@@ -1,7 +1,7 @@
 {
   "name": "vue3-schema-forms",
-  "private": true,
-  "version": "0.0.1",
+  "private": false,
+  "version": "0.0.3",
   "type": "module",
   "files": [
     "dist"
@@ -25,7 +25,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "test-storybook": "test-storybook",
-    "build-storybook": "storybook build",
+    "build-storybook": "storybook build -s public -o dist/storybook",
     "test": "vitest"
   },
   "dependencies": {

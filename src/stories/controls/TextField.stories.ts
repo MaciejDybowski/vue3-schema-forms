@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3';
 import { Schema } from '@/vocabulary/schema';
 import { StoryTemplateWithValidation } from '../templates/story-template';
