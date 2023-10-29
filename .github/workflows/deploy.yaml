@@ -6,6 +6,8 @@ on:
       - "master"
 jobs:
   deploy:
+    permissions:
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.build-publish.outputs.page_url }}
