@@ -31,3 +31,9 @@ onMounted(() => {
   theme.global.name.value = props.themeName.value;
 });
 </script>
+
+<style>
+.v-application__wrap {
+  min-height: 0vh !important;
+}
+</style>
