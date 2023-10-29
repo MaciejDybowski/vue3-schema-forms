@@ -2,8 +2,8 @@
 import { StoryFn } from '@storybook/vue3';
 
 import { ref } from 'vue';
-import { userEvent, within } from '@storybook/testing-library';
-import VueSchemaForms from '@/components/engine/vue-schema-forms.vue';
+import { VueSchemaForms } from '@/components';
+
 
 
 export const StoryTemplate: StoryFn<typeof VueSchemaForms> = (args: any, { argTypes }) => ({

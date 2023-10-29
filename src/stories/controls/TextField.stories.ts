@@ -1,15 +1,14 @@
-// @ts-nocheck
-import SchemaForm from '../../components/engine/vue-schema-forms.vue';
 import { Meta, StoryObj } from '@storybook/vue3';
-import { Schema } from '../../vocabulary/schema';
+import { Schema } from '@/vocabulary/schema';
 import { StoryTemplateWithValidation } from '../templates/story-template';
 import { userEvent, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
+import { VueSchemaForms } from '@/components';
 
 
 const meta = {
   title: 'Forms/Pole tekstowe [TextField]',
-  component: SchemaForm,
+  component: VueSchemaForms,
   tags: ['autodocs'],
   argTypes: {
     schema: { control: 'object', description: 'Schema u' /*table: { disable: true }*/ },
@@ -24,7 +23,7 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
-} satisfies Meta<typeof SchemaForm>;
+} satisfies Meta<typeof VueSchemaForms>;
 
 export default meta;
 

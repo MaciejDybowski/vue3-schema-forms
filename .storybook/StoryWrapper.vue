@@ -19,23 +19,15 @@ const props = defineProps<{
 const theme = useTheme();
 
 watch(props.localeName, (nVal) => {
-  //console.debug('Zmień język =>', nVal);
   i18n.global.locale.value = nVal;
 });
 
 watch(props.themeName, (nVal) => {
-  //console.debug('Zmień theme => ', nVal);
   theme.global.name.value = nVal as string;
 });
 
 onMounted(() => {
   i18n.global.locale.value = props.localeName.value;
-  theme.global.name.value =  props.themeName.value;
-})
+  theme.global.name.value = props.themeName.value;
+});
 </script>
-
-<style>
-.v-application__wrap {
-  min-height: 0vh !important;
-}
-</style>

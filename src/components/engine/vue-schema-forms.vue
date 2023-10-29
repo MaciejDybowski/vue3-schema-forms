@@ -17,11 +17,11 @@
 import { getCurrentInstance, onMounted, ref, watch } from "vue"
 
 import FormRoot from "./form-root.vue"
-import { Schema, SchemaOptions } from "../../vocabulary/schema"
+import { Schema, SchemaOptions } from '@/vocabulary/schema'
 import set from "lodash/set"
 import { useI18n } from "vue-i18n"
-import { resolveSchemaWithLocale } from "../../core/engine/utils"
-import { NodeUpdateEvent } from "../../vocabulary/engine"
+import { resolveSchemaWithLocale } from '@/core/engine/utils'
+import { NodeUpdateEvent } from '@/vocabulary/engine'
 import TextField from "../controls/text-field.vue"
 import DuplicatedSection from "../controls/duplicated-section.vue"
 import usePerformanceAPI from "../../core/composables/usePerformanceAPI"
