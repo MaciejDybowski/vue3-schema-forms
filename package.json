@@ -1,0 +1,72 @@
+{
+  "name": "vue3-schema-forms",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/vue3-schema-forms.umd.js",
+  "module": "./dist/vue3-schema-forms-ts.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/vue3-schema-forms.es.js",
+      "require": "./dist/vue3-schema-forms.umd.js"
+    },
+    "./dist/vue3-schema-forms.css": {
+      "import": "./dist/vue3-schema-forms.css",
+      "require": "./dist/vue3-schema-forms.css"
+    }
+  },
+  "types": "./dist/main.d.ts",
+  "scripts": {
+    "build": "vue-tsc && vite build",
+    "format": "prettier --write .",
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "test-storybook": "test-storybook",
+    "build-storybook": "storybook build",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.3.67",
+    "@stoplight/json-ref-resolver": "3.1.6",
+    "debounce": "^1.2.1",
+    "expr-eval": "^2.0.2",
+    "lodash": "^4.17.21",
+    "vue": "^3.2.47",
+    "vue-i18n": "^9.5.0",
+    "vue-json-pretty": "^2.2.4",
+    "vuetify": "^3.3.21"
+  },
+  "devDependencies": {
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@intlify/unplugin-vue-i18n": "^0.10.1",
+    "@storybook/addon-essentials": "^7.5.1",
+    "@storybook/addon-interactions": "^7.5.1",
+    "@storybook/addon-links": "^7.5.1",
+    "@storybook/blocks": "^7.5.1",
+    "@storybook/jest": "^0.2.3",
+    "@storybook/manager-api": "^7.5.1",
+    "@storybook/test-runner": "^0.13.0",
+    "@storybook/testing-library": "^0.2.2",
+    "@storybook/theming": "^7.5.1",
+    "@storybook/vue3": "^7.5.1",
+    "@storybook/vue3-vite": "^7.5.1",
+    "@vitejs/plugin-vue": "^4.4.0",
+    "@vue/test-utils": "^2.4.1",
+    "eslint": "^8.51.0",
+    "eslint-plugin-storybook": "^0.6.15",
+    "jsdom": "^22.1.0",
+    "prettier": "2.8.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "remark-gfm": "^3.0.1",
+    "storybook": "^7.5.1",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11",
+    "vite-plugin-vuetify": "^1.0.2",
+    "vitest": "^0.34.6",
+    "vue-tsc": "^1.8.19"
+  }
+}
