@@ -3,7 +3,6 @@ import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
-import * as path from 'path';
 import typescript2 from 'rollup-plugin-typescript2';
 
 export default defineConfig({
@@ -13,7 +12,7 @@ export default defineConfig({
     VueI18nPlugin({}),
     typescript2({
       check: false,
-      include: ['src/**/*.vue', "src/**/*.ts"],
+      include: ['src/**/*.vue', 'src/**/*.ts'],
       tsconfigOverride: {
         compilerOptions: {
           sourceMap: true,
@@ -28,7 +27,6 @@ export default defineConfig({
     }),
   ],
   build: {
-    cssCodeSplit: false,
     lib: {
       entry: './src/VueSchemaForms.ts',
       name: 'vue3-schema-forms',

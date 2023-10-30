@@ -1,14 +1,22 @@
 {
   "name": "vue3-schema-forms",
   "private": false,
-  "version": "0.0.9",
+  "version": "0.0.13",
   "type": "module",
   "files": [
     "dist"
   ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js.js",
   "exports": {
-    ".": "./dist/index.js",
-    "./styles.css": "./dist/style.css"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./dist/*.css": {
+      "import": "./dist/*.css",
+      "require": "./dist/*.css"
+    }
   },
   "types": "./dist/VueSchemaForms.d.ts",
   "license": "Apache-2.0",
