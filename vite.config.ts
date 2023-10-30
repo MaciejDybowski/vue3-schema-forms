@@ -1,35 +1,43 @@
-import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite"
-import vue from "@vitejs/plugin-vue"
-import { defineConfig } from "vite"
-import { fileURLToPath, URL } from "node:url"
-import vuetify, { transformAssetUrls } from "vite-plugin-vuetify"
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
+import vue from '@vitejs/plugin-vue';
+import { defineConfig } from 'vite';
+import { fileURLToPath, URL } from 'node:url';
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import * as path from 'path';
+import typescript2 from 'rollup-plugin-typescript2';
 
 export default defineConfig({
   plugins: [
     vue({ template: { transformAssetUrls } }),
     vuetify({ autoImport: true }),
     VueI18nPlugin({}),
+    typescript2({
+      check: false,
+      include: ['src/**/*.vue', "src/**/*.ts"],
+      tsconfigOverride: {
+        compilerOptions: {
+          sourceMap: true,
+          declaration: true,
+          declarationMap: true,
+        },
+        exclude: [
+          'vite.config.ts',
+        ],
+      },
+
+    }),
   ],
   build: {
-    cssCodeSplit: true,
+    cssCodeSplit: false,
     lib: {
-      entry: "src/install.ts",
+      entry: './src/install.ts',
       name: 'vue3-schema-forms',
-      formats: ["es", "cjs", "umd"],
-      fileName: format => `vue3-schema-forms.${format}.js`
+      formats: ['es', 'cjs'],
+      fileName: format => (format === 'es' ? 'index.js' : 'index.cjs'),
     },
     rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, "src/install.ts")
-      },
       external: ['vue'],
       output: {
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'main.css') return 'vue3-schema-forms.css';
-          return assetInfo.name;
-        },
-        exports: "named",
         globals: {
           vue: 'Vue',
         },
@@ -38,7 +46,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-})
+});
