@@ -1,24 +1,17 @@
 {
   "name": "vue3-schema-forms",
   "private": false,
-  "version": "0.0.4",
+  "version": "0.0.9",
   "type": "module",
   "files": [
     "dist"
   ],
-  "main": "./dist/vue3-schema-forms.umd.js",
-  "module": "./dist/vue3-schema-forms-ts.es.js",
   "exports": {
-    ".": {
-      "import": "./dist/vue3-schema-forms.es.js",
-      "require": "./dist/vue3-schema-forms.umd.js"
-    },
-    "./dist/vue3-schema-forms.css": {
-      "import": "./dist/vue3-schema-forms.css",
-      "require": "./dist/vue3-schema-forms.css"
-    }
+    ".": "./dist/index.js",
+    "./styles.css": "./dist/style.css"
   },
-  "types": "./dist/main.d.ts",
+  "types": "./dist/VueSchemaForms.d.ts",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "vue-tsc && vite build",
     "format": "prettier --write .",

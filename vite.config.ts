@@ -30,7 +30,7 @@ export default defineConfig({
   build: {
     cssCodeSplit: false,
     lib: {
-      entry: './src/install.ts',
+      entry: './src/VueSchemaForms.ts',
       name: 'vue3-schema-forms',
       formats: ['es', 'cjs'],
       fileName: format => (format === 'es' ? 'index.js' : 'index.cjs'),

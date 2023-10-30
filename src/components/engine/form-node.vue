@@ -23,10 +23,10 @@
 import { computed, onMounted, ref } from 'vue';
 import { useDisplay } from 'vuetify';
 
-import { EngineField } from '@/vocabulary/engine';
-import { Layout } from '@/vocabulary/schema/elements';
-import { useConditionalRendering } from '@/core/composables/useConditionalRendering';
-import { getColsByDisplay } from '@/core/engine/utils';
+import { EngineField } from '../../vocabulary/engine';
+import { Layout } from '../../vocabulary/schema/elements';
+import { useConditionalRendering } from '../../core/composables/useConditionalRendering';
+import { getColsByDisplay } from '../../core/engine/utils';
 
 const props = defineProps<{
   schema: EngineField,

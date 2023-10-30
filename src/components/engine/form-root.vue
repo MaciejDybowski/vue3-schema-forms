@@ -12,11 +12,11 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Schema, SchemaOptions } from '@/vocabulary/schema';
+import { Schema, SchemaOptions } from '../../vocabulary/schema';
 
-import { EngineField, NodeUpdateEvent } from '@/vocabulary/engine';
+import { EngineField, NodeUpdateEvent } from '../../vocabulary/engine';
 import FormNode from './form-node.vue';
-import { SchemaField } from '@/vocabulary/schema/elements';
+import { SchemaField } from '../../vocabulary/schema/elements';
 
 const { locale, t } = useI18n();
 

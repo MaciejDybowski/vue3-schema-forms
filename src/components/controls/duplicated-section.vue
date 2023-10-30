@@ -14,10 +14,10 @@ import FormRoot from '../engine/form-root.vue';
 import { onMounted, ref } from 'vue';
 import get from 'lodash/get';
 
-import { NodeUpdateEvent } from '@/vocabulary/engine';
-import { Schema } from '@/vocabulary/schema';
-import { produceUpdateEvent } from '@/core/engine/utils';
-import { EngineDuplicatedSection } from '@/vocabulary/engine/controls';
+import { NodeUpdateEvent } from '../../vocabulary/engine';
+import { Schema } from '../../vocabulary/schema';
+import { produceUpdateEvent } from '../../core/engine/utils';
+import { EngineDuplicatedSection } from '../../vocabulary/engine/controls';
 
 const props = defineProps<{
   schema: EngineDuplicatedSection

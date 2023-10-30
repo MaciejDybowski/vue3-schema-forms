@@ -12,9 +12,9 @@
 
 <script setup lang='ts'>
 import { computed, onMounted, onUpdated } from 'vue';
-import { bindProps, getValueFromModel, mapRules, produceUpdateEvent } from '@/core/engine/utils';
-import { EngineTextField } from '@/vocabulary/engine/controls';
-import { useCalculation } from '@/core/composables/useCalculation';
+import { bindProps, getValueFromModel, mapRules, produceUpdateEvent } from '../../core/engine/utils';
+import { EngineTextField } from '../../vocabulary/engine/controls';
+import { useCalculation } from '../../core/composables/useCalculation';
 
 const props = defineProps<{
   schema: EngineTextField
