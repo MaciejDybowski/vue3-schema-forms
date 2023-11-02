@@ -1,7 +1,7 @@
 {
   "name": "vue3-schema-forms",
   "private": false,
-  "version": "0.0.13",
+  "version": "0.0.17",
   "type": "module",
   "files": [
     "dist"
@@ -18,10 +18,10 @@
       "require": "./dist/*.css"
     }
   },
-  "types": "./dist/VueSchemaForms.d.ts",
+  "types": "./dist/lib_main.d.ts",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "vue-tsc && vite build",
+    "build": "vue-tsc && vite build && cat src/global-components.d.ts >> dist/lib_main.d.ts",
     "format": "prettier --write .",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
@@ -35,25 +35,27 @@
     "debounce": "^1.2.1",
     "expr-eval": "^2.0.2",
     "lodash": "^4.17.21",
-    "vue": "^3.2.47",
-    "vue-i18n": "^9.5.0",
-    "vue-json-pretty": "^2.2.4",
-    "vuetify": "^3.3.21"
+    "vue-json-pretty": "^2.2.4"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "vue-i18n": "^9.6.4",
+    "vuetify": "^3.3.22"
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@intlify/unplugin-vue-i18n": "^0.10.1",
-    "@storybook/addon-essentials": "^7.5.1",
-    "@storybook/addon-interactions": "^7.5.1",
-    "@storybook/addon-links": "^7.5.1",
-    "@storybook/blocks": "^7.5.1",
+    "@storybook/addon-essentials": "^7.5.2",
+    "@storybook/addon-interactions": "^7.5.2",
+    "@storybook/addon-links": "^7.5.2",
+    "@storybook/blocks": "^7.5.2",
     "@storybook/jest": "^0.2.3",
-    "@storybook/manager-api": "^7.5.1",
+    "@storybook/manager-api": "^7.5.2",
     "@storybook/test-runner": "^0.13.0",
     "@storybook/testing-library": "^0.2.2",
-    "@storybook/theming": "^7.5.1",
-    "@storybook/vue3": "^7.5.1",
-    "@storybook/vue3-vite": "^7.5.1",
+    "@storybook/theming": "^7.5.2",
+    "@storybook/vue3": "^7.5.2",
+    "@storybook/vue3-vite": "^7.5.2",
     "@vitejs/plugin-vue": "^4.4.0",
     "@vue/test-utils": "^2.4.1",
     "eslint": "^8.51.0",
@@ -64,11 +66,12 @@
     "react-dom": "^18.2.0",
     "remark-gfm": "^3.0.1",
     "rollup-plugin-typescript2": "^0.36.0",
-    "storybook": "^7.5.1",
+    "storybook": "^7.5.2",
     "typescript": "^5.2.2",
     "vite": "^4.4.11",
     "vite-plugin-vuetify": "^1.0.2",
     "vitest": "^0.34.6",
-    "vue-tsc": "^1.8.19"
+    "vue-tsc": "^1.8.19",
+    "vite-plugin-dts": "^3.6.3"
   }
 }

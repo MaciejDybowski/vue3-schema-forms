@@ -4,15 +4,19 @@ import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import typescript2 from 'rollup-plugin-typescript2';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   plugins: [
     vue({ template: { transformAssetUrls } }),
     vuetify({ autoImport: true }),
     VueI18nPlugin({}),
+    dts({
+      insertTypesEntry: true,
+    }),
     typescript2({
       check: false,
-      include: ['src/**/*.vue', 'src/**/*.ts'],
+      include: ["src/components/**/*.vue"],
       tsconfigOverride: {
         compilerOptions: {
           sourceMap: true,
@@ -27,11 +31,12 @@ export default defineConfig({
     }),
   ],
   build: {
+    cssCodeSplit: true,
     lib: {
       entry: './src/VueSchemaForms.ts',
       name: 'vue3-schema-forms',
       formats: ['es', 'cjs'],
-      fileName: format => (format === 'es' ? 'index.js' : 'index.cjs'),
+      fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
       external: ['vue'],

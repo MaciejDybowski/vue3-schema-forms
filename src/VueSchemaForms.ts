@@ -7,6 +7,7 @@ const VueSchemaForms = {
       // @ts-ignore
       const component = components[componentName];
       app.component(componentName, component);
+
     }
   },
 };
