@@ -1,41 +1,46 @@
 // @ts-nocheck
-import { StoryFn } from '@storybook/vue3';
+import { StoryFn } from "@storybook/vue3"
 
-import { ref } from 'vue';
-import { VueSchemaForms } from '@/components';
+import { ref } from "vue"
+import { VueSchemaForms } from "@/components"
 
-
-
-export const StoryTemplate: StoryFn<typeof VueSchemaForms> = (args: any, { argTypes }) => ({
+export const StoryTemplate: StoryFn<typeof VueSchemaForms> = (
+  args: any,
+  { argTypes }
+) => ({
   props: Object.keys(argTypes),
   components: { SchemaForm },
   setup() {
-    return { args };
+    return { args }
   },
-  template: '<schema-form :schema="args.schema" v-model="args.model" :options="args.options"/>',
-});
+  template:
+    '<schema-form :schema="args.schema" v-model="args.model" :options="args.options"/>',
+})
 
-export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (args: any, { argTypes }) => ({
+export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (
+  args: any,
+  { argTypes }
+) => ({
   props: Object.keys(argTypes),
   components: { VueSchemaForms },
   setup(args) {
-    const form = ref();
-    const model = ref(args.modelValue);
-    const validationResult = ref(false);
+    const form = ref()
+    const model = ref(args.modelValue)
+    const validationResult = ref(false)
 
     async function validate() {
-      const { valid } = await form.value.validate();
-      validationResult.value = valid;
+      const { valid } = await form.value.validate()
+      validationResult.value = valid
     }
 
     function reset() {
-      form.value.reset();
-      validationResult.value = false;
+      form.value.reset()
+      validationResult.value = false
     }
 
     function resetValidation() {
-      form.value.resetValidation();
-      validationResult.value = false;
+      form.value.resetValidation()
+      validationResult.value = false
     }
 
     return {
@@ -46,7 +51,7 @@ export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (args
       form,
       model,
       validationResult,
-    };
+    }
   },
   template: `
     <v-form ref='form'>
@@ -99,4 +104,4 @@ export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (args
     </v-form>
 
   `,
-});
+})

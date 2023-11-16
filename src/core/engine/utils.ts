@@ -4,6 +4,7 @@ import { Schema } from '@/vocabulary/schema';
 import jsonSchemaResolver from './jsonSchemaResolver';
 import { DisplayBreakpoint } from 'vuetify';
 import { Cols } from '@/vocabulary/schema/elements';
+import { EngineTextField } from '@/vocabulary/engine/controls';
 
 export function produceUpdateEvent(val: any, schema: EngineField) {
   const event: NodeUpdateEvent = { key: schema.key, value: val };
@@ -17,8 +18,24 @@ export function getValueFromModel(model: object, schema: EngineField): any {
 export function bindProps(
   schema: EngineField,
 ): Record<string, string | number | boolean> {
-  return { ...schema.options?.fieldProps, ...schema.layout?.props };
+  const props = { ...schema.options?.fieldProps, ...schema.layout?.props };
+
+  if ((schema as EngineTextField).calculation) {
+    props.readOnly = true;
+  }
+
+  return props;
 }
+
+export function bindClass(schema: EngineField): string {
+  let classString = '';
+  if (schema.required) {
+    classString += 'required-input ';
+  }
+  return classString;
+}
+
+export const variableRegexp: RegExp = new RegExp('{.*?}', 'g');
 
 export async function resolveSchemaWithLocale(
   schema: Schema,
@@ -31,8 +48,10 @@ export async function resolveSchemaWithLocale(
   return resolved.result as Schema;
 }
 
-
-export function getColsByDisplay(displayBreakpoint: DisplayBreakpoint, cols: Cols): number {
+export function getColsByDisplay(
+  displayBreakpoint: DisplayBreakpoint,
+  cols: Cols,
+): number {
   switch (displayBreakpoint) {
     case 'xxl':
       const xxl = cols.xxl;
@@ -54,7 +73,6 @@ export function getColsByDisplay(displayBreakpoint: DisplayBreakpoint, cols: Col
       return xs ? xs : 12;
   }
 }
-
 
 export function mapRules(required: boolean): any[] {
   let arr = [];

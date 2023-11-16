@@ -1,9 +1,7 @@
-import { EngineField } from './index';
+import { EngineField } from "./index"
 
 export interface EngineTextField extends EngineField {
-  calculation?: string;
+  calculation?: string
 }
 
-export interface EngineDuplicatedSection extends EngineField {
-}
-
+export interface EngineDuplicatedSection extends EngineField {}

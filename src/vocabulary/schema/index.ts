@@ -10,4 +10,5 @@ export interface Schema {
 
 export interface SchemaOptions {
   fieldProps?: Record<string, string>
+  digitsAfterDecimal?: string | number
 }

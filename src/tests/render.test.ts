@@ -1,40 +1,149 @@
-import { mount, VueWrapper } from '@vue/test-utils';
-import { expect, it } from 'vitest';
-import { offsetSchema } from '@/stories/schemas';
-import { createVuetify } from 'vuetify';
-import * as components from 'vuetify/components';
-import * as directives from 'vuetify/directives';
-import i18n from '../plugins/i18n';
-import { VueSchemaForms } from '@/components';
+import { mount, VueWrapper } from "@vue/test-utils"
+import { expect, test } from "vitest"
+import { createVuetify } from "vuetify"
+import * as components from "vuetify/components"
+import * as directives from "vuetify/directives"
+import i18n from "../../.storybook/plugins/i18n"
+import { VueSchemaForms } from "@/components"
+import {
+  _100fieldSchema,
+  _10fieldSchema,
+  _50fieldSchema, invoicePositionsSchema,
+} from '@/tests/test-schemas';
 
-const vuetify = createVuetify({ components, directives });
+const vuetify = createVuetify({ components, directives })
 
 async function waitForResult(wrapper: VueWrapper): Promise<number> {
-  await wrapper.vm.$nextTick();
-  await wrapper.vm.$nextTick();
-  await wrapper.vm.$nextTick();
-  await wrapper.vm.$nextTick();
-
+  await wrapper.vm.$nextTick()
+  await wrapper.vm.$nextTick()
+  await wrapper.vm.$nextTick()
+  await wrapper.vm.$nextTick()
   // @ts-ignore
-  return wrapper.vm.result as number;
+  return wrapper.vm.result as number
 }
 
-it('should return simple schema less than 45ms ', async function() {
+test("should render 10 field`s form with empty model less than 80 ms", async function () {
   const wrapper: VueWrapper = mount(VueSchemaForms, {
     global: {
       plugins: [vuetify, i18n],
     },
     props: {
-      schema: offsetSchema,
+      schema: _10fieldSchema,
+      options: {},
+      modelValue: {},
+    },
+  })
+
+  expect(wrapper.exists()).eq(true)
+  const renderTime = await waitForResult(wrapper)
+  expect(renderTime).toBeGreaterThan(0)
+  expect(renderTime).toBeLessThan(80)
+})
+
+test("should render 50 field`s form with empty model less than 240 ms", async function () {
+  const wrapper: VueWrapper = mount(VueSchemaForms, {
+    global: {
+      plugins: [vuetify, i18n],
+    },
+    props: {
+      schema: _50fieldSchema,
+      options: {},
+      modelValue: {},
+    },
+  })
+
+  expect(wrapper.exists()).eq(true)
+  const renderTime = await waitForResult(wrapper)
+  expect(renderTime).toBeGreaterThan(0)
+  expect(renderTime).toBeLessThan(240)
+})
+
+test("should render 100 field`s form with empty model less than 410 ms", async function () {
+  const wrapper: VueWrapper = mount(VueSchemaForms, {
+    global: {
+      plugins: [vuetify, i18n],
+    },
+    props: {
+      schema: _100fieldSchema,
+      options: {},
+      modelValue: {},
+    },
+  })
+
+  expect(wrapper.exists()).eq(true)
+  const renderTime = await waitForResult(wrapper)
+  expect(renderTime).toBeGreaterThan(0)
+  expect(renderTime).toBeLessThan(410)
+})
+
+
+test("should render many duplicated-section with calculations (min. 50 row's of 5 field's) less than 900 ms", async function () {
+  const wrapper: VueWrapper = mount(VueSchemaForms, {
+    global: {
+      plugins: [vuetify, i18n],
+    },
+    props: {
+      schema: invoicePositionsSchema,
       options: {},
       modelValue: {
-        fieldA: 'test',
+        invoiceItems: [
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+          {product: "Item 1", quantity: 2, netPrice: 90.50, tax: 0.18},
+          {product: "Item 2", quantity: 5, netPrice: 88.30, tax: 0.07},
+          {product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23},
+          {product: "Item 4", quantity: 1, netPrice: 20, tax: 0.32},
+          {product: "Item 5", quantity: 18, netPrice: 3.13, tax: 0.23},
+        ]
       },
     },
-  });
+  })
 
-  expect(wrapper.exists()).eq(true);
-  const renderTime = await waitForResult(wrapper);
-  expect(renderTime).toBeGreaterThan(0);
-  expect(renderTime).toBeLessThan(45);
-});
+  expect(wrapper.exists()).eq(true)
+  const renderTime = await waitForResult(wrapper)
+  expect(renderTime).toBeGreaterThan(0)
+  expect(renderTime).toBeLessThan(900)
+})
