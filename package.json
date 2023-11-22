@@ -19,6 +19,18 @@
     "build-storybook": "storybook build -o dist/storybook",
     "test": "vitest"
   },
+  "keywords": [
+    "vue",
+    "vuetify",
+    "forms",
+    "JSON Schema"
+  ],
+  "author": "Maciek Dybowski",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MaciejDybowski/vue3-schema-forms"
+  },
+  "homepage": "https://maciejdybowski.github.io/vue3-schema-forms/",
   "dependencies": {
     "@mdi/font": "^7.3.67",
     "@stoplight/json-ref-resolver": "3.1.6",

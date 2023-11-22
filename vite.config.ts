@@ -6,6 +6,7 @@ import dts from 'vite-plugin-dts';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { exec } from 'node:child_process';
 import * as path from 'path';
+import { fileURLToPath, URL } from "node:url"
 
 export default defineConfig({
   plugins: [
@@ -65,7 +66,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
 });
