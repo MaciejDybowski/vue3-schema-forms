@@ -1,12 +1,11 @@
 <template>
   <div class="node-text-field">
     <v-text-field
-      :id="schema.key"
       v-model="localModel"
       :label="schema.label"
       v-bind="bindProps(schema)"
       :rules="mapRules(schema.required)"
-      :class='bindClass(schema)'
+      :class="bindClass(schema)"
     />
   </div>
 </template>
@@ -19,7 +18,7 @@ import {
   getValueFromModel,
   mapRules,
   produceUpdateEvent,
-} from '../../core/engine/utils';
+} from "../../core/engine/utils"
 import { EngineTextField } from "../../vocabulary/engine/controls"
 import { useCalculation } from "../../core/composables/useCalculation"
 

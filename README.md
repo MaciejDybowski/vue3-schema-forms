@@ -5,11 +5,6 @@ This library is designed to simplify form creation by leveraging the JSON Schema
 
 Inspired by https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/
 
-## ToDo List
-
-- [ ] Odłączenie translacji od i18n bo w sumie to nie trzeba
-- [ ] Sekcja powielana i draggable
-- [ ] Przemyśleć sekcje edytowalne
 
 ## Installation
 
@@ -19,27 +14,29 @@ You can install `vue3-schema-forms` using npm:
 npm install vue3-schema-forms
 ```
 
-## Usage
+## Basic Usage
 
 ```javascript
 // index.ts
-import VueSchemaForms from "vue3-schema-forms"
+import { createVueSchemaForms } from 'vue3-schema-forms';
 
-const app = createApp(App)
-app.use(Vue3SchemaForms)
-app.mount("#app")
+const schemaForms = createVueSchemaForms({});
+
+createApp(App)
+  .use(schemaForms)
+  .mount('#app');
 ```
 
 Po zaimportowaniu pluginu możemy wywołać komponent generujący formularze i przekazać odpowiednie props'y
 
-```vue
-// someComponent.vue
-<vue-schema-forms v-model='model' :schema='schema' :options='formOptions' />
-```
-
-Przykładowe propsy
-
 ```javascript
+// someComponent.vue
+<vue-schema-forms 
+  v-model="model" 
+  :schema="schema" 
+  :options="formOptions"
+/>
+
 const formOptions = ref({})
 const model = ref({})
 const schema = ref({
@@ -52,5 +49,23 @@ const schema = ref({
       },
     },
   },
-})
 ```
+## Documentation
+The documentation and some of the testing was based on the Storybook application [click here](https://maciejdybowski.github.io/vue3-schema-forms/)
+
+## Tests
+1. ```cd``` to the project directory
+2. Install development dependencies: ```npm install```
+3. Run the tests: ```npm test```
+4. Run the storybook: ```npm run storybook```
+5. Run storybook tests: ``npm run test-storybook``
+
+
+## ToDo List
+- [ ] Create many basics fields like data/radio/checkbox/combo etc.
+- [ ] Create editable sections
+- [ ] Use resolveDepsComposable for deps on fields
+
+In progress:
+- [ ] Editable duplicated section, fix width when one field < 12 cols
+

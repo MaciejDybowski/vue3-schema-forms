@@ -1,5 +1,5 @@
 <template>
-  <v-container class="my-4">
+  <v-container>
     <v-form ref="form">
       <vue-schema-forms
         v-model="model"
@@ -26,7 +26,6 @@
             </div>
           </v-expand-transition>
         </div>
-
         <v-btn
           color="error"
           class="mt-4"
@@ -35,7 +34,6 @@
         >
           Reset Form
         </v-btn>
-
         <v-btn
           color="warning"
           class="mt-4"
@@ -60,7 +58,7 @@ import { useI18n } from "vue-i18n"
 import PropsViewer from "./PropsViewer.vue"
 import { Schema, SchemaOptions } from "@/vocabulary/schema"
 import { VForm } from "vuetify/components"
-import VueSchemaForms from "@/components/engine/vue-schema-forms.vue"
+import VueSchemaForms from "@/components/engine/VueSchemaForms.vue"
 
 const { t } = useI18n()
 const showJSONs = ref(true)

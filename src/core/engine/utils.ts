@@ -75,7 +75,7 @@ export function getColsByDisplay(
 }
 
 export function mapRules(required: boolean): any[] {
-  let arr = [];
+  let arr: any[] = [];
   if (required) {
     arr.push((value: any) => {
       if (value) return true;

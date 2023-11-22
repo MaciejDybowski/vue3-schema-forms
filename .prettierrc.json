@@ -1,0 +1,15 @@
+{
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
+  "printWidth": 130,
+  "singleAttributePerLine": true,
+  "importOrder": [
+    "<THIRD_PARTY_MODULES>",
+    "^@/components/(.*)$",
+    "^@.*$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
+}

@@ -5,10 +5,10 @@ import { StoryTemplateWithValidation } from "../templates/story-template"
 import { userEvent, within } from "@storybook/testing-library"
 import { expect } from "@storybook/jest"
 import { VueSchemaForms } from "@/components"
-import { SchemaTextField } from '@/vocabulary/schema/elements';
+import { SchemaTextField } from "@/vocabulary/schema/elements"
 
 const meta = {
-  title: "Forms/Controls/Pole tekstowe [TextField]",
+  title: "Forms/Controls/TextField",
   component: VueSchemaForms,
   tags: ["autodocs"],
   argTypes: {
@@ -69,8 +69,8 @@ export const WithVuetifyProps: Story = {
             component: "text-field",
             props: {
               variant: "outlined",
-              density: "compact"
-            }
+              density: "compact",
+            },
           },
         } as SchemaTextField,
       },

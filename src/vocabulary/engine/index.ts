@@ -13,7 +13,8 @@ export interface EngineField {
 }
 
 export interface EngineOptions {
-  fieldProps: Record<string, string>
+  fieldProps: Record<string, any>
+  buttonProps: Record<string, any>
   digitsAfterDecimal: number
 }
 

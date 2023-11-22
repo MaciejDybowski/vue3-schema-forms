@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3"
 import { VueSchemaForms } from "@/components"
-import { conditionSchema } from "@/stories/schemas"
+import { schemaWithTranslation } from "@/stories/schemas"
 
 const meta = {
-  title: "Forms/Features/ConditionalRendering",
+  title: "Forms/Features/Translations",
   component: VueSchemaForms,
   tags: ["autodocs"],
   argTypes: {
@@ -36,15 +36,15 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * #### Warunkowe renderowanie
- *  Biblioteka potrafi rozwiązać zależności pomiędzy polami bazując na bibliotece https://www.npmjs.com/package/expr-eval
+ * #### Translations for Any Text in the Form
+ * `label: { $ref: '#/i18n/~$locale~/your_i18n_key' }` - the translation definition relies on the i18n plugin
  *
- * ` if: string` - wartość definiowana w obiekcie `Layout`
- *
+ * `i18n: object` - when defining the form schema, include an object with translations.
+ * ##### !!! The schema is translated at the very beginning of the rendering process; changing the language "live" can be costly and requires re-rendering the entire form. !!!
  */
 export const TranslationWithI18n: Story = {
-  name: "Conditional rendering [if]",
+  name: "Translations with i18n",
   args: {
-    schema: conditionSchema,
+    schema: schemaWithTranslation,
   },
 }

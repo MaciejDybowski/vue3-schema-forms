@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3"
 import { VueSchemaForms } from "@/components"
-import { schemaWithTranslation } from "@/stories/schemas"
+import { offsetSchema } from "@/stories/schemas"
 
 const meta = {
-  title: "Forms/Features/Translations",
+  title: "Forms/Features/Layouts",
   component: VueSchemaForms,
   tags: ["autodocs"],
   argTypes: {
@@ -36,15 +36,15 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * #### Tłumaczenia dowolnego tekstu w formularzu
- * ` label: { $ref: '#/i18n/~$locale~/your_i18n_key' }` - definicja tłumaczenia opiera się o plugin i18n
+ * #### Arranging form fields using the "fill to end" function and offsets
+ * `fillRow: boolean` - the space after the field is filled to the end of the row (completing to 12)
  *
- * `i18n : object` - do definicji schematu formularza nalezy dołączyć obiekt z tłumaczeniami.
- * ##### !!! Schemat jest tłumaczony na samym początku procesu renderowania, zmiana języka 'live" może być kosztowna i wymaga przerenderowania całego formularza. !!!
+ * `offset`: number - specifies the number of "empty" columns before the field that will be generated
+ *
+ * `cols: number | Cols` - specifies the column width in the grid system. It can be a number or an object that meets the structure of the `Cols` interface.
  */
-export const TranslationWithI18n: Story = {
-  name: "Translations with i18n",
+export const FillRowAndOffsets: Story = {
   args: {
-    schema: schemaWithTranslation,
+    schema: offsetSchema,
   },
 }

@@ -5,14 +5,14 @@ export const offsetSchema: Schema = {
   type: "object",
   properties: {
     field1: {
-      label: "Pole na całą szerokość",
+      label: "Full-width Field",
       layout: {
         component: "text-field",
         cols: 12,
       },
     },
     field2: {
-      label: "Pole ze zmienną szerokością względem ekranu",
+      label: "Variable-width Field Relative to Screen",
       layout: {
         component: "text-field",
         cols: {
@@ -24,7 +24,7 @@ export const offsetSchema: Schema = {
       },
     },
     field3: {
-      label: 'Pole z opcją "fillRow"',
+      label: 'Field with "fillRow" Option',
       layout: {
         component: "text-field",
         cols: 6,
@@ -32,7 +32,7 @@ export const offsetSchema: Schema = {
       },
     },
     field4: {
-      label: "Pole z ustawionym offsetem na 4",
+      label: "Field with Offset Set to 4",
       layout: {
         component: "text-field",
         offset: 4,
@@ -40,7 +40,7 @@ export const offsetSchema: Schema = {
       },
     },
     field5: {
-      label: "Pole z ustawionym offsetem na 2",
+      label: "Field with Offset Set to 2",
       layout: {
         component: "text-field",
         offset: 2,
@@ -49,24 +49,33 @@ export const offsetSchema: Schema = {
     },
   },
 }
-
 export const conditionSchema: Schema = {
   type: "object",
   properties: {
+    description: {
+      content: "Type: admin/admin",
+      layout: {
+        component: "static-content",
+        tag: "span",
+      },
+    },
     login: {
-      label: 'Type: "admin"',
+      label: "Login",
       layout: {
         component: "text-field",
       },
     },
     password: {
-      label: 'Type: "root"',
+      label: "Password",
       layout: {
         component: "text-field",
+        props: {
+          type: "password",
+        },
       },
     },
     secretCode: {
-      label: "Field is rendered",
+      label: "Result",
       layout: {
         component: "text-field",
         if: 'login =="admin" and password == "admin"',

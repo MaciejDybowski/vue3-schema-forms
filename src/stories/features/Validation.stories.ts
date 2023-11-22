@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3"
 import { VueSchemaForms } from "@/components"
-import { offsetSchema } from "@/stories/schemas"
+import { Schema } from "@/vocabulary/schema"
 
 const meta = {
-  title: "Forms/Features/Layouts",
+  title: "Forms/Features/Validations",
   component: VueSchemaForms,
   tags: ["autodocs"],
   argTypes: {
@@ -36,15 +36,28 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * #### Układanie pól formularza za pomocą funkcji "wypełnij do końca" oraz offsetów
- * `fillRow: boolean` - przestrzeń za polem zostaje wypełniona do końca wiersza (dopełnienie do 12)
- *
- * `offset`: number - określa liczbę kolumn "pustych" przed polem które zostanie wygenerowane
- *
- * `cols: number | Cols` - określa szerokość kolumny w systemie grid. Może być liczbą lub obiektem spełniającym strukturę interfejsu `Cols`
+ * #### Required field with nested
  */
-export const FillRowAndOffsets: Story = {
+export const RequiredWithNested: Story = {
   args: {
-    schema: offsetSchema,
+    schema: {
+      type: "object",
+      properties: {
+        item1: {
+          label: "Normal Item",
+          layout: { component: "text-field" },
+        },
+        nested: {
+          properties: {
+            item2: {
+              label: "Nested Item",
+              layout: { component: "text-field" },
+            },
+          },
+          required: ["item2"],
+        },
+      },
+      required: ["item1"] as Schema,
+    },
   },
 }

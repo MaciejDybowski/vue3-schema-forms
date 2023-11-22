@@ -1,1 +1,1 @@
-export { default as VueSchemaForms } from "./engine/vue-schema-forms.vue"
+export { default as VueSchemaForms } from "./engine/VueSchemaForms.vue"

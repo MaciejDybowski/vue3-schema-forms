@@ -14,11 +14,15 @@ import { onMounted, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { Schema, SchemaOptions } from "../../vocabulary/schema"
 
-import { EngineField, NodeUpdateEvent } from "../../vocabulary/engine"
-import FormNode from "./form-node.vue"
+import {
+  EngineField,
+  EngineOptions,
+  NodeUpdateEvent,
+} from "../../vocabulary/engine"
+import FormNode from "./FormNode.vue"
 import { SchemaField } from "../../vocabulary/schema/elements"
-import { useResolveDependency } from "@/core/composables/useResolveDependency"
-import { variableRegexp } from "@/core/engine/utils"
+import { useResolveDependency } from "../../core/composables/useResolveDependency"
+import { variableRegexp } from "../../core/engine/utils"
 
 const { locale, t } = useI18n()
 
@@ -54,7 +58,7 @@ function objectToArray(obj: Schema, prefix = ""): Array<EngineField> {
         on: {
           input: (e: NodeUpdateEvent) => input(e),
         },
-        options: props.options,
+        options: props.options as EngineOptions,
         required: obj.required?.includes(key),
       } as EngineField)
     }
