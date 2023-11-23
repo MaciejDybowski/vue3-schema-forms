@@ -11,7 +11,7 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 export default defineConfig({
   plugins: [
-    peerDepsExternal(),
+
     vue({ template: { transformAssetUrls } }),
     vuetify({ autoImport: true }),
     VueI18nPlugin({}),
