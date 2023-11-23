@@ -3,17 +3,12 @@ import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
 import typescript2 from 'rollup-plugin-typescript2';
 import dts from 'vite-plugin-dts';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { exec } from 'node:child_process';
 import * as path from 'path';
-import { fileURLToPath, URL } from "node:url"
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 export default defineConfig({
   plugins: [
-    //peerDepsExternal(),
     vue(),
-    //vuetify({ autoImport: true }),
     VueI18nPlugin({}),
     dts({
       insertTypesEntry: true,
@@ -52,7 +47,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'src/main.ts'),
       },
-      external: ['vue'],
+      external: ['vue', 'vue-i18n', 'vuetify'],
       output: {
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'main.css') return 'style.css';
@@ -67,7 +62,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
+      '@': path.resolve(__dirname, 'src'),
     },
   },
 });
