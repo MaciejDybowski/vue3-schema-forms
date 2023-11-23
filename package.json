@@ -1,7 +1,7 @@
 {
   "name": "vue3-schema-forms",
   "private": false,
-  "version": "0.0.18",
+  "version": "0.0.19",
   "type": "module",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -16,7 +16,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "test-storybook": "test-storybook",
-    "build-storybook": "storybook build -o dist/storybook",
+    "build-storybook": "storybook build -o dist-storybook",
     "test": "vitest"
   },
   "keywords": [
@@ -70,7 +70,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remark-gfm": "^3.0.1",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-typescript2": "^0.36.0",
     "storybook": "^7.5.3",
     "typescript": "^5.2.2",
