@@ -7,12 +7,12 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { exec } from 'node:child_process';
 import * as path from 'path';
 import { fileURLToPath, URL } from "node:url"
-import vuetify from 'vite-plugin-vuetify';
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 export default defineConfig({
   plugins: [
     peerDepsExternal(),
-    vue(),
+    vue({ template: { transformAssetUrls } }),
     vuetify({ autoImport: true }),
     VueI18nPlugin({}),
     dts({
@@ -67,7 +67,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@": path.resolve(__dirname, "src"),
     },
   },
 });
