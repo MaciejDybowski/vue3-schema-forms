@@ -16,7 +16,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "test-storybook": "test-storybook",
-    "build-storybook": "storybook build -o dist/storybook",
+    "build-storybook": "storybook build -o dist-storybook",
     "test": "vitest"
   },
   "keywords": [
