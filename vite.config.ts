@@ -7,12 +7,13 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { exec } from 'node:child_process';
 import * as path from 'path';
 import { fileURLToPath, URL } from "node:url"
+import vuetify from 'vite-plugin-vuetify';
 
 export default defineConfig({
   plugins: [
     peerDepsExternal(),
     vue(),
-    //vuetify({ autoImport: true }),
+    vuetify({ autoImport: true }),
     VueI18nPlugin({}),
     dts({
       insertTypesEntry: true,
