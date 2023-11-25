@@ -3,7 +3,7 @@ import get from 'lodash/get';
 import { Schema } from '@/vocabulary/schema';
 import jsonSchemaResolver from './jsonSchemaResolver';
 import { DisplayBreakpoint } from 'vuetify';
-import { Cols } from '@/vocabulary/schema/elements';
+import { Cols, SchemaComponent } from '@/vocabulary/schema/elements';
 import { EngineTextField } from '@/vocabulary/engine/controls';
 
 export function produceUpdateEvent(val: any, schema: EngineField) {
@@ -22,11 +22,22 @@ export function getValueFromModel(model: object, schema: EngineField): any {
 
 export function bindProps(
   schema: EngineField,
+  component: SchemaComponent,
 ): Record<string, string | number | boolean> {
-  const props = { ...schema.options?.fieldProps, ...schema.layout?.props };
+  let props: Record<string, string | number | boolean> = {};
 
-  if ((schema as EngineTextField).calculation) {
-    props.readOnly = true;
+  switch (component) {
+    case 'text-field':
+      props = { ...schema.options?.textFieldProps, ...schema.layout?.props };
+      if ((schema as EngineTextField).calculation) {
+        props.readOnly = true;
+      }
+      break;
+    case 'radio-button':
+      props = { ...schema.options?.radioButtonProps, ...schema.layout?.props };
+      break
+    default:
+      console.warn("component is not recognized")
   }
 
   return props;

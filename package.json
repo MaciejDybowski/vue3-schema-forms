@@ -1,7 +1,7 @@
 {
   "name": "vue3-schema-forms",
   "private": false,
-  "version": "0.0.19",
+  "version": "0.0.20",
   "type": "module",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -34,7 +34,6 @@
   "dependencies": {
     "@mdi/font": "^7.3.67",
     "@stoplight/json-ref-resolver": "3.1.6",
-    "debounce": "^1.2.1",
     "expr-eval": "^2.0.2",
     "lodash": "^4.17.21",
     "uuid": "^9.0.1",
@@ -42,12 +41,14 @@
     "vuedraggable": "^4.1.0"
   },
   "peerDependencies": {
-    "vue": "^3.0.0",
+    "vue": "^3.3.4",
     "vue-i18n": "^9.6.4",
-    "vuetify": "^3.3.22"
+    "vuetify": "^3.4.2",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "storybook-addon-mock": "^4.3.0",
     "@intlify/unplugin-vue-i18n": "^0.10.1",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-interactions": "^7.5.3",

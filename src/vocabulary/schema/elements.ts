@@ -12,6 +12,10 @@ export interface SchemaTextField extends SchemaField {
   calculation?: string;
 }
 
+export interface SchemaSourceField extends SchemaField {
+  source?: Source;
+}
+
 export interface Layout {
   component: SchemaComponent;
   cols?: number | Cols;
@@ -32,7 +36,8 @@ export type SchemaComponent =
   | 'text-field'
   | 'duplicated-section'
   | 'static-content'
-  | 'section'
+  | 'radio-button'
+
 export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span'
 
 export interface Cols {
@@ -49,4 +54,15 @@ export type Translation = Record<string, string>
 export interface DuplicatedSectionOptions {
   addBtnText: string | { $ref: string };
   showDivider: boolean;
+}
+
+
+export interface Source {
+  api: string,
+  items: Array<any>;
+  itemText: string,
+  itemValue: string
+  returnObject: boolean
+
+  [key: string]: any;
 }

@@ -1,10 +1,18 @@
-import { EngineField } from "./index"
+import { EngineField } from './index';
+import { Source } from '@/vocabulary/schema/elements';
 
 export interface EngineTextField extends EngineField {
-  calculation?: string
+  calculation?: string;
 }
 
 export interface EngineStaticField extends EngineField {
-  content: string
+  content: string;
 }
-export interface EngineDuplicatedSection extends EngineField {}
+
+export interface EngineDuplicatedSection extends EngineField {
+}
+
+export interface EngineSourceField extends EngineField {
+  source: Source;
+
+}
