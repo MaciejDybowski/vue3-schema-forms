@@ -9,7 +9,7 @@ import { EngineSourceField } from '@/vocabulary/engine/controls';
 import { Source } from '@/vocabulary/schema/elements';
 
 const meta = {
-  title: 'Forms/Controls/RadioButton',
+  title: 'Forms/Controls/Checkbox',
   component: VueSchemaForms,
   tags: ['autodocs'],
   argTypes: {
@@ -49,7 +49,7 @@ export const Standard: Story = {
         radioButton: {
           label: 'Choose option',
           layout: {
-            component: 'radio-button',
+            component: 'checkbox',
           },
           source: {
             items: [
@@ -75,7 +75,7 @@ export const WithDefault: Story = {
         radioButton1: {
           label: 'Choose option',
           layout: {
-            component: 'radio-button',
+            component: 'checkbox',
           },
           default: 3,
           source: {
@@ -100,7 +100,7 @@ export const CustomMapping: Story = {
         radioButton2: {
           label: 'Choose option',
           layout: {
-            component: 'radio-button',
+            component: 'checkbox',
           },
           source: {
             items: [
@@ -126,7 +126,7 @@ export const CustomMappingReturnObject: Story = {
         radioButton3: {
           label: 'Choose option',
           layout: {
-            component: 'radio-button',
+            component: 'checkbox',
           },
           source: {
             items: [
@@ -153,9 +153,9 @@ export const CustomMappingReturnObjectDefault: Story = {
         radioButton4: {
           label: 'Choose option',
           layout: {
-            component: 'radio-button',
+            component: 'checkbox',
           },
-          default: { id: 2, text: 'Option 2' },
+          default: [{ id: 2, text: 'Option 2' }],
           source: {
             items: [
               { id: 1, text: 'Option 1' },
@@ -197,7 +197,7 @@ export const GetOptionsFromAPI: Story = {
         radio: {
           label: 'Options',
           layout: {
-            component: 'radio-button',
+            component: 'checkbox',
             props: {
               inline: true,
             },
@@ -206,11 +206,10 @@ export const GetOptionsFromAPI: Story = {
             api: '/api/v1/options',
             itemText: 'label',
             itemValue: 'id',
-            //returnObject: true,
+            returnObject: true,
           } as Source,
         },
       },
-      required: ['radio'],
     } as Schema,
   },
 };
@@ -219,16 +218,19 @@ export const GetOptionsFromAPI: Story = {
  * Example shows how to define a "required" field on a form
  */
 export const SimpleValidation: Story = {
-  name: 'RadioButton with required annotation',
+  name: 'Checkbox with required annotation',
   render: StoryTemplateWithValidation,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit, {delay: 600});
+
     const exampleElement = canvas.getByLabelText('Option 3');
     await userEvent.click(exampleElement, 'Required field', {
-      delay: 500,
+      delay: 600,
     });
-    const Submit = canvas.getByText('Validate');
-    await userEvent.click(Submit);
+
+    await userEvent.click(Submit, {delay: 600});
     // 👇 Assert DOM structure
     await expect(
       canvas.getByText('Walidacja zakończona sukcesem'),
@@ -242,7 +244,7 @@ export const SimpleValidation: Story = {
         radioButtonRequired: {
           label: 'Choose option',
           layout: {
-            component: 'radio-button',
+            component: 'checkbox',
           },
           source: {
             items: [

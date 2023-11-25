@@ -1,7 +1,7 @@
 {
   "name": "vue3-schema-forms",
   "private": false,
-  "version": "0.0.20",
+  "version": "0.0.21",
   "type": "module",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -41,14 +41,13 @@
     "vuedraggable": "^4.1.0"
   },
   "peerDependencies": {
+    "axios": "^1.6.2",
     "vue": "^3.3.4",
     "vue-i18n": "^9.6.4",
-    "vuetify": "^3.4.2",
-    "axios": "^1.6.2"
+    "vuetify": "^3.4.2"
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
-    "storybook-addon-mock": "^4.3.0",
     "@intlify/unplugin-vue-i18n": "^0.10.1",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-interactions": "^7.5.3",
@@ -73,9 +72,11 @@
     "remark-gfm": "^3.0.1",
     "rollup-plugin-typescript2": "^0.36.0",
     "storybook": "^7.5.3",
+    "storybook-addon-mock": "^4.3.0",
     "typescript": "^5.2.2",
     "vite": "^4.4.11",
     "vite-plugin-dts": "^3.6.3",
+    "vite-plugin-vue-devtools": "^1.0.0-rc.5",
     "vite-plugin-vuetify": "^1.0.2",
     "vitest": "^0.34.6",
     "vue-tsc": "^1.8.19"

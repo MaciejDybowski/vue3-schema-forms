@@ -35,11 +35,13 @@ export function bindProps(
       break;
     case 'radio-button':
       props = { ...schema.options?.radioButtonProps, ...schema.layout?.props };
-      break
+      break;
+    case 'checkbox':
+      props = { ...schema.options?.checkboxProps, ...schema.layout?.props };
+      break;
     default:
-      console.warn("component is not recognized")
+      console.warn('component is not recognized');
   }
-
   return props;
 }
 
@@ -98,6 +100,5 @@ export function mapRules(required: boolean): any[] {
       return 'Field is required';
     });
   }
-
   return arr;
 }

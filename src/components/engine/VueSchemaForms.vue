@@ -1,20 +1,15 @@
 <template>
-  <div
-    class='aurea-from'
-    ref='el'
-  >
-    <form-root
-      v-if='!loading'
-      :model='modelValue'
-      :schema='resolvedSchema'
-      :options='options'
-      @update:model='updateModel'
-    />
-  </div>
+  <form-root
+    v-if='!loading'
+    :model='modelValue'
+    :schema='resolvedSchema'
+    :options='options'
+    @update:model='updateModel'
+  />
 </template>
 
 <script setup lang='ts'>
-import { getCurrentInstance, onMounted, ref, watch } from 'vue';
+import { Component, getCurrentInstance, onMounted, ref, watch } from 'vue';
 
 import FormRoot from './FormRoot.vue';
 import { Schema, SchemaOptions } from '../../vocabulary/schema';
@@ -27,17 +22,22 @@ import DuplicatedSection from '../controls/duplicated-section/DuplicatedSection.
 import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
 import StaticContent from '../controls/StaticContent.vue';
 import RadioButton from '../controls/RadioButton.vue';
+import CheckboxButton from '../controls/CheckboxButton.vue';
 
 // register components to VueInstance
+declare type Components = Record<string, Component>
 const components = {
   'text-field': TextField,
   'duplicated-section': DuplicatedSection,
   'static-content': StaticContent,
   'radio-button': RadioButton,
-};
+  'checkbox': CheckboxButton,
+} as Components;
 const instance = getCurrentInstance();
 for (const [name, comp] of Object.entries(components)) {
+  //@ts-ignore
   if (!instance?.appContext.app.component(`node-${name}`)) {
+    //@ts-ignore
     instance?.appContext.app.component(`node-${name}`, comp);
   }
 }

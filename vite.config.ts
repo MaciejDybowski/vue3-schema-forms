@@ -5,9 +5,10 @@ import typescript2 from 'rollup-plugin-typescript2';
 import dts from 'vite-plugin-dts';
 import { exec } from 'node:child_process';
 import * as path from 'path';
-
+import VueDevTools from 'vite-plugin-vue-devtools'
 export default defineConfig({
   plugins: [
+    VueDevTools(),
     vue(),
     VueI18nPlugin({}),
     dts({

@@ -6,14 +6,17 @@
     :rules='mapRules(schema.required)'
     :class='bindClass(schema)'
     v-if='!loading'
+    :hide-details='!mapRules(schema.required).length > 0'
   >
     <template
-      v-for='option in data'
+      v-for='(option,index) in data'
       :key='option[itemValue]'
     >
       <v-radio
+        v-bind="{...bindProps(schema, 'radio-button'), ...defaultVuetifyProps}"
         :label='option[itemText]'
         :value='option[itemValue]'
+        :class='index !== data.length-1 ? "mb-2" : ""'
       />
     </template>
   </v-radio-group>
@@ -29,6 +32,8 @@ const props = defineProps<{
   schema: EngineSourceField
   model: object
 }>();
+
+const defaultVuetifyProps = { density: 'compact' };
 
 const localModel = computed({
   get(): string | number {
@@ -65,5 +70,11 @@ watch(loading, () => {
 </script>
 
 <style scoped lang='css'>
+:deep(.v-label) {
+  margin-inline-start: 0 !important;
+}
 
+:deep(.v-selection-control-group) {
+  padding-left: 0 !important;
+}
 </style>

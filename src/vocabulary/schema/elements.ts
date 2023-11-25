@@ -37,6 +37,7 @@ export type SchemaComponent =
   | 'duplicated-section'
   | 'static-content'
   | 'radio-button'
+  | 'checkbox'
 
 export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span'
 
