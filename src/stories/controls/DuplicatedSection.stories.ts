@@ -49,9 +49,10 @@ export const Standard: Story = {
             items: {
               product: {
                 label: 'Product',
-                layout: { component: 'text-field', cols: 6 },
+                layout: { component: 'text-field', cols: 12 },
               },
             },
+            cols:6
           },
         },
       },
@@ -75,10 +76,11 @@ export const WithDefaults: Story = {
             items: {
               product: {
                 label: 'Product',
-                layout: { component: 'text-field', cols: 6 },
+                layout: { component: 'text-field', cols: 12 },
               },
             },
           },
+          cols:6
         },
       },
     } as Schema,

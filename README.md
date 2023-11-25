@@ -63,9 +63,8 @@ The documentation and some of the testing was based on the Storybook application
 
 ## ToDo List
 - [ ] Create many basics fields like data/radio/checkbox/combo etc.
-- [ ] Create editable sections
 - [ ] Use resolveDepsComposable for deps on fields
 
 In progress:
-- [ ] Editable duplicated section, fix width when one field < 12 cols
+- [ ] Create editable sections
 

@@ -142,9 +142,8 @@ const isShowDivider = computed(() => {
 
 function init(): void {
   nodes.value = [];
-  let arr: Array<any> = get(props.model, props.schema.key, []);
+  let arr: Object[] = get(props.model, props.schema.key, []);
   if (arr.length === 0 && isArray(props.schema.default)) {
-    console.log(props.schema.default);
     arr = props.schema.default as Array<any>;
   }
   if (arr.length > 0) {
