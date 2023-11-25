@@ -2,7 +2,7 @@ import { SchemaField, Translation } from "./elements"
 
 export interface Schema {
   id?: string
-  type: string
+  type: "object"
   properties: Record<string, SchemaField>
   required?: Array<string>
   i18n?: Record<string, Translation>

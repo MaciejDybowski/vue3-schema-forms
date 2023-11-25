@@ -1,29 +1,29 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3"
-import { Schema } from "@/vocabulary/schema"
-import { VueSchemaForms } from "@/components"
-import { StoryTemplate } from "@/stories/templates/story-template"
-import { userEvent, within } from "@storybook/testing-library"
-import { expect } from "@storybook/jest"
+import { Meta, StoryObj } from '@storybook/vue3';
+import { Schema } from '@/vocabulary/schema';
+import { VueSchemaForms } from '@/components';
+import { StoryTemplate } from '@/stories/templates/story-template';
+import { userEvent, within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta = {
-  title: "Forms/Controls/DuplicatedSection",
+  title: 'Forms/Controls/DuplicatedSection',
   component: VueSchemaForms,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     schema: {
-      control: "object",
-      description: "Schema" /*table: { disable: true }*/,
+      control: 'object',
+      description: 'Schema' /*table: { disable: true }*/,
     },
     modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
+      control: 'object',
+      description: 'Model' /*table: { disable: true }*/,
     },
     options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
+      control: 'object',
+      description: 'Opcje' /*table: { disable: true }*/,
     },
-    "update:modelValue": { table: { disable: true } },
+    'update:modelValue': { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -32,24 +32,24 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
-} satisfies Meta<typeof VueSchemaForms>
+} satisfies Meta<typeof VueSchemaForms>;
 
-export default meta
+export default meta;
 
 type Story = StoryObj<typeof meta>
 
 export const Standard: Story = {
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         invoiceItems: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             items: {
               product: {
-                label: "Product",
-                layout: { component: "text-field", cols: 6 },
+                label: 'Product',
+                layout: { component: 'text-field', cols: 6 },
               },
             },
           },
@@ -57,20 +57,46 @@ export const Standard: Story = {
       },
     },
   },
-}
+};
+
+/**
+ * You can set the default value of field from schema
+ */
+export const WithDefaults: Story = {
+  name: 'Default values',
+  args: {
+    schema: {
+      type: 'object',
+      properties: {
+        invoiceItems: {
+          default: [{ product: 'Item1' }, { product: 'Item2' }],
+          layout: {
+            component: 'duplicated-section',
+            items: {
+              product: {
+                label: 'Product',
+                layout: { component: 'text-field', cols: 6 },
+              },
+            },
+          },
+        },
+      },
+    } as Schema,
+  },
+};
 
 export const WithDivider: Story = {
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         invoiceItems: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             items: {
               product: {
-                label: "Product",
-                layout: { component: "text-field", cols: 12 },
+                label: 'Product',
+                layout: { component: 'text-field', cols: 12 },
               },
             },
             options: {
@@ -81,60 +107,60 @@ export const WithDivider: Story = {
       },
     },
   },
-}
+};
 
 export const WithBtnProps: Story = {
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         invoiceItems: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             items: {
               product: {
-                label: "Product",
-                layout: { component: "text-field", cols: 12 },
+                label: 'Product',
+                layout: { component: 'text-field', cols: 12 },
               },
             },
             options: {
-              addBtnText: { $ref: "#/i18n/~$locale~/addAction" },
+              addBtnText: { $ref: '#/i18n/~$locale~/addAction' },
             },
           },
         },
       },
       i18n: {
         en: {
-          addAction: "Add item",
+          addAction: 'Add item',
         },
         pl: {
-          addAction: "Dodaj pozycję",
+          addAction: 'Dodaj pozycję',
         },
       },
     },
     options: {
       buttonProps: {
-        variant: "outlined",
-        rounded: "xl",
+        variant: 'outlined',
+        rounded: 'xl',
       },
     },
   },
-}
+};
 
 export const Actions: Story = {
-  name: "Actions",
+  name: 'Actions',
   render: StoryTemplate,
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const addBtn = canvas.queryAllByRole("button")[1]
+    const canvas = within(canvasElement);
+    const addBtn = canvas.queryAllByRole('button')[1];
 
-    await userEvent.click(addBtn, { delay: 400 })
-    const sections = canvas.getAllByLabelText("Product")
-    await expect(sections[1]).toBeInTheDocument()
+    await userEvent.click(addBtn, { delay: 400 });
+    const sections = canvas.getAllByLabelText('Product');
+    await expect(sections[1]).toBeInTheDocument();
 
-    await userEvent.hover(sections[1], { delay: 200 })
-    const contextMenu = canvas.queryAllByRole("button")[1]
-    await userEvent.click(contextMenu, { delay: 200 })
+    await userEvent.hover(sections[1], { delay: 200 });
+    const contextMenu = canvas.queryAllByRole('button')[1];
+    await userEvent.click(contextMenu, { delay: 200 });
 
     //  console.debug(canvas)
     //  //TODO test for click context menu...?
@@ -145,15 +171,15 @@ export const Actions: Story = {
   },
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         invoiceItems: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             items: {
               product: {
-                label: "Product",
-                layout: { component: "text-field", cols: 12 },
+                label: 'Product',
+                layout: { component: 'text-field', cols: 12 },
               },
             },
             options: {
@@ -165,4 +191,4 @@ export const Actions: Story = {
     },
     modelValue: {},
   },
-}
+};

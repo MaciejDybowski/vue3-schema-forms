@@ -1,30 +1,30 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3"
-import { Schema } from "@/vocabulary/schema"
-import { StoryTemplateWithValidation } from "../templates/story-template"
-import { userEvent, within } from "@storybook/testing-library"
-import { expect } from "@storybook/jest"
-import { VueSchemaForms } from "@/components"
-import { SchemaTextField } from "@/vocabulary/schema/elements"
+import { Meta, StoryObj } from '@storybook/vue3';
+import { Schema } from '@/vocabulary/schema';
+import { StoryTemplateWithValidation } from '../templates/story-template';
+import { userEvent, within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
+import { VueSchemaForms } from '@/components';
+import { SchemaTextField } from '@/vocabulary/schema/elements';
 
 const meta = {
-  title: "Forms/Controls/TextField",
+  title: 'Forms/Controls/TextField',
   component: VueSchemaForms,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
+      control: 'object',
+      description: 'Schema u' /*table: { disable: true }*/,
     },
     modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
+      control: 'object',
+      description: 'Model' /*table: { disable: true }*/,
     },
     options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
+      control: 'object',
+      description: 'Opcje' /*table: { disable: true }*/,
     },
-    "update:modelValue": { table: { disable: true } },
+    'update:modelValue': { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -33,84 +33,103 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
-} satisfies Meta<typeof VueSchemaForms>
+} satisfies Meta<typeof VueSchemaForms>;
 
-export default meta
+export default meta;
 
 type Story = StoryObj<typeof meta>
 
 export const Standard: Story = {
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textField: {
-          label: "Pole tekstowe",
+          label: 'Text field',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
       },
     } as Schema,
   },
-}
+};
+/**
+ * You can set the default value of field from schema
+ */
+export const WithDefault: Story = {
+  args: {
+    schema: {
+      type: 'object',
+      properties: {
+        textFieldWithDefault: {
+          label: 'Text field',
+          default: 'Item 1',
+          layout: {
+            component: 'text-field',
+          },
+        },
+      },
+    } as Schema,
+  },
+};
 /**
  * You can personalize the form controls according to the options available in vuetify
  */
 export const WithVuetifyProps: Story = {
-  name: "TextField with Vuetify Props",
+  name: 'TextField with Vuetify Props',
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textField: {
-          label: "Pole tekstowe",
+          label: 'Text field',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             props: {
-              variant: "outlined",
-              density: "compact",
+              variant: 'outlined',
+              density: 'compact',
             },
           },
         } as SchemaTextField,
       },
     } as Schema,
   },
-}
+};
 
 /**
  * Example shows how to define a "required" field on a form
  */
 export const SimpleValidation: Story = {
-  name: "TextField with required annotation",
+  name: 'TextField with required annotation',
   render: StoryTemplateWithValidation,
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const exampleElement = canvas.getByLabelText("Pole tekstowe")
-    await userEvent.type(exampleElement, "Wymagane pole", {
+    const canvas = within(canvasElement);
+    const exampleElement = canvas.getByLabelText('Text field');
+    await userEvent.type(exampleElement, 'Required field', {
       delay: 100,
-    })
-    const Submit = canvas.getByText("Validate")
-    await userEvent.click(Submit)
+    });
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit);
 
     // 👇 Assert DOM structure
     await expect(
-      canvas.getByText("Walidacja zakończona sukcesem")
-    ).toBeInTheDocument()
+      canvas.getByText('Walidacja zakończona sukcesem'),
+    ).toBeInTheDocument();
   },
   args: {
     modelValue: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textField: {
-          label: "Pole tekstowe",
+          label: 'Text field',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
       },
-      required: ["textField"],
+      required: ['textField'],
     } as Schema,
   },
-}
+};

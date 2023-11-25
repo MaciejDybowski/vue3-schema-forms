@@ -12,7 +12,12 @@ export function produceUpdateEvent(val: any, schema: EngineField) {
 }
 
 export function getValueFromModel(model: object, schema: EngineField): any {
-  return get(model, schema.key, null);
+  const value = get(model, schema.key, null);
+  if (schema.default && value === null) {
+    produceUpdateEvent(schema.default, schema);
+    return schema.default;
+  }
+  return value;
 }
 
 export function bindProps(
