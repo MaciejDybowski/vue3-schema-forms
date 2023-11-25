@@ -6,7 +6,7 @@ import axios from 'axios';
 export function useApiData(source: Source) {
   const itemText = ref(source.itemText ? source.itemText : 'label');
   const itemValue = ref(source.itemValue ? source.itemValue : 'value');
-  const loading = ref(true);
+  const loading = ref(false);
   let data: Ref<Array<object>> = ref([]);
 
   if (source.items) {
@@ -15,6 +15,7 @@ export function useApiData(source: Source) {
 
   if (source.api) {
     const execute = async () => {
+      loading.value = true
       const response = await axios.get(source.api);
 
       data.value = response.data;
