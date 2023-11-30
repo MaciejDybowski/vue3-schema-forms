@@ -84,11 +84,7 @@ function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
 function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, index: number) {
   switch (actionId) {
     case 'addBelow':
-      nodes.value.splice(index + 1, 0, {
-        id: uuidv4(),
-        type: 'object',
-        properties: props.schema.layout.items,
-      } as Schema);
+      nodes.value.splice(index + 1, 0, getClearNode.value);
       localModel.value.splice(index + 1, 0, {});
       return;
     case 'delete':
@@ -100,12 +96,17 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
   }
 }
 
-function addNode(): void {
-  nodes.value.push({
+const getClearNode = computed((): Schema => {
+  return {
     id: uuidv4(),
     type: 'object',
-    properties: props.schema.layout.items,
-  } as Schema);
+    properties: props.schema.layout.schema?.properties,
+    required: props.schema.layout.schema?.required,
+  } as Schema;
+});
+
+function addNode(): void {
+  nodes.value.push(getClearNode.value);
   localModel.value.push({});
 }
 
@@ -138,22 +139,22 @@ const isShowDivider = computed(() => {
 function init(): void {
   nodes.value = [];
   let isDefaultExist = false;
-  let arr: Object[] = get(props.model, props.schema.key, []);
-  if (arr.length === 0 && isArray(props.schema.default)) {
-    arr = props.schema.default as Array<any>;
+  let sections: Object[] = get(props.model, props.schema.key, []);
+  if (sections.length === 0 && isArray(props.schema.default)) {
+    sections = props.schema.default as Array<any>;
     isDefaultExist = true;
   }
-  if (arr.length > 0) {
-    arr.forEach((item: any, index: number) => {
+  if (sections.length > 0) {
+    sections.forEach((item: any, index: number) => {
       nodes.value.push({
         id: uuidv4(),
         type: 'object',
         properties: isDefaultExist
-          ? mapPropertiesIfDefault(props.schema.layout.items, arr[index])
-          : props.schema.layout.items,
-        required: mapRequiredItems(props.schema),
+          ? mapPropertiesIfDefault(props.schema.layout.schema?.properties, sections[index])
+          : props.schema.layout.schema?.properties,
+        required: props.schema.layout.schema?.required,
       } as Schema);
-      localModel.value.push(isDefaultExist ? {} : arr[index]);
+      localModel.value.push(isDefaultExist ? {} : sections[index]);
     });
   } else {
     addNode();
@@ -166,11 +167,6 @@ function mapPropertiesIfDefault(fieldDefinition: Object, defaultValue: object) {
     itemsWithDefault[key] = Object.assign({ ...value, default: defaultValue[key] });
   }
   return itemsWithDefault;
-}
-
-function mapRequiredItems(schema) {
-  console.debug(schema);
-  return []
 }
 
 onMounted(() => {

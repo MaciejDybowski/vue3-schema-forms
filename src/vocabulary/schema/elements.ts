@@ -1,8 +1,10 @@
+import { Schema } from '@/vocabulary/schema/index';
+
 export interface SchemaField {
   label?: string | { $ref: string };
   content?: string | { $ref: string };
   default?: number | string | boolean | object | Array<any>;
-  type?: "text" | "number" | "date" | "array" | "object";
+  type?: 'text' | 'number' | 'date' | 'array' | 'object';
   layout?: Layout;
   properties?: Record<string, SchemaField | SchemaTextField>;
   required?: Array<string>;
@@ -25,16 +27,22 @@ export interface Layout {
   offset?: number;
 
   // duplicated-section && section
-  items?: Record<string, SchemaField>;
+  schema?: Schema;
   options?: Record<string, any>;
 
   // static-content
   tag?: StaticContentTag;
 }
 
-export type SchemaComponent = "text-field" | "duplicated-section" | "static-content" | "radio-button" | "checkbox" | "text-area";
+export type SchemaComponent =
+  'text-field'
+  | 'duplicated-section'
+  | 'static-content'
+  | 'radio-button'
+  | 'checkbox'
+  | 'text-area';
 
-export type StaticContentTag = "h1" | "h2" | "h3" | "h4" | "h5" | "p" | "span";
+export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span';
 
 export interface Cols {
   xs?: number;

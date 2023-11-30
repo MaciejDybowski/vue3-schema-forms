@@ -57,47 +57,51 @@ export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (args
         v-model='model'
         :options='args.options'
       />
-      <div class='d-flex flex-column'>
-        <div class='d-flex align-center'>
+      <v-row>
+        <v-col
+          cols='12'
+          class='d-flex flex-column'
+        >
+          <div class='d-flex align-center'>
+            <v-btn
+              color='success'
+              @click='validate'
+              width='200'
+            >
+              Validate
+            </v-btn>
+            <v-expand-transition>
+              <div
+                v-if='validationResult'
+                class='ml-2'
+              >
+                <v-icon color='green'>
+                  mdi-check-circle-outline
+                </v-icon>
+                <span>Form is valid</span>
+              </div>
+            </v-expand-transition>
+
+          </div>
           <v-btn
-            color='success'
-            @click='validate'
+            color='error'
+            class='mt-4'
+            @click='reset'
             width='200'
           >
-            Validate
+            Reset Form
           </v-btn>
-          <v-expand-transition>
-            <div
-              v-if='validationResult'
-              class='ml-2'
-            >
-              <v-icon color='green'>
-                mdi-check-circle-outline
-              </v-icon>
-              <span>Form is valid</span>
-            </div>
-          </v-expand-transition>
 
-        </div>
-
-        <v-btn
-          color='error'
-          class='mt-4'
-          @click='reset'
-          width='200'
-        >
-          Reset Form
-        </v-btn>
-
-        <v-btn
-          color='warning'
-          class='mt-4'
-          @click='resetValidation'
-          width='200'
-        >
-          Reset Validation
-        </v-btn>
-      </div>
+          <v-btn
+            color='warning'
+            class='mt-4'
+            @click='resetValidation'
+            width='200'
+          >
+            Reset Validation
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-form>
 
   `,
