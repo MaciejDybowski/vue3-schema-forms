@@ -40,10 +40,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from "vue"
-import { useI18n } from "vue-i18n"
+import { reactive } from "vue";
+import { useI18n } from "vue-i18n";
 
-const { t } = useI18n()
+const { t } = useI18n();
 const actions = reactive([
   {
     actionId: "delete",
@@ -57,20 +57,20 @@ const actions = reactive([
     iconColor: "success",
     translationKey: "addBelowAction",
   },
-])
+]);
 
 const props = withDefaults(
   defineProps<{
-    show: boolean
+    show: boolean;
   }>(),
   {
     show: false,
   }
-)
+);
 
 const emit = defineEmits<{
-  (e: "handleAction", actionId: string): void
-}>()
+  (e: "handleAction", actionId: string): void;
+}>();
 </script>
 
 <style scoped lang="scss">

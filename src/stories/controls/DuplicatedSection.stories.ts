@@ -1,29 +1,29 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { Schema } from '@/vocabulary/schema';
-import { VueSchemaForms } from '@/components';
-import { StoryTemplate } from '@/stories/templates/story-template';
-import { userEvent, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { Schema } from "@/vocabulary/schema";
+import { VueSchemaForms } from "@/components";
+import { StoryTemplate } from "@/stories/templates/story-template";
+import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
 
 const meta = {
-  title: 'Forms/Controls/DuplicatedSection',
+  title: "Forms/Controls/DuplicatedSection",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -36,23 +36,23 @@ const meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof meta>;
 
 export const Standard: Story = {
   args: {
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         invoiceItems: {
           layout: {
-            component: 'duplicated-section',
+            component: "duplicated-section",
             items: {
               product: {
-                label: 'Product',
-                layout: { component: 'text-field', cols: 12 },
+                label: "Product",
+                layout: { component: "text-field", cols: 12 },
               },
             },
-            cols:6
+            cols: 6,
           },
         },
       },
@@ -64,23 +64,23 @@ export const Standard: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefaults: Story = {
-  name: 'Default values',
+  name: "Default values",
   args: {
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         invoiceItems: {
-          default: [{ product: 'Item1' }, { product: 'Item2' }],
+          default: [{ product: "Item1" }, { product: "Item2" }],
           layout: {
-            component: 'duplicated-section',
+            component: "duplicated-section",
             items: {
               product: {
-                label: 'Product',
-                layout: { component: 'text-field', cols: 12 },
+                label: "Product",
+                layout: { component: "text-field", cols: 12 },
               },
             },
           },
-          cols:6
+          cols: 6,
         },
       },
     } as Schema,
@@ -90,15 +90,15 @@ export const WithDefaults: Story = {
 export const WithDivider: Story = {
   args: {
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         invoiceItems: {
           layout: {
-            component: 'duplicated-section',
+            component: "duplicated-section",
             items: {
               product: {
-                label: 'Product',
-                layout: { component: 'text-field', cols: 12 },
+                label: "Product",
+                layout: { component: "text-field", cols: 12 },
               },
             },
             options: {
@@ -114,74 +114,77 @@ export const WithDivider: Story = {
 export const WithBtnProps: Story = {
   args: {
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         invoiceItems: {
           layout: {
-            component: 'duplicated-section',
+            component: "duplicated-section",
             items: {
               product: {
-                label: 'Product',
-                layout: { component: 'text-field', cols: 12 },
+                label: "Product",
+                layout: { component: "text-field", cols: 12 },
               },
             },
             options: {
-              addBtnText: { $ref: '#/i18n/~$locale~/addAction' },
+              addBtnText: { $ref: "#/i18n/~$locale~/addAction" },
             },
           },
         },
       },
       i18n: {
         en: {
-          addAction: 'Add item',
+          addAction: "Add item",
         },
         pl: {
-          addAction: 'Dodaj pozycję',
+          addAction: "Dodaj pozycję",
         },
       },
     },
     options: {
       buttonProps: {
-        variant: 'outlined',
-        rounded: 'xl',
+        variant: "outlined",
+        rounded: "xl",
       },
     },
   },
 };
 
-export const Actions: Story = {
-  name: 'Actions',
-  render: StoryTemplate,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const addBtn = canvas.queryAllByRole('button')[1];
+export const AddAction: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
 
-    await userEvent.click(addBtn, { delay: 400 });
-    const sections = canvas.getAllByLabelText('Product');
-    await expect(sections[1]).toBeInTheDocument();
+    const input1 = await canvas.findByLabelText("Product");
+    await userEvent.type(input1, "Item 1", { delay: 100 });
 
-    await userEvent.hover(sections[1], { delay: 200 });
-    const contextMenu = canvas.queryAllByRole('button')[1];
-    await userEvent.click(contextMenu, { delay: 200 });
+    await expect(context.args.modelValue).toEqual({
+      invoiceItems: [{ product: "Item 1" }],
+    });
 
-    //  console.debug(canvas)
-    //  //TODO test for click context menu...?
-    // const contextMenuDelete1 = canvas.findByTestId("delete")
-    // console.debug(contextMenuDelete1)
-    //console.debug(contextMenuDelete1)
-    //await userEvent.click(contextMenuDelete, { delay: 200 });
+    const addButton = await canvas.findByRole("button", { name: "Add" });
+    await userEvent.click(addButton, { delay: 400 });
+
+    const duplicatedSections = document.getElementsByClassName("duplicated-section-item");
+    await expect(duplicatedSections[1]).toBeInTheDocument();
+
+    const input2 = await within(duplicatedSections[1]).findByLabelText("Product");
+    await userEvent.type(input2, "Item 2", { delay: 100 });
+
+    await expect(context.args.modelValue).toEqual({
+      invoiceItems: [{ product: "Item 1" }, { product: "Item 2" }],
+    });
   },
   args: {
+    modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         invoiceItems: {
           layout: {
-            component: 'duplicated-section',
+            component: "duplicated-section",
             items: {
               product: {
-                label: 'Product',
-                layout: { component: 'text-field', cols: 12 },
+                label: "Product",
+                layout: { component: "text-field", cols: 12 },
               },
             },
             options: {
@@ -191,6 +194,104 @@ export const Actions: Story = {
         },
       },
     },
+  },
+};
+
+export const DeleteAction: Story = {
+  play: async (context) => {
+    await expect(context.args.modelValue).toEqual({
+      invoiceItems: [{ product: "Item 1" }, { product: "Item 2" }],
+    });
+
+    const duplicatedSections = document.getElementsByClassName("duplicated-section-item");
+    await expect(duplicatedSections[1]).toBeInTheDocument();
+
+    const section = within(duplicatedSections[1]);
+    const contextMenu = section.queryAllByRole("button")[0];
+
+    await userEvent.hover(duplicatedSections[1], { delay: 200 });
+    await userEvent.click(contextMenu, { delay: 200 });
+
+    const deleteAction = document.getElementsByClassName("v-list-item")[0];
+    await userEvent.click(deleteAction, { delay: 200 });
+
+    await expect(context.args.modelValue).toEqual({
+      invoiceItems: [{ product: "Item 1" }],
+    });
+  },
+  args: {
     modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        invoiceItems: {
+          default: [{ product: "Item 1" }, { product: "Item 2" }],
+          layout: {
+            component: "duplicated-section",
+            items: {
+              product: {
+                label: "Product",
+                layout: { component: "text-field", cols: 12 },
+              },
+            },
+            options: {
+              showDivider: true,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const AddBelowAction: Story = {
+  play: async (context) => {
+    await expect(context.args.modelValue).toEqual({
+      invoiceItems: [{ product: "Item 1" }, { product: "Item 2" }],
+    });
+
+    let duplicatedSections = document.getElementsByClassName("duplicated-section-item");
+    await expect(duplicatedSections[1]).toBeInTheDocument();
+
+    let section = within(duplicatedSections[0]);
+    const contextMenu = section.queryAllByRole("button")[0];
+
+    await userEvent.hover(duplicatedSections[0], { delay: 200 });
+    await userEvent.click(contextMenu, { delay: 200 });
+
+    const deleteAction = document.getElementsByClassName("v-list-item")[1];
+    await userEvent.click(deleteAction, { delay: 200 });
+
+    duplicatedSections = document.getElementsByClassName("duplicated-section-item");
+    section = within(duplicatedSections[1]);
+    const input2 = await section.findByLabelText("Product");
+    await userEvent.type(input2, "new item", { delay: 100 });
+
+    await expect(context.args.modelValue).toEqual({
+      invoiceItems: [{ product: "Item 1" }, { product: "new item" }, { product: "Item 2" }],
+    });
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        invoiceItems: {
+          default: [{ product: "Item 1" }, { product: "Item 2" }],
+          layout: {
+            component: "duplicated-section",
+            items: {
+              product: {
+                label: "Product",
+                layout: { component: "text-field", cols: 12 },
+              },
+            },
+            options: {
+              showDivider: true,
+            },
+          },
+        },
+      },
+    },
   },
 };

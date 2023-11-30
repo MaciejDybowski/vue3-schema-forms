@@ -10,12 +10,12 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    show: boolean
+    show: boolean;
   }>(),
   {
     show: false,
   }
-)
+);
 </script>
 
 <style scoped lang="css">

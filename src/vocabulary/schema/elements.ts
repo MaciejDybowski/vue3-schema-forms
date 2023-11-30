@@ -2,7 +2,7 @@ export interface SchemaField {
   label?: string | { $ref: string };
   content?: string | { $ref: string };
   default?: number | string | boolean | object | Array<any>;
-  type?: 'text' | 'number' | 'date' | 'array' | 'object';
+  type?: "text" | "number" | "date" | "array" | "object";
   layout?: Layout;
   properties?: Record<string, SchemaField | SchemaTextField>;
   required?: Array<string>;
@@ -32,14 +32,9 @@ export interface Layout {
   tag?: StaticContentTag;
 }
 
-export type SchemaComponent =
-  | 'text-field'
-  | 'duplicated-section'
-  | 'static-content'
-  | 'radio-button'
-  | 'checkbox'
+export type SchemaComponent = "text-field" | "duplicated-section" | "static-content" | "radio-button" | "checkbox" | "text-area";
 
-export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span'
+export type StaticContentTag = "h1" | "h2" | "h3" | "h4" | "h5" | "p" | "span";
 
 export interface Cols {
   xs?: number;
@@ -50,20 +45,19 @@ export interface Cols {
   xxl?: number;
 }
 
-export type Translation = Record<string, string>
+export type Translation = Record<string, string>;
 
 export interface DuplicatedSectionOptions {
   addBtnText: string | { $ref: string };
   showDivider: boolean;
 }
 
-
 export interface Source {
-  api: string,
+  api: string;
   items: Array<any>;
-  itemText: string,
-  itemValue: string
-  returnObject: boolean
+  itemText: string;
+  itemValue: string;
+  returnObject: boolean;
 
   [key: string]: any;
 }

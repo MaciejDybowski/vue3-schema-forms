@@ -14,8 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import VueJsonPretty from "vue-json-pretty"
-import "vue-json-pretty/lib/styles.css"
+import VueJsonPretty from "vue-json-pretty";
+import "vue-json-pretty/lib/styles.css";
 
 const props = defineProps({
   schema: {
@@ -26,7 +26,7 @@ const props = defineProps({
     type: null,
     required: true,
   },
-})
+});
 </script>
 
 <style scoped lang="scss"></style>

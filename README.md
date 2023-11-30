@@ -27,7 +27,7 @@ createApp(App)
   .mount('#app');
 ```
 
-Po zaimportowaniu pluginu możemy wywołać komponent generujący formularze i przekazać odpowiednie props'y
+After importing the plugin, we can invoke the form-generating component and pass the appropriate props.
 
 ```javascript
 // someComponent.vue
@@ -64,7 +64,13 @@ The documentation and some of the testing was based on the Storybook application
 ## ToDo List
 - [ ] Create many basics fields like data/radio/checkbox/combo etc.
 - [ ] Use resolveDepsComposable for deps on fields
+- [ ] Create editable sections
 
 In progress:
-- [ ] Create editable sections
+- [ ] Required in Duplicated-section
+- [ ] More tests for new fields
+- [ ] Write Homepage mdx
+- [ ] i18n [warnings] how to resolve message -> test on library
+- [ ] npm link and test
+- [ ] create logger and variable to manage
 

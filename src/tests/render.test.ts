@@ -1,26 +1,21 @@
-import { mount, VueWrapper } from "@vue/test-utils"
-import { expect, test } from "vitest"
-import { createVuetify } from "vuetify"
-import * as components from "vuetify/components"
-import * as directives from "vuetify/directives"
-import i18n from "../../.storybook/plugins/i18n"
-import { VueSchemaForms } from "@/components"
-import {
-  _100fieldSchema,
-  _10fieldSchema,
-  _50fieldSchema,
-  invoicePositionsSchema,
-} from "@/tests/test-schemas"
+import { mount, VueWrapper } from "@vue/test-utils";
+import { expect, test } from "vitest";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
+import i18n from "../../.storybook/plugins/i18n";
+import { VueSchemaForms } from "@/components";
+import { _100fieldSchema, _10fieldSchema, _50fieldSchema, invoicePositionsSchema } from "@/tests/test-schemas";
 
-const vuetify = createVuetify({ components, directives })
+const vuetify = createVuetify({ components, directives });
 
 async function waitForResult(wrapper: VueWrapper): Promise<number> {
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
+  await wrapper.vm.$nextTick();
+  await wrapper.vm.$nextTick();
+  await wrapper.vm.$nextTick();
+  await wrapper.vm.$nextTick();
   // @ts-ignore
-  return wrapper.vm.result as number
+  return wrapper.vm.result as number;
 }
 
 test("should render 10 field`s form with empty model less than 80 ms", async function () {
@@ -33,13 +28,13 @@ test("should render 10 field`s form with empty model less than 80 ms", async fun
       options: {},
       modelValue: {},
     },
-  })
+  });
 
-  expect(wrapper.exists()).eq(true)
-  const renderTime = await waitForResult(wrapper)
-  expect(renderTime).toBeGreaterThan(0)
-  expect(renderTime).toBeLessThan(80)
-})
+  expect(wrapper.exists()).eq(true);
+  const renderTime = await waitForResult(wrapper);
+  expect(renderTime).toBeGreaterThan(0);
+  expect(renderTime).toBeLessThan(80);
+});
 
 test("should render 50 field`s form with empty model less than 240 ms", async function () {
   const wrapper: VueWrapper = mount(VueSchemaForms, {
@@ -51,13 +46,13 @@ test("should render 50 field`s form with empty model less than 240 ms", async fu
       options: {},
       modelValue: {},
     },
-  })
+  });
 
-  expect(wrapper.exists()).eq(true)
-  const renderTime = await waitForResult(wrapper)
-  expect(renderTime).toBeGreaterThan(0)
-  expect(renderTime).toBeLessThan(240)
-})
+  expect(wrapper.exists()).eq(true);
+  const renderTime = await waitForResult(wrapper);
+  expect(renderTime).toBeGreaterThan(0);
+  expect(renderTime).toBeLessThan(240);
+});
 
 test("should render 100 field`s form with empty model less than 410 ms", async function () {
   const wrapper: VueWrapper = mount(VueSchemaForms, {
@@ -69,13 +64,13 @@ test("should render 100 field`s form with empty model less than 410 ms", async f
       options: {},
       modelValue: {},
     },
-  })
+  });
 
-  expect(wrapper.exists()).eq(true)
-  const renderTime = await waitForResult(wrapper)
-  expect(renderTime).toBeGreaterThan(0)
-  expect(renderTime).toBeLessThan(410)
-})
+  expect(wrapper.exists()).eq(true);
+  const renderTime = await waitForResult(wrapper);
+  expect(renderTime).toBeGreaterThan(0);
+  expect(renderTime).toBeLessThan(410);
+});
 
 test("should render many duplicated-section with calculations (min. 50 row's of 5 field's) less than 900 ms", async function () {
   const wrapper: VueWrapper = mount(VueSchemaForms, {
@@ -140,10 +135,10 @@ test("should render many duplicated-section with calculations (min. 50 row's of 
         ],
       },
     },
-  })
+  });
 
-  expect(wrapper.exists()).eq(true)
-  const renderTime = await waitForResult(wrapper)
-  expect(renderTime).toBeGreaterThan(0)
-  expect(renderTime).toBeLessThan(900)
-})
+  expect(wrapper.exists()).eq(true);
+  const renderTime = await waitForResult(wrapper);
+  expect(renderTime).toBeGreaterThan(0);
+  expect(renderTime).toBeLessThan(900);
+});

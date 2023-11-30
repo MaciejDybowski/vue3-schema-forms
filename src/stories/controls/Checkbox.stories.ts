@@ -1,31 +1,31 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { Schema } from '@/vocabulary/schema';
-import { StoryTemplateWithValidation } from '../templates/story-template';
-import { userEvent, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
-import { VueSchemaForms } from '@/components';
-import { EngineSourceField } from '@/vocabulary/engine/controls';
-import { Source } from '@/vocabulary/schema/elements';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { Schema } from "@/vocabulary/schema";
+import { StoryTemplateWithValidation } from "../templates/story-template";
+import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
+import { VueSchemaForms } from "@/components";
+import { EngineSourceField } from "@/vocabulary/engine/controls";
+import { Source } from "@/vocabulary/schema/elements";
 
 const meta = {
-  title: 'Forms/Controls/Checkbox',
+  title: "Forms/Controls/Checkbox",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -38,24 +38,30 @@ const meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>
-
+type Story = StoryObj<typeof meta>;
 
 export const Standard: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const option2 = canvas.getByLabelText("Option 2");
+    await userEvent.click(option2, { delay: 200 });
+    await expect(context.args.modelValue).toEqual({ checkboxStandard: [2] });
+  },
   args: {
+    modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        radioButton: {
-          label: 'Choose option',
+        checkboxStandard: {
+          label: "Choose option",
           layout: {
-            component: 'checkbox',
+            component: "checkbox",
           },
           source: {
             items: [
-              { value: 1, label: 'Option 1' },
-              { value: 2, label: 'Option 2' },
-              { value: 3, label: 'Option 3' },
+              { value: 1, label: "Option 1" },
+              { value: 2, label: "Option 2" },
+              { value: 3, label: "Option 3" },
             ],
           },
         } as EngineSourceField,
@@ -63,26 +69,35 @@ export const Standard: Story = {
     } as Schema,
   },
 };
+
 /**
  * You can set the default value of field from schema
  */
 export const WithDefault: Story = {
-  name: 'With default (id)',
+  name: "With default (id)",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    await expect(context.args.modelValue).toEqual({ checkboxWithDefault: [3] });
+    const option2 = canvas.getByLabelText("Option 2");
+    await userEvent.click(option2, { delay: 200 });
+    await expect(context.args.modelValue).toEqual({ checkboxWithDefault: [3, 2] });
+  },
   args: {
+    modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        radioButton1: {
-          label: 'Choose option',
+        checkboxWithDefault: {
+          label: "Choose option",
           layout: {
-            component: 'checkbox',
+            component: "checkbox",
           },
-          default: 3,
+          default: [3],
           source: {
             items: [
-              { value: 1, label: 'Option 1' },
-              { value: 2, label: 'Option 2' },
-              { value: 3, label: 'Option 3' },
+              { value: 1, label: "Option 1" },
+              { value: 2, label: "Option 2" },
+              { value: 3, label: "Option 3" },
             ],
           },
         } as EngineSourceField,
@@ -92,24 +107,30 @@ export const WithDefault: Story = {
 };
 
 export const CustomMapping: Story = {
-  name: 'Custom mapping',
+  name: "Custom mapping",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const option2 = canvas.getByLabelText("Option 2");
+    await expect(option2).toBeInTheDocument();
+  },
   args: {
+    modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        radioButton2: {
-          label: 'Choose option',
+        checkboxWithCustomMapping: {
+          label: "Choose option",
           layout: {
-            component: 'checkbox',
+            component: "checkbox",
           },
           source: {
             items: [
-              { id: 1, text: 'Option 1' },
-              { id: 2, text: 'Option 2' },
-              { id: 3, text: 'Option 3' },
+              { id: 1, text: "Option 1" },
+              { id: 2, text: "Option 2" },
+              { id: 3, text: "Option 3" },
             ],
-            itemValue: 'id',
-            itemText: 'text',
+            itemValue: "id",
+            itemText: "text",
           },
         } as EngineSourceField,
       },
@@ -118,24 +139,31 @@ export const CustomMapping: Story = {
 };
 
 export const CustomMappingReturnObject: Story = {
-  name: 'Custom mapper + return obj',
+  name: "Custom mapper + return obj",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const option2 = canvas.getByLabelText("Option 2");
+    await userEvent.click(option2, { delay: 200 });
+    await expect(context.args.modelValue).toEqual({ checkboxWithCustomMappingObj: [{ id: 2, text: "Option 2" }] });
+  },
   args: {
+    modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        radioButton3: {
-          label: 'Choose option',
+        checkboxWithCustomMappingObj: {
+          label: "Choose option",
           layout: {
-            component: 'checkbox',
+            component: "checkbox",
           },
           source: {
             items: [
-              { id: 1, text: 'Option 1' },
-              { id: 2, text: 'Option 2' },
-              { id: 3, text: 'Option 3' },
+              { id: 1, text: "Option 1" },
+              { id: 2, text: "Option 2" },
+              { id: 3, text: "Option 3" },
             ],
-            itemValue: 'id',
-            itemText: 'text',
+            itemValue: "id",
+            itemText: "text",
             returnObject: true,
           },
         } as EngineSourceField,
@@ -145,25 +173,40 @@ export const CustomMappingReturnObject: Story = {
 };
 
 export const CustomMappingReturnObjectDefault: Story = {
-  name: 'Custom mapper + obj + default',
+  name: "Custom mapper + obj + default",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const option3 = canvas.getByLabelText("Option 3");
+    await userEvent.click(option3, { delay: 200 });
+    await expect(context.args.modelValue).toEqual({
+      checkboxWithCustomMappingObjDefault: [
+        {
+          id: 2,
+          text: "Option 2",
+        },
+        { id: 3, text: "Option 3" },
+      ],
+    });
+  },
   args: {
+    modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        radioButton4: {
-          label: 'Choose option',
+        checkboxWithCustomMappingObjDefault: {
+          label: "Choose option",
           layout: {
-            component: 'checkbox',
+            component: "checkbox",
           },
-          default: [{ id: 2, text: 'Option 2' }],
+          default: [{ id: 2, text: "Option 2" }],
           source: {
             items: [
-              { id: 1, text: 'Option 1' },
-              { id: 2, text: 'Option 2' },
-              { id: 3, text: 'Option 3' },
+              { id: 1, text: "Option 1" },
+              { id: 2, text: "Option 2" },
+              { id: 3, text: "Option 3" },
             ],
-            itemValue: 'id',
-            itemText: 'text',
+            itemValue: "id",
+            itemText: "text",
             returnObject: true,
           },
         } as EngineSourceField,
@@ -172,40 +215,44 @@ export const CustomMappingReturnObjectDefault: Story = {
   },
 };
 
-
 export const GetOptionsFromAPI: Story = {
   parameters: {
     mockData: [
       {
-        url: '/api/v1/options',
-        method: 'GET',
+        url: "/api/v1/options",
+        method: "GET",
         status: 200,
         response: [
-          { id: 1, label: 'Option 1' },
-          { id: 2, label: 'Option 2' },
-          { id: 3, label: 'Option 3' },
-          { id: 4, label: 'Option 4' },
+          { id: 1, label: "Option 1" },
+          { id: 2, label: "Option 2" },
+          { id: 3, label: "Option 3" },
+          { id: 4, label: "Option 4" },
         ],
       },
     ],
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for api call
+    await expect(canvas.getByText("Option 4")).toBeInTheDocument();
+  },
   args: {
-    model: {},
+    modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        radio: {
-          label: 'Options',
+        checkboxFromAPI: {
+          label: "Options",
           layout: {
-            component: 'checkbox',
+            component: "checkbox",
             props: {
               inline: true,
             },
           },
           source: {
-            api: '/api/v1/options',
-            itemText: 'label',
-            itemValue: 'id',
+            api: "/api/v1/options",
+            itemText: "label",
+            itemValue: "id",
             returnObject: true,
           } as Source,
         },
@@ -218,44 +265,42 @@ export const GetOptionsFromAPI: Story = {
  * Example shows how to define a "required" field on a form
  */
 export const SimpleValidation: Story = {
-  name: 'Checkbox with required annotation',
+  name: "Checkbox with required annotation",
   render: StoryTemplateWithValidation,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const Submit = canvas.getByText('Validate');
-    await userEvent.click(Submit, {delay: 600});
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 600 });
 
-    const exampleElement = canvas.getByLabelText('Option 3');
-    await userEvent.click(exampleElement, 'Required field', {
+    const exampleElement = canvas.getByLabelText("Option 3");
+    await userEvent.click(exampleElement, "Required field", {
       delay: 600,
     });
 
-    await userEvent.click(Submit, {delay: 600});
+    await userEvent.click(Submit, { delay: 600 });
     // 👇 Assert DOM structure
-    await expect(
-      canvas.getByText('Walidacja zakończona sukcesem'),
-    ).toBeInTheDocument();
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        radioButtonRequired: {
-          label: 'Choose option',
+        checkboxButtonRequired: {
+          label: "Choose option",
           layout: {
-            component: 'checkbox',
+            component: "checkbox",
           },
           source: {
             items: [
-              { value: 1, label: 'Option 1' },
-              { value: 2, label: 'Option 2' },
-              { value: 3, label: 'Option 3' },
+              { value: 1, label: "Option 1" },
+              { value: 2, label: "Option 2" },
+              { value: 3, label: "Option 3" },
             ],
           },
         } as EngineSourceField,
       },
-      required: ['radioButtonRequired'],
+      required: ["checkboxButtonRequired"],
     } as Schema,
   },
 };

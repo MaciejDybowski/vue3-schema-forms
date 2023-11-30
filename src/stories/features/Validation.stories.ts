@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3"
-import { VueSchemaForms } from "@/components"
-import { Schema } from "@/vocabulary/schema"
+import { Meta, StoryObj } from "@storybook/vue3";
+import { VueSchemaForms } from "@/components";
+import { Schema } from "@/vocabulary/schema";
 
 const meta = {
   title: "Forms/Features/Validations",
@@ -29,11 +29,11 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
-} satisfies Meta<typeof VueSchemaForms>
+} satisfies Meta<typeof VueSchemaForms>;
 
-export default meta
+export default meta;
 
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof meta>;
 
 /**
  * #### Required field with nested
@@ -60,4 +60,4 @@ export const RequiredWithNested: Story = {
       required: ["item1"] as Schema,
     },
   },
-}
+};

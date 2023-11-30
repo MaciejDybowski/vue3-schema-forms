@@ -1,5 +1,5 @@
-import { Schema } from "@/vocabulary/schema"
-import { SchemaTextField } from "@/vocabulary/schema/elements"
+import { Schema } from "@/vocabulary/schema";
+import { SchemaTextField } from "@/vocabulary/schema/elements";
 
 export const offsetSchema: Schema = {
   type: "object",
@@ -48,7 +48,7 @@ export const offsetSchema: Schema = {
       },
     },
   },
-}
+};
 export const conditionSchema: Schema = {
   type: "object",
   properties: {
@@ -82,7 +82,7 @@ export const conditionSchema: Schema = {
       },
     },
   },
-}
+};
 
 export const schemaWithTranslation: Schema = {
   type: "object",
@@ -134,7 +134,7 @@ export const schemaWithTranslation: Schema = {
       password: "Password",
     },
   },
-}
+};
 
 export const aLotOfTranslationsSchema: Schema = {
   type: "object",
@@ -512,7 +512,7 @@ export const aLotOfTranslationsSchema: Schema = {
       firstName: "Imię",
     },
   },
-}
+};
 
 export const duplicatedSectionSchema: Schema = {
   type: "object",
@@ -607,7 +607,7 @@ export const duplicatedSectionSchema: Schema = {
       firstName: "Imię",
     },
   },
-}
+};
 
 export const schema_100_field: Schema = {
   type: "object",
@@ -713,7 +713,7 @@ export const schema_100_field: Schema = {
     zfield9: { label: "1", layout: { component: "text-field" } },
     zfield10: { label: "1", layout: { component: "text-field" } },
   },
-}
+};
 
 export const calculationSchemaInDuplicatedSection: Schema = {
   type: "object",
@@ -776,7 +776,7 @@ export const calculationSchemaInDuplicatedSection: Schema = {
       },
     },
   },
-}
+};
 
 export const simpleCalculationSchema: Schema = {
   type: "object",
@@ -808,7 +808,7 @@ export const simpleCalculationSchema: Schema = {
       calculation: "field3 * field3",
     } as SchemaTextField,
   },
-}
+};
 
 export const simpleCalculationWithDynamicDigits: Schema = {
   type: "object",
@@ -853,4 +853,4 @@ export const simpleCalculationWithDynamicDigits: Schema = {
       calculation: "field3 * field3",
     } as SchemaTextField,
   },
-}
+};

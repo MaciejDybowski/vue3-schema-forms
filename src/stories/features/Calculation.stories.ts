@@ -1,14 +1,14 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3"
-import { VueSchemaForms } from "@/components"
+import { Meta, StoryObj } from "@storybook/vue3";
+import { VueSchemaForms } from "@/components";
 import {
   calculationSchemaInDuplicatedSection,
   simpleCalculationSchema,
   simpleCalculationWithDynamicDigits,
-} from "@/stories/schemas"
-import { userEvent, within } from "@storybook/testing-library"
-import { expect } from "@storybook/jest"
-import { invoicePositionsSchema } from "@/tests/test-schemas"
+} from "@/stories/schemas";
+import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
+import { invoicePositionsSchema } from "@/tests/test-schemas";
 
 const meta = {
   title: "Forms/Features/Calculations",
@@ -36,11 +36,11 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
-} satisfies Meta<typeof VueSchemaForms>
+} satisfies Meta<typeof VueSchemaForms>;
 
-export default meta
+export default meta;
 
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof meta>;
 
 /**
  * #### Performing calculations based on form fields
@@ -55,7 +55,7 @@ export const SimpleCalculation: Story = {
   args: {
     schema: simpleCalculationSchema,
   },
-}
+};
 
 /**
  *  ```options.digitsAfterDecimal: 3 ``` static version
@@ -67,7 +67,7 @@ export const WithStaticDigitsOptions: Story = {
       digitsAfterDecimal: 3,
     },
   },
-}
+};
 
 /**
  *  ```options.digitsAfterDecimal: {currency.digitsAfterDecimal} ``` Value set dynamically (max = 10) based on another value in the model.
@@ -87,18 +87,18 @@ export const WithDynamicDigitsOptions: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const digitsAfterDecimal = canvas.getByLabelText("Digits after decimal")
-    const resultSquare = canvas.getByLabelText("Result ^2")
+    const canvas = within(canvasElement);
+    const digitsAfterDecimal = canvas.getByLabelText("Digits after decimal");
+    const resultSquare = canvas.getByLabelText("Result ^2");
 
-    await userEvent.clear(digitsAfterDecimal, { delay: 300 })
-    await userEvent.type(digitsAfterDecimal, "2", { delay: 300 })
-    expect(resultSquare).toHaveValue("0.14")
-    await userEvent.clear(digitsAfterDecimal, { delay: 300 })
-    await userEvent.type(digitsAfterDecimal, "4", { delay: 300 })
-    expect(resultSquare).toHaveValue("0.1406")
+    await userEvent.clear(digitsAfterDecimal, { delay: 300 });
+    await userEvent.type(digitsAfterDecimal, "2", { delay: 300 });
+    expect(resultSquare).toHaveValue("0.14");
+    await userEvent.clear(digitsAfterDecimal, { delay: 300 });
+    await userEvent.type(digitsAfterDecimal, "4", { delay: 300 });
+    expect(resultSquare).toHaveValue("0.1406");
   },
-}
+};
 
 /**
  * Heavy calculations
@@ -119,7 +119,7 @@ export const calculationInDuplicatedSchema: Story = {
       digitsAfterDecimal: "{digitsAfterDecimal}",
     },
   },
-}
+};
 
 /**
  * Calculations have been designed with the intention of being used in duplicated sections, such as invoice items.
@@ -135,4 +135,4 @@ export const invoiceItems: Story = {
     },
     schema: invoicePositionsSchema,
   },
-}
+};

@@ -1,5 +1,5 @@
-import { Schema } from "@/vocabulary/schema"
-import { SchemaTextField } from "@/vocabulary/schema/elements"
+import { Schema } from "@/vocabulary/schema";
+import { SchemaTextField } from "@/vocabulary/schema/elements";
 
 export const _10fieldSchema: Schema = {
   type: "object",
@@ -15,7 +15,7 @@ export const _10fieldSchema: Schema = {
     field9: { label: "field", layout: { component: "text-field" } },
     field10: { label: "field", layout: { component: "text-field" } },
   },
-}
+};
 
 export const _50fieldSchema: Schema = {
   type: "object",
@@ -71,7 +71,7 @@ export const _50fieldSchema: Schema = {
     field49: { label: "field", layout: { component: "text-field" } },
     field50: { label: "field", layout: { component: "text-field" } },
   },
-}
+};
 
 export const _100fieldSchema: Schema = {
   type: "object",
@@ -177,7 +177,7 @@ export const _100fieldSchema: Schema = {
     field99: { label: "field", layout: { component: "text-field" } },
     field100: { label: "field", layout: { component: "text-field" } },
   },
-}
+};
 
 export const invoicePositionsSchema: Schema = {
   type: "object",
@@ -221,4 +221,4 @@ export const invoicePositionsSchema: Schema = {
       addAction: "Dodaj wiersz",
     },
   },
-}
+};

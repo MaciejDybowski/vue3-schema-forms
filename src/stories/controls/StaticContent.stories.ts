@@ -1,8 +1,8 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3"
-import { Schema } from "@/vocabulary/schema"
-import { VueSchemaForms } from "@/components"
-import { Layout } from "@/vocabulary/schema/elements"
+import { Meta, StoryObj } from "@storybook/vue3";
+import { Schema } from "@/vocabulary/schema";
+import { VueSchemaForms } from "@/components";
+import { Layout } from "@/vocabulary/schema/elements";
 
 const meta = {
   title: "Forms/Static content",
@@ -30,11 +30,11 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
-} satisfies Meta<typeof VueSchemaForms>
+} satisfies Meta<typeof VueSchemaForms>;
 
-export default meta
+export default meta;
 
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof meta>;
 
 export const Examples: Story = {
   args: {
@@ -109,4 +109,4 @@ export const Examples: Story = {
       },
     },
   },
-}
+};

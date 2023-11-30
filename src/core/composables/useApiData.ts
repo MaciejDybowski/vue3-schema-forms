@@ -1,11 +1,10 @@
-import { Source } from '@/vocabulary/schema/elements';
-import { ref, Ref } from 'vue';
-import axios from 'axios';
-
+import { Source } from "@/vocabulary/schema/elements";
+import { ref, Ref } from "vue";
+import axios from "axios";
 
 export function useApiData(source: Source) {
-  const itemText = ref(source.itemText ? source.itemText : 'label');
-  const itemValue = ref(source.itemValue ? source.itemValue : 'value');
+  const itemText = ref(source.itemText ? source.itemText : "label");
+  const itemValue = ref(source.itemValue ? source.itemValue : "value");
   const loading = ref(false);
   let data: Ref<Array<object>> = ref([]);
 
@@ -15,7 +14,7 @@ export function useApiData(source: Source) {
 
   if (source.api) {
     const execute = async () => {
-      loading.value = true
+      loading.value = true;
       const response = await axios.get(source.api);
 
       data.value = response.data;
@@ -27,5 +26,3 @@ export function useApiData(source: Source) {
 
   return { itemText, itemValue, loading, data };
 }
-
-

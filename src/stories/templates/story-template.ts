@@ -1,30 +1,23 @@
 // @ts-nocheck
-import { StoryFn } from '@storybook/vue3';
+import { StoryFn } from "@storybook/vue3";
 
-import { defineComponent, ref } from 'vue';
-import VueSchemaForms from '@/components/engine/VueSchemaForms.vue';
+import { defineComponent, ref } from "vue";
+import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
 
 export default defineComponent({
   components: { VueSchemaForms },
 });
 
-export const StoryTemplate: StoryFn<typeof VueSchemaForms> = (
-  args: any,
-  { argTypes },
-) => ({
+export const StoryTemplate: StoryFn<typeof VueSchemaForms> = (args: any, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { VueSchemaForms },
   setup(args) {
     return { args };
   },
-  template:
-    '<vue-schema-forms :schema="args.schema" v-model="args.model" :options="args.options"/>',
+  template: '<vue-schema-forms :schema="args.schema" v-model="args.model" :options="args.options"/>',
 });
 
-export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (
-  args: any,
-  { argTypes },
-) => ({
+export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (args: any, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { VueSchemaForms },
   setup(args) {
@@ -81,7 +74,7 @@ export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (
               <v-icon color='green'>
                 mdi-check-circle-outline
               </v-icon>
-              <span>Walidacja zakończona sukcesem</span>
+              <span>Form is valid</span>
             </div>
           </v-expand-transition>
 

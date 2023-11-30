@@ -1,39 +1,44 @@
 <template>
   <v-radio-group
-    v-model='localModel'
-    :label='schema.label'
-    v-bind="bindProps(schema, 'radio-button')"
-    :rules='mapRules(schema.required)'
-    :class='bindClass(schema)'
-    v-if='!loading'
-    :hide-details='!mapRules(schema.required).length > 0'
+    v-model="localModel"
+    :label="schema.label"
+    v-bind="vuetifyProps"
+    :rules="vuetifyRules"
+    :class="bindClass(schema)"
+    v-if="!loading"
+    :hide-details="!(vuetifyRules.length > 0)"
   >
     <template
-      v-for='(option,index) in data'
-      :key='option[itemValue]'
+      v-for="(option, index) in data"
+      :key="option[itemValue]"
     >
       <v-radio
-        v-bind="{...bindProps(schema, 'radio-button'), ...defaultVuetifyProps}"
-        :label='option[itemText]'
-        :value='option[itemValue]'
-        :class='index !== data.length-1 ? "mb-2" : ""'
-      />
+        v-bind="vuetifyProps"
+        :value="option[itemValue]"
+        :class="index !== data.length - 1 && !vuetifyProps.inline ? 'mb-2' : ''"
+      >
+        <template #label="{ label }">
+          <div class="mr-2">{{ option[itemText] }}</div>
+        </template>
+      </v-radio>
     </template>
   </v-radio-group>
 </template>
 
-<script setup lang='ts'>
-import { EngineSourceField } from '@/vocabulary/engine/controls';
-import { computed, watch } from 'vue';
-import { bindClass, bindProps, getValueFromModel, mapRules, produceUpdateEvent } from '@/core/engine/utils';
-import { useApiData } from '@/core/composables/useApiData';
+<script setup lang="ts">
+import { EngineSourceField } from "@/vocabulary/engine/controls";
+import { computed, onMounted, watch } from "vue";
+import { bindClass, getValueFromModel, produceUpdateEvent } from "@/core/engine/utils";
+import { useApiData } from "@/core/composables/useApiData";
+import { useRules } from "@/core/composables/useRules";
+import { useProps } from "@/core/composables/useProps";
 
 const props = defineProps<{
-  schema: EngineSourceField
-  model: object
+  schema: EngineSourceField;
+  model: object;
 }>();
 
-const defaultVuetifyProps = { density: 'compact' };
+const vuetifyProps = useProps(props.schema, "radio-button");
 
 const localModel = computed({
   get(): string | number {
@@ -57,6 +62,7 @@ const localModel = computed({
 });
 
 const { itemText, itemValue, loading, data } = useApiData(props.schema.source);
+const vuetifyRules = useRules(props.schema);
 
 watch(loading, () => {
   if (data.value.length === 0) {
@@ -67,9 +73,14 @@ watch(loading, () => {
   }
 });
 
+onMounted(() => {
+  if (!loading.value && localModel.value == null) {
+    localModel.value = data.value[0][itemValue.value];
+  }
+});
 </script>
 
-<style scoped lang='css'>
+<style scoped lang="css">
 :deep(.v-label) {
   margin-inline-start: 0 !important;
 }

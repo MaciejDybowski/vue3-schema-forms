@@ -1,23 +1,24 @@
-import { Layout } from '../schema/elements';
+import { Layout } from "../schema/elements";
 
 export interface EngineField {
   key: string;
   label: string;
   default: number | string | boolean | object | Array<any>;
-  type: 'text' | 'number' | 'object' | 'array';
+  type: "text" | "number" | "object" | "array";
   layout: Layout;
   options: EngineOptions;
   on: {
-    input: Function
+    input: Function;
   };
   required: boolean;
 }
 
 export interface EngineOptions {
   textFieldProps: Record<string, any>;
+  textAreaProps: Record<string, any>;
   radioButtonProps: Record<string, any>;
   buttonProps: Record<string, any>;
-  checkboxProps:Record<string, any>;
+  checkboxProps: Record<string, any>;
   digitsAfterDecimal: number;
 }
 

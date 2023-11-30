@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3"
-import { VueSchemaForms } from "@/components"
-import { offsetSchema } from "@/stories/schemas"
+import { Meta, StoryObj } from "@storybook/vue3";
+import { VueSchemaForms } from "@/components";
+import { offsetSchema } from "@/stories/schemas";
 
 const meta = {
   title: "Forms/Features/Layouts",
@@ -29,11 +29,11 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
-} satisfies Meta<typeof VueSchemaForms>
+} satisfies Meta<typeof VueSchemaForms>;
 
-export default meta
+export default meta;
 
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof meta>;
 
 /**
  * #### Arranging form fields using the "fill to end" function and offsets
@@ -47,4 +47,4 @@ export const FillRowAndOffsets: Story = {
   args: {
     schema: offsetSchema,
   },
-}
+};

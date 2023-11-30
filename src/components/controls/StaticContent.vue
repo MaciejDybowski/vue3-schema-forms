@@ -29,12 +29,12 @@
 </template>
 
 <script setup lang="ts">
-import { EngineStaticField } from "@/vocabulary/engine/controls"
+import { EngineStaticField } from "@/vocabulary/engine/controls";
 
 const props = defineProps<{
-  schema: EngineStaticField
-  model: object
-}>()
+  schema: EngineStaticField;
+  model: object;
+}>();
 </script>
 
 <style scoped lang="css"></style>

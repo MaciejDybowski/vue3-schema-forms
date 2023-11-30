@@ -1,5 +1,5 @@
 <template>
-  <div class="hover-wrapper">
+  <div class="duplicated-section-item">
     <v-hover
       v-slot="{ isHovering, props }"
       open-delay="200"
@@ -24,12 +24,12 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    showDivider: boolean
+    showDivider: boolean;
   }>(),
   {
     showDivider: false,
   }
-)
+);
 </script>
 
 <style scoped lang="css"></style>

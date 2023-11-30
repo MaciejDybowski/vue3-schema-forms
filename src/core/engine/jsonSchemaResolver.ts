@@ -1,5 +1,5 @@
-import { Resolver } from "@stoplight/json-ref-resolver"
+import { Resolver } from "@stoplight/json-ref-resolver";
 
-const jsonSchemaResolver = new Resolver()
+const jsonSchemaResolver = new Resolver();
 
-export default jsonSchemaResolver
+export default jsonSchemaResolver;
