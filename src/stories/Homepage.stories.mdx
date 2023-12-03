@@ -1,0 +1,56 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta
+  title="Vue Schema Forms"
+/>
+
+# Vue Schema Forms 🚀
+
+Create dynamic and user-friendly forms effortlessly with the Vue3 and Vuetify.
+This library is designed to simplify form creation by leveraging the JSON Schema format. Inspired by [koumoul-dev](https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/)
+
+
+## Installation
+
+You can install `vue3-schema-forms` using npm:
+
+```bash
+npm install vue3-schema-forms
+```
+
+## Basic Usage
+
+```javascript
+// index.ts
+import { createVueSchemaForms } from 'vue3-schema-forms';
+
+const schemaForms = createVueSchemaForms({});
+
+createApp(App)
+  .use(schemaForms)
+  .mount('#app');
+```
+
+After importing the plugin, we can invoke the form-generating component and pass the appropriate props.
+
+```javascript
+// someComponent.vue
+<vue-schema-forms
+  v-model="model"
+  :schema="schema"
+  :options="formOptions"
+/>
+
+const formOptions = ref({})
+const model = ref({})
+const schema = ref({
+  type: "object",
+  properties: {
+    field1: {
+      label: "Field 1",
+      layout: {
+        component: "text-field",
+      },
+    },
+  },
+```

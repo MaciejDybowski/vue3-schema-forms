@@ -26,12 +26,12 @@
 </template>
 
 <script setup lang="ts">
-import { EngineSourceField } from "@/vocabulary/engine/controls";
+import { EngineSourceField } from "../../vocabulary/engine/controls";
 import { computed, onMounted, watch } from "vue";
-import { bindClass, getValueFromModel, produceUpdateEvent } from "@/core/engine/utils";
-import { useApiData } from "@/core/composables/useApiData";
-import { useRules } from "@/core/composables/useRules";
-import { useProps } from "@/core/composables/useProps";
+import { bindClass, getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
+import { useApiData } from "../../core/composables/useApiData";
+import { useRules } from "../../core/composables/useRules";
+import { useProps } from "../../core/composables/useProps";
 
 const props = defineProps<{
   schema: EngineSourceField;

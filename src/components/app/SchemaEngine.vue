@@ -95,7 +95,7 @@ async function validate() {
     const item = arr.find((item: FormItem) => !item.isValid);
     const itemRef = document.getElementById(item?.id + "");
     if (item)
-      itemRef.scrollIntoView({
+      itemRef?.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });

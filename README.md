@@ -65,13 +65,12 @@ The documentation and some of the testing was based on the Storybook application
 - [ ] Create many basics fields like data/radio/checkbox/combo etc.
 - [ ] Use resolveDepsComposable for deps on fields
 - [ ] Create editable sections
-
-In progress:
-- [ ] Change to use Engine props
-- [ ] write test to if / layouts / i18n
-- [ ] Write Homepage mdx
+- [ ] Change to use Engine props (decomposition)
 - [ ] i18n [warnings] how to resolve message -> test on library
 - [ ] create logger and variable to manage
+
+In progress:
+
 
 
 Przypadki testowe

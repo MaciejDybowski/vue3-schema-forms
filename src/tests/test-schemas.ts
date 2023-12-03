@@ -185,26 +185,29 @@ export const invoicePositionsSchema: Schema = {
     invoiceItems: {
       layout: {
         component: "duplicated-section",
-        items: {
-          product: {
-            label: "Product",
-            layout: { component: "text-field", cols: 3 },
-          },
-          quantity: {
-            label: "Quantity",
-            layout: { component: "text-field", cols: 1 },
-            type: "number",
-          },
-          netPrice: {
-            label: "Net price",
-            layout: { component: "text-field", cols: 2 },
-          },
-          tax: { label: "Tax", layout: { component: "text-field", cols: 3 } },
-          summary: {
-            label: "Summary",
-            layout: { component: "text-field", cols: 3 },
-            calculation: "quantity * (netPrice+netPrice*tax)",
-          } as SchemaTextField,
+        schema: {
+          type: "object",
+          properties: {
+            product: {
+              label: "Product",
+              layout: { component: "text-field", cols: 3 },
+            },
+            quantity: {
+              label: "Quantity",
+              layout: { component: "text-field", cols: 1 },
+              type: "number",
+            },
+            netPrice: {
+              label: "Net price",
+              layout: { component: "text-field", cols: 2 },
+            },
+            tax: { label: "Tax", layout: { component: "text-field", cols: 3 } },
+            summary: {
+              label: "Summary",
+              layout: { component: "text-field", cols: 3 },
+              calculation: "quantity * (netPrice+netPrice*tax)",
+            } as SchemaTextField,
+          }
         },
         options: {
           addBtnText: { $ref: "#/i18n/~$locale~/addAction" },

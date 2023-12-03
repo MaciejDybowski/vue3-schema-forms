@@ -10,11 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import { EngineField } from "@/vocabulary/engine";
+import { EngineField } from "../../vocabulary/engine";
 import { computed } from "vue";
-import { bindClass, getValueFromModel, produceUpdateEvent } from "@/core/engine/utils";
-import { useRules } from "@/core/composables/useRules";
-import { useProps } from "@/core/composables/useProps";
+import { bindClass, getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
+import { useRules } from "../../core/composables/useRules";
+import { useProps } from "../../core/composables/useProps";
 
 const props = defineProps<{
   schema: EngineField,

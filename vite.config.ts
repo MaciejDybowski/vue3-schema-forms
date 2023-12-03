@@ -10,7 +10,9 @@ export default defineConfig({
   plugins: [
     VueDevTools(),
     vue(),
-    VueI18nPlugin({}),
+    VueI18nPlugin({
+      include: path.resolve(__dirname, './src/locales/**')
+    }),
     dts({
       insertTypesEntry: true,
     }),

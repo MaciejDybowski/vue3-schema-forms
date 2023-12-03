@@ -54,7 +54,7 @@ import FormRoot from '../../engine/FormRoot.vue';
 import DraggableIcon from './DraggableIcon.vue';
 import DraggableContextMenu from './DraggableContextMenu.vue';
 import { useI18n } from 'vue-i18n';
-import { DuplicatedSectionOptions } from '@/vocabulary/schema/elements';
+import { DuplicatedSectionOptions, SchemaField } from '@/vocabulary/schema/elements';
 import { isArray } from 'lodash';
 import DuplicatedSectionItem from './DuplicatedSectionItem.vue';
 
@@ -150,7 +150,7 @@ function init(): void {
         id: uuidv4(),
         type: 'object',
         properties: isDefaultExist
-          ? mapPropertiesIfDefault(props.schema.layout.schema?.properties, sections[index])
+          ? mapPropertiesIfDefault(props.schema.layout.schema?.properties as Record<any, SchemaField>, sections[index])
           : props.schema.layout.schema?.properties,
         required: props.schema.layout.schema?.required,
       } as Schema);
@@ -161,7 +161,7 @@ function init(): void {
   }
 }
 
-function mapPropertiesIfDefault(fieldDefinition: Object, defaultValue: object) {
+function mapPropertiesIfDefault(fieldDefinition: Record<string, SchemaField>, defaultValue: object) {
   let itemsWithDefault = {};
   for (let [key, value] of Object.entries(fieldDefinition)) {
     itemsWithDefault[key] = Object.assign({ ...value, default: defaultValue[key] });

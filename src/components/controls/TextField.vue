@@ -17,7 +17,7 @@ import { bindClass, getValueFromModel, produceUpdateEvent } from "../../core/eng
 import { EngineTextField } from "../../vocabulary/engine/controls";
 import { useCalculation } from "../../core/composables/useCalculation";
 import { useRules } from "../../core/composables/useRules";
-import { useProps } from "@/core/composables/useProps";
+import { useProps } from "../../core/composables/useProps";
 
 const props = defineProps<{
   schema: EngineTextField;
