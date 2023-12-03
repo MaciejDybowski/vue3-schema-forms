@@ -63,8 +63,6 @@ import PropsViewer from "./PropsViewer.vue";
 import { Schema, SchemaOptions } from "@/vocabulary/schema";
 import { VForm } from "vuetify/components";
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
-import { ar } from "vuetify/locale";
-import { a } from "@storybook/vue3/dist/render-ddbe18a8";
 
 const { t } = useI18n();
 const showJSONs = ref(true);

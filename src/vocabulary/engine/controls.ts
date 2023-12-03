@@ -1,8 +1,8 @@
 import { EngineField } from "./index";
 import { Source } from "@/vocabulary/schema/elements";
 
-export interface EngineProps {
-  schema: EngineField;
+export interface EngineProps<T> {
+  schema: T;
   model: object;
 }
 

@@ -67,10 +67,14 @@ The documentation and some of the testing was based on the Storybook application
 - [ ] Create editable sections
 
 In progress:
-- [ ] Required in Duplicated-section
-- [ ] More tests for new fields
+- [ ] Change to use Engine props
+- [ ] write test to if / layouts / i18n
 - [ ] Write Homepage mdx
 - [ ] i18n [warnings] how to resolve message -> test on library
-- [ ] npm link and test
 - [ ] create logger and variable to manage
+
+
+Przypadki testowe
+1. reset formularza - czy domyślne zostają
+2. reset formularza = null tam gdzie trzeba
 

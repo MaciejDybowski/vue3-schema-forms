@@ -51,11 +51,19 @@ export const Table10: Story = {
           default: [{ product: "Item1" }, { product: "Item2" }],
           layout: {
             component: "duplicated-section",
-            items: {
-              product: {
-                label: "Product",
-                layout: { component: "text-field", cols: 12 },
+            schema: {
+              type: "object",
+              properties: {
+                product: {
+                  label: "Product",
+                  layout: { component: "text-field", cols: 12 },
+                },
+                area: {
+                  label: "Area",
+                  layout: { component: "text-area", cols: 12 },
+                }
               },
+              required: ["product"]
             },
           },
           cols: 6,
