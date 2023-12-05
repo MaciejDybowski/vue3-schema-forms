@@ -19,6 +19,7 @@ export interface EngineOptions {
   radioButtonProps: Record<string, any>;
   buttonProps: Record<string, any>;
   checkboxProps: Record<string, any>;
+  selectProps: Record<string, any>;
   digitsAfterDecimal: number;
 }
 

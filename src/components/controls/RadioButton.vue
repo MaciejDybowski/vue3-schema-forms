@@ -10,15 +10,15 @@
   >
     <template
       v-for="(option, index) in data"
-      :key="option[itemValue]"
+      :key="option[value]"
     >
       <v-radio
         v-bind="vuetifyProps"
-        :value="option[itemValue]"
+        :value="option[value]"
         :class="index !== data.length - 1 && !vuetifyProps.inline ? 'mb-2' : ''"
       >
         <template #label="{ label }">
-          <div class="mr-2">{{ option[itemText] }}</div>
+          <div class="mr-2">{{ option[title] }}</div>
         </template>
       </v-radio>
     </template>
@@ -29,7 +29,7 @@
 import { EngineSourceField } from "../../vocabulary/engine/controls";
 import { computed, onMounted, watch } from "vue";
 import { bindClass, getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
-import { useApiData } from "../../core/composables/useApiData";
+import { useSource } from "../../core/composables/useSource";
 import { useRules } from "../../core/composables/useRules";
 import { useProps } from "../../core/composables/useProps";
 
@@ -44,7 +44,7 @@ const localModel = computed({
   get(): string | number {
     if (props.schema.source.returnObject) {
       const obj = getValueFromModel(props.model, props.schema);
-      return obj ? obj[itemValue.value] : null;
+      return obj ? obj[value] : null;
     } else {
       return getValueFromModel(props.model, props.schema);
     }
@@ -52,7 +52,7 @@ const localModel = computed({
   set(val: any) {
     if (props.schema.source.returnObject) {
       const obj = data.value.filter((item) => {
-        return item[itemValue.value] === val;
+        return item[value] === val;
       })[0];
       produceUpdateEvent(obj, props.schema);
     } else {
@@ -61,7 +61,7 @@ const localModel = computed({
   },
 });
 
-const { itemText, itemValue, loading, data } = useApiData(props.schema.source);
+const { title, value, loading, data } = useSource(props.schema.source);
 const vuetifyRules = useRules(props.schema);
 
 watch(loading, () => {
@@ -69,13 +69,13 @@ watch(loading, () => {
     console.warn(`Field ${props.schema.key} don't have any data/options/items`);
   }
   if (!loading.value && localModel.value == null) {
-    localModel.value = data.value[0][itemValue.value];
+    localModel.value = data.value[0][value];
   }
 });
 
 onMounted(() => {
   if (!loading.value && localModel.value == null) {
-    localModel.value = data.value[0][itemValue.value];
+    localModel.value = data.value[0][value];
   }
 });
 </script>

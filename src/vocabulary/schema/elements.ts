@@ -40,7 +40,8 @@ export type SchemaComponent =
   | 'static-content'
   | 'radio-button'
   | 'checkbox'
-  | 'text-area';
+  | 'text-area'
+  | 'select'
 
 export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span';
 
@@ -61,11 +62,11 @@ export interface DuplicatedSectionOptions {
 }
 
 export interface Source {
-  api: string;
-  items: Array<any>;
-  itemText: string;
-  itemValue: string;
-  returnObject: boolean;
+  api?: string;
+  items?: Array<any>;
+  title?: string;
+  value?: string;
+  returnObject?: boolean;
 
   [key: string]: any;
 }

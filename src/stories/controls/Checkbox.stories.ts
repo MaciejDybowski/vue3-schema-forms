@@ -59,9 +59,9 @@ export const Standard: Story = {
           },
           source: {
             items: [
-              { value: 1, label: "Option 1" },
-              { value: 2, label: "Option 2" },
-              { value: 3, label: "Option 3" },
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" },
             ],
           },
         } as EngineSourceField,
@@ -74,7 +74,7 @@ export const Standard: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefault: Story = {
-  name: "With default (id)",
+  name: "With default (value)",
   play: async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.modelValue).toEqual({ checkboxWithDefault: [3] });
@@ -95,9 +95,9 @@ export const WithDefault: Story = {
           default: [3],
           source: {
             items: [
-              { value: 1, label: "Option 1" },
-              { value: 2, label: "Option 2" },
-              { value: 3, label: "Option 3" },
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" },
             ],
           },
         } as EngineSourceField,
@@ -129,8 +129,8 @@ export const CustomMapping: Story = {
               { id: 2, text: "Option 2" },
               { id: 3, text: "Option 3" },
             ],
-            itemValue: "id",
-            itemText: "text",
+            value: "id",
+            title: "text",
           },
         } as EngineSourceField,
       },
@@ -162,8 +162,8 @@ export const CustomMappingReturnObject: Story = {
               { id: 2, text: "Option 2" },
               { id: 3, text: "Option 3" },
             ],
-            itemValue: "id",
-            itemText: "text",
+            value: "id",
+            title: "text",
             returnObject: true,
           },
         } as EngineSourceField,
@@ -205,8 +205,8 @@ export const CustomMappingReturnObjectDefault: Story = {
               { id: 2, text: "Option 2" },
               { id: 3, text: "Option 3" },
             ],
-            itemValue: "id",
-            itemText: "text",
+            value: "id",
+            title: "text",
             returnObject: true,
           },
         } as EngineSourceField,
@@ -251,8 +251,8 @@ export const GetOptionsFromAPI: Story = {
           },
           source: {
             api: "/api/v1/options",
-            itemText: "label",
-            itemValue: "id",
+            title: "label",
+            value: "id",
             returnObject: true,
           } as Source,
         },
@@ -293,9 +293,9 @@ export const SimpleValidation: Story = {
           },
           source: {
             items: [
-              { value: 1, label: "Option 1" },
-              { value: 2, label: "Option 2" },
-              { value: 3, label: "Option 3" },
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" },
             ],
           },
         } as EngineSourceField,

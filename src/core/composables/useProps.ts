@@ -36,6 +36,13 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
         ...schema.layout?.props,
       };
       break;
+    case 'select':
+      props = {
+        ...defaultTextAreaProps,
+        ...schema.options?.selectProps,
+        ...schema.layout?.props,
+      };
+      break
     default:
       console.warn("component is not recognized");
   }
