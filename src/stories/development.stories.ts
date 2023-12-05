@@ -88,11 +88,13 @@ export const Table1: Story = {
         invoiceItems: {
           layout: {
             component: "duplicated-section",
-            items: {
-              product: {
-                label: "Product",
-                layout: { component: "text-field", cols: 12 },
-              },
+            schema: {
+              properties: {
+                product: {
+                  label: "Product",
+                  layout: { component: "text-field", cols: 12 },
+                },
+              }
             },
             cols: 6,
           },

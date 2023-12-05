@@ -67,7 +67,6 @@ The documentation and some of the testing was based on the Storybook application
 - [ ] Create editable sections
 - [ ] Change to use Engine props (decomposition)
 - [ ] i18n [warnings] how to resolve message -> test on library
-- [ ] create logger and variable to manage
 
 In progress:
 

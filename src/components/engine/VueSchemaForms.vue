@@ -25,6 +25,7 @@ import RadioButton from '../controls/RadioButton.vue';
 import CheckboxButton from '../controls/CheckboxButton.vue';
 import TextArea from '../controls/TextArea.vue';
 import Select from '../controls/Select.vue';
+import { formUpdateLogger } from '../../main';
 
 // register components to VueInstance
 declare type Components = Record<string, Component>;
@@ -47,6 +48,14 @@ for (const [name, comp] of Object.entries(components)) {
 }
 // end register-components
 
+// condition for enable measure render tests
+let result = ref(0);
+const isShouldMeasureRenderTime = import.meta.env.VITE_ENABLE_RENDER_TEST === 'true';
+if (isShouldMeasureRenderTime) {
+  result = usePerformanceAPI().result;
+}
+// end
+
 const props = defineProps<{
   schema: Schema;
   modelValue: object;
@@ -60,11 +69,13 @@ const emit = defineEmits<{
 let loading = ref(true);
 const { locale, t } = useI18n();
 const resolvedSchema = ref({} as Schema);
-const { result } = usePerformanceAPI();
 
 function updateModel(event: NodeUpdateEvent) {
   set(props.modelValue, event.key, event.value);
   emit('update:modelValue', props.modelValue);
+  if(formUpdateLogger){
+    console.debug('[vue-schema-forms] =>', props.modelValue);
+  }
 }
 
 async function loadResolvedSchema() {
@@ -82,7 +93,6 @@ watch(
   { deep: true },
 );
 onMounted(async () => {
-  console.debug('[vue-schema-forms] => mounted');
   await loadResolvedSchema();
 });
 </script>

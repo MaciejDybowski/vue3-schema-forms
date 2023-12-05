@@ -56,12 +56,7 @@ function runCalculationIfExist() {
 }
 
 onMounted(() => {
-  console.debug(`[text-field] - ${props.schema.key} => mounted`);
   runCalculationIfExist();
-});
-
-onUpdated(() => {
-  console.debug(`[text-field] - ${props.schema.key} => updated`, localModel.value);
 });
 </script>
 

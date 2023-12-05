@@ -1,10 +1,20 @@
-import * as components from "../src/components/index";
-import { App } from "vue";
+import * as components from '../src/components/index';
+import { App } from 'vue';
+
+export let formUpdateLogger = false;
 
 export type VueSchemaForms = {
   install: (app: App) => void;
 };
-export const createVueSchemaForms = (options?: any): VueSchemaForms => {
+
+export type VueSchemaFormsOptions = {
+  formUpdateLogger: boolean
+}
+
+export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
+  if (options?.formUpdateLogger) {
+    formUpdateLogger = options.formUpdateLogger;
+  }
   // TODO options
   return {
     install: (app: App): void => {
