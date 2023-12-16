@@ -52,7 +52,7 @@ const localModel = computed({
       const arrayOfObj = data.value.filter((obj) => val?.includes(obj[value])).map((item) => item);
       produceUpdateEvent(arrayOfObj.length > 0 ? arrayOfObj : null, props.schema);
     } else {
-      produceUpdateEvent(val, props.schema);
+      produceUpdateEvent(val.length > 0 ? val : null, props.schema);
     }
   },
 });
