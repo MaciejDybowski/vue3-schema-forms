@@ -7,6 +7,7 @@ const config: StorybookConfig = {
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     'storybook-addon-mock',
+    "@storybook/addon-mdx-gfm"
   ],
   core: {},
   framework: {

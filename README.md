@@ -58,7 +58,14 @@ The documentation and some of the testing was based on the Storybook application
 2. Install development dependencies: ```npm install```
 3. Run the tests: ```npm test```
 4. Run the storybook: ```npm run storybook```
-5. Run storybook tests: ``npm run test-storybook``
+5. Run storybook tests: ```npm run test-storybook```
+
+## Contributing
+1. Fork it!
+2. Create your feature branch: ```git checkout -b my-new-feature```
+3. Commit your changes: ```git commit -am 'Add some feature'```
+4. Push to the branch: ```git push origin my-new-feature```
+5. Submit a pull request
 
 
 ## ToDo List
@@ -69,7 +76,8 @@ The documentation and some of the testing was based on the Storybook application
 - [ ] i18n [warnings] how to resolve message -> test on library
 
 In progress:
-
+- [ ] section
+- [ ] hide fields
 
 
 Przypadki testowe
