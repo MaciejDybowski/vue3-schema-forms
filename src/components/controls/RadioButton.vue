@@ -6,7 +6,6 @@
     :rules="vuetifyRules"
     :class="bindClass(schema)"
     v-if="!loading"
-    :hide-details="!(vuetifyRules.length > 0)"
   >
     <template
       v-for="(option, index) in data"

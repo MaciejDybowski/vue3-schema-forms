@@ -6,7 +6,6 @@
       v-bind="useProps(schema, 'text-field')"
       :rules="vuetifyRules"
       :class="bindClass(schema)"
-      :hide-details="!(vuetifyRules.length > 0)"
     />
   </div>
 </template>

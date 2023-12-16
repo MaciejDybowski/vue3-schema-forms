@@ -8,6 +8,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
   switch (component) {
     case "text-field":
       props = {
+        ...defaultTextFieldProperties,
         ...schema.options?.textFieldProps,
         ...schema.layout?.props,
       };
@@ -38,7 +39,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
       break;
     case 'select':
       props = {
-        ...defaultTextAreaProps,
+        ...defaultSelectProps,
         ...schema.options?.selectProps,
         ...schema.layout?.props,
       };
@@ -49,15 +50,27 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
   return props;
 }
 
+const defaultTextFieldProperties = {
+  "hide-details": "auto",
+}
+
 const defaultCheckboxProperties = {
   density: "compact",
-  "hide-details": true,
+  "hide-details": "auto",
   multiple: true,
 };
 
-const defaultRadioProps = { density: "compact" };
+const defaultRadioProps = {
+  density: "compact",
+  "hide-details": "auto"
+};
 
 const defaultTextAreaProps = {
   rows: 3,
   "auto-grow": true,
+  "hide-details": "auto"
 };
+
+const defaultSelectProps = {
+  "hide-details": "auto"
+}

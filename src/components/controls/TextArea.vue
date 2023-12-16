@@ -5,7 +5,6 @@
     :rules="vuetifyRules"
     v-bind="useProps(schema, 'text-area')"
     :class="bindClass(schema)"
-    :hide-details="!(vuetifyRules.length > 0)"
   />
 </template>
 

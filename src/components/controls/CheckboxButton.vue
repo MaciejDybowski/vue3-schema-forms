@@ -1,38 +1,38 @@
 <template>
   <div
     :class="'checkbox-root ' + bindClass(schema)"
-    v-if="!loading"
+    v-if='!loading'
   >
-    <label class="v-label">
+    <label class='v-label'>
       {{ schema.label }}
     </label>
     <template
-      v-for="(option, index) in data"
-      :key="option[value]"
+      v-for='(option, index) in data'
+      :key='option[value]'
     >
       <v-checkbox
-        v-model="localModel"
+        v-model='localModel'
         v-bind="useProps(schema, 'checkbox')"
-        :rules="vuetifyRules"
-        :label="option[title]"
-        :value="option[value]"
-        :hide-details="!(index == data.length - 1 && vuetifyRules.length > 0)"
+        :rules='vuetifyRules'
+        :label='option[title]'
+        :value='option[value]'
+        :hide-details='index == data.length - 1 ? "auto" : true'
       >
-        <template #message="{ message }">
-          <div class="ml-4">{{ message }}</div>
+        <template #message='{ message }'>
+          <div class='ml-4'>{{ message }}</div>
         </template>
       </v-checkbox>
     </template>
   </div>
 </template>
 
-<script setup lang="ts">
-import { EngineSourceField } from "../../vocabulary/engine/controls";
-import { useSource } from "../../core/composables/useSource";
-import { bindClass, getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
-import { computed } from "vue";
-import { useRules } from "../..//core/composables/useRules";
-import { useProps } from "../../core/composables/useProps";
+<script setup lang='ts'>
+import { EngineSourceField } from '../../vocabulary/engine/controls';
+import { useSource } from '../../core/composables/useSource';
+import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import { computed } from 'vue';
+import { useRules } from '../..//core/composables/useRules';
+import { useProps } from '../../core/composables/useProps';
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -61,4 +61,4 @@ const vuetifyRules = useRules(props.schema);
 const { title, value, loading, data } = useSource(props.schema.source);
 </script>
 
-<style scoped lang="css"></style>
+<style scoped lang='css'></style>
