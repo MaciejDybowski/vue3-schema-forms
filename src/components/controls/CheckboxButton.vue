@@ -39,16 +39,19 @@ const props = defineProps<{
   model: object;
 }>();
 
+const { title, value, loading, data, returnObject } = useSource(props.schema.source);
+const vuetifyRules = useRules(props.schema);
+
 const localModel = computed({
   get(): string | number {
-    if (props.schema.source.returnObject) {
+    if (returnObject) {
       return getValueFromModel(props.model, props.schema)?.map((item) => item[value]);
     } else {
       return getValueFromModel(props.model, props.schema);
     }
   },
   set(val: any) {
-    if (props.schema.source.returnObject) {
+    if (returnObject) {
       const arrayOfObj = data.value.filter((obj) => val?.includes(obj[value])).map((item) => item);
       produceUpdateEvent(arrayOfObj.length > 0 ? arrayOfObj : null, props.schema);
     } else {
@@ -57,8 +60,7 @@ const localModel = computed({
   },
 });
 
-const vuetifyRules = useRules(props.schema);
-const { title, value, loading, data } = useSource(props.schema.source);
+
 </script>
 
 <style scoped lang='css'></style>

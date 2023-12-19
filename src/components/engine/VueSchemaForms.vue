@@ -27,6 +27,7 @@ import TextArea from '../controls/TextArea.vue';
 import Select from '../controls/Select.vue';
 import { formUpdateLogger } from '../../main';
 import EditableSection from '../controls/editable-section/EditableSection.vue';
+import Autocomplete from '../controls/Autocomplete.vue';
 
 // register components to VueInstance
 declare type Components = Record<string, Component>;
@@ -38,7 +39,8 @@ const components = {
   'checkbox': CheckboxButton,
   'text-area': TextArea,
   'select': Select,
-  "editable-section": EditableSection
+  "editable-section": EditableSection,
+  "dictionary": Autocomplete
 } as Components;
 const instance = getCurrentInstance();
 for (const [name, comp] of Object.entries(components)) {

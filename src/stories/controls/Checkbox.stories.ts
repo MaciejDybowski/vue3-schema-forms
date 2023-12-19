@@ -6,7 +6,7 @@ import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import { VueSchemaForms } from "@/components";
 import { EngineSourceField } from "@/vocabulary/engine/controls";
-import { Source } from "@/vocabulary/schema/elements";
+import { SimpleSource, Source } from '@/vocabulary/schema/elements';
 
 const meta = {
   title: "Forms/Controls/Checkbox",
@@ -250,11 +250,11 @@ export const GetOptionsFromAPI: Story = {
             },
           },
           source: {
-            api: "/api/v1/options",
+            url: "/api/v1/options",
             title: "label",
             value: "id",
             returnObject: true,
-          } as Source,
+          } as SimpleSource,
         },
       },
     } as Schema,

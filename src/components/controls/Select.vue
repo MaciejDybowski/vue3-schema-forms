@@ -26,6 +26,8 @@ const props = defineProps<{
   schema: EngineSourceField;
   model: object;
 }>();
+const { title, value, loading, data, returnObject } = useSource(props.schema.source);
+
 const vuetifyProps = useProps(props.schema, 'select');
 const vuetifyRules = useRules(props.schema);
 
@@ -38,9 +40,6 @@ const localModel = computed({
   },
 });
 
-
-
-const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 </script>
 
 <style scoped lang='css'>

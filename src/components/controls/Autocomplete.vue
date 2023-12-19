@@ -1,0 +1,83 @@
+<template>
+  <base-autocomplete
+    :label='schema.label'
+    v-model='localModel'
+    :item-title='title'
+    :item-value='value'
+    :items='data'
+    :loading='loading'
+    :return-object='returnObject as any'
+    :auto-select-first='true'
+    :lazy='lazy'
+    :options='paginationOptions'
+    @loadMoreRecords='loadMoreRecords'
+    :search='query'
+    @update:search='updateQuery'
+  >
+    <template
+      #item='{ item, props}'
+      v-if='description !== null'
+    >
+      <v-list-item
+        v-bind='props'
+        :title='item.title'
+        :subtitle='item.raw[description]'
+      >
+      </v-list-item>
+    </template>
+  </base-autocomplete>
+</template>
+
+<script setup lang='ts'>
+
+import BaseAutocomplete from '@/components/controls/base/BaseAutocomplete.vue';
+import { computed, onMounted } from 'vue';
+import { getValueFromModel, produceUpdateEvent } from '@/core/engine/utils';
+import { EngineDictionaryField } from '@/vocabulary/engine/controls';
+import { useDictionarySource } from '@/core/composables/useDictionarySource';
+
+
+const props = defineProps<{
+  schema: EngineDictionaryField;
+  model: object;
+}>();
+
+const localModel = computed({
+  get(): any {
+    return getValueFromModel(props.model, props.schema);
+  },
+  set(val: any) {
+    if (val === null) {
+      query.value = '';
+    }
+    produceUpdateEvent(val, props.schema);
+  },
+});
+
+const {
+  title,
+  value,
+  loading,
+  data,
+  returnObject,
+  description,
+  query,
+  lazy,
+  paginationOptions,
+  load,
+  loadMoreRecords,
+} = useDictionarySource(props.schema.source, props.model);
+
+onMounted(async () => {
+  await load();
+});
+
+function updateQuery(val: string) {
+  console.debug("updateQuery", val)
+  query.value = val;
+}
+</script>
+
+<style scoped lang='css'>
+
+</style>

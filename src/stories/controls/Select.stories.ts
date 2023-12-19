@@ -6,7 +6,7 @@ import { userEvent, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { VueSchemaForms } from '@/components';
 import { EngineSourceField } from '@/vocabulary/engine/controls';
-import { Source } from '@/vocabulary/schema/elements';
+import { SimpleSource } from '@/vocabulary/schema/elements';
 
 const meta = {
   title: 'Forms/Controls/Select',
@@ -255,11 +255,11 @@ export const GetOptionsFromAPI: Story = {
             },
           },
           source: {
-            api: '/api/v1/options',
+            url: '/api/v1/options',
             title: 'label',
             value: 'id',
             returnObject: true,
-          } as Source,
+          } as SimpleSource,
         },
       },
     } as Schema,
@@ -279,7 +279,7 @@ export const SimpleValidation: Story = {
 
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
-    const Submit = canvas.getByText("Validate");
+    const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
   },

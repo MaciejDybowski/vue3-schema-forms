@@ -43,6 +43,7 @@ export type SchemaComponent =
   | 'text-area'
   | 'select'
   | 'editable-section'
+  | 'dictionary'
 
 export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span';
 
@@ -63,11 +64,25 @@ export interface DuplicatedSectionOptions {
 }
 
 export interface Source {
-  api?: string;
-  items?: Array<any>;
   title?: string;
   value?: string;
   returnObject?: boolean;
+}
 
-  [key: string]: any;
+export interface SimpleSource extends Source {
+  url?: string;
+  items?: Array<any>;
+}
+
+export interface DictionarySource extends Source {
+  url: string;
+  description?: string
+  references?: ResponseReference;
+  itemsPerPage?: number
+  lazy?: boolean
+}
+
+export interface ResponseReference {
+  data: string,
+  totalElements: string
 }

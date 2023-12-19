@@ -234,7 +234,7 @@ export const GetOptionsFromAPI: Story = {
             },
           },
           source: {
-            api: "/api/v1/options",
+            url: "/api/v1/options",
             title: "label",
             value: "id",
             returnObject: true,

@@ -1,5 +1,5 @@
 import { EngineField } from "./index";
-import { Source } from "@/vocabulary/schema/elements";
+import { DictionarySource, Source } from '@/vocabulary/schema/elements';
 
 export interface EngineProps<T> {
   schema: T;
@@ -18,4 +18,7 @@ export interface EngineDuplicatedSection extends EngineField {}
 
 export interface EngineSourceField extends EngineField {
   source: Source;
+}
+export interface EngineDictionaryField extends EngineField {
+  source: DictionarySource
 }
