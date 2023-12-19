@@ -50,7 +50,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'src/main.ts'),
       },
-      external: ['vue', 'vue-i18n', 'vuetify', "vuedraggable"],
+      external: ['vue', 'vue-i18n', 'vuetify', "vuedraggable", 'axios'],
       output: {
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'main.css') return 'style.css';
