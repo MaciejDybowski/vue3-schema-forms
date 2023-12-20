@@ -15,6 +15,7 @@
     @loadMoreRecords='loadMoreRecords'
     :search='query'
     @update:search='updateQuery'
+    :no-filter='true'
   >
     <template
       #item='{ item, props}'
@@ -39,6 +40,7 @@ import { EngineDictionaryField } from '../../vocabulary/engine/controls';
 import { useDictionarySource } from '../../core/composables/useDictionarySource';
 import { useProps } from '../../core/composables/useProps';
 import { useRules } from '../../core/composables/useRules';
+import { da } from 'vuetify/locale';
 
 
 const props = defineProps<{
@@ -73,15 +75,24 @@ const {
   paginationOptions,
   load,
   loadMoreRecords,
+  singleOptionAutoSelect,
 } = useDictionarySource(props.schema.source, props.model);
 
 onMounted(async () => {
   await load();
+  if (data.value.length === 1 && singleOptionAutoSelect) {
+    localModel.value = data.value[0]
+  }
 });
 
 function updateQuery(val: string) {
-  console.debug('updateQuery', val);
-  query.value = val;
+  if (localModel.value === null) {
+    query.value = val;
+  } else if (val !== '' && val !== localModel.value[title]) {
+    query.value = val;
+  } else if (val !== '') {
+    query.value = localModel.value[title];
+  }
 }
 </script>
 

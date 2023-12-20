@@ -76,10 +76,11 @@ export interface SimpleSource extends Source {
 
 export interface DictionarySource extends Source {
   url: string;
-  description?: string
+  description?: string;
   references?: ResponseReference;
-  itemsPerPage?: number
-  lazy?: boolean
+  itemsPerPage?: number;
+  lazy?: boolean;
+  singleOptionAutoSelect?: boolean;
 }
 
 export interface ResponseReference {

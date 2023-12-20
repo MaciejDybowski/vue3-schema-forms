@@ -9,6 +9,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
     case "text-field":
       props = {
         ...defaultTextFieldProperties,
+        ...schema.options?.fieldProps,
         ...schema.options?.textFieldProps,
         ...schema.layout?.props,
       };
@@ -19,6 +20,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
     case "radio-button":
       props = {
         ...defaultRadioProps,
+        ...schema.options?.fieldProps,
         ...schema.options?.radioButtonProps,
         ...schema.layout?.props,
       };
@@ -26,6 +28,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
     case "checkbox":
       props = {
         ...defaultCheckboxProperties,
+        ...schema.options?.fieldProps,
         ...schema.options?.checkboxProps,
         ...schema.layout?.props,
       };
@@ -33,6 +36,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
     case "text-area":
       props = {
         ...defaultTextAreaProps,
+        ...schema.options?.fieldProps,
         ...schema.options?.textAreaProps,
         ...schema.layout?.props,
       };
@@ -40,6 +44,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
     case 'select':
       props = {
         ...defaultSelectProps,
+        ...schema.options?.fieldProps,
         ...schema.options?.selectProps,
         ...schema.layout?.props,
       };
