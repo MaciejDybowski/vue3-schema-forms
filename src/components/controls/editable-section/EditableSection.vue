@@ -21,11 +21,11 @@
 </template>
 
 <script setup lang='ts'>
-import { EngineField, NodeUpdateEvent } from '@/vocabulary/engine';
-import { computed, onUpdated, ref } from 'vue';
-import FormRoot from '@/components/engine/FormRoot.vue';
+import { EngineField, NodeUpdateEvent } from '../../../vocabulary/engine';
+import { computed, ref } from 'vue';
+import FormRoot from '../../engine/FormRoot.vue';
 import set from 'lodash/set';
-import { Schema } from '@/vocabulary/schema';
+import { Schema } from '../../../vocabulary/schema';
 
 const props = defineProps<{
   schema: EngineField;

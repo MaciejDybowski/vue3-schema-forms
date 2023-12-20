@@ -1,10 +1,10 @@
 import { DictionarySource, ResponseReference } from '@/vocabulary/schema/elements';
 
-import { Pagination } from '@/components/controls/base/Pagination';
+import { Pagination } from '../../components/controls/base/Pagination';
 import axios from 'axios';
 import { Ref, ref, watch } from 'vue';
-import { mapSliceTotalElements } from '@/components/controls/base/SliceResponse';
-import { useResolveVariables } from '@/core/composables/useResolveVariables';
+import { mapSliceTotalElements } from '../../components/controls/base/SliceResponse';
+import { useResolveVariables } from './useResolveVariables';
 import { debounce } from 'lodash';
 import get from 'lodash/get';
 

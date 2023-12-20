@@ -36,7 +36,7 @@
 <script setup lang='ts'>
 
 import { Pagination } from './Pagination';
-import { computed, onMounted, ref, useAttrs } from 'vue';
+import { computed, ref, useAttrs } from 'vue';
 
 const attrs = useAttrs();
 const props = withDefaults(

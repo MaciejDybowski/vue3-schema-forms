@@ -2,6 +2,8 @@
   <base-autocomplete
     :label='schema.label'
     v-model='localModel'
+    v-bind='vuetifyProps'
+    :rules='vuetifyRules'
     :item-title='title'
     :item-value='value'
     :items='data'
@@ -30,17 +32,22 @@
 
 <script setup lang='ts'>
 
-import BaseAutocomplete from '@/components/controls/base/BaseAutocomplete.vue';
+import BaseAutocomplete from './base/BaseAutocomplete.vue';
 import { computed, onMounted } from 'vue';
-import { getValueFromModel, produceUpdateEvent } from '@/core/engine/utils';
-import { EngineDictionaryField } from '@/vocabulary/engine/controls';
-import { useDictionarySource } from '@/core/composables/useDictionarySource';
+import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import { EngineDictionaryField } from '../../vocabulary/engine/controls';
+import { useDictionarySource } from '../../core/composables/useDictionarySource';
+import { useProps } from '../../core/composables/useProps';
+import { useRules } from '../../core/composables/useRules';
 
 
 const props = defineProps<{
   schema: EngineDictionaryField;
   model: object;
 }>();
+
+const vuetifyProps = useProps(props.schema, 'select');
+const vuetifyRules = useRules(props.schema);
 
 const localModel = computed({
   get(): any {
@@ -73,7 +80,7 @@ onMounted(async () => {
 });
 
 function updateQuery(val: string) {
-  console.debug("updateQuery", val)
+  console.debug('updateQuery', val);
   query.value = val;
 }
 </script>

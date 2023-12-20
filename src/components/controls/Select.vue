@@ -16,11 +16,11 @@
 <script setup lang='ts'>
 
 import { computed } from 'vue';
-import { bindClass, getValueFromModel, produceUpdateEvent } from '@/core/engine/utils';
-import { EngineSourceField } from '@/vocabulary/engine/controls';
-import { useProps } from '@/core/composables/useProps';
-import { useRules } from '@/core/composables/useRules';
-import { useSource } from '@/core/composables/useSource';
+import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import { EngineSourceField } from '../..//vocabulary/engine/controls';
+import { useProps } from '../../core/composables/useProps';
+import { useRules } from '../../core/composables/useRules';
+import { useSource } from '../../core/composables/useSource';
 
 const props = defineProps<{
   schema: EngineSourceField;
