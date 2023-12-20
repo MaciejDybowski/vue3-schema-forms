@@ -14,6 +14,7 @@ export interface EngineField {
 }
 
 export interface EngineOptions {
+  fieldProps: Record<string, any>
   textFieldProps: Record<string, any>;
   textAreaProps: Record<string, any>;
   radioButtonProps: Record<string, any>;

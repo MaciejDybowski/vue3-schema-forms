@@ -24,6 +24,7 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
   const responseReference: ResponseReference = source.references
     ? source.references
     : { data: 'content', totalElements: 'numberOfElements' } as ResponseReference;
+  const singleOptionAutoSelect = source.singleOptionAutoSelect ? source.singleOptionAutoSelect : false;
 
   let endpoint = { url: source.url, allVariablesResolved: true }; // default wrapper object
 
@@ -40,7 +41,23 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
     });
   }
 
-  let query = ref('');
+  /*
+    User search support.
+    queryInData prevents the http request from being executed when the selecta/autocomplete/combobox model is selected
+    Example:
+    1. user was searching currency "dollar".
+    2. he selected US dollar.
+    3. request query = US dollar will not execute.
+   */
+  const urlParts = endpoint.url.split('?');
+  const urlParams = new URLSearchParams(urlParts[1]);
+  let queryParam: any = '';
+  if (urlParams.has('query')) {
+    queryParam = urlParams.get('query');
+    urlParams.delete('query');
+  }
+
+  let query = ref(queryParam);
   watch(query, (value, oldValue) => {
     const queryInData = data.value.filter((item: any) => item[title] === value).length > 0;
     queryInData ? debounced.load.cancel() : debounced.load();
@@ -51,12 +68,14 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
       loading.value = true;
       paginationOptions.value.resetPage();
       const response = await axios.get(
-        endpoint.url, {
+        `${urlParts[0]}?${urlParams.toString()}`, {
           params: lazy.value ? {
             page: paginationOptions.value.getPage(),
             size: paginationOptions.value.getItemsPerPage(),
             query: query.value ? query.value : null,
-          } : {},
+          } : {
+            query: query.value ? query.value : null,
+          },
         },
       );
 
@@ -71,7 +90,7 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
     if (endpoint.allVariablesResolved) {
       loading.value = true;
       const response = await axios.get(
-        endpoint.url, {
+        `${urlParts[0]}?${urlParams.toString()}`, {
           params: {
             page: paginationOptions.value.getPage() + 1,
             size: paginationOptions.value.getItemsPerPage(),
@@ -87,7 +106,7 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
   };
 
   const debounced = {
-    load: debounce(load, 300),
+    load: debounce(load, 600),
   };
 
   return {
@@ -102,5 +121,6 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
     query,
     load,
     loadMoreRecords,
+    singleOptionAutoSelect,
   };
 }
