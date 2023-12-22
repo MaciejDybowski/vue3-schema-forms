@@ -26,7 +26,7 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
     : { data: 'content', totalElements: 'numberOfElements' } as ResponseReference;
   const singleOptionAutoSelect = source.singleOptionAutoSelect ? source.singleOptionAutoSelect : false;
 
-  let endpoint = { url: source.url, allVariablesResolved: true }; // default wrapper object
+  let endpoint = { resolvedText: source.url, allVariablesResolved: true }; // default wrapper object
 
   const isApiContainsDependency = source.url.match(new RegExp('{.*?}', 'g'));
   if (isApiContainsDependency !== null) {
@@ -34,7 +34,7 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
     watch(formModel, () => {
       endpoint = useResolveVariables(source.url, formModel);
       const temp = useResolveVariables(source.url, formModel);
-      if (temp.url !== endpoint.url) {
+      if (temp.resolvedText !== endpoint.resolvedText) {
         endpoint = temp;
         debounced.load();
       }
@@ -49,7 +49,7 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
     2. he selected US dollar.
     3. request query = US dollar will not execute.
    */
-  const urlParts = endpoint.url.split('?');
+  const urlParts = endpoint.resolvedText.split('?');
   const urlParams = new URLSearchParams(urlParts[1]);
   let queryParam: any = '';
   if (urlParams.has('query')) {
@@ -85,7 +85,7 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
     } else {
-      console.debug(`API call was blocked, not every variable from endpoint was resolved ${endpoint.url}`);
+      console.debug(`API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`);
     }
   };
   const loadMoreRecords = async () => {

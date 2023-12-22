@@ -1,22 +1,22 @@
 <template>
-  <div class="node-text-field">
+  <div class='node-text-field'>
     <v-text-field
-      v-model="localModel"
-      :label="schema.label"
-      v-bind="useProps(schema, 'text-field')"
-      :rules="vuetifyRules"
-      :class="bindClass(schema)"
+      v-model='localModel'
+      :label='schema.label'
+      v-bind="useProps(schema, model,'text-field')"
+      :rules='vuetifyRules'
+      :class='bindClass(schema)'
     />
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, onUpdated } from "vue";
-import { bindClass, getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
-import { EngineTextField } from "../../vocabulary/engine/controls";
-import { useCalculation } from "../../core/composables/useCalculation";
-import { useRules } from "../../core/composables/useRules";
-import { useProps } from "../../core/composables/useProps";
+<script setup lang='ts'>
+import { computed, onMounted } from 'vue';
+import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import { EngineTextField } from '../../vocabulary/engine/controls';
+import { roundToDecimal, useCalculation } from '../../core/composables/useCalculation';
+import { useRules } from '../../core/composables/useRules';
+import { useProps } from '../../core/composables/useProps';
 
 const props = defineProps<{
   schema: EngineTextField;
@@ -28,15 +28,17 @@ const localModel = computed({
     return getValueFromModel(props.model, props.schema);
   },
   set(val: any) {
-    val = props.schema.type === "number" ? parseNumberType(val) : val;
+    val = props.schema.type === 'number' ? parseNumberType(val) : val;
     produceUpdateEvent(val, props.schema);
   },
 });
 
 function parseNumberType(val: string): number | null {
   if (val) {
-    const valWithDot = val.replaceAll(",", ".");
-    return isNaN(parseFloat(valWithDot)) ? null : parseFloat(valWithDot);
+    const valWithDot = val.replaceAll(',', '.');
+    return isNaN(parseFloat(valWithDot))
+      ? null
+      : roundToDecimal(parseFloat(valWithDot), props.schema.options.digitsAfterDecimal);
   } else {
     return null;
   }
@@ -59,9 +61,9 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="css"></style>
+<style scoped lang='css'></style>
 
-<i18n lang="json">
+<i18n lang='json'>
 {
   "en": {},
   "pl": {}

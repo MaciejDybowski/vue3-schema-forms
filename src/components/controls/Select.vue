@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 
-const vuetifyProps = useProps(props.schema, 'select');
+const vuetifyProps = useProps(props.schema, props.model, 'select');
 const vuetifyRules = useRules(props.schema);
 
 const localModel = computed({

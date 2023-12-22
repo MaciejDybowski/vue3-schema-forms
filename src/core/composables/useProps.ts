@@ -1,12 +1,14 @@
-import { EngineField } from "@/vocabulary/engine";
-import { SchemaComponent } from "@/vocabulary/schema/elements";
-import { EngineTextField } from "@/vocabulary/engine/controls";
+import { EngineField } from '@/vocabulary/engine';
+import { SchemaComponent } from '@/vocabulary/schema/elements';
+import { EngineTextField } from '@/vocabulary/engine/controls';
+import { useResolveVariables } from '@/core/composables/useResolveVariables';
+import set from 'lodash/set';
 
-export function useProps(schema: EngineField, component: SchemaComponent): Record<string, string | number | boolean> {
+export function useProps(schema: EngineField, formModel: object, component: SchemaComponent): Record<string, string | number | boolean> {
   let props: Record<string, string | number | boolean> = {};
 
   switch (component) {
-    case "text-field":
+    case 'text-field':
       props = {
         ...defaultTextFieldProperties,
         ...schema.options?.fieldProps,
@@ -17,7 +19,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
         props.readOnly = true;
       }
       break;
-    case "radio-button":
+    case 'radio-button':
       props = {
         ...defaultRadioProps,
         ...schema.options?.fieldProps,
@@ -25,7 +27,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
         ...schema.layout?.props,
       };
       break;
-    case "checkbox":
+    case 'checkbox':
       props = {
         ...defaultCheckboxProperties,
         ...schema.options?.fieldProps,
@@ -33,7 +35,7 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
         ...schema.layout?.props,
       };
       break;
-    case "text-area":
+    case 'text-area':
       props = {
         ...defaultTextAreaProps,
         ...schema.options?.fieldProps,
@@ -48,34 +50,41 @@ export function useProps(schema: EngineField, component: SchemaComponent): Recor
         ...schema.options?.selectProps,
         ...schema.layout?.props,
       };
-      break
+      break;
     default:
-      console.warn("component is not recognized");
+      console.warn('component is not recognized');
   }
+
+  for (let [key, value] of Object.entries(props)) {
+    if (typeof value === 'string') {
+      set(props, key, useResolveVariables(value, formModel).resolvedText);
+    }
+  }
+
   return props;
 }
 
 const defaultTextFieldProperties = {
-  "hide-details": "auto",
-}
+  'hide-details': 'auto',
+};
 
 const defaultCheckboxProperties = {
-  density: "compact",
-  "hide-details": "auto",
+  density: 'compact',
+  'hide-details': 'auto',
   multiple: true,
 };
 
 const defaultRadioProps = {
-  density: "compact",
-  "hide-details": "auto"
+  density: 'compact',
+  'hide-details': 'auto',
 };
 
 const defaultTextAreaProps = {
   rows: 3,
-  "auto-grow": true,
-  "hide-details": "auto"
+  'auto-grow': true,
+  'hide-details': 'auto',
 };
 
 const defaultSelectProps = {
-  "hide-details": "auto"
-}
+  'hide-details': 'auto',
+};

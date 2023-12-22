@@ -4,14 +4,7 @@ import { Schema } from '@/vocabulary/schema';
 import { fireEvent, userEvent, within } from '@storybook/testing-library';
 import { VueSchemaForms } from '@/components';
 import { DictionarySource, SchemaSourceField } from '@/vocabulary/schema/elements';
-import {
-  PAGE_0,
-  PAGE_1,
-  PAGE_SEARCH_DOL,
-  REQUEST_NOT_LAZY,
-  REQUEST_PAGE_0_1,
-  REQUEST_SEARCH_DOL,
-} from '@/stories/controls/Dictionary/responses';
+import { REQUEST_NOT_LAZY, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from '@/stories/controls/Dictionary/responses';
 import { StoryTemplateWithValidation } from '@/stories/templates/story-template';
 import { expect } from '@storybook/jest';
 
@@ -220,27 +213,7 @@ export const Required: Story = {
   },
   parameters: {
     mockData: [
-      {
-        url: '/api/currencies?page=0&size=20',
-        method: 'GET',
-        status: 200,
-        response: (request) => {
-          const { body, searchParams } = request;
-          if (searchParams.page === '0' && searchParams.size === '20') {
-            return PAGE_0;
-          }
-          if (searchParams.page === '0' && searchParams.size === '20' && searchParams.query === 'Dol') {
-            return PAGE_1;
-          }
-          return 'no data';
-        },
-      },
-      {
-        url: '/api/currencies?page=0&size=20&query=Dol',
-        method: 'GET',
-        status: 200,
-        response: PAGE_SEARCH_DOL,
-      },
+      REQUEST_PAGE_0_1,
     ],
   },
 };

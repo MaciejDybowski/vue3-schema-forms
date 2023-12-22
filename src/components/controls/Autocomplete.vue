@@ -47,7 +47,7 @@ const props = defineProps<{
   model: object;
 }>();
 
-const vuetifyProps = useProps(props.schema, 'select');
+const vuetifyProps = useProps(props.schema, props.model, 'select');
 const vuetifyRules = useRules(props.schema);
 
 const localModel = computed({

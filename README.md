@@ -69,18 +69,11 @@ The documentation and some of the testing was based on the Storybook application
 
 
 ## ToDo List
-- [ ] Create many basics fields like data/radio/checkbox/combo etc.
+- [ ] Create date/datetime field
 - [ ] Use resolveDepsComposable for deps on fields
 - [ ] Create editable sections
 - [ ] Change to use Engine props (decomposition)
 - [ ] i18n [warnings] how to resolve message -> test on library
 
 In progress:
-- [ ] section
 - [ ] hide fields
-
-
-Przypadki testowe
-1. reset formularza - czy domyślne zostają
-2. reset formularza = null tam gdzie trzeba
-

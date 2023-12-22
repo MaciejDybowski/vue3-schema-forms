@@ -1,7 +1,7 @@
-import { ComputedRef, Ref, ref, unref, watch } from "vue";
-import { Expression, Value } from "expr-eval";
-import set from "lodash/set";
-import betterParser from "../engine/evalExprParser";
+import { ComputedRef, Ref, ref, unref, watch } from 'vue';
+import { Expression, Value } from 'expr-eval';
+import set from 'lodash/set';
+import betterParser from '../engine/evalExprParser';
 
 export function useCalculation(key: string, calculation: string, model: object, digitsAfterDecimal: ComputedRef<number>): number {
   // ref/unref computed value because were warning about override readonly computed value
@@ -44,7 +44,7 @@ function getDigitsAfterDecimal(actual: Ref<number>): number {
   }
 }
 
-function roundToDecimal(value: number, decimalPlaces: number): number {
-  const factor = Math.pow(10, decimalPlaces);
+export function roundToDecimal(value: number, decimalPlaces: number): number {
+  const factor = Math.pow(10, isNaN(decimalPlaces) ? 2 : decimalPlaces);
   return Math.round(value * factor) / factor;
 }
