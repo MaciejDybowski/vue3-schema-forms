@@ -3,6 +3,7 @@
     :label='schema.label'
     v-model='localModel'
     v-bind='vuetifyProps'
+    :class='bindClass(schema)'
     :rules='vuetifyRules'
     :item-title='title'
     :item-value='value'
@@ -35,13 +36,11 @@
 
 import BaseAutocomplete from './base/BaseAutocomplete.vue';
 import { computed, onMounted } from 'vue';
-import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
 import { EngineDictionaryField } from '../../vocabulary/engine/controls';
 import { useDictionarySource } from '../../core/composables/useDictionarySource';
 import { useProps } from '../../core/composables/useProps';
 import { useRules } from '../../core/composables/useRules';
-import { da } from 'vuetify/locale';
-
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -56,9 +55,7 @@ const localModel = computed({
     return getValueFromModel(props.model, props.schema);
   },
   set(val: any) {
-    if (val === null) {
-      query.value = '';
-    }
+    updateQuery(val)
     produceUpdateEvent(val, props.schema);
   },
 });
@@ -79,20 +76,15 @@ const {
 } = useDictionarySource(props.schema.source, props.model);
 
 onMounted(async () => {
-  await load();
+  localModel.value ? updateQuery(localModel.value[title]) : await load();
+
   if (data.value.length === 1 && singleOptionAutoSelect) {
-    localModel.value = data.value[0]
+    localModel.value = data.value[0];
   }
 });
 
 function updateQuery(val: string) {
-  if (localModel.value === null) {
-    query.value = val;
-  } else if (val !== '' && val !== localModel.value[title]) {
-    query.value = val;
-  } else if (val !== '') {
-    query.value = localModel.value[title];
-  }
+  query.value = val
 }
 </script>
 

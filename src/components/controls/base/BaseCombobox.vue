@@ -13,7 +13,6 @@
       />
     </template>
 
-
     <template #append-item>
       <div v-if='lazy && isNextPage'>
         <v-list-item
@@ -72,7 +71,6 @@ const isNextPage = computed(() => {
 });
 
 function loadMore(isIntersecting) {
-  console.log('Intersect :', isIntersecting);
   appending.value = isIntersecting;
   if (isIntersecting) {
     emit('loadMoreRecords');

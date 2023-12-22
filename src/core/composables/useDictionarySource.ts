@@ -11,12 +11,12 @@ import get from 'lodash/get';
 export function useDictionarySource(source: DictionarySource, formModel: object) {
   const title = source.title ? source.title : 'title';
   const value = source.value ? source.value : 'value';
-  const returnObject = source.returnObject ? source.returnObject : true;
+  const returnObject = source.returnObject !== undefined ? source.returnObject : true;
   const loading = ref(false);
   let data: Ref<Array<object>> = ref([]);
 
   // dictionary options
-  const lazy = ref(source.lazy ? source.lazy : true);
+  const lazy = ref(source.lazy !== undefined ? source.lazy : true);
   const description = source.description ? source.description : null;
   const paginationOptions = ref(source.itemsPerPage
     ? new Pagination(source.itemsPerPage)
@@ -59,8 +59,10 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
 
   let query = ref(queryParam);
   watch(query, (value, oldValue) => {
-    const queryInData = data.value.filter((item: any) => item[title] === value).length > 0;
-    queryInData ? debounced.load.cancel() : debounced.load();
+    if (value || (value === null && oldValue)) {
+      const queryInData = data.value.filter((item: any) => item[title] === value).length > 0;
+      queryInData ? debounced.load.cancel() : debounced.load();
+    }
   });
 
   const load = async () => {
@@ -72,9 +74,9 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
           params: lazy.value ? {
             page: paginationOptions.value.getPage(),
             size: paginationOptions.value.getItemsPerPage(),
-            query: query.value ? query.value : null,
+            query: query.value ? query.value : null
           } : {
-            query: query.value ? query.value : null,
+            query: query.value ? query.value : null
           },
         },
       );
@@ -94,7 +96,7 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
           params: {
             page: paginationOptions.value.getPage() + 1,
             size: paginationOptions.value.getItemsPerPage(),
-            query: query.value ? query.value : null,
+            query: query.value ? query.value : null
           },
         },
       );
