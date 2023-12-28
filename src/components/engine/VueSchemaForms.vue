@@ -1,6 +1,7 @@
 <template>
   <form-root
     v-if='!loading'
+    :form-id='formId'
     :model='modelValue'
     :schema='resolvedSchema'
     :options='options'
@@ -28,6 +29,7 @@ import Select from '../controls/Select.vue';
 import { formUpdateLogger } from '../../main';
 import EditableSection from '../controls/editable-section/EditableSection.vue';
 import Autocomplete from '../controls/Autocomplete.vue';
+import { useFormModelStore } from '@/store/formModelStore';
 
 // register components to VueInstance
 declare type Components = Record<string, Component>;
@@ -39,8 +41,8 @@ const components = {
   'checkbox': CheckboxButton,
   'text-area': TextArea,
   'select': Select,
-  "editable-section": EditableSection,
-  "dictionary": Autocomplete
+  'editable-section': EditableSection,
+  'dictionary': Autocomplete,
 } as Components;
 const instance = getCurrentInstance();
 for (const [name, comp] of Object.entries(components)) {
@@ -74,10 +76,16 @@ let loading = ref(true);
 const { locale, t } = useI18n();
 const resolvedSchema = ref({} as Schema);
 
+const formId = Math.random().toString().slice(2, 5);
+const formModelStore = useFormModelStore(formId);
+
 function updateModel(event: NodeUpdateEvent) {
   set(props.modelValue, event.key, event.value);
   emit('update:modelValue', props.modelValue);
-  if(formUpdateLogger){
+
+  formModelStore.updateFormModel(props.modelValue);
+
+  if (formUpdateLogger) {
     console.debug('[vue-schema-forms] =>', props.modelValue);
   }
 }

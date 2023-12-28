@@ -37,7 +37,7 @@ const props = defineProps<{
 }>();
 
 const resolvedContent = computed(() => {
-  return useResolveVariables(props.schema.content, props.model);
+  return useResolveVariables(props.schema.content, props.schema.formId);
 });
 </script>
 

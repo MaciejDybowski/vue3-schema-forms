@@ -2,7 +2,7 @@
   <base-autocomplete
     :label='schema.label'
     v-model='localModel'
-    v-bind='vuetifyProps'
+    v-bind="useProps(props.schema, props.model, 'select')"
     :class='bindClass(schema)'
     :rules='vuetifyRules'
     :item-title='title'
@@ -47,7 +47,6 @@ const props = defineProps<{
   model: object;
 }>();
 
-const vuetifyProps = useProps(props.schema, props.model, 'select');
 const vuetifyRules = useRules(props.schema);
 
 const localModel = computed({
@@ -73,7 +72,7 @@ const {
   load,
   loadMoreRecords,
   singleOptionAutoSelect,
-} = useDictionarySource(props.schema.source, props.model);
+} = useDictionarySource(props.schema.source, props.schema.formId);
 
 onMounted(async () => {
   localModel.value ? updateQuery(localModel.value[title]) : await load();

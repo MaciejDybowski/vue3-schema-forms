@@ -7,7 +7,7 @@ import { Cols } from '@/vocabulary/schema/elements';
 import set from 'lodash/set';
 
 export function produceUpdateEvent(val: any, schema: EngineField) {
-  const event: NodeUpdateEvent = { key: schema.key, value: val ? val : null };
+  const event: NodeUpdateEvent = { key: schema.key, value: val || val === 0 ? val : null };
   schema.on.input(event);
 }
 
@@ -19,6 +19,10 @@ export function getValueFromModel(model: object, schema: EngineField): any {
     set(schema, 'default', null);
     return defaultValue;
   }
+  if (value !== null) {
+    set(schema, 'default', null);
+  }
+
   return value;
 }
 

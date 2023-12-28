@@ -3,7 +3,7 @@
     <v-text-field
       v-model='localModel'
       :label='schema.label'
-      v-bind="useProps(schema, model,'text-field')"
+      v-bind="useProps(props.schema, props.model, 'text-field')"
       :rules='vuetifyRules'
       :class='bindClass(schema)'
     />
@@ -35,7 +35,7 @@ const localModel = computed({
 
 function parseNumberType(val: string): number | null {
   if (val) {
-    const valWithDot = val.replaceAll(',', '.');
+    const valWithDot = (val+"").replaceAll(',', '.');
     return isNaN(parseFloat(valWithDot))
       ? null
       : roundToDecimal(parseFloat(valWithDot), props.schema.options.digitsAfterDecimal);

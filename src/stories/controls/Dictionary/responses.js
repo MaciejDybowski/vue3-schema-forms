@@ -385,6 +385,20 @@ export const REQUEST_SEARCH_DOL = {
   response: PAGE_SEARCH_DOL,
 };
 
+export const REQUEST_SEARCH_TEST = {
+  url: '/api/currencies?page=0&size=20&test=Test',
+  method: 'GET',
+  status: 200,
+  response: PAGE_0,
+};
+
+export const REQUEST_SEARCH_DOLAR_AUSTRALIJSKI = {
+  url: '/api/currencies?page=0&size=20&query=Dolar australijski',
+  method: 'GET',
+  status: 200,
+  response: PAGE_SEARCH_DOL,
+};
+
 export const REQUEST_NOT_LAZY = {
   url: '/api/currencies',
   method: 'GET',

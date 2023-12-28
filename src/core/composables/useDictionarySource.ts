@@ -7,8 +7,10 @@ import { mapSliceTotalElements } from '../../components/controls/base/SliceRespo
 import { useResolveVariables } from './useResolveVariables';
 import { debounce } from 'lodash';
 import get from 'lodash/get';
+import { variableRegexp } from '@/core/engine/utils';
+import { useFormModelStore } from '@/store/formModelStore';
 
-export function useDictionarySource(source: DictionarySource, formModel: object) {
+export function useDictionarySource(source: DictionarySource, formId: string) {
   const title = source.title ? source.title : 'title';
   const value = source.value ? source.value : 'value';
   const returnObject = source.returnObject !== undefined ? source.returnObject : true;
@@ -28,12 +30,13 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
 
   let endpoint = { resolvedText: source.url, allVariablesResolved: true }; // default wrapper object
 
-  const isApiContainsDependency = source.url.match(new RegExp('{.*?}', 'g'));
+  const isApiContainsDependency = source.url.match(variableRegexp);
   if (isApiContainsDependency !== null) {
-    endpoint = useResolveVariables(source.url, formModel);
-    watch(formModel, () => {
-      endpoint = useResolveVariables(source.url, formModel);
-      const temp = useResolveVariables(source.url, formModel);
+    endpoint = useResolveVariables(source.url, formId);
+
+    const formModelStore = useFormModelStore(formId);
+    formModelStore.$subscribe((mutation, state) => {
+      const temp = useResolveVariables(source.url, formId);
       if (temp.resolvedText !== endpoint.resolvedText) {
         endpoint = temp;
         debounced.load();
@@ -49,15 +52,7 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
     2. he selected US dollar.
     3. request query = US dollar will not execute.
    */
-  const urlParts = endpoint.resolvedText.split('?');
-  const urlParams = new URLSearchParams(urlParts[1]);
-  let queryParam: any = '';
-  if (urlParams.has('query')) {
-    queryParam = urlParams.get('query');
-    urlParams.delete('query');
-  }
-
-  let query = ref(queryParam);
+  let query = ref('');
   watch(query, (value, oldValue) => {
     if (value || (value === null && oldValue)) {
       const queryInData = data.value.filter((item: any) => item[title] === value).length > 0;
@@ -69,14 +64,15 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
     if (endpoint.allVariablesResolved) {
       loading.value = true;
       paginationOptions.value.resetPage();
+      const { url, params } = prepareUrl();
       const response = await axios.get(
-        `${urlParts[0]}?${urlParams.toString()}`, {
+        `${url}?${params}`, {
           params: lazy.value ? {
             page: paginationOptions.value.getPage(),
             size: paginationOptions.value.getItemsPerPage(),
-            query: query.value ? query.value : null
+            query: query.value ? query.value : null,
           } : {
-            query: query.value ? query.value : null
+            query: query.value ? query.value : null,
           },
         },
       );
@@ -91,12 +87,13 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
   const loadMoreRecords = async () => {
     if (endpoint.allVariablesResolved) {
       loading.value = true;
+      const { url, params } = prepareUrl();
       const response = await axios.get(
-        `${urlParts[0]}?${urlParams.toString()}`, {
+        `${url}?${params}`, {
           params: {
             page: paginationOptions.value.getPage() + 1,
             size: paginationOptions.value.getItemsPerPage(),
-            query: query.value ? query.value : null
+            query: query.value ? query.value : null,
           },
         },
       );
@@ -110,6 +107,18 @@ export function useDictionarySource(source: DictionarySource, formModel: object)
   const debounced = {
     load: debounce(load, 600),
   };
+
+  function prepareUrl() {
+    let urlParts = endpoint.resolvedText.split('?');
+    let urlParams = new URLSearchParams(urlParts[1]);
+    if (urlParams.has('query')) {
+      query.value = urlParams.get('query') as string;
+      urlParams.delete('query');
+    }
+
+    return { url: urlParts[0], params: urlParams.toString() };
+  }
+
 
   return {
     title,

@@ -3,10 +3,14 @@ import { Meta, StoryObj } from '@storybook/vue3';
 import { VueSchemaForms } from '@/components';
 import { StoryTemplateWithValidation } from '@/stories/templates/story-template';
 import { Schema, SchemaOptions } from '@/vocabulary/schema';
-import { DictionarySource, SchemaField, SchemaSourceField } from '@/vocabulary/schema/elements';
+import { DictionarySource, SchemaField, SchemaSourceField, SchemaTextField } from '@/vocabulary/schema/elements';
 import { userEvent, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
-import { REQUEST_PAGE_0_1 } from '@/stories/controls/Dictionary/responses';
+import {
+  REQUEST_PAGE_0_1,
+  REQUEST_SEARCH_DOLAR_AUSTRALIJSKI,
+  REQUEST_SEARCH_TEST,
+} from '@/stories/controls/Dictionary/responses';
 
 const meta = {
   title: 'Forms/Tests',
@@ -81,10 +85,25 @@ export const UseFormVariablesInFieldProps: Story = {
   render: StoryTemplateWithValidation,
   args: {
     modelValue: {
-      firstName: 'Maciej',
+      //firstName: 'Maciej',
+      // currency: {
+      //   'id': 'AUD',
+      //   'label': 'Dolar australijski',
+      //   'digitsAfterDecimal': '2',
+      // },
+      items: [
+        { item: 'test', quantity: 3, price: 32.21 },
+      ],
     },
     schema: {
       properties: {
+        firstName: {
+          label: "Imię",
+          layout: {
+            component: "text-field",
+            cols: 3
+          }
+        },
         currency: {
           label: 'Currency',
           layout: {
@@ -102,23 +121,67 @@ export const UseFormVariablesInFieldProps: Story = {
           type: 'number',
           layout: {
             component: 'text-field',
-            cols: 2,
+            cols: 3,
             props: {
               suffix: '{currency.id}',
-              hint: "Digits after decimal = {currency.digitsAfterDecimal}",
-              "persistent-hint": true
+              hint: 'Digits after decimal = {currency.digitsAfterDecimal}',
+              'persistent-hint': true,
             },
           },
-        } as SchemaField,
+        } as SchemaTextField,
+        items: {
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                item: {
+                  label: 'Item',
+                  layout: { component: 'text-field', cols: 3 },
+                },
+                quantity: {
+                  label: 'Quantity',
+                  type: 'number',
+                  default: 1,
+                  layout: { component: 'text-field', cols: 3 },
+                },
+                price: {
+                  label: 'Price',
+                  type: 'number',
+                  layout: { component: 'text-field', cols: 3 },
+                  props: {
+                    suffix: '{currency.id}',
+                    'persistent-hint': true,
+                  },
+                },
+                summary: {
+                  label: 'Amount',
+                  type: 'number',
+                  layout: {
+                    component: 'text-field',
+                    cols: 3,
+                    props: {
+                      suffix: '{currency.id}',
+                      hint: 'Digits after decimal = {currency.digitsAfterDecimal}',
+                      'persistent-hint': true,
+                    },
+                  },
+                  calculation: 'quantity * price',
+                } as SchemaTextField,
+              },
+            },
+          },
+        },
       },
     } as Schema,
     options: {
-      digitsAfterDecimal: "{currency.digitsAfterDecimal}"
-    } as SchemaOptions
+      digitsAfterDecimal: '{currency.digitsAfterDecimal}',
+    } as SchemaOptions,
   },
   parameters: {
     mockData: [
+      REQUEST_SEARCH_TEST,
       REQUEST_PAGE_0_1,
+      REQUEST_SEARCH_DOLAR_AUSTRALIJSKI,
     ],
   },
 };

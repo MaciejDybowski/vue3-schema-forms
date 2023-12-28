@@ -1,24 +1,24 @@
 <template>
-  <v-row class="form-root">
+  <v-row class='form-root'>
     <form-node
-      v-for="node in nodes"
-      :key="node.key"
-      :model="model"
-      :schema="node"
+      v-for='node in nodes'
+      :key='node.key'
+      :model='model'
+      :schema='node'
     ></form-node>
   </v-row>
 </template>
 
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { Schema, SchemaOptions } from "../../vocabulary/schema";
+<script setup lang='ts'>
+import { onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { Schema, SchemaOptions } from '../../vocabulary/schema';
 
-import { EngineField, EngineOptions, NodeUpdateEvent } from "../../vocabulary/engine";
-import FormNode from "./FormNode.vue";
-import { SchemaField } from "../../vocabulary/schema/elements";
-import { useResolveDependency } from "../../core/composables/useResolveDependency";
-import { variableRegexp } from "../../core/engine/utils";
+import { EngineField, EngineOptions, NodeUpdateEvent } from '../../vocabulary/engine';
+import FormNode from './FormNode.vue';
+import { SchemaField } from '../../vocabulary/schema/elements';
+import { useResolveDependency } from '../../core/composables/useResolveDependency';
+import { variableRegexp } from '../../core/engine/utils';
 
 const { locale, t } = useI18n();
 
@@ -28,14 +28,14 @@ const props = defineProps<{
   schema: Schema;
   model: object;
   options?: SchemaOptions;
-  rootModel?: object;
+  formId: string
 }>();
 
 const emit = defineEmits<{
-  (e: "update:model", val: any): void;
+  (e: 'update:model', val: any): void;
 }>();
 
-function objectToArray(obj: Schema, prefix = ""): Array<EngineField> {
+function objectToArray(obj: Schema, prefix = ''): Array<EngineField> {
   const result: Array<EngineField> = [];
 
   for (const key in obj.properties) {
@@ -46,6 +46,7 @@ function objectToArray(obj: Schema, prefix = ""): Array<EngineField> {
       result.push(...nestedProperties);
     } else {
       result.push({
+        formId: props.formId,
         key: newKey,
         ...property,
         on: {
@@ -60,21 +61,21 @@ function objectToArray(obj: Schema, prefix = ""): Array<EngineField> {
 }
 
 function input(event: NodeUpdateEvent) {
-  emit("update:model", event);
+  emit('update:model', event);
 }
 
 onMounted(() => {
-  if (typeof props.options?.digitsAfterDecimal === "string" && variableRegexp.test(props.options.digitsAfterDecimal)) {
-    useResolveDependency("digitsAfterDecimal", props.options.digitsAfterDecimal.slice(1, -1), props.model, props.options);
+  if (typeof props.options?.digitsAfterDecimal === 'string' && variableRegexp.test(props.options.digitsAfterDecimal)) {
+    useResolveDependency('digitsAfterDecimal', props.options.digitsAfterDecimal.slice(1, -1), props.model, props.options);
   }
 
   nodes.value.push(...objectToArray(props.schema));
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang='scss'></style>
 
-<i18n lang="json">
+<i18n lang='json'>
 {
   "en": {},
   "pl": {}

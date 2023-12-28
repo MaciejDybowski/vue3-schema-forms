@@ -2,7 +2,7 @@
   <v-radio-group
     v-model='localModel'
     :label='schema.label'
-    v-bind='vuetifyProps'
+    v-bind="useProps(props.schema, props.model,'radio-button')"
     :rules='vuetifyRules'
     :class='bindClass(schema)'
     v-if='!loading'
@@ -12,7 +12,7 @@
       :key='option[value]'
     >
       <v-radio
-        v-bind='vuetifyProps'
+        v-bind="useProps(props.schema, props.model,'radio-button')"
         :value='option[value]'
         :class="index !== data.length - 1 && !vuetifyProps.inline ? 'mb-2' : ''"
       >
@@ -37,7 +37,7 @@ const props = defineProps<{
   model: object;
 }>();
 
-const vuetifyProps = useProps(props.schema, props.model,'radio-button');
+const vuetifyProps = useProps(props.schema, props.model, 'radio-button');
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 
 const localModel = computed({

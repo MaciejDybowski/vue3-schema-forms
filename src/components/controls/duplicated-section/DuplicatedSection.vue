@@ -19,7 +19,7 @@
             @update:model='updateModel($event, index)'
             :options='schema.options'
             :schema='element as Schema'
-            :root-model='model'
+            :form-id='schema.formId'
           />
           <draggable-context-menu
             :show='isHovering'
@@ -57,6 +57,7 @@ import { useI18n } from 'vue-i18n';
 import { DuplicatedSectionOptions, SchemaField } from '@/vocabulary/schema/elements';
 import { isArray } from 'lodash';
 import DuplicatedSectionItem from './DuplicatedSectionItem.vue';
+import set from 'lodash/set';
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;
@@ -76,8 +77,9 @@ const dragOptions = ref({
 const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedSectionOptions);
 
 function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
-  const obj = localModel.value[indexOfArray];
-  localModel.value[indexOfArray] = Object.assign({ ...obj, [event.key]: event.value });
+  //const obj = localModel.value[indexOfArray];
+  //localModel.value[indexOfArray] = Object.assign({ ...obj, [event.key]: event.value });
+  set(localModel.value[indexOfArray], event.key, event.value);
   produceUpdateEvent(localModel, props.schema);
 }
 
@@ -92,7 +94,7 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
       localModel.value = localModel.value.filter((item, i) => i !== index);
       return;
     default:
-      console.error('Unknown action di');
+      console.error('Unknown action');
   }
 }
 

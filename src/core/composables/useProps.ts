@@ -3,6 +3,7 @@ import { SchemaComponent } from '@/vocabulary/schema/elements';
 import { EngineTextField } from '@/vocabulary/engine/controls';
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import set from 'lodash/set';
+import { variableRegexp } from '@/core/engine/utils';
 
 export function useProps(schema: EngineField, formModel: object, component: SchemaComponent): Record<string, string | number | boolean> {
   let props: Record<string, string | number | boolean> = {};
@@ -56,8 +57,13 @@ export function useProps(schema: EngineField, formModel: object, component: Sche
   }
 
   for (let [key, value] of Object.entries(props)) {
-    if (typeof value === 'string') {
-      set(props, key, useResolveVariables(value, formModel).resolvedText);
+    if (typeof value === 'string' && variableRegexp.test(value)) {
+      const obj = useResolveVariables(value, schema.formId);
+      if (obj.allVariablesResolved) {
+        set(props, key, obj.resolvedText);
+      } else {
+        delete props[key];
+      }
     }
   }
 

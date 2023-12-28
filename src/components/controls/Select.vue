@@ -2,7 +2,7 @@
   <v-select
     v-model='localModel'
     :label='schema.label'
-    v-bind='vuetifyProps'
+    v-bind="useProps(props.schema, props.model, 'select')"
     :rules='vuetifyRules'
     :class='bindClass(schema)'
     :item-title='title'
@@ -28,7 +28,6 @@ const props = defineProps<{
 }>();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 
-const vuetifyProps = useProps(props.schema, props.model, 'select');
 const vuetifyRules = useRules(props.schema);
 
 const localModel = computed({
