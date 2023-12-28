@@ -35,7 +35,7 @@ export function useDictionarySource(source: DictionarySource, formId: string) {
     endpoint = useResolveVariables(source.url, formId);
 
     const formModelStore = useFormModelStore(formId);
-    formModelStore.$subscribe((mutation, state) => {
+    formModelStore.$subscribe(() => {
       const temp = useResolveVariables(source.url, formId);
       if (temp.resolvedText !== endpoint.resolvedText) {
         endpoint = temp;

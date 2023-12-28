@@ -53,26 +53,6 @@ function transformSchema() {
   console.debug('#TODO');
 }
 
-// check function performance
-function replaceComponent(jsonObj: any) {
-  if (typeof jsonObj === 'object' && jsonObj !== null) {
-    if (jsonObj.hasOwnProperty('component')) {
-      jsonObj['component'] = 'read-view';
-    }
-
-    for (var key in jsonObj) {
-      if (jsonObj.hasOwnProperty(key)) {
-        replaceComponent(jsonObj[key]);
-      }
-    }
-  } else if (Array.isArray(jsonObj)) {
-    for (var i = 0; i < jsonObj.length; i++) {
-      replaceComponent(jsonObj[i]);
-    }
-  }
-  return jsonObj;
-}
-
 </script>
 <style scoped lang='css'>
 .editable {
