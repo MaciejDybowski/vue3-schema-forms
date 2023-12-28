@@ -1,17 +1,19 @@
-import { Expression, Value } from "expr-eval";
-import { Ref, watch } from "vue";
-import betterParser from "../engine/evalExprParser";
+import { Expression, Value } from 'expr-eval';
+import { Ref } from 'vue';
+import betterParser from '../engine/evalExprParser';
+import { useFormModelStore } from '@/store/formModelStore';
 
-export function useConditionalRendering(condition: string, model: object, resultRef: Ref<Boolean>): void {
+export function useConditionalRendering(condition: string, formId: string, resultRef: Ref<Boolean>): void {
   let myExpr: Expression = betterParser.parse(condition);
+  const formModelStore = useFormModelStore(formId);
 
-  if (myExpr.variables().every((variable) => variable in model)) {
-    resultRef.value = myExpr.evaluate(model as Value);
+  if (myExpr.variables().every((variable) => variable in formModelStore.getFormModel)) {
+    resultRef.value = myExpr.evaluate(formModelStore.getFormModel as Value);
   }
 
-  watch(model, () => {
-    if (myExpr.variables().every((variable) => variable in model)) {
-      resultRef.value = myExpr.evaluate(model as Value);
+  formModelStore.$subscribe(() => {
+    if (myExpr.variables().every((variable) => variable in formModelStore.getFormModel)) {
+      resultRef.value = myExpr.evaluate(formModelStore.getFormModel as Value);
     }
   });
 }

@@ -38,7 +38,7 @@ const display = useDisplay();
 
 function checkRenderCondition() {
   if (props.schema.layout.if) {
-    useConditionalRendering(props.schema.layout.if, props.model, render);
+    useConditionalRendering(props.schema.layout.if, props.schema.formId, render);
   } else {
     render.value = true;
   }
