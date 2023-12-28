@@ -6,6 +6,7 @@
   <v-col
     :cols="getCols"
     v-if="render"
+    v-show='!(schema.layout.hide)'
   >
     <component
       :is="`node-${schema.layout.component}`"

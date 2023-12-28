@@ -25,6 +25,7 @@ export interface Layout {
   props?: Record<string, any>;
   fillRow?: boolean;
   offset?: number;
+  hide?: boolean;
 
   // duplicated-section && section
   schema?: Schema;

@@ -76,5 +76,3 @@ The documentation and some of the testing was based on the Storybook application
 - [ ] i18n [warnings] how to resolve message -> test on library
 
 In progress:
-- [ ] tests for calculations (even nested)
-- [ ] hide fields
