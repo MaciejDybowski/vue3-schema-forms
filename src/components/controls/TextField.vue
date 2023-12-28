@@ -34,8 +34,8 @@ const localModel = computed({
 });
 
 function parseNumberType(val: string): number | null {
-  if (val) {
-    const valWithDot = (val+"").replaceAll(',', '.');
+  if (val || parseFloat(val) == 0) {
+    const valWithDot = (val + '').replaceAll(',', '.');
     return isNaN(parseFloat(valWithDot))
       ? null
       : roundToDecimal(parseFloat(valWithDot), props.schema.options.digitsAfterDecimal);

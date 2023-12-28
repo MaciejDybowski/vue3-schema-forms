@@ -1,33 +1,33 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3";
-import { VueSchemaForms } from "@/components";
+import { Meta, StoryObj } from '@storybook/vue3';
+import { VueSchemaForms } from '@/components';
 import {
   calculationSchemaInDuplicatedSection,
   simpleCalculationSchema,
   simpleCalculationWithDynamicDigits,
-} from "@/stories/schemas";
-import { userEvent, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
-import { invoicePositionsSchema } from "@/tests/test-schemas";
+} from '@/stories/schemas';
+import { userEvent, within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
+import { invoicePositionsSchema } from '@/tests/test-schemas';
 
 const meta = {
-  title: "Forms/Features/Calculations",
+  title: 'Forms/Features/Calculations',
   component: VueSchemaForms,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
+      control: 'object',
+      description: 'Schema u' /*table: { disable: true }*/,
     },
     modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
+      control: 'object',
+      description: 'Model' /*table: { disable: true }*/,
     },
     options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
+      control: 'object',
+      description: 'Opcje' /*table: { disable: true }*/,
     },
-    "update:modelValue": { table: { disable: true } },
+    'update:modelValue': { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -52,7 +52,22 @@ type Story = StoryObj<typeof meta>;
  *  * dynamically, by providing the path to the value stored in the model `{currency.digitsAfterDecimal}` (e.g., a currency, which is an object and has the number of decimal places as a parameter). This will be demonstrated in the following examples.
  */
 export const SimpleCalculation: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const field1 = canvas.getByLabelText('Field 1');
+    const field2 = canvas.getByLabelText('Field 2');
+    await userEvent.type(field1, '2', { delay: 200 });
+    await userEvent.type(field2, '13.25', { delay: 200 });
+
+    await expect(context.args.modelValue).toEqual({
+      field1: 2,
+      field2: 13.25,
+      field3: 15.25,
+      field4: 232.56,
+    });
+  },
   args: {
+    modelValue: {},
     schema: simpleCalculationSchema,
   },
 };
@@ -61,7 +76,22 @@ export const SimpleCalculation: Story = {
  *  ```options.digitsAfterDecimal: 3 ``` static version
  */
 export const WithStaticDigitsOptions: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const field1 = canvas.getByLabelText('Field 1');
+    const field2 = canvas.getByLabelText('Field 2');
+    await userEvent.type(field1, '2', { delay: 200 });
+    await userEvent.type(field2, '13.25', { delay: 200 });
+
+    await expect(context.args.modelValue).toEqual({
+      field1: 2,
+      field2: 13.25,
+      field3: 15.25,
+      field4: 232.563,
+    });
+  },
   args: {
+    modelValue: {},
     schema: simpleCalculationSchema,
     options: {
       digitsAfterDecimal: 3,
@@ -73,6 +103,18 @@ export const WithStaticDigitsOptions: Story = {
  *  ```options.digitsAfterDecimal: {currency.digitsAfterDecimal} ``` Value set dynamically (max = 10) based on another value in the model.
  */
 export const WithDynamicDigitsOptions: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const digitsAfterDecimal = canvas.getByLabelText('Digits after decimal');
+    const resultSquare = canvas.getByLabelText('Result ^2');
+
+    await userEvent.clear(digitsAfterDecimal, { delay: 300 });
+    await userEvent.type(digitsAfterDecimal, '2', { delay: 300 });
+    expect(resultSquare).toHaveValue('0.14');
+    await userEvent.clear(digitsAfterDecimal, { delay: 300 });
+    await userEvent.type(digitsAfterDecimal, '4', { delay: 300 });
+    expect(resultSquare).toHaveValue('0.1406');
+  },
   args: {
     modelValue: {
       currency: {
@@ -83,20 +125,8 @@ export const WithDynamicDigitsOptions: Story = {
     },
     schema: simpleCalculationWithDynamicDigits,
     options: {
-      digitsAfterDecimal: "{currency.digitsAfterDecimal}",
+      digitsAfterDecimal: '{currency.digitsAfterDecimal}',
     },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const digitsAfterDecimal = canvas.getByLabelText("Digits after decimal");
-    const resultSquare = canvas.getByLabelText("Result ^2");
-
-    await userEvent.clear(digitsAfterDecimal, { delay: 300 });
-    await userEvent.type(digitsAfterDecimal, "2", { delay: 300 });
-    expect(resultSquare).toHaveValue("0.14");
-    await userEvent.clear(digitsAfterDecimal, { delay: 300 });
-    await userEvent.type(digitsAfterDecimal, "4", { delay: 300 });
-    expect(resultSquare).toHaveValue("0.1406");
   },
 };
 
@@ -104,6 +134,42 @@ export const WithDynamicDigitsOptions: Story = {
  * Heavy calculations
  */
 export const calculationInDuplicatedSchema: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const addButton = await canvas.findByRole('button', { name: 'Add' });
+    await userEvent.click(addButton);
+
+    const duplicatedSections = document.getElementsByClassName('duplicated-section-item');
+    await expect(duplicatedSections[1]).toBeInTheDocument();
+
+    const field1 = await within(duplicatedSections[1]).findByLabelText('Field 1');
+    const field2 = await within(duplicatedSections[1]).findByLabelText('Field 2');
+    await userEvent.type(field1, '3', { delay: 100 });
+    await userEvent.type(field2, '7.5', { delay: 100 });
+
+    const expectedModel = {
+      'digitsAfterDecimal': 4,
+      'items': [
+        {
+          'field1': 0.12544,
+          'field2': 2.45644,
+          'field3': 2.5819,
+          'field4': 6.6662,
+          'field5': 6.5408,
+          'field6': 2.7073,
+        },
+        {
+          'field3': 10.5,
+          'field4': 110.25,
+          'field5': 107.25,
+          'field6': 13.5,
+          'field1': 3,
+          'field2': 7.5,
+        },
+      ],
+    };
+    await expect(context.args.modelValue).toEqual(expectedModel);
+  },
   args: {
     modelValue: {
       digitsAfterDecimal: 4,
@@ -116,8 +182,8 @@ export const calculationInDuplicatedSchema: Story = {
     },
     schema: calculationSchemaInDuplicatedSection,
     options: {
-      digitsAfterDecimal: "{digitsAfterDecimal}",
-    },
+      digitsAfterDecimal: '{digitsAfterDecimal}',
+    } as SchemaOptions,
   },
 };
 
@@ -128,9 +194,9 @@ export const invoiceItems: Story = {
   args: {
     modelValue: {
       invoiceItems: [
-        { product: "Item 1", quantity: 2, netPrice: 90.5, tax: 0.18 },
-        { product: "Item 2", quantity: 5, netPrice: 88.3, tax: 0.07 },
-        { product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23 },
+        { product: 'Item 1', quantity: 2, netPrice: 90.5, tax: 0.18 },
+        { product: 'Item 2', quantity: 5, netPrice: 88.3, tax: 0.07 },
+        { product: 'Item 3', quantity: 6, netPrice: 113.55, tax: 0.23 },
       ],
     },
     schema: invoicePositionsSchema,

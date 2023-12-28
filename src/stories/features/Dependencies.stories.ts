@@ -3,17 +3,13 @@ import { Meta, StoryObj } from '@storybook/vue3';
 import { VueSchemaForms } from '@/components';
 import { StoryTemplateWithValidation } from '@/stories/templates/story-template';
 import { Schema, SchemaOptions } from '@/vocabulary/schema';
-import { DictionarySource, SchemaField, SchemaSourceField, SchemaTextField } from '@/vocabulary/schema/elements';
+import { DictionarySource, SchemaSourceField, SchemaTextField } from '@/vocabulary/schema/elements';
+import { REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI } from '@/stories/controls/Dictionary/responses';
 import { userEvent, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
-import {
-  REQUEST_PAGE_0_1,
-  REQUEST_SEARCH_DOLAR_AUSTRALIJSKI,
-  REQUEST_SEARCH_TEST,
-} from '@/stories/controls/Dictionary/responses';
 
 const meta = {
-  title: 'Forms/Tests',
+  title: 'Forms/Features/Dependencies',
   component: VueSchemaForms,
   tags: ['autodocs'],
   argTypes: {
@@ -44,66 +40,44 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const DefaultVariablesWhenReset: Story = {
+
+export const UseFormVariablesInFieldProps: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText('Field B');
-    await userEvent.type(field, 'This is standard text field...', { delay: 100 });
+    const currency = canvas.getByLabelText('Currency');
 
-    const Reset = canvas.getByText('Reset Form');
-    await userEvent.click(Reset, { delay: 200 });
+    await context.step('Resolve dependency', async () => {
+      await userEvent.click(currency, { pointerEventsCheck: 0, delay: 200 });
+      const items = document.getElementsByClassName('v-list-item');
+      await userEvent.click(items[0], { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({
-      fieldA: null,
-      fieldB: null,
+      const querySuffix = await canvas.findAllByText('AFN');
+      let queryHint = await canvas.findAllByText('Digits after decimal = 2');
+
+      await expect(querySuffix.length).toEqual(2);
+      await expect(queryHint.length).toEqual(2);
+    });
+
+    await context.step('Dynamic changed already resolved', async () => {
+      const items = document.getElementsByClassName('v-list-item');
+
+      await userEvent.click(currency, { pointerEventsCheck: 0, delay: 200 });
+      await userEvent.click(items[1], { delay: 200 });
+
+      const queryHint = await canvas.findAllByText('Digits after decimal = 3');
+      await expect(queryHint.length).toEqual(2);
     });
   },
   render: StoryTemplateWithValidation,
   args: {
-    modelValue: {},
-    schema: {
-      properties: {
-        fieldA: {
-          label: 'Field A',
-          default: 'Random text',
-          layout: {
-            component: 'text-field',
-          },
-        } as SchemaField,
-        fieldB: {
-          label: 'Field B',
-          layout: {
-            component: 'text-field',
-          },
-        } as SchemaField,
-      },
-    } as Schema,
-  },
-};
-
-export const UseFormVariablesInFieldProps: Story = {
-  render: StoryTemplateWithValidation,
-  args: {
     modelValue: {
-      //firstName: 'Maciej',
-      // currency: {
-      //   'id': 'AUD',
-      //   'label': 'Dolar australijski',
-      //   'digitsAfterDecimal': '2',
-      // },
+      amount: 32,
       items: [
-        { item: 'test', quantity: 3, price: 32.21 },
+        { item: 'Item 1', quantity: 3, price: 32.21 },
       ],
     },
     schema: {
       properties: {
-        firstName: {
-          label: "Imię",
-          layout: {
-            component: "text-field",
-            cols: 3
-          }
-        },
         currency: {
           label: 'Currency',
           layout: {
@@ -117,7 +91,7 @@ export const UseFormVariablesInFieldProps: Story = {
           } as DictionarySource,
         } as SchemaSourceField,
         amount: {
-          label: 'Amount',
+          label: 'Amount (outside)',
           type: 'number',
           layout: {
             component: 'text-field',
@@ -179,7 +153,6 @@ export const UseFormVariablesInFieldProps: Story = {
   },
   parameters: {
     mockData: [
-      REQUEST_SEARCH_TEST,
       REQUEST_PAGE_0_1,
       REQUEST_SEARCH_DOLAR_AUSTRALIJSKI,
     ],

@@ -9,7 +9,7 @@ export const PAGE_0 = {
     {
       'id': 'ALL',
       'label': 'Lek',
-      'digitsAfterDecimal': '2',
+      'digitsAfterDecimal': '3',
     },
     {
       'id': 'AMD',
