@@ -5,13 +5,14 @@ import typescript2 from 'rollup-plugin-typescript2';
 import dts from 'vite-plugin-dts';
 import { exec } from 'node:child_process';
 import * as path from 'path';
-import VueDevTools from 'vite-plugin-vue-devtools'
+import VueDevTools from 'vite-plugin-vue-devtools';
+
 export default defineConfig({
   plugins: [
     VueDevTools(),
     vue(),
     VueI18nPlugin({
-      include: path.resolve(__dirname, './src/locales/**')
+      include: path.resolve(__dirname, './src/locales/**'),
     }),
     dts({
       insertTypesEntry: true,
@@ -50,7 +51,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'src/main.ts'),
       },
-      external: ['vue', 'vue-i18n', 'vuetify', "vuedraggable", 'axios'],
+      external: ['vue', 'vue-i18n', 'vuetify', 'vuedraggable', 'axios', 'pinia'],
       output: {
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'main.css') return 'style.css';
@@ -63,6 +64,7 @@ export default defineConfig({
       },
     },
   },
+
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),

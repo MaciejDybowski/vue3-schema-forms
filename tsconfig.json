@@ -27,5 +27,6 @@
     "types": ["vite/client"] // for env variables
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["src/stories", "src/tests"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
