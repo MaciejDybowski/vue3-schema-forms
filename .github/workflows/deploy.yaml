@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:
@@ -16,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: build-publish
-        uses: bitovi/github-actions-storybook-to-github-pages@v1.0.0
+        uses: bitovi/github-actions-storybook-to-github-pages@v1.0.2
         with:
           path: dist-storybook
           build_command: npm run build-storybook
