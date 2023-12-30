@@ -3,6 +3,8 @@ import { Meta, StoryObj } from '@storybook/vue3';
 import { Schema } from '@/vocabulary/schema';
 import { VueSchemaForms } from '@/components';
 import { Layout } from '@/vocabulary/schema/elements';
+import { within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta = {
   title: 'Forms/Static content',
@@ -105,6 +107,10 @@ export const Examples: Story = {
 };
 
 export const TextWithVariablesAndHTML: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Hello Maciej Dybowski!')).toBeInTheDocument();
+  },
   args: {
     modelValue: {
       data: {
