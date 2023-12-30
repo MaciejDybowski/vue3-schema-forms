@@ -1,123 +1,82 @@
 // @ts-nocheck
-import SchemaEngine from '../components/app/SchemaEngine.vue';
-import { Meta, StoryObj } from '@storybook/vue3';
-import { ArgTypes } from '@storybook/types';
-import { Schema } from '@/vocabulary/schema';
-import { DictionarySource, SchemaSourceField } from '@/vocabulary/schema/elements';
+import DevelopmentTable from "../components/app/DevelopmentTable.vue";
+import {Meta, StoryObj} from '@storybook/vue3';
+import {ArgTypes} from '@storybook/types';
+import {Schema} from '@/vocabulary/schema';
+import {SchemaField} from '@/vocabulary/schema/elements';
 
 const meta = {
-  title: 'Development Page',
-  component: SchemaEngine,
-  argTypes: {
-    schema: { control: 'object', description: 'Schema u' },
-    model: { control: 'object', description: 'Model' },
-    options: { control: 'object', description: 'Opcje' },
-  } as Partial<ArgTypes<any>>,
-  args: {
-    options: {
-      textFieldProps: {
-        variant: 'outlined',
-        density: 'comfortable',
-      },
+    title: 'Development Page',
+    component: DevelopmentTable,
+    argTypes: {
+        schema: {control: 'object', description: 'Schema u'},
+        model: {control: 'object', description: 'Model'},
+        options: {control: 'object', description: 'Opcje'},
+    } as Partial<ArgTypes<any>>,
+    args: {
+        options: {
+            fieldProps: {
+                variant: 'outlined',
+                density: 'comfortable',
+            },
+        },
+        model: {},
     },
-    model: {},
-  },
-} satisfies Meta<typeof SchemaEngine>;
+} satisfies Meta<typeof DevelopmentTable>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 
 export const Table1: Story = {
-  parameters: {
-    mockData: [
-      {
-        url: 'http://10.16.72.9:8085/api/v1/ksef-invoices?param1=Maciek&page=0&size=20',
-        method: 'GET',
-        status: 200,
-        response: {
-          'content': [
-            {
-              'ksefReferenceNumber': '1854510877-20231213-4BEE88074DB1-0B',
-              'invoiceReferenceNumber': 'FV/2023/22',
-              'text': "asia"
+    args: {
+        model: {},
+        schema: {
+            type: 'object',
+            properties: {
+                test: {
+                    layout: {
+                        component: 'duplicated-section',
+                        schema: {
+                            properties: {
+                                product: {
+                                    label: "product",
+                                    layout: {component: "text-field"}
+                                }
+                            },
+                            required: ['product']
+                        }
+                    }
+                } as SchemaField,
+                field1: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field2: {label: 'First name', layout: {component: 'text-field'}} as SchemaField,
+                field3: {label: 'Last name', layout: {component: 'text-area', props: {counter: 10}}} as SchemaField,
+                field4: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field5: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field6: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field7: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field8: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field9: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field10: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field11: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field12: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field13: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field14: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field15: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field16: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field17: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field18: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field19: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field20: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field21: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field22: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field23: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field24: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
+                field25: {label: 'Field 1', layout: {component: 'text-field'}} as SchemaField,
             },
-            {
-              'ksefReferenceNumber': '1854510877-20231213-87863E46C331-62',
-              'invoiceReferenceNumber': 'FV/2023/23',
-              'text': "qwe"
-            },
-            {
-              'ksefReferenceNumber': '1854510877-20231213-3D94CDC7871A-65',
-              'invoiceReferenceNumber': 'FV/2023/24',
-              'text': "asia123"
-            },
-            {
-              'ksefReferenceNumber': '1854510877-20231213-A-65',
-              'invoiceReferenceNumber': 'test',
-              'text': "asia1232131"
-            },
-          ],
-          'pageable': {
-            'pageNumber': 0,
-            'pageSize': 20,
-            'sort': {
-              'unsorted': true,
-              'sorted': false,
-              'empty': true,
-            },
-            'offset': 0,
-            'paged': true,
-            'unpaged': false,
-          },
-          'numberOfElements': 4,
-          'size': 4,
-          'number': 0,
-          'sort': {
-            'unsorted': true,
-            'sorted': false,
-            'empty': true,
-          },
-          'first': true,
-          'last': true,
-          'empty': false,
-        },
-      },
-    ],
-  },
-  args: {
-    model: {
-      firstName: 'Maciek',
-
+            required: ['field3', 'field2'],
+        } as Schema,
     },
-    schema: {
-      type: 'object',
-      properties: {
-        firstName: {
-          label: 'Imię',
-          layout: { component: 'text-field' },
-        },
-        lastName: {
-          label: 'Nazwisko',
-          layout: { component: 'text-field' },
-        },
-        currency: {
-          label: 'Waluta',
-          layout: {
-            component: 'dictionary',
-          },
-          source: {
-            url: 'http://10.16.72.9:8085/api/v1/ksef-invoices?param1={firstName}',
-            title: 'invoiceReferenceNumber',
-            value: 'ksefReferenceNumber',
-            description: "text",
-
-          } as DictionarySource,
-        } as SchemaSourceField,
-      },
-
-    } as Schema,
-  },
 };
 
 

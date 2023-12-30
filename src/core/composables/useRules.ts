@@ -16,7 +16,7 @@ export function useRules(schema: EngineField): any[] {
   if (schema.layout.props && 'counter' in schema.layout.props) {
     const props = schema.layout.props;
     rules.push((value: string) => {
-      return value.length <= props.counter || t('counter', { counter: props.counter });
+      return value?.length <= props.counter || t('counter', { counter: props.counter });
     });
   }
 

@@ -1,8 +1,8 @@
 // @ts-nocheck
-import { StoryFn } from "@storybook/vue3";
+import { StoryFn } from '@storybook/vue3';
 
-import { defineComponent, ref } from "vue";
-import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
+import { defineComponent, ref } from 'vue';
+import VueSchemaForms from '@/components/engine/VueSchemaForms.vue';
 
 export default defineComponent({
   components: { VueSchemaForms },
@@ -14,7 +14,15 @@ export const StoryTemplate: StoryFn<typeof VueSchemaForms> = (args: any, { argTy
   setup(args) {
     return { args };
   },
-  template: '<vue-schema-forms :schema="args.schema" v-model="args.model" :options="args.options"/>',
+  template: `
+    <v-container class='mx-2'>
+      <vue-schema-forms
+        v-model='args.model'
+        :schema='args.schema'
+        :options='args.options'
+      />
+    </v-container>
+  `,
 });
 
 export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (args: any, { argTypes }) => ({
@@ -23,86 +31,66 @@ export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (args
   setup(args) {
     const form = ref();
     const model = ref(args.modelValue);
-    const validationResult = ref(false);
-
-    async function validate() {
-      const { valid } = await form.value.validate();
-      validationResult.value = valid;
-    }
-
-    function reset() {
-      form.value.reset();
-      validationResult.value = false;
-    }
-
-    function resetValidation() {
-      form.value.resetValidation();
-      validationResult.value = false;
-    }
-
     return {
       args,
-      validate,
-      reset,
-      resetValidation,
       form,
       model,
-      validationResult,
     };
   },
   template: `
-    <v-form ref='form'>
+    <v-container class='mx-2'>
       <vue-schema-forms
-        :schema='args.schema'
         v-model='model'
+        :schema='args.schema'
         :options='args.options'
-      />
-      <v-row>
-        <v-col
-          cols='12'
-          class='d-flex flex-column'
-        >
-          <div class='d-flex align-center'>
-            <v-btn
-              color='success'
-              @click='validate'
-              width='200'
-            >
-              Validate
-            </v-btn>
-            <v-expand-transition>
-              <div
-                v-if='validationResult'
-                class='ml-2'
+        :default-form-actions='true'
+        :validation-behaviour="'messages'"
+      >
+      </vue-schema-forms>
+    </v-container>
+  `,
+});
+
+
+export const StoryTemplateWithCustomValidation: StoryFn<typeof VueSchemaForms> = (args: any, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  components: { VueSchemaForms },
+  setup(args) {
+    const myForm = ref();
+    const model = ref(args.modelValue);
+
+    async function validate() {
+      const valid = await myForm.value.validate();
+      window.alert('Validation result: ' + valid);
+    }
+
+    return {
+      myForm,
+      args,
+      validate,
+      model,
+    };
+  },
+  template: `
+    <v-container class='mx-2'>
+      <vue-schema-forms
+        ref='myForm'
+        v-model='model'
+        :schema='args.schema'
+        :options='args.options'
+      >
+        <template #formActions>
+          <v-row>
+            <v-col>
+              <v-btn color='primary'
+                     @click='validate'
               >
-                <v-icon color='green'>
-                  mdi-check-circle-outline
-                </v-icon>
-                <span>Form is valid</span>
-              </div>
-            </v-expand-transition>
-
-          </div>
-          <v-btn
-            color='error'
-            class='mt-4'
-            @click='reset'
-            width='200'
-          >
-            Reset Form
-          </v-btn>
-
-          <v-btn
-            color='warning'
-            class='mt-4'
-            @click='resetValidation'
-            width='200'
-          >
-            Reset Validation
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
-
+                Submit
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+      </vue-schema-forms>
+    </v-container>
   `,
 });
