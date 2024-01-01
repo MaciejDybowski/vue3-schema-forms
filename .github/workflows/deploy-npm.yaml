@@ -1,9 +1,8 @@
-name: publish to npm
+name: Publish new version of library to NPM repository
 on:
   push:
     branches:
       - "master"
-      - "dev"
 jobs:
   build:
     runs-on: ubuntu-latest
