@@ -3,7 +3,7 @@
     <v-text-field
       v-model='localModel'
       :label='schema.label'
-      v-bind="useProps(props.schema, props.model, 'text-field')"
+      v-bind="useProps(schema)"
       :rules='vuetifyRules'
       :class='bindClass(schema)'
     />

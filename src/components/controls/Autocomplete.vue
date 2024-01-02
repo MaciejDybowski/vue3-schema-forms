@@ -2,7 +2,7 @@
   <base-autocomplete
     :label='schema.label'
     v-model='localModel'
-    v-bind="useProps(props.schema, props.model, 'select')"
+    v-bind="useProps(schema)"
     :class='bindClass(schema)'
     :rules='vuetifyRules'
     :item-title='title'

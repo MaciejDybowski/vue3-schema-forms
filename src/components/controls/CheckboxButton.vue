@@ -12,7 +12,7 @@
     >
       <v-checkbox
         v-model='localModel'
-        v-bind="useProps(schema, model, 'checkbox')"
+        v-bind="useProps(schema)"
         :rules='vuetifyRules'
         :label='option[title]'
         :value='option[value]'

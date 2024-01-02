@@ -2,7 +2,7 @@
   <v-select
     v-model='localModel'
     :label='schema.label'
-    v-bind="useProps(props.schema, props.model, 'select')"
+    v-bind="useProps(schema)"
     :rules='vuetifyRules'
     :class='bindClass(schema)'
     :item-title='title'

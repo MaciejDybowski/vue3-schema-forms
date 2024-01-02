@@ -2,7 +2,7 @@
   <v-radio-group
     v-model='localModel'
     :label='schema.label'
-    v-bind="useProps(props.schema, props.model,'radio-button')"
+    v-bind="useProps(schema)"
     :rules='vuetifyRules'
     :class='bindClass(schema)'
     v-if='!loading'
@@ -12,7 +12,7 @@
       :key='option[value]'
     >
       <v-radio
-        v-bind="useProps(props.schema, props.model,'radio-button')"
+        v-bind="useProps(schema)"
         :value='option[value]'
         :class="index !== data.length - 1 && !vuetifyProps.inline ? 'mb-2' : ''"
       >

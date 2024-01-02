@@ -1,14 +1,13 @@
 import { EngineField } from '@/vocabulary/engine';
-import { SchemaComponent } from '@/vocabulary/schema/elements';
 import { EngineTextField } from '@/vocabulary/engine/controls';
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import set from 'lodash/set';
 import { variableRegexp } from '@/core/engine/utils';
 
-export function useProps(schema: EngineField, formModel: object, component: SchemaComponent): Record<string, string | number | boolean> {
+export function useProps(schema: EngineField): Record<string, string | number | boolean> {
   let props: Record<string, string | number | boolean> = {};
 
-  switch (component) {
+  switch (schema.layout.component) {
     case 'text-field':
       props = {
         ...defaultTextFieldProperties,
@@ -53,7 +52,11 @@ export function useProps(schema: EngineField, formModel: object, component: Sche
       };
       break;
     default:
-      console.warn('component is not recognized');
+      props = {
+        ...schema.options?.fieldProps,
+        ...schema.layout?.props,
+      };
+    //console.warn('component is not recognized - used default props');
   }
 
   for (let [key, value] of Object.entries(props)) {

@@ -3,7 +3,7 @@
     v-model='localModel'
     :label='schema.label'
     :rules='vuetifyRules'
-    v-bind="useProps(schema, model,'text-area')"
+    v-bind="useProps(schema)"
     :class='bindClass(schema)'
   />
 </template>
