@@ -45,6 +45,7 @@ export type SchemaComponent =
   | 'select'
   | 'editable-section'
   | 'dictionary'
+  | 'date-picker'
 
 export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span';
 

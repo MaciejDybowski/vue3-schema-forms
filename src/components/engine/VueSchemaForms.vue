@@ -47,6 +47,7 @@ import Autocomplete from '../controls/Autocomplete.vue';
 import {useFormModelStore} from '@/store/formModelStore';
 import {FormItem, ValidationBehaviour, ValidationError} from '../../vocabulary/engine/formValidation';
 import FormDefaultActions from "@/components/app/FormDefaultActions.vue";
+import DatePicker from '@/components/controls/date/DatePicker.vue';
 
 // register components to VueInstance
 declare type Components = Record<string, Component>;
@@ -60,6 +61,7 @@ const components = {
   'select': Select,
   'editable-section': EditableSection,
   'dictionary': Autocomplete,
+  "date-picker": DatePicker
 } as Components;
 const instance = getCurrentInstance();
 for (const [name, comp] of Object.entries(components)) {
