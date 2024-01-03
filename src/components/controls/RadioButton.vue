@@ -37,7 +37,7 @@ const props = defineProps<{
   model: object;
 }>();
 
-const vuetifyProps = useProps(props.schema, props.model, 'radio-button');
+const vuetifyProps = useProps(props.schema);
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 
 const localModel = computed({
