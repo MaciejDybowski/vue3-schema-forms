@@ -53,6 +53,7 @@ export function useProps(schema: EngineField): Record<string, string | number | 
       break;
     default:
       props = {
+        'hide-details': 'auto',
         ...schema.options?.fieldProps,
         ...schema.layout?.props,
       };

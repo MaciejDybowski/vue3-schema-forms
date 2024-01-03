@@ -1,10 +1,9 @@
 <template>
   <v-menu
-    v-model='menu'
     :close-on-content-click='false'
     offset-y
   >
-    <template v-slot:activator='{ props }'>
+    <template v-slot:activator='{ isActive, props }'>
       <v-text-field
         :label='schema.label'
         v-model='textFieldDate'
@@ -12,8 +11,10 @@
         v-bind='{...props, ...useProps(schema)}'
         append-inner-icon='mdi-calendar'
         v-maska:[maskOptions]
+        :rules='useRules(schema)'
       ></v-text-field>
     </template>
+
     <v-date-picker
       v-model='pickerDate'
       @update:modelValue='transformTextFieldDate'
@@ -26,7 +27,7 @@
 
 <script setup lang='ts'>
 
-import { computed, ref, Ref } from 'vue';
+import { computed, onMounted, ref, Ref } from 'vue';
 import { EngineSourceField } from '@/vocabulary/engine/controls';
 import { useProps } from '@/core/composables/useProps';
 
@@ -34,12 +35,15 @@ import { vMaska } from 'maska';
 import { getValueFromModel, produceUpdateEvent } from '@/core/engine/utils';
 import { onClickOutside } from '@vueuse/core';
 import dayjs from './dayjs';
+import { useRules } from '@/core/composables/useRules';
 
 const props = defineProps<{ schema: EngineSourceField; model: object; }>();
+const dateFormat = 'DD/MM/YYYY';
 
 const localModel = computed({
-  get(): string {
-    return dayjs(getValueFromModel(props.model, props.schema)).tz().format('L');
+  get(): string | null {
+    const value = getValueFromModel(props.model, props.schema);
+    return value ? dayjs(value).tz().format(dateFormat) : null;
   },
   set(val: any) {
     produceUpdateEvent(val ? new Date(val).toISOString() : null, props.schema);
@@ -52,7 +56,7 @@ const pickerDate: Ref<Date | undefined> = ref();
 const textFieldDate = ref('');
 
 function transformTextFieldDate() {
-  localModel.value = textFieldDate.value = dayjs(pickerDate.value).tz().format('L');
+  localModel.value = textFieldDate.value = dayjs(pickerDate.value).tz().format(dateFormat);
 }
 
 function tryMatchToDate() {
@@ -69,6 +73,12 @@ function tryMatchToDate() {
 const calendar = ref();
 onClickOutside(calendar, () => {
   menu.value = false;
+});
+
+onMounted(() => {
+  if (localModel.value) {
+    textFieldDate.value = localModel.value;
+  }
 });
 
 </script>
