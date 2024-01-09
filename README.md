@@ -91,7 +91,7 @@ const schema = ref({
 5. Submit a pull request
 
 ## ToDo List
-
+- [ ] Signal for form is ready (for autosave but after initial model changes)
 - [ ] Create date/datetime field
 - [ ] Use resolveDepsComposable for deps on fields
 - [ ] Create editable sections

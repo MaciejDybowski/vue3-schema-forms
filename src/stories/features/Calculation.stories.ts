@@ -9,6 +9,8 @@ import {
 import { userEvent, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { invoicePositionsSchema } from '@/tests/test-schemas';
+import { Layout, SchemaTextField } from '../../vocabulary/schema/elements';
+import { Schema } from '../../vocabulary/schema';
 
 const meta = {
   title: 'Forms/Features/Calculations',
@@ -200,5 +202,100 @@ export const invoiceItems: Story = {
       ],
     },
     schema: invoicePositionsSchema,
+  },
+};
+
+export const SUM_function: Story = {
+  play: async (context) => {
+    await expect(context.args.modelValue).toEqual({
+      data: {
+        items: [
+          {
+            product: 'Computer',
+            quantity: 1,
+            price: 3200,
+            value: 3200
+          },
+          {
+            product: 'Laptop',
+            quantity: 2,
+            price: 1334.23,
+            value: 2668.46
+          },
+        ],
+      },
+      summary: {
+        sumValue: 5568.46,
+      },
+    });
+  },
+  args: {
+    modelValue: {
+      data: {
+        items: [
+          {
+            product: 'Computer',
+            quantity: 1,
+            price: 3200,
+          },
+          {
+            product: 'Laptop',
+            quantity: 2,
+            price: 1334.23,
+          },
+        ],
+      },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        description: {
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+          content: 'In order for there to be a summation option along with the operation of other calculation functions, "precalculations" were added when preparing the final expression. <br> The function accepts two parameters: <br> 1. Path to the variable to be summed <br>  2. Path to the variable, which is an array of data',
+        },
+        data: {
+          properties: {
+            items: {
+              layout: {
+                component: 'duplicated-section',
+                schema: {
+                  properties: {
+                    product: { label: 'Product', layout: { component: 'text-field', cols: 4 } },
+                    quantity: {
+                      label: 'Quantity',
+                      type: 'number',
+                      default: 1,
+                      layout: { component: 'text-field', cols: 2 },
+                    },
+                    price: { label: 'Price', type: 'number', layout: { component: 'text-field', cols: 3 } },
+                    value: {
+                      label: 'Value',
+                      type: 'number',
+                      layout: { component: 'text-field', cols: 3 },
+                      calculation: 'quantity * price',
+                    } as SchemaTextField,
+                  },
+                },
+              } as Layout,
+            },
+          },
+        },
+        summary: {
+          properties: {
+            sumValue: {
+              label: 'SUM(Value)-300',
+              layout: {
+                component: 'text-field',
+                cols: 4,
+              },
+              calculation: 'SUM(value, data.items) - 300',
+            } as SchemaTextField,
+          },
+        },
+      },
+    } as Schema,
   },
 };

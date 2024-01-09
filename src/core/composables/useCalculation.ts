@@ -1,7 +1,7 @@
 import { ComputedRef, Ref, ref, unref, watch } from 'vue';
 import { Expression, Value } from 'expr-eval';
 import set from 'lodash/set';
-import betterParser from '../engine/evalExprParser';
+import betterParser, { SUM } from '../engine/evalExprParser';
 
 export function useCalculation(key: string, calculation: string, model: object, digitsAfterDecimal: ComputedRef<number>): number {
   // ref/unref computed value because were warning about override readonly computed value
@@ -9,25 +9,34 @@ export function useCalculation(key: string, calculation: string, model: object, 
     ? ref(2)
     : ref(unref(getDigitsAfterDecimal(digitsAfterDecimal)));
   let result = ref(0);
-  let myExpr: Expression = betterParser.parse(calculation);
+  let originalCalc = calculation;
+
+  let myExpr: Expression = prepareCalcExpression(calculation, model);
   if (myExpr.variables().every((variable) => variable in model)) {
     result.value = myExpr.evaluate(model as Value);
   }
 
   watch(model, () => {
-    if (myExpr.variables().every((variable) => variable in model)) {
-      result.value = myExpr.evaluate(model as Value);
-      set(model, key, roundToDecimal(result.value, digitsAfterDecimalLocal.value));
-    }
+    myExpr = prepareCalcExpression(originalCalc, model);
+    executeCalc();
   });
 
   watch(digitsAfterDecimal, () => {
     digitsAfterDecimalLocal.value = getDigitsAfterDecimal(digitsAfterDecimal);
+    executeCalc();
+  });
+
+  function executeCalc(): void {
     if (myExpr.variables().every((variable) => variable in model)) {
       result.value = myExpr.evaluate(model as Value);
       set(model, key, roundToDecimal(result.value, digitsAfterDecimalLocal.value));
     }
-  });
+  }
+
+  function prepareCalcExpression(calculation: string, model: object): Expression {
+    calculation = SUM(calculation, model);
+    return betterParser.parse(calculation);
+  }
 
   return roundToDecimal(result.value, digitsAfterDecimalLocal.value);
 }
