@@ -3,9 +3,11 @@
     <v-text-field
       v-model='localModel'
       :label='schema.label'
-      v-bind="useProps(schema)"
-      :rules='vuetifyRules'
+      v-bind='useProps(schema)'
+      :rules='rules(schema)'
       :class='bindClass(schema)'
+      @focusout='focusout'
+      @focusin='focusin'
     />
   </div>
 </template>
@@ -14,45 +16,50 @@
 import { computed, onMounted } from 'vue';
 import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
 import { EngineTextField } from '../../vocabulary/engine/controls';
-import { roundToDecimal, useCalculation } from '../../core/composables/useCalculation';
+import { useCalculation } from '../../core/composables/useCalculation';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
+import { useFormattedNumber } from '../../core/composables/useFormattedNumber';
 
 const props = defineProps<{
   schema: EngineTextField;
   model: object;
 }>();
 
+const { rules } = useRules();
+const isNumberField = props.schema.type === 'number';
+const { showFormattedNumber, formatNumber, parseNumberType } = useFormattedNumber(props.schema.options);
+
 const localModel = computed({
   get(): string | number {
-    return getValueFromModel(props.model, props.schema);
+    return isNumberField && showFormattedNumber.value
+      ? formatNumber(getValueFromModel(props.model, props.schema))
+      : getValueFromModel(props.model, props.schema);
   },
   set(val: any) {
-    val = props.schema.type === 'number' ? parseNumberType(val) : val;
+    val = isNumberField
+      ? parseNumberType(val, props.schema.options.digitsAfterDecimal)
+      : val;
     produceUpdateEvent(val, props.schema);
   },
 });
 
-function parseNumberType(val: string): number | null {
-  if (val || parseFloat(val) == 0) {
-    const valWithDot = (val + '').replaceAll(',', '.');
-    return isNaN(parseFloat(valWithDot))
-      ? null
-      : roundToDecimal(parseFloat(valWithDot), props.schema.options.digitsAfterDecimal);
-  } else {
-    return null;
+function focusout() {
+  if (isNumberField) {
+    showFormattedNumber.value = true;
   }
 }
 
-const digitsAfterDecimal = computed(() => {
-  return props.schema.options.digitsAfterDecimal;
-});
+function focusin() {
+  if (isNumberField) {
+    showFormattedNumber.value = false;
+  }
+}
 
-const vuetifyRules = useRules(props.schema);
 
 function runCalculationIfExist() {
   if (props.schema.calculation) {
-    localModel.value = useCalculation(props.schema.key, props.schema.calculation, props.model, digitsAfterDecimal);
+    localModel.value = useCalculation(props.schema.key, props.schema.calculation, props.model, props.schema.options);
   }
 }
 

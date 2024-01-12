@@ -50,7 +50,7 @@ type Story = StoryObj<typeof meta>;
  *
  * ##### We know that rounding is an important aspect when working with numbers :)
  * The form allows adjusting the number of decimal places using the parameter `digitsAfterDecimal`, which can be set in two ways:
- *  * statically, using the form option `options.digitsAfterDecimal: number` (max = 10)
+ *  * statically, using the form option `options.digitsAfterDecimal: number`
  *  * dynamically, by providing the path to the value stored in the model `{currency.digitsAfterDecimal}` (e.g., a currency, which is an object and has the number of decimal places as a parameter). This will be demonstrated in the following examples.
  */
 export const SimpleCalculation: Story = {
@@ -82,8 +82,8 @@ export const WithStaticDigitsOptions: Story = {
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText('Field 1');
     const field2 = canvas.getByLabelText('Field 2');
-    await userEvent.type(field1, '2', { delay: 200 });
-    await userEvent.type(field2, '13.25', { delay: 200 });
+    await userEvent.type(field1, '2');
+    await userEvent.type(field2, '13.25');
 
     await expect(context.args.modelValue).toEqual({
       field1: 2,
@@ -102,7 +102,7 @@ export const WithStaticDigitsOptions: Story = {
 };
 
 /**
- *  ```options.digitsAfterDecimal: {currency.digitsAfterDecimal} ``` Value set dynamically (max = 10) based on another value in the model.
+ *  ```options.digitsAfterDecimal: {currency.digitsAfterDecimal} ``` Value set dynamically based on another value in the model.
  */
 export const WithDynamicDigitsOptions: Story = {
   play: async ({ canvasElement }) => {
