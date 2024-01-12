@@ -8,7 +8,7 @@
         :label='schema.label'
         v-model='textFieldDate'
         @update:modelValue='tryMatchToDate'
-        v-bind='{...props, ...useProps(schema)}'
+        v-bind='{...props, ...bindProps(schema)}'
         append-inner-icon='mdi-calendar'
         v-maska:[maskOptions]
         :rules='rules(schema)'
@@ -39,7 +39,8 @@ import { useRules } from '@/core/composables/useRules';
 
 const props = defineProps<{ schema: EngineSourceField; model: object; }>();
 const dateFormat = 'DD/MM/YYYY';
-const { rules } = useRules()
+const { rules } = useRules();
+const { bindProps } = useProps();
 
 const localModel = computed({
   get(): string | null {

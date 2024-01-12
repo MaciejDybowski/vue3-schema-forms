@@ -2,7 +2,7 @@
   <v-radio-group
     v-model='localModel'
     :label='schema.label'
-    v-bind="useProps(schema)"
+    v-bind='bindProps(schema)'
     :rules='rules(schema)'
     :class='bindClass(schema)'
     v-if='!loading'
@@ -12,9 +12,9 @@
       :key='option[value]'
     >
       <v-radio
-        v-bind="useProps(schema)"
+        v-bind='bindProps(schema)'
         :value='option[value]'
-        :class="index !== data.length - 1 && !vuetifyProps.inline ? 'mb-2' : ''"
+        :class="index !== data.length - 1 && !bindProps(schema).inline ? 'mb-2' : ''"
       >
         <template #label='{ label }'>
           <div class='mr-2'>{{ option[title] }}</div>
@@ -37,7 +37,7 @@ const props = defineProps<{
   model: object;
 }>();
 
-const vuetifyProps = useProps(props.schema);
+const { bindProps } = useProps();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 
 const localModel = computed({

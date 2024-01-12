@@ -3,7 +3,7 @@
     <v-text-field
       v-model='localModel'
       :label='schema.label'
-      v-bind='useProps(schema)'
+      v-bind='bindProps(schema)'
       :rules='rules(schema)'
       :class='bindClass(schema)'
       @focusout='focusout'
@@ -27,6 +27,7 @@ const props = defineProps<{
 }>();
 
 const { rules } = useRules();
+const { bindProps } = useProps();
 const isNumberField = props.schema.type === 'number';
 const { showFormattedNumber, formatNumber, parseNumberType } = useFormattedNumber(props.schema.options);
 
@@ -55,7 +56,6 @@ function focusin() {
     showFormattedNumber.value = false;
   }
 }
-
 
 function runCalculationIfExist() {
   if (props.schema.calculation) {

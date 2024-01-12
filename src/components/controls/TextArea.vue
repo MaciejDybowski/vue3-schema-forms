@@ -3,7 +3,7 @@
     v-model='localModel'
     :label='schema.label'
     :rules='rules(schema)'
-    v-bind='useProps(schema)'
+    v-bind='bindProps(schema)'
     :class='bindClass(schema)'
   />
 </template>
@@ -19,7 +19,10 @@ const props = defineProps<{
   schema: EngineField,
   model: object
 }>();
+
 const { rules } = useRules();
+const { bindProps } = useProps();
+
 const localModel = computed({
   get(): string {
     return getValueFromModel(props.model, props.schema);

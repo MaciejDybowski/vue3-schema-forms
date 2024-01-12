@@ -2,7 +2,7 @@
   <base-autocomplete
     :label='schema.label'
     v-model='localModel'
-    v-bind='useProps(schema)'
+    v-bind='bindProps(schema)'
     :class='bindClass(schema)'
     :rules='rules(schema)'
     :item-title='title'
@@ -46,7 +46,7 @@ const props = defineProps<{
   schema: EngineDictionaryField;
   model: object;
 }>();
-
+const { bindProps } = useProps();
 const { rules } = useRules();
 
 const localModel = computed({

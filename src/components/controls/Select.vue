@@ -2,7 +2,7 @@
   <v-select
     v-model='localModel'
     :label='schema.label'
-    v-bind="useProps(schema)"
+    v-bind='bindProps(schema)'
     :rules='rules(schema)'
     :class='bindClass(schema)'
     :item-title='title'
@@ -27,7 +27,7 @@ const props = defineProps<{
   model: object;
 }>();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
-
+const { bindProps } = useProps();
 const { rules } = useRules();
 
 const localModel = computed({

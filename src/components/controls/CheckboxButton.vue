@@ -12,7 +12,7 @@
     >
       <v-checkbox
         v-model='localModel'
-        v-bind="useProps(schema)"
+        v-bind='bindProps(schema)'
         :rules='rules(schema)'
         :label='option[title]'
         :value='option[value]'
@@ -41,6 +41,7 @@ const props = defineProps<{
 
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { rules } = useRules();
+const { bindProps } = useProps();
 
 const localModel = computed({
   get(): string | number {
