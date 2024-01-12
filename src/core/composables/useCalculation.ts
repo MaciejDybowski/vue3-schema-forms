@@ -1,13 +1,14 @@
-import { ComputedRef, Ref, ref, unref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Expression, Value } from 'expr-eval';
 import set from 'lodash/set';
 import betterParser, { SUM } from '../engine/evalExprParser';
+import { EngineOptions } from '@/vocabulary/engine';
 
-export function useCalculation(key: string, calculation: string, model: object, digitsAfterDecimal: ComputedRef<number>): number {
-  // ref/unref computed value because were warning about override readonly computed value
-  const digitsAfterDecimalLocal = isNaN(digitsAfterDecimal.value)
-    ? ref(2)
-    : ref(unref(getDigitsAfterDecimal(digitsAfterDecimal)));
+export function useCalculation(key: string, calculation: string, model: object, formOptions: EngineOptions): number {
+  const digitsAfterDecimalLocal = computed(() => {
+    return formOptions.digitsAfterDecimal || 2;
+  });
+
   let result = ref(0);
   let originalCalc = calculation;
 
@@ -21,10 +22,9 @@ export function useCalculation(key: string, calculation: string, model: object, 
     executeCalc();
   });
 
-  watch(digitsAfterDecimal, () => {
-    digitsAfterDecimalLocal.value = getDigitsAfterDecimal(digitsAfterDecimal);
+  watch(formOptions, () => {
     executeCalc();
-  });
+  }, { deep: true });
 
   function executeCalc(): void {
     if (myExpr.variables().every((variable) => variable in model)) {
@@ -38,22 +38,12 @@ export function useCalculation(key: string, calculation: string, model: object, 
     return betterParser.parse(calculation);
   }
 
+  function roundToDecimal(value: number, decimalPlaces: number): number {
+    const factor = Math.pow(10, isNaN(decimalPlaces) ? 2 : decimalPlaces);
+    return Math.round(value * factor) / factor;
+  }
+
   return roundToDecimal(result.value, digitsAfterDecimalLocal.value);
 }
 
-function getDigitsAfterDecimal(actual: Ref<number>): number {
-  if (actual.value !== null) {
-    if (actual.value > 10) {
-      return 10;
-    } else {
-      return actual.value;
-    }
-  } else {
-    return 2;
-  }
-}
 
-export function roundToDecimal(value: number, decimalPlaces: number): number {
-  const factor = Math.pow(10, isNaN(decimalPlaces) ? 2 : decimalPlaces);
-  return Math.round(value * factor) / factor;
-}

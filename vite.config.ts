@@ -9,9 +9,7 @@ import * as path from 'path';
 export default defineConfig({
   plugins: [
     vue(),
-    VueI18nPlugin({
-      include: path.resolve(__dirname, './src/locales/**'),
-    }),
+    VueI18nPlugin({}),
     dts({
       insertTypesEntry: true,
     }),
@@ -35,7 +33,6 @@ export default defineConfig({
         console.log('Components type added');
       },
     },
-
   ],
   build: {
     cssCodeSplit: true,
@@ -62,7 +59,6 @@ export default defineConfig({
       },
     },
   },
-
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),

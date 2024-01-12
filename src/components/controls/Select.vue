@@ -3,7 +3,7 @@
     v-model='localModel'
     :label='schema.label'
     v-bind="useProps(schema)"
-    :rules='vuetifyRules'
+    :rules='rules(schema)'
     :class='bindClass(schema)'
     :item-title='title'
     :item-value='value'
@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 
-const vuetifyRules = useRules(props.schema);
+const { rules } = useRules();
 
 const localModel = computed({
   get(): string | number {

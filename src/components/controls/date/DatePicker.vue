@@ -11,7 +11,7 @@
         v-bind='{...props, ...useProps(schema)}'
         append-inner-icon='mdi-calendar'
         v-maska:[maskOptions]
-        :rules='useRules(schema)'
+        :rules='rules(schema)'
       ></v-text-field>
     </template>
 
@@ -39,6 +39,7 @@ import { useRules } from '@/core/composables/useRules';
 
 const props = defineProps<{ schema: EngineSourceField; model: object; }>();
 const dateFormat = 'DD/MM/YYYY';
+const { rules } = useRules()
 
 const localModel = computed({
   get(): string | null {

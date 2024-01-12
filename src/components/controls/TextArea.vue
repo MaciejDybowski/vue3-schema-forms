@@ -2,8 +2,8 @@
   <v-textarea
     v-model='localModel'
     :label='schema.label'
-    :rules='vuetifyRules'
-    v-bind="useProps(schema)"
+    :rules='rules(schema)'
+    v-bind='useProps(schema)'
     :class='bindClass(schema)'
   />
 </template>
@@ -19,7 +19,7 @@ const props = defineProps<{
   schema: EngineField,
   model: object
 }>();
-
+const { rules } = useRules();
 const localModel = computed({
   get(): string {
     return getValueFromModel(props.model, props.schema);
@@ -29,7 +29,7 @@ const localModel = computed({
   },
 });
 
-const vuetifyRules = useRules(props.schema);
+
 </script>
 
 <style scoped lang='css'></style>

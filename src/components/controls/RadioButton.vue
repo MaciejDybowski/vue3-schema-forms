@@ -3,7 +3,7 @@
     v-model='localModel'
     :label='schema.label'
     v-bind="useProps(schema)"
-    :rules='vuetifyRules'
+    :rules='rules(schema)'
     :class='bindClass(schema)'
     v-if='!loading'
   >
@@ -62,7 +62,7 @@ const localModel = computed({
 });
 
 
-const vuetifyRules = useRules(props.schema);
+const { rules } = useRules();
 
 watch(loading, () => {
   if (data.value.length === 0) {

@@ -2,9 +2,9 @@
   <base-autocomplete
     :label='schema.label'
     v-model='localModel'
-    v-bind="useProps(schema)"
+    v-bind='useProps(schema)'
     :class='bindClass(schema)'
-    :rules='vuetifyRules'
+    :rules='rules(schema)'
     :item-title='title'
     :item-value='value'
     :items='data'
@@ -47,14 +47,14 @@ const props = defineProps<{
   model: object;
 }>();
 
-const vuetifyRules = useRules(props.schema);
+const { rules } = useRules();
 
 const localModel = computed({
   get(): any {
     return getValueFromModel(props.model, props.schema);
   },
   set(val: any) {
-    updateQuery(val)
+    updateQuery(val);
     produceUpdateEvent(val, props.schema);
   },
 });
@@ -83,7 +83,7 @@ onMounted(async () => {
 });
 
 function updateQuery(val: string) {
-  query.value = val
+  query.value = val;
 }
 </script>
 

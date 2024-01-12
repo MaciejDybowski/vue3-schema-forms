@@ -751,6 +751,7 @@ export const calculationSchemaInDuplicatedSection: Schema = {
                 component: 'text-field',
                 cols: 2,
               },
+              type: "number",
               calculation: 'field1 + field2',
             } as SchemaTextField,
             field4: {
@@ -759,6 +760,7 @@ export const calculationSchemaInDuplicatedSection: Schema = {
                 component: 'text-field',
                 cols: 2,
               },
+              type: "number",
               calculation: 'field3 * field3',
             } as SchemaTextField,
             field5: {
@@ -767,6 +769,7 @@ export const calculationSchemaInDuplicatedSection: Schema = {
                 component: 'text-field',
                 cols: 2,
               },
+              type: "number",
               calculation: 'field4 - field1',
             } as SchemaTextField,
             field6: {
@@ -775,6 +778,7 @@ export const calculationSchemaInDuplicatedSection: Schema = {
                 component: 'text-field',
                 cols: 2,
               },
+              type: "number",
               calculation: 'field1 + field2 + field4 - field5',
             } as SchemaTextField,
           },
@@ -803,6 +807,7 @@ export const simpleCalculationSchema: Schema = {
         component: 'text-field',
         cols: 2,
       },
+      type: 'number',
       calculation: 'field1 + field2',
     } as SchemaTextField,
     field4: {
@@ -811,6 +816,7 @@ export const simpleCalculationSchema: Schema = {
         component: 'text-field',
         cols: 2,
       },
+      type: 'number',
       calculation: 'field3 * field3',
     } as SchemaTextField,
   },
@@ -848,6 +854,7 @@ export const simpleCalculationWithDynamicDigits: Schema = {
         component: 'text-field',
         cols: 2,
       },
+      type: 'number',
       calculation: 'field1 + field2',
     } as SchemaTextField,
     field4: {
@@ -856,6 +863,7 @@ export const simpleCalculationWithDynamicDigits: Schema = {
         component: 'text-field',
         cols: 2,
       },
+      type: 'number',
       calculation: 'field3 * field3',
     } as SchemaTextField,
   },

@@ -13,7 +13,7 @@
       <v-checkbox
         v-model='localModel'
         v-bind="useProps(schema)"
-        :rules='vuetifyRules'
+        :rules='rules(schema)'
         :label='option[title]'
         :value='option[value]'
         :hide-details='index == data.length - 1 ? "auto" : true'
@@ -40,7 +40,7 @@ const props = defineProps<{
 }>();
 
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
-const vuetifyRules = useRules(props.schema);
+const { rules } = useRules();
 
 const localModel = computed({
   get(): string | number {
