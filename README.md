@@ -68,6 +68,29 @@ const schema = ref({
 | defaultFormActions  | false    | boolean             | flag, which is responsible for the visibility of the default form buttons in the #formActions slot                                                   |
 | validationBehaviour | "scroll" | ValidationBehaviour | A flag that defines the validation behavior after a failed attempt to validate the form. Available options "scroll" / "messages"                     |
 
+#### Options
+
+In options, there are priorities in setting props for form fields:
+1. Defaults (!)
+2. FieldProps (!!)
+3. InputType Props (!!!)
+4. Specific props defined in layout (!!!!)
+
+Example: If when defining a layout you specify props as they are in the default they will be overwritten
+
+The following table shows the default values for each field
+
+| Name               | Default                                                                                                      | Type   | Description                                               |
+|--------------------|--------------------------------------------------------------------------------------------------------------|--------|-----------------------------------------------------------|
+| digitsAfterDecimal | -                                                                                                            | number | Number of decimal places in the representation of numbers |
+| fieldProps         | -                                                                                                            | object | Option to set props for each type of field                |
+| textFieldProps     | <pre><code>{<br>  "hide-details": "auto"<br>}</code></pre>                                                   | object | Option to set props for text fields                       |
+| textAreaProps      | <pre><code>{<br>  "rows": 3,<br>  "hide-details": "auto",<br>  "auto-grow": true, <br>}</code></pre>         | object | Option to set props for text-area fields                  |
+| radioButtonProps   | <pre><code>{<br>  "density": "compact",<br>  "hide-details": "auto",<br>}</code></pre>                       | object | Option to set props for radio fields                      |
+| buttonProps        | -                                                                                                            | object | Option to set props for button (duplicated section)       |
+| checkboxProps      | <pre><code>{<br>  "density": "compact",<br>  "hide-details": "auto",<br>  "multiple": true<br>}</code></pre> | object | Option to set props for checkbox fields                   |
+| selectProps        | <pre><code>{<br>  "hide-details": "auto"<br>}</code></pre>                                                   | object | Option to set props for autocomplete/select fields        |
+
 #### Component slots
 
 | Name        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -91,11 +114,10 @@ const schema = ref({
 5. Submit a pull request
 
 ## ToDo List
+
+- [ ] create useLabel composable with dependency
 - [ ] Signal for form is ready (for autosave but after initial model changes)
 - [ ] Create date/datetime field
 - [ ] Use resolveDepsComposable for deps on fields
 - [ ] Create editable sections
 - [ ] Change to use Engine props (decomposition)
-- [ ] i18n [warnings] how to resolve message -> test on library
-
-In progress:
