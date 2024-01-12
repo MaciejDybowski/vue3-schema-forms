@@ -1,4 +1,4 @@
-## Vue3 Json Schema Form powered by Vuetify
+## Vue3 Json Schema Form powered by Vuetify 🚀
 
 Create dynamic and user-friendly forms effortlessly with the Vue3 and Vuetify.
 This library is designed to simplify form creation by leveraging the JSON Schema format.
@@ -8,22 +8,37 @@ Inspired by https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/
 ## Documentation
 
 The documentation and some of the testing was based on the Storybook
-application [click here](https://maciejdybowski.github.io/vue3-schema-forms/)
+application [live](https://maciejdybowski.github.io/vue3-schema-forms/) 👈👈👈 
 
-Check the changelog here => [latest](https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs)
+Check the changelog here => [@latest](https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs)
+
+## Requirements
+
+To relieve the library of dependencies as ```peerDependencies``` library takes:
+
+* ```vue@3.4.3```
+* ```vuetify@3.4.9```
+* ```axios@1.6.2``` - in order to maintain the configuration from the host (e.g. token interceptor)
+* ```dayjs@1.11.10``` - management and formatting of dates including time zones,
+* ```pinia@2.1.7``` - managing the status of each form, reference values
+* ```vue-i18n@9.6.4``` - handling translations in the library
+* ```vuedraggable@4.1.0``` - support for drag&drop interaction 
+
+```bash
+npm i vue vuetify axiox dayjs pinia vue-18n vuedraggable
+```
 
 ## Installation
 
-You can install `vue3-schema-forms` using npm:
+You can install `vue3-schema-forms` using [npm](https://www.npmjs.com/package/vue3-schema-forms):
 
 ```bash
 npm install vue3-schema-forms
 ```
 
-## Basic Usage
+## Usage
 
-```javascript
-// index.ts
+```typescript
 import { createVueSchemaForms } from 'vue3-schema-forms';
 
 const schemaForms = createVueSchemaForms({});
@@ -35,27 +50,33 @@ createApp(App)
 
 After importing the plugin, we can invoke the form-generating component and pass the appropriate props.
 
-```javascript
-// someComponent.vue
-<vue-schema-forms
-  v-model="model" 
-  :schema = "schema"
-:
-options = "formOptions"
-  / >
+```vue
+<template>
+  <vue-schema-forms
+    v-model='model'
+    :schema='schema'
+    :options='formOptions'
+    :default-form-actions='true'
+    :validation-behaviour="'messages'"
+  >
+  </vue-schema-forms>
+</template>
 
-const formOptions = ref({})
-const model = ref({})
-const schema = ref({
-  type: "object",
-  properties: {
-    field1: {
-      label: "Field 1",
-      layout: {
-        component: "text-field",
+<script>
+  const formOptions = ref({});
+  const model = ref({});
+  const schema = ref({
+    type: 'object',
+    properties: {
+      field1: {
+        label: 'Field 1',
+        layout: {
+          component: 'text-field',
+        },
       },
     },
-  },
+  });
+</script>
 ```
 
 #### Props description
@@ -71,6 +92,7 @@ const schema = ref({
 #### Options
 
 In options, there are priorities in setting props for form fields:
+
 1. Defaults (!)
 2. FieldProps (!!)
 3. InputType Props (!!!)
@@ -80,16 +102,16 @@ Example: If when defining a layout you specify props as they are in the default 
 
 The following table shows the default values for each field
 
-| Name               | Default                                                                                                      | Type   | Description                                               |
-|--------------------|--------------------------------------------------------------------------------------------------------------|--------|-----------------------------------------------------------|
-| digitsAfterDecimal | -                                                                                                            | number | Number of decimal places in the representation of numbers |
-| fieldProps         | -                                                                                                            | object | Option to set props for each type of field                |
-| textFieldProps     | <pre><code>{<br>  "hide-details": "auto"<br>}</code></pre>                                                   | object | Option to set props for text fields                       |
-| textAreaProps      | <pre><code>{<br>  "rows": 3,<br>  "hide-details": "auto",<br>  "auto-grow": true, <br>}</code></pre>         | object | Option to set props for text-area fields                  |
-| radioButtonProps   | <pre><code>{<br>  "density": "compact",<br>  "hide-details": "auto",<br>}</code></pre>                       | object | Option to set props for radio fields                      |
-| buttonProps        | -                                                                                                            | object | Option to set props for button (duplicated section)       |
-| checkboxProps      | <pre><code>{<br>  "density": "compact",<br>  "hide-details": "auto",<br>  "multiple": true<br>}</code></pre> | object | Option to set props for checkbox fields                   |
-| selectProps        | <pre><code>{<br>  "hide-details": "auto"<br>}</code></pre>                                                   | object | Option to set props for autocomplete/select fields        |
+| Name               | Default                                                                 | Type   | Description                                               |
+|--------------------|-------------------------------------------------------------------------|--------|-----------------------------------------------------------|
+| digitsAfterDecimal | -                                                                       | number | Number of decimal places in the representation of numbers |
+| fieldProps         | -                                                                       | object | Option to set props for each type of field                |
+| textFieldProps     | ```{'hide-details': 'auto',}```                                         | object | Option to set props for text fields                       |
+| textAreaProps      | ```{"rows": 3, "hide-details": "auto", "auto-grow": true}```            | object | Option to set props for text-area fields                  |
+| radioButtonProps   | ```{"density": "compact", "hide-details": "auto"}```                    | object | Option to set props for radio fields                      |
+| buttonProps        | -                                                                       | object | Option to set props for button (duplicated section)       |
+| checkboxProps      | ```{"density": "compact", "hide-details": "auto", "multiple": true }``` | object | Option to set props for checkbox fields                   |
+| selectProps        | ```{"hide-details": "auto"}```                                          | object | Option to set props for autocomplete/select fields        |
 
 #### Component slots
 
