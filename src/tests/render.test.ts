@@ -4,11 +4,17 @@ import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import i18n from '../../.storybook/plugins/i18n';
-import { VueSchemaForms } from '@/components';
-import { _100fieldSchema, _10fieldSchema, _50fieldSchema, invoicePositionsSchema } from '@/tests/test-schemas';
+import { VueSchemaForms } from '../components';
+import { _100fieldSchema, _10fieldSchema, _50fieldSchema, invoicePositionsSchema } from './test-schemas';
 import * as process from 'process';
+import { createPinia } from 'pinia';
 
 const vuetify = createVuetify({ components, directives });
+const pinia = createPinia();
+
+const global = {
+  plugins: [vuetify, i18n, pinia],
+};
 
 async function waitForResult(wrapper: VueWrapper): Promise<number> {
   await wrapper.vm.$nextTick();
@@ -22,9 +28,7 @@ async function waitForResult(wrapper: VueWrapper): Promise<number> {
 test('should render 10 field`s form with empty model less than 80 ms', async function() {
   process.env.VITE_ENABLE_RENDER_TEST = 'true';
   const wrapper: VueWrapper = mount(VueSchemaForms, {
-    global: {
-      plugins: [vuetify, i18n],
-    },
+    global,
     props: {
       schema: _10fieldSchema,
       options: {},
@@ -41,9 +45,7 @@ test('should render 10 field`s form with empty model less than 80 ms', async fun
 test('should render 50 field`s form with empty model less than 240 ms', async function() {
   process.env.VITE_ENABLE_RENDER_TEST = 'true';
   const wrapper: VueWrapper = mount(VueSchemaForms, {
-    global: {
-      plugins: [vuetify, i18n],
-    },
+    global,
     props: {
       schema: _50fieldSchema,
       options: {},
@@ -60,9 +62,7 @@ test('should render 50 field`s form with empty model less than 240 ms', async fu
 test('should render 100 field`s form with empty model less than 410 ms', async function() {
   process.env.VITE_ENABLE_RENDER_TEST = 'true';
   const wrapper: VueWrapper = mount(VueSchemaForms, {
-    global: {
-      plugins: [vuetify, i18n],
-    },
+    global,
     props: {
       schema: _100fieldSchema,
       options: {},
@@ -79,9 +79,7 @@ test('should render 100 field`s form with empty model less than 410 ms', async f
 test('should render many duplicated-section with calculations (min. 50 row\'s of 5 field\'s) less than 900 ms', async function() {
   process.env.VITE_ENABLE_RENDER_TEST = 'true';
   const wrapper: VueWrapper = mount(VueSchemaForms, {
-    global: {
-      plugins: [vuetify, i18n],
-    },
+    global,
     props: {
       schema: invoicePositionsSchema,
       options: {},

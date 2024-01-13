@@ -1,19 +1,26 @@
 import { Expression, Value } from 'expr-eval';
-import { Ref } from 'vue';
+import { ref, Ref } from 'vue';
 import betterParser from '../engine/evalExprParser';
 import { useFormModelStore } from '@/store/formModelStore';
+import { EngineField } from '@/vocabulary/engine';
 
-export function useConditionalRendering(condition: string, formId: string, resultRef: Ref<Boolean>): void {
-  let myExpr: Expression = betterParser.parse(condition);
-  const formModelStore = useFormModelStore(formId);
+export function useConditionalRendering(schema: EngineField) {
+  const formModelStore = useFormModelStore(schema.formId);
+  const shouldRender = ref(!schema.layout.if);
 
-  if (myExpr.variables().every((variable) => variable in formModelStore.getFormModel)) {
-    resultRef.value = myExpr.evaluate(formModelStore.getFormModel as Value);
+  if (!shouldRender.value) {
+    let myExpr: Expression = betterParser.parse(schema.layout.if as string);
+
+    if (myExpr.variables().every((variable) => variable in formModelStore.getFormModel)) {
+      shouldRender.value = myExpr.evaluate(formModelStore.getFormModel as Value);
+    }
+
+    formModelStore.$subscribe(() => {
+      if (myExpr.variables().every((variable) => variable in formModelStore.getFormModel)) {
+        shouldRender.value = myExpr.evaluate(formModelStore.getFormModel as Value);
+      }
+    });
   }
 
-  formModelStore.$subscribe(() => {
-    if (myExpr.variables().every((variable) => variable in formModelStore.getFormModel)) {
-      resultRef.value = myExpr.evaluate(formModelStore.getFormModel as Value);
-    }
-  });
+  return { shouldRender };
 }

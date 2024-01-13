@@ -16,11 +16,12 @@ export const offsetSchema: Schema = {
       layout: {
         component: 'text-field',
         cols: {
-          xxl: 6,
+          xxl: 4,
           xl: 6,
           md: 8,
           sm: 12,
         },
+        fillRow: true,
       },
     },
     field3: {
@@ -751,7 +752,7 @@ export const calculationSchemaInDuplicatedSection: Schema = {
                 component: 'text-field',
                 cols: 2,
               },
-              type: "number",
+              type: 'number',
               calculation: 'field1 + field2',
             } as SchemaTextField,
             field4: {
@@ -760,7 +761,7 @@ export const calculationSchemaInDuplicatedSection: Schema = {
                 component: 'text-field',
                 cols: 2,
               },
-              type: "number",
+              type: 'number',
               calculation: 'field3 * field3',
             } as SchemaTextField,
             field5: {
@@ -769,7 +770,7 @@ export const calculationSchemaInDuplicatedSection: Schema = {
                 component: 'text-field',
                 cols: 2,
               },
-              type: "number",
+              type: 'number',
               calculation: 'field4 - field1',
             } as SchemaTextField,
             field6: {
@@ -778,7 +779,7 @@ export const calculationSchemaInDuplicatedSection: Schema = {
                 component: 'text-field',
                 cols: 2,
               },
-              type: "number",
+              type: 'number',
               calculation: 'field1 + field2 + field4 - field5',
             } as SchemaTextField,
           },
