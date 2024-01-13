@@ -1,7 +1,7 @@
 <template>
   <v-radio-group
     v-model='localModel'
-    :label='schema.label'
+    :label='label'
     v-bind='bindProps(schema)'
     :rules='rules(schema)'
     :class='bindClass(schema)'
@@ -31,12 +31,13 @@ import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/eng
 import { useSource } from '../../core/composables/useSource';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
+import { useLabel } from '@/core/composables/useLabel';
 
 const props = defineProps<{
   schema: EngineSourceField;
   model: object;
 }>();
-
+const { label } = useLabel(props.schema);
 const { bindProps } = useProps();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 

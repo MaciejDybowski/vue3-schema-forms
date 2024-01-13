@@ -3,7 +3,8 @@ import DevelopmentTable from '../components/app/DevelopmentTable.vue';
 import { Meta, StoryObj } from '@storybook/vue3';
 import { ArgTypes } from '@storybook/types';
 import { Schema } from '@/vocabulary/schema';
-import { Layout, SchemaTextField } from '../vocabulary/schema/elements';
+import { Layout, SchemaTextField, SimpleSource } from '../vocabulary/schema/elements';
+import { EngineSourceField } from '../vocabulary/engine/controls';
 
 const meta = {
   title: 'Development Page',
@@ -49,6 +50,22 @@ export const Table1: Story = {
     schema: {
       type: 'object',
       properties: {
+        invoiceMetadata: {
+          properties: {
+            pricing: {
+              label: 'The invoice is issued:',
+              layout: { component: 'radio-button', cols: 3, fillRow: true } as Layout,
+              default: { value: 'net', title: 'at net prices', formatted: 'net' },
+              source: {
+                items: [
+                  { value: 'net', title: 'at net prices', formatted: 'net' },
+                  { value: 'gross', title: 'at gross prices', formatted: 'gross' },
+                ],
+                returnObject: true,
+              } as SimpleSource,
+            } as EngineSourceField,
+          },
+        },
         data: {
           properties: {
             items: {
@@ -63,7 +80,7 @@ export const Table1: Story = {
                       default: 1,
                       layout: { component: 'text-field', cols: 2 },
                     },
-                    price: { label: 'Price', type: 'number', layout: { component: 'text-field', cols: 3 } },
+                    price: { label: 'Price ({invoiceMetadata.pricing.formatted})', type: 'number', layout: { component: 'text-field', cols: 3 } },
                     value: {
                       label: 'Value',
                       type: 'number',
@@ -85,7 +102,7 @@ export const Table1: Story = {
                 cols: 4,
               },
               calculation: 'SUM(value, data.items) - 300',
-              type: 'number'
+              type: 'number',
             } as SchemaTextField,
           },
         },

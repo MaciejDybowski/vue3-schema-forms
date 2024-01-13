@@ -1,6 +1,6 @@
 <template>
   <base-autocomplete
-    :label='schema.label'
+    :label='label'
     v-model='localModel'
     v-bind='bindProps(schema)'
     :class='bindClass(schema)'
@@ -41,11 +41,13 @@ import { EngineDictionaryField } from '../../vocabulary/engine/controls';
 import { useDictionarySource } from '../../core/composables/useDictionarySource';
 import { useProps } from '../../core/composables/useProps';
 import { useRules } from '../../core/composables/useRules';
+import { useLabel } from '@/core/composables/useLabel';
 
 const props = defineProps<{
   schema: EngineDictionaryField;
   model: object;
 }>();
+const { label } = useLabel(props.schema);
 const { bindProps } = useProps();
 const { rules } = useRules();
 

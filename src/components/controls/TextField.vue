@@ -2,7 +2,7 @@
   <div class='node-text-field'>
     <v-text-field
       v-model='localModel'
-      :label='schema.label'
+      :label='label'
       v-bind='bindProps(schema)'
       :rules='rules(schema)'
       :class='bindClass(schema)'
@@ -20,16 +20,21 @@ import { useCalculation } from '../../core/composables/useCalculation';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
 import { useFormattedNumber } from '../../core/composables/useFormattedNumber';
+import { useLabel } from '@/core/composables/useLabel';
 
 const props = defineProps<{
   schema: EngineTextField;
   model: object;
 }>();
 
+
+
 const { rules } = useRules();
 const { bindProps } = useProps();
 const isNumberField = props.schema.type === 'number';
 const { showFormattedNumber, formatNumber, parseNumberType } = useFormattedNumber(props.schema.options);
+
+const { label } = useLabel(props.schema);
 
 const localModel = computed({
   get(): string | number {

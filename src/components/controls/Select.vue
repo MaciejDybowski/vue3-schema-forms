@@ -1,7 +1,7 @@
 <template>
   <v-select
     v-model='localModel'
-    :label='schema.label'
+    :label='label'
     v-bind='bindProps(schema)'
     :rules='rules(schema)'
     :class='bindClass(schema)'
@@ -21,11 +21,13 @@ import { EngineSourceField } from '../..//vocabulary/engine/controls';
 import { useProps } from '../../core/composables/useProps';
 import { useRules } from '../../core/composables/useRules';
 import { useSource } from '../../core/composables/useSource';
+import { useLabel } from '@/core/composables/useLabel';
 
 const props = defineProps<{
   schema: EngineSourceField;
   model: object;
 }>();
+const { label } = useLabel(props.schema);
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { bindProps } = useProps();
 const { rules } = useRules();

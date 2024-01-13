@@ -5,7 +5,7 @@
   >
     <template v-slot:activator='{ isActive, props }'>
       <v-text-field
-        :label='schema.label'
+        :label='label'
         v-model='textFieldDate'
         @update:modelValue='tryMatchToDate'
         v-bind='{...props, ...bindProps(schema)}'
@@ -36,9 +36,12 @@ import { getValueFromModel, produceUpdateEvent } from '@/core/engine/utils';
 import { onClickOutside } from '@vueuse/core';
 import dayjs from './dayjs';
 import { useRules } from '@/core/composables/useRules';
+import { useLabel } from '@/core/composables/useLabel';
 
 const props = defineProps<{ schema: EngineSourceField; model: object; }>();
 const dateFormat = 'DD/MM/YYYY';
+
+const { label } = useLabel(props.schema);
 const { rules } = useRules();
 const { bindProps } = useProps();
 

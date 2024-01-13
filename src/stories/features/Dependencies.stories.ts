@@ -3,10 +3,17 @@ import { Meta, StoryObj } from '@storybook/vue3';
 import { VueSchemaForms } from '@/components';
 import { StoryTemplateWithValidation } from '@/stories/templates/story-template';
 import { Schema, SchemaOptions } from '@/vocabulary/schema';
-import { DictionarySource, SchemaSourceField, SchemaTextField } from '@/vocabulary/schema/elements';
+import {
+  DictionarySource,
+  Layout,
+  SchemaSourceField,
+  SchemaTextField,
+  SimpleSource,
+} from '@/vocabulary/schema/elements';
 import { REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI } from '@/stories/controls/Dictionary/responses';
 import { userEvent, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
+import { EngineSourceField } from '../../vocabulary/engine/controls';
 
 const meta = {
   title: 'Forms/Features/Dependencies',
@@ -156,5 +163,161 @@ export const UseFormVariablesInFieldProps: Story = {
       REQUEST_PAGE_0_1,
       REQUEST_SEARCH_DOLAR_AUSTRALIJSKI,
     ],
+  },
+};
+
+
+export const UseDependenciesInLabel: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+
+    await context.step(('Resolved deps on load'), async () => {
+      let labelResolved = await canvas.findAllByText('Price (net)');
+      await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
+    });
+
+    await context.step(('Resolved when variable changed'), async () => {
+      const gross = canvas.getByLabelText('at gross prices');
+      await userEvent.click(gross, { delay: 200 });
+
+      let labelResolved = await canvas.findAllByText('Price (gross)');
+      await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
+    });
+  },
+  args: {
+    modelValue: {
+      data: {
+        items: [
+          {
+            product: 'Computer',
+            quantity: 1,
+            price: 3200,
+          },
+          {
+            product: 'Laptop',
+            quantity: 2,
+            price: 1334.23,
+          },
+        ],
+      },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        invoiceMetadata: {
+          properties: {
+            pricing: {
+              label: 'The invoice is issued:',
+              layout: { component: 'radio-button', cols: 3, fillRow: true } as Layout,
+              default: { value: 'net', title: 'at net prices', formatted: 'net' },
+              source: {
+                items: [
+                  { value: 'net', title: 'at net prices', formatted: 'net' },
+                  { value: 'gross', title: 'at gross prices', formatted: 'gross' },
+                ],
+                returnObject: true,
+              } as SimpleSource,
+            } as EngineSourceField,
+          },
+        },
+        data: {
+          properties: {
+            items: {
+              layout: {
+                component: 'duplicated-section',
+                schema: {
+                  properties: {
+                    product: { label: 'Product', layout: { component: 'text-field', cols: 4 } },
+                    quantity: {
+                      label: 'Quantity',
+                      type: 'number',
+                      default: 1,
+                      layout: { component: 'text-field', cols: 2 },
+                    },
+                    price: { label: 'Price ({invoiceMetadata.pricing.formatted})', type: 'number', layout: { component: 'text-field', cols: 3 } },
+                    value: {
+                      label: 'Value',
+                      type: 'number',
+                      layout: { component: 'text-field', cols: 3 },
+                      calculation: 'quantity * price',
+                    } as SchemaTextField,
+                  },
+                },
+              } as Layout,
+            },
+          },
+        },
+        summary: {
+          properties: {
+            sumValue: {
+              label: 'SUM(Value)',
+              layout: {
+                component: 'text-field',
+                cols: 4,
+              },
+              calculation: 'SUM(value, data.items) - 300',
+              type: 'number',
+            } as SchemaTextField,
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const UseVariableDependencyWithFallbackMessage: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+
+    await context.step(('Check default label with fallback message'), async () => {
+      let labelResolved = await canvas.findAllByText('Telephone with your country prefix');
+      await expect(labelResolved.length).toEqual(2); // 1 visible and 1 not visible
+    });
+
+    await context.step(('Check default label after variable set in model'), async () => {
+      const select = canvas.getByLabelText('Country');
+      await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+      const items = document.getElementsByClassName('v-list-item');
+      await userEvent.click(items[0], { delay: 200 });
+
+      let labelResolved = await canvas.findAllByText('Telephone with PL prefix');
+      await expect(labelResolved.length).toEqual(2); // 1 visible and 1 not visible
+    });
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: 'object',
+      properties: {
+        description: {
+          content: 'If we want to have dependencies and a default value when this value is not yet in the model then we do it as follows: <b>path_to_variable:value_default</b>',
+          layout: {
+            component: 'static-content',
+            tag: "span"
+          },
+        },
+        country: {
+          label: 'Country',
+          layout: {
+            component: 'select',
+            cols: 3,
+            fillRow: true,
+          },
+          source: {
+            items: [
+              { value: 'PL', title: 'Poland' },
+            ],
+          } as SimpleSource,
+        },
+        textField: {
+          label: 'Telephone with {country:your country} prefix',
+          layout: {
+            component: 'text-field',
+            cols: 3,
+          },
+        },
+      },
+    } as Schema,
   },
 };

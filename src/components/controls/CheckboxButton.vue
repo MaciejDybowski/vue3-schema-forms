@@ -4,7 +4,7 @@
     v-if='!loading'
   >
     <label class='v-label'>
-      {{ schema.label }}
+      {{ label }}
     </label>
     <template
       v-for='(option, index) in data'
@@ -33,12 +33,14 @@ import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/eng
 import { computed } from 'vue';
 import { useRules } from '../..//core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
+import { useLabel } from '@/core/composables/useLabel';
 
 const props = defineProps<{
   schema: EngineSourceField;
   model: object;
 }>();
 
+const { label } = useLabel(props.schema);
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { rules } = useRules();
 const { bindProps } = useProps();

@@ -1,7 +1,7 @@
 <template>
   <v-textarea
     v-model='localModel'
-    :label='schema.label'
+    :label='label'
     :rules='rules(schema)'
     v-bind='bindProps(schema)'
     :class='bindClass(schema)'
@@ -14,12 +14,13 @@ import { computed } from 'vue';
 import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
+import { useLabel } from '@/core/composables/useLabel';
 
 const props = defineProps<{
   schema: EngineField,
   model: object
 }>();
-
+const { label } = useLabel(props.schema);
 const { rules } = useRules();
 const { bindProps } = useProps();
 
