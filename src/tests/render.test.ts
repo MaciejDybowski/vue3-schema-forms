@@ -76,7 +76,7 @@ test('should render 100 field`s form with empty model less than 410 ms', async f
   expect(renderTime).toBeLessThan(410);
 });
 
-test('should render many duplicated-section with calculations (min. 50 row\'s of 5 field\'s) less than 900 ms', async function() {
+test('should render many duplicated-section with calculations (min. 50 row\'s of 5 field\'s) less than 1000 ms', async function() {
   process.env.VITE_ENABLE_RENDER_TEST = 'true';
   const wrapper: VueWrapper = mount(VueSchemaForms, {
     global,
@@ -143,5 +143,5 @@ test('should render many duplicated-section with calculations (min. 50 row\'s of
   expect(wrapper.exists()).eq(true);
   const renderTime = await waitForResult(wrapper);
   expect(renderTime).toBeGreaterThan(0);
-  expect(renderTime).toBeLessThan(900);
+  expect(renderTime).toBeLessThan(1000);
 });

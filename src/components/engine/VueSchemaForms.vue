@@ -1,38 +1,38 @@
 <template>
   <v-form
-      :ref='(el) => formRef[formId] = el'
+    :ref='(el) => formRef[formId] = el'
   >
     <form-root
-        v-if='!loading'
-        :form-id='formId'
-        :model='modelValue'
-        :schema='resolvedSchema'
-        :options='options'
-        @update:model='updateModel'
+      v-if='!loading'
+      :form-id='formId'
+      :model='modelValue'
+      :schema='resolvedSchema'
+      :options='options'
+      @update:model='updateModel'
     />
 
     <slot name='formActions'>
       <form-default-actions
-          v-if="defaultFormActions"
-          :form-valid="formValid"
-          :error-messages="errorMessages"
-          @validate="validate(validationBehaviour)"
-          @reset-validation="resetValidation"
-          @reset="reset"
+        v-if='defaultFormActions'
+        :form-valid='formValid'
+        :error-messages='errorMessages'
+        @validate='validate(validationBehaviour)'
+        @reset-validation='resetValidation'
+        @reset='reset'
       />
     </slot>
   </v-form>
 </template>
 
 <script setup lang='ts'>
-import {Component, getCurrentInstance, onMounted, Ref, ref, watch} from 'vue';
+import { Component, getCurrentInstance, onMounted, Ref, ref, watch } from 'vue';
 
 import FormRoot from './FormRoot.vue';
-import {Schema, SchemaOptions} from '../../vocabulary/schema';
+import { Schema, SchemaOptions } from '../../vocabulary/schema';
 import set from 'lodash/set';
-import {useI18n} from 'vue-i18n';
-import {resolveSchemaWithLocale} from '../../core/engine/utils';
-import {NodeUpdateEvent} from '../../vocabulary/engine';
+import { useI18n } from 'vue-i18n';
+import { resolveSchemaWithLocale } from '../../core/engine/utils';
+import { NodeUpdateEvent } from '../../vocabulary/engine';
 import TextField from '../controls/TextField.vue';
 import DuplicatedSection from '../controls/duplicated-section/DuplicatedSection.vue';
 import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
@@ -41,12 +41,12 @@ import RadioButton from '../controls/RadioButton.vue';
 import CheckboxButton from '../controls/CheckboxButton.vue';
 import TextArea from '../controls/TextArea.vue';
 import Select from '../controls/Select.vue';
-import {formUpdateLogger} from '../../main';
+import { formUpdateLogger } from '../../main';
 import EditableSection from '../controls/editable-section/EditableSection.vue';
 import Autocomplete from '../controls/Autocomplete.vue';
-import {useFormModelStore} from '@/store/formModelStore';
-import {FormItem, ValidationBehaviour, ValidationError} from '../../vocabulary/engine/formValidation';
-import FormDefaultActions from "@/components/app/FormDefaultActions.vue";
+import { useFormModelStore } from '@/store/formModelStore';
+import { FormItem, ValidationBehaviour, ValidationError } from '../../vocabulary/engine/formValidation';
+import FormDefaultActions from '@/components/app/FormDefaultActions.vue';
 import DatePicker from '@/components/controls/date/DatePicker.vue';
 
 // register components to VueInstance
@@ -61,7 +61,7 @@ const components = {
   'select': Select,
   'editable-section': EditableSection,
   'dictionary': Autocomplete,
-  "date-picker": DatePicker
+  'date-picker': DatePicker,
 } as Components;
 const instance = getCurrentInstance();
 for (const [name, comp] of Object.entries(components)) {
@@ -73,32 +73,27 @@ for (const [name, comp] of Object.entries(components)) {
 }
 // end register-components
 
-// condition for enable measure render tests
-let result = ref(0);
-const isShouldMeasureRenderTime = import.meta.env.VITE_ENABLE_RENDER_TEST === 'true';
-if (isShouldMeasureRenderTime) {
-  result = usePerformanceAPI().result;
-}
-// end
+// render tests
+const { result } = usePerformanceAPI();
 
 const props = withDefaults(defineProps<{
-      schema: Schema;
-      modelValue: object;
-      options?: SchemaOptions;
-      defaultFormActions?: boolean
-      validationBehaviour?: ValidationBehaviour
-    }>(),
-    {
-      defaultFormActions: false,
-      validationBehaviour: "scroll"
-    });
+    schema: Schema;
+    modelValue: object;
+    options?: SchemaOptions;
+    defaultFormActions?: boolean
+    validationBehaviour?: ValidationBehaviour
+  }>(),
+  {
+    defaultFormActions: false,
+    validationBehaviour: 'scroll',
+  });
 
 const emit = defineEmits<{
   (e: 'update:modelValue', val: any): void;
 }>();
 
 let loading = ref(true);
-const {locale, t} = useI18n();
+const { locale, t } = useI18n();
 const resolvedSchema = ref({} as Schema);
 
 const formId = Math.random().toString().slice(2, 5);
@@ -125,28 +120,28 @@ async function loadResolvedSchema() {
 }
 
 watch(
-    locale,
-    async () => {
-      console.debug('[vue-schema-forms] => Reload form in other language');
-      await loadResolvedSchema();
-    },
-    {deep: true},
+  locale,
+  async () => {
+    console.debug('[vue-schema-forms] => Reload form in other language');
+    await loadResolvedSchema();
+  },
+  { deep: true },
 );
 onMounted(async () => {
-  formModelStore.updateFormModel(props.modelValue)
+  formModelStore.updateFormModel(props.modelValue);
   await loadResolvedSchema();
 });
 
 
 async function validate(option?: ValidationBehaviour) {
-  const {valid} = await formRef.value[formId].validate();
+  const { valid } = await formRef.value[formId].validate();
   formValid.value = valid;
 
   if (!option) {
-    return valid
+    return valid;
   }
   if (valid) {
-    errorMessages.value = []
+    errorMessages.value = [];
   }
 
   if (!valid && option === 'scroll') {
@@ -172,24 +167,24 @@ async function validate(option?: ValidationBehaviour) {
         messages: item.errorMessages.length > 0 ? item.errorMessages : null,
       } as ValidationError;
     }).filter((item) => item.messages);
-    return errorMessages.value
+    return errorMessages.value;
   }
 }
 
 function reset() {
   formRef.value[formId].reset();
-  errorMessages.value = []
+  errorMessages.value = [];
 }
 
 function resetValidation() {
   formRef.value[formId].resetValidation();
-  errorMessages.value = []
+  errorMessages.value = [];
 }
 
 defineExpose({
   validate,
   reset,
-  resetValidation
+  resetValidation,
 });
 </script>
 
