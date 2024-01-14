@@ -25,7 +25,7 @@ To relieve the library of dependencies as ```peerDependencies``` library takes:
 * ```vuedraggable@4.1.0``` - support for drag&drop interaction 
 
 ```bash
-npm i vue vuetify axiox dayjs pinia vue-18n vuedraggable
+npm i vue vuetify axios dayjs pinia vue-18n vuedraggable
 ```
 
 ## Installation
@@ -137,7 +137,6 @@ The following table shows the default values for each field
 
 ## ToDo List
 
-- [ ] create useLabel composable with dependency
 - [ ] Signal for form is ready (for autosave but after initial model changes)
 - [ ] Create date/datetime field
 - [ ] Use resolveDepsComposable for deps on fields
