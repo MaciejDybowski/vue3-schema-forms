@@ -33,9 +33,9 @@
 
 <script setup lang="ts">
 
-import FormActionButton from "@/components/app/FormActionButton.vue";
-import FormValidVisualization from "@/components/app/FormValidVisualization.vue";
-import FormErrorVisualization from "@/components/app/FormErrorVisualization.vue";
+import FormActionButton from "@/components/engine/validation/FormActionButton.vue";
+import FormValidVisualization from "@/components/engine/validation/FormValidVisualization.vue";
+import FormErrorVisualization from "@/components/engine/validation/FormErrorVisualization.vue";
 import {ValidationError} from "@/vocabulary/engine/formValidation";
 
 const props = defineProps<{
