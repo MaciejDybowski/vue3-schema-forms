@@ -36,12 +36,13 @@
 
 import BaseAutocomplete from './base/BaseAutocomplete.vue';
 import { computed, onMounted } from 'vue';
-import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
 import { EngineDictionaryField } from '../../vocabulary/engine/controls';
 import { useDictionarySource } from '../../core/composables/useDictionarySource';
 import { useProps } from '../../core/composables/useProps';
 import { useRules } from '../../core/composables/useRules';
-import { useLabel } from '@/core/composables/useLabel';
+import { useLabel } from '../../core/composables/useLabel';
+import { useClass } from '../../core/composables/useClass';
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -50,6 +51,7 @@ const props = defineProps<{
 const { label } = useLabel(props.schema);
 const { bindProps } = useProps();
 const { rules } = useRules();
+const { bindClass } = useClass();
 
 const localModel = computed({
   get(): any {

@@ -14,21 +14,21 @@
 
 <script setup lang='ts'>
 import { computed, onMounted } from 'vue';
-import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
 import { EngineTextField } from '../../vocabulary/engine/controls';
 import { useCalculation } from '../../core/composables/useCalculation';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
 import { useFormattedNumber } from '../../core/composables/useFormattedNumber';
 import { useLabel } from '@/core/composables/useLabel';
+import { useClass } from '@/core/composables/useClass';
 
 const props = defineProps<{
   schema: EngineTextField;
   model: object;
 }>();
 
-
-
+const { bindClass } = useClass();
 const { rules } = useRules();
 const { bindProps } = useProps();
 const isNumberField = props.schema.type === 'number';

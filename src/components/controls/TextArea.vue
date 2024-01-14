@@ -11,10 +11,11 @@
 <script setup lang='ts'>
 import { EngineField } from '../../vocabulary/engine';
 import { computed } from 'vue';
-import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import {  getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
 import { useLabel } from '@/core/composables/useLabel';
+import { useClass } from '@/core/composables/useClass';
 
 const props = defineProps<{
   schema: EngineField,
@@ -23,6 +24,7 @@ const props = defineProps<{
 const { label } = useLabel(props.schema);
 const { rules } = useRules();
 const { bindProps } = useProps();
+const { bindClass } = useClass();
 
 const localModel = computed({
   get(): string {

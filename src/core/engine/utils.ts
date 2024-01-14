@@ -2,9 +2,9 @@ import { EngineField, NodeUpdateEvent } from '@/vocabulary/engine';
 import get from 'lodash/get';
 import { Schema } from '@/vocabulary/schema';
 import jsonSchemaResolver from './jsonSchemaResolver';
-import { DisplayBreakpoint } from 'vuetify';
-import { Cols } from '@/vocabulary/schema/elements';
 import set from 'lodash/set';
+
+export const variableRegexp: RegExp = new RegExp('{.*?}', 'g');
 
 export function produceUpdateEvent(val: any, schema: EngineField) {
   const event: NodeUpdateEvent = { key: schema.key, value: val || val === 0 ? val : null };
@@ -25,16 +25,6 @@ export function getValueFromModel(model: object, schema: EngineField): any {
 
   return value;
 }
-
-export function bindClass(schema: EngineField): string {
-  let classString = '';
-  if (schema.required) {
-    classString += 'required-input ';
-  }
-  return classString;
-}
-
-export const variableRegexp: RegExp = new RegExp('{.*?}', 'g');
 
 export async function resolveSchemaWithLocale(schema: Schema, locale: string): Promise<Schema> {
   const temp = JSON.parse(JSON.stringify(schema).replaceAll('~$locale~', locale));

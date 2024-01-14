@@ -27,11 +27,12 @@
 <script setup lang='ts'>
 import { EngineSourceField } from '../../vocabulary/engine/controls';
 import { computed, onMounted, watch } from 'vue';
-import { bindClass, getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
 import { useSource } from '../../core/composables/useSource';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
 import { useLabel } from '@/core/composables/useLabel';
+import { useClass } from '@/core/composables/useClass';
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -40,6 +41,7 @@ const props = defineProps<{
 const { label } = useLabel(props.schema);
 const { bindProps } = useProps();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
+const { bindClass } = useClass();
 
 const localModel = computed({
   get(): string | number {
