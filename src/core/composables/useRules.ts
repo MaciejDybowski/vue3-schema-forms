@@ -1,21 +1,9 @@
 import { EngineField } from '../../vocabulary/engine';
-import { useI18n } from 'vue-i18n';
+import { useLocale } from '@/core/composables/useLocale';
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
 export function useRules() {
-  const { t } = useI18n({
-    messages: {
-      en: {
-        'required': 'Field is required.',
-        'counter': 'Max {counter} characters.',
-      },
-      pl: {
-        'required': 'Pole jest wymagane.',
-        'counter': 'Dozwolona liczba znaków: {counter}.',
-      },
-    },
-  });
-
+  const { t } = useLocale();
   function buildInRules(schema: EngineField) {
     let rules: any[] = [];
 

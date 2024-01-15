@@ -8,7 +8,7 @@ Inspired by https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/
 ## Documentation
 
 The documentation and some of the testing was based on the Storybook
-application [live](https://maciejdybowski.github.io/vue3-schema-forms/) 👈👈👈 
+application [live](https://maciejdybowski.github.io/vue3-schema-forms/) 👈👈
 
 Check the changelog here => [@latest](https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs)
 
@@ -22,7 +22,7 @@ To relieve the library of dependencies as ```peerDependencies``` library takes:
 * ```dayjs@1.11.10``` - management and formatting of dates including time zones,
 * ```pinia@2.1.7``` - managing the status of each form, reference values
 * ```vue-i18n@9.6.4``` - handling translations in the library
-* ```vuedraggable@4.1.0``` - support for drag&drop interaction 
+* ```vuedraggable@4.1.0``` - support for drag&drop interaction
 
 ```bash
 npm i vue vuetify axios dayjs pinia vue-18n vuedraggable
@@ -51,6 +51,7 @@ createApp(App)
 After importing the plugin, we can invoke the form-generating component and pass the appropriate props.
 
 ```vue
+
 <template>
   <vue-schema-forms
     v-model='model'
@@ -119,6 +120,12 @@ The following table shows the default values for each field
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | formActions | The slot contains predefined default actions for the form: validation, reset validation and reset form. The user is free to override this slot and write his own buttons using exposed functions from the component. Just give "ref" and enjoy a ready-made validation function that takes 3 options: no parameter / scroll / messages [example](https://maciejdybowski.github.io/vue3-schema-forms/?path=/story/forms-features-validations--add-custom-submit-with-built-in-validation) |
 
+## Integrated fields
+
+| Name          | Default settings                                                                                                                                                                                   | Component | Description                                               | Link                                                                       |
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|-----------------------------------------------------------|----------------------------------------------------------------------------|
+| v-phone-input | <pre>{<br>  'country-icon-mode': 'svg',<br>  'countryLabel': t('countryLabel'),<br>  'guess-country': true, <br>  'include-countries': ['pl', 'gb', 'ru', 'de', 'us', 'es', 'fr', 'it']<br>}</pre> | phone     | Number of decimal places in the representation of numbers | [source](https://github.com/paul-thebaud/v-phone-input?tab=readme-ov-file) |
+
 ## Tests
 
 1. ```cd``` to the project directory
@@ -137,8 +144,18 @@ The following table shows the default values for each field
 
 ## ToDo List
 
+- [ ] Ability to add validation functions in schema
+- [ ] Ability to mark "not-saveable" field in schema/model
+- [ ] Phone input
+- [ ] Email input
+- [ ] Address input
+- [ ] Markdown input
+- [ ] File input
+- [ ] Table input
 - [ ] Signal for form is ready (for autosave but after initial model changes)
-- [ ] Create date/datetime field
+- [ ] Create datetime field
+
+
 - [ ] Use resolveDepsComposable for deps on fields
 - [ ] Create editable sections
 - [ ] Change to use Engine props (decomposition)

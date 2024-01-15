@@ -46,8 +46,9 @@ import EditableSection from '../controls/editable-section/EditableSection.vue';
 import Autocomplete from '../controls/Autocomplete.vue';
 import { useFormModelStore } from '@/store/formModelStore';
 import { FormItem, ValidationBehaviour, ValidationError } from '../../vocabulary/engine/formValidation';
-import FormDefaultActions from '@/components/engine/validation/FormDefaultActions.vue';
-import DatePicker from '@/components/controls/date/DatePicker.vue';
+import FormDefaultActions from './validation/FormDefaultActions.vue';
+import DatePicker from '../controls/date/DatePicker.vue';
+import PhoneInput from '../controls/PhoneInput.vue';
 
 // register components to VueInstance
 declare type Components = Record<string, Component>;
@@ -62,6 +63,7 @@ const components = {
   'editable-section': EditableSection,
   'dictionary': Autocomplete,
   'date-picker': DatePicker,
+  "phone": PhoneInput
 } as Components;
 const instance = getCurrentInstance();
 for (const [name, comp] of Object.entries(components)) {

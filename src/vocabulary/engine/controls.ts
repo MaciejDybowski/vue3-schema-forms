@@ -19,6 +19,10 @@ export interface EngineDuplicatedSection extends EngineField {}
 export interface EngineSourceField extends EngineField {
   source: Source;
 }
+
+export interface EnginePhoneField extends EngineField {
+  phoneInputProps: object
+}
 export interface EngineDictionaryField extends EngineField {
   source: DictionarySource
 }

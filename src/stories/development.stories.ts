@@ -80,7 +80,11 @@ export const Table1: Story = {
                       default: 1,
                       layout: { component: 'text-field', cols: 2 },
                     },
-                    price: { label: 'Price ({invoiceMetadata.pricing.formatted})', type: 'number', layout: { component: 'text-field', cols: 3 } },
+                    price: {
+                      label: 'Price ({invoiceMetadata.pricing.formatted})',
+                      type: 'number',
+                      layout: { component: 'text-field', cols: 3 },
+                    },
                     value: {
                       label: 'Value',
                       type: 'number',
@@ -111,4 +115,33 @@ export const Table1: Story = {
   },
 };
 
+export const Table2: Story = {
+  args: {
+    model: {
+      //phone: "+48510123656"
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        name: {
+          label: 'Name',
+          layout: {
+            component: 'text-field',
+          },
+        },
+        phone: {
+          label: 'Phone input',
+          layout: {
+            component: 'phone',
+          },
+          phoneInputProps: {
+            hint: "Only valid phone numbers...",
+            placeholder: "Type your number"
+          },
+        },
+      },
+
+    } as Schema,
+  },
+};
 
