@@ -7,8 +7,8 @@ import { mapSliceTotalElements } from '../../components/controls/base/SliceRespo
 import { useResolveVariables } from './useResolveVariables';
 import { debounce } from 'lodash';
 import get from 'lodash/get';
-import { variableRegexp } from '@/core/engine/utils';
-import { useFormModelStore } from '@/store/formModelStore';
+import { variableRegexp } from '../../core/engine/utils';
+import { useFormModelStore } from '../../store/formModelStore';
 
 export function useDictionarySource(source: DictionarySource, formId: string) {
   const title = source.title ? source.title : 'title';

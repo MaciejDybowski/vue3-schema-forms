@@ -24,7 +24,7 @@
 <script setup lang='ts'>
 import { EngineField } from '../../vocabulary/engine';
 import { useConditionalRendering } from '../../core/composables/useConditionalRendering';
-import { useSchemaCols } from '@/core/composables/useSchemaCols';
+import { useSchemaCols } from '../../core/composables/useSchemaCols';
 
 const props = defineProps<{
   schema: EngineField;

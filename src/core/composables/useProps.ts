@@ -1,8 +1,8 @@
 import { EngineField } from '@/vocabulary/engine';
 import { EngineTextField } from '@/vocabulary/engine/controls';
-import { useResolveVariables } from '@/core/composables/useResolveVariables';
+import { useResolveVariables } from '../../core/composables/useResolveVariables';
 import set from 'lodash/set';
-import { variableRegexp } from '@/core/engine/utils';
+import { variableRegexp } from '../../core/engine/utils';
 
 export function useProps() {
   function bindProps(schema: EngineField) {

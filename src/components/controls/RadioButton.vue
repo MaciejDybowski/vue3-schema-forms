@@ -31,8 +31,8 @@ import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
 import { useSource } from '../../core/composables/useSource';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
-import { useLabel } from '@/core/composables/useLabel';
-import { useClass } from '@/core/composables/useClass';
+import { useLabel } from '../../core/composables/useLabel';
+import { useClass } from '../../core/composables/useClass';
 
 const props = defineProps<{
   schema: EngineSourceField;

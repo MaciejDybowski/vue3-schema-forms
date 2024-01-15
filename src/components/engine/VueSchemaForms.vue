@@ -44,7 +44,7 @@ import Select from '../controls/Select.vue';
 import { formUpdateLogger } from '../../main';
 import EditableSection from '../controls/editable-section/EditableSection.vue';
 import Autocomplete from '../controls/Autocomplete.vue';
-import { useFormModelStore } from '@/store/formModelStore';
+import { useFormModelStore } from '../../store/formModelStore';
 import { FormItem, ValidationBehaviour, ValidationError } from '../../vocabulary/engine/formValidation';
 import FormDefaultActions from './validation/FormDefaultActions.vue';
 import DatePicker from '../controls/date/DatePicker.vue';

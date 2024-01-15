@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import { variableRegexp } from '../engine/utils';
-import { useFormModelStore } from '@/store/formModelStore';
+import { useFormModelStore } from '../../store/formModelStore';
 
 export function useResolveVariables(inputString: string, formId: string) {
   let allVariablesResolved = true;

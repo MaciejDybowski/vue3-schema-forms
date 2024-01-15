@@ -28,15 +28,15 @@
 <script setup lang='ts'>
 
 import { computed, onMounted, ref, Ref } from 'vue';
-import { EngineSourceField } from '@/vocabulary/engine/controls';
-import { useProps } from '@/core/composables/useProps';
+import { EngineSourceField } from '../../../vocabulary/engine/controls';
+import { useProps } from '../../../core/composables/useProps';
 
 import { vMaska } from 'maska';
-import { getValueFromModel, produceUpdateEvent } from '@/core/engine/utils';
+import { getValueFromModel, produceUpdateEvent } from '../../../core/engine/utils';
 import { onClickOutside } from '@vueuse/core';
 import dayjs from './dayjs';
-import { useRules } from '@/core/composables/useRules';
-import { useLabel } from '@/core/composables/useLabel';
+import { useRules } from '../../../core/composables/useRules';
+import { useLabel } from '../../../core/composables/useLabel';
 
 const props = defineProps<{ schema: EngineSourceField; model: object; }>();
 const dateFormat = 'DD/MM/YYYY';

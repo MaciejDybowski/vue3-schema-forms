@@ -14,8 +14,8 @@ import { computed } from 'vue';
 import {  getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
-import { useLabel } from '@/core/composables/useLabel';
-import { useClass } from '@/core/composables/useClass';
+import { useLabel } from '../../core/composables/useLabel';
+import { useClass } from '../../core/composables/useClass';
 
 const props = defineProps<{
   schema: EngineField,

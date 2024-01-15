@@ -1,7 +1,7 @@
-import { useResolveVariables } from '@/core/composables/useResolveVariables';
+import { useResolveVariables } from './useResolveVariables';
 import { EngineField } from '@/vocabulary/engine';
-import { useFormModelStore } from '@/store/formModelStore';
-import { variableRegexp } from '@/core/engine/utils';
+import { useFormModelStore } from '../../store/formModelStore';
+import { variableRegexp } from '../../core/engine/utils';
 import { ref } from 'vue';
 
 

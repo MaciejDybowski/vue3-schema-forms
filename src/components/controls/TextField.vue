@@ -20,8 +20,8 @@ import { useCalculation } from '../../core/composables/useCalculation';
 import { useRules } from '../../core/composables/useRules';
 import { useProps } from '../../core/composables/useProps';
 import { useFormattedNumber } from '../../core/composables/useFormattedNumber';
-import { useLabel } from '@/core/composables/useLabel';
-import { useClass } from '@/core/composables/useClass';
+import { useLabel } from '../../core/composables/useLabel';
+import { useClass } from '../../core/composables/useClass';
 
 const props = defineProps<{
   schema: EngineTextField;

@@ -17,13 +17,13 @@ import 'flag-icons/css/flag-icons.min.css';
 import 'v-phone-input/dist/v-phone-input.css';
 import { VPhoneInput } from 'v-phone-input';
 import { computed } from 'vue';
-import { useLabel } from '@/core/composables/useLabel';
+import { useLabel } from '../../core/composables/useLabel';
 import { EnginePhoneField } from '@/vocabulary/engine/controls';
-import { useRules } from '@/core/composables/useRules';
-import { useClass } from '@/core/composables/useClass';
-import { getValueFromModel, produceUpdateEvent } from '@/core/engine/utils';
-import { useProps } from '@/core/composables/useProps';
-import { useLocale } from '@/core/composables/useLocale';
+import { useRules } from '../../core/composables/useRules';
+import { useClass } from '../../core/composables/useClass';
+import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
+import { useProps } from '../../core/composables/useProps';
+import { useLocale } from '../../core/composables/useLocale';
 
 
 const props = defineProps<{
