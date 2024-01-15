@@ -122,9 +122,9 @@ The following table shows the default values for each field
 
 ## Integrated fields
 
-| Name          | Default settings                                                                                                                                                                                   | Component | Description                                               | Link                                                                       |
-|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|-----------------------------------------------------------|----------------------------------------------------------------------------|
-| v-phone-input | <pre>{<br>  'country-icon-mode': 'svg',<br>  'countryLabel': t('countryLabel'),<br>  'guess-country': true, <br>  'include-countries': ['pl', 'gb', 'ru', 'de', 'us', 'es', 'fr', 'it']<br>}</pre> | phone     | Number of decimal places in the representation of numbers | [source](https://github.com/paul-thebaud/v-phone-input?tab=readme-ov-file) |
+| Name          | Default settings                                                                                                                                                                                   | Component | Description                                        | Link                                                                       |
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|----------------------------------------------------|----------------------------------------------------------------------------|
+| v-phone-input | <pre>{<br>  'country-icon-mode': 'svg',<br>  'countryLabel': t('countryLabel'),<br>  'guess-country': true, <br>  'include-countries': ['pl', 'gb', 'ru', 'de', 'us', 'es', 'fr', 'it']<br>}</pre> | phone     | International phone field for Vuetify 3 and Vue 3. | [source](https://github.com/paul-thebaud/v-phone-input?tab=readme-ov-file) |
 
 ## Tests
 
