@@ -8,9 +8,11 @@ Inspired by https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/
 ## Documentation
 
 The documentation and some of the testing was based on the Storybook
-application [live](https://maciejdybowski.github.io/vue3-schema-forms/) 👈👈
+application 👉 [live](https://maciejdybowski.github.io/vue3-schema-forms/)
 
-Check the changelog here => [@latest](https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs)
+Check the changelog here 👉 [@latest](https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs)
+
+Sample app with schema forms configuration 👉 [here](https://github.com/MaciejDybowski/vue3-schema-forms-demo-app)
 
 ## Requirements
 
@@ -25,7 +27,7 @@ To relieve the library of dependencies as ```peerDependencies``` library takes:
 * ```vuedraggable@4.1.0``` - support for drag&drop interaction
 
 ```bash
-npm i vue vuetify axios dayjs pinia vue-18n vuedraggable
+npm i vue@3.4.14 vuetify@3.4.10 axios@1.6.5 dayjs@1.11.10 pinia@2.1.7 vue-i18n@9 vuedraggable@next
 ```
 
 ## Installation
