@@ -1,38 +1,38 @@
 <template>
   <v-radio-group
-    v-model='localModel'
-    :label='label'
-    v-bind='bindProps(schema)'
-    :rules='rules(schema)'
-    :class='bindClass(schema)'
-    v-if='!loading'
+    v-model="localModel"
+    :label="label"
+    v-bind="bindProps(schema)"
+    :rules="rules(schema)"
+    :class="bindClass(schema)"
+    v-if="!loading"
   >
     <template
-      v-for='(option, index) in data'
-      :key='option[value]'
+      v-for="(option, index) in data"
+      :key="option[value]"
     >
       <v-radio
-        v-bind='bindProps(schema)'
-        :value='option[value]'
+        v-bind="bindProps(schema)"
+        :value="option[value]"
         :class="index !== data.length - 1 && !bindProps(schema).inline ? 'mb-2' : ''"
       >
-        <template #label='{ label }'>
-          <div class='mr-2'>{{ option[title] }}</div>
+        <template #label="{ label }">
+          <div class="mr-2">{{ option[title] }}</div>
         </template>
       </v-radio>
     </template>
   </v-radio-group>
 </template>
 
-<script setup lang='ts'>
-import { EngineSourceField } from '../../vocabulary/engine/controls';
-import { computed, onMounted, watch } from 'vue';
-import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
-import { useSource } from '../../core/composables/useSource';
-import { useRules } from '../../core/composables/useRules';
-import { useProps } from '../../core/composables/useProps';
-import { useLabel } from '../../core/composables/useLabel';
-import { useClass } from '../../core/composables/useClass';
+<script setup lang="ts">
+import { EngineSourceField } from "../../vocabulary/engine/controls";
+import { computed, onMounted, watch } from "vue";
+import { getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
+import { useSource } from "../../core/composables/useSource";
+import { useRules } from "../../core/composables/useRules";
+import { useProps } from "../../core/composables/useProps";
+import { useLabel } from "../../core/composables/useLabel";
+import { useClass } from "../../core/composables/useClass";
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -64,7 +64,6 @@ const localModel = computed({
   },
 });
 
-
 const { rules } = useRules();
 
 watch(loading, () => {
@@ -83,7 +82,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang='css'>
+<style scoped lang="css">
 :deep(.v-label) {
   margin-inline-start: 0 !important;
 }
