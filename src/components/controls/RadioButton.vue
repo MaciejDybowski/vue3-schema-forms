@@ -77,8 +77,6 @@ watch(loading, () => {
 });
 
 onMounted(async () => {
-  //await load();
-
   if (!loading.value && localModel.value == null) {
     localModel.value = data.value[0][value];
   }
