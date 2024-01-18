@@ -25,8 +25,8 @@
     "forms",
     "JSON Schema"
   ],
-  "author": "Maciek Dybowski",
-  "license": "Apache-2.0",
+  "author": "Maciej Dybowski",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/MaciejDybowski/vue3-schema-forms"
@@ -38,6 +38,7 @@
     "@vueuse/core": "^10.7.1",
     "expr-eval": "^2.0.2",
     "flag-icons": "^7.1.0",
+    "leaflet-geosearch": "^3.11.0",
     "lodash": "^4.17.21",
     "maska": "^2.1.10",
     "uuid": "^9.0.1",
@@ -51,7 +52,7 @@
     "vue": "^3.4.3",
     "vue-i18n": "^9.6.4",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.4.9"
+    "vuetify": "^3.4.10"
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",

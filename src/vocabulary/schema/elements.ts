@@ -18,6 +18,15 @@ export interface SchemaSourceField extends SchemaField {
   source?: Source;
 }
 
+export interface SchemaLocationField extends SchemaField {
+  results: LocationResult;
+}
+
+export interface LocationResult {
+  lang: string,
+  countryLimit: string,
+}
+
 export interface Layout {
   component: SchemaComponent;
   cols?: number | Cols;
@@ -47,6 +56,8 @@ export type SchemaComponent =
   | 'dictionary'
   | 'date-picker'
   | 'phone'
+  | 'read-only'
+  | 'location'
 
 export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span';
 

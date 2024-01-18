@@ -60,7 +60,7 @@ export const StoryTemplateWithCustomValidation: StoryFn<typeof VueSchemaForms> =
     const model = ref(args.modelValue);
 
     async function validate() {
-      const valid = await myForm.value.validate();
+      const { valid } = await myForm.value.validate();
       window.alert('Validation result: ' + valid);
     }
 

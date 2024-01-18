@@ -49,6 +49,7 @@ import { FormItem, ValidationBehaviour, ValidationError } from '../../vocabulary
 import FormDefaultActions from './validation/FormDefaultActions.vue';
 import DatePicker from '../controls/date/DatePicker.vue';
 import PhoneInput from '../controls/PhoneInput.vue';
+import Location from '../controls/Location.vue';
 
 // register components to VueInstance
 declare type Components = Record<string, Component>;
@@ -63,7 +64,8 @@ const components = {
   'editable-section': EditableSection,
   'dictionary': Autocomplete,
   'date-picker': DatePicker,
-  "phone": PhoneInput
+  'phone': PhoneInput,
+  'location': Location,
 } as Components;
 const instance = getCurrentInstance();
 for (const [name, comp] of Object.entries(components)) {
