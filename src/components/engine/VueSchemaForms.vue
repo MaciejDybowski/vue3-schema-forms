@@ -140,7 +140,7 @@ async function validate(option?: ValidationBehaviour) {
   formValid.value = valid;
 
   if (!option) {
-    return valid;
+    return { valid };
   }
   if (valid) {
     errorMessages.value = [];
@@ -155,21 +155,22 @@ async function validate(option?: ValidationBehaviour) {
         behavior: 'smooth',
         block: 'center',
       });
-    return;
+    return { valid };
   }
 
   if (!valid && option === 'messages') {
     let arr: FormItem[] = Array.from(formRef.value[formId].items);
-    errorMessages.value = arr.map((item: FormItem) => {
-      const element: Ref<any> = ref(document.getElementById(item.id as string));
-      const label = element.value.labels[0].innerText ? element.value.labels[0].innerText : element.value.labels[1].innerText;
-      return {
-        id: item.id,
-        label: label,
-        messages: item.errorMessages.length > 0 ? item.errorMessages : null,
-      } as ValidationError;
-    }).filter((item) => item.messages);
-    return errorMessages.value;
+    errorMessages.value = arr.filter((item: FormItem) => !item.isValid)
+      .map((item: FormItem) => {
+        const element: Ref<any> = ref(document.getElementById(item.id as string));
+        const label = element.value.labels[0].innerText ? element.value.labels[0].innerText : element.value.labels[1].innerText;
+        return {
+          id: item.id,
+          label: label,
+          messages: item.errorMessages.length > 0 ? item.errorMessages : null,
+        } as ValidationError;
+      }).filter((item) => item.messages);
+    return { valid, messages: errorMessages.value };
   }
 }
 
