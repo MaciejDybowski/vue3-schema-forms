@@ -6,7 +6,7 @@ import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import { VueSchemaForms } from "@/components";
 import { EngineSourceField } from "@/vocabulary/engine/controls";
-import { SimpleSource, Source } from '@/vocabulary/schema/elements';
+import { SimpleSource, Source } from "@/vocabulary/schema/elements";
 
 const meta = {
   title: "Forms/Controls/Checkbox",

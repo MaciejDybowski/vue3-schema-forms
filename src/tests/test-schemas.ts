@@ -207,7 +207,7 @@ export const invoicePositionsSchema: Schema = {
               layout: { component: "text-field", cols: 3 },
               calculation: "quantity * (netPrice+netPrice*tax)",
             } as SchemaTextField,
-          }
+          },
         },
         options: {
           addBtnText: { $ref: "#/i18n/~$locale~/addAction" },

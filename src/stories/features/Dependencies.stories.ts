@@ -1,38 +1,32 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { VueSchemaForms } from '@/components';
-import { StoryTemplateWithValidation } from '@/stories/templates/story-template';
-import { Schema, SchemaOptions } from '@/vocabulary/schema';
-import {
-  DictionarySource,
-  Layout,
-  SchemaSourceField,
-  SchemaTextField,
-  SimpleSource,
-} from '@/vocabulary/schema/elements';
-import { REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI } from '@/stories/controls/Dictionary/responses';
-import { userEvent, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
-import { EngineSourceField } from '../../vocabulary/engine/controls';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { VueSchemaForms } from "@/components";
+import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
+import { Schema, SchemaOptions } from "@/vocabulary/schema";
+import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "@/vocabulary/schema/elements";
+import { REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI } from "@/stories/controls/Dictionary/responses";
+import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
+import { EngineSourceField } from "../../vocabulary/engine/controls";
 
 const meta = {
-  title: 'Forms/Features/Dependencies',
+  title: "Forms/Features/Dependencies",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -47,31 +41,30 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-
 export const UseFormVariablesInFieldProps: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const currency = canvas.getByLabelText('Currency');
+    const currency = canvas.getByLabelText("Currency");
 
-    await context.step('Resolve dependency', async () => {
+    await context.step("Resolve dependency", async () => {
       await userEvent.click(currency, { pointerEventsCheck: 0, delay: 200 });
-      const items = document.getElementsByClassName('v-list-item');
+      const items = document.getElementsByClassName("v-list-item");
       await userEvent.click(items[0], { delay: 200 });
 
-      const querySuffix = await canvas.findAllByText('AFN');
-      let queryHint = await canvas.findAllByText('Digits after decimal = 2');
+      const querySuffix = await canvas.findAllByText("AFN");
+      let queryHint = await canvas.findAllByText("Digits after decimal = 2");
 
       await expect(querySuffix.length).toEqual(2);
       await expect(queryHint.length).toEqual(2);
     });
 
-    await context.step('Dynamic changed already resolved', async () => {
-      const items = document.getElementsByClassName('v-list-item');
+    await context.step("Dynamic changed already resolved", async () => {
+      const items = document.getElementsByClassName("v-list-item");
 
       await userEvent.click(currency, { pointerEventsCheck: 0, delay: 200 });
       await userEvent.click(items[1], { delay: 200 });
 
-      const queryHint = await canvas.findAllByText('Digits after decimal = 3');
+      const queryHint = await canvas.findAllByText("Digits after decimal = 3");
       await expect(queryHint.length).toEqual(2);
     });
   },
@@ -79,74 +72,72 @@ export const UseFormVariablesInFieldProps: Story = {
   args: {
     modelValue: {
       amount: 32,
-      items: [
-        { item: 'Item 1', quantity: 3, price: 32.21 },
-      ],
+      items: [{ item: "Item 1", quantity: 3, price: 32.21 }],
     },
     schema: {
       properties: {
         currency: {
-          label: 'Currency',
+          label: "Currency",
           layout: {
-            component: 'dictionary',
+            component: "dictionary",
             cols: 3,
           },
           source: {
-            url: '/api/currencies',
-            title: 'label',
-            value: 'id',
+            url: "/api/currencies",
+            title: "label",
+            value: "id",
           } as DictionarySource,
         } as SchemaSourceField,
         amount: {
-          label: 'Amount (outside)',
-          type: 'number',
+          label: "Amount (outside)",
+          type: "number",
           layout: {
-            component: 'text-field',
+            component: "text-field",
             cols: 3,
             props: {
-              suffix: '{currency.id}',
-              hint: 'Digits after decimal = {currency.digitsAfterDecimal}',
-              'persistent-hint': true,
+              suffix: "{currency.id}",
+              hint: "Digits after decimal = {currency.digitsAfterDecimal}",
+              "persistent-hint": true,
             },
           },
         } as SchemaTextField,
         items: {
           layout: {
-            component: 'duplicated-section',
+            component: "duplicated-section",
             schema: {
               properties: {
                 item: {
-                  label: 'Item',
-                  layout: { component: 'text-field', cols: 3 },
+                  label: "Item",
+                  layout: { component: "text-field", cols: 3 },
                 },
                 quantity: {
-                  label: 'Quantity',
-                  type: 'number',
+                  label: "Quantity",
+                  type: "number",
                   default: 1,
-                  layout: { component: 'text-field', cols: 3 },
+                  layout: { component: "text-field", cols: 3 },
                 },
                 price: {
-                  label: 'Price',
-                  type: 'number',
-                  layout: { component: 'text-field', cols: 3 },
+                  label: "Price",
+                  type: "number",
+                  layout: { component: "text-field", cols: 3 },
                   props: {
-                    suffix: '{currency.id}',
-                    'persistent-hint': true,
+                    suffix: "{currency.id}",
+                    "persistent-hint": true,
                   },
                 },
                 summary: {
-                  label: 'Amount',
-                  type: 'number',
+                  label: "Amount",
+                  type: "number",
                   layout: {
-                    component: 'text-field',
+                    component: "text-field",
                     cols: 3,
                     props: {
-                      suffix: '{currency.id}',
-                      hint: 'Digits after decimal = {currency.digitsAfterDecimal}',
-                      'persistent-hint': true,
+                      suffix: "{currency.id}",
+                      hint: "Digits after decimal = {currency.digitsAfterDecimal}",
+                      "persistent-hint": true,
                     },
                   },
-                  calculation: 'quantity * price',
+                  calculation: "quantity * price",
                 } as SchemaTextField,
               },
             },
@@ -155,32 +146,28 @@ export const UseFormVariablesInFieldProps: Story = {
       },
     } as Schema,
     options: {
-      digitsAfterDecimal: '{currency.digitsAfterDecimal}',
+      digitsAfterDecimal: "{currency.digitsAfterDecimal}",
     } as SchemaOptions,
   },
   parameters: {
-    mockData: [
-      REQUEST_PAGE_0_1,
-      REQUEST_SEARCH_DOLAR_AUSTRALIJSKI,
-    ],
+    mockData: [REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI],
   },
 };
-
 
 export const UseDependenciesInLabel: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
-    await context.step(('Resolved deps on load'), async () => {
-      let labelResolved = await canvas.findAllByText('Price (net)');
+    await context.step("Resolved deps on load", async () => {
+      let labelResolved = await canvas.findAllByText("Price (net)");
       await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
     });
 
-    await context.step(('Resolved when variable changed'), async () => {
-      const gross = canvas.getByLabelText('at gross prices');
+    await context.step("Resolved when variable changed", async () => {
+      const gross = canvas.getByLabelText("at gross prices");
       await userEvent.click(gross, { delay: 200 });
 
-      let labelResolved = await canvas.findAllByText('Price (gross)');
+      let labelResolved = await canvas.findAllByText("Price (gross)");
       await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
     });
   },
@@ -189,12 +176,12 @@ export const UseDependenciesInLabel: Story = {
       data: {
         items: [
           {
-            product: 'Computer',
+            product: "Computer",
             quantity: 1,
             price: 3200,
           },
           {
-            product: 'Laptop',
+            product: "Laptop",
             quantity: 2,
             price: 1334.23,
           },
@@ -202,18 +189,18 @@ export const UseDependenciesInLabel: Story = {
       },
     },
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         invoiceMetadata: {
           properties: {
             pricing: {
-              label: 'The invoice is issued:',
-              layout: { component: 'radio-button', cols: 3, fillRow: true } as Layout,
-              default: { value: 'net', title: 'at net prices', formatted: 'net' },
+              label: "The invoice is issued:",
+              layout: { component: "radio-button", cols: 3, fillRow: true } as Layout,
+              default: { value: "net", title: "at net prices", formatted: "net" },
               source: {
                 items: [
-                  { value: 'net', title: 'at net prices', formatted: 'net' },
-                  { value: 'gross', title: 'at gross prices', formatted: 'gross' },
+                  { value: "net", title: "at net prices", formatted: "net" },
+                  { value: "gross", title: "at gross prices", formatted: "gross" },
                 ],
                 returnObject: true,
               } as SimpleSource,
@@ -224,22 +211,26 @@ export const UseDependenciesInLabel: Story = {
           properties: {
             items: {
               layout: {
-                component: 'duplicated-section',
+                component: "duplicated-section",
                 schema: {
                   properties: {
-                    product: { label: 'Product', layout: { component: 'text-field', cols: 4 } },
+                    product: { label: "Product", layout: { component: "text-field", cols: 4 } },
                     quantity: {
-                      label: 'Quantity',
-                      type: 'number',
+                      label: "Quantity",
+                      type: "number",
                       default: 1,
-                      layout: { component: 'text-field', cols: 2 },
+                      layout: { component: "text-field", cols: 2 },
                     },
-                    price: { label: 'Price ({invoiceMetadata.pricing.formatted})', type: 'number', layout: { component: 'text-field', cols: 3 } },
+                    price: {
+                      label: "Price ({invoiceMetadata.pricing.formatted})",
+                      type: "number",
+                      layout: { component: "text-field", cols: 3 },
+                    },
                     value: {
-                      label: 'Value',
-                      type: 'number',
-                      layout: { component: 'text-field', cols: 3 },
-                      calculation: 'quantity * price',
+                      label: "Value",
+                      type: "number",
+                      layout: { component: "text-field", cols: 3 },
+                      calculation: "quantity * price",
                     } as SchemaTextField,
                   },
                 },
@@ -250,13 +241,13 @@ export const UseDependenciesInLabel: Story = {
         summary: {
           properties: {
             sumValue: {
-              label: 'SUM(Value)',
+              label: "SUM(Value)",
               layout: {
-                component: 'text-field',
+                component: "text-field",
                 cols: 4,
               },
-              calculation: 'SUM(value, data.items) - 300',
-              type: 'number',
+              calculation: "SUM(value, data.items) - 300",
+              type: "number",
             } as SchemaTextField,
           },
         },
@@ -269,51 +260,50 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
-    await context.step(('Check default label with fallback message'), async () => {
-      let labelResolved = await canvas.findAllByText('Telephone with your country prefix');
+    await context.step("Check default label with fallback message", async () => {
+      let labelResolved = await canvas.findAllByText("Telephone with your country prefix");
       await expect(labelResolved.length).toEqual(2); // 1 visible and 1 not visible
     });
 
-    await context.step(('Check default label after variable set in model'), async () => {
-      const select = canvas.getByLabelText('Country');
+    await context.step("Check default label after variable set in model", async () => {
+      const select = canvas.getByLabelText("Country");
       await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-      const items = document.getElementsByClassName('v-list-item');
+      const items = document.getElementsByClassName("v-list-item");
       await userEvent.click(items[0], { delay: 200 });
 
-      let labelResolved = await canvas.findAllByText('Telephone with PL prefix');
+      let labelResolved = await canvas.findAllByText("Telephone with PL prefix");
       await expect(labelResolved.length).toEqual(2); // 1 visible and 1 not visible
     });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         description: {
-          content: 'If we want to have dependencies and a default value when this value is not yet in the model then we do it as follows: <b>path_to_variable:value_default</b>',
+          content:
+            "If we want to have dependencies and a default value when this value is not yet in the model then we do it as follows: <b>path_to_variable:value_default</b>",
           layout: {
-            component: 'static-content',
-            tag: "span"
+            component: "static-content",
+            tag: "span",
           },
         },
         country: {
-          label: 'Country',
+          label: "Country",
           layout: {
-            component: 'select',
+            component: "select",
             cols: 3,
             fillRow: true,
           },
           source: {
-            items: [
-              { value: 'PL', title: 'Poland' },
-            ],
+            items: [{ value: "PL", title: "Poland" }],
           } as SimpleSource,
         },
         textField: {
-          label: 'Telephone with {country:your country} prefix',
+          label: "Telephone with {country:your country} prefix",
           layout: {
-            component: 'text-field',
+            component: "text-field",
             cols: 3,
           },
         },

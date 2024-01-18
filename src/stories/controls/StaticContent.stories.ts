@@ -1,29 +1,29 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { Schema } from '@/vocabulary/schema';
-import { VueSchemaForms } from '@/components';
-import { Layout } from '@/vocabulary/schema/elements';
-import { within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { Schema } from "@/vocabulary/schema";
+import { VueSchemaForms } from "@/components";
+import { Layout } from "@/vocabulary/schema/elements";
+import { within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
 
 const meta = {
-  title: 'Forms/Static content',
+  title: "Forms/Static content",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -42,63 +42,63 @@ export const Examples: Story = {
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         h1: {
-          content: 'h1 - Static form text content',
+          content: "h1 - Static form text content",
           layout: {
-            component: 'static-content',
-            tag: 'h1',
+            component: "static-content",
+            tag: "h1",
           } as Layout,
         },
         h2: {
-          content: 'h2- Static form text content',
+          content: "h2- Static form text content",
           layout: {
-            component: 'static-content',
-            tag: 'h2',
+            component: "static-content",
+            tag: "h2",
           } as Layout,
         },
         h3: {
-          content: 'h3- Static form text content',
+          content: "h3- Static form text content",
           layout: {
-            component: 'static-content',
-            tag: 'h3',
+            component: "static-content",
+            tag: "h3",
           } as Layout,
         },
         h4: {
-          content: 'h4 - Static form text content',
+          content: "h4 - Static form text content",
           layout: {
-            component: 'static-content',
-            tag: 'h4',
+            component: "static-content",
+            tag: "h4",
           } as Layout,
         },
         h5: {
-          content: 'h5 - Static form text content',
+          content: "h5 - Static form text content",
           layout: {
-            component: 'static-content',
-            tag: 'h5',
+            component: "static-content",
+            tag: "h5",
           } as Layout,
         },
         paragraph: {
-          content: 'p - Static form text content',
+          content: "p - Static form text content",
           layout: {
-            component: 'static-content',
-            tag: 'p',
+            component: "static-content",
+            tag: "p",
           } as Layout,
         },
         span: {
-          content: 'span - Static form text content tag',
+          content: "span - Static form text content tag",
           layout: {
-            component: 'static-content',
-            tag: 'span',
+            component: "static-content",
+            tag: "span",
           } as Layout,
         },
         longText: {
           content:
-            'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
+            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
           layout: {
-            component: 'static-content',
-            tag: 'span',
+            component: "static-content",
+            tag: "span",
           } as Layout,
         },
       },
@@ -109,35 +109,33 @@ export const Examples: Story = {
 export const TextWithVariablesAndHTML: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('Hello Maciej Dybowski!')).toBeInTheDocument();
+    await expect(canvas.getByText("Hello Maciej Dybowski!")).toBeInTheDocument();
   },
   args: {
     modelValue: {
       data: {
-        firstName: 'Maciej',
-        lastName: 'Dybowski',
+        firstName: "Maciej",
+        lastName: "Dybowski",
       },
     },
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         h2: {
-          content: 'Hello {data.firstName} {data.lastName}!',
+          content: "Hello {data.firstName} {data.lastName}!",
           layout: {
-            component: 'static-content',
-            tag: 'h2',
+            component: "static-content",
+            tag: "h2",
           } as Layout,
         },
         description: {
-          content: '<b>{data.firstName}</b>, this span was generated as v-html content.',
+          content: "<b>{data.firstName}</b>, this span was generated as v-html content.",
           layout: {
-            component: 'static-content',
-            tag: 'span',
+            component: "static-content",
+            tag: "span",
           } as Layout,
         },
       },
     } as Schema,
   },
 };
-
-

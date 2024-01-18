@@ -1,63 +1,63 @@
 <template>
   <draggable
-    v-model='nodes'
-    group='sections'
-    @start='drag = true'
-    @end='drag = false'
-    @change='changePosition'
-    handle='.draggable-icon'
-    item-key='id'
-    v-bind='dragOptions'
+    v-model="nodes"
+    group="sections"
+    @start="drag = true"
+    @end="drag = false"
+    @change="changePosition"
+    handle=".draggable-icon"
+    item-key="id"
+    v-bind="dragOptions"
   >
-    <template #item='{ element, index }'>
-      <duplicated-section-item :show-divider='isShowDivider && index <= nodes.length - 2'>
-        <template #box='{ isHovering }'>
-          <draggable-icon :show='isHovering' />
+    <template #item="{ element, index }">
+      <duplicated-section-item :show-divider="isShowDivider && index <= nodes.length - 2">
+        <template #box="{ isHovering }">
+          <draggable-icon :show="isHovering" />
           <form-root
-            class='mb-3'
-            :model='localModel[index]'
-            @update:model='updateModel($event, index)'
-            :options='schema.options'
-            :schema='element as Schema'
-            :form-id='schema.formId'
+            class="mb-3"
+            :model="localModel[index]"
+            @update:model="updateModel($event, index)"
+            :options="schema.options"
+            :schema="element as Schema"
+            :form-id="schema.formId"
           />
           <draggable-context-menu
-            :show='isHovering'
-            @handle-action='handleDraggableContextAction($event, index)'
+            :show="isHovering"
+            @handle-action="handleDraggableContextAction($event, index)"
           />
         </template>
       </duplicated-section-item>
     </template>
   </draggable>
   <v-btn
-    prepend-icon='mdi-plus'
-    color='primary'
-    v-bind='schema.options.buttonProps'
-    @click='addNode'
+    prepend-icon="mdi-plus"
+    color="primary"
+    v-bind="schema.options.buttonProps"
+    @click="addNode"
   >
     {{ getAddBtnText }}
   </v-btn>
 </template>
 
-<script setup lang='ts'>
-import { computed, onMounted, ref } from 'vue';
-import get from 'lodash/get';
-import draggable from 'vuedraggable';
+<script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
+import get from "lodash/get";
+import draggable from "vuedraggable";
 
-import { NodeUpdateEvent } from '../../../vocabulary/engine';
-import { Schema } from '../../../vocabulary/schema';
-import { produceUpdateEvent } from '../../../core/engine/utils';
-import { EngineDuplicatedSection } from '../../../vocabulary/engine/controls';
-import { v4 as uuidv4 } from 'uuid';
-import { VueDragable } from '@/vocabulary/VueDragable';
-import FormRoot from '../../engine/FormRoot.vue';
-import DraggableIcon from './DraggableIcon.vue';
-import DraggableContextMenu from './DraggableContextMenu.vue';
-import { useI18n } from 'vue-i18n';
-import { DuplicatedSectionOptions, SchemaField } from '@/vocabulary/schema/elements';
-import { isArray } from 'lodash';
-import DuplicatedSectionItem from './DuplicatedSectionItem.vue';
-import set from 'lodash/set';
+import { NodeUpdateEvent } from "../../../vocabulary/engine";
+import { Schema } from "../../../vocabulary/schema";
+import { produceUpdateEvent } from "../../../core/engine/utils";
+import { EngineDuplicatedSection } from "../../../vocabulary/engine/controls";
+import { v4 as uuidv4 } from "uuid";
+import { VueDragable } from "@/vocabulary/VueDragable";
+import FormRoot from "../../engine/FormRoot.vue";
+import DraggableIcon from "./DraggableIcon.vue";
+import DraggableContextMenu from "./DraggableContextMenu.vue";
+import { useI18n } from "vue-i18n";
+import { DuplicatedSectionOptions, SchemaField } from "@/vocabulary/schema/elements";
+import { isArray } from "lodash";
+import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
+import set from "lodash/set";
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;
@@ -71,7 +71,7 @@ const { t } = useI18n();
 const dragOptions = ref({
   animation: 200,
   disabled: false,
-  ghostClass: 'ghost',
+  ghostClass: "ghost",
 });
 
 const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedSectionOptions);
@@ -83,25 +83,25 @@ function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
   produceUpdateEvent(localModel, props.schema);
 }
 
-function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, index: number) {
+function handleDraggableContextAction(actionId: "delete" | "addBelow" | string, index: number) {
   switch (actionId) {
-    case 'addBelow':
+    case "addBelow":
       nodes.value.splice(index + 1, 0, getClearNode.value);
       localModel.value.splice(index + 1, 0, {});
       return;
-    case 'delete':
+    case "delete":
       nodes.value = nodes.value.filter((item, i) => i !== index);
       localModel.value = localModel.value.filter((item, i) => i !== index);
       return;
     default:
-      console.error('Unknown action');
+      console.error("Unknown action");
   }
 }
 
 const getClearNode = computed((): Schema => {
   return {
     id: uuidv4(),
-    type: 'object',
+    type: "object",
     properties: props.schema.layout.schema?.properties,
     required: props.schema.layout.schema?.required,
   } as Schema;
@@ -118,7 +118,7 @@ function changePosition(drag: VueDragable<Schema>) {
     localModel.value[drag.moved.newIndex] = localModel.value[drag.moved.oldIndex];
     localModel.value[drag.moved.oldIndex] = temp;
   } else {
-    console.warn('Error with draggable');
+    console.warn("Error with draggable");
   }
 }
 
@@ -126,7 +126,7 @@ const getAddBtnText = computed(() => {
   if (duplicatedSectionOptions.value?.addBtnText) {
     return duplicatedSectionOptions.value.addBtnText;
   } else {
-    return t('addAction');
+    return t("addAction");
   }
 });
 
@@ -150,7 +150,7 @@ function init(): void {
     sections.forEach((item: any, index: number) => {
       nodes.value.push({
         id: uuidv4(),
-        type: 'object',
+        type: "object",
         properties: isDefaultExist
           ? mapPropertiesIfDefault(props.schema.layout.schema?.properties as Record<any, SchemaField>, sections[index])
           : props.schema.layout.schema?.properties,
@@ -176,14 +176,14 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .ghost {
   opacity: 0.5;
   background: #d3d3d3;
 }
 </style>
 
-<i18n lang='json'>
+<i18n lang="json">
 {
   "en": {
     "addAction": "Add"

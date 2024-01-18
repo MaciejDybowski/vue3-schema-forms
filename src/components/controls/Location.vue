@@ -1,47 +1,47 @@
 <template>
   <v-autocomplete
-    :label='label'
-    v-model='localModel'
-    :items='items'
-    @update:search='debounced.search'
-    :no-filter='true'
-    item-title='formatted_address'
-    :return-object='true'
-    :rules='rules(schema)'
-    :class='bindClass(schema)'
-    v-bind='bindProps(schema)'
+    :label="label"
+    v-model="localModel"
+    :items="items"
+    @update:search="debounced.search"
+    :no-filter="true"
+    item-title="formatted_address"
+    :return-object="true"
+    :rules="rules(schema)"
+    :class="bindClass(schema)"
+    v-bind="bindProps(schema)"
   >
   </v-autocomplete>
 </template>
 
-<script setup lang='ts'>
-import { useLabel } from '../../core/composables/useLabel';
-import { computed, Ref, ref } from 'vue';
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
-import { debounce } from 'lodash';
-import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
-import { EngineLocationField } from '@/vocabulary/engine/controls';
-import { useRules } from '@/core/composables/useRules';
-import { useClass } from '@/core/composables/useClass';
-import { useProps } from '@/core/composables/useProps';
+<script setup lang="ts">
+import { useLabel } from "../../core/composables/useLabel";
+import { computed, Ref, ref } from "vue";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { debounce } from "lodash";
+import { getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
+import { EngineLocationField } from "@/vocabulary/engine/controls";
+import { useRules } from "@/core/composables/useRules";
+import { useClass } from "@/core/composables/useClass";
+import { useProps } from "@/core/composables/useProps";
 
 interface Location {
-  country: string,
-  country_code: string,
-  state: string,
-  county: string,
-  municipality: string,
-  village: string
-  city: string
-  city_district: string
-  suburb: string
-  quarter: string
-  street: string
-  house_number: string
-  postcode: string
-  formatted_address: string
-  lat: number,
-  lng: number
+  country: string;
+  country_code: string;
+  state: string;
+  county: string;
+  municipality: string;
+  village: string;
+  city: string;
+  city_district: string;
+  suburb: string;
+  quarter: string;
+  street: string;
+  house_number: string;
+  postcode: string;
+  formatted_address: string;
+  lat: number;
+  lng: number;
 }
 
 const props = defineProps<{
@@ -67,7 +67,7 @@ const items: Ref<Location[]> = ref([]);
 
 const provider = new OpenStreetMapProvider({
   params: {
-    'accept-language': props.schema.results?.lang,
+    "accept-language": props.schema.results?.lang,
     countrycodes: props.schema.results?.lang,
     addressdetails: 1,
   },

@@ -1,10 +1,10 @@
-import { SimpleSource } from '@/vocabulary/schema/elements';
-import { ref, Ref } from 'vue';
-import axios from 'axios';
+import { SimpleSource } from "@/vocabulary/schema/elements";
+import { ref, Ref } from "vue";
+import axios from "axios";
 
 export function useSource(source: SimpleSource) {
-  const title = source.title ? source.title : 'title';
-  const value = source.value ? source.value : 'value';
+  const title = source.title ? source.title : "title";
+  const value = source.value ? source.value : "value";
   const returnObject = source.returnObject ? source.returnObject : false;
   const loading = ref(false);
   let data: Ref<Array<object>> = ref([]);
@@ -23,7 +23,7 @@ export function useSource(source: SimpleSource) {
     loading.value = false;
   };
 
-  load()
+  load();
 
   return { title, value, loading, data, returnObject };
 }

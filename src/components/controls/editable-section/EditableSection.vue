@@ -1,32 +1,30 @@
 <template>
-  <div class='editable-section d-flex'>
+  <div class="editable-section d-flex">
     <v-btn
-      class='editable'
-      position='absolute'
-      variant='outlined'
-      size='20'
-      @click='transformSchema'
+      class="editable"
+      position="absolute"
+      variant="outlined"
+      size="20"
+      @click="transformSchema"
     >
-      <v-icon size='16'>
-        mdi-pencil
-      </v-icon>
+      <v-icon size="16"> mdi-pencil </v-icon>
     </v-btn>
     <form-root
-      :schema='wrappedSchema'
-      :model='model'
-      :options='schema.options'
-      @update:model='updateModel'
-      :form-id='schema.formId'
+      :schema="wrappedSchema"
+      :model="model"
+      :options="schema.options"
+      @update:model="updateModel"
+      :form-id="schema.formId"
     />
   </div>
 </template>
 
-<script setup lang='ts'>
-import { EngineField, NodeUpdateEvent } from '../../../vocabulary/engine';
-import { computed, ref } from 'vue';
-import FormRoot from '../../engine/FormRoot.vue';
-import set from 'lodash/set';
-import { Schema } from '../../../vocabulary/schema';
+<script setup lang="ts">
+import { EngineField, NodeUpdateEvent } from "../../../vocabulary/engine";
+import { computed, ref } from "vue";
+import FormRoot from "../../engine/FormRoot.vue";
+import set from "lodash/set";
+import { Schema } from "../../../vocabulary/schema";
 
 const props = defineProps<{
   schema: EngineField;
@@ -38,23 +36,21 @@ function updateModel(event: NodeUpdateEvent) {
 }
 
 let sectionSchema = ref({
-  type: 'object',
+  type: "object",
   properties: {
     [props.schema.key]: props.schema.layout.schema,
   },
 } as Schema);
 
 let wrappedSchema = computed(() => {
-    return sectionSchema.value;
-  },
-);
+  return sectionSchema.value;
+});
 
 function transformSchema() {
-  console.debug('#TODO');
+  console.debug("#TODO");
 }
-
 </script>
-<style scoped lang='css'>
+<style scoped lang="css">
 .editable {
   margin-left: -24px;
 }

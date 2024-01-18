@@ -1,8 +1,8 @@
-import { computed, ref, watch } from 'vue';
-import { Expression, Value } from 'expr-eval';
-import set from 'lodash/set';
-import betterParser, { SUM } from '../engine/evalExprParser';
-import { EngineOptions } from '@/vocabulary/engine';
+import { computed, ref, watch } from "vue";
+import { Expression, Value } from "expr-eval";
+import set from "lodash/set";
+import betterParser, { SUM } from "../engine/evalExprParser";
+import { EngineOptions } from "@/vocabulary/engine";
 
 export function useCalculation(key: string, calculation: string, model: object, formOptions: EngineOptions): number {
   const digitsAfterDecimalLocal = computed(() => {
@@ -22,9 +22,13 @@ export function useCalculation(key: string, calculation: string, model: object, 
     executeCalc();
   });
 
-  watch(formOptions, () => {
-    executeCalc();
-  }, { deep: true });
+  watch(
+    formOptions,
+    () => {
+      executeCalc();
+    },
+    { deep: true },
+  );
 
   function executeCalc(): void {
     if (myExpr.variables().every((variable) => variable in model)) {
@@ -45,5 +49,3 @@ export function useCalculation(key: string, calculation: string, model: object, 
 
   return roundToDecimal(result.value, digitsAfterDecimalLocal.value);
 }
-
-

@@ -1,11 +1,10 @@
-import { EngineField } from '@/vocabulary/engine';
+import { EngineField } from "@/vocabulary/engine";
 
 export function useClass() {
-
   function bindClass(schema: EngineField): string {
-    let classString = '';
+    let classString = "";
     if (schema.required) {
-      classString += 'required-input ';
+      classString += "required-input ";
     }
     return classString;
   }

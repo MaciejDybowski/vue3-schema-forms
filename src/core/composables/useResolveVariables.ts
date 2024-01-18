@@ -1,6 +1,6 @@
-import get from 'lodash/get';
-import { variableRegexp } from '../engine/utils';
-import { useFormModelStore } from '../../store/formModelStore';
+import get from "lodash/get";
+import { variableRegexp } from "../engine/utils";
+import { useFormModelStore } from "../../store/formModelStore";
 
 export function useResolveVariables(inputString: string, formId: string) {
   let allVariablesResolved = true;
@@ -8,7 +8,7 @@ export function useResolveVariables(inputString: string, formId: string) {
 
   inputString.match(variableRegexp)?.forEach((match: string) => {
     const unwrapped = match.slice(1, -1);
-    const split = unwrapped.split(':');
+    const split = unwrapped.split(":");
     const variable = split[0];
     const defaultValue = split.length === 2 ? split[1] : null;
 
@@ -16,7 +16,7 @@ export function useResolveVariables(inputString: string, formId: string) {
     if (!value) {
       allVariablesResolved = false;
     }
-    inputString = inputString.replace(match, value + '');
+    inputString = inputString.replace(match, value + "");
   });
 
   return { resolvedText: inputString, allVariablesResolved };

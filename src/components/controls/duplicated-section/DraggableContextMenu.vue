@@ -65,7 +65,7 @@ const props = withDefaults(
   }>(),
   {
     show: false,
-  }
+  },
 );
 
 const emit = defineEmits<{

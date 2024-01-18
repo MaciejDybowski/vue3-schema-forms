@@ -14,7 +14,7 @@ const props = withDefaults(
   }>(),
   {
     show: false,
-  }
+  },
 );
 </script>
 

@@ -1,5 +1,5 @@
-import { EngineField } from '../../vocabulary/engine';
-import { useLocale } from '../../core/composables/useLocale';
+import { EngineField } from "../../vocabulary/engine";
+import { useLocale } from "../../core/composables/useLocale";
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
 export function useRules() {
@@ -10,14 +10,14 @@ export function useRules() {
     if (schema.required) {
       rules.push((value: any) => {
         if (value) return true;
-        return t('required');
+        return t("required");
       });
     }
 
-    if (schema.layout.props && 'counter' in schema.layout.props) {
+    if (schema.layout.props && "counter" in schema.layout.props) {
       const props = schema.layout.props;
       rules.push((value: string) => {
-        return value?.length <= props.counter || t('counter', { counter: props.counter });
+        return value?.length <= props.counter || t("counter", { counter: props.counter });
       });
     }
 

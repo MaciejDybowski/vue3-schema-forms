@@ -1,9 +1,8 @@
-import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
 
-export const useFormModelStore = (formId: string) => defineStore(
-  `formModelStore-${formId}`,
-  () => {
+export const useFormModelStore = (formId: string) =>
+  defineStore(`formModelStore-${formId}`, () => {
     const model = ref({});
     const getFormModel = computed(() => {
       return model.value;
@@ -14,5 +13,4 @@ export const useFormModelStore = (formId: string) => defineStore(
     }
 
     return { model, getFormModel, updateFormModel };
-  },
-)();
+  })();

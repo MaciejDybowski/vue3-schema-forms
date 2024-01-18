@@ -1,41 +1,39 @@
 <template>
   <v-autocomplete
-    v-model='model'
-    v-bind='attrs'
+    v-model="model"
+    v-bind="attrs"
   >
     <template
-      v-for='(_, slot) in $slots'
-      v-slot:[slot]='scope'
+      v-for="(_, slot) in $slots"
+      v-slot:[slot]="scope"
     >
       <slot
-        :name='slot'
-        v-bind='scope'
+        :name="slot"
+        v-bind="scope"
       />
     </template>
 
     <template #append-item>
-      <div v-if='lazy && isNextPage'>
+      <div v-if="lazy && isNextPage">
         <v-list-item
-          class='pa-0 d-flex justify-center'
-          v-intersect='loadMore'
+          class="pa-0 d-flex justify-center"
+          v-intersect="loadMore"
         >
-          <div v-show='appending'>
+          <div v-show="appending">
             <v-progress-circular
               indeterminate
-              color='primary'
+              color="primary"
             ></v-progress-circular>
           </div>
-        </v-list-item
-        >
+        </v-list-item>
       </div>
     </template>
   </v-autocomplete>
 </template>
 
-<script setup lang='ts'>
-
-import { Pagination } from './Pagination';
-import { computed, ref, useAttrs } from 'vue';
+<script setup lang="ts">
+import { Pagination } from "./Pagination";
+import { computed, ref, useAttrs } from "vue";
 
 const attrs = useAttrs();
 const props = withDefaults(
@@ -54,15 +52,14 @@ const model = computed({
     return props.modelValue;
   },
   set(val: any[]) {
-    emit('update:modelValue', val);
+    emit("update:modelValue", val);
   },
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', val: any[]);
-  (e: 'loadMoreRecords');
+  (e: "update:modelValue", val: any[]);
+  (e: "loadMoreRecords");
 }>();
-
 
 const appending = ref(false);
 
@@ -73,12 +70,9 @@ const isNextPage = computed(() => {
 function loadMore(isIntersecting) {
   appending.value = isIntersecting;
   if (isIntersecting) {
-    emit('loadMoreRecords');
+    emit("loadMoreRecords");
   }
 }
-
 </script>
 
-<style scoped lang='css'>
-
-</style>
+<style scoped lang="css"></style>

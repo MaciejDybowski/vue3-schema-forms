@@ -1,27 +1,27 @@
 <template>
-  <div class='node-text-field'>
+  <div class="node-text-field">
     <v-text-field
-      v-model='localModel'
-      :label='label'
-      v-bind='bindProps(schema)'
-      :rules='rules(schema)'
-      :class='bindClass(schema)'
-      @focusout='focusout'
-      @focusin='focusin'
+      v-model="localModel"
+      :label="label"
+      v-bind="bindProps(schema)"
+      :rules="rules(schema)"
+      :class="bindClass(schema)"
+      @focusout="focusout"
+      @focusin="focusin"
     />
   </div>
 </template>
 
-<script setup lang='ts'>
-import { computed, onMounted } from 'vue';
-import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
-import { EngineTextField } from '../../vocabulary/engine/controls';
-import { useCalculation } from '../../core/composables/useCalculation';
-import { useRules } from '../../core/composables/useRules';
-import { useProps } from '../../core/composables/useProps';
-import { useFormattedNumber } from '../../core/composables/useFormattedNumber';
-import { useLabel } from '../../core/composables/useLabel';
-import { useClass } from '../../core/composables/useClass';
+<script setup lang="ts">
+import { computed, onMounted } from "vue";
+import { getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
+import { EngineTextField } from "../../vocabulary/engine/controls";
+import { useCalculation } from "../../core/composables/useCalculation";
+import { useRules } from "../../core/composables/useRules";
+import { useProps } from "../../core/composables/useProps";
+import { useFormattedNumber } from "../../core/composables/useFormattedNumber";
+import { useLabel } from "../../core/composables/useLabel";
+import { useClass } from "../../core/composables/useClass";
 
 const props = defineProps<{
   schema: EngineTextField;
@@ -31,7 +31,7 @@ const props = defineProps<{
 const { bindClass } = useClass();
 const { rules } = useRules();
 const { bindProps } = useProps();
-const isNumberField = props.schema.type === 'number';
+const isNumberField = props.schema.type === "number";
 const { showFormattedNumber, formatNumber, parseNumberType } = useFormattedNumber(props.schema.options);
 
 const { label } = useLabel(props.schema);
@@ -43,9 +43,7 @@ const localModel = computed({
       : getValueFromModel(props.model, props.schema);
   },
   set(val: any) {
-    val = isNumberField
-      ? parseNumberType(val, props.schema.options.digitsAfterDecimal)
-      : val;
+    val = isNumberField ? parseNumberType(val, props.schema.options.digitsAfterDecimal) : val;
     produceUpdateEvent(val, props.schema);
   },
 });
@@ -73,9 +71,9 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>
 
-<i18n lang='json'>
+<i18n lang="json">
 {
   "en": {},
   "pl": {}

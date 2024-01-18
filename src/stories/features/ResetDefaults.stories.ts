@@ -1,30 +1,30 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { VueSchemaForms } from '@/components';
-import { StoryTemplateWithValidation } from '@/stories/templates/story-template';
-import { Schema } from '@/vocabulary/schema';
-import { SchemaField } from '@/vocabulary/schema/elements';
-import { userEvent, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { VueSchemaForms } from "@/components";
+import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
+import { Schema } from "@/vocabulary/schema";
+import { SchemaField } from "@/vocabulary/schema/elements";
+import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
 
 const meta = {
-  title: 'Forms/Features/Reset Form',
+  title: "Forms/Features/Reset Form",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -42,10 +42,10 @@ type Story = StoryObj<typeof meta>;
 export const DefaultVariablesWhenReset: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText('Field B');
-    await userEvent.type(field, 'This is standard text field...', { delay: 100 });
+    const field = canvas.getByLabelText("Field B");
+    await userEvent.type(field, "This is standard text field...", { delay: 100 });
 
-    const Reset = canvas.getByText('Reset Form');
+    const Reset = canvas.getByText("Reset Form");
     await userEvent.click(Reset, { delay: 200 });
 
     await expect(context.args.modelValue).toEqual({
@@ -59,16 +59,16 @@ export const DefaultVariablesWhenReset: Story = {
     schema: {
       properties: {
         fieldA: {
-          label: 'Field A',
-          default: 'Random text',
+          label: "Field A",
+          default: "Random text",
           layout: {
-            component: 'text-field',
+            component: "text-field",
           },
         } as SchemaField,
         fieldB: {
-          label: 'Field B',
+          label: "Field B",
           layout: {
-            component: 'text-field',
+            component: "text-field",
           },
         } as SchemaField,
       },

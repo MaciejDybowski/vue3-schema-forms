@@ -1,7 +1,7 @@
 import { Layout } from "../schema/elements";
 
 export interface EngineField {
-  formId: string,
+  formId: string;
   key: string;
   label: string;
   default: number | string | boolean | object | Array<any>;
@@ -15,7 +15,7 @@ export interface EngineField {
 }
 
 export interface EngineOptions {
-  fieldProps: Record<string, any>
+  fieldProps: Record<string, any>;
   textFieldProps: Record<string, any>;
   textAreaProps: Record<string, any>;
   radioButtonProps: Record<string, any>;

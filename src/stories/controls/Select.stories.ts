@@ -1,31 +1,31 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { Schema } from '@/vocabulary/schema';
-import { StoryTemplateWithValidation } from '../templates/story-template';
-import { userEvent, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
-import { VueSchemaForms } from '@/components';
-import { EngineSourceField } from '@/vocabulary/engine/controls';
-import { SimpleSource } from '@/vocabulary/schema/elements';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { Schema } from "@/vocabulary/schema";
+import { StoryTemplateWithValidation } from "../templates/story-template";
+import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
+import { VueSchemaForms } from "@/components";
+import { EngineSourceField } from "@/vocabulary/engine/controls";
+import { SimpleSource } from "@/vocabulary/schema/elements";
 
 const meta = {
-  title: 'Forms/Controls/Select',
+  title: "Forms/Controls/Select",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -40,32 +40,31 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-
 export const Standard: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Simple select');
+    const select = canvas.getByLabelText("Simple select");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-    const items = document.getElementsByClassName('v-list-item');
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.modelValue).toEqual({ select: 1 });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         select: {
-          label: 'Simple select',
+          label: "Simple select",
           layout: {
-            component: 'select',
+            component: "select",
           },
           source: {
             items: [
-              { value: 1, title: 'Option 1' },
-              { value: 2, title: 'Option 2' },
-              { value: 3, title: 'Option 3' },
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" },
             ],
           },
         } as EngineSourceField,
@@ -77,26 +76,26 @@ export const Standard: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefault: Story = {
-  name: 'With default (value)',
+  name: "With default (value)",
   play: async (context) => {
     await expect(context.args.modelValue).toEqual({ selectWithDefault: 3 });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         selectWithDefault: {
-          label: 'Simple select',
+          label: "Simple select",
           layout: {
-            component: 'select',
+            component: "select",
           },
           default: 3,
           source: {
             items: [
-              { value: 1, title: 'Option 1' },
-              { value: 2, title: 'Option 2' },
-              { value: 3, title: 'Option 3' },
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" },
             ],
           },
         } as EngineSourceField,
@@ -106,34 +105,34 @@ export const WithDefault: Story = {
 };
 
 export const CustomMapping: Story = {
-  name: 'Custom mapping',
+  name: "Custom mapping",
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Simple select');
+    const select = canvas.getByLabelText("Simple select");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-    const items = document.getElementsByClassName('v-list-item');
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.modelValue).toEqual({ selectCustomMapping: 1 });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         selectCustomMapping: {
-          label: 'Simple select',
+          label: "Simple select",
           layout: {
-            component: 'select',
+            component: "select",
           },
           source: {
             items: [
-              { id: 1, text: 'Option 1' },
-              { id: 2, text: 'Option 2' },
-              { id: 3, text: 'Option 3' },
+              { id: 1, text: "Option 1" },
+              { id: 2, text: "Option 2" },
+              { id: 3, text: "Option 3" },
             ],
-            value: 'id',
-            title: 'text',
+            value: "id",
+            title: "text",
           },
         } as EngineSourceField,
       },
@@ -142,34 +141,34 @@ export const CustomMapping: Story = {
 };
 
 export const CustomMappingReturnObject: Story = {
-  name: 'Custom mapper + return obj',
+  name: "Custom mapper + return obj",
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Simple select');
+    const select = canvas.getByLabelText("Simple select");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-    const items = document.getElementsByClassName('v-list-item');
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
-    await expect(context.args.modelValue).toEqual({ selectCustomMappingObject: { id: 1, text: 'Option 1' } });
+    await expect(context.args.modelValue).toEqual({ selectCustomMappingObject: { id: 1, text: "Option 1" } });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         selectCustomMappingObject: {
-          label: 'Simple select',
+          label: "Simple select",
           layout: {
-            component: 'select',
+            component: "select",
           },
           source: {
             items: [
-              { id: 1, text: 'Option 1' },
-              { id: 2, text: 'Option 2' },
-              { id: 3, text: 'Option 3' },
+              { id: 1, text: "Option 1" },
+              { id: 2, text: "Option 2" },
+              { id: 3, text: "Option 3" },
             ],
-            value: 'id',
-            title: 'text',
+            value: "id",
+            title: "text",
             returnObject: true,
           },
         } as EngineSourceField,
@@ -179,34 +178,34 @@ export const CustomMappingReturnObject: Story = {
 };
 
 export const CustomMappingReturnObjectDefault: Story = {
-  name: 'Custom mapper + obj + default',
+  name: "Custom mapper + obj + default",
   play: async (context) => {
     await expect(context.args.modelValue).toEqual({
       selectCustomMappingObjectDefault: {
         id: 2,
-        text: 'Option 2',
+        text: "Option 2",
       },
     });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         selectCustomMappingObjectDefault: {
-          label: 'Simple select',
+          label: "Simple select",
           layout: {
-            component: 'select',
+            component: "select",
           },
-          default: { id: 2, text: 'Option 2' },
+          default: { id: 2, text: "Option 2" },
           source: {
             items: [
-              { id: 1, text: 'Option 1' },
-              { id: 2, text: 'Option 2' },
-              { id: 3, text: 'Option 3' },
+              { id: 1, text: "Option 1" },
+              { id: 2, text: "Option 2" },
+              { id: 3, text: "Option 3" },
             ],
-            value: 'id',
-            title: 'text',
+            value: "id",
+            title: "text",
             returnObject: true,
           },
         } as EngineSourceField,
@@ -218,25 +217,25 @@ export const CustomMappingReturnObjectDefault: Story = {
 export const GetOptionsFromAPI: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Simple select');
+    const select = canvas.getByLabelText("Simple select");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-    const items = document.getElementsByClassName('v-list-item');
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({ selectOptionsFromAPI: { id: 1, label: 'Option 1' } });
+    await expect(context.args.modelValue).toEqual({ selectOptionsFromAPI: { id: 1, label: "Option 1" } });
   },
   parameters: {
     mockData: [
       {
-        url: '/api/v1/options',
-        method: 'GET',
+        url: "/api/v1/options",
+        method: "GET",
         status: 200,
         response: [
-          { id: 1, label: 'Option 1' },
-          { id: 2, label: 'Option 2' },
-          { id: 3, label: 'Option 3' },
-          { id: 4, label: 'Option 4' },
+          { id: 1, label: "Option 1" },
+          { id: 2, label: "Option 2" },
+          { id: 3, label: "Option 3" },
+          { id: 4, label: "Option 4" },
         ],
       },
     ],
@@ -244,20 +243,20 @@ export const GetOptionsFromAPI: Story = {
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         selectOptionsFromAPI: {
-          label: 'Simple select',
+          label: "Simple select",
           layout: {
-            component: 'select',
+            component: "select",
             props: {
               inline: true,
             },
           },
           source: {
-            url: '/api/v1/options',
-            title: 'label',
-            value: 'id',
+            url: "/api/v1/options",
+            title: "label",
+            value: "id",
             returnObject: true,
           } as SimpleSource,
         },
@@ -270,39 +269,39 @@ export const GetOptionsFromAPI: Story = {
  * Example shows how to define a "required" field on a form
  */
 export const SimpleValidation: Story = {
-  name: 'Select with required annotation',
+  name: "Select with required annotation",
   render: StoryTemplateWithValidation,
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Simple select');
+    const select = canvas.getByLabelText("Simple select");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-    const items = document.getElementsByClassName('v-list-item');
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
-    const Submit = canvas.getByText('Validate');
+    const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 200 });
-    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         radioButtonRequired: {
-          label: 'Simple select',
+          label: "Simple select",
           layout: {
-            component: 'select',
+            component: "select",
           },
           source: {
             items: [
-              { value: 1, title: 'Option 1' },
-              { value: 2, title: 'Option 2' },
-              { value: 3, title: 'Option 3' },
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" },
             ],
           },
         } as EngineSourceField,
       },
-      required: ['radioButtonRequired'],
+      required: ["radioButtonRequired"],
     } as Schema,
   },
 };

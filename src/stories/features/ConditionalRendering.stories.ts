@@ -1,31 +1,31 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { VueSchemaForms } from '@/components';
-import { conditionSchema } from '@/stories/schemas';
-import { userEvent, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
-import { Schema } from '@/vocabulary/schema';
-import { SchemaField, SchemaTextField } from '@/vocabulary/schema/elements';
-import { StoryTemplateWithValidation } from '@/stories/templates/story-template';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { VueSchemaForms } from "@/components";
+import { conditionSchema } from "@/stories/schemas";
+import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
+import { Schema } from "@/vocabulary/schema";
+import { SchemaField, SchemaTextField } from "@/vocabulary/schema/elements";
+import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
 
 const meta = {
-  title: 'Forms/Features/ConditionalRendering',
+  title: "Forms/Features/ConditionalRendering",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -47,16 +47,16 @@ type Story = StoryObj<typeof meta>;
  * `if: string` - a value defined in the `Layout` object
  */
 export const ConditionStory: Story = {
-  name: 'if',
+  name: "if",
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const login = canvas.getByLabelText('Login');
-    const password = canvas.getByLabelText('Password');
+    const login = canvas.getByLabelText("Login");
+    const password = canvas.getByLabelText("Password");
 
-    await userEvent.type(login, 'admin', { delay: 100 });
-    await userEvent.type(password, 'admin', { delay: 300 });
+    await userEvent.type(login, "admin", { delay: 100 });
+    await userEvent.type(password, "admin", { delay: 300 });
 
-    const rendered = canvas.getByLabelText('Result');
+    const rendered = canvas.getByLabelText("Result");
     expect(rendered).toBeInTheDocument();
   },
   args: {
@@ -68,19 +68,19 @@ export const ConditionStory: Story = {
 export const ConditionalWithDuplicatedSection: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText('Test');
-    await userEvent.type(field, 'root', { delay: 100 });
+    const field = canvas.getByLabelText("Test");
+    await userEvent.type(field, "root", { delay: 100 });
 
-    const ifField = canvas.getByLabelText('Some field with if');
-    await userEvent.type(ifField, 'Test', { delay: 100 });
+    const ifField = canvas.getByLabelText("Some field with if");
+    await userEvent.type(ifField, "Test", { delay: 100 });
 
-    console.debug(context.args.modelValue)
+    console.debug(context.args.modelValue);
     await expect(context.args.modelValue).toEqual({
       data: {
-        test: 'root',
+        test: "root",
       },
       invoice: {
-        items: [{ someFieldWithIf: 'Test' }],
+        items: [{ someFieldWithIf: "Test" }],
       },
     });
   },
@@ -91,9 +91,9 @@ export const ConditionalWithDuplicatedSection: Story = {
         data: {
           properties: {
             test: {
-              label: 'Test',
+              label: "Test",
               layout: {
-                component: 'text-field',
+                component: "text-field",
                 cols: 3,
               },
             } as SchemaTextField,
@@ -103,16 +103,16 @@ export const ConditionalWithDuplicatedSection: Story = {
           properties: {
             items: {
               layout: {
-                component: 'duplicated-section',
+                component: "duplicated-section",
                 schema: {
                   properties: {
                     someField: {
-                      label: 'Item',
-                      layout: { component: 'text-field', cols: 3 },
+                      label: "Item",
+                      layout: { component: "text-field", cols: 3 },
                     },
                     someFieldWithIf: {
-                      label: 'Some field with if',
-                      layout: { component: 'text-field', cols: 3, if: 'data.test==\'root\'' },
+                      label: "Some field with if",
+                      layout: { component: "text-field", cols: 3, if: "data.test=='root'" },
                     },
                   },
                 },

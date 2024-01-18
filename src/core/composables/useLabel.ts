@@ -1,9 +1,8 @@
-import { useResolveVariables } from './useResolveVariables';
-import { EngineField } from '@/vocabulary/engine';
-import { useFormModelStore } from '../../store/formModelStore';
-import { variableRegexp } from '../../core/engine/utils';
-import { ref } from 'vue';
-
+import { useResolveVariables } from "./useResolveVariables";
+import { EngineField } from "@/vocabulary/engine";
+import { useFormModelStore } from "../../store/formModelStore";
+import { variableRegexp } from "../../core/engine/utils";
+import { ref } from "vue";
 
 export function useLabel(schema: EngineField) {
   const formModelStore = useFormModelStore(schema.formId);
@@ -13,7 +12,7 @@ export function useLabel(schema: EngineField) {
   if (schema.label.match(variableRegexp)) {
     formModelStore.$subscribe(() => {
       const { resolvedText, allVariablesResolved } = useResolveVariables(schema.label, schema.formId);
-      allVariablesResolved ? label.value = resolvedText : label.value = labelWithFallbackMessage;
+      allVariablesResolved ? (label.value = resolvedText) : (label.value = labelWithFallbackMessage);
     });
   }
 

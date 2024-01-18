@@ -28,7 +28,7 @@ const props = withDefaults(
   }>(),
   {
     showDivider: false,
-  }
+  },
 );
 </script>
 

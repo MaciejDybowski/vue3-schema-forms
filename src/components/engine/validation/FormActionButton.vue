@@ -1,20 +1,17 @@
 <template>
-  <v-btn v-bind="props"
-         width="200"
+  <v-btn
+    v-bind="props"
+    width="200"
   >
-    {{value}}
+    {{ value }}
   </v-btn>
 </template>
 
 <script setup lang="ts">
-
 const props = defineProps<{
-  color: string
-  value: string
+  color: string;
+  value: string;
 }>();
-
 </script>
 
-<style scoped lang="css">
-
-</style>
+<style scoped lang="css"></style>

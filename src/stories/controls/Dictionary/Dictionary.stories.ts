@@ -1,31 +1,31 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { Schema } from '@/vocabulary/schema';
-import { fireEvent, userEvent, within } from '@storybook/testing-library';
-import { VueSchemaForms } from '@/components';
-import { DictionarySource, SchemaSourceField } from '@/vocabulary/schema/elements';
-import { REQUEST_NOT_LAZY, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from '@/stories/controls/Dictionary/responses';
-import { StoryTemplateWithValidation } from '@/stories/templates/story-template';
-import { expect } from '@storybook/jest';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { Schema } from "@/vocabulary/schema";
+import { fireEvent, userEvent, within } from "@storybook/testing-library";
+import { VueSchemaForms } from "@/components";
+import { DictionarySource, SchemaSourceField } from "@/vocabulary/schema/elements";
+import { REQUEST_NOT_LAZY, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
+import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
+import { expect } from "@storybook/jest";
 
 const meta = {
-  title: 'Forms/Controls/Dictionary [autocomplete]',
+  title: "Forms/Controls/Dictionary [autocomplete]",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -43,120 +43,115 @@ type Story = StoryObj<typeof meta>;
 export const Standard: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Currency');
+    const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-    const list = document.getElementsByClassName('v-list');
+    const list = document.getElementsByClassName("v-list");
     fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
 
-    const items = document.getElementsByClassName('v-list-item');
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[19], { delay: 200 });
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
     await userEvent.click(items[21], { delay: 200 });
 
     await expect(context.args.modelValue).toEqual({
       currency: {
-        'id': 'BWP',
-        'label': 'Pula',
-        'digitsAfterDecimal': '2',
+        id: "BWP",
+        label: "Pula",
+        digitsAfterDecimal: "2",
       },
     });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         currency: {
-          label: 'Currency',
+          label: "Currency",
           layout: {
-            component: 'dictionary',
+            component: "dictionary",
           },
           source: {
-            url: '/api/currencies',
-            title: 'label',
-            value: 'id',
+            url: "/api/currencies",
+            title: "label",
+            value: "id",
           } as DictionarySource,
         } as SchemaSourceField,
       },
     } as Schema,
   },
   parameters: {
-    mockData: [
-      REQUEST_PAGE_0_1,
-    ],
+    mockData: [REQUEST_PAGE_0_1],
   },
 };
 
 export const WithSearch: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Currency');
+    const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    await userEvent.type(select, 'Dol', { delay: 200 });
-    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.type(select, "Dol", { delay: 200 });
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.modelValue).toEqual({
       currency: {
-        'id': 'AUD',
-        'label': 'Dolar australijski',
-        'digitsAfterDecimal': '2',
+        id: "AUD",
+        label: "Dolar australijski",
+        digitsAfterDecimal: "2",
       },
     });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         currency: {
-          label: 'Currency',
+          label: "Currency",
           layout: {
-            component: 'dictionary',
+            component: "dictionary",
           },
           source: {
-            url: '/api/currencies',
-            title: 'label',
-            value: 'id',
+            url: "/api/currencies",
+            title: "label",
+            value: "id",
           } as DictionarySource,
         } as SchemaSourceField,
       },
     } as Schema,
   },
   parameters: {
-    mockData: [
-      REQUEST_PAGE_0_1,
-      REQUEST_SEARCH_DOL,
-    ],
+    mockData: [REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL],
   },
 };
 
 export const ReturnValue: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Currency');
+    const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    const items = document.getElementsByClassName('v-list-item');
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
 
     await expect(context.args.modelValue).toEqual({
-      currency: 'AFN',
+      currency: "AFN",
     });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         currency: {
-          label: 'Currency',
+          label: "Currency",
           layout: {
-            component: 'dictionary',
+            component: "dictionary",
           },
           source: {
-            url: '/api/currencies',
-            title: 'label',
-            value: 'id',
+            url: "/api/currencies",
+            title: "label",
+            value: "id",
             returnObject: false,
           } as DictionarySource,
         } as SchemaSourceField,
@@ -164,91 +159,85 @@ export const ReturnValue: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [
-      REQUEST_PAGE_0_1,
-    ],
+    mockData: [REQUEST_PAGE_0_1],
   },
 };
-
 
 export const Required: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Currency');
+    const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-    const items = document.getElementsByClassName('v-list-item');
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
-    const Submit = canvas.getByText('Validate');
+    const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 200 });
-    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
     await expect(context.args.modelValue).toEqual({
       currency: {
-        'id': 'AFN',
-        'label': 'Afgani',
-        'digitsAfterDecimal': '2',
+        id: "AFN",
+        label: "Afgani",
+        digitsAfterDecimal: "2",
       },
     });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         currency: {
-          label: 'Currency',
+          label: "Currency",
           layout: {
-            component: 'dictionary',
+            component: "dictionary",
           },
           source: {
-            url: '/api/currencies',
-            title: 'label',
-            value: 'value',
+            url: "/api/currencies",
+            title: "label",
+            value: "value",
           } as DictionarySource,
         } as SchemaSourceField,
       },
-      required: ['currency'],
+      required: ["currency"],
     } as Schema,
   },
   parameters: {
-    mockData: [
-      REQUEST_PAGE_0_1,
-    ],
+    mockData: [REQUEST_PAGE_0_1],
   },
 };
-
 
 export const LazyLoadingDisabled: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Currency');
+    const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    const items = document.getElementsByClassName('v-list-item');
+    const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
 
     await expect(context.args.modelValue).toEqual({
       currency: {
-        'id': 'BTN',
-        'label': 'Ngultrum',
-        'digitsAfterDecimal': '2',
+        id: "BTN",
+        label: "Ngultrum",
+        digitsAfterDecimal: "2",
       },
     });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         currency: {
-          label: 'Currency',
+          label: "Currency",
           layout: {
-            component: 'dictionary',
+            component: "dictionary",
           },
           source: {
-            url: '/api/currencies',
-            title: 'label',
-            value: 'id',
+            url: "/api/currencies",
+            title: "label",
+            value: "id",
             lazy: false,
           } as DictionarySource,
         } as SchemaSourceField,
@@ -256,8 +245,6 @@ export const LazyLoadingDisabled: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [
-      REQUEST_NOT_LAZY,
-    ],
+    mockData: [REQUEST_NOT_LAZY],
   },
 };

@@ -1,24 +1,24 @@
 // @ts-nocheck
-import DevelopmentTable from '../components/app/DevelopmentTable.vue';
-import { Meta, StoryObj } from '@storybook/vue3';
-import { ArgTypes } from '@storybook/types';
-import { Schema } from '@/vocabulary/schema';
-import { Layout, SchemaTextField, SimpleSource } from '../vocabulary/schema/elements';
-import { EngineSourceField } from '../vocabulary/engine/controls';
+import DevelopmentTable from "../components/app/DevelopmentTable.vue";
+import { Meta, StoryObj } from "@storybook/vue3";
+import { ArgTypes } from "@storybook/types";
+import { Schema } from "@/vocabulary/schema";
+import { Layout, SchemaLocationField, SchemaTextField, SimpleSource } from "../vocabulary/schema/elements";
+import { EngineSourceField } from "../vocabulary/engine/controls";
 
 const meta = {
-  title: 'Development Page',
+  title: "Development Page",
   component: DevelopmentTable,
   argTypes: {
-    schema: { control: 'object', description: 'Schema u' },
-    model: { control: 'object', description: 'Model' },
-    options: { control: 'object', description: 'Opcje' },
+    schema: { control: "object", description: "Schema u" },
+    model: { control: "object", description: "Model" },
+    options: { control: "object", description: "Opcje" },
   } as Partial<ArgTypes<any>>,
   args: {
     options: {
       fieldProps: {
-        variant: 'outlined',
-        density: 'comfortable',
+        variant: "outlined",
+        density: "comfortable",
       },
     },
     model: {},
@@ -28,19 +28,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-
 export const Table1: Story = {
   args: {
     model: {
       data: {
         items: [
           {
-            product: 'Computer',
+            product: "Computer",
             quantity: 1,
             price: 3200,
           },
           {
-            product: 'Laptop',
+            product: "Laptop",
             quantity: 2,
             price: 1334.23,
           },
@@ -48,18 +47,18 @@ export const Table1: Story = {
       },
     },
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         invoiceMetadata: {
           properties: {
             pricing: {
-              label: 'The invoice is issued:',
-              layout: { component: 'radio-button', cols: 3, fillRow: true } as Layout,
-              default: { value: 'net', title: 'at net prices', formatted: 'net' },
+              label: "The invoice is issued:",
+              layout: { component: "radio-button", cols: 3, fillRow: true } as Layout,
+              default: { value: "net", title: "at net prices", formatted: "net" },
               source: {
                 items: [
-                  { value: 'net', title: 'at net prices', formatted: 'net' },
-                  { value: 'gross', title: 'at gross prices', formatted: 'gross' },
+                  { value: "net", title: "at net prices", formatted: "net" },
+                  { value: "gross", title: "at gross prices", formatted: "gross" },
                 ],
                 returnObject: true,
               } as SimpleSource,
@@ -70,26 +69,26 @@ export const Table1: Story = {
           properties: {
             items: {
               layout: {
-                component: 'duplicated-section',
+                component: "duplicated-section",
                 schema: {
                   properties: {
-                    product: { label: 'Product', layout: { component: 'text-field', cols: 4 } },
+                    product: { label: "Product", layout: { component: "text-field", cols: 4 } },
                     quantity: {
-                      label: 'Quantity',
-                      type: 'number',
+                      label: "Quantity",
+                      type: "number",
                       default: 1,
-                      layout: { component: 'text-field', cols: 2 },
+                      layout: { component: "text-field", cols: 2, props: { suffix: "szt.", variant: "plain" } },
                     },
                     price: {
-                      label: 'Price ({invoiceMetadata.pricing.formatted})',
-                      type: 'number',
-                      layout: { component: 'text-field', cols: 3 },
+                      label: "Price ({invoiceMetadata.pricing.formatted})",
+                      type: "number",
+                      layout: { component: "text-field", cols: 3 },
                     },
                     value: {
-                      label: 'Value',
-                      type: 'number',
-                      layout: { component: 'text-field', cols: 3 },
-                      calculation: 'quantity * price',
+                      label: "Value",
+                      type: "number",
+                      layout: { component: "text-field", cols: 3 },
+                      calculation: "quantity * price",
                     } as SchemaTextField,
                   },
                 },
@@ -100,13 +99,13 @@ export const Table1: Story = {
         summary: {
           properties: {
             sumValue: {
-              label: 'SUM(Value)',
+              label: "SUM(Value)",
               layout: {
-                component: 'text-field',
+                component: "text-field",
                 cols: 4,
               },
-              calculation: 'SUM(value, data.items) - 300',
-              type: 'number',
+              calculation: "SUM(value, data.items) - 300",
+              type: "number",
             } as SchemaTextField,
           },
         },
@@ -118,30 +117,35 @@ export const Table1: Story = {
 export const Table2: Story = {
   args: {
     model: {
-      //phone: "+48510123656"
+      location: {
+        country: "Polska",
+        country_code: "pl",
+        state: "województwo małopolskie",
+        city: "Kraków",
+        city_district: "Prądnik Biały",
+        suburb: "Prądnik Biały",
+        quarter: "Azory",
+        street: "Opolska",
+        postcode: "31-301",
+        formatted_address: "Opolska, Azory, Prądnik Biały, Kraków, województwo małopolskie, 31-301, Polska",
+        lat: 50.0893889,
+        lng: 19.9105881,
+      },
     },
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        name: {
-          label: 'Name',
+        location: {
+          label: "Location field",
           layout: {
-            component: 'text-field',
+            component: "location",
           },
-        },
-        phone: {
-          label: 'Phone input',
-          layout: {
-            component: 'phone',
+          results: {
+            lang: "pl",
+            countryLimit: "pl",
           },
-          phoneInputProps: {
-            hint: "Only valid phone numbers...",
-            placeholder: "Type your number"
-          },
-        },
+        } as SchemaLocationField,
       },
-
     } as Schema,
   },
 };
-

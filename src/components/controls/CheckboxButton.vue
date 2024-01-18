@@ -1,40 +1,40 @@
 <template>
   <div
     :class="'checkbox-root ' + bindClass(schema)"
-    v-if='!loading'
+    v-if="!loading"
   >
-    <label class='v-label'>
+    <label class="v-label">
       {{ label }}
     </label>
     <template
-      v-for='(option, index) in data'
-      :key='option[value]'
+      v-for="(option, index) in data"
+      :key="option[value]"
     >
       <v-checkbox
-        v-model='localModel'
-        v-bind='bindProps(schema)'
-        :rules='rules(schema)'
-        :label='option[title]'
-        :value='option[value]'
-        :hide-details='index == data.length - 1 ? "auto" : true'
+        v-model="localModel"
+        v-bind="bindProps(schema)"
+        :rules="rules(schema)"
+        :label="option[title]"
+        :value="option[value]"
+        :hide-details="index == data.length - 1 ? 'auto' : true"
       >
-        <template #message='{ message }'>
-          <div class='ml-4'>{{ message }}</div>
+        <template #message="{ message }">
+          <div class="ml-4">{{ message }}</div>
         </template>
       </v-checkbox>
     </template>
   </div>
 </template>
 
-<script setup lang='ts'>
-import { EngineSourceField } from '../../vocabulary/engine/controls';
-import { useSource } from '../../core/composables/useSource';
-import { getValueFromModel, produceUpdateEvent } from '../../core/engine/utils';
-import { computed } from 'vue';
-import { useRules } from '../..//core/composables/useRules';
-import { useProps } from '../../core/composables/useProps';
-import { useLabel } from '../../core/composables/useLabel';
-import { useClass } from '../../core/composables/useClass';
+<script setup lang="ts">
+import { EngineSourceField } from "../../vocabulary/engine/controls";
+import { useSource } from "../../core/composables/useSource";
+import { getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
+import { computed } from "vue";
+import { useRules } from "../..//core/composables/useRules";
+import { useProps } from "../../core/composables/useProps";
+import { useLabel } from "../../core/composables/useLabel";
+import { useClass } from "../../core/composables/useClass";
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -64,8 +64,6 @@ const localModel = computed({
     }
   },
 });
-
-
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>
