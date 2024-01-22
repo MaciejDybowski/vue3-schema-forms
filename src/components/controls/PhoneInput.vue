@@ -56,8 +56,6 @@ const localModel = computed({
     produceUpdateEvent(val, props.schema);
   },
 });
-
-// TODO - https://github.com/paul-thebaud/v-phone-input/issues/21
 </script>
 
 <style scoped lang="css"></style>

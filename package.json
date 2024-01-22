@@ -50,7 +50,7 @@
     "lodash": "^4.17.21",
     "maska": "^2.1.10",
     "uuid": "^9.0.1",
-    "v-phone-input": "^4.1.0",
+    "v-phone-input": "^4.1.1",
     "vue-json-pretty": "^2.3.0"
   },
   "peerDependencies": {
