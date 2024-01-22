@@ -21,9 +21,9 @@ import { OpenStreetMapProvider } from "leaflet-geosearch";
 import { debounce } from "lodash";
 import { getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
 import { EngineLocationField } from "@/vocabulary/engine/controls";
-import { useRules } from "@/core/composables/useRules";
-import { useClass } from "@/core/composables/useClass";
-import { useProps } from "@/core/composables/useProps";
+import { useRules } from "../../core/composables/useRules";
+import { useClass } from "../../core/composables/useClass";
+import { useProps } from "../../core/composables/useProps";
 
 interface Location {
   country: string;
