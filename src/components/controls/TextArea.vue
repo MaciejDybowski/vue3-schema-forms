@@ -1,17 +1,17 @@
 <template>
   <v-textarea
-    v-model='localModel'
-    :label='label'
-    :rules='rules(schema)'
-    v-bind='bindProps(schema)'
-    :class='bindClass(schema)'
+    v-model="localModel"
+    :label="label"
+    :rules="rules(schema)"
+    v-bind="bindProps(schema)"
+    :class="bindClass(schema)"
   />
 </template>
 
-<script setup lang='ts'>
-import { EngineField } from '../../vocabulary/engine';
-import { computed } from 'vue';
-import { useClass, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
+<script setup lang="ts">
+import { EngineField } from "../../vocabulary/engine";
+import { computed } from "vue";
+import { useClass, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
 
 const props = defineProps<{
   schema: EngineField;
@@ -33,4 +33,4 @@ const localModel = computed({
 });
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>

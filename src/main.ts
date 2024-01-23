@@ -1,7 +1,7 @@
-import * as components from '../src/components/index';
-import { App } from 'vue';
-import { Components } from '@/components/engine/VueSchemaForms.vue';
-import * as exportedComposables from '../src/core/composables';
+import * as components from "../src/components/index";
+import { App } from "vue";
+import { Components } from "@/components/engine/VueSchemaForms.vue";
+import * as exportedComposables from "../src/core/composables";
 
 export let formUpdateLogger = false;
 
@@ -11,7 +11,7 @@ export type VueSchemaForms = {
 
 export type VueSchemaFormsOptions = {
   formUpdateLogger?: boolean;
-  customComponents?: Components
+  customComponents?: Components;
 };
 export const composables = exportedComposables;
 

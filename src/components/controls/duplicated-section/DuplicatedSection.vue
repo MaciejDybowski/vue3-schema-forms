@@ -58,7 +58,7 @@ import { DuplicatedSectionOptions, SchemaField } from "@/vocabulary/schema/eleme
 import { isArray } from "lodash";
 import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
 import set from "lodash/set";
-import { useFormModel } from '../../../core/composables';
+import { useFormModel } from "../../../core/composables";
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;
@@ -77,7 +77,7 @@ const dragOptions = ref({
 
 const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedSectionOptions);
 
-const {getValue, setValue} = useFormModel()
+const { getValue, setValue } = useFormModel();
 function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
   set(localModel.value[indexOfArray], event.key, event.value);
   setValue(localModel, props.schema);

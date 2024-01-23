@@ -1,28 +1,27 @@
 <template>
   <v-autocomplete
-    :label='label'
-    v-model='localModel'
-    :items='items'
-    @update:search='debounced.search'
-    :no-filter='true'
-    item-title='formatted_address'
-    :return-object='true'
-    :rules='rules(schema)'
-    :class='bindClass(schema)'
-    v-bind='bindProps(schema)'
+    :label="label"
+    v-model="localModel"
+    :items="items"
+    @update:search="debounced.search"
+    :no-filter="true"
+    item-title="formatted_address"
+    :return-object="true"
+    :rules="rules(schema)"
+    :class="bindClass(schema)"
+    v-bind="bindProps(schema)"
   >
   </v-autocomplete>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
+import { computed, Ref, ref } from "vue";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { debounce } from "lodash";
 
-import { computed, Ref, ref } from 'vue';
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
-import { debounce } from 'lodash';
+import { EngineLocationField } from "@/vocabulary/engine/controls";
 
-import { EngineLocationField } from '@/vocabulary/engine/controls';
-
-import { useClass, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
+import { useClass, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
 
 interface Location {
   country: string;
@@ -67,7 +66,7 @@ const items: Ref<Location[]> = ref([]);
 
 const provider = new OpenStreetMapProvider({
   params: {
-    'accept-language': props.schema.results?.lang,
+    "accept-language": props.schema.results?.lang,
     countrycodes: props.schema.results?.lang,
     addressdetails: 1,
   },

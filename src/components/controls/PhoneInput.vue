@@ -1,26 +1,26 @@
 <template>
   <v-phone-input
-    :class='bindClass(schema)'
-    :label='label'
-    v-model='localModel'
+    :class="bindClass(schema)"
+    :label="label"
+    v-model="localModel"
     :invalid-message="(options: any) => t('phoneInvalid', { example: options.example })"
-    :country-props='bindProps(schema)'
-    :phone-props='bindProps(schema)'
-    v-bind='mergedPhoneInputProps'
-    :rules='rules(schema)'
+    :country-props="bindProps(schema)"
+    :phone-props="bindProps(schema)"
+    v-bind="mergedPhoneInputProps"
+    :rules="rules(schema)"
   >
   </v-phone-input>
 </template>
 
-<script setup lang='ts'>
-import 'flag-icons/css/flag-icons.min.css';
-import 'v-phone-input/dist/v-phone-input.css';
-import { VPhoneInput } from 'v-phone-input';
-import { computed } from 'vue';
+<script setup lang="ts">
+import "flag-icons/css/flag-icons.min.css";
+import "v-phone-input/dist/v-phone-input.css";
+import { VPhoneInput } from "v-phone-input";
+import { computed } from "vue";
 
-import { EnginePhoneField } from '@/vocabulary/engine/controls';
+import { EnginePhoneField } from "@/vocabulary/engine/controls";
 
-import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from '../../core/composables';
+import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
 
 const props = defineProps<{
   schema: EnginePhoneField;
@@ -35,10 +35,10 @@ const { t } = useLocale();
 const { getValue, setValue } = useFormModel();
 
 const phoneInputProps = {
-  'country-icon-mode': 'svg',
-  countryLabel: t('countryLabel'),
-  'guess-country': true,
-  'include-countries': ['pl', 'gb', 'ru', 'de', 'us', 'es', 'fr', 'it'],
+  "country-icon-mode": "svg",
+  countryLabel: t("countryLabel"),
+  "guess-country": true,
+  "include-countries": ["pl", "gb", "ru", "de", "us", "es", "fr", "it"],
 };
 
 const mergedPhoneInputProps = {
@@ -56,4 +56,4 @@ const localModel = computed({
 });
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>

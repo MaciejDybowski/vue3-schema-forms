@@ -1,23 +1,23 @@
 <template>
   <v-select
-    v-model='localModel'
-    :label='label'
-    v-bind='bindProps(schema)'
-    :rules='rules(schema)'
-    :class='bindClass(schema)'
-    :item-title='title'
-    :item-value='value'
-    :items='data'
-    :loading='loading'
-    :return-object='returnObject as any'
+    v-model="localModel"
+    :label="label"
+    v-bind="bindProps(schema)"
+    :rules="rules(schema)"
+    :class="bindClass(schema)"
+    :item-title="title"
+    :item-value="value"
+    :items="data"
+    :loading="loading"
+    :return-object="returnObject as any"
   ></v-select>
 </template>
 
-<script setup lang='ts'>
-import { computed } from 'vue';
+<script setup lang="ts">
+import { computed } from "vue";
 
-import { EngineSourceField } from '../..//vocabulary/engine/controls';
-import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '@/core/composables';
+import { EngineSourceField } from "../..//vocabulary/engine/controls";
+import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from "@/core/composables";
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -39,4 +39,4 @@ const localModel = computed({
 });
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>

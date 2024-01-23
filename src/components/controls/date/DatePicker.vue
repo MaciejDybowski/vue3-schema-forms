@@ -1,42 +1,42 @@
 <template>
   <v-menu
-    :close-on-content-click='false'
+    :close-on-content-click="false"
     offset-y
   >
-    <template v-slot:activator='{ isActive, props }'>
+    <template v-slot:activator="{ isActive, props }">
       <v-text-field
-        :label='label'
-        v-model='textFieldDate'
-        @update:modelValue='tryMatchToDate'
-        v-bind='{ ...props, ...bindProps(schema) }'
-        append-inner-icon='mdi-calendar'
+        :label="label"
+        v-model="textFieldDate"
+        @update:modelValue="tryMatchToDate"
+        v-bind="{ ...props, ...bindProps(schema) }"
+        append-inner-icon="mdi-calendar"
         v-maska:[maskOptions]
-        :rules='rules(schema)'
+        :rules="rules(schema)"
       ></v-text-field>
     </template>
 
     <v-date-picker
-      v-model='pickerDate'
-      @update:modelValue='transformTextFieldDate'
+      v-model="pickerDate"
+      @update:modelValue="transformTextFieldDate"
       :key="pickerDate + ''"
-      ref='calendar'
+      ref="calendar"
     >
     </v-date-picker>
   </v-menu>
 </template>
 
-<script setup lang='ts'>
-import { computed, onMounted, ref, Ref } from 'vue';
-import { EngineSourceField } from '../../../vocabulary/engine/controls';
+<script setup lang="ts">
+import { computed, onMounted, ref, Ref } from "vue";
+import { EngineSourceField } from "../../../vocabulary/engine/controls";
 
-import { vMaska } from 'maska';
-import { onClickOutside } from '@vueuse/core';
-import dayjs from './dayjs';
+import { vMaska } from "maska";
+import { onClickOutside } from "@vueuse/core";
+import dayjs from "./dayjs";
 
-import { useFormModel, useLabel, useProps, useRules } from '../../../core/composables';
+import { useFormModel, useLabel, useProps, useRules } from "../../../core/composables";
 
 const props = defineProps<{ schema: EngineSourceField; model: object }>();
-const dateFormat = 'DD/MM/YYYY';
+const dateFormat = "DD/MM/YYYY";
 
 const { label } = useLabel(props.schema);
 const { rules } = useRules();
@@ -53,10 +53,10 @@ const localModel = computed({
   },
 });
 
-const maskOptions = { mask: '##/##/####' };
+const maskOptions = { mask: "##/##/####" };
 const menu = ref(false);
 const pickerDate: Ref<Date | undefined> = ref();
-const textFieldDate = ref('');
+const textFieldDate = ref("");
 
 function transformTextFieldDate() {
   localModel.value = textFieldDate.value = dayjs(pickerDate.value).tz().format(dateFormat);
@@ -84,7 +84,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 :deep(.v-picker-title) {
   display: none;
 }
