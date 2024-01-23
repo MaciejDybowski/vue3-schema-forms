@@ -19,7 +19,9 @@ export interface EngineStaticField extends EngineField {
   content: string;
 }
 
-export interface EngineDuplicatedSection extends EngineField {}
+export interface EngineDuplicatedSection extends EngineField {
+  editable?: boolean
+}
 
 export interface EngineSourceField extends EngineField {
   source: Source;
