@@ -107,7 +107,7 @@ The following table shows the default values for each field
 
 | Name               | Default                                                                 | Type   | Description                                               |
 |--------------------|-------------------------------------------------------------------------|--------|-----------------------------------------------------------|
-| digitsAfterDecimal | -                                                                       | number | Number of decimal places in the representation of numbers |
+| digitsAfterDecimal | 2                                                                       | number | Number of decimal places in the representation of numbers |
 | fieldProps         | -                                                                       | object | Option to set props for each type of field                |
 | textFieldProps     | ```{'hide-details': 'auto',}```                                         | object | Option to set props for text fields                       |
 | textAreaProps      | ```{"rows": 3, "hide-details": "auto", "auto-grow": true}```            | object | Option to set props for text-area fields                  |
@@ -127,6 +127,26 @@ The following table shows the default values for each field
 | Name          | Default settings                                                                                                                                                                                   | Component | Description                                        | Link                                                                       |
 |---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|----------------------------------------------------|----------------------------------------------------------------------------|
 | v-phone-input | <pre>{<br>  'country-icon-mode': 'svg',<br>  'countryLabel': t('countryLabel'),<br>  'guess-country': true, <br>  'include-countries': ['pl', 'gb', 'ru', 'de', 'us', 'es', 'fr', 'it']<br>}</pre> | phone     | International phone field for Vuetify 3 and Vue 3. | [source](https://github.com/paul-thebaud/v-phone-input?tab=readme-ov-file) |
+
+## Plugin options
+
+| Name             | Default | Type       | Description                                                                                                                                                                |
+|------------------|---------|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| formUpdateLogger | false   | boolean    | enabling this option allows the console to preview the form model update event                                                                                             |
+| customComponents | -       | Components | This option allows you to install your custom form fields. You need to specify the name and the component. The integration is on your side using the composables provided. |
+
+```typescript
+// example of adding options
+const customs = {
+  'user-input': UserInput,
+};
+
+const vueSchemaForms = createVueSchemaForms({
+  customComponents: customs,
+  formUpdateLogger: true
+});
+```
+
 
 ## Tests
 
@@ -148,7 +168,6 @@ The following table shows the default values for each field
 
 - [ ] Ability to add validation functions in schema
 - [ ] Ability to mark "not-saveable" field in schema/model
-- [ ] Phone input
 - [ ] Email input
 - [ ] Address input
 - [ ] Markdown input
