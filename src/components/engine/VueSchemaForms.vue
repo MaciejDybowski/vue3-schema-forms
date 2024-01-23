@@ -50,7 +50,7 @@ import PhoneInput from "../controls/PhoneInput.vue";
 import Location from "../controls/Location.vue";
 
 // register components to VueInstance
-declare type Components = Record<string, Component>;
+export declare type Components = Record<string, Component>;
 const components = {
   "text-field": TextField,
   "duplicated-section": DuplicatedSection,

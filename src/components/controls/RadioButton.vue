@@ -1,38 +1,33 @@
 <template>
   <v-radio-group
-    v-model="localModel"
-    :label="label"
-    v-bind="bindProps(schema)"
-    :rules="rules(schema)"
-    :class="bindClass(schema)"
-    v-if="!loading"
+    v-model='localModel'
+    :label='label'
+    v-bind='bindProps(schema)'
+    :rules='rules(schema)'
+    :class='bindClass(schema)'
+    v-if='!loading'
   >
     <template
-      v-for="(option, index) in data"
-      :key="option[value]"
+      v-for='(option, index) in data'
+      :key='option[value]'
     >
       <v-radio
-        v-bind="bindProps(schema)"
-        :value="option[value]"
+        v-bind='bindProps(schema)'
+        :value='option[value]'
         :class="index !== data.length - 1 && !bindProps(schema).inline ? 'mb-2' : ''"
       >
-        <template #label="{ label }">
-          <div class="mr-2">{{ option[title] }}</div>
+        <template #label='{ label }'>
+          <div class='mr-2'>{{ option[title] }}</div>
         </template>
       </v-radio>
     </template>
   </v-radio-group>
 </template>
 
-<script setup lang="ts">
-import { EngineSourceField } from "../../vocabulary/engine/controls";
-import { computed, onMounted, watch } from "vue";
-import { getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
-import { useSource } from "../../core/composables/useSource";
-import { useRules } from "../../core/composables/useRules";
-import { useProps } from "../../core/composables/useProps";
-import { useLabel } from "../../core/composables/useLabel";
-import { useClass } from "../../core/composables/useClass";
+<script setup lang='ts'>
+import { EngineSourceField } from '../../vocabulary/engine/controls';
+import { computed, onMounted, watch } from 'vue';
+import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -42,14 +37,15 @@ const { label } = useLabel(props.schema);
 const { bindProps } = useProps();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { bindClass } = useClass();
+const { getValue, setValue } = useFormModel();
 
 const localModel = computed({
   get(): string | number {
     if (returnObject) {
-      const obj = getValueFromModel(props.model, props.schema);
+      const obj = getValue(props.model, props.schema);
       return obj ? obj[value] : null;
     } else {
-      return getValueFromModel(props.model, props.schema);
+      return getValue(props.model, props.schema);
     }
   },
   set(val: any) {
@@ -57,9 +53,9 @@ const localModel = computed({
       const obj = data.value.filter((item) => {
         return item[value] === val;
       })[0];
-      produceUpdateEvent(obj, props.schema);
+      setValue(obj, props.schema);
     } else {
-      produceUpdateEvent(val, props.schema);
+      setValue(val, props.schema);
     }
   },
 });
@@ -82,7 +78,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang="css">
+<style scoped lang='css'>
 :deep(.v-label) {
   margin-inline-start: 0 !important;
 }

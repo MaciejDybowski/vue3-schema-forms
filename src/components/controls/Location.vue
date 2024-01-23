@@ -1,29 +1,28 @@
 <template>
   <v-autocomplete
-    :label="label"
-    v-model="localModel"
-    :items="items"
-    @update:search="debounced.search"
-    :no-filter="true"
-    item-title="formatted_address"
-    :return-object="true"
-    :rules="rules(schema)"
-    :class="bindClass(schema)"
-    v-bind="bindProps(schema)"
+    :label='label'
+    v-model='localModel'
+    :items='items'
+    @update:search='debounced.search'
+    :no-filter='true'
+    item-title='formatted_address'
+    :return-object='true'
+    :rules='rules(schema)'
+    :class='bindClass(schema)'
+    v-bind='bindProps(schema)'
   >
   </v-autocomplete>
 </template>
 
-<script setup lang="ts">
-import { useLabel } from "../../core/composables/useLabel";
-import { computed, Ref, ref } from "vue";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
-import { debounce } from "lodash";
-import { getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
-import { EngineLocationField } from "@/vocabulary/engine/controls";
-import { useRules } from "../../core/composables/useRules";
-import { useClass } from "../../core/composables/useClass";
-import { useProps } from "../../core/composables/useProps";
+<script setup lang='ts'>
+
+import { computed, Ref, ref } from 'vue';
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { debounce } from 'lodash';
+
+import { EngineLocationField } from '@/vocabulary/engine/controls';
+
+import { useClass, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
 
 interface Location {
   country: string;
@@ -53,13 +52,14 @@ const { label } = useLabel(props.schema);
 const { rules } = useRules();
 const { bindClass } = useClass();
 const { bindProps } = useProps();
+const { getValue, setValue } = useFormModel();
 
 const localModel = computed({
   get(): string | number {
-    return getValueFromModel(props.model, props.schema);
+    return getValue(props.model, props.schema);
   },
   set(val: any) {
-    produceUpdateEvent(val, props.schema);
+    setValue(val, props.schema);
   },
 });
 
@@ -67,7 +67,7 @@ const items: Ref<Location[]> = ref([]);
 
 const provider = new OpenStreetMapProvider({
   params: {
-    "accept-language": props.schema.results?.lang,
+    'accept-language': props.schema.results?.lang,
     countrycodes: props.schema.results?.lang,
     addressdetails: 1,
   },

@@ -1,21 +1,17 @@
 <template>
   <v-textarea
-    v-model="localModel"
-    :label="label"
-    :rules="rules(schema)"
-    v-bind="bindProps(schema)"
-    :class="bindClass(schema)"
+    v-model='localModel'
+    :label='label'
+    :rules='rules(schema)'
+    v-bind='bindProps(schema)'
+    :class='bindClass(schema)'
   />
 </template>
 
-<script setup lang="ts">
-import { EngineField } from "../../vocabulary/engine";
-import { computed } from "vue";
-import { getValueFromModel, produceUpdateEvent } from "../../core/engine/utils";
-import { useRules } from "../../core/composables/useRules";
-import { useProps } from "../../core/composables/useProps";
-import { useLabel } from "../../core/composables/useLabel";
-import { useClass } from "../../core/composables/useClass";
+<script setup lang='ts'>
+import { EngineField } from '../../vocabulary/engine';
+import { computed } from 'vue';
+import { useClass, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
 
 const props = defineProps<{
   schema: EngineField;
@@ -25,15 +21,16 @@ const { label } = useLabel(props.schema);
 const { rules } = useRules();
 const { bindProps } = useProps();
 const { bindClass } = useClass();
+const { getValue, setValue } = useFormModel();
 
 const localModel = computed({
   get(): string {
-    return getValueFromModel(props.model, props.schema);
+    return getValue(props.model, props.schema);
   },
   set(val: any) {
-    produceUpdateEvent(val, props.schema);
+    setValue(val, props.schema);
   },
 });
 </script>
 
-<style scoped lang="css"></style>
+<style scoped lang='css'></style>

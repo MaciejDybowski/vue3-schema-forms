@@ -1,63 +1,62 @@
 <template>
   <v-menu
-    :close-on-content-click="false"
+    :close-on-content-click='false'
     offset-y
   >
-    <template v-slot:activator="{ isActive, props }">
+    <template v-slot:activator='{ isActive, props }'>
       <v-text-field
-        :label="label"
-        v-model="textFieldDate"
-        @update:modelValue="tryMatchToDate"
-        v-bind="{ ...props, ...bindProps(schema) }"
-        append-inner-icon="mdi-calendar"
+        :label='label'
+        v-model='textFieldDate'
+        @update:modelValue='tryMatchToDate'
+        v-bind='{ ...props, ...bindProps(schema) }'
+        append-inner-icon='mdi-calendar'
         v-maska:[maskOptions]
-        :rules="rules(schema)"
+        :rules='rules(schema)'
       ></v-text-field>
     </template>
 
     <v-date-picker
-      v-model="pickerDate"
-      @update:modelValue="transformTextFieldDate"
+      v-model='pickerDate'
+      @update:modelValue='transformTextFieldDate'
       :key="pickerDate + ''"
-      ref="calendar"
+      ref='calendar'
     >
     </v-date-picker>
   </v-menu>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, ref, Ref } from "vue";
-import { EngineSourceField } from "../../../vocabulary/engine/controls";
-import { useProps } from "../../../core/composables/useProps";
+<script setup lang='ts'>
+import { computed, onMounted, ref, Ref } from 'vue';
+import { EngineSourceField } from '../../../vocabulary/engine/controls';
 
-import { vMaska } from "maska";
-import { getValueFromModel, produceUpdateEvent } from "../../../core/engine/utils";
-import { onClickOutside } from "@vueuse/core";
-import dayjs from "./dayjs";
-import { useRules } from "../../../core/composables/useRules";
-import { useLabel } from "../../../core/composables/useLabel";
+import { vMaska } from 'maska';
+import { onClickOutside } from '@vueuse/core';
+import dayjs from './dayjs';
+
+import { useFormModel, useLabel, useProps, useRules } from '../../../core/composables';
 
 const props = defineProps<{ schema: EngineSourceField; model: object }>();
-const dateFormat = "DD/MM/YYYY";
+const dateFormat = 'DD/MM/YYYY';
 
 const { label } = useLabel(props.schema);
 const { rules } = useRules();
 const { bindProps } = useProps();
+const { getValue, setValue } = useFormModel();
 
 const localModel = computed({
   get(): string | null {
-    const value = getValueFromModel(props.model, props.schema);
+    const value = getValue(props.model, props.schema);
     return value ? dayjs(value).tz().format(dateFormat) : null;
   },
   set(val: any) {
-    produceUpdateEvent(val ? new Date(val).toISOString() : null, props.schema);
+    setValue(val ? new Date(val).toISOString() : null, props.schema);
   },
 });
 
-const maskOptions = { mask: "##/##/####" };
+const maskOptions = { mask: '##/##/####' };
 const menu = ref(false);
 const pickerDate: Ref<Date | undefined> = ref();
-const textFieldDate = ref("");
+const textFieldDate = ref('');
 
 function transformTextFieldDate() {
   localModel.value = textFieldDate.value = dayjs(pickerDate.value).tz().format(dateFormat);
@@ -85,7 +84,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="scss">
+<style scoped lang='scss'>
 :deep(.v-picker-title) {
   display: none;
 }

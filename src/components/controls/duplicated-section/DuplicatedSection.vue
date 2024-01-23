@@ -46,7 +46,7 @@ import draggable from "vuedraggable";
 
 import { NodeUpdateEvent } from "../../../vocabulary/engine";
 import { Schema } from "../../../vocabulary/schema";
-import { produceUpdateEvent } from "../../../core/engine/utils";
+
 import { EngineDuplicatedSection } from "../../../vocabulary/engine/controls";
 import { v4 as uuidv4 } from "uuid";
 import { VueDragable } from "@/vocabulary/VueDragable";
@@ -58,6 +58,7 @@ import { DuplicatedSectionOptions, SchemaField } from "@/vocabulary/schema/eleme
 import { isArray } from "lodash";
 import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
 import set from "lodash/set";
+import { useFormModel } from '../../../core/composables';
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;
@@ -76,11 +77,10 @@ const dragOptions = ref({
 
 const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedSectionOptions);
 
+const {getValue, setValue} = useFormModel()
 function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
-  //const obj = localModel.value[indexOfArray];
-  //localModel.value[indexOfArray] = Object.assign({ ...obj, [event.key]: event.value });
   set(localModel.value[indexOfArray], event.key, event.value);
-  produceUpdateEvent(localModel, props.schema);
+  setValue(localModel, props.schema);
 }
 
 function handleDraggableContextAction(actionId: "delete" | "addBelow" | string, index: number) {

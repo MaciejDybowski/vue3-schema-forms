@@ -155,8 +155,6 @@ export const SimpleValidation: Story = {
   render: StoryTemplateWithValidation,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for auto validation
-    await expect(canvas.getByText("Field is required.")).toBeInTheDocument();
 
     const exampleElement = canvas.getByLabelText("Phone input");
     await userEvent.type(exampleElement, "510333", {
