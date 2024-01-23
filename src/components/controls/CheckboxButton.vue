@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { EngineSourceField } from "../../vocabulary/engine/controls";
 import { computed } from "vue";
-import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from "@/core/composables";
+import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from "../../core/composables";
 
 const props = defineProps<{
   schema: EngineSourceField;
