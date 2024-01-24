@@ -1,67 +1,67 @@
 <template>
-  <v-form :ref="(el) => (formRef[formId] = el)">
+  <v-form :ref='(el) => (formRef[formId] = el)'>
     <form-root
-      v-if="!loading"
-      :form-id="formId"
-      :model="modelValue"
-      :schema="resolvedSchema"
-      :options="options"
-      @update:model="updateModel"
+      v-if='!loading'
+      :form-id='formId'
+      :model='modelValue'
+      :schema='resolvedSchema'
+      :options='options'
+      @update:model='updateModel'
     />
 
-    <slot name="formActions">
+    <slot name='formActions'>
       <form-default-actions
-        v-if="defaultFormActions"
-        :form-valid="formValid"
-        :error-messages="errorMessages"
-        @validate="validate(validationBehaviour)"
-        @reset-validation="resetValidation"
-        @reset="reset"
+        v-if='defaultFormActions'
+        :form-valid='formValid'
+        :error-messages='errorMessages'
+        @validate='validate(validationBehaviour)'
+        @reset-validation='resetValidation'
+        @reset='reset'
       />
     </slot>
   </v-form>
 </template>
 
-<script setup lang="ts">
-import { Component, getCurrentInstance, onMounted, Ref, ref, watch } from "vue";
+<script setup lang='ts'>
+import { Component, getCurrentInstance, onMounted, Ref, ref, watch } from 'vue';
 
-import FormRoot from "./FormRoot.vue";
-import { Schema, SchemaOptions } from "../../vocabulary/schema";
-import set from "lodash/set";
-import { useI18n } from "vue-i18n";
-import { resolveSchemaWithLocale } from "../../core/engine/utils";
-import { NodeUpdateEvent } from "../../vocabulary/engine";
-import TextField from "../controls/TextField.vue";
-import DuplicatedSection from "../controls/duplicated-section/DuplicatedSection.vue";
-import usePerformanceAPI from "../../core/composables/usePerformanceAPI";
-import StaticContent from "../controls/StaticContent.vue";
-import RadioButton from "../controls/RadioButton.vue";
-import CheckboxButton from "../controls/CheckboxButton.vue";
-import TextArea from "../controls/TextArea.vue";
-import Select from "../controls/Select.vue";
-import { formUpdateLogger } from "../../main";
-import EditableSection from "../controls/editable-section/EditableSection.vue";
-import Autocomplete from "../controls/Autocomplete.vue";
-import { useFormModelStore } from "../../store/formModelStore";
-import { FormItem, ValidationBehaviour, ValidationError } from "../../vocabulary/engine/formValidation";
-import FormDefaultActions from "./validation/FormDefaultActions.vue";
-import DatePicker from "../controls/date/DatePicker.vue";
-import PhoneInput from "../controls/PhoneInput.vue";
-import Location from "../controls/Location.vue";
+import FormRoot from './FormRoot.vue';
+import { Schema, SchemaOptions } from '../../vocabulary/schema';
+import set from 'lodash/set';
+import { useI18n } from 'vue-i18n';
+import { resolveSchemaWithLocale } from '../../core/engine/utils';
+import { NodeUpdateEvent } from '../../vocabulary/engine';
+import TextField from '../controls/TextField.vue';
+import DuplicatedSection from '../controls/duplicated-section/DuplicatedSection.vue';
+import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
+import StaticContent from '../controls/StaticContent.vue';
+import RadioButton from '../controls/RadioButton.vue';
+import CheckboxButton from '../controls/CheckboxButton.vue';
+import TextArea from '../controls/TextArea.vue';
+import Select from '../controls/Select.vue';
+import { formUpdateLogger } from '../../main';
+import EditableSection from '../controls/editable-section/EditableSection.vue';
+import Autocomplete from '../controls/Autocomplete.vue';
+import { useFormModelStore } from '../../store/formModelStore';
+import { FormItem, ValidationBehaviour, ValidationError } from '../../vocabulary/engine/formValidation';
+import FormDefaultActions from './validation/FormDefaultActions.vue';
+import DatePicker from '../controls/date/DatePicker.vue';
+import PhoneInput from '../controls/PhoneInput.vue';
+import Location from '../controls/Location.vue';
 
 // register components to VueInstance
 export declare type Components = Record<string, Component>;
 const components = {
-  "text-field": TextField,
-  "duplicated-section": DuplicatedSection,
-  "static-content": StaticContent,
-  "radio-button": RadioButton,
+  'text-field': TextField,
+  'duplicated-section': DuplicatedSection,
+  'static-content': StaticContent,
+  'radio-button': RadioButton,
   checkbox: CheckboxButton,
-  "text-area": TextArea,
+  'text-area': TextArea,
   select: Select,
-  "editable-section": EditableSection,
+  'editable-section': EditableSection,
   dictionary: Autocomplete,
-  "date-picker": DatePicker,
+  'date-picker': DatePicker,
   phone: PhoneInput,
   location: Location,
 } as Components;
@@ -88,12 +88,12 @@ const props = withDefaults(
   }>(),
   {
     defaultFormActions: false,
-    validationBehaviour: "scroll",
+    validationBehaviour: 'scroll',
   },
 );
 
 const emit = defineEmits<{
-  (e: "update:modelValue", val: any): void;
+  (e: 'update:modelValue', val: any): void;
 }>();
 
 let loading = ref(true);
@@ -108,11 +108,11 @@ const formModelStore = useFormModelStore(formId);
 
 function updateModel(event: NodeUpdateEvent) {
   set(props.modelValue, event.key, event.value);
-  emit("update:modelValue", props.modelValue);
+  emit('update:modelValue', props.modelValue);
   formModelStore.updateFormModel(props.modelValue);
 
   if (formUpdateLogger) {
-    console.debug("[vue-schema-forms] =>", props.modelValue);
+    console.debug('[vue-schema-forms] =>', props.modelValue);
   }
 }
 
@@ -125,7 +125,7 @@ async function loadResolvedSchema() {
 watch(
   locale,
   async () => {
-    console.debug("[vue-schema-forms] => Reload form in other language");
+    console.debug('[vue-schema-forms] => Reload form in other language');
     await loadResolvedSchema();
   },
   { deep: true },
@@ -146,19 +146,19 @@ async function validate(option?: ValidationBehaviour) {
     errorMessages.value = [];
   }
 
-  if (!valid && option === "scroll") {
+  if (!valid && option === 'scroll') {
     let arr: FormItem[] = Array.from(formRef.value[formId].items);
     const item = arr.find((item: FormItem) => !item.isValid);
-    const itemRef = document.getElementById(item?.id + "");
+    const itemRef = document.getElementById(item?.id + '');
     if (item)
       itemRef?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
+        behavior: 'smooth',
+        block: 'center',
       });
     return { valid };
   }
 
-  if (!valid && option === "messages") {
+  if (!valid && option === 'messages') {
     let arr: FormItem[] = Array.from(formRef.value[formId].items);
     errorMessages.value = arr
       .filter((item: FormItem) => !item.isValid)
@@ -173,6 +173,13 @@ async function validate(option?: ValidationBehaviour) {
       })
       .filter((item) => item.messages);
     return { valid, messages: errorMessages.value };
+  }
+
+  if (valid && option === 'messages') {
+    return { valid, messages: [] };
+  }
+  if (valid && option === 'scroll') {
+    return { valid };
   }
 }
 
@@ -193,7 +200,7 @@ defineExpose({
 });
 </script>
 
-<style lang="scss">
+<style lang='scss'>
 .required-input {
   .v-label:first-child:after,
   .v-field-label::after {
@@ -203,7 +210,7 @@ defineExpose({
 }
 </style>
 
-<i18n lang="json">
+<i18n lang='json'>
 {
   "en": {},
   "pl": {}

@@ -17,7 +17,7 @@
             :show='isHovering'
           />
           <form-root
-            class='mb-3'
+            :class='isEditable ? "mb-3" : ""'
             :model='localModel[index]'
             @update:model='updateModel($event, index)'
             :options='computedOptions'
