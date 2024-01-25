@@ -1,44 +1,44 @@
 <template>
   <base-autocomplete
-    :label="label"
-    v-model="localModel"
-    v-bind="bindProps(schema)"
-    :class="bindClass(schema)"
-    :rules="rules(schema)"
-    :item-title="title"
-    :item-value="value"
-    :items="data"
-    :loading="loading"
-    :return-object="returnObject as any"
-    :auto-select-first="true"
-    :lazy="lazy"
-    :options="paginationOptions"
-    @loadMoreRecords="loadMoreRecords"
-    :search="query"
-    @update:search="updateQuery"
-    :no-filter="true"
+    :label='label'
+    v-model='localModel'
+    v-bind='bindProps(schema)'
+    :class='bindClass(schema)'
+    :rules='rules(schema)'
+    :item-title='title'
+    :item-value='value'
+    :items='data'
+    :loading='loading'
+    :return-object='returnObject as any'
+    :auto-select-first='true'
+    :lazy='lazy'
+    :options='paginationOptions'
+    @loadMoreRecords='loadMoreRecords'
+    :search='query'
+    @update:search='updateQuery'
+    :no-filter='true'
   >
     <template
-      #item="{ item, props }"
-      v-if="description !== null"
+      #item='{ item, props }'
+      v-if='description !== null'
     >
       <v-list-item
-        v-bind="props"
-        :title="item.title"
-        :subtitle="item.raw[description]"
+        v-bind='props'
+        :title='item.title'
+        :subtitle='item.raw[description]'
       >
       </v-list-item>
     </template>
   </base-autocomplete>
 </template>
 
-<script setup lang="ts">
-import BaseAutocomplete from "./base/BaseAutocomplete.vue";
-import { computed, onMounted } from "vue";
+<script setup lang='ts'>
+import BaseAutocomplete from './base/BaseAutocomplete.vue';
+import { computed, onMounted } from 'vue';
 
-import { EngineDictionaryField } from "../../vocabulary/engine/controls";
+import { EngineDictionaryField } from '../../vocabulary/engine/controls';
 
-import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
+import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -55,7 +55,7 @@ const localModel = computed({
     return getValue(props.model, props.schema);
   },
   set(val: any) {
-    updateQuery(returnObject ? val['title'] : val);
+    updateQuery(val);
     setValue(val, props.schema);
   },
 });
@@ -73,7 +73,7 @@ const {
   load,
   loadMoreRecords,
   singleOptionAutoSelect,
-} = useDictionarySource(props.schema.source, props.schema.formId);
+} = useDictionarySource(props.schema.source, props.schema.formId, props.schema.options);
 
 onMounted(async () => {
   localModel.value ? updateQuery(localModel.value[title]) : await load();

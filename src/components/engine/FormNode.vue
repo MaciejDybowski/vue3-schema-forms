@@ -33,7 +33,6 @@ const props = defineProps<{
 
 const { shouldRender } = useConditionalRendering(props.schema);
 const { cols, completionOfRow, isOffsetExist, offset, fillRow, hideField } = useSchemaCols(props.schema);
-console.debug(props.schema.key, cols.value, completionOfRow.value, fillRow.value, shouldRender.value);
 </script>
 
 <style scoped lang='css'></style>

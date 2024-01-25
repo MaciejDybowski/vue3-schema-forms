@@ -1,11 +1,11 @@
-import { Layout } from "../schema/elements";
+import { Layout } from '../schema/elements';
 
 export interface EngineField {
   formId: string;
   key: string;
   label: string;
   default: number | string | boolean | object | Array<any>;
-  type: "text" | "number" | "object" | "array";
+  type: 'text' | 'number' | 'object' | 'array' | 'date' | 'phone';
   layout: Layout;
   options: EngineOptions;
   on: {

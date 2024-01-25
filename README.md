@@ -147,7 +147,6 @@ const vueSchemaForms = createVueSchemaForms({
 });
 ```
 
-
 ## Tests
 
 1. ```cd``` to the project directory
@@ -173,6 +172,7 @@ const vueSchemaForms = createVueSchemaForms({
 - [ ] Markdown input
 - [ ] File input
 - [ ] Table input
+- [ ] Rsql filter on dictionary
 - [ ] Signal for form is ready (for autosave but after initial model changes)
 - [ ] Create datetime field
 

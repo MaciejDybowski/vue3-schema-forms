@@ -39,6 +39,7 @@
     "expr-eval": "^2.0.2",
     "flag-icons": "^7.1.0",
     "leaflet-geosearch": "^3.11.0",
+    "libphonenumber-js": "^1.10.54",
     "lodash": "^4.17.21",
     "maska": "^2.1.10",
     "uuid": "^9.0.1",

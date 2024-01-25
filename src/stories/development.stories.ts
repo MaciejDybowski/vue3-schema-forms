@@ -1,24 +1,23 @@
 // @ts-nocheck
-import DevelopmentTable from "../components/app/DevelopmentTable.vue";
-import { Meta, StoryObj } from "@storybook/vue3";
-import { ArgTypes } from "@storybook/types";
-import { Schema } from "@/vocabulary/schema";
-import { Layout, SchemaLocationField, SchemaTextField, SimpleSource } from "../vocabulary/schema/elements";
-import { EngineSourceField } from "../vocabulary/engine/controls";
+import DevelopmentTable from '../components/app/DevelopmentTable.vue';
+import { Meta, StoryObj } from '@storybook/vue3';
+import { ArgTypes } from '@storybook/types';
+import { Schema } from '@/vocabulary/schema';
+import { DictionarySource, SchemaField } from '../vocabulary/schema/elements';
 
 const meta = {
-  title: "Development Page",
+  title: 'Development Page',
   component: DevelopmentTable,
   argTypes: {
-    schema: { control: "object", description: "Schema u" },
-    model: { control: "object", description: "Model" },
-    options: { control: "object", description: "Opcje" },
+    schema: { control: 'object', description: 'Schema u' },
+    model: { control: 'object', description: 'Model' },
+    options: { control: 'object', description: 'Opcje' },
   } as Partial<ArgTypes<any>>,
   args: {
     options: {
       fieldProps: {
-        variant: "outlined",
-        density: "comfortable",
+        variant: 'outlined',
+        density: 'comfortable',
       },
     },
     model: {},
@@ -29,123 +28,140 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
+  parameters: {
+    mockData: [
+      {
+        url: '/api/dictionaries&query=PLN?&page=0&size=20',
+        method: 'GET',
+        status: 200,
+        response: {
+          'content': [
+            {
+              'id': 'PLN',
+              'label': 'Polski złoty',
+              'digitsAfterDecimal': '2',
+            },
+          ],
+          'empty': false,
+          'first': true,
+          'last': true,
+          'number': 0,
+          'numberOfElements': 1,
+          'pageable': {
+            'offset': 0,
+            'pageNumber': 0,
+            'pageSize': 20,
+            'paged': true,
+            'unpaged': false,
+          },
+          'size': 20,
+        },
+      },
+    ],
+  },
   args: {
     model: {
-      data: {
-        items: [
-          {
-            product: "Computer",
-            quantity: 1,
-            price: 3200,
-          },
-          {
-            product: "Laptop",
-            quantity: 2,
-            price: 1334.23,
-          },
-        ],
+      field1: 'Just text',
+      field2: 1334.21233,
+      field3: { text: '_text-test_' },
+      field4: { number: 1333.233232 },
+      referenceField: { text: 'Test' },
+      date: '2023-12-31T23:00:00.000Z',
+      currency: {
+        id: 'PLN',
       },
+      phone: '+48510333202',
+
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
-        invoiceMetadata: {
-          properties: {
-            pricing: {
-              label: "The invoice is issued:",
-              layout: { component: "radio-button", cols: 3, fillRow: true } as Layout,
-              default: { value: "net", title: "at net prices", formatted: "net" },
-              source: {
-                items: [
-                  { value: "net", title: "at net prices", formatted: "net" },
-                  { value: "gross", title: "at gross prices", formatted: "gross" },
-                ],
-                returnObject: true,
-              } as SimpleSource,
-            } as EngineSourceField,
+        test: {
+          label: 'Pole do obliczeń',
+          type: 'number',
+          layout: {
+            component: 'text-field',
           },
         },
-        data: {
-          properties: {
-            items: {
-              layout: {
-                component: "duplicated-section",
-                schema: {
-                  properties: {
-                    product: { label: "Product", layout: { component: "text-field", cols: 4 } },
-                    quantity: {
-                      label: "Quantity",
-                      type: "number",
-                      default: 1,
-                      layout: { component: "text-field", cols: 2, props: { suffix: "szt.", variant: "plain" } },
-                    },
-                    price: {
-                      label: "Price ({invoiceMetadata.pricing.formatted})",
-                      type: "number",
-                      layout: { component: "text-field", cols: 3 },
-                    },
-                    value: {
-                      label: "Value",
-                      type: "number",
-                      layout: { component: "text-field", cols: 3 },
-                      calculation: "quantity * price",
-                    } as SchemaTextField,
-                  },
-                },
-              } as Layout,
-            },
+        field1: {
+          type: 'text',
+          label: 'Data viewer: text',
+          layout: {
+            component: 'data-viewer',
+          },
+        } as SchemaField,
+        field2: {
+          type: 'number',
+          label: 'Data viewer: number',
+          layout: {
+            component: 'data-viewer',
+          },
+        } as SchemaField,
+        field3: {
+          type: 'text',
+          valueMapping: 'Dodatkowa treść: {field3.text}',
+          label: 'Data viewer: object.text',
+          layout: {
+            component: 'data-viewer',
           },
         },
-        summary: {
-          properties: {
-            sumValue: {
-              label: "SUM(Value)",
-              layout: {
-                component: "text-field",
-                cols: 4,
-              },
-              calculation: "SUM(value, data.items) - 300",
-              type: "number",
-            } as SchemaTextField,
+        field4: {
+          type: 'number',
+          valueMapping: 'Test: {field4.number}',
+          label: 'Data viewer: object.number',
+          layout: {
+            component: 'data-viewer',
           },
+        },
+        field5: {
+          type: 'text',
+          valueMapping: '{referenceField.text}',
+          label: 'Data viewer: with reference object',
+          layout: {
+            component: 'data-viewer',
+          },
+        },
+        date: {
+          type: 'date',
+          //valueMapping: "{date}",
+          label: 'Data viewer: date',
+          layout: {
+            component: 'data-viewer',
+          },
+        },
+        calc: {
+          type: 'number',
+          label: 'Calculation',
+          valueMapping: 'Wynik obliczeń to: {calc} w walucie {currency.id}',
+          calculation: 'field4.number + field2 + test',
+          layout: {
+            component: 'data-viewer',
+          },
+        },
+        phone: {
+          label: 'Telefon',
+          type: 'phone',
+          layout: {
+            component: 'data-viewer',
+          },
+        } as SchemaField,
+        dictionary: {
+          label: 'Waluta faktury - słownik',
+          valueMapping: '{dictionary.label}',
+          layout: {
+            component: 'data-viewer',
+          },
+          source: {
+            url: '/api/dictionaries&query=PLN',
+            title: 'label',
+            value: 'id',
+            returnObject: true,
+            singleOptionAutoSelect: true,
+          } as DictionarySource,
         },
       },
+      required: ['field1'],
     } as Schema,
   },
 };
 
-export const Table2: Story = {
-  args: {
-    model: {
-      location: {
-        country: "Polska",
-        country_code: "pl",
-        state: "województwo małopolskie",
-        city: "Kraków",
-        city_district: "Prądnik Biały",
-        suburb: "Prądnik Biały",
-        quarter: "Azory",
-        street: "Opolska",
-        postcode: "31-301",
-        formatted_address: "Opolska, Azory, Prądnik Biały, Kraków, województwo małopolskie, 31-301, Polska",
-        lat: 50.0893889,
-        lng: 19.9105881,
-      },
-    },
-    schema: {
-      type: "object",
-      properties: {
-        location: {
-          label: "Location field",
-          layout: {
-            component: "location",
-          },
-          results: {
-            lang: "pl",
-            countryLimit: "pl",
-          },
-        } as SchemaLocationField,
-      },
-    } as Schema,
-  },
-};

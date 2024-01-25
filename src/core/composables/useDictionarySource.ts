@@ -9,8 +9,11 @@ import { debounce } from "lodash";
 import get from "lodash/get";
 import { variableRegexp } from "../../core/engine/utils";
 import { useFormModelStore } from "../../store/formModelStore";
+import { EngineOptions } from '@/vocabulary/engine';
+import { useFormattedNumber } from '../../core/composables/useFormattedNumber';
 
-export function useDictionarySource(source: DictionarySource, formId: string) {
+export function useDictionarySource(source: DictionarySource, formId: string, formOptions: EngineOptions) {
+  const {formatNumber} = useFormattedNumber(formOptions)
   const title = source.title ? source.title : "title";
   const value = source.value ? source.value : "value";
   const returnObject = source.returnObject !== undefined ? source.returnObject : true;
@@ -30,11 +33,11 @@ export function useDictionarySource(source: DictionarySource, formId: string) {
 
   const isApiContainsDependency = source.url.match(variableRegexp);
   if (isApiContainsDependency !== null) {
-    endpoint = useResolveVariables(source.url, formId);
+    endpoint = useResolveVariables(source.url, formId, formatNumber);
 
     const formModelStore = useFormModelStore(formId);
     formModelStore.$subscribe(() => {
-      const temp = useResolveVariables(source.url, formId);
+      const temp = useResolveVariables(source.url, formId, formatNumber);
       if (temp.resolvedText !== endpoint.resolvedText) {
         endpoint = temp;
         debounced.load();

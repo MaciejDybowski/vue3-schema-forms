@@ -8,12 +8,14 @@ export function useLocale() {
         counter: "Max {counter} characters.",
         phoneInvalid: "The number provided is incorrect. (Ex: {example})",
         countryLabel: "Country",
+        emptyValue: "No value"
       },
       pl: {
         required: "Pole jest wymagane.",
         counter: "Dozwolona liczba znaków: {counter}.",
         phoneInvalid: "Podany numer jest niepoprawny. (Np.: {example})",
         countryLabel: "Kraj",
+        emptyValue: "Brak"
       },
     },
   });

@@ -1,5 +1,5 @@
-import { EngineField } from "./index";
-import { DictionarySource, LocationResult, Source } from "@/vocabulary/schema/elements";
+import { EngineField } from './index';
+import { DictionarySource, LocationResult, SimpleSource, Source } from '@/vocabulary/schema/elements';
 
 export interface EngineProps<T> {
   schema: T;
@@ -10,9 +10,10 @@ export interface EngineTextField extends EngineField {
   calculation?: string;
 }
 
-export interface EngineReadOnlyField extends EngineField {
+export interface EngineDataViewerField extends EngineField {
   calculation?: string;
   valueMapping?: string;
+  source?: SimpleSource | DictionarySource;
 }
 
 export interface EngineStaticField extends EngineField {
@@ -20,7 +21,7 @@ export interface EngineStaticField extends EngineField {
 }
 
 export interface EngineDuplicatedSection extends EngineField {
-  editable?: boolean
+  editable?: boolean;
 }
 
 export interface EngineSourceField extends EngineField {
