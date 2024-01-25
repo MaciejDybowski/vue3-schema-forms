@@ -80,7 +80,7 @@ function runCalculationIfExist() {
 }
 
 async function resolveIfDictionary() {
-  if ('source' in props.schema && 'url' in props.schema.source) {
+  if ('source' in props.schema && props.schema.source && 'url' in props.schema.source) {
     const {
       data,
       load,
