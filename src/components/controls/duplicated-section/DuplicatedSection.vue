@@ -157,7 +157,7 @@ const isShowDivider = computed(() => {
 function init(): void {
   nodes.value = [];
   let isDefaultExist = false;
-  let sections: Object[] = get(props.model, props.schema.key, []);
+  let sections: Object[] = get(props.model, props.schema.key, []) || []; //lodash error with default value = array
   if (sections.length === 0 && isArray(props.schema.default)) {
     sections = props.schema.default as Array<any>;
     isDefaultExist = true;
