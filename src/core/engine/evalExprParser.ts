@@ -16,7 +16,7 @@ export function SUM(calculation: string, model: object) {
     if (match) {
       let parameters = match[1];
       let parameterArray = parameters.split(",").map((param) => param.trim());
-      const sum = get(model, parameterArray[1], []).reduce(
+      const sum = get(model, parameterArray[1], [])?.reduce(
         (partialSum: number, item: object) => partialSum + get(item, parameterArray[0], 0),
         0,
       );

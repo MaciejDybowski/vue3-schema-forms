@@ -158,11 +158,11 @@ function init(): void {
   nodes.value = [];
   let isDefaultExist = false;
   let sections: Object[] = get(props.model, props.schema.key, []);
-  if (sections.length === 0 && isArray(props.schema.default)) {
+  if (sections?.length === 0 && isArray(props.schema.default)) {
     sections = props.schema.default as Array<any>;
     isDefaultExist = true;
   }
-  if (sections.length > 0) {
+  if (sections?.length > 0) {
     sections.forEach((item: any, index: number) => {
       nodes.value.push({
         id: uuidv4(),
