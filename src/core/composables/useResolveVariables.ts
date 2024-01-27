@@ -8,7 +8,7 @@ export function useResolveVariables(inputString: string, formId: string, formatN
   const formModelStore = useFormModelStore(formId);
 
 
-  inputString.match(variableRegexp)?.forEach((match: string) => {
+  inputString?.match(variableRegexp)?.forEach((match: string) => {
     const unwrapped = match.slice(1, -1);
     const split = unwrapped.split(':');
     const variable = split[0];

@@ -11,7 +11,7 @@ export function useLabel(schema: EngineField) {
   const label = ref(useResolveVariables(schema.label, schema.formId, formatNumber).resolvedText);
   const labelWithFallbackMessage = label.value;
 
-  if (schema.label.match(variableRegexp)) {
+  if (schema?.label?.match(variableRegexp)) {
     formModelStore.$subscribe(() => {
       const { resolvedText, allVariablesResolved } = useResolveVariables(schema.label, schema.formId, formatNumber);
       allVariablesResolved ? (label.value = resolvedText) : (label.value = labelWithFallbackMessage);
