@@ -49,6 +49,7 @@ import DatePicker from '../controls/date/DatePicker.vue';
 import PhoneInput from '../controls/PhoneInput.vue';
 import Location from '../controls/Location.vue';
 import DataViewer from '../controls/data-viewer/DataViewer.vue';
+import Address from '../controls/address/Address.vue';
 
 // register components to VueInstance
 export declare type Components = Record<string, Component>;
@@ -65,7 +66,8 @@ const components = {
   'date-picker': DatePicker,
   phone: PhoneInput,
   location: Location,
-  "data-viewer": DataViewer
+  'data-viewer': DataViewer,
+  'address': Address,
 } as Components;
 const instance = getCurrentInstance();
 for (const [name, comp] of Object.entries(components)) {

@@ -7,15 +7,28 @@ export function useLocale() {
         required: "Field is required.",
         counter: "Max {counter} characters.",
         phoneInvalid: "The number provided is incorrect. (Ex: {example})",
-        countryLabel: "Country",
-        emptyValue: "No value"
+
+        emptyValue: "No value",
+        address: {
+          country: "Country",
+          region: "Region",
+          addressLine: "Street and number",
+          postalCode: "Postal code",
+          city: "City"
+        }
       },
       pl: {
         required: "Pole jest wymagane.",
         counter: "Dozwolona liczba znaków: {counter}.",
         phoneInvalid: "Podany numer jest niepoprawny. (Np.: {example})",
-        countryLabel: "Kraj",
-        emptyValue: "Brak"
+        emptyValue: "Brak",
+        address: {
+          country: "Kraj",
+          region: "Województwo/Region",
+          addressLine: "Ulica i numer",
+          postalCode: "Kod pocztowy",
+          city: "Miejscowość"
+        }
       },
     },
   });

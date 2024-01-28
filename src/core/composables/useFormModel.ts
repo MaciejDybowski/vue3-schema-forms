@@ -3,8 +3,8 @@ import get from 'lodash/get';
 import set from 'lodash/set';
 
 export function useFormModel() {
-  function getValue(model: object, schema: EngineField): any {
-    const value = get(model, schema.key, null);
+  function getValue(model: object, schema: EngineField, defaultValue: any = null): any {
+    const value = get(model, schema.key, defaultValue);
     if (schema.default && value === null) {
       const defaultValue = schema.default;
       setValue(defaultValue, schema);

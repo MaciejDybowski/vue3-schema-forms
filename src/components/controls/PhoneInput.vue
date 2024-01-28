@@ -38,7 +38,7 @@ const { getValue, setValue } = useFormModel();
 
 const phoneInputProps = {
   "country-icon-mode": "svg",
-  countryLabel: t("countryLabel"),
+  countryLabel: t("address.country"),
   "guess-country": true,
   "include-countries": ["pl", "gb", "ru", "de", "us", "es", "fr", "it"],
 };

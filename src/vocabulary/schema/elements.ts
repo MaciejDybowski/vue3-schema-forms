@@ -1,10 +1,10 @@
-import { Schema } from "@/vocabulary/schema/index";
+import { Schema } from '@/vocabulary/schema/index';
 
 export interface SchemaField {
   label?: string | { $ref: string };
   content?: string | { $ref: string };
   default?: number | string | boolean | object | Array<any>;
-  type?: "text" | "number" | "date" | "array" | "object";
+  type?: 'text' | 'number' | 'date' | 'array' | 'object';
   layout?: Layout;
   properties?: Record<string, SchemaField | SchemaTextField>;
   required?: Array<string>;
@@ -36,7 +36,7 @@ export interface Layout {
   offset?: number;
   hide?: boolean;
 
-  // duplicated-section && section
+  // duplicated-section && section && address
   schema?: Schema;
   options?: Record<string, any>;
 
@@ -45,21 +45,22 @@ export interface Layout {
 }
 
 export type SchemaComponent =
-  | "text-field"
-  | "duplicated-section"
-  | "static-content"
-  | "radio-button"
-  | "checkbox"
-  | "text-area"
-  | "select"
-  | "editable-section"
-  | "dictionary"
-  | "date-picker"
-  | "phone"
-  | "data-viewer"
-  | "location";
+  | 'text-field'
+  | 'duplicated-section'
+  | 'static-content'
+  | 'radio-button'
+  | 'checkbox'
+  | 'text-area'
+  | 'select'
+  | 'editable-section'
+  | 'dictionary'
+  | 'date-picker'
+  | 'phone'
+  | 'data-viewer'
+  | 'location'
+  | 'address'
 
-export type StaticContentTag = "h1" | "h2" | "h3" | "h4" | "h5" | "p" | "span";
+export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span';
 
 export interface Cols {
   xs?: number;
