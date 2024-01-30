@@ -34,7 +34,7 @@
 <script setup lang='ts'>
 import { EngineStaticField } from '../../vocabulary/engine/controls';
 import { computed } from 'vue';
-import { useResolveVariables } from '@/core/composables/useResolveVariables';
+import { useResolveVariables } from '../../core/composables/useResolveVariables';
 
 
 const props = defineProps<{

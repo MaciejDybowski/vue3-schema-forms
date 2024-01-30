@@ -9,7 +9,7 @@ import { SchemaDateField, SchemaTextField } from '@/vocabulary/schema/elements';
 import dayjs from '../../components/controls/date/dayjs';
 
 const meta = {
-  title: 'Forms/Controls/Date [experimental]',
+  title: 'Forms/Controls/Date',
   component: VueSchemaForms,
   tags: ['autodocs'],
   argTypes: {
