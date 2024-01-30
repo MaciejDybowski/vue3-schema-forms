@@ -23,10 +23,10 @@ import {
   useFormModel,
   useLabel,
   useLocale,
+  useResolveVariables
 } from '../../../core/composables';
 import dayjs from '../date/dayjs';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { useResolveVariables } from '@/core/composables/useResolveVariables';
 
 const props = defineProps<{
   schema: EngineDataViewerField;
@@ -53,12 +53,15 @@ const localModel = computed({
     } else {
       switch (props.schema.type) {
         case 'number':
+          if(!value) break
           value = formatNumber(value);
           break;
         case 'date':
+          if(!value) break
           value = dayjs(value).format(dateFormat.value);
           break;
         case 'phone':
+          if(!value) break
           value = parsePhoneNumber(value).formatNational();
           break;
         default:
@@ -66,7 +69,7 @@ const localModel = computed({
       }
     }
 
-    return value !== 'null' ? value : t('emptyValue');
+    return value !== 'null' && !!value ? value : t('emptyValue');
   },
   set(val: any) {
     setValue(val, props.schema);
@@ -106,7 +109,7 @@ onMounted(async () => {
 
 <style scoped lang='scss'>
 :deep(.v-field-label--floating) {
-  visibility: visible;
+  visibility: visible!important;
 }
 </style>
 
