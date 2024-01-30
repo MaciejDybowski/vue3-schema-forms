@@ -22,6 +22,13 @@ export interface SchemaLocationField extends SchemaField {
   results: LocationResult;
 }
 
+export interface SchemaDateField extends SchemaField {
+  pastDateAvailable?: boolean;
+  futureDateAvailable?: boolean;
+  closeOnFirstClick?: boolean;
+  formatInModel?: string
+}
+
 export interface LocationResult {
   lang: string;
   countryLimit: string;

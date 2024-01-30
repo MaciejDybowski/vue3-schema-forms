@@ -1,14 +1,13 @@
 import { EngineField } from '@/vocabulary/engine';
 import { EngineTextField } from '@/vocabulary/engine/controls';
-import { useResolveVariables } from '../../core/composables/useResolveVariables';
 import set from 'lodash/set';
 import { variableRegexp } from '../../core/engine/utils';
-import { useFormattedNumber } from '../../core/composables/useFormattedNumber';
+import { useResolveVariables } from './useResolveVariables';
 
 export function useProps() {
   function bindProps(schema: EngineField) {
     let props: Record<string, string | number | boolean> = {};
-    const { formatNumber } = useFormattedNumber(schema.options);
+    const { resolve } = useResolveVariables(schema);
 
     switch (schema.layout.component) {
       case 'text-field':
@@ -65,7 +64,7 @@ export function useProps() {
 
     for (let [key, value] of Object.entries(props)) {
       if (typeof value === 'string' && variableRegexp.test(value)) {
-        const obj = useResolveVariables(value, schema.formId, formatNumber);
+        const obj = resolve(value);
         if (obj.allVariablesResolved) {
           set(props, key, obj.resolvedText);
         } else {

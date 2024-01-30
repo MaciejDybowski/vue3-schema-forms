@@ -113,7 +113,7 @@ export const StandardDate: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Read value from model [date]');
-    const text = canvas.getByText('25/01/2024');
+    const text = canvas.getByText('01/25/2024');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();

@@ -12,21 +12,21 @@
 
 <script setup lang='ts'>
 
-import { EngineDataViewerField } from '@/vocabulary/engine/controls';
+import { EngineDataViewerField, EngineDictionaryField } from '@/vocabulary/engine/controls';
 import { computed, onMounted } from 'vue';
 import {
   useCalculation,
   useClass,
+  useDateFormat,
   useDictionarySource,
   useFormattedNumber,
   useFormModel,
   useLabel,
   useLocale,
-  useResolveVariables,
 } from '../../../core/composables';
-import dayjs from 'dayjs';
+import dayjs from '../date/dayjs';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { DictionarySource } from '@/vocabulary/schema/elements';
+import { useResolveVariables } from '@/core/composables/useResolveVariables';
 
 const props = defineProps<{
   schema: EngineDataViewerField;
@@ -38,7 +38,8 @@ const { label } = useLabel(props.schema);
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const { formatNumber } = useFormattedNumber(props.schema.options);
-
+const { dateFormat } = useDateFormat();
+const { resolve } = useResolveVariables(props.schema);
 
 const isValueMapping = !!props.schema.valueMapping;
 
@@ -47,7 +48,7 @@ const localModel = computed({
     let value = getValue(props.model, props.schema);
 
     if (isValueMapping) {
-      const { resolvedText } = useResolveVariables(props.schema.valueMapping as string, props.schema.formId, formatNumber);
+      const { resolvedText } = resolve(props.schema.valueMapping as string);
       value = resolvedText;
     } else {
       switch (props.schema.type) {
@@ -55,7 +56,7 @@ const localModel = computed({
           value = formatNumber(value);
           break;
         case 'date':
-          value = dayjs(value).tz().format('DD/MM/YYYY');
+          value = dayjs(value).format(dateFormat.value);
           break;
         case 'phone':
           value = parsePhoneNumber(value).formatNational();
@@ -85,7 +86,7 @@ async function resolveIfDictionary() {
       data,
       load,
       singleOptionAutoSelect,
-    } = useDictionarySource(props.schema.source as DictionarySource, props.schema.formId, props.schema.options);
+    } = useDictionarySource(props.schema as EngineDictionaryField);
 
     await load();
 

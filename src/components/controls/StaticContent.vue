@@ -34,8 +34,7 @@
 <script setup lang='ts'>
 import { EngineStaticField } from '../../vocabulary/engine/controls';
 import { computed } from 'vue';
-import { useResolveVariables } from '../../core/composables/useResolveVariables';
-import { useFormattedNumber } from '../../core/composables';
+import { useResolveVariables } from '@/core/composables/useResolveVariables';
 
 
 const props = defineProps<{
@@ -43,10 +42,10 @@ const props = defineProps<{
   model: object;
 }>();
 
-const { formatNumber } = useFormattedNumber(props.schema.options);
+const { resolve } = useResolveVariables(props.schema);
 
 const resolvedContent = computed(() => {
-  return useResolveVariables(props.schema.content, props.schema.formId, formatNumber);
+  return resolve(props.schema.content);
 });
 </script>
 

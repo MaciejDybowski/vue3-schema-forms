@@ -27,7 +27,7 @@ To relieve the library of dependencies as ```peerDependencies``` library takes:
 * ```vuedraggable@4.1.0``` - support for drag&drop interaction
 
 ```bash
-npm i vue@3.4.14 vuetify@3.4.10 axios@1.6.5 dayjs@1.11.10 pinia@2.1.7 vue-i18n@9 vuedraggable@next
+npm i vue@3.4.14 vuetify@3.5.1 axios@1.6.5 dayjs@1.11.10 pinia@2.1.7 vue-i18n@9 vuedraggable@next
 ```
 
 ## Installation
@@ -168,7 +168,6 @@ const vueSchemaForms = createVueSchemaForms({
 - [ ] Ability to add validation functions in schema
 - [ ] Ability to mark "not-saveable" field in schema/model
 - [ ] Email input
-- [ ] Address input
 - [ ] Markdown input
 - [ ] File input
 - [ ] Table input

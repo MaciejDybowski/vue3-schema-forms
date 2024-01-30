@@ -28,6 +28,13 @@ export interface EngineSourceField extends EngineField {
   source: Source;
 }
 
+export interface EngineDateField extends EngineField {
+  pastDateAvailable?: boolean;
+  futureDateAvailable?: boolean;
+  closeOnFirstClick?: boolean;
+  formatInModel?: string
+}
+
 export interface EnginePhoneField extends EngineField {
   phoneInputProps: object;
 }

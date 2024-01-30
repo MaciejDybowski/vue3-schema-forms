@@ -73,7 +73,7 @@ const {
   load,
   loadMoreRecords,
   singleOptionAutoSelect,
-} = useDictionarySource(props.schema.source, props.schema.formId, props.schema.options);
+} = useDictionarySource(props.schema);
 
 onMounted(async () => {
   localModel.value ? updateQuery(localModel.value[title]) : await load();
