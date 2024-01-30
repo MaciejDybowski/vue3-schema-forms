@@ -1,24 +1,26 @@
 <template>
-  <div class="duplicated-section-item">
-    <v-hover
-      v-slot="{ isHovering, props }"
-      open-delay="200"
-    >
-      <div
-        class="d-flex"
-        v-bind="props"
+  <v-row>
+    <v-col class="duplicated-section-item">
+      <v-hover
+        v-slot="{ isHovering, props }"
+        open-delay="200"
       >
-        <slot
-          name="box"
-          :isHovering="isHovering"
-        ></slot>
-      </div>
-    </v-hover>
-    <v-divider
-      v-if="showDivider"
-      class="mb-4"
-    />
-  </div>
+        <div
+          class="d-flex"
+          v-bind="props"
+        >
+          <slot
+            name="box"
+            :isHovering="isHovering"
+          ></slot>
+        </div>
+      </v-hover>
+      <v-divider
+        v-if="showDivider"
+        class="mb-4"
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script setup lang="ts">

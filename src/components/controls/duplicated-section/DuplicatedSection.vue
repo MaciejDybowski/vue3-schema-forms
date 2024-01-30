@@ -1,47 +1,53 @@
 <template>
-  <draggable
-    v-model='nodes'
-    group='sections'
-    @start='drag = true'
-    @end='drag = false'
-    @change='changePosition'
-    handle='.draggable-icon'
-    item-key='id'
-    v-bind='dragOptions'
-  >
-    <template #item='{ element, index }'>
-      <duplicated-section-item :show-divider='isShowDivider && index <= nodes.length - 2'>
-        <template #box='{ isHovering }'>
-          <draggable-icon
-            v-if='isEditable'
-            :show='isHovering'
-          />
-          <form-root
-            :class='isEditable ? "mb-3" : ""'
-            :model='localModel[index]'
-            @update:model='updateModel($event, index)'
-            :options='computedOptions'
-            :schema='element as Schema'
-            :form-id='schema.formId'
-          />
-          <draggable-context-menu
-            v-if='isEditable'
-            :show='isHovering'
-            @handle-action='handleDraggableContextAction($event, index)'
-          />
+  <v-row>
+    <v-col cols='12'>
+      <draggable
+        v-model='nodes'
+        group='sections'
+        @start='drag = true'
+        @end='drag = false'
+        @change='changePosition'
+        handle='.draggable-icon'
+        item-key='id'
+
+        v-bind='dragOptions'
+      >
+        <template #item='{ element, index }'>
+          <duplicated-section-item :show-divider='isShowDivider && index <= nodes.length - 2'>
+            <template #box='{ isHovering }'>
+              <draggable-icon
+                v-if='isEditable'
+                :show='isHovering'
+              />
+              <form-root
+                :model='localModel[index]'
+                @update:model='updateModel($event, index)'
+                :options='computedOptions'
+                :schema='element as Schema'
+                :form-id='schema.formId'
+              />
+              <draggable-context-menu
+                v-if='isEditable'
+                :show='isHovering'
+                @handle-action='handleDraggableContextAction($event, index)'
+              />
+            </template>
+          </duplicated-section-item>
         </template>
-      </duplicated-section-item>
-    </template>
-  </draggable>
-  <v-btn
-    v-if='isEditable'
-    prepend-icon='mdi-plus'
-    color='primary'
-    v-bind='schema.options.buttonProps'
-    @click='addNode'
-  >
-    {{ getAddBtnText }}
-  </v-btn>
+      </draggable>
+    </v-col>
+    <v-col>
+      <v-btn
+        v-if='isEditable'
+        prepend-icon='mdi-plus'
+        color='primary'
+        v-bind='schema.options.buttonProps'
+        @click='addNode'
+      >
+        {{ getAddBtnText }}
+      </v-btn>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup lang='ts'>
