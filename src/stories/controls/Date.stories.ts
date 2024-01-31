@@ -63,6 +63,35 @@ export const Standard: Story = {
   },
 };
 
+export const ReadOnly: Story = {
+  play: async (context) => {
+    //const canvas = within(context.canvasElement);
+    //const field = canvas.getByLabelText('Date');
+    //await userEvent.type(field, '01/29/2024');
+    //await expect(context.args.modelValue.simpleDate).toEqual('2024-01-29T00:00:00.000+01:00');
+  },
+  args: {
+    modelValue: {
+      readonlyDate: '2024-01-29T00:00:00.000+01:00',
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        readonlyDate: {
+          label: 'Date',
+          layout: {
+            component: 'date-picker',
+            props: {
+              readonly: true,
+            },
+          },
+        },
+      },
+      required: ['readonlyDate']
+    } as Schema,
+  },
+};
+
 export const PickFromMenu: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
@@ -133,7 +162,7 @@ export const CustomFormatInModel: Story = {
           layout: {
             component: 'date-picker',
           },
-          formatInModel: "DD/MM/YYYY"
+          formatInModel: 'DD/MM/YYYY',
         } as SchemaDateField,
       },
     } as Schema,

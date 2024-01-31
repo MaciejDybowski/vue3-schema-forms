@@ -7,7 +7,7 @@
     @update:focused='(val) => (isInputFocused = val)'
     :placeholder='dateFormat.toLocaleLowerCase()'
     v-maska:[maskOptions]
-    clearable
+    :clearable="!vuetifyProps.readonly"
     :rules='dateRules'
     @update:model-value='dateTyping'
     append-inner-icon='mdi-calendar'
@@ -23,6 +23,7 @@
     :activator='inputFieldRef'
     scrim='transparent'
     offset='5'
+    :disabled="vuetifyProps.readonly"
   >
     <v-card min-width='0'>
       <v-card-text class='pa-0'>
@@ -74,6 +75,8 @@ const localModel = computed({
     setValue(val, props.schema);
   },
 });
+
+const vuetifyProps = bindProps(props.schema)
 
 const currentDate = new Date();
 currentDate.setHours(0, 0, 0, 0);
