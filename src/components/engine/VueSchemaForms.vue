@@ -23,14 +23,14 @@
 </template>
 
 <script setup lang='ts'>
-import { Component, getCurrentInstance, onMounted, Ref, ref, watch } from 'vue';
+import { getCurrentInstance, onMounted, Ref, ref, watch } from 'vue';
 
 import FormRoot from './FormRoot.vue';
 import { Schema, SchemaOptions } from '../../vocabulary/schema';
 import set from 'lodash/set';
 import { useI18n } from 'vue-i18n';
 import { resolveSchemaWithLocale } from '../../core/engine/utils';
-import { NodeUpdateEvent } from '../../vocabulary/engine';
+import { Components, NodeUpdateEvent } from '../../vocabulary/engine';
 import TextField from '../controls/TextField.vue';
 import DuplicatedSection from '../controls/duplicated-section/DuplicatedSection.vue';
 import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
@@ -52,7 +52,6 @@ import DataViewer from '../controls/data-viewer/DataViewer.vue';
 import Address from '../controls/address/Address.vue';
 
 // register components to VueInstance
-export declare type Components = Record<string, Component>;
 const components = {
   'text-field': TextField,
   'duplicated-section': DuplicatedSection,
@@ -116,7 +115,7 @@ function updateModel(event: NodeUpdateEvent) {
   formModelStore.updateFormModel(props.modelValue);
 
   if (formUpdateLogger) {
-    console.debug('[vue-schema-forms] =>', props.modelValue);
+    console.debug(`[vue-schema-forms] [${event.key}] =>`, props.modelValue);
   }
 }
 

@@ -1,4 +1,5 @@
 import { Layout } from '../schema/elements';
+import { Component } from 'vue';
 
 export interface EngineField {
   formId: string;
@@ -36,3 +37,6 @@ export interface Validation {
   message: string,
   nullable?: boolean
 }
+
+
+export declare type Components = Record<string, Component>;

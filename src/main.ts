@@ -1,9 +1,10 @@
 import * as components from "../src/components/index";
 import { App } from "vue";
-import { Components } from "@/components/engine/VueSchemaForms.vue";
-import * as exportedComposables from "../src/core/composables";
 
-export let formUpdateLogger = false;
+import * as exportedComposables from "../src/core/composables";
+import { Components } from '@/vocabulary/engine';
+
+export let formUpdateLogger = true;
 
 export type VueSchemaForms = {
   install: (app: App) => void;
