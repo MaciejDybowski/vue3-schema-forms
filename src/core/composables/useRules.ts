@@ -33,9 +33,6 @@ export function useRules() {
         });
       });
     }
-
-    console.debug(rules);
-
     return rules;
   }
 
