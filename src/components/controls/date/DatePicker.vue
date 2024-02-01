@@ -23,7 +23,7 @@
     :activator='inputFieldRef'
     scrim='transparent'
     offset='5'
-    :disabled="vuetifyProps.readonly"
+    :disabled="vuetifyProps.readonly as boolean"
   >
     <v-card min-width='0'>
       <v-card-text class='pa-0'>
@@ -68,7 +68,6 @@ const {dateFormat} = useDateFormat()
 
 const localModel = computed({
   get(): string | null {
-    console.debug(getValue(props.model, props.schema));
     return getValue(props.model, props.schema);
   },
   set(val: any) {
