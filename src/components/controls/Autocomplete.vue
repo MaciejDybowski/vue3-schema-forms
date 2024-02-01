@@ -55,7 +55,12 @@ const localModel = computed({
     return getValue(props.model, props.schema);
   },
   set(val: any) {
-    updateQuery(returnObject ? val['title'] : val);
+    if (val && typeof val === 'object') {
+      updateQuery(returnObject ? val[title] : val);
+    } else {
+      updateQuery(returnObject ? null : val);
+    }
+
     setValue(val, props.schema);
   },
 });

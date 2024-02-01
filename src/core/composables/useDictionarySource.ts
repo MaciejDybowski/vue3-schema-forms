@@ -19,6 +19,7 @@ export function useDictionarySource(field: EngineDictionaryField) {
   const returnObject = source.returnObject !== undefined ? source.returnObject : true;
   const loading = ref(false);
   let data: Ref<Array<object>> = ref([]);
+  let firstLoad = ref(true);
 
   // dictionary options
   const lazy = ref(source.lazy !== undefined ? source.lazy : true);
@@ -47,7 +48,7 @@ export function useDictionarySource(field: EngineDictionaryField) {
 
   /*
     User search support.
-    queryInData prevents the http request from being executed when the selecta/autocomplete/combobox model is selected
+    queryInData prevents the http request from being executed when the select/autocomplete/combobox model is selected
     Example:
     1. user was searching currency "dollar".
     2. he selected US dollar.
@@ -56,8 +57,12 @@ export function useDictionarySource(field: EngineDictionaryField) {
   let query = ref('');
   watch(query, (value, oldValue) => {
     if (value || (value === null && oldValue)) {
-      const queryInData = data.value.filter((item: any) => item[title] === value).length > 0;
-      queryInData ? debounced.load.cancel() : debounced.load();
+      const queryInData = data.value.filter((item: any) => {
+        return item[title] === value || Object.values(item).includes(value);
+      }).length > 0;
+      queryInData
+        ? debounced.load.cancel()
+        : debounced.load();
     }
   });
 
@@ -111,7 +116,10 @@ export function useDictionarySource(field: EngineDictionaryField) {
     let urlParts = endpoint.resolvedText.split('?');
     let urlParams = new URLSearchParams(urlParts[1]);
     if (urlParams.has('query')) {
-      query.value = urlParams.get('query') as string;
+      if (firstLoad.value) {
+        query.value = urlParams.get('query') as string;
+        firstLoad.value = false;
+      }
       urlParams.delete('query');
     }
 
