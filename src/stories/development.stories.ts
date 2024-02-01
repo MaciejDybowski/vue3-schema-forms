@@ -3,7 +3,7 @@ import DevelopmentTable from '../components/app/DevelopmentTable.vue';
 import { Meta, StoryObj } from '@storybook/vue3';
 import { ArgTypes } from '@storybook/types';
 import { Schema } from '../vocabulary/schema';
-import { SchemaDateField } from '../vocabulary/schema/elements';
+import { SchemaField } from '../vocabulary/schema/elements';
 
 const meta = {
   title: 'Development Page',
@@ -29,21 +29,32 @@ type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
   args: {
-    model: {
-      //"date": "2024-01-31T00:00:00.000+01:00"
-    },
+    model: {},
     schema: {
       type: 'object',
       properties: {
-        date: {
-          label: 'Data',
+        email: {
+          label: 'Adres e-mail',
           layout: {
-            component: 'date-picker',
+            component: 'text-field',
           },
-          formatInModel: "YYYY/DD/MM"
-        } as SchemaDateField,
+          validations: [
+            {
+              regexp: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+              message:  { $ref: "#/i18n/~$locale~/emailIsNotValid" },
+            },
+          ],
+        } as SchemaField,
       },
-      required: ["date"]
+      required: [''],
+      i18n: {
+        pl: {
+          emailIsNotValid: "Adres e-mail nie jest poprawny"
+        },
+        en: {
+          emailIsNotValid: "Email must be valid"
+        }
+      }
     } as Schema,
   },
 };

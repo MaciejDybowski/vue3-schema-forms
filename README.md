@@ -165,9 +165,7 @@ const vueSchemaForms = createVueSchemaForms({
 
 ## ToDo List
 
-- [ ] Ability to add validation functions in schema
 - [ ] Ability to mark "not-saveable" field in schema/model
-- [ ] Email input
 - [ ] Markdown input
 - [ ] File input
 - [ ] Table input

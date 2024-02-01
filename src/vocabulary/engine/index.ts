@@ -12,6 +12,7 @@ export interface EngineField {
     input: Function;
   };
   required: boolean;
+  validations?: Array<Validation>;
 }
 
 export interface EngineOptions {
@@ -28,4 +29,10 @@ export interface EngineOptions {
 export interface NodeUpdateEvent {
   key: string;
   value: any;
+}
+
+export interface Validation {
+  regexp: RegExp,
+  message: string,
+  nullable?: boolean
 }
