@@ -37,24 +37,10 @@ export const Table1: Story = {
           label: 'Adres e-mail',
           layout: {
             component: 'text-field',
+            class: "au-test"
           },
-          validations: [
-            {
-              regexp: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
-              message:  { $ref: "#/i18n/~$locale~/emailIsNotValid" },
-            },
-          ],
         } as SchemaField,
       },
-      required: [''],
-      i18n: {
-        pl: {
-          emailIsNotValid: "Adres e-mail nie jest poprawny"
-        },
-        en: {
-          emailIsNotValid: "Email must be valid"
-        }
-      }
     } as Schema,
   },
 };

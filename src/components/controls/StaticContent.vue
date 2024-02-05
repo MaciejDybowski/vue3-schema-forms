@@ -26,13 +26,11 @@
   />
   <p
     v-if="schema.layout.tag === 'p' && resolvedContent.allVariablesResolved"
-    class='text-subtitle-2'
     v-html='resolvedContent.resolvedText'
     :class='bindClass(schema)'
   />
   <span
     v-if="schema.layout.tag === 'span' && resolvedContent.allVariablesResolved"
-    class='text-subtitle-2 d-block text-justify'
     v-html='resolvedContent.resolvedText'
     :class='bindClass(schema)'
   />
