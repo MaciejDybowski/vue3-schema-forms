@@ -49,6 +49,7 @@ export interface Layout {
 
   // static-content
   tag?: StaticContentTag;
+  class?: string
 }
 
 export type SchemaComponent =
