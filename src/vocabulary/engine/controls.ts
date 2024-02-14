@@ -28,6 +28,10 @@ export interface EngineSourceField extends EngineField {
   source: Source;
 }
 
+export interface RadioField extends  EngineSourceField {
+  initValue?: boolean
+}
+
 export interface EngineDateField extends EngineField {
   pastDateAvailable?: boolean;
   futureDateAvailable?: boolean;

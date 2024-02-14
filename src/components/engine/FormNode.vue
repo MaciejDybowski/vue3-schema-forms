@@ -1,10 +1,6 @@
 <template>
   <v-col
-    v-if='isOffsetExist && shouldRender'
-    :cols='offset'
-  ></v-col>
-
-  <v-col
+    :class='layoutCssClass'
     v-if='shouldRender'
     :cols='cols'
     v-show='hideField'
@@ -15,16 +11,13 @@
       :model='model'
     />
   </v-col>
-  <v-col
-    v-if='fillRow && shouldRender'
-    :cols='completionOfRow'
-  ></v-col>
 </template>
 
 <script setup lang='ts'>
 import { EngineField } from '../../vocabulary/engine';
 import { useConditionalRendering } from '../../core/composables/useConditionalRendering';
 import { useSchemaCols } from '../../core/composables/useSchemaCols';
+import { computed } from 'vue';
 
 const props = defineProps<{
   schema: EngineField;
@@ -33,6 +26,20 @@ const props = defineProps<{
 
 const { shouldRender } = useConditionalRendering(props.schema);
 const { cols, completionOfRow, isOffsetExist, offset, fillRow, hideField } = useSchemaCols(props.schema);
+
+const layoutCssClass = computed(() => {
+  let cssString = '';
+
+  if (isOffsetExist) {
+    cssString += `offset-${offset}`;
+  }
+  if (fillRow.value) {
+    cssString += ' mr-auto';
+  }
+  return cssString;
+});
+
+
 </script>
 
 <style scoped lang='css'></style>

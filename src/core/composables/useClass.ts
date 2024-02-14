@@ -9,7 +9,6 @@ export function useClass() {
     if(schema.layout.class){
       classString += schema.layout.class
     }
-    console.debug(classString)
     return classString;
   }
 

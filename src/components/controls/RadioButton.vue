@@ -1,36 +1,36 @@
 <template>
   <v-radio-group
-    v-model="localModel"
-    :label="label"
-    v-bind="bindProps(schema)"
-    :rules="rules(schema)"
-    :class="bindClass(schema)"
-    v-if="!loading"
+    v-model='localModel'
+    :label='label'
+    v-bind='bindProps(schema)'
+    :rules='rules(schema)'
+    :class='bindClass(schema)'
+    v-if='!loading'
   >
     <template
-      v-for="(option, index) in data"
-      :key="option[value]"
+      v-for='(option, index) in data'
+      :key='option[value]'
     >
       <v-radio
-        v-bind="bindProps(schema)"
-        :value="option[value]"
+        v-bind='bindProps(schema)'
+        :value='option[value]'
         :class="index !== data.length - 1 && !bindProps(schema).inline ? 'mb-2' : ''"
       >
-        <template #label="{ label }">
-          <div class="mr-2">{{ option[title] }}</div>
+        <template #label='{ label }'>
+          <div class='mr-2'>{{ option[title] }}</div>
         </template>
       </v-radio>
     </template>
   </v-radio-group>
 </template>
 
-<script setup lang="ts">
-import { EngineSourceField } from "../../vocabulary/engine/controls";
-import { computed, onMounted, watch } from "vue";
-import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from "../../core/composables";
+<script setup lang='ts'>
+import { RadioField } from '../../vocabulary/engine/controls';
+import { computed, onMounted, watch } from 'vue';
+import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
 
 const props = defineProps<{
-  schema: EngineSourceField;
+  schema: RadioField;
   model: object;
 }>();
 const { label } = useLabel(props.schema);
@@ -38,6 +38,7 @@ const { bindProps } = useProps();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
+const initValue: boolean = props.schema.initValue !== undefined ? props.schema.initValue : true;
 
 const localModel = computed({
   get(): string | number {
@@ -66,19 +67,19 @@ watch(loading, () => {
   if (data.value.length === 0) {
     console.warn(`Field ${props.schema.key} don't have any data/options/items`);
   }
-  if (!loading.value && localModel.value == null) {
+  if (!loading.value && localModel.value == null && initValue) {
     localModel.value = data.value[0][value];
   }
 });
 
 onMounted(async () => {
-  if (!loading.value && localModel.value == null) {
+  if (!loading.value && localModel.value == null && initValue) {
     localModel.value = data.value[0][value];
   }
 });
 </script>
 
-<style scoped lang="css">
+<style scoped lang='css'>
 :deep(.v-label) {
   margin-inline-start: 0 !important;
 }
