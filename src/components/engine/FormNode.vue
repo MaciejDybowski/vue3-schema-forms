@@ -4,6 +4,7 @@
     v-if='shouldRender'
     :cols='cols'
     v-show='hideField'
+    :style='mr'
   >
     <component
       :is='`node-${schema.layout.component}`'
@@ -33,11 +34,15 @@ const layoutCssClass = computed(() => {
   if (isOffsetExist) {
     cssString += `offset-${offset}`;
   }
-  if (fillRow.value) {
-    cssString += ' mr-auto';
-  }
+
   return cssString;
 });
+
+const mr = computed(() => {
+  if (fillRow.value) {
+    return `margin-right: ${((12-(offset+cols.value))/12)*100}%!important`
+  }
+})
 
 
 </script>
