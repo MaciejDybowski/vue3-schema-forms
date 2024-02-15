@@ -225,9 +225,9 @@ function isDateComplete(val: string) {
   display: none;
 }
 
-:deep(.v-date-picker-month__day--adjacent) {
-  display: none;
-}
+//:deep(.v-date-picker-month__day--adjacent) {
+//  display: none;
+//}
 
 :deep(.v-date-picker-month__day) {
   width: 32px;
