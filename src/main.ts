@@ -1,10 +1,12 @@
 import * as components from "../src/components/index";
+
 import { App } from "vue";
 
 import * as exportedComposables from "../src/core/composables";
 import { Components } from '@/vocabulary/engine';
+import { exportedControls } from '../src/components/controls';
 
-export let formUpdateLogger = true;
+export let formUpdateLogger = false;
 
 export type VueSchemaForms = {
   install: (app: App) => void;
@@ -15,6 +17,7 @@ export type VueSchemaFormsOptions = {
   customComponents?: Components;
 };
 export const composables = exportedComposables;
+export const formControls:Components = exportedControls
 
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
   if (options?.formUpdateLogger) {
