@@ -5,6 +5,7 @@ import { App } from "vue";
 import * as exportedComposables from "../src/core/composables";
 import { Components } from '@/vocabulary/engine';
 import { exportedControls } from '../src/components/controls';
+import { useFormModelStore } from '@/store/formModelStore';
 
 export let formUpdateLogger = false;
 
@@ -16,6 +17,8 @@ export type VueSchemaFormsOptions = {
   formUpdateLogger?: boolean;
   customComponents?: Components;
 };
+
+export const schemaFormModelStore = useFormModelStore(Math.random().toString().slice(2, 5));
 export const composables = exportedComposables;
 export const formControls:Components = exportedControls
 
