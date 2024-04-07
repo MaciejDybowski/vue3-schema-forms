@@ -1,5 +1,5 @@
-import { EngineField } from '@/vocabulary/engine';
-import { EngineTextField } from '@/vocabulary/engine/controls';
+import { EngineField } from '../../vocabulary/engine';
+import { EngineTextField } from '../../vocabulary/engine/controls';
 import set from 'lodash/set';
 import { variableRegexp } from '../../core/engine/utils';
 import { useResolveVariables } from './useResolveVariables';

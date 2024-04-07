@@ -1,4 +1,4 @@
-import { Schema } from "@/vocabulary/schema";
+import { Schema } from "../../vocabulary/schema";
 import jsonSchemaResolver from "./jsonSchemaResolver";
 
 export const variableRegexp: RegExp = new RegExp("{.*?}", "g");

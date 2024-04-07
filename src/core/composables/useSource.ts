@@ -1,4 +1,4 @@
-import { SimpleSource } from "@/vocabulary/schema/elements";
+import { SimpleSource } from "../../vocabulary/schema/elements";
 import { ref, Ref } from "vue";
 import axios from "axios";
 

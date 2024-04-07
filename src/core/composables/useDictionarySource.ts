@@ -1,4 +1,4 @@
-import { DictionarySource, ResponseReference } from '@/vocabulary/schema/elements';
+import { DictionarySource, ResponseReference } from '../..//vocabulary/schema/elements';
 
 import { Pagination } from '../../components/controls/base/Pagination';
 import axios from 'axios';
@@ -9,7 +9,7 @@ import get from 'lodash/get';
 import { variableRegexp } from '../../core/engine/utils';
 import { useFormModelStore } from '../../store/formModelStore';
 import { useResolveVariables } from './useResolveVariables';
-import { EngineDictionaryField } from '@/vocabulary/engine/controls';
+import { EngineDictionaryField } from '../../vocabulary/engine/controls';
 
 export function useDictionarySource(field: EngineDictionaryField) {
   const { resolve } = useResolveVariables(field);

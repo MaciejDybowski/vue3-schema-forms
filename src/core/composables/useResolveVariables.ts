@@ -1,6 +1,6 @@
 import { useFormModelStore } from '../../store/formModelStore';
 import { useFormattedNumber } from '../../core/composables';
-import { EngineField } from '@/vocabulary/engine';
+import { EngineField } from '../../vocabulary/engine';
 import { useDateFormat } from './useDateFormat';
 import get from 'lodash/get';
 import { variableRegexp } from '../engine/utils';

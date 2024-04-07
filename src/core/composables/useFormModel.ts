@@ -1,4 +1,4 @@
-import { EngineField, NodeUpdateEvent } from '@/vocabulary/engine';
+import { EngineField, NodeUpdateEvent } from '../../vocabulary/engine';
 import get from 'lodash/get';
 import set from 'lodash/set';
 

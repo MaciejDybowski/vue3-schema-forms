@@ -1,4 +1,4 @@
-import { Schema } from '@/vocabulary/schema/index';
+import { Schema } from './index';
 
 export interface SchemaField {
   label?: string | { $ref: string };

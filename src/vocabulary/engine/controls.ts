@@ -1,5 +1,5 @@
 import { EngineField } from './index';
-import { DictionarySource, LocationResult, SimpleSource, Source } from '@/vocabulary/schema/elements';
+import { DictionarySource, LocationResult, SimpleSource, Source } from '../schema/elements';
 
 export interface EngineProps<T> {
   schema: T;

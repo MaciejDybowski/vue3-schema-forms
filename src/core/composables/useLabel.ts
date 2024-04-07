@@ -1,4 +1,4 @@
-import { EngineField } from '@/vocabulary/engine';
+import { EngineField } from '../../vocabulary/engine';
 import { useFormModelStore } from '../../store/formModelStore';
 import { variableRegexp } from '../../core/engine/utils';
 import { ref } from 'vue';

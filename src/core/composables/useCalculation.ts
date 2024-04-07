@@ -2,7 +2,7 @@ import { computed, ref, watch } from 'vue';
 import { Expression, Value } from 'expr-eval';
 import set from 'lodash/set';
 import betterParser, { SUM } from '../engine/evalExprParser';
-import { EngineOptions } from '@/vocabulary/engine';
+import { EngineOptions } from '../../vocabulary/engine';
 import get from 'lodash/get';
 
 export function useCalculation(key: string, calculation: string, model: object, formOptions: EngineOptions): number {

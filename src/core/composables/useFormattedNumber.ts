@@ -1,6 +1,6 @@
 import { useI18n } from "vue-i18n";
 import { computed, ref } from "vue";
-import { EngineOptions } from "@/vocabulary/engine";
+import { EngineOptions } from "../../vocabulary/engine";
 
 export function useFormattedNumber(formOptions: EngineOptions) {
   const { locale } = useI18n();
