@@ -20,7 +20,7 @@ export type VueSchemaFormsOptions = {
   customComponents?: Components;
 };
 
-export const schemaFormModelStoreTest = schemaFormModelStore
+export const schemaFormModelStoreInit = schemaFormModelStore
 export const composables = exportedComposables;
 export const formControls:Components = exportedControls
 
