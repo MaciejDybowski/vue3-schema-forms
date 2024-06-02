@@ -11,6 +11,7 @@
     "dist/*"
   ],
   "scripts": {
+    "dev": "echo ' to link lib run  \"npm link vue3-schema-forms\" in your destination project' && npm link && vite build --watch",
     "build": "vue-tsc && vite build",
     "format": "prettier --write src/",
     "preview": "vite preview",
