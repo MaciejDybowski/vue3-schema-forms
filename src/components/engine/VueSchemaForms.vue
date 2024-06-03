@@ -50,6 +50,7 @@ import PhoneInput from '../controls/PhoneInput.vue';
 import Location from '../controls/Location.vue';
 import DataViewer from '../controls/data-viewer/DataViewer.vue';
 import Address from '../controls/address/Address.vue';
+import DateTimePicker from "../controls/date/DateTimePicker.vue";
 
 // register components to VueInstance
 const components = {
@@ -63,6 +64,7 @@ const components = {
   'editable-section': EditableSection,
   dictionary: Autocomplete,
   'date-picker': DatePicker,
+  'date-time-picker': DateTimePicker,
   phone: PhoneInput,
   location: Location,
   'data-viewer': DataViewer,

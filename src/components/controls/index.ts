@@ -11,6 +11,7 @@ import DatePicker from "./date/DatePicker.vue"
 import PhoneInput from "./PhoneInput.vue"
 import Location from "./Location.vue"
 import Address from "./address/Address.vue"
+import DateTimePicker from "./date/DateTimePicker.vue"
 
 import { Components } from '@/vocabulary/engine';
 
@@ -25,6 +26,7 @@ export const exportedControls: Components = {
   'data-viewer': DataViewer,
   "dictionary": Autocomplete,
   'date-picker': DatePicker,
+  'date-time-picker': DateTimePicker,
   "phone": PhoneInput,
   "location": Location,
   'address': Address,

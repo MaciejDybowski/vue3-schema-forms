@@ -10,9 +10,13 @@ import { en } from 'vuetify/locale';
 
 // @ts-ignore
 import colors from 'vuetify/lib/util/colors';
+import { VTimePicker } from 'vuetify/labs/VTimePicker'
 
 export default createVuetify({
-  components,
+  components: {
+    ...components,
+    VTimePicker,
+  },
   directives,
   icons: {
     defaultSet: 'mdi',

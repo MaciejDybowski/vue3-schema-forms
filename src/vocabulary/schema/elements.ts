@@ -63,6 +63,7 @@ export type SchemaComponent =
   | 'editable-section'
   | 'dictionary'
   | 'date-picker'
+  | 'date-time-picker'
   | 'phone'
   | 'data-viewer'
   | 'location'
