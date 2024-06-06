@@ -90,7 +90,7 @@ const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedS
 
 const { getValue, setValue } = useFormModel();
 
-const isEditable: boolean = 'editable' in props.schema ? props.schema.editable as boolean : true;
+const isEditable: boolean = 'editable' in duplicatedSectionOptions.value ? duplicatedSectionOptions.value.editable as boolean : true;
 
 const computedOptions = computed(() => {
   const options = JSON.parse(JSON.stringify(props.schema.options));

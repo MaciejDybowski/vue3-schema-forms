@@ -48,22 +48,7 @@ export const Table1: Story = {
 export const Table2: Story = {
   args: {
     model: {
-      stages: [
-        {
-          simpleDate: "2024-06-05T15:32:00.000+02:00"
-        },
-        {
-          simpleDate: "2024-01-01T15:07:00.000+02:00"
-        }
-      ],
-      stages2: [
-        {
-          simpleDate: "2024-02-08T10:15:00.000+02:00"
-        },
-        {
-          simpleDate: "2024-02-02T12:52:00.000+02:00"
-        },
-      ]
+
     },
     schema: {
       type: 'object',

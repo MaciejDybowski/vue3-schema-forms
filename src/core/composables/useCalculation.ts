@@ -14,9 +14,13 @@ export function useCalculation(key: string, calculation: string, model: object, 
   let originalCalc = calculation;
 
   let myExpr: Expression = prepareCalcExpression(calculation, model);
-  if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
-    result.value = myExpr.evaluate(model as Value);
-  }
+
+  myExpr.variables({ withMembers: true }).forEach((variable) => {
+    if (get(model, variable, null) == null) {
+      set(model, variable, 0);
+    }
+  });
+  result.value = myExpr.evaluate(model as Value);
 
   watch(model, () => {
     myExpr = prepareCalcExpression(originalCalc, model);
