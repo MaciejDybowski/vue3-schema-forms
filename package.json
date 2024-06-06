@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.0.38-snapshot-11",
+  "version": "0.0.38-snapshot-13",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -53,7 +53,7 @@
     "axios": "^1.6.2",
     "dayjs": "^1.11.10",
     "pinia": "2.1.7",
-    "vue": "^3.4.3",
+    "vue": "^3.4.27",
     "vue-i18n": "^9.6.4",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.5.12"

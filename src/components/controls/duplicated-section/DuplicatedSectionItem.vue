@@ -17,7 +17,7 @@
       </v-hover>
       <v-divider
         v-if="showDivider"
-        class="mb-4"
+        class="mt-6"
       />
     </v-col>
   </v-row>

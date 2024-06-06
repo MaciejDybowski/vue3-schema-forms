@@ -8,6 +8,7 @@ export interface EngineProps<T> {
 
 export interface EngineTextField extends EngineField {
   calculation?: string;
+  expression?:string
 }
 
 export interface EngineDataViewerField extends EngineField {

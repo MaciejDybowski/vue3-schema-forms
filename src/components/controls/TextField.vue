@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
 import { EngineTextField } from "../../vocabulary/engine/controls";
-import { useCalculation, useClass, useFormattedNumber, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
+import { useCalculation, useExpression, useClass, useFormattedNumber, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
 
 const props = defineProps<{
   schema: EngineTextField;
@@ -61,8 +61,15 @@ function runCalculationIfExist() {
   }
 }
 
+function runExpressionIfExist(){
+  if(props.schema.expression){
+    localModel.value = useExpression(props.schema.key, props.schema.expression, props.model);
+  }
+}
+
 onMounted(() => {
   runCalculationIfExist();
+  runExpressionIfExist()
 });
 </script>
 

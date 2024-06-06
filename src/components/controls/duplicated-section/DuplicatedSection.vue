@@ -17,7 +17,7 @@
             <template #box='{ isHovering }'>
               <draggable-icon
                 v-if='isEditable'
-                :show='isHovering'
+                :show='isHovering ? isHovering : false'
               />
               <form-root
                 :model='localModel[index]'
@@ -28,7 +28,7 @@
               />
               <draggable-context-menu
                 v-if='isEditable'
-                :show='isHovering'
+                :show='isHovering ? isHovering : false'
                 @handle-action='handleDraggableContextAction($event, index)'
               />
             </template>

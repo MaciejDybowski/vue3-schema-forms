@@ -14,3 +14,4 @@ export { useFormModel } from './useFormModel';
 export { useDateFormat } from './useDateFormat';
 export { useResolveVariables } from './useResolveVariables';
 export { useDateTimeFormat } from "./useDateTimeFormat"
+export {useExpression} from "./useExpression"
