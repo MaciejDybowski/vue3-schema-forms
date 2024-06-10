@@ -164,6 +164,8 @@ const vueSchemaForms = createVueSchemaForms({
 5. Submit a pull request
 
 ## ToDo List
+- [ ] add type number int/float !!!
+
 
 - [ ] Ability to mark "not-saveable" field in schema/model
 - [ ] Markdown input
