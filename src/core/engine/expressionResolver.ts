@@ -5,7 +5,8 @@ export const functions = {
   FIND_EARLIEST_DATE: FIND_EARLIEST_DATE,
   CALC_DATE_DIFF_RETURN_DAY: CALC_DATE_DIFF_RETURN_DAY,
   CALC_DATE_DIFF_RETURN_HOURS: CALC_DATE_DIFF_RETURN_HOURS,
-  CALC_DATE_DIFF_RETURN_MINUTES: CALC_DATE_DIFF_RETURN_MINUTES
+  CALC_DATE_DIFF_RETURN_MINUTES: CALC_DATE_DIFF_RETURN_MINUTES,
+  DELEGATION_DIET_CALC: DELEGATION_DIET_CALC
 }
 
 export function FIND_OLDEST_DATE(expression: string, model: object){
@@ -136,4 +137,45 @@ function calculateDateDifference(date1, date2) {
     hours: diffInHours,
     minutes: diffInMinutes
   };
+}
+
+export function DELEGATION_DIET_CALC(expression: string, model: object) {
+  if (expression.includes('DELEGATION_DIET_CALC')) {
+    let regex = /DELEGATION_DIET_CALC\((.*?)\)/;
+    let match = regex.exec(expression);
+    if (match) {
+      let parameters = match[1];
+      let parameterArray = parameters.split(',').map((param) => param.trim());
+      let dni = get(model, parameterArray[0], 0);
+      let godziny = get(model, parameterArray[1], 0);
+      let sniadania = get(model, parameterArray[2], 0);
+      let obiady = get(model, parameterArray[3], 0);
+      let kolacje = get(model, parameterArray[4], 0);
+
+      let dietaNalezna = 45 * dni;
+      if (godziny <= 8 && godziny > 0) {
+        dietaNalezna += 45 / 2;
+      }
+      if (godziny > 8) {
+        dietaNalezna += 45;
+      }
+
+      if (sniadania > 0) {
+        dietaNalezna = dietaNalezna - ((45 * 0.25) * sniadania);
+      }
+
+      if (obiady > 0) {
+        dietaNalezna = dietaNalezna - ((45 * 0.5) * obiady);
+      }
+
+      if (kolacje > 0) {
+        dietaNalezna = dietaNalezna - ((45 * 0.25) * kolacje);
+      }
+
+      return dietaNalezna;
+    }
+
+  } else {
+    return expression;
+  }
 }
