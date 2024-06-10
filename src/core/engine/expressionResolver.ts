@@ -1,16 +1,16 @@
 import get from "lodash/get";
 
 export const functions = {
-  MIN: MIN,
-  MAX: MAX,
+  FIND_OLDEST_DATE: FIND_OLDEST_DATE,
+  FIND_EARLIEST_DATE: FIND_EARLIEST_DATE,
   CALC_DATE_DIFF_RETURN_DAY: CALC_DATE_DIFF_RETURN_DAY,
   CALC_DATE_DIFF_RETURN_HOURS: CALC_DATE_DIFF_RETURN_HOURS,
   CALC_DATE_DIFF_RETURN_MINUTES: CALC_DATE_DIFF_RETURN_MINUTES
 }
 
-export function MIN(expression: string, model: object){
-  if (expression.includes("MIN")) {
-    let regex = /MIN\((.*?)\)/;
+export function FIND_OLDEST_DATE(expression: string, model: object){
+  if (expression.includes("FIND_OLDEST_DATE")) {
+    let regex = /FIND_OLDEST_DATE\((.*?)\)/;
     let match = regex.exec(expression);
     if(match){
       let parameters = match[1];
@@ -26,15 +26,15 @@ export function MIN(expression: string, model: object){
         min = values[0][parameterArray[0]]
       }
 
-      return expression.replace(`MIN(${parameterArray.join(", ")})`, min + "");
+      return expression.replace(`FIND_OLDEST_DATE(${parameterArray.join(", ")})`, min + "");
     }
   }
   return expression;
 }
 
-export function MAX(expression: string, model: object){
-  if (expression.includes("MAX")) {
-    let regex = /MAX\((.*?)\)/;
+export function FIND_EARLIEST_DATE(expression: string, model: object){
+  if (expression.includes("FIND_EARLIEST_DATE")) {
+    let regex = /FIND_EARLIEST_DATE\((.*?)\)/;
     let match = regex.exec(expression);
     if(match){
       let parameters = match[1];
@@ -50,7 +50,7 @@ export function MAX(expression: string, model: object){
         min = values[0][parameterArray[0]]
       }
 
-      return expression.replace(`MAX(${parameterArray.join(", ")})`, min + "");
+      return expression.replace(`FIND_EARLIEST_DATE(${parameterArray.join(", ")})`, min + "");
     }
   }
   return expression;

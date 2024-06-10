@@ -352,3 +352,18 @@ export const AddBelowAction: Story = {
     } as Schema,
   },
 };
+
+
+// TODO do zrobienia wyprostować rozjazd proces fakturowania a mBank
+// editable: false -> wyprostować
+export const ReadOnlyMode: Story = {
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+
+      }
+    }
+  }
+}
