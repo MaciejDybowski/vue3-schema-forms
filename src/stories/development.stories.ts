@@ -36,7 +36,7 @@ export const Table1: Story = {
         email: {
           label: 'Adres e-mail',
           layout: {
-            component: 'date-time-picker',
+            component: 'text-field',
             class: "au-test"
           },
         } as SchemaField,
@@ -44,81 +44,3 @@ export const Table1: Story = {
     } as Schema,
   },
 };
-
-export const Table2: Story = {
-  args: {
-    model: {
-
-    },
-    schema: {
-      type: 'object',
-      properties: {
-        stages: {
-          layout: {
-            component:  "duplicated-section",
-            schema: {
-              properties: {
-                simpleDate: {
-                  label: 'DateTime',
-                  layout: {
-                    component: 'date-time-picker',
-                  },
-                },
-              }
-            }
-          }
-        },
-        stages2: {
-          layout: {
-            component:  "duplicated-section",
-            schema: {
-              properties: {
-                simpleDate: {
-                  label: 'DateTime',
-                  layout: {
-                    component: 'date-time-picker',
-                  },
-                },
-              }
-            }
-          }
-        },
-        minimum: {
-          label: "Minimum",
-          layout: {
-            component: "text-field"
-          },
-          expression: "MIN(simpleDate, stages)"
-        },
-        maximum: {
-          label: "Maximum",
-          layout: {
-            component: "text-field"
-          },
-          expression: "MAX(simpleDate, stages2)"
-        },
-        dni: {
-          label: "Dni",
-          layout: {
-            component: "text-field"
-          },
-          expression: "CALC_DATE_DIFF_RETURN_DAY(maximum, minimum)"
-        },
-        godziny: {
-          label: "Godziny",
-          layout: {
-            component: "text-field"
-          },
-          expression: "CALC_DATE_DIFF_RETURN_HOURS(maximum, minimum)"
-        },
-        minuty: {
-          label: "Minuty",
-          layout: {
-            component: "text-field"
-          },
-          expression: "CALC_DATE_DIFF_RETURN_MINUTES(maximum, minimum)"
-        }
-      },
-    } as Schema,
-  }
-}
