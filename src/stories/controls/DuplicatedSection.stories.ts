@@ -354,15 +354,35 @@ export const AddBelowAction: Story = {
 };
 
 
-// TODO do zrobienia wyprostować rozjazd proces fakturowania a mBank
-// editable: false -> wyprostować
 export const ReadOnlyMode: Story = {
   args: {
     modelValue: {},
     schema: {
       type: "object",
       properties: {
-
+        description: {
+          content: "Add editable:false on first level of definition object. ex. nearby layout",
+          layout: {
+            component: "static-content",
+            tag: "span"
+          }
+        },
+        stages: {
+          editable: false,
+          layout: {
+            component:  "duplicated-section",
+            schema: {
+              properties: {
+                simpleDate: {
+                  label: 'DateTime',
+                  layout: {
+                    component: 'date-time-picker',
+                  },
+                },
+              }
+            }
+          }
+        },
       }
     }
   }

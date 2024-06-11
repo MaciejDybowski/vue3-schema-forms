@@ -58,15 +58,81 @@ type Story = StoryObj<typeof meta>;
  *
  * Like calculations, the expression listens for changes in the model - currently only available for the `text-field` component
  */
-// TODO - dopisać scheme
-export const findOldestDate: Story = {
+export const examples: Story = {
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({});
+
   },
   args: {
     modelValue: {},
     schema: {
-
+      type: "object",
+      properties: {
+        stages: {
+          layout: {
+            component:  "duplicated-section",
+            schema: {
+              properties: {
+                simpleDate: {
+                  label: 'DateTime',
+                  layout: {
+                    component: 'date-time-picker',
+                  },
+                },
+              }
+            }
+          }
+        },
+        stages2: {
+          layout: {
+            component:  "duplicated-section",
+            schema: {
+              properties: {
+                simpleDate: {
+                  label: 'DateTime',
+                  layout: {
+                    component: 'date-time-picker',
+                  },
+                },
+              }
+            }
+          }
+        },
+        minimum: {
+          label: "Minimum",
+          layout: {
+            component: "text-field"
+          },
+          expression: "FIND_OLDEST_DATE(simpleDate, stages)"
+        },
+        maximum: {
+          label: "Maximum",
+          layout: {
+            component: "text-field"
+          },
+          expression: "FIND_EARLIEST_DATE(simpleDate, stages2)"
+        },
+        dni: {
+          label: "Dni",
+          layout: {
+            component: "text-field"
+          },
+          expression: "CALC_DATE_DIFF_RETURN_DAY(maximum, minimum)"
+        },
+        godziny: {
+          label: "Godziny",
+          layout: {
+            component: "text-field"
+          },
+          expression: "CALC_DATE_DIFF_RETURN_HOURS(maximum, minimum)"
+        },
+        minuty: {
+          label: "Minuty",
+          layout: {
+            component: "text-field"
+          },
+          expression: "CALC_DATE_DIFF_RETURN_MINUTES(maximum, minimum)"
+        }
+      },
     },
   },
 };

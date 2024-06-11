@@ -7,120 +7,98 @@ export const functions = {
   CALC_DATE_DIFF_RETURN_HOURS: CALC_DATE_DIFF_RETURN_HOURS,
   CALC_DATE_DIFF_RETURN_MINUTES: CALC_DATE_DIFF_RETURN_MINUTES,
   DELEGATION_DIET_CALC: DELEGATION_DIET_CALC
-}
+};
 
-export function FIND_OLDEST_DATE(expression: string, model: object){
-  if (expression.includes("FIND_OLDEST_DATE")) {
-    let regex = /FIND_OLDEST_DATE\((.*?)\)/;
-    let match = regex.exec(expression);
-    if(match){
-      let parameters = match[1];
-      let parameterArray = parameters.split(",").map((param) => param.trim());
+export function FIND_OLDEST_DATE(expression: string, model: object) {
+  let regex = /FIND_OLDEST_DATE\((.*?)\)/;
+  let match = regex.exec(expression);
+  if (match) {
+    let parameters = match[1];
+    let parameterArray = parameters.split(",").map((param) => param.trim());
 
-      const values = get(model, parameterArray[1], []);
-      let min = ""
-      if(values.length > 1){
-        min = values.map((item) => item[parameterArray[0]]).sort(function(a,b){
-          return Date.parse(a) - Date.parse(b);
-        })[0];
-      } else {
-        min = values[0][parameterArray[0]]
-      }
-
-      return expression.replace(`FIND_OLDEST_DATE(${parameterArray.join(", ")})`, min + "");
+    const values = get(model, parameterArray[1], []);
+    let min = "";
+    if (values.length > 1) {
+      min = values.map((item) => item[parameterArray[0]]).sort(function(a, b) {
+        return Date.parse(a) - Date.parse(b);
+      })[0];
+    } else {
+      min = values.length == 0 ? "" : values[0][parameterArray[0]];
     }
-  }
-  return expression;
-}
-
-export function FIND_EARLIEST_DATE(expression: string, model: object){
-  if (expression.includes("FIND_EARLIEST_DATE")) {
-    let regex = /FIND_EARLIEST_DATE\((.*?)\)/;
-    let match = regex.exec(expression);
-    if(match){
-      let parameters = match[1];
-      let parameterArray = parameters.split(",").map((param) => param.trim());
-
-      const values = get(model, parameterArray[1], []);
-      let min = ""
-      if(values.length > 1){
-        min = values.map((item) => item[parameterArray[0]]).sort(function(a,b){
-          return Date.parse(a) - Date.parse(b);
-        })[values.length-1];
-      } else {
-        min = values[0][parameterArray[0]]
-      }
-
-      return expression.replace(`FIND_EARLIEST_DATE(${parameterArray.join(", ")})`, min + "");
-    }
-  }
-  return expression;
-}
-
-export function CALC_DATE_DIFF_RETURN_DAY(expression: string,  model: object){
-  if (expression.includes("CALC_DATE_DIFF_RETURN_DAY")) {
-    let regex = /CALC_DATE_DIFF_RETURN_DAY\((.*?)\)/;
-    let match = regex.exec(expression);
-    if(match){
-      let parameters = match[1];
-      let parameterArray = parameters.split(",").map((param) => param.trim());
-
-      const date1 = get(model, parameterArray[0], 0)
-      const date2 = get(model, parameterArray[1], 0)
-      const result = calculateDateDifference(date1, date2)
-      return result.days+""
-    }
-
-
-  } else {
-    return expression;
+    return min;
   }
 }
 
-export function CALC_DATE_DIFF_RETURN_HOURS(expression: string,  model: object){
-  if (expression.includes("CALC_DATE_DIFF_RETURN_HOURS")) {
-    let regex = /CALC_DATE_DIFF_RETURN_HOURS\((.*?)\)/;
-    let match = regex.exec(expression);
-    if(match){
-      let parameters = match[1];
-      let parameterArray = parameters.split(",").map((param) => param.trim());
+export function FIND_EARLIEST_DATE(expression: string, model: object) {
 
-      const date1 = get(model, parameterArray[0], 0)
-      const date2 = get(model, parameterArray[1], 0)
-      const result = calculateDateDifference(date1, date2)
-      return result.hours+""
+  let regex = /FIND_EARLIEST_DATE\((.*?)\)/;
+  let match = regex.exec(expression);
+  if (match) {
+    let parameters = match[1];
+    let parameterArray = parameters.split(",").map((param) => param.trim());
+
+    const values = get(model, parameterArray[1], []);
+    let max = "";
+    if (values.length > 1) {
+      max = values.map((item) => item[parameterArray[0]]).sort(function(a, b) {
+        return Date.parse(a) - Date.parse(b);
+      })[values.length - 1];
+    } else {
+      max = values.length == 0 ? "" : values[0][parameterArray[0]];
     }
-
-  } else {
-    return expression;
+    return max;
   }
 }
 
-export function CALC_DATE_DIFF_RETURN_MINUTES(expression: string,  model: object){
-  if (expression.includes("CALC_DATE_DIFF_RETURN_MINUTES")) {
-    let regex = /CALC_DATE_DIFF_RETURN_MINUTES\((.*?)\)/;
-    let match = regex.exec(expression);
-    if(match){
-      let parameters = match[1];
-      let parameterArray = parameters.split(",").map((param) => param.trim());
+export function CALC_DATE_DIFF_RETURN_DAY(expression: string, model: object) {
+  let regex = /CALC_DATE_DIFF_RETURN_DAY\((.*?)\)/;
+  let match = regex.exec(expression);
+  if (match) {
+    let parameters = match[1];
+    let parameterArray = parameters.split(",").map((param) => param.trim());
 
-      const date1 = get(model, parameterArray[0], 0)
-      const date2 = get(model, parameterArray[1], 0)
-      const result = calculateDateDifference(date1, date2)
-      return result.minutes+""
-    }
+    const date1 = get(model, parameterArray[0], 0);
+    const date2 = get(model, parameterArray[1], 0);
+    const result = calculateDateDifference(date1, date2);
+    return isNaN(result.days) ? "" : result.days + "";
+  }
+}
 
-  } else {
-    return expression;
+export function CALC_DATE_DIFF_RETURN_HOURS(expression: string, model: object) {
+  let regex = /CALC_DATE_DIFF_RETURN_HOURS\((.*?)\)/;
+  let match = regex.exec(expression);
+  if (match) {
+    let parameters = match[1];
+    let parameterArray = parameters.split(",").map((param) => param.trim());
+
+    const date1 = get(model, parameterArray[0], 0);
+    const date2 = get(model, parameterArray[1], 0);
+    const result = calculateDateDifference(date1, date2);
+    return isNaN(result.hours) ? "" : result.hours + "";
+  }
+}
+
+export function CALC_DATE_DIFF_RETURN_MINUTES(expression: string, model: object) {
+  let regex = /CALC_DATE_DIFF_RETURN_MINUTES\((.*?)\)/;
+  let match = regex.exec(expression);
+  if (match) {
+    let parameters = match[1];
+    let parameterArray = parameters.split(",").map((param) => param.trim());
+
+    const date1 = get(model, parameterArray[0], 0);
+    const date2 = get(model, parameterArray[1], 0);
+    const result = calculateDateDifference(date1, date2);
+    return isNaN(result.minutes) ? "" : result.minutes + "";
   }
 }
 
 function calculateDateDifference(date1, date2) {
   // Convert dates to Date objects
-  const d1 = new Date(date1).getMilliseconds();
-  const d2 = new Date(date2).getMilliseconds();
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
 
   // Calculate the difference in milliseconds
+  // @ts-ignore
   const diffInMs = Math.abs(d2 - d1);
 
   // Convert the difference to days, hours, and minutes
@@ -140,42 +118,37 @@ function calculateDateDifference(date1, date2) {
 }
 
 export function DELEGATION_DIET_CALC(expression: string, model: object) {
-  if (expression.includes('DELEGATION_DIET_CALC')) {
-    let regex = /DELEGATION_DIET_CALC\((.*?)\)/;
-    let match = regex.exec(expression);
-    if (match) {
-      let parameters = match[1];
-      let parameterArray = parameters.split(',').map((param) => param.trim());
-      let dni = get(model, parameterArray[0], 0);
-      let godziny = get(model, parameterArray[1], 0);
-      let sniadania = get(model, parameterArray[2], 0);
-      let obiady = get(model, parameterArray[3], 0);
-      let kolacje = get(model, parameterArray[4], 0);
+  let regex = /DELEGATION_DIET_CALC\((.*?)\)/;
+  let match = regex.exec(expression);
+  if (match) {
+    let parameters = match[1];
+    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let dni = get(model, parameterArray[0], 0);
+    let godziny = get(model, parameterArray[1], 0);
+    let sniadania = get(model, parameterArray[2], 0);
+    let obiady = get(model, parameterArray[3], 0);
+    let kolacje = get(model, parameterArray[4], 0);
 
-      let dietaNalezna = 45 * dni;
-      if (godziny <= 8 && godziny > 0) {
-        dietaNalezna += 45 / 2;
-      }
-      if (godziny > 8) {
-        dietaNalezna += 45;
-      }
-
-      if (sniadania > 0) {
-        dietaNalezna = dietaNalezna - ((45 * 0.25) * sniadania);
-      }
-
-      if (obiady > 0) {
-        dietaNalezna = dietaNalezna - ((45 * 0.5) * obiady);
-      }
-
-      if (kolacje > 0) {
-        dietaNalezna = dietaNalezna - ((45 * 0.25) * kolacje);
-      }
-
-      return dietaNalezna;
+    let dietaNalezna = 45 * dni;
+    if (godziny <= 8 && godziny > 0) {
+      dietaNalezna += 45 / 2;
+    }
+    if (godziny > 8) {
+      dietaNalezna += 45;
     }
 
-  } else {
-    return expression;
+    if (sniadania > 0) {
+      dietaNalezna = dietaNalezna - ((45 * 0.25) * sniadania);
+    }
+
+    if (obiady > 0) {
+      dietaNalezna = dietaNalezna - ((45 * 0.5) * obiady);
+    }
+
+    if (kolacje > 0) {
+      dietaNalezna = dietaNalezna - ((45 * 0.25) * kolacje);
+    }
+
+    return dietaNalezna;
   }
 }
