@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang='ts'>
-import { RadioField } from '../../vocabulary/engine/controls';
+import { RadioField } from '@/types/engine/controls';
 import { computed, onMounted, watch } from 'vue';
 import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
 

@@ -12,11 +12,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { Schema, SchemaOptions } from "../../vocabulary/schema";
+import { Schema, SchemaOptions } from "@/types/schema";
 
-import { EngineField, EngineOptions, NodeUpdateEvent } from "../../vocabulary/engine";
+import { EngineField, EngineOptions, NodeUpdateEvent } from "@/types/engine";
 import FormNode from "./FormNode.vue";
-import { SchemaField } from "../../vocabulary/schema/elements";
+import { SchemaField } from "@/types/schema/elements";
 import { useResolveDependency } from "../../core/composables/useResolveDependency";
 import { variableRegexp } from "../../core/engine/utils";
 

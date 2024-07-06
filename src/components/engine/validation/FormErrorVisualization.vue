@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ValidationError } from "@/vocabulary/engine/formValidation";
+import { ValidationError } from "@/types/engine/formValidation";
 
 const props = defineProps<{
   errorMessages: Array<ValidationError>;

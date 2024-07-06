@@ -13,7 +13,7 @@ import Location from "./Location.vue"
 import Address from "./address/Address.vue"
 import DateTimePicker from "./date/DateTimePicker.vue"
 
-import { Components } from '@/vocabulary/engine';
+import { Components } from '@/types/engine';
 
 export const exportedControls: Components = {
   'text-field': TextField,

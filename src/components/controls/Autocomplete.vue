@@ -36,7 +36,7 @@
 import BaseAutocomplete from './base/BaseAutocomplete.vue';
 import { computed, onMounted } from 'vue';
 
-import { EngineDictionaryField } from '../../vocabulary/engine/controls';
+import { EngineDictionaryField } from '@/types/engine/controls';
 
 import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
 

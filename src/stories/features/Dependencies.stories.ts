@@ -2,12 +2,12 @@
 import { Meta, StoryObj } from "@storybook/vue3";
 import { VueSchemaForms } from "@/components";
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
-import { Schema, SchemaOptions } from "@/vocabulary/schema";
-import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "@/vocabulary/schema/elements";
+import { Schema, SchemaOptions } from "../../types/schema";
+import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "../../types/schema/elements";
 import { REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI } from "@/stories/controls/Dictionary/responses";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { EngineSourceField } from "../../vocabulary/engine/controls";
+import { EngineSourceField } from "../../types/engine/controls";
 
 const meta = {
   title: "Forms/Features/Dependencies",

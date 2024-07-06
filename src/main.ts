@@ -3,7 +3,7 @@ import * as components from "../src/components/index";
 import { App } from "vue";
 
 import * as exportedComposables from "../src/core/composables";
-import { Components } from '@/vocabulary/engine';
+import { Components } from '@/types/engine';
 import { exportedControls } from '../src/components/controls';
 
 

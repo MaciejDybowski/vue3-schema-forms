@@ -19,7 +19,7 @@ import { computed, Ref, ref } from "vue";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
 import { debounce } from "lodash";
 
-import { EngineLocationField } from "@/vocabulary/engine/controls";
+import { EngineLocationField } from "@/types/engine/controls";
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
 

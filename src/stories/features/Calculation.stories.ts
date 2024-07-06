@@ -9,8 +9,8 @@ import {
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import { invoicePositionsSchema } from "@/tests/test-schemas";
-import { Layout, SchemaTextField } from "../../vocabulary/schema/elements";
-import { Schema } from "../../vocabulary/schema";
+import { Layout, SchemaTextField } from "../../types/schema/elements";
+import { Schema } from "../../types/schema";
 
 const meta = {
   title: "Forms/Features/Calculations",

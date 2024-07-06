@@ -20,7 +20,7 @@ import "v-phone-input/dist/v-phone-input.css";
 import { VPhoneInput } from "v-phone-input";
 import { computed } from "vue";
 
-import { EnginePhoneField } from "@/vocabulary/engine/controls";
+import { EnginePhoneField } from "@/types/engine/controls";
 
 import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
 

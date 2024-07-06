@@ -2,8 +2,8 @@
 import DevelopmentTable from '../components/app/DevelopmentTable.vue';
 import { Meta, StoryObj } from '@storybook/vue3';
 import { ArgTypes } from '@storybook/types';
-import { Schema } from '../vocabulary/schema';
-import { SchemaField } from '../vocabulary/schema/elements';
+import { Schema } from '../types/schema';
+import { SchemaField } from '../types/schema/elements';
 
 const meta = {
   title: 'Development Page',

@@ -13,10 +13,10 @@
 import { computed, onBeforeMount, reactive } from 'vue';
 import { useFormModel, useLocale } from '../../../core/composables';
 
-import { Schema } from '@/vocabulary/schema';
+import { Schema } from '@/types/schema';
 import FormRoot from '../../engine/FormRoot.vue';
 import { merge } from 'lodash';
-import { EngineField } from '@/vocabulary/engine';
+import { EngineField } from '@/types/engine';
 
 const props = defineProps<{
   schema: EngineField;

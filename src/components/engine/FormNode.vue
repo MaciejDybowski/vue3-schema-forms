@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang='ts'>
-import { EngineField } from '../../vocabulary/engine';
+import { EngineField } from '@/types/engine';
 import { useConditionalRendering } from '../../core/composables/useConditionalRendering';
 import { useSchemaCols } from '../../core/composables/useSchemaCols';
 import { computed } from 'vue';

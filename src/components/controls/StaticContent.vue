@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang='ts'>
-import { EngineStaticField } from '../../vocabulary/engine/controls';
+import { EngineStaticField } from '@/types/engine/controls';
 import { computed } from 'vue';
 import { useResolveVariables } from '../../core/composables/useResolveVariables';
 import { useClass } from '../../core/composables';

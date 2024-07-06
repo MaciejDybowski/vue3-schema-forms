@@ -1,5 +1,5 @@
-import { Schema } from "@/vocabulary/schema";
-import { SchemaTextField } from "@/vocabulary/schema/elements";
+import { Schema } from "../types/schema";
+import { SchemaTextField } from "../types/schema/elements";
 
 export const _10fieldSchema: Schema = {
   type: "object",

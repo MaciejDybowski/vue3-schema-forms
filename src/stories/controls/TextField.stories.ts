@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
-import { Schema } from "@/vocabulary/schema";
+import { Schema } from "../../types/schema";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import { VueSchemaForms } from "@/components";
-import { SchemaTextField } from "@/vocabulary/schema/elements";
+import { SchemaTextField } from "../../types/schema/elements";
 
 const meta = {
   title: "Forms/Controls/TextField",

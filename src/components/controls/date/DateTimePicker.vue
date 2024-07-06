@@ -64,7 +64,7 @@
 
 <script setup lang='ts'>
 import { computed, ref, watch } from 'vue';
-import { EngineDateField } from '../../../vocabulary/engine/controls';
+import { EngineDateField } from '@/types/engine/controls';
 
 import { MaskOptions, vMaska } from 'maska';
 import dayjs from './dayjs';

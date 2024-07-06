@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import PropsViewer from "./PropsViewer.vue";
-import { Schema, SchemaOptions } from "@/vocabulary/schema";
+import { Schema, SchemaOptions } from "@/types/schema";
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
 
 const showJSONs = ref(true);

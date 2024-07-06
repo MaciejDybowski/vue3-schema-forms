@@ -1,9 +1,9 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
-import { Schema } from "@/vocabulary/schema";
+import { Schema } from "../../../types/schema";
 import { fireEvent, userEvent, within } from "@storybook/testing-library";
 import { VueSchemaForms } from "@/components";
-import { DictionarySource, SchemaSourceField } from "@/vocabulary/schema/elements";
+import { DictionarySource, SchemaSourceField } from "../../../types/schema/elements";
 import { REQUEST_NOT_LAZY, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
 import { expect } from "@storybook/jest";

@@ -1,4 +1,4 @@
-import { EngineField, Validation } from '../../vocabulary/engine';
+import { EngineField, Validation } from '@/types/engine';
 import { useLocale } from '../../core/composables/useLocale';
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported

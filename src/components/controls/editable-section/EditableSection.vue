@@ -20,11 +20,11 @@
 </template>
 
 <script setup lang="ts">
-import { EngineField, NodeUpdateEvent } from "../../../vocabulary/engine";
+import { EngineField, NodeUpdateEvent } from "@/types/engine";
 import { computed, ref } from "vue";
 import FormRoot from "../../engine/FormRoot.vue";
 import set from "lodash/set";
-import { Schema } from "../../../vocabulary/schema";
+import { Schema } from "@/types/schema";
 
 const props = defineProps<{
   schema: EngineField;

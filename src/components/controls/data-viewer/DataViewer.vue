@@ -12,7 +12,7 @@
 
 <script setup lang='ts'>
 
-import { EngineDataViewerField, EngineDictionaryField } from '@/vocabulary/engine/controls';
+import { EngineDataViewerField, EngineDictionaryField } from '@/types/engine/controls';
 import { computed, onMounted } from 'vue';
 import {
   useCalculation,

@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
-import { Schema } from "@/vocabulary/schema";
+import { Schema } from "../../types/schema";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import { VueSchemaForms } from "@/components";
-import { EngineSourceField } from "@/vocabulary/engine/controls";
-import { SimpleSource, Source } from "@/vocabulary/schema/elements";
+import { EngineSourceField } from "../../types/engine/controls";
+import { SimpleSource, Source } from "../../types/schema/elements";
 
 const meta = {
   title: "Forms/Controls/Checkbox",

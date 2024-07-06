@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang='ts'>
-import { EngineSourceField } from '../../vocabulary/engine/controls';
+import { EngineSourceField } from '@/types/engine/controls';
 import { computed } from 'vue';
 import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
 

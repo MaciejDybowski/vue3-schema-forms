@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import { EngineSourceField } from "../..//vocabulary/engine/controls";
+import { EngineSourceField } from "@/types/engine/controls";
 import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from "../../core/composables";
 
 const props = defineProps<{

@@ -26,11 +26,11 @@
 import { getCurrentInstance, onMounted, Ref, ref, watch } from 'vue';
 
 import FormRoot from './FormRoot.vue';
-import { Schema, SchemaOptions } from '../../vocabulary/schema';
+import { Schema, SchemaOptions } from '@/types/schema';
 import set from 'lodash/set';
 import { useI18n } from 'vue-i18n';
 import { resolveSchemaWithLocale } from '../../core/engine/utils';
-import { Components, NodeUpdateEvent } from '../../vocabulary/engine';
+import { Components, NodeUpdateEvent } from '@/types/engine';
 import TextField from '../controls/TextField.vue';
 import DuplicatedSection from '../controls/duplicated-section/DuplicatedSection.vue';
 import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
@@ -43,7 +43,7 @@ import { formUpdateLogger } from '../../main';
 import EditableSection from '../controls/editable-section/EditableSection.vue';
 import Autocomplete from '../controls/Autocomplete.vue';
 import { useFormModelStore } from '../../store/formModelStore';
-import { FormItem, ValidationBehaviour, ValidationError } from '../../vocabulary/engine/formValidation';
+import { FormItem, ValidationBehaviour, ValidationError } from '@/types/engine/formValidation';
 import FormDefaultActions from './validation/FormDefaultActions.vue';
 import DatePicker from '../controls/date/DatePicker.vue';
 import PhoneInput from '../controls/PhoneInput.vue';

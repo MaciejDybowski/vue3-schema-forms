@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3';
 import { VueSchemaForms } from '@/components';
-import { Schema } from '../../vocabulary/schema';
+import { Schema } from '../../types/schema';
 import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
-import { DictionarySource } from '../../vocabulary/schema/elements';
+import { DictionarySource } from '../../types/schema/elements';
 
 const meta = {
   title: 'Forms/Controls/Data viewer',

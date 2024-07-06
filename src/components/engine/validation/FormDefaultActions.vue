@@ -33,7 +33,7 @@
 import FormActionButton from "./FormActionButton.vue";
 import FormValidVisualization from "./FormValidVisualization.vue";
 import FormErrorVisualization from "./FormErrorVisualization.vue";
-import { ValidationError } from "../../../vocabulary/engine/formValidation";
+import { ValidationError } from "@/types/engine/formValidation";
 
 const props = defineProps<{
   formValid: boolean | null;

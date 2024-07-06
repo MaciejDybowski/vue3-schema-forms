@@ -2,8 +2,8 @@
 import { Meta, StoryObj } from "@storybook/vue3";
 import { VueSchemaForms } from "@/components";
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
-import { Schema } from "@/vocabulary/schema";
-import { SchemaField } from "@/vocabulary/schema/elements";
+import { Schema } from "../../types/schema";
+import { SchemaField } from "../../types/schema/elements";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 

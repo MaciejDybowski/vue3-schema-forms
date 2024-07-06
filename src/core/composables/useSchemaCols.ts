@@ -1,8 +1,8 @@
 import { DisplayBreakpoint, useDisplay } from "vuetify";
 import { computed } from "vue";
-import { Cols, Layout } from "../../vocabulary/schema/elements";
+import { Cols, Layout } from "@/types/schema/elements";
 
-import { EngineField } from "../../vocabulary/engine";
+import { EngineField } from "@/types/engine";
 
 export function useSchemaCols(schema: EngineField) {
   const display = useDisplay();

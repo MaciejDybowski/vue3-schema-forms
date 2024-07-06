@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
 import { VueSchemaForms } from "@/components";
-import { Schema } from "@/vocabulary/schema";
-import { SchemaTextField } from "@/vocabulary/schema/elements";
+import { Schema } from "../../types/schema";
+import { SchemaTextField } from "../../types/schema/elements";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 

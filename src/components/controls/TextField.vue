@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
-import { EngineTextField } from "../../vocabulary/engine/controls";
+import { EngineTextField } from "@/types/engine/controls";
 import { useCalculation, useExpression, useClass, useFormattedNumber, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
 
 const props = defineProps<{
