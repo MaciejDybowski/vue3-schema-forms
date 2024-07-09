@@ -10,5 +10,5 @@ npm-publish:
   image: docker.tecna.pl/node:lts
   script:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm run install
+    - npm install
     - npm run build-and-publish-snapshot
