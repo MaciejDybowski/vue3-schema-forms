@@ -50,7 +50,8 @@ import PhoneInput from '../controls/PhoneInput.vue';
 import Location from '../controls/Location.vue';
 import DataViewer from '../controls/data-viewer/DataViewer.vue';
 import Address from '../controls/address/Address.vue';
-import DateTimePicker from "../controls/date/DateTimePicker.vue";
+import DateTimePicker from '../controls/date/DateTimePicker.vue';
+import ButtonField from '../controls/ButtonField.vue';
 
 // register components to VueInstance
 const components = {
@@ -69,6 +70,7 @@ const components = {
   location: Location,
   'data-viewer': DataViewer,
   'address': Address,
+  'button': ButtonField,
 } as Components;
 const instance = getCurrentInstance();
 for (const [name, comp] of Object.entries(components)) {

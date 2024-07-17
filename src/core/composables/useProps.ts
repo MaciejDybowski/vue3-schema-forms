@@ -53,6 +53,12 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
+      case 'button':
+        props = {
+          ...schema.options?.buttonProps,
+          ...schema.layout?.props,
+        };
+        break;
       default:
         props = {
           'hide-details': 'auto',

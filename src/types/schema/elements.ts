@@ -26,7 +26,7 @@ export interface SchemaDateField extends SchemaField {
   pastDateAvailable?: boolean;
   futureDateAvailable?: boolean;
   closeOnFirstClick?: boolean;
-  formatInModel?: string
+  formatInModel?: string;
 }
 
 export interface LocationResult {
@@ -49,7 +49,7 @@ export interface Layout {
 
   // static-content
   tag?: StaticContentTag;
-  class?: string
+  class?: string;
 }
 
 export type SchemaComponent =
@@ -68,6 +68,7 @@ export type SchemaComponent =
   | 'data-viewer'
   | 'location'
   | 'address'
+  | 'button'
 
 export type StaticContentTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span';
 
