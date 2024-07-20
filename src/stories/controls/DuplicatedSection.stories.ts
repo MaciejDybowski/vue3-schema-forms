@@ -353,7 +353,6 @@ export const AddBelowAction: Story = {
   },
 };
 
-
 export const ReadOnlyMode: Story = {
   args: {
     modelValue: {},
@@ -364,26 +363,26 @@ export const ReadOnlyMode: Story = {
           content: "Add editable:false on first level of definition object. ex. nearby layout",
           layout: {
             component: "static-content",
-            tag: "span"
-          }
+            tag: "span",
+          },
         },
         stages: {
           editable: false,
           layout: {
-            component:  "duplicated-section",
+            component: "duplicated-section",
             schema: {
               properties: {
                 simpleDate: {
-                  label: 'DateTime',
+                  label: "DateTime",
                   layout: {
-                    component: 'date-time-picker',
+                    component: "date-time-picker",
                   },
                 },
-              }
-            }
-          }
+              },
+            },
+          },
         },
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};

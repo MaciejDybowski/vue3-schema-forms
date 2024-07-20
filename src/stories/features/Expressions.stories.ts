@@ -44,7 +44,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-
 /**
  * #### Performing expression based on form fields
  * `expression: string` - an expression b ased on form fields. This expression uses predefined functions built into the forms engine. The list will be shown below
@@ -59,9 +58,7 @@ type Story = StoryObj<typeof meta>;
  * Like calculations, the expression listens for changes in the model - currently only available for the `text-field` component
  */
 export const examples: Story = {
-  play: async (context) => {
-
-  },
+  play: async (context) => {},
   args: {
     modelValue: {},
     schema: {
@@ -69,69 +66,69 @@ export const examples: Story = {
       properties: {
         stages: {
           layout: {
-            component:  "duplicated-section",
+            component: "duplicated-section",
             schema: {
               properties: {
                 simpleDate: {
-                  label: 'DateTime',
+                  label: "DateTime",
                   layout: {
-                    component: 'date-time-picker',
+                    component: "date-time-picker",
                   },
                 },
-              }
-            }
-          }
+              },
+            },
+          },
         },
         stages2: {
           layout: {
-            component:  "duplicated-section",
+            component: "duplicated-section",
             schema: {
               properties: {
                 simpleDate: {
-                  label: 'DateTime',
+                  label: "DateTime",
                   layout: {
-                    component: 'date-time-picker',
+                    component: "date-time-picker",
                   },
                 },
-              }
-            }
-          }
+              },
+            },
+          },
         },
         minimum: {
           label: "Minimum",
           layout: {
-            component: "text-field"
+            component: "text-field",
           },
-          expression: "FIND_OLDEST_DATE(simpleDate, stages)"
+          expression: "FIND_OLDEST_DATE(simpleDate, stages)",
         },
         maximum: {
           label: "Maximum",
           layout: {
-            component: "text-field"
+            component: "text-field",
           },
-          expression: "FIND_EARLIEST_DATE(simpleDate, stages2)"
+          expression: "FIND_EARLIEST_DATE(simpleDate, stages2)",
         },
         dni: {
           label: "Dni",
           layout: {
-            component: "text-field"
+            component: "text-field",
           },
-          expression: "CALC_DATE_DIFF_RETURN_DAY(maximum, minimum)"
+          expression: "CALC_DATE_DIFF_RETURN_DAY(maximum, minimum)",
         },
         godziny: {
           label: "Godziny",
           layout: {
-            component: "text-field"
+            component: "text-field",
           },
-          expression: "CALC_DATE_DIFF_RETURN_HOURS(maximum, minimum)"
+          expression: "CALC_DATE_DIFF_RETURN_HOURS(maximum, minimum)",
         },
         minuty: {
           label: "Minuty",
           layout: {
-            component: "text-field"
+            component: "text-field",
           },
-          expression: "CALC_DATE_DIFF_RETURN_MINUTES(maximum, minimum)"
-        }
+          expression: "CALC_DATE_DIFF_RETURN_MINUTES(maximum, minimum)",
+        },
       },
     },
   },

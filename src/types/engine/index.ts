@@ -1,12 +1,12 @@
-import { Layout } from '../schema/elements';
-import { Component } from 'vue';
+import { Layout } from "../schema/elements";
+import { Component } from "vue";
 
 export interface EngineField {
   formId: string;
   key: string;
   label: string;
   default: number | string | boolean | object | Array<any>;
-  type: 'text' | 'number' | 'object' | 'array' | 'date' | 'phone';
+  type: "text" | "number" | "object" | "array" | "date" | "phone";
   layout: Layout;
   options: EngineOptions;
   on: {
@@ -33,10 +33,9 @@ export interface NodeUpdateEvent {
 }
 
 export interface Validation {
-  regexp: RegExp,
-  message: string,
-  nullable?: boolean
+  regexp: RegExp;
+  message: string;
+  nullable?: boolean;
 }
-
 
 export declare type Components = Record<string, Component>;

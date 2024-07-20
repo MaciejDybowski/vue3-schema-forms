@@ -1,26 +1,26 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { VueSchemaForms } from '@/components';
-import { expect } from '@storybook/jest';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { VueSchemaForms } from "@/components";
+import { expect } from "@storybook/jest";
 
 const meta = {
-  title: 'Forms/Features/CSS Class binding',
+  title: "Forms/Features/CSS Class binding",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -35,29 +35,28 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-
 export const Story1: Story = {
-  name: 'Bind class',
+  name: "Bind class",
   play: async (context) => {
-    const field = document.getElementsByClassName('text-h4');
+    const field = document.getElementsByClassName("text-h4");
     await expect(field[0]).not.toEqual(null);
   },
   args: {
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         span: {
-          content: 'Text with class',
+          content: "Text with class",
           layout: {
-            component: 'static-content',
-            tag: 'span',
-            class: 'text-subtitle-4 text-h4',
+            component: "static-content",
+            tag: "span",
+            class: "text-subtitle-4 text-h4",
           },
         },
         textField: {
-          label: 'Text',
+          label: "Text",
           layout: {
-            component: 'text-field',
+            component: "text-field",
           },
         },
       },

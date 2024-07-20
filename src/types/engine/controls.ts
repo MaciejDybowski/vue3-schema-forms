@@ -1,5 +1,5 @@
-import { EngineField } from './index';
-import { DictionarySource, LocationResult, SimpleSource, Source } from '../schema/elements';
+import { EngineField } from "./index";
+import { DictionarySource, LocationResult, SimpleSource, Source } from "../schema/elements";
 
 export interface EngineProps<T> {
   schema: T;
@@ -8,7 +8,7 @@ export interface EngineProps<T> {
 
 export interface EngineTextField extends EngineField {
   calculation?: string;
-  expression?:string
+  expression?: string;
 }
 
 export interface EngineDataViewerField extends EngineField {
@@ -29,15 +29,15 @@ export interface EngineSourceField extends EngineField {
   source: Source;
 }
 
-export interface RadioField extends  EngineSourceField {
-  initValue?: boolean
+export interface RadioField extends EngineSourceField {
+  initValue?: boolean;
 }
 
 export interface EngineDateField extends EngineField {
   pastDateAvailable?: boolean;
   futureDateAvailable?: boolean;
   closeOnFirstClick?: boolean;
-  formatInModel?: string
+  formatInModel?: string;
 }
 
 export interface EnginePhoneField extends EngineField {

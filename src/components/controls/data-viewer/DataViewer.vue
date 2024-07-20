@@ -1,19 +1,18 @@
 <template>
-  <div :class='bindClass(schema) + "data-viewer-text d-flex flex-column"'>
-    <label class='v-label v-field-label--floating'>
+  <div :class="bindClass(schema) + 'data-viewer-text d-flex flex-column'">
+    <label class="v-label v-field-label--floating">
       {{ label }}
     </label>
     <div
-      class='v-field__input'
-      v-html='localModel'
+      class="v-field__input"
+      v-html="localModel"
     />
   </div>
 </template>
 
-<script setup lang='ts'>
-
-import { EngineDataViewerField, EngineDictionaryField } from '@/types/engine/controls';
-import { computed, onMounted } from 'vue';
+<script setup lang="ts">
+import { EngineDataViewerField, EngineDictionaryField } from "@/types/engine/controls";
+import { computed, onMounted } from "vue";
 import {
   useCalculation,
   useClass,
@@ -23,10 +22,10 @@ import {
   useFormModel,
   useLabel,
   useLocale,
-  useResolveVariables
-} from '../../../core/composables';
-import dayjs from '../date/dayjs';
-import { parsePhoneNumber } from 'libphonenumber-js';
+  useResolveVariables,
+} from "../../../core/composables";
+import dayjs from "../date/dayjs";
+import { parsePhoneNumber } from "libphonenumber-js";
 
 const props = defineProps<{
   schema: EngineDataViewerField;
@@ -52,30 +51,29 @@ const localModel = computed({
       value = resolvedText;
     } else {
       switch (props.schema.type) {
-        case 'number':
-          if(!value) break
+        case "number":
+          if (!value) break;
           value = formatNumber(value);
           break;
-        case 'date':
-          if(!value) break
+        case "date":
+          if (!value) break;
           value = dayjs(value).format(dateFormat.value);
           break;
-        case 'phone':
-          if(!value) break
+        case "phone":
+          if (!value) break;
           value = parsePhoneNumber(value).formatNational();
           break;
         default:
-          console.warn('Type of data not recognized');
+          console.warn("Type of data not recognized");
       }
     }
 
-    return value !== 'null' && !!value ? value : t('emptyValue');
+    return value !== "null" && !!value ? value : t("emptyValue");
   },
   set(val: any) {
     setValue(val, props.schema);
   },
 });
-
 
 function runCalculationIfExist() {
   if (props.schema.calculation) {
@@ -84,12 +82,8 @@ function runCalculationIfExist() {
 }
 
 async function resolveIfDictionary() {
-  if ('source' in props.schema && props.schema.source && 'url' in props.schema.source) {
-    const {
-      data,
-      load,
-      singleOptionAutoSelect,
-    } = useDictionarySource(props.schema as EngineDictionaryField);
+  if ("source" in props.schema && props.schema.source && "url" in props.schema.source) {
+    const { data, load, singleOptionAutoSelect } = useDictionarySource(props.schema as EngineDictionaryField);
 
     await load();
 
@@ -103,13 +97,10 @@ onMounted(async () => {
   runCalculationIfExist();
   await resolveIfDictionary();
 });
-
-
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 :deep(.v-field-label--floating) {
-  visibility: visible!important;
+  visibility: visible !important;
 }
 </style>
-

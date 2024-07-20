@@ -8,8 +8,8 @@
     :phone-props="bindProps(schema)"
     v-bind="mergedPhoneInputProps"
     :rules="rules(schema)"
-    name='phone'
-    type='tel'
+    name="phone"
+    type="tel"
   >
   </v-phone-input>
 </template>

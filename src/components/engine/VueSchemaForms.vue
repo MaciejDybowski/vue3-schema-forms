@@ -1,42 +1,42 @@
 <template>
-  <v-form :ref='(el) => (formRef[formId] = el)'>
+  <v-form :ref="(el) => (formRef[formId] = el)">
     <form-root
-      v-if='!loading'
-      :form-id='formId'
-      :model='modelValue'
-      :schema='resolvedSchema'
-      :options='options'
-      @update:model='updateModel'
+      v-if="!loading"
+      :form-id="formId"
+      :model="modelValue"
+      :schema="resolvedSchema"
+      :options="options"
+      @update:model="updateModel"
     />
 
-    <slot name='formActions'>
+    <slot name="formActions">
       <form-default-actions
-        v-if='defaultFormActions'
-        :form-valid='formValid'
-        :error-messages='errorMessages'
-        @validate='validate(validationBehaviour)'
-        @reset-validation='resetValidation'
-        @reset='reset'
+        v-if="defaultFormActions"
+        :form-valid="formValid"
+        :error-messages="errorMessages"
+        @validate="validate(validationBehaviour)"
+        @reset-validation="resetValidation"
+        @reset="reset"
       />
     </slot>
   </v-form>
 </template>
 
-<script setup lang='ts'>
-import { getCurrentInstance, onMounted, Ref, ref, watch } from 'vue';
+<script setup lang="ts">
+import { getCurrentInstance, onMounted, Ref, ref, watch } from "vue";
 
-import FormRoot from './FormRoot.vue';
-import { Schema, SchemaOptions } from '@/types/schema';
-import set from 'lodash/set';
-import { useI18n } from 'vue-i18n';
-import { resolveSchemaWithLocale } from '../../core/engine/utils';
-import { NodeUpdateEvent } from '@/types/engine';
-import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
-import { formUpdateLogger } from '../../main';
-import { useFormModelStore } from '../../store/formModelStore';
-import { FormItem, ValidationBehaviour, ValidationError } from '@/types/engine/formValidation';
-import FormDefaultActions from './validation/FormDefaultActions.vue';
-import { vueSchemaFromControls } from '@/components/controls';
+import FormRoot from "./FormRoot.vue";
+import { Schema, SchemaOptions } from "@/types/schema";
+import set from "lodash/set";
+import { useI18n } from "vue-i18n";
+import { resolveSchemaWithLocale } from "../../core/engine/utils";
+import { NodeUpdateEvent } from "@/types/engine";
+import usePerformanceAPI from "../../core/composables/usePerformanceAPI";
+import { formUpdateLogger } from "../../main";
+import { useFormModelStore } from "../../store/formModelStore";
+import { FormItem, ValidationBehaviour, ValidationError } from "@/types/engine/formValidation";
+import FormDefaultActions from "./validation/FormDefaultActions.vue";
+import { vueSchemaFromControls } from "@/components/controls";
 
 // register components to VueInstance if not installed yet by plugin options
 const instance = getCurrentInstance();
@@ -60,12 +60,12 @@ const props = withDefaults(
   }>(),
   {
     defaultFormActions: false,
-    validationBehaviour: 'scroll',
+    validationBehaviour: "scroll",
   },
 );
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', val: any): void;
+  (e: "update:modelValue", val: any): void;
 }>();
 
 let loading = ref(true);
@@ -80,7 +80,7 @@ const formModelStore = useFormModelStore(formId);
 
 function updateModel(event: NodeUpdateEvent) {
   set(props.modelValue, event.key, event.value);
-  emit('update:modelValue', props.modelValue);
+  emit("update:modelValue", props.modelValue);
   formModelStore.updateFormModel(props.modelValue);
 
   if (formUpdateLogger) {
@@ -97,7 +97,7 @@ async function loadResolvedSchema() {
 watch(
   locale,
   async () => {
-    console.debug('[vue-schema-forms] => Reload form in other language');
+    console.debug("[vue-schema-forms] => Reload form in other language");
     await loadResolvedSchema();
   },
   { deep: true },
@@ -118,19 +118,19 @@ async function validate(option?: ValidationBehaviour) {
     errorMessages.value = [];
   }
 
-  if (!valid && option === 'scroll') {
+  if (!valid && option === "scroll") {
     let arr: FormItem[] = Array.from(formRef.value[formId].items);
     const item = arr.find((item: FormItem) => !item.isValid);
-    const itemRef = document.getElementById(item?.id + '');
+    const itemRef = document.getElementById(item?.id + "");
     if (item)
       itemRef?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
+        behavior: "smooth",
+        block: "center",
       });
     return { valid };
   }
 
-  if (!valid && option === 'messages') {
+  if (!valid && option === "messages") {
     let arr: FormItem[] = Array.from(formRef.value[formId].items);
     errorMessages.value = arr
       .filter((item: FormItem) => !item.isValid)
@@ -147,10 +147,10 @@ async function validate(option?: ValidationBehaviour) {
     return { valid, messages: errorMessages.value };
   }
 
-  if (valid && option === 'messages') {
+  if (valid && option === "messages") {
     return { valid, messages: [] };
   }
-  if (valid && option === 'scroll') {
+  if (valid && option === "scroll") {
     return { valid };
   }
 }
@@ -172,7 +172,7 @@ defineExpose({
 });
 </script>
 
-<style lang='scss'>
+<style lang="scss">
 .required-input {
   .v-label:first-child:after,
   .v-field-label::after {
@@ -182,7 +182,7 @@ defineExpose({
 }
 </style>
 
-<i18n lang='json'>
+<i18n lang="json">
 {
   "en": {},
   "pl": {}

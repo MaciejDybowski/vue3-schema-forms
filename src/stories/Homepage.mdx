@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/blocks';
+import { Meta } from "@storybook/blocks";
 
 <Meta title="Vue Schema Forms" />
 
@@ -55,10 +55,10 @@ After importing the plugin, we can invoke the form-generating component and pass
 ```vue
 <template>
   <vue-schema-forms
-    v-model='model'
-    :schema='schema'
-    :options='formOptions'
-    :default-form-actions='true'
+    v-model="model"
+    :schema="schema"
+    :options="formOptions"
+    :default-form-actions="true"
     :validation-behaviour="'messages'"
   >
   </vue-schema-forms>
@@ -125,23 +125,22 @@ The following table shows the default values for each field
 
 The fields are described in the readme on the Github code repository [link](https://github.com/MaciejDybowski/vue3-schema-forms)
 
-
 ## Plugin options
 
 | Name             | Default | Type       | Description                                                                                                                                                                |
-|------------------|---------|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------------- | ------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | formUpdateLogger | false   | boolean    | enabling this option allows the console to preview the form model update event                                                                                             |
 | customComponents | -       | Components | This option allows you to install your custom form fields. You need to specify the name and the component. The integration is on your side using the composables provided. |
 
 ```typescript
 // example of adding options
 const customs = {
-  'user-input': UserInput,
+  "user-input": UserInput,
 };
 
 const vueSchemaForms = createVueSchemaForms({
   customComponents: customs,
-  formUpdateLogger: true
+  formUpdateLogger: true,
 });
 ```
 

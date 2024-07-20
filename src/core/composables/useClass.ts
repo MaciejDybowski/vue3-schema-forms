@@ -6,8 +6,8 @@ export function useClass() {
     if (schema.required) {
       classString += "required-input ";
     }
-    if(schema.layout.class){
-      classString += schema.layout.class
+    if (schema.layout.class) {
+      classString += schema.layout.class;
     }
     return classString;
   }

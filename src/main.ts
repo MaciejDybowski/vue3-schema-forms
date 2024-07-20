@@ -1,9 +1,9 @@
-import { App } from 'vue';
-import * as components from '../src/components/index';
-import * as exportedComposables from '../src/core/composables';
-import { Components } from '@/types/engine';
+import { App } from "vue";
+import * as components from "../src/components/index";
+import * as exportedComposables from "../src/core/composables";
+import { Components } from "@/types/engine";
 
-import { vueSchemaFromControls } from '@/components/controls';
+import { vueSchemaFromControls } from "@/components/controls";
 
 export let formUpdateLogger = false;
 
@@ -14,14 +14,13 @@ export type VueSchemaForms = {
 export type VueSchemaFormsOptions = {
   formUpdateLogger?: boolean;
   customComponents?: Components;
-  installFormControls?: boolean
+  installFormControls?: boolean;
 };
 
 // jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
 // import * as schemaFormModelStore from './store/formModelStore';
 // export const schemaFormModelStoreInit = schemaFormModelStore;
 export const composables = exportedComposables;
-
 
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
   if (options?.formUpdateLogger) {

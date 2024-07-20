@@ -6,7 +6,7 @@ export const functions = {
   CALC_DATE_DIFF_RETURN_DAY: CALC_DATE_DIFF_RETURN_DAY,
   CALC_DATE_DIFF_RETURN_HOURS: CALC_DATE_DIFF_RETURN_HOURS,
   CALC_DATE_DIFF_RETURN_MINUTES: CALC_DATE_DIFF_RETURN_MINUTES,
-  DELEGATION_DIET_CALC: DELEGATION_DIET_CALC
+  DELEGATION_DIET_CALC: DELEGATION_DIET_CALC,
 };
 
 export function FIND_OLDEST_DATE(expression: string, model: object) {
@@ -19,9 +19,11 @@ export function FIND_OLDEST_DATE(expression: string, model: object) {
     const values = get(model, parameterArray[1], []);
     let min = "";
     if (values.length > 1) {
-      min = values.map((item) => item[parameterArray[0]]).sort(function(a, b) {
-        return Date.parse(a) - Date.parse(b);
-      })[0];
+      min = values
+        .map((item) => item[parameterArray[0]])
+        .sort(function (a, b) {
+          return Date.parse(a) - Date.parse(b);
+        })[0];
     } else {
       min = values.length == 0 ? "" : values[0][parameterArray[0]];
     }
@@ -30,7 +32,6 @@ export function FIND_OLDEST_DATE(expression: string, model: object) {
 }
 
 export function FIND_EARLIEST_DATE(expression: string, model: object) {
-
   let regex = /FIND_EARLIEST_DATE\((.*?)\)/;
   let match = regex.exec(expression);
   if (match) {
@@ -40,9 +41,11 @@ export function FIND_EARLIEST_DATE(expression: string, model: object) {
     const values = get(model, parameterArray[1], []);
     let max = "";
     if (values.length > 1) {
-      max = values.map((item) => item[parameterArray[0]]).sort(function(a, b) {
-        return Date.parse(a) - Date.parse(b);
-      })[values.length - 1];
+      max = values
+        .map((item) => item[parameterArray[0]])
+        .sort(function (a, b) {
+          return Date.parse(a) - Date.parse(b);
+        })[values.length - 1];
     } else {
       max = values.length == 0 ? "" : values[0][parameterArray[0]];
     }
@@ -113,7 +116,7 @@ function calculateDateDifference(date1, date2) {
   return {
     days: diffInDays,
     hours: diffInHours,
-    minutes: diffInMinutes
+    minutes: diffInMinutes,
   };
 }
 
@@ -138,15 +141,15 @@ export function DELEGATION_DIET_CALC(expression: string, model: object) {
     }
 
     if (sniadania > 0) {
-      dietaNalezna = dietaNalezna - ((45 * 0.25) * sniadania);
+      dietaNalezna = dietaNalezna - 45 * 0.25 * sniadania;
     }
 
     if (obiady > 0) {
-      dietaNalezna = dietaNalezna - ((45 * 0.5) * obiady);
+      dietaNalezna = dietaNalezna - 45 * 0.5 * obiady;
     }
 
     if (kolacje > 0) {
-      dietaNalezna = dietaNalezna - ((45 * 0.25) * kolacje);
+      dietaNalezna = dietaNalezna - 45 * 0.25 * kolacje;
     }
 
     return dietaNalezna;

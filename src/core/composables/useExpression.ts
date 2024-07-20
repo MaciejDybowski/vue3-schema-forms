@@ -3,7 +3,6 @@ import set from "lodash/set";
 import { functions } from "../engine/expressionResolver";
 
 export function useExpression(key: string, expression: string, model: object) {
-
   let functionName = extractFunctionName(expression);
 
   if (functionName) {

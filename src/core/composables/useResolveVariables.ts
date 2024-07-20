@@ -1,10 +1,10 @@
-import { useFormModelStore } from '../../store/formModelStore';
-import { useFormattedNumber } from '../../core/composables';
-import { EngineField } from '@/types/engine';
-import { useDateFormat } from './useDateFormat';
-import get from 'lodash/get';
-import { variableRegexp } from '../engine/utils';
-import dayjs from '../../components/controls/date/dayjs';
+import { useFormModelStore } from "../../store/formModelStore";
+import { useFormattedNumber } from "../../core/composables";
+import { EngineField } from "@/types/engine";
+import { useDateFormat } from "./useDateFormat";
+import get from "lodash/get";
+import { variableRegexp } from "../engine/utils";
+import dayjs from "../../components/controls/date/dayjs";
 
 export function useResolveVariables(field: EngineField) {
   const formModelStore = useFormModelStore(field.formId);
@@ -16,23 +16,23 @@ export function useResolveVariables(field: EngineField) {
 
     inputString?.match(variableRegexp)?.forEach((match: string) => {
       const unwrapped = match.slice(1, -1);
-      const split = unwrapped.split(':');
+      const split = unwrapped.split(":");
       const variable = split[0];
       const defaultValue = split.length === 2 ? split[1] : null;
 
       let value = get(formModelStore.getFormModel, variable, defaultValue);
 
-      if (typeof value === 'number') {
+      if (typeof value === "number") {
         value = formatNumber(value);
       }
-      if (typeof value === 'string' && dayjs(value).isValid() && value.length >= 10) {
+      if (typeof value === "string" && dayjs(value).isValid() && value.length >= 10) {
         value = dayjs(value).format(dateFormat.value);
       }
 
       if (!value) {
         allVariablesResolved = false;
       }
-      inputString = inputString.replace(match, value + '');
+      inputString = inputString.replace(match, value + "");
     });
 
     return { resolvedText: inputString, allVariablesResolved };

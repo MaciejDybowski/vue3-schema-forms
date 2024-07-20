@@ -1,8 +1,8 @@
-import { EngineField } from '@/types/engine';
-import { EngineTextField } from '@/types/engine/controls';
-import set from 'lodash/set';
-import { variableRegexp } from '../../core/engine/utils';
-import { useResolveVariables } from './useResolveVariables';
+import { EngineField } from "@/types/engine";
+import { EngineTextField } from "@/types/engine/controls";
+import set from "lodash/set";
+import { variableRegexp } from "../../core/engine/utils";
+import { useResolveVariables } from "./useResolveVariables";
 
 export function useProps() {
   function bindProps(schema: EngineField) {
@@ -10,7 +10,7 @@ export function useProps() {
     const { resolve } = useResolveVariables(schema);
 
     switch (schema.layout.component) {
-      case 'text-field':
+      case "text-field":
         props = {
           ...defaultTextFieldProperties,
           ...schema.options?.fieldProps,
@@ -21,7 +21,7 @@ export function useProps() {
           props.readOnly = true;
         }
         break;
-      case 'radio-button':
+      case "radio-button":
         props = {
           ...defaultRadioProps,
           ...schema.options?.fieldProps,
@@ -29,7 +29,7 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
-      case 'checkbox':
+      case "checkbox":
         props = {
           ...defaultCheckboxProperties,
           ...schema.options?.fieldProps,
@@ -37,7 +37,7 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
-      case 'text-area':
+      case "text-area":
         props = {
           ...defaultTextAreaProps,
           ...schema.options?.fieldProps,
@@ -45,7 +45,7 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
-      case 'select':
+      case "select":
         props = {
           ...defaultSelectProps,
           ...schema.options?.fieldProps,
@@ -53,7 +53,7 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
-      case 'button':
+      case "button":
         props = {
           ...schema.options?.buttonProps,
           ...schema.layout?.props,
@@ -61,7 +61,7 @@ export function useProps() {
         break;
       default:
         props = {
-          'hide-details': 'auto',
+          "hide-details": "auto",
           ...schema.options?.fieldProps,
           ...schema.layout?.props,
         };
@@ -69,7 +69,7 @@ export function useProps() {
     }
 
     for (let [key, value] of Object.entries(props)) {
-      if (typeof value === 'string' && variableRegexp.test(value)) {
+      if (typeof value === "string" && variableRegexp.test(value)) {
         const obj = resolve(value);
         if (obj.allVariablesResolved) {
           set(props, key, obj.resolvedText);
@@ -86,26 +86,26 @@ export function useProps() {
 }
 
 const defaultTextFieldProperties = {
-  'hide-details': 'auto',
+  "hide-details": "auto",
 };
 
 const defaultCheckboxProperties = {
-  density: 'compact',
-  'hide-details': 'auto',
+  density: "compact",
+  "hide-details": "auto",
   multiple: true,
 };
 
 const defaultRadioProps = {
-  density: 'compact',
-  'hide-details': 'auto',
+  density: "compact",
+  "hide-details": "auto",
 };
 
 const defaultTextAreaProps = {
   rows: 3,
-  'auto-grow': true,
-  'hide-details': 'auto',
+  "auto-grow": true,
+  "hide-details": "auto",
 };
 
 const defaultSelectProps = {
-  'hide-details': 'auto',
+  "hide-details": "auto",
 };

@@ -1,26 +1,26 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
-import { Schema } from '../../types/schema';
-import { VueSchemaForms } from '@/components';
+import { Meta, StoryObj } from "@storybook/vue3";
+import { Schema } from "../../types/schema";
+import { VueSchemaForms } from "@/components";
 
 const meta = {
-  title: 'Forms/Controls/Button',
+  title: "Forms/Controls/Button",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -35,7 +35,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-
 export const Standard: Story = {
   play: async (context) => {
     // const canvas = within(context.canvasElement);
@@ -45,19 +44,18 @@ export const Standard: Story = {
   },
   args: {
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         textArea: {
-          label: 'Click it!',
+          label: "Click it!",
           layout: {
-            component: 'button',
+            component: "button",
           },
         },
       },
     } as Schema,
   },
 };
-
 
 export const WithProps: Story = {
   play: async (context) => {
@@ -68,14 +66,14 @@ export const WithProps: Story = {
   },
   args: {
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         textArea: {
-          label: 'Click it!',
+          label: "Click it!",
           layout: {
-            component: 'button',
+            component: "button",
             props: {
-              'prepend-icon': 'mdi-plus',
+              "prepend-icon": "mdi-plus",
             },
           },
         },
