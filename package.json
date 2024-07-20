@@ -20,7 +20,7 @@
     "test-storybook": "test-storybook --verbose",
     "build-storybook": "storybook build -o dist-storybook",
     "test": "vitest",
-    "tecna-publish-snapshot": "npm publish --registry=https://nexus3.tecna.pl/repository/npm-private-releases"
+    "publish:nexus": "npm publish --registry=https://nexus3.tecna.pl/repository/npm-private-releases"
   },
   "keywords": [
     "vue",
