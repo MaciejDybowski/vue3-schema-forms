@@ -1,0 +1,14 @@
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_AUTH_CONFIG: $CI_DOCKER_AUTH_CONFIG
+  NPM_REGISTRY: nexus3.tecna.pl/repository/npm-private-releases
+  NPM_PROXY: nexus3.tecna.pl/repository/npm-private
+stages:
+  - publish # no need to split it into separate stages, we can also avoid passing artifacts that way
+npm-publish:
+  stage: publish
+  image: docker.tecna.pl/node:lts
+  script:
+    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - npm install
+    - npm run build-and-publish-snapshot
