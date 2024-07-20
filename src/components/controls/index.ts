@@ -1,3 +1,4 @@
+//@ts-nocheck
 import TextField from './TextField.vue';
 import DuplicatedSection from './duplicated-section/DuplicatedSection.vue';
 import StaticContent from './StaticContent.vue';
@@ -16,7 +17,7 @@ import ButtonField from './ButtonField.vue';
 
 import { Components } from '@/types/engine';
 
-export const exportedControls: Components = {
+export const vueSchemaFromControls: Components = {
   'text-field': TextField,
   'duplicated-section': DuplicatedSection,
   'static-content': StaticContent,

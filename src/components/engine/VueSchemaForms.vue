@@ -30,53 +30,18 @@ import { Schema, SchemaOptions } from '@/types/schema';
 import set from 'lodash/set';
 import { useI18n } from 'vue-i18n';
 import { resolveSchemaWithLocale } from '../../core/engine/utils';
-import { Components, NodeUpdateEvent } from '@/types/engine';
-import TextField from '../controls/TextField.vue';
-import DuplicatedSection from '../controls/duplicated-section/DuplicatedSection.vue';
+import { NodeUpdateEvent } from '@/types/engine';
 import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
-import StaticContent from '../controls/StaticContent.vue';
-import RadioButton from '../controls/RadioButton.vue';
-import CheckboxButton from '../controls/CheckboxButton.vue';
-import TextArea from '../controls/TextArea.vue';
-import Select from '../controls/Select.vue';
 import { formUpdateLogger } from '../../main';
-import EditableSection from '../controls/editable-section/EditableSection.vue';
-import Autocomplete from '../controls/Autocomplete.vue';
 import { useFormModelStore } from '../../store/formModelStore';
 import { FormItem, ValidationBehaviour, ValidationError } from '@/types/engine/formValidation';
 import FormDefaultActions from './validation/FormDefaultActions.vue';
-import DatePicker from '../controls/date/DatePicker.vue';
-import PhoneInput from '../controls/PhoneInput.vue';
-import Location from '../controls/Location.vue';
-import DataViewer from '../controls/data-viewer/DataViewer.vue';
-import Address from '../controls/address/Address.vue';
-import DateTimePicker from '../controls/date/DateTimePicker.vue';
-import ButtonField from '../controls/ButtonField.vue';
+import { vueSchemaFromControls } from '@/components/controls';
 
-// register components to VueInstance
-const components = {
-  'text-field': TextField,
-  'duplicated-section': DuplicatedSection,
-  'static-content': StaticContent,
-  'radio-button': RadioButton,
-  checkbox: CheckboxButton,
-  'text-area': TextArea,
-  select: Select,
-  'editable-section': EditableSection,
-  dictionary: Autocomplete,
-  'date-picker': DatePicker,
-  'date-time-picker': DateTimePicker,
-  phone: PhoneInput,
-  location: Location,
-  'data-viewer': DataViewer,
-  'address': Address,
-  'button': ButtonField,
-} as Components;
+// register components to VueInstance if not installed yet by plugin options
 const instance = getCurrentInstance();
-for (const [name, comp] of Object.entries(components)) {
-  //@ts-ignore
+for (const [name, comp] of Object.entries(vueSchemaFromControls)) {
   if (!instance?.appContext.app.component(`node-${name}`)) {
-    //@ts-ignore
     instance?.appContext.app.component(`node-${name}`, comp);
   }
 }

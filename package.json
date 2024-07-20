@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.0.38-snapshot-3",
+  "version": "0.0.38-snapshot-4",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
-    "@intlify/unplugin-vue-i18n": "4.0.0",
+    "@intlify/unplugin-vue-i18n": "0.13.0",
     "@storybook/addon-essentials": "^8.2.4",
     "@storybook/addon-interactions": "^8.2.4",
     "@storybook/addon-links": "^8.2.4",

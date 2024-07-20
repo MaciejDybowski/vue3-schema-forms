@@ -1,13 +1,9 @@
-import * as components from "../src/components/index";
-
-import { App } from "vue";
-
-import * as exportedComposables from "../src/core/composables";
+import { App } from 'vue';
+import * as components from '../src/components/index';
+import * as exportedComposables from '../src/core/composables';
 import { Components } from '@/types/engine';
-import { exportedControls } from '../src/components/controls';
 
-
-import * as schemaFormModelStore from "./store/formModelStore"
+import { vueSchemaFromControls } from '@/components/controls';
 
 export let formUpdateLogger = false;
 
@@ -18,11 +14,14 @@ export type VueSchemaForms = {
 export type VueSchemaFormsOptions = {
   formUpdateLogger?: boolean;
   customComponents?: Components;
+  installFormControls?: boolean
 };
 
-export const schemaFormModelStoreInit = schemaFormModelStore
+// jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
+// import * as schemaFormModelStore from './store/formModelStore';
+// export const schemaFormModelStoreInit = schemaFormModelStore;
 export const composables = exportedComposables;
-export const formControls:Components = exportedControls
+
 
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
   if (options?.formUpdateLogger) {
@@ -33,14 +32,27 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
     install: (app: App): void => {
       for (const componentName in components) {
         const component = components[componentName];
-        app.component(componentName, component);
+        if (!app.component(componentName)) {
+          console.debug(`[vue3-schema-forms] - register component - ${componentName}`);
+          app.component(componentName, component);
+        }
       }
 
       if (options?.customComponents) {
         for (const componentName in options.customComponents) {
           const component = options.customComponents[componentName];
-          console.debug(`Register custom component = ${componentName}`);
+          console.debug(`[vue3-schema-forms] - register custom component = ${componentName}`);
           app.component(`node-${componentName}`, component);
+        }
+      }
+
+      if (options?.installFormControls) {
+        for (const componentName in vueSchemaFromControls) {
+          const component = vueSchemaFromControls[componentName];
+          if (!app.component(`node-${componentName}`)) {
+            console.debug(`[vue3-schema-forms] - install form control - ${componentName}`);
+            app.component(`node-${componentName}`, component);
+          }
         }
       }
     },
