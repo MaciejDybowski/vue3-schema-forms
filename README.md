@@ -26,8 +26,16 @@ To relieve the library of dependencies as ```peerDependencies``` library takes:
 * ```vue-i18n@9.6.4``` - handling translations in the library
 * ```vuedraggable@4.1.0``` - support for drag&drop interaction
 
+For manage SFC i18n translation ```devDependencies```:
+
+* ```intlify/unplugin-vue-i18n@0.13.0```
+
 ```bash
 npm i vue@3.4.14 vuetify@3.5.1 axios@1.6.5 dayjs@1.11.10 pinia@2.1.7 vue-i18n@9 vuedraggable@next
+```
+
+```bash
+npm install -dev @intlify/unplugin-vue-i18n@0.13.0
 ```
 
 ## Installation
@@ -162,20 +170,3 @@ const vueSchemaForms = createVueSchemaForms({
 3. Commit your changes: ```git commit -am 'Add some feature'```
 4. Push to the branch: ```git push origin my-new-feature```
 5. Submit a pull request
-
-## ToDo List
-- [ ] add type number int/float !!!
-
-
-- [ ] Ability to mark "not-saveable" field in schema/model
-- [ ] Markdown input
-- [ ] File input
-- [ ] Table input
-- [ ] Rsql filter on dictionary
-- [ ] Signal for form is ready (for autosave but after initial model changes)
-- [ ] Create datetime field
-
-
-- [ ] Use resolveDepsComposable for deps on fields
-- [ ] Create editable sections
-- [ ] Change to use Engine props (decomposition)
