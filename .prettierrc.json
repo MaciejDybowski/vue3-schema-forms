@@ -1,7 +1,7 @@
 {
   "tabWidth": 2,
   "semi": true,
-  "singleQuote": false,
+  "singleQuote": true,
   "printWidth": 130,
   "singleAttributePerLine": true,
   "importOrder": [
