@@ -1,15 +1,17 @@
-import { Pagination } from "../../components/controls/base/Pagination";
 import axios from "axios";
-import { Ref, ref, watch } from "vue";
-import { mapSliceTotalElements } from "../../components/controls/base/SliceResponse";
 import { debounce } from "lodash";
 import get from "lodash/get";
+import { Ref, ref, watch } from "vue";
+
+import { EngineDictionaryField } from "@/types/engine/controls";
+import { ResponseReference } from "@/types/shared/ResponseReference";
+import { DictionarySource } from "@/types/shared/Source";
+
+import { Pagination } from "../../components/controls/base/Pagination";
+import { mapSliceTotalElements } from "../../components/controls/base/SliceResponse";
 import { variableRegexp } from "../../core/engine/utils";
 import { useFormModelStore } from "../../store/formModelStore";
 import { useResolveVariables } from "./useResolveVariables";
-import { EngineDictionaryField } from "@/types/engine/controls";
-import { DictionarySource } from "@/types/shared/Source";
-import { ResponseReference } from "@/types/shared/ResponseReference";
 
 export function useDictionarySource(field: EngineDictionaryField) {
   const { resolve } = useResolveVariables(field);

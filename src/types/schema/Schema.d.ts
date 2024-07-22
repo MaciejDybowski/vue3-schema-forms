@@ -1,5 +1,5 @@
-import { Translation } from "@/types/shared/Translation";
 import { SchemaField } from "@/types/schema/SchemaField";
+import { Translation } from "@/types/shared/Translation";
 
 export interface Schema {
   id?: string;

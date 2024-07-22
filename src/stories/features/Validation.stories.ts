@@ -1,11 +1,12 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3";
 import { VueSchemaForms } from "@/components";
+import { expect } from "@storybook/jest";
+import { userEvent, within } from "@storybook/testing-library";
+import { Meta, StoryObj } from "@storybook/vue3";
+
 import { Schema } from "../../types/schema/Schema";
 import { SchemaField } from "../../types/schema/elements";
 import { StoryTemplateWithCustomValidation, StoryTemplateWithValidation } from "../templates/story-template";
-import { userEvent, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
 
 const meta = {
   title: "Forms/Features/Validations",

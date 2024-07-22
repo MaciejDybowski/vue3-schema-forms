@@ -1,5 +1,6 @@
-import { useLocale } from "./useLocale";
 import { computed } from "vue";
+
+import { useLocale } from "./useLocale";
 
 export function useDateTimeFormat() {
   const { locale } = useLocale();

@@ -1,12 +1,13 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3";
-import { Schema } from "../../types/schema/Schema";
-import { StoryTemplateWithValidation } from "../templates/story-template";
-import { userEvent, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
 import { VueSchemaForms } from "@/components";
+import { expect } from "@storybook/jest";
+import { userEvent, within } from "@storybook/testing-library";
+import { Meta, StoryObj } from "@storybook/vue3";
+
 import { EngineSourceField } from "../../types/engine/controls";
+import { Schema } from "../../types/schema/Schema";
 import { SimpleSource } from "../../types/schema/elements";
+import { StoryTemplateWithValidation } from "../templates/story-template";
 
 const meta = {
   title: "Forms/Controls/Select",

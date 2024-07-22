@@ -33,12 +33,12 @@
 </template>
 
 <script setup lang="ts">
-import BaseAutocomplete from "./base/BaseAutocomplete.vue";
 import { computed, onMounted } from "vue";
 
 import { EngineDictionaryField } from "@/types/engine/controls";
 
 import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
+import BaseAutocomplete from "./base/BaseAutocomplete.vue";
 
 const props = defineProps<{
   schema: EngineDictionaryField;

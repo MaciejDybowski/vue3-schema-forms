@@ -1,4 +1,4 @@
-import { EngineField } from "@/types/engine";
+import { EngineField } from "@/types/engine/EngineField";
 
 export function useClass() {
   function bindClass(schema: EngineField): string {

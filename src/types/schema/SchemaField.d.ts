@@ -1,18 +1,19 @@
 import { Layout } from "@/types/shared/Layout";
-
-import { Source } from "@/types/shared/Source";
 import { LocationResult } from "@/types/shared/LocationResult";
+import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
+import { SchemaSimpleValidation } from "@/types/shared/SchemaSimpleValidation";
+import { Source } from "@/types/shared/Source";
 
 export interface SchemaField {
   label?: string | { $ref: string };
   content?: string | { $ref: string };
   default?: number | string | boolean | object | Array<any>;
-  type?: "text" | "number" | "date" | "array" | "object";
+  type?: SchemaFieldType;
   layout?: Layout;
   properties?: Record<string, SchemaField>;
   required?: Array<string>;
 
-  // textfield, data-viewer
+  // text-field, data-viewer
   calculation?: string;
   // dictionary and other selects/radio/checkbox and data-viewer
   source?: Source;
@@ -24,4 +25,7 @@ export interface SchemaField {
   futureDateAvailable?: boolean;
   closeOnFirstClick?: boolean;
   formatInModel?: string;
+
+  // simple validation
+  validations?: Array<SchemaSimpleValidation>;
 }

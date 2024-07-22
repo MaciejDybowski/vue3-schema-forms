@@ -1,6 +1,8 @@
-import { EngineField, NodeUpdateEvent } from "@/types/engine";
 import get from "lodash/get";
 import set from "lodash/set";
+
+import { EngineField } from "@/types/engine/EngineField";
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 
 export function useFormModel() {
   function getValue(model: object, schema: EngineField, defaultValue: any = null): any {

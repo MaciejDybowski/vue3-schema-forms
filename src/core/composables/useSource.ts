@@ -1,5 +1,6 @@
-import { ref, Ref } from "vue";
 import axios from "axios";
+import { Ref, ref } from "vue";
+
 import { SimpleSource } from "@/types/shared/Source";
 
 export function useSource(source: SimpleSource) {

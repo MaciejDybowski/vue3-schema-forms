@@ -15,9 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref } from "vue";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
 import { debounce } from "lodash";
+import { Ref, computed, ref } from "vue";
 
 import { EngineLocationField } from "@/types/engine/controls";
 

@@ -11,21 +11,23 @@
 </template>
 
 <script setup lang="ts">
-import { EngineDataViewerField, EngineDictionaryField } from "@/types/engine/controls";
+import { parsePhoneNumber } from "libphonenumber-js";
 import { computed, onMounted } from "vue";
+
+import { EngineDataViewerField, EngineDictionaryField } from "@/types/engine/controls";
+
 import {
   useCalculation,
   useClass,
   useDateFormat,
   useDictionarySource,
-  useFormattedNumber,
   useFormModel,
+  useFormattedNumber,
   useLabel,
   useLocale,
   useResolveVariables,
 } from "../../../core/composables";
 import dayjs from "../date/dayjs";
-import { parsePhoneNumber } from "libphonenumber-js";
 
 const props = defineProps<{
   schema: EngineDataViewerField;

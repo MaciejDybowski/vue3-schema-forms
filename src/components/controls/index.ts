@@ -1,21 +1,21 @@
 //@ts-nocheck
-import TextField from "./TextField.vue";
-import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
-import StaticContent from "./StaticContent.vue";
-import RadioButton from "./RadioButton.vue";
-import CheckboxButton from "./CheckboxButton.vue";
-import TextArea from "./TextArea.vue";
-import Select from "./Select.vue";
-import DataViewer from "./data-viewer/DataViewer.vue";
-import Autocomplete from "./Autocomplete.vue";
-import DatePicker from "./date/DatePicker.vue";
-import PhoneInput from "./PhoneInput.vue";
-import Location from "./Location.vue";
-import Address from "./address/Address.vue";
-import DateTimePicker from "./date/DateTimePicker.vue";
-import ButtonField from "./ButtonField.vue";
+import { Components } from "@/main";
 
-import { Components } from "@/types/engine";
+import Autocomplete from "./Autocomplete.vue";
+import ButtonField from "./ButtonField.vue";
+import CheckboxButton from "./CheckboxButton.vue";
+import Location from "./Location.vue";
+import PhoneInput from "./PhoneInput.vue";
+import RadioButton from "./RadioButton.vue";
+import Select from "./Select.vue";
+import StaticContent from "./StaticContent.vue";
+import TextArea from "./TextArea.vue";
+import TextField from "./TextField.vue";
+import Address from "./address/Address.vue";
+import DataViewer from "./data-viewer/DataViewer.vue";
+import DatePicker from "./date/DatePicker.vue";
+import DateTimePicker from "./date/DateTimePicker.vue";
+import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,

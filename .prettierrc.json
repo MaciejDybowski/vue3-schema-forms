@@ -4,6 +4,7 @@
   "singleQuote": false,
   "printWidth": 130,
   "singleAttributePerLine": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
     "^@/components/(.*)$",

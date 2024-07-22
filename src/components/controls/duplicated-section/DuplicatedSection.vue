@@ -50,26 +50,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { isArray } from "lodash";
 import get from "lodash/get";
+import set from "lodash/set";
+import { v4 as uuidv4 } from "uuid";
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
 
-import { NodeUpdateEvent } from "@/types/engine";
-
-import { EngineDuplicatedSection } from "@/types/engine/controls";
-import { v4 as uuidv4 } from "uuid";
-import { VueDragable } from "@/types/VueDragable";
-import FormRoot from "../../engine/FormRoot.vue";
-import DraggableIcon from "./DraggableIcon.vue";
-import DraggableContextMenu from "./DraggableContextMenu.vue";
-import { useI18n } from "vue-i18n";
-import { isArray } from "lodash";
-import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
-import set from "lodash/set";
 import { useFormModel } from "@/core/composables";
+import { VueDragable } from "@/types/VueDragable";
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
+import { EngineDuplicatedSection } from "@/types/engine/controls";
 import { Schema } from "@/types/schema/Schema";
 import { SchemaField } from "@/types/schema/SchemaField";
 import { DuplicatedSectionOptions } from "@/types/shared/DuplicatedSectionOptions";
+
+import FormRoot from "../../engine/FormRoot.vue";
+import DraggableContextMenu from "./DraggableContextMenu.vue";
+import DraggableIcon from "./DraggableIcon.vue";
+import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;

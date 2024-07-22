@@ -1,9 +1,10 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3";
-import { Schema } from "../../types/schema/Schema";
-import { userEvent, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
 import { VueSchemaForms } from "@/components";
+import { expect } from "@storybook/jest";
+import { userEvent, within } from "@storybook/testing-library";
+import { Meta, StoryObj } from "@storybook/vue3";
+
+import { Schema } from "../../types/schema/Schema";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 const meta = {

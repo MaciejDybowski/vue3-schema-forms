@@ -1,12 +1,6 @@
-import { EngineField } from "./index";
-
-import { DictionarySource, SimpleSource, Source } from "@/types/shared/Source";
+import { EngineField } from "@/types/engine/EngineField";
 import { LocationResult } from "@/types/shared/LocationResult";
-
-export interface EngineProps<T> {
-  schema: T;
-  model: object;
-}
+import { DictionarySource, SimpleSource, Source } from "@/types/shared/Source";
 
 export interface EngineTextField extends EngineField {
   calculation?: string;

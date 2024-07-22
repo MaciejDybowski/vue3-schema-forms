@@ -1,8 +1,8 @@
+import { Schema } from "@/types/schema/Schema";
 import { SchemaComponent } from "@/types/schema/SchemaComponent";
 import { Cols } from "@/types/shared/Cols";
-import { Schema } from "@/types/schema/Schema";
-import { StaticContentTag } from "@/types/shared/StaticContentTag";
 import { DuplicatedSectionOptions } from "@/types/shared/DuplicatedSectionOptions";
+import { StaticContentTag } from "@/types/shared/StaticContentTag";
 
 export interface Layout {
   component: SchemaComponent;

@@ -29,10 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import { ValidationError } from "@/types/engine/formValidation";
+import { ValidationFromError } from "@/types/engine/ValidationFromError";
 
 const props = defineProps<{
-  errorMessages: Array<ValidationError>;
+  errorMessages: Array<ValidationFromError>;
 }>();
 
 function scrollToItem(id: string) {

@@ -23,21 +23,25 @@
 </template>
 
 <script setup lang="ts">
-import { getCurrentInstance, onMounted, Ref, ref, watch } from "vue";
-
-import FormRoot from "./FormRoot.vue";
 import set from "lodash/set";
+import { Ref, getCurrentInstance, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { resolveSchemaWithLocale } from "../../core/engine/utils";
-import { NodeUpdateEvent } from "@/types/engine";
-import usePerformanceAPI from "../../core/composables/usePerformanceAPI";
-import { formUpdateLogger } from "../../main";
-import { useFormModelStore } from "../../store/formModelStore";
-import { FormItem, ValidationBehaviour, ValidationError } from "@/types/engine/formValidation";
-import FormDefaultActions from "./validation/FormDefaultActions.vue";
+
 import { vueSchemaFromControls } from "@/components/controls";
+
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
+import { ValidationFromBehaviour } from "@/types/engine/ValidationFromBehaviour";
+import { ValidationFromError } from "@/types/engine/ValidationFromError";
+import { ValidationFromItem } from "@/types/engine/ValidationFromItem";
 import { Schema } from "@/types/schema/Schema";
 import { SchemaOptions } from "@/types/schema/SchemaOptions";
+
+import usePerformanceAPI from "../../core/composables/usePerformanceAPI";
+import { resolveSchemaWithLocale } from "../../core/engine/utils";
+import { formUpdateLogger } from "../../main";
+import { useFormModelStore } from "../../store/formModelStore";
+import FormRoot from "./FormRoot.vue";
+import FormDefaultActions from "./validation/FormDefaultActions.vue";
 
 // register components to VueInstance if not installed yet by plugin options
 const instance = getCurrentInstance();
@@ -57,7 +61,7 @@ const props = withDefaults(
     modelValue: object;
     options?: SchemaOptions;
     defaultFormActions?: boolean;
-    validationBehaviour?: ValidationBehaviour;
+    validationBehaviour?: ValidationFromBehaviour;
   }>(),
   {
     defaultFormActions: false,
@@ -76,7 +80,7 @@ const resolvedSchema = ref({} as Schema);
 const formId = Math.random().toString().slice(2, 5);
 const formRef = ref({});
 const formValid = ref(false);
-const errorMessages: Ref<Array<ValidationError>> = ref([]);
+const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
 const formModelStore = useFormModelStore(formId);
 
 function updateModel(event: NodeUpdateEvent) {
@@ -108,7 +112,7 @@ onMounted(async () => {
   await loadResolvedSchema();
 });
 
-async function validate(option?: ValidationBehaviour) {
+async function validate(option?: ValidationFromBehaviour) {
   const { valid } = await formRef.value[formId].validate();
   formValid.value = valid;
 
@@ -120,8 +124,8 @@ async function validate(option?: ValidationBehaviour) {
   }
 
   if (!valid && option === "scroll") {
-    let arr: FormItem[] = Array.from(formRef.value[formId].items);
-    const item = arr.find((item: FormItem) => !item.isValid);
+    let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
+    const item = arr.find((item: ValidationFromItem) => !item.isValid);
     const itemRef = document.getElementById(item?.id + "");
     if (item)
       itemRef?.scrollIntoView({
@@ -132,17 +136,17 @@ async function validate(option?: ValidationBehaviour) {
   }
 
   if (!valid && option === "messages") {
-    let arr: FormItem[] = Array.from(formRef.value[formId].items);
+    let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
     errorMessages.value = arr
-      .filter((item: FormItem) => !item.isValid)
-      .map((item: FormItem) => {
+      .filter((item: ValidationFromItem) => !item.isValid)
+      .map((item: ValidationFromItem) => {
         const element: Ref<any> = ref(document.getElementById(item.id as string));
         const label = element.value.labels[0].innerText ? element.value.labels[0].innerText : element.value.labels[1].innerText;
         return {
           id: item.id,
           label: label,
           messages: item.errorMessages.length > 0 ? item.errorMessages : null,
-        } as ValidationError;
+        } as ValidationFromError;
       })
       .filter((item) => item.messages);
     return { valid, messages: errorMessages.value };

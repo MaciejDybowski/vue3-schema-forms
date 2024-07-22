@@ -1,16 +1,17 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3";
 import { VueSchemaForms } from "@/components";
 import {
   calculationSchemaInDuplicatedSection,
   simpleCalculationSchema,
   simpleCalculationWithDynamicDigits,
 } from "@/stories/schemas";
-import { userEvent, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
 import { invoicePositionsSchema } from "@/tests/test-schemas";
-import { Layout, SchemaTextField } from "../../types/schema/elements";
+import { expect } from "@storybook/jest";
+import { userEvent, within } from "@storybook/testing-library";
+import { Meta, StoryObj } from "@storybook/vue3";
+
 import { Schema } from "../../types/schema/Schema";
+import { Layout, SchemaTextField } from "../../types/schema/elements";
 
 const meta = {
   title: "Forms/Features/Expressions",

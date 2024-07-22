@@ -1,8 +1,10 @@
-import { EngineField } from "@/types/engine";
-import { useFormModelStore } from "../../store/formModelStore";
-import { variableRegexp } from "../../core/engine/utils";
 import { ref } from "vue";
+
+import { EngineField } from "@/types/engine/EngineField";
+
 import { useResolveVariables } from "../../core/composables/useResolveVariables";
+import { variableRegexp } from "../../core/engine/utils";
+import { useFormModelStore } from "../../store/formModelStore";
 
 export function useLabel(schema: EngineField) {
   const formModelStore = useFormModelStore(schema.formId);

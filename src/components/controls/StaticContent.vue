@@ -8,10 +8,11 @@
 </template>
 
 <script setup lang="ts">
-import { EngineStaticField } from "@/types/engine/controls";
 import { computed } from "vue";
+
 import { useResolveVariables } from "@/core/composables";
 import { useClass } from "@/core/composables";
+import { EngineStaticField } from "@/types/engine/controls";
 
 const props = defineProps<{
   schema: EngineStaticField;

@@ -1,13 +1,15 @@
-import { mount, VueWrapper } from "@vue/test-utils";
+import { createPinia } from "pinia";
+import * as process from "process";
 import { expect, test } from "vitest";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+
+import { VueWrapper, mount } from "@vue/test-utils";
+
 import i18n from "../../.storybook/plugins/i18n";
 import { VueSchemaForms } from "../components";
-import { _100fieldSchema, _10fieldSchema, _50fieldSchema, invoicePositionsSchema } from "./test-schemas";
-import * as process from "process";
-import { createPinia } from "pinia";
+import { _10fieldSchema, _50fieldSchema, _100fieldSchema, invoicePositionsSchema } from "./test-schemas";
 
 const vuetify = createVuetify({ components, directives });
 const pinia = createPinia();

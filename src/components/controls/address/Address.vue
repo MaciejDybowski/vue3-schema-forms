@@ -9,13 +9,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeMount, reactive } from "vue";
-import { useFormModel, useLocale } from "../../../core/composables";
-
-import FormRoot from "../../engine/FormRoot.vue";
 import { merge } from "lodash";
-import { EngineField } from "@/types/engine";
+import { computed, onBeforeMount, reactive } from "vue";
+
+import { EngineField } from "@/types/engine/EngineField";
 import { Schema } from "@/types/schema/Schema";
+
+import { useFormModel, useLocale } from "../../../core/composables";
+import FormRoot from "../../engine/FormRoot.vue";
 
 const props = defineProps<{
   schema: EngineField;

@@ -1,10 +1,12 @@
-import { useFormModelStore } from "../../store/formModelStore";
-import { useFormattedNumber } from "../../core/composables";
-import { EngineField } from "@/types/engine";
-import { useDateFormat } from "./useDateFormat";
 import get from "lodash/get";
-import { variableRegexp } from "../engine/utils";
+
+import { EngineField } from "@/types/engine/EngineField";
+
 import dayjs from "../../components/controls/date/dayjs";
+import { useFormattedNumber } from "../../core/composables";
+import { useFormModelStore } from "../../store/formModelStore";
+import { variableRegexp } from "../engine/utils";
+import { useDateFormat } from "./useDateFormat";
 
 export function useResolveVariables(field: EngineField) {
   const formModelStore = useFormModelStore(field.formId);

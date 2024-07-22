@@ -1,7 +1,8 @@
 // @ts-nocheck
-import DevelopmentTable from "../components/app/DevelopmentTable.vue";
-import { Meta, StoryObj } from "@storybook/vue3";
 import { ArgTypes } from "@storybook/types";
+import { Meta, StoryObj } from "@storybook/vue3";
+
+import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { Schema } from "../types/schema/Schema";
 import { SchemaField } from "../types/schema/elements";
 

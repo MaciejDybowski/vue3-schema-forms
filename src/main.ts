@@ -1,10 +1,11 @@
-import { App } from "vue";
-import * as components from "../src/components/index";
-import * as exportedComposables from "../src/core/composables";
-import { Components } from "@/types/engine";
+import { App, Component } from "vue";
 
 import { vueSchemaFromControls } from "@/components/controls";
 
+import * as components from "../src/components/index";
+import * as exportedComposables from "../src/core/composables";
+
+export declare type Components = Record<string, Component>;
 export let formUpdateLogger = false;
 
 export type VueSchemaForms = {

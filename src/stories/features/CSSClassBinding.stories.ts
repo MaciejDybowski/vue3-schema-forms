@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3";
 import { VueSchemaForms } from "@/components";
 import { expect } from "@storybook/jest";
+import { Meta, StoryObj } from "@storybook/vue3";
 
 const meta = {
   title: "Forms/Features/CSS Class binding",

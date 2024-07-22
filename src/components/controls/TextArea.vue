@@ -9,9 +9,10 @@
 </template>
 
 <script setup lang="ts">
-import { EngineField } from "@/types/engine";
 import { computed } from "vue";
-import { useClass, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
+
+import { useClass, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
+import { EngineField } from "@/types/engine/EngineField";
 
 const props = defineProps<{
   schema: EngineField;

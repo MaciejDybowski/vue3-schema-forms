@@ -32,8 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import { Pagination } from "./Pagination";
 import { computed, onMounted, ref, useAttrs } from "vue";
+
+import { Pagination } from "./Pagination";
 
 const attrs = useAttrs();
 const props = withDefaults(

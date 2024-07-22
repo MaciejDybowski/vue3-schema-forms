@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3";
 import { VueSchemaForms } from "@/components";
 import { schemaWithTranslation } from "@/stories/schemas";
+import { Meta, StoryObj } from "@storybook/vue3";
 
 const meta = {
   title: "Forms/Features/Translations",

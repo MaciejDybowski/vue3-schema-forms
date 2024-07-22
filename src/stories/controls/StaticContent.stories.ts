@@ -1,10 +1,11 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3";
-import { Schema } from "../../types/schema/Schema";
 import { VueSchemaForms } from "@/components";
-import { Layout } from "../../types/schema/elements";
-import { within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
+import { within } from "@storybook/testing-library";
+import { Meta, StoryObj } from "@storybook/vue3";
+
+import { Schema } from "../../types/schema/Schema";
+import { Layout } from "../../types/schema/elements";
 
 const meta = {
   title: "Forms/Static content",

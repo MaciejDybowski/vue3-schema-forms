@@ -1,6 +1,8 @@
-import { EngineField } from "@/types/engine";
-import { EngineTextField } from "@/types/engine/controls";
 import set from "lodash/set";
+
+import { EngineField } from "@/types/engine/EngineField";
+import { EngineTextField } from "@/types/engine/controls";
+
 import { variableRegexp } from "../../core/engine/utils";
 import { useResolveVariables } from "./useResolveVariables";
 

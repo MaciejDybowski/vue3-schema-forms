@@ -16,8 +16,8 @@
 
 <script setup lang="ts">
 import "flag-icons/css/flag-icons.min.css";
-import "v-phone-input/dist/v-phone-input.css";
 import { VPhoneInput } from "v-phone-input";
+import "v-phone-input/dist/v-phone-input.css";
 import { computed } from "vue";
 
 import { EnginePhoneField } from "@/types/engine/controls";

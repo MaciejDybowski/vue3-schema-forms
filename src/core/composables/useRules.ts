@@ -1,4 +1,6 @@
-import { EngineField, Validation } from "@/types/engine";
+import { EngineField } from "@/types/engine/EngineField";
+import { SchemaSimpleValidation } from "@/types/shared/SchemaSimpleValidation";
+
 import { useLocale } from "../../core/composables/useLocale";
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
@@ -23,7 +25,7 @@ export function useRules() {
     }
 
     if (schema.validations) {
-      schema.validations.forEach((item: Validation) => {
+      schema.validations.forEach((item: SchemaSimpleValidation) => {
         rules.push((value: string) => {
           if (new RegExp(item.regexp, "g").test(value)) {
             return true;

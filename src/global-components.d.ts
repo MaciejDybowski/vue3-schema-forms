@@ -1,6 +1,7 @@
-import components from "./components";
-import "@vue/runtime-core";
 import { FormErrorVisualization } from "@/components";
+import "@vue/runtime-core";
+
+import components from "./components";
 
 declare module "@vue/runtime-core" {
   export interface GlobalComponents {

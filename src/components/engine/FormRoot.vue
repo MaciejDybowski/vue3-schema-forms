@@ -13,14 +13,16 @@
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { EngineField, EngineOptions, NodeUpdateEvent } from "@/types/engine";
-import FormNode from "./FormNode.vue";
+import { EngineField } from "@/types/engine/EngineField";
+import { EngineOptions } from "@/types/engine/EngineOptions";
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
+import { Schema } from "@/types/schema/Schema";
+import { SchemaField } from "@/types/schema/SchemaField";
+import { SchemaOptions } from "@/types/schema/SchemaOptions";
 
 import { useResolveDependency } from "../../core/composables/useResolveDependency";
 import { variableRegexp } from "../../core/engine/utils";
-import { Schema } from "@/types/schema/Schema";
-import { SchemaOptions } from "@/types/schema/SchemaOptions";
-import { SchemaField } from "@/types/schema/SchemaField";
+import FormNode from "./FormNode.vue";
 
 const { locale, t } = useI18n();
 

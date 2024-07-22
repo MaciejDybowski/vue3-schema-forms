@@ -1,5 +1,6 @@
-import { ref, watch } from "vue";
 import set from "lodash/set";
+import { ref, watch } from "vue";
+
 import { functions } from "../engine/expressionResolver";
 
 export function useExpression(key: string, expression: string, model: object) {

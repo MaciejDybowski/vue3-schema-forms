@@ -1,7 +1,7 @@
-import { DisplayBreakpoint, useDisplay } from "vuetify";
 import { computed } from "vue";
+import { DisplayBreakpoint, useDisplay } from "vuetify";
 
-import { EngineField } from "@/types/engine";
+import { EngineField } from "@/types/engine/EngineField";
 import { Cols } from "@/types/shared/Cols";
 import { Layout } from "@/types/shared/Layout";
 
