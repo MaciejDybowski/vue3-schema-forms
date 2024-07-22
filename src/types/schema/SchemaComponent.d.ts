@@ -1,0 +1,17 @@
+export type SchemaComponent =
+  | "text-field"
+  | "duplicated-section"
+  | "static-content"
+  | "radio-button"
+  | "checkbox"
+  | "text-area"
+  | "select"
+  | "editable-section"
+  | "dictionary"
+  | "date-picker"
+  | "date-time-picker"
+  | "phone"
+  | "data-viewer"
+  | "location"
+  | "address"
+  | "button";

@@ -1,5 +1,5 @@
-import { Layout } from "../schema/elements";
 import { Component } from "vue";
+import { Layout } from "@/types/shared/Layout";
 
 export interface EngineField {
   formId: string;

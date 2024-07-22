@@ -2,7 +2,7 @@
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { Meta, StoryObj } from "@storybook/vue3";
 import { ArgTypes } from "@storybook/types";
-import { Schema } from "../types/schema";
+import { Schema } from "../types/schema/Schema";
 import { SchemaField } from "../types/schema/elements";
 
 const meta = {

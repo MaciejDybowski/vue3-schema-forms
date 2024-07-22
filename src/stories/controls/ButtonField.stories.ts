@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
-import { Schema } from "../../types/schema";
+import { Schema } from "../../types/schema/Schema";
 import { VueSchemaForms } from "@/components";
 
 const meta = {

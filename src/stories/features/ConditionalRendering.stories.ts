@@ -4,7 +4,7 @@ import { VueSchemaForms } from "@/components";
 import { conditionSchema } from "@/stories/schemas";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
-import { Schema } from "../../types/schema";
+import { Schema } from "../../types/schema/Schema";
 import { SchemaField, SchemaTextField } from "../../types/schema/elements";
 
 const meta = {

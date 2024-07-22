@@ -12,13 +12,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { Schema, SchemaOptions } from "@/types/schema";
 
 import { EngineField, EngineOptions, NodeUpdateEvent } from "@/types/engine";
 import FormNode from "./FormNode.vue";
-import { SchemaField } from "@/types/schema/elements";
+
 import { useResolveDependency } from "../../core/composables/useResolveDependency";
 import { variableRegexp } from "../../core/engine/utils";
+import { Schema } from "@/types/schema/Schema";
+import { SchemaOptions } from "@/types/schema/SchemaOptions";
+import { SchemaField } from "@/types/schema/SchemaField";
 
 const { locale, t } = useI18n();
 

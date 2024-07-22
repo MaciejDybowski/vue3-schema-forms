@@ -1,4 +1,4 @@
-import { Schema } from "../types/schema";
+import { Schema } from "../types/schema/Schema";
 import { SchemaTextField } from "../types/schema/elements";
 
 export const _10fieldSchema: Schema = {

@@ -1,6 +1,6 @@
-import { SimpleSource } from "@/types/schema/elements";
 import { ref, Ref } from "vue";
 import axios from "axios";
+import { SimpleSource } from "@/types/shared/Source";
 
 export function useSource(source: SimpleSource) {
   const title = source.title ? source.title : "title";

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
-import { Schema } from "../../types/schema";
+import { Schema } from "../../types/schema/Schema";
 import { VueSchemaForms } from "@/components";
 import { SchemaLocationField } from "../../types/schema/elements";
 import { StoryTemplateWithValidation } from "../templates/story-template";

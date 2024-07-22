@@ -1,17 +1,17 @@
 <template>
   <component
-    :is='schema.layout.tag'
-    v-if='resolvedContent.allVariablesResolved'
-    v-html='resolvedContent.resolvedText'
-    :class='bindClass(schema)'
+    :is="schema.layout.tag"
+    v-if="resolvedContent.allVariablesResolved"
+    v-html="resolvedContent.resolvedText"
+    :class="bindClass(schema)"
   />
 </template>
 
-<script setup lang='ts'>
-import { EngineStaticField } from '@/types/engine/controls';
-import { computed } from 'vue';
-import { useResolveVariables } from '@/core/composables';
-import { useClass } from '@/core/composables';
+<script setup lang="ts">
+import { EngineStaticField } from "@/types/engine/controls";
+import { computed } from "vue";
+import { useResolveVariables } from "@/core/composables";
+import { useClass } from "@/core/composables";
 
 const props = defineProps<{
   schema: EngineStaticField;
@@ -27,4 +27,4 @@ const resolvedContent = computed(() => {
 const { bindClass } = useClass();
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>

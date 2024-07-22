@@ -24,7 +24,7 @@ import { EngineField, NodeUpdateEvent } from "@/types/engine";
 import { computed, ref } from "vue";
 import FormRoot from "../../engine/FormRoot.vue";
 import set from "lodash/set";
-import { Schema } from "@/types/schema";
+import { Schema } from "@/types/schema/Schema";
 
 const props = defineProps<{
   schema: EngineField;

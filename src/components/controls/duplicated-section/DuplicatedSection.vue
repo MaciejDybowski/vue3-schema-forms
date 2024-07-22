@@ -55,7 +55,6 @@ import get from "lodash/get";
 import draggable from "vuedraggable";
 
 import { NodeUpdateEvent } from "@/types/engine";
-import { Schema } from "@/types/schema";
 
 import { EngineDuplicatedSection } from "@/types/engine/controls";
 import { v4 as uuidv4 } from "uuid";
@@ -64,11 +63,13 @@ import FormRoot from "../../engine/FormRoot.vue";
 import DraggableIcon from "./DraggableIcon.vue";
 import DraggableContextMenu from "./DraggableContextMenu.vue";
 import { useI18n } from "vue-i18n";
-import { DuplicatedSectionOptions, SchemaField } from "@/types/schema/elements";
 import { isArray } from "lodash";
 import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
 import set from "lodash/set";
-import { useFormModel } from "../../../core/composables";
+import { useFormModel } from "@/core/composables";
+import { Schema } from "@/types/schema/Schema";
+import { SchemaField } from "@/types/schema/SchemaField";
+import { DuplicatedSectionOptions } from "@/types/shared/DuplicatedSectionOptions";
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;

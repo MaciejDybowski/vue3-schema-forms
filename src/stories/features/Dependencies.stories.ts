@@ -2,7 +2,7 @@
 import { Meta, StoryObj } from "@storybook/vue3";
 import { VueSchemaForms } from "@/components";
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
-import { Schema, SchemaOptions } from "../../types/schema";
+import { Schema, SchemaOptions } from "../../types/schema/Schema";
 import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "../../types/schema/elements";
 import { REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI } from "@/stories/controls/Dictionary/responses";
 import { userEvent, within } from "@storybook/testing-library";

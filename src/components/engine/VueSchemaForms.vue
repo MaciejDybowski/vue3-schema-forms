@@ -26,7 +26,6 @@
 import { getCurrentInstance, onMounted, Ref, ref, watch } from "vue";
 
 import FormRoot from "./FormRoot.vue";
-import { Schema, SchemaOptions } from "@/types/schema";
 import set from "lodash/set";
 import { useI18n } from "vue-i18n";
 import { resolveSchemaWithLocale } from "../../core/engine/utils";
@@ -37,6 +36,8 @@ import { useFormModelStore } from "../../store/formModelStore";
 import { FormItem, ValidationBehaviour, ValidationError } from "@/types/engine/formValidation";
 import FormDefaultActions from "./validation/FormDefaultActions.vue";
 import { vueSchemaFromControls } from "@/components/controls";
+import { Schema } from "@/types/schema/Schema";
+import { SchemaOptions } from "@/types/schema/SchemaOptions";
 
 // register components to VueInstance if not installed yet by plugin options
 const instance = getCurrentInstance();

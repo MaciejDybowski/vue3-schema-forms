@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
-import { Schema } from "../../../types/schema";
+import { Schema } from "../../../types/schema/Schema";
 import { fireEvent, userEvent, within } from "@storybook/testing-library";
 import { VueSchemaForms } from "@/components";
 import { DictionarySource, SchemaSourceField } from "../../../types/schema/elements";

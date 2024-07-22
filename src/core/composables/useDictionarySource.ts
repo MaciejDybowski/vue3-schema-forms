@@ -1,5 +1,3 @@
-import { DictionarySource, ResponseReference } from "@/types/schema/elements";
-
 import { Pagination } from "../../components/controls/base/Pagination";
 import axios from "axios";
 import { Ref, ref, watch } from "vue";
@@ -10,6 +8,8 @@ import { variableRegexp } from "../../core/engine/utils";
 import { useFormModelStore } from "../../store/formModelStore";
 import { useResolveVariables } from "./useResolveVariables";
 import { EngineDictionaryField } from "@/types/engine/controls";
+import { DictionarySource } from "@/types/shared/Source";
+import { ResponseReference } from "@/types/shared/ResponseReference";
 
 export function useDictionarySource(field: EngineDictionaryField) {
   const { resolve } = useResolveVariables(field);
