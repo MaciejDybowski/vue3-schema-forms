@@ -1,24 +1,24 @@
 // @ts-nocheck
-import { ArgTypes } from "@storybook/types";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { ArgTypes } from '@storybook/types';
+import { Meta, StoryObj } from '@storybook/vue3';
 
-import DevelopmentTable from "../components/app/DevelopmentTable.vue";
-import { Schema } from "../types/schema/Schema";
-import { SchemaField } from "../types/schema/elements";
+import DevelopmentTable from '../components/app/DevelopmentTable.vue';
+import { Schema } from '../types/schema/Schema';
+
 
 const meta = {
-  title: "Development Page",
+  title: 'Development Page',
   component: DevelopmentTable,
   argTypes: {
-    schema: { control: "object", description: "Schema u" },
-    model: { control: "object", description: "Model" },
-    options: { control: "object", description: "Opcje" },
+    schema: { control: 'object', description: 'Schema u' },
+    model: { control: 'object', description: 'Model' },
+    options: { control: 'object', description: 'Opcje' },
   } as Partial<ArgTypes<any>>,
   args: {
     options: {
       fieldProps: {
-        variant: "outlined",
-        density: "comfortable",
+        variant: 'outlined',
+        density: 'comfortable',
       },
     },
     model: {},
@@ -30,18 +30,34 @@ type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
   args: {
-    model: { email: "2024-06-05T15:25:00.000+02:00" },
+    model: { firstName: 'Maciej' },
     schema: {
-      type: "object",
-      properties: {
-        email: {
-          label: "Adres e-mail",
-          layout: {
-            component: "text-field",
-            class: "au-test",
+      'type': 'object',
+      'properties': {
+        'conditional': {
+          'label': 'Editable',
+          'layout': {
+            'cols': { 'xs': 12, 'sm': 12, 'md': 12, 'lg': 12, 'xl': 12, 'xxl': 12 },
+            'offset': 0,
+            'fillRow': false,
+            'component': 'radio-button',
+            'props': {},
           },
-        } as SchemaField,
+          'source': { 'items': [{ 'value': false, 'title': 'Tak' }, { 'value': true, 'title': 'Nie' }] },
+        },
+        firstName: {
+          label: 'Imię',
+          layout: {
+            test: 'if(conditional==false,"text-field","text-area")',
+            component: 'text-field',
+            cols: 12,
+            // props: {
+            //   readonly: '{conditional}',
+            // },
+          },
+        },
       },
+      'required': [],
     } as Schema,
   },
 };
