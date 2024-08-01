@@ -3,7 +3,7 @@
     <v-text-field
       v-model="localModel"
       :label="label"
-      v-bind="bindProps(schema)"
+      v-bind="bindProps(schema, model)"
       :rules="rules(schema)"
       :class="bindClass(schema)"
       @focusout="focusout"

@@ -5,9 +5,10 @@ import { EngineTextField } from "@/types/engine/controls";
 
 import { variableRegexp } from "../../core/engine/utils";
 import { useResolveVariables } from "./useResolveVariables";
+import { useCustomIfExpression } from "@/core/composables/useCustomIfExpression";
 
 export function useProps() {
-  function bindProps(schema: EngineField) {
+  function bindProps(schema: EngineField, model: any = {}) {
     let props: Record<string, string | number | boolean> = {};
     const { resolve } = useResolveVariables(schema);
 
@@ -71,6 +72,14 @@ export function useProps() {
     }
 
     for (let [key, value] of Object.entries(props)) {
+
+      if(typeof value === "string" && value.includes("if")){
+
+        useCustomIfExpression(key, props, model)
+
+        console.debug(props[key])
+      }
+
       if (typeof value === "string" && variableRegexp.test(value)) {
         const obj = resolve(value);
         if (obj.allVariablesResolved) {

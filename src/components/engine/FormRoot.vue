@@ -23,6 +23,8 @@ import { SchemaOptions } from "@/types/schema/SchemaOptions";
 import { useResolveDependency } from "../../core/composables/useResolveDependency";
 import { variableRegexp } from "../../core/engine/utils";
 import FormNode from "./FormNode.vue";
+import set from "lodash/set";
+import { cloneDeep } from "lodash";
 
 const { locale, t } = useI18n();
 
@@ -73,7 +75,7 @@ onMounted(() => {
     useResolveDependency("digitsAfterDecimal", props.options.digitsAfterDecimal.slice(1, -1), props.model, props.options);
   }
 
-  nodes.value.push(...objectToArray(props.schema));
+  nodes.value.push(...objectToArray(cloneDeep(props.schema)));
 });
 </script>
 

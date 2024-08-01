@@ -1,11 +1,10 @@
 // @ts-nocheck
-import { REQUEST_NOT_LAZY, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
 import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { Schema } from "../types/schema/Schema";
-import { DictionarySource } from "../types/shared/Source";
+
 
 const meta = {
   title: "Development Page",
@@ -13,17 +12,17 @@ const meta = {
   argTypes: {
     schema: { control: "object", description: "Schema u" },
     model: { control: "object", description: "Model" },
-    options: { control: "object", description: "Opcje" },
+    options: { control: "object", description: "Opcje" }
   } as Partial<ArgTypes<any>>,
   args: {
     options: {
       fieldProps: {
         variant: "outlined",
-        density: "comfortable",
-      },
+        density: "comfortable"
+      }
     },
-    model: {},
-  },
+    model: {}
+  }
 } satisfies Meta<typeof DevelopmentTable>;
 
 export default meta;
@@ -31,31 +30,33 @@ type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
   args: {
-    model: {
-      currency: "Dol",
-    },
+    model: { firstName: "Maciej" },
     schema: {
-      type: "object",
-      properties: {
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
+      "type": "object",
+      "properties": {
+        "conditional": {
+          "label": "Editable",
+          "layout": {
+            "cols": { "xs": 12, "sm": 12, "md": 12, "lg": 12, "xl": 12, "xxl": 12 },
+            "offset": 0,
+            "fillRow": false,
+            "component": "radio-button",
+            "props": {}
           },
-          source: {
-            url: "/api/currencies",
-            title: "label",
-            value: "id",
-            description: "label",
-            returnObject: true,
-            singleOptionAutoSelect: true,
-          } as DictionarySource,
-        } as SchemaSourceField,
+          "source": { "items": [{ "value": false, "title": "Tak" }, { "value": true, "title": "Nie" }] }
+        },
+        firstName: {
+          label: "Imię",
+          layout: {
+            component: "text-field",
+            cols: 12,
+            props: {
+              test: `if(conditional==false,"true","false")`
+            }
+          }
+        }
       },
-      required: [],
-    } as Schema,
-  },
-  parameters: {
-    mockData: [REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL],
-  },
+      "required": []
+    } as Schema
+  }
 };
