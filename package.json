@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -22,9 +22,6 @@
     "test": "vitest",
     "publish:nexus": "npm publish --registry=https://nexus3.tecna.pl/repository/npm-private-releases"
   },
-  "pre-commit": [
-    "format"
-  ],
   "keywords": [
     "vue",
     "vuetify",
@@ -84,8 +81,6 @@
     "eslint": "^9.7.0",
     "eslint-plugin-storybook": "^0.8.0",
     "jsdom": "^24.1.1",
-    "pre-commit": "^1.2.2",
-    "pre-push": "^0.1.4",
     "prettier": "3.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -14,4 +14,5 @@ export type SchemaComponent =
   | "data-viewer"
   | "location"
   | "address"
-  | "button";
+  | "button"
+  | "switch";

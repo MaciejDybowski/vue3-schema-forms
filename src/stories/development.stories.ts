@@ -1,24 +1,23 @@
 // @ts-nocheck
-import { ArgTypes } from '@storybook/types';
-import { Meta, StoryObj } from '@storybook/vue3';
+import { ArgTypes } from "@storybook/types";
+import { Meta, StoryObj } from "@storybook/vue3";
 
-import DevelopmentTable from '../components/app/DevelopmentTable.vue';
-import { Schema } from '../types/schema/Schema';
-
+import DevelopmentTable from "../components/app/DevelopmentTable.vue";
+import { Schema } from "../types/schema/Schema";
 
 const meta = {
-  title: 'Development Page',
+  title: "Development Page",
   component: DevelopmentTable,
   argTypes: {
-    schema: { control: 'object', description: 'Schema u' },
-    model: { control: 'object', description: 'Model' },
-    options: { control: 'object', description: 'Opcje' },
+    schema: { control: "object", description: "Schema u" },
+    model: { control: "object", description: "Model" },
+    options: { control: "object", description: "Opcje" },
   } as Partial<ArgTypes<any>>,
   args: {
     options: {
       fieldProps: {
-        variant: 'outlined',
-        density: 'comfortable',
+        variant: "outlined",
+        density: "comfortable",
       },
     },
     model: {},
@@ -30,34 +29,32 @@ type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
   args: {
-    model: { firstName: 'Maciej' },
+    model: {},
     schema: {
-      'type': 'object',
-      'properties': {
-        'conditional': {
-          'label': 'Editable',
-          'layout': {
-            'cols': { 'xs': 12, 'sm': 12, 'md': 12, 'lg': 12, 'xl': 12, 'xxl': 12 },
-            'offset': 0,
-            'fillRow': false,
-            'component': 'radio-button',
-            'props': {},
-          },
-          'source': { 'items': [{ 'value': false, 'title': 'Tak' }, { 'value': true, 'title': 'Nie' }] },
-        },
-        firstName: {
-          label: 'Imię',
+      type: "object",
+      properties: {
+        textArea: {
+          label: "Change it!",
           layout: {
-            test: 'if(conditional==false,"text-field","text-area")',
-            component: 'text-field',
-            cols: 12,
-            // props: {
-            //   readonly: '{conditional}',
-            // },
+            component: "switch",
+            props: {
+              "true-value": "Maciek",
+              "false-value": "Magda",
+            },
+          },
+        },
+        textArea2: {
+          label: "Change it!",
+          layout: {
+            component: "switch",
+            props: {
+              "true-value": "Czesc",
+              "false-value": "Pa",
+            },
           },
         },
       },
-      'required': [],
+      required: [],
     } as Schema,
   },
 };

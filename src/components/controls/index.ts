@@ -9,6 +9,7 @@ import PhoneInput from "./PhoneInput.vue";
 import RadioButton from "./RadioButton.vue";
 import Select from "./Select.vue";
 import StaticContent from "./StaticContent.vue";
+import Switch from "./Switch.vue";
 import TextArea from "./TextArea.vue";
 import TextField from "./TextField.vue";
 import Address from "./address/Address.vue";
@@ -33,4 +34,5 @@ export const vueSchemaFromControls: Components = {
   location: Location,
   address: Address,
   button: ButtonField,
+  switch: Switch,
 };
