@@ -45,7 +45,6 @@ const localModel = computed({
 
 onMounted(() => {
   if (!("default" in props.schema)) {
-    console.debug(formSwitch.value[switchId].falseValue);
     let falseValue = formSwitch.value[switchId].falseValue;
     localModel.value = falseValue === undefined ? false : falseValue;
   }
