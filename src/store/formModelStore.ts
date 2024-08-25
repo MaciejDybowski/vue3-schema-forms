@@ -12,9 +12,7 @@ export const useFormModelStore = (formId: string) =>
       model.value = obj;
     }
 
-    const readyMap = ref({
-      test: false,
-    });
+    const readyMap = ref({});
     const isFromReady = computed(() => {
       return Object.values(readyMap.value).every((value) => value);
     });
