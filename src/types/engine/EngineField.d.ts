@@ -1,6 +1,6 @@
-import { EngineOptions } from "@/types/engine/EngineOptions";
-import { Layout } from "@/types/shared/Layout";
-import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
+import { EngineOptions } from '@/types/engine/EngineOptions';
+import { Layout } from '@/types/shared/Layout';
+import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
 
 export interface EngineField {
   formId: string;
@@ -17,4 +17,8 @@ export interface EngineField {
   type?: SchemaFieldType;
   layout: Layout;
   validations: any;
+
+  // conditional rendering in duplicated section
+  path?: string;
+  index?: number;
 }
