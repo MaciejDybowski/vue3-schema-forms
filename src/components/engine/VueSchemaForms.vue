@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import set from "lodash/set";
-import { Ref, getCurrentInstance, onMounted, ref, watch } from "vue";
+import { Ref, computed, getCurrentInstance, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { vueSchemaFromControls } from "@/components/controls";
@@ -71,6 +71,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: "update:modelValue", val: any): void;
+  (e: "isFormReady");
 }>();
 
 let loading = ref(true);
@@ -90,8 +91,16 @@ function updateModel(event: NodeUpdateEvent) {
 
   if (formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, props.modelValue);
+    console.debug(`[form ${formId}] is ready =>`, isFormReady.value);
+  }
+  if (isFormReady.value) {
+    emit("isFormReady");
   }
 }
+
+const isFormReady = computed(() => {
+  return formModelStore.isFromReady;
+});
 
 async function loadResolvedSchema() {
   loading.value = true;

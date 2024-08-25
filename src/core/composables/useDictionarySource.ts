@@ -34,11 +34,12 @@ export function useDictionarySource(field: EngineDictionaryField) {
 
   let endpoint = { resolvedText: source.url, allVariablesResolved: true }; // default wrapper object
 
+  const formModelStore = useFormModelStore(field.formId);
+
   const isApiContainsDependency = source.url.match(variableRegexp);
   if (isApiContainsDependency !== null) {
     endpoint = resolve(source.url);
 
-    const formModelStore = useFormModelStore(field.formId);
     formModelStore.$subscribe(() => {
       const temp = resolve(source.url);
       if (temp.resolvedText !== endpoint.resolvedText) {
@@ -63,12 +64,17 @@ export function useDictionarySource(field: EngineDictionaryField) {
         data.value.filter((item: any) => {
           return item[title] === value || Object.values(item).includes(value);
         }).length > 0;
-      queryInData ? debounced.load.cancel() : debounced.load();
+
+      let initFlag = value.length > 0 && data.value.length == 0;
+      queryInData ? debounced.load.cancel() : debounced.load(initFlag);
     }
   });
 
-  const load = async () => {
+  const load = async (onMountedCall: boolean = false) => {
     if (endpoint.allVariablesResolved) {
+      if (onMountedCall) {
+        formModelStore.updateReadyMap(field.key, false);
+      }
       loading.value = true;
       paginationOptions.value.resetPage();
       const { url, params } = prepareUrl();
@@ -87,6 +93,9 @@ export function useDictionarySource(field: EngineDictionaryField) {
       data.value = get(response.data, responseReference.data, []);
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
+      if (onMountedCall) {
+        formModelStore.updateReadyMap(field.key, true);
+      }
     } else {
       console.debug(`API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`);
     }

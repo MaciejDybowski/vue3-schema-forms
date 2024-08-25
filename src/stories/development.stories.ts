@@ -1,23 +1,25 @@
 // @ts-nocheck
-import { ArgTypes } from '@storybook/types';
-import { Meta, StoryObj } from '@storybook/vue3';
+import { REQUEST_NOT_LAZY, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
+import { ArgTypes } from "@storybook/types";
+import { Meta, StoryObj } from "@storybook/vue3";
 
-import DevelopmentTable from '../components/app/DevelopmentTable.vue';
-import { Schema } from '../types/schema/Schema';
+import DevelopmentTable from "../components/app/DevelopmentTable.vue";
+import { Schema } from "../types/schema/Schema";
+import { DictionarySource } from "../types/shared/Source";
 
 const meta = {
-  title: 'Development Page',
+  title: "Development Page",
   component: DevelopmentTable,
   argTypes: {
-    schema: { control: 'object', description: 'Schema u' },
-    model: { control: 'object', description: 'Model' },
-    options: { control: 'object', description: 'Opcje' },
+    schema: { control: "object", description: "Schema u" },
+    model: { control: "object", description: "Model" },
+    options: { control: "object", description: "Opcje" },
   } as Partial<ArgTypes<any>>,
   args: {
     options: {
       fieldProps: {
-        variant: 'outlined',
-        density: 'comfortable',
+        variant: "outlined",
+        density: "comfortable",
       },
     },
     model: {},
@@ -29,63 +31,31 @@ type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
   args: {
-    model: {},
+    model: {
+      currency: "Dol",
+    },
     schema: {
-      type: 'object',
-      'properties': {
-        'data': {
-          'properties': {
-            'test': {
-              'label': 'Test',
-              'layout': {
-                'component': 'text-field',
-                'cols': 3,
-              },
-            },
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
           },
-        },
-        'invoice': {
-          'properties': {
-            'items': {
-              'layout': {
-                'component': 'duplicated-section',
-                'schema': {
-                  'properties': {
-                    dane: {
-                      properties: {
-                        'someField': {
-                          'label': 'Item',
-                          'layout': {
-                            'component': 'text-field',
-                            'cols': 3,
-                          },
-                        },
-                        'someFieldWithIf': {
-                          'label': 'Some field with if',
-                          'layout': {
-                            'component': 'text-field',
-                            'cols': 3,
-                            'if': 'dane.someField=="root"',
-                          },
-                        },
-                        'someFieldWithIf2': {
-                          'label': 'Some field with if',
-                          'layout': {
-                            'component': 'text-field',
-                            'cols': 3,
-                            'if': 'data.test=="root"',
-                          },
-                        },
-                      }
-                    }
-                  },
-                },
-              },
-            },
-          },
-        },
+          source: {
+            url: "/api/currencies",
+            title: "label",
+            value: "id",
+            description: "label",
+            returnObject: true,
+            singleOptionAutoSelect: true,
+          } as DictionarySource,
+        } as SchemaSourceField,
       },
       required: [],
     } as Schema,
+  },
+  parameters: {
+    mockData: [REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL],
   },
 };
