@@ -1,6 +1,6 @@
-import { App, Component } from 'vue';
+import { App, Component } from "vue";
 
-import { vueSchemaFromControls } from '@/components/controls';
+import { vueSchemaFromControls } from "@/components/controls";
 
 import {
   useCalculation,
@@ -10,8 +10,8 @@ import {
   useDateTimeFormat,
   useDictionarySource,
   useExpression,
-  useFormattedNumber,
   useFormModel,
+  useFormattedNumber,
   useLabel,
   useLocale,
   useProps,
@@ -19,21 +19,21 @@ import {
   useResolveVariables,
   useRules,
   useSource,
-} from '@/core/composables';
-import { EngineField } from '@/types/engine/EngineField';
-import { SchemaField } from '@/types/schema/SchemaField';
-import { Schema } from '@/types/schema/Schema';
-import { SchemaComponent } from '@/types/schema/SchemaComponent';
-import { SchemaOptions } from '@/types/schema/SchemaOptions';
-import { Cols } from '@/types/shared/Cols';
-import { DuplicatedSectionOptions } from '@/types/shared/DuplicatedSectionOptions';
-import { Layout } from '@/types/shared/Layout';
-import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
-import { Source } from '@/types/shared/Source';
-import { StaticContentTag } from '@/types/shared/StaticContentTag';
-import { Translation } from '@/types/shared/Translation';
+} from "@/core/composables";
+import { EngineField } from "@/types/engine/EngineField";
+import { Schema } from "@/types/schema/Schema";
+import { SchemaComponent } from "@/types/schema/SchemaComponent";
+import { SchemaField } from "@/types/schema/SchemaField";
+import { SchemaOptions } from "@/types/schema/SchemaOptions";
+import { Cols } from "@/types/shared/Cols";
+import { DuplicatedSectionOptions } from "@/types/shared/DuplicatedSectionOptions";
+import { Layout } from "@/types/shared/Layout";
+import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
+import { Source } from "@/types/shared/Source";
+import { StaticContentTag } from "@/types/shared/StaticContentTag";
+import { Translation } from "@/types/shared/Translation";
 
-import * as components from '../src/components/index';
+import * as components from "../src/components/index";
 
 export declare type Components = Record<string, Component>;
 export let formUpdateLogger = false;
@@ -89,8 +89,18 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
 };
 
 export type {
-  EngineField, Schema, SchemaOptions, SchemaComponent, SchemaField,
-  Cols, DuplicatedSectionOptions, Layout, SchemaFieldType, Source, StaticContentTag, Translation,
+  EngineField,
+  Schema,
+  SchemaOptions,
+  SchemaComponent,
+  SchemaField,
+  Cols,
+  DuplicatedSectionOptions,
+  Layout,
+  SchemaFieldType,
+  Source,
+  StaticContentTag,
+  Translation,
 };
 export {
   useLabel,

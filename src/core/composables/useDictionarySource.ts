@@ -38,13 +38,13 @@ export function useDictionarySource(field: EngineDictionaryField) {
 
   const isApiContainsDependency = source.url.match(variableRegexp);
   if (isApiContainsDependency !== null) {
-    endpoint = resolve(source.url);
+    endpoint = resolve(source.url, title);
 
     formModelStore.$subscribe(() => {
-      const temp = resolve(source.url);
+      const temp = resolve(source.url, title);
       if (temp.resolvedText !== endpoint.resolvedText) {
         endpoint = temp;
-        debounced.load();
+        debounced.load("watcher");
       }
     });
   }
@@ -66,11 +66,12 @@ export function useDictionarySource(field: EngineDictionaryField) {
         }).length > 0;
 
       let initFlag = value.length > 0 && data.value.length == 0;
-      queryInData ? debounced.load.cancel() : debounced.load(initFlag);
+      queryInData ? debounced.load.cancel() : debounced.load("query", initFlag);
     }
   });
 
-  const load = async (onMountedCall: boolean = false) => {
+  const load = async (caller: string, onMountedCall: boolean = false) => {
+    //console.debug("CALLER = ", caller);
     if (endpoint.allVariablesResolved) {
       if (onMountedCall) {
         formModelStore.updateReadyMap(field.key, false);
@@ -93,8 +94,10 @@ export function useDictionarySource(field: EngineDictionaryField) {
       data.value = get(response.data, responseReference.data, []);
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
-      if (onMountedCall) {
-        formModelStore.updateReadyMap(field.key, true);
+
+      if (onMountedCall && data.value.length > 1) {
+        //console.debug("ustawiam true true");
+        formModelStore.updateReadyMap(field.key, true, true);
       }
     } else {
       console.debug(`API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`);

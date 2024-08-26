@@ -13,7 +13,7 @@ export function useResolveVariables(field: EngineField) {
   const { formatNumber } = useFormattedNumber(field.options);
   const { dateFormat } = useDateFormat();
 
-  function resolve(inputString: string) {
+  function resolve(inputString: string, title: string = "title") {
     let allVariablesResolved = true;
 
     inputString?.match(variableRegexp)?.forEach((match: string) => {
@@ -29,6 +29,9 @@ export function useResolveVariables(field: EngineField) {
       }
       if (typeof value === "string" && dayjs(value).isValid() && value.length >= 10) {
         value = dayjs(value).format(dateFormat.value);
+      }
+      if (typeof value == "object" && value !== null) {
+        value = value[title];
       }
 
       if (!value) {

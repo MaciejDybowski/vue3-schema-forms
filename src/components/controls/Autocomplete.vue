@@ -35,6 +35,7 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from "vue";
 
+import { useFormModelStore } from "@/store/formModelStore";
 import { EngineDictionaryField } from "@/types/engine/controls";
 
 import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
@@ -80,16 +81,22 @@ const {
   singleOptionAutoSelect,
 } = useDictionarySource(props.schema);
 
+const formModelStore = useFormModelStore(props.schema.formId);
+
 onMounted(async () => {
-  localModel.value ? updateQuery(localModel.value) : await load(true);
+  localModel.value ? updateQuery(localModel.value) : await load("autocomplete", true);
 
   if (data.value.length === 1 && singleOptionAutoSelect) {
     localModel.value = data.value[0];
+    formModelStore.updateReadyMap(props.schema.key, true);
   }
 
   watch(data, () => {
     if (data.value.length === 1 && singleOptionAutoSelect) {
-      localModel.value = data.value[0];
+      if (JSON.stringify(localModel.value) !== JSON.stringify(data.value[0])) {
+        localModel.value = data.value[0];
+        formModelStore.updateReadyMap(props.schema.key, true);
+      }
     }
   });
 });

@@ -87,7 +87,7 @@ async function resolveIfDictionary() {
   if ("source" in props.schema && props.schema.source && "url" in props.schema.source) {
     const { data, load, singleOptionAutoSelect } = useDictionarySource(props.schema as EngineDictionaryField);
 
-    await load();
+    await load("dataViewer");
 
     if (data.value.length === 1 && singleOptionAutoSelect) {
       localModel.value = data.value[0];

@@ -14,12 +14,35 @@ export const useFormModelStore = (formId: string) =>
 
     const readyMap = ref({});
     const isFromReady = computed(() => {
-      return Object.values(readyMap.value).every((value) => value);
+      if (Object.values(readyMap.value).length == 0) {
+        return true;
+      }
+      // @ts-ignore
+      return Object.values(readyMap.value).every(({ load, update }) => load && update);
     });
 
-    function updateReadyMap(key: string, value: boolean) {
-      readyMap.value[key] = value;
+    function updateReadyMap(key: string, value: boolean, noRequireWaitForUpdate: boolean = false) {
+      //console.debug("updateReadyMapCall", key, value);
+      if (key in readyMap.value) {
+        readyMap.value[key].load = value;
+        if (noRequireWaitForUpdate) {
+          readyMap.value[key].update = noRequireWaitForUpdate;
+        }
+      } else {
+        readyMap.value[key] = { load: value, update: noRequireWaitForUpdate };
+      }
+      //console.debug(readyMap.value, isFromReady.value);
     }
 
-    return { model, getFormModel, updateFormModel, isFromReady, updateReadyMap };
+    function updateReadyMapUpdate(key: string, value: any) {
+      if (typeof value == "object") {
+        //console.debug("updateReadyMapUpdateCall", key);
+        if (key in readyMap.value) {
+          readyMap.value[key].update = true;
+        }
+        //console.debug(readyMap.value, isFromReady.value);
+      }
+    }
+
+    return { model, getFormModel, updateFormModel, isFromReady, updateReadyMap, updateReadyMapUpdate };
   })();

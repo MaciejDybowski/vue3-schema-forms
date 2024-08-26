@@ -83,18 +83,22 @@ const formRef = ref({});
 const formValid = ref(false);
 const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
 const formModelStore = useFormModelStore(formId);
+const formReadySignalSent = ref(false);
 
 function updateModel(event: NodeUpdateEvent) {
   set(props.modelValue, event.key, event.value);
-  emit("update:modelValue", props.modelValue);
   formModelStore.updateFormModel(props.modelValue);
+  emit("update:modelValue", props.modelValue);
+
+  formModelStore.updateReadyMapUpdate(event.key, event.value);
+  if (isFormReady.value && !formReadySignalSent.value) {
+    emit("isFormReady");
+    formReadySignalSent.value = true;
+  }
 
   if (formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, props.modelValue);
     console.debug(`[form ${formId}] is ready =>`, isFormReady.value);
-  }
-  if (isFormReady.value) {
-    emit("isFormReady");
   }
 }
 
