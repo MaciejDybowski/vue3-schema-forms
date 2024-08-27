@@ -87,13 +87,14 @@ const formModelStore = useFormModelStore(formId);
 const formReadySignalSent = ref(false);
 
 const debounced = {
-  formIsReady: debounce(formIsReady, 600),
+  formIsReady: debounce(formIsReady, 3000),
 };
 
 function formIsReady() {
   if (!formReadySignalSent.value) {
     emit("isFormReady");
     formReadySignalSent.value = true;
+    console.debug("form is ready !!");
   }
 }
 
@@ -133,6 +134,7 @@ watch(
 onMounted(async () => {
   formModelStore.updateFormModel(props.modelValue);
   await loadResolvedSchema();
+  debounced.formIsReady();
 });
 
 async function validate(option?: ValidationFromBehaviour) {
