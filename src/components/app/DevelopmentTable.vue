@@ -7,6 +7,7 @@
       :options="options"
       :default-form-actions="true"
       :validation-behaviour="'messages'"
+      @is-form-ready="startWatcher"
     >
       <!--      <template #formActions>-->
       <!--        <v-row>-->
@@ -53,6 +54,10 @@ let myForm = ref();
 async function validate() {
   const { valid } = await myForm.value.validate();
   window.alert(`Validation result: ${valid}`);
+}
+
+function startWatcher() {
+  console.debug("Form is ready");
 }
 </script>
 

@@ -23,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import { debounce } from "lodash";
 import set from "lodash/set";
 import { Ref, computed, getCurrentInstance, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -85,20 +86,29 @@ const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
 const formModelStore = useFormModelStore(formId);
 const formReadySignalSent = ref(false);
 
+const debounced = {
+  formIsReady: debounce(formIsReady, 600),
+};
+
+function formIsReady() {
+  if (!formReadySignalSent.value) {
+    emit("isFormReady");
+    formReadySignalSent.value = true;
+  }
+}
+
 function updateModel(event: NodeUpdateEvent) {
+  debounced.formIsReady.cancel();
   set(props.modelValue, event.key, event.value);
   formModelStore.updateFormModel(props.modelValue);
   emit("update:modelValue", props.modelValue);
 
-  formModelStore.updateReadyMapUpdate(event.key, event.value);
-  if (isFormReady.value && !formReadySignalSent.value) {
-    emit("isFormReady");
-    formReadySignalSent.value = true;
-  }
+  //formModelStore.updateReadyMapUpdate(event.key, event.value);
+  debounced.formIsReady();
 
   if (formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, props.modelValue);
-    console.debug(`[form ${formId}] is ready =>`, isFormReady.value);
+    //console.debug(`[form ${formId}] is ready =>`, isFormReady.value);
   }
 }
 

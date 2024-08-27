@@ -1,37 +1,38 @@
-import { cloneDeep } from "lodash";
-import { watch } from "vue";
-import get from "lodash/get";
 import { Expression, Value } from "expr-eval";
-import betterParser from "@/core/engine/evalExprParser";
+import { cloneDeep } from "lodash";
+import get from "lodash/get";
 import set from "lodash/set";
+import { watch } from "vue";
+
+import betterParser from "@/core/engine/evalExprParser";
 
 export function useCustomIfExpression(keyToResolve: string, object: any, model: any) {
-  console.debug(keyToResolve)
+  //console.debug(keyToResolve)
 
   if (object[keyToResolve].includes("if") || `${keyToResolve}Expression` in object) {
     object[`${keyToResolve}Expression`] = cloneDeep(object[keyToResolve]);
 
+    watch(
+      model,
+      () => {
+        //console.debug("jestem w watch")
+        const result = parseIfStatement(object[`${keyToResolve}Expression`]);
+        let ifResult = false;
+        let myExpr: Expression = betterParser.parse(result?.wyrazenie as string);
 
+        if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
+          ifResult = myExpr.evaluate(model as Value);
+        }
 
-    watch(model, () => {
-      console.debug("jestem w watch")
-      const result = parseIfStatement(object[`${keyToResolve}Expression`]);
-      let ifResult = false;
-      let myExpr: Expression = betterParser.parse(result?.wyrazenie as string);
+        const newValue = ifResult ? result?.prawda : result?.falsz;
+        // console.debug("newValue", newValue)
+        //object[keyToResolve] = newValue.slice(1, -1);
 
-      if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
-        ifResult = myExpr.evaluate(model as Value);
-      }
-
-      const newValue = ifResult ? result?.prawda : result?.falsz;
-      console.debug("newValue", newValue)
-      //object[keyToResolve] = newValue.slice(1, -1);
-
-      set(object,keyToResolve, newValue.slice(1,-1))
-      console.debug("w funkcji",object)
-
-    }, { deep: true });
-
+        set(object, keyToResolve, newValue.slice(1, -1));
+        //console.debug("w funkcji",object)
+      },
+      { deep: true },
+    );
   }
 
   function parseIfStatement(input) {

@@ -77,7 +77,7 @@ export function useProps() {
 
         useCustomIfExpression(key, props, model)
 
-        console.debug(props[key])
+        //console.debug(props[key])
       }
 
       if (typeof value === "string" && variableRegexp.test(value)) {
