@@ -30,7 +30,7 @@ const props = defineProps<{
   model: object;
 }>();
 
-useCustomIfExpression("component", props.schema.layout, props.model);
+useCustomIfExpression("component", props.schema.layout, props.schema);
 
 const { shouldRender } = useConditionalRendering(props.schema);
 const { cols, completionOfRow, isOffsetExist, offset, fillRow, hideField } = useSchemaCols(props.schema);

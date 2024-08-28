@@ -74,10 +74,7 @@ export function useProps() {
     for (let [key, value] of Object.entries(props)) {
 
       if(typeof value === "string" && value.includes("if")){
-
-        useCustomIfExpression(key, props, model)
-
-        //console.debug(props[key])
+        useCustomIfExpression(key, props, schema)
       }
 
       if (typeof value === "string" && variableRegexp.test(value)) {

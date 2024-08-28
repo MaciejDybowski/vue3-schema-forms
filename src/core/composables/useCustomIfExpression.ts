@@ -2,37 +2,51 @@ import { Expression, Value } from "expr-eval";
 import { cloneDeep } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
-import { watch } from "vue";
 
 import betterParser from "@/core/engine/evalExprParser";
+import { EngineField } from "@/types/engine/EngineField";
+import { useFormModelStore } from "@/store/formModelStore";
+import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
 
-export function useCustomIfExpression(keyToResolve: string, object: any, model: any) {
-  //console.debug(keyToResolve)
+export function useCustomIfExpression(keyToResolve: string, object: any, schema: EngineField) {
+  const formModelStore = useFormModelStore(schema.formId);
+  //console.debug(keyToResolve, object, object[keyToResolve].includes("if"));
 
   if (object[keyToResolve].includes("if") || `${keyToResolve}Expression` in object) {
     object[`${keyToResolve}Expression`] = cloneDeep(object[keyToResolve]);
 
-    watch(
-      model,
-      () => {
-        //console.debug("jestem w watch")
-        const result = parseIfStatement(object[`${keyToResolve}Expression`]);
-        let ifResult = false;
-        let myExpr: Expression = betterParser.parse(result?.wyrazenie as string);
+    let modelExpression = usePreparedModelForExpression(schema);
+    tryResolveIfExpression(modelExpression);
 
-        if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
-          ifResult = myExpr.evaluate(model as Value);
-        }
+    formModelStore.$subscribe(() => {
+      modelExpression = usePreparedModelForExpression(schema);
+      tryResolveIfExpression(modelExpression);
+    });
+  }
 
-        const newValue = ifResult ? result?.prawda : result?.falsz;
-        // console.debug("newValue", newValue)
-        //object[keyToResolve] = newValue.slice(1, -1);
 
-        set(object, keyToResolve, newValue.slice(1, -1));
-        //console.debug("w funkcji",object)
-      },
-      { deep: true },
-    );
+  function tryResolveIfExpression(model: any) {
+    console.debug(`[if-resolver] => field = ${keyToResolve}`);
+    const result = parseIfStatement(object[`${keyToResolve}Expression`]);
+    let ifResult = false;
+    let myExpr: Expression = betterParser.parse(result?.wyrazenie as string);
+
+    console.debug(myExpr.variables({ withMembers: true }));
+    console.debug(model);
+    if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
+      ifResult = myExpr.evaluate(model as Value);
+    }
+
+    //console.debug(myExpr)
+    let newValue = ifResult ? result?.prawda : result?.falsz;
+    //console.debug("newValue", newValue)
+    // object[keyToResolve] = newValue.slice(1, -1);
+    if (newValue == "true" || newValue == "false") {
+      newValue = newValue == "true";
+    }
+
+    set(object, keyToResolve, newValue);
+    //console.debug("After set", object)
   }
 
   function parseIfStatement(input) {

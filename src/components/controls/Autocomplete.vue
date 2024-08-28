@@ -81,21 +81,17 @@ const {
   singleOptionAutoSelect,
 } = useDictionarySource(props.schema);
 
-const formModelStore = useFormModelStore(props.schema.formId);
-
 onMounted(async () => {
-  localModel.value ? updateQuery(localModel.value) : await load("autocomplete", true);
+  localModel.value ? updateQuery(localModel.value) : await load("autocomplete");
 
   if (data.value.length === 1 && singleOptionAutoSelect) {
     localModel.value = data.value[0];
-    formModelStore.updateReadyMap(props.schema.key, true);
   }
 
   watch(data, () => {
     if (data.value.length === 1 && singleOptionAutoSelect) {
       if (JSON.stringify(localModel.value) !== JSON.stringify(data.value[0])) {
         localModel.value = data.value[0];
-        formModelStore.updateReadyMap(props.schema.key, true);
       }
     }
   });

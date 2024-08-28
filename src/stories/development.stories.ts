@@ -30,28 +30,39 @@ type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
   args: {
-    model: { firstName: "Maciej" },
+    model: { waluta: { value: "PLN", "title": "Polski złoty" } },
     schema: {
       "type": "object",
       "properties": {
-        "conditional": {
-          "label": "Editable",
-          "layout": {
-            "cols": { "xs": 12, "sm": 12, "md": 12, "lg": 12, "xl": 12, "xxl": 12 },
-            "offset": 0,
-            "fillRow": false,
-            "component": "radio-button",
-            "props": {}
-          },
-          "source": { "items": [{ "value": false, "title": "Tak" }, { "value": true, "title": "Nie" }] }
-        },
-        firstName: {
-          label: "Imię",
+        waluta: {
+          "label": "Waluta",
           layout: {
-            component: "text-field",
-            cols: 12,
-            props: {
-              test: `if(conditional==false,"true","false")`
+            component: "radio-button"
+          },
+          "source": {
+            "items": [
+              { "value": "PLN", "title": "Polski złoty" },
+              { "value": "EUR", "title": "Euro" }
+            ],
+            returnObject: true
+          }
+        },
+        section: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                "kwotaNetto": {
+                  "label": "Kwota netto",
+                  "layout": {
+                    "component": "text-field",
+                    "props": {
+                      "persistent-hint": "if(waluta.value!='PLN',true,false)",
+                      "hint": "Kwota netto PLN: {kwotaNettoPln:0}"
+                    }
+                  },
+                }
+              }
             }
           }
         }

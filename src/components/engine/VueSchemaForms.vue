@@ -87,35 +87,30 @@ const formModelStore = useFormModelStore(formId);
 const formReadySignalSent = ref(false);
 
 const debounced = {
-  formIsReady: debounce(formIsReady, 3000),
+  formIsReady: (WAIT: number = 800) => debounce(formIsReady, WAIT),
 };
 
 function formIsReady() {
   if (!formReadySignalSent.value) {
     emit("isFormReady");
     formReadySignalSent.value = true;
-    console.debug("form is ready !!");
+    if (formUpdateLogger) {
+      console.debug(`[form ${formId}] sent ready signal`);
+    }
   }
 }
 
 function updateModel(event: NodeUpdateEvent) {
-  debounced.formIsReady.cancel();
+  debounced.formIsReady().cancel();
   set(props.modelValue, event.key, event.value);
   formModelStore.updateFormModel(props.modelValue);
   emit("update:modelValue", props.modelValue);
 
-  //formModelStore.updateReadyMapUpdate(event.key, event.value);
   debounced.formIsReady();
-
   if (formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, props.modelValue);
-    //console.debug(`[form ${formId}] is ready =>`, isFormReady.value);
   }
 }
-
-const isFormReady = computed(() => {
-  return formModelStore.isFromReady;
-});
 
 async function loadResolvedSchema() {
   loading.value = true;
@@ -134,7 +129,7 @@ watch(
 onMounted(async () => {
   formModelStore.updateFormModel(props.modelValue);
   await loadResolvedSchema();
-  debounced.formIsReady();
+  debounced.formIsReady(3000);
 });
 
 async function validate(option?: ValidationFromBehaviour) {
