@@ -10,6 +10,8 @@
 </template>
 
 <script setup lang="ts">
+import { cloneDeep } from "lodash";
+import set from "lodash/set";
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -23,8 +25,6 @@ import { SchemaOptions } from "@/types/schema/SchemaOptions";
 import { useResolveDependency } from "../../core/composables/useResolveDependency";
 import { variableRegexp } from "../../core/engine/utils";
 import FormNode from "./FormNode.vue";
-import set from "lodash/set";
-import { cloneDeep } from "lodash";
 
 const { locale, t } = useI18n();
 

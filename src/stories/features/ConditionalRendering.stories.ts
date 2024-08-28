@@ -219,4 +219,3 @@ export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
     } as Schema,
   },
 };
-

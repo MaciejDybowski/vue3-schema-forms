@@ -3,10 +3,10 @@ import { cloneDeep } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
 
-import betterParser from "@/core/engine/evalExprParser";
-import { EngineField } from "@/types/engine/EngineField";
-import { useFormModelStore } from "@/store/formModelStore";
 import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
+import betterParser from "@/core/engine/evalExprParser";
+import { useFormModelStore } from "@/store/formModelStore";
+import { EngineField } from "@/types/engine/EngineField";
 
 export function useCustomIfExpression(keyToResolve: string, object: any, schema: EngineField) {
   const formModelStore = useFormModelStore(schema.formId);
@@ -23,7 +23,6 @@ export function useCustomIfExpression(keyToResolve: string, object: any, schema:
       tryResolveIfExpression(modelExpression);
     });
   }
-
 
   function tryResolveIfExpression(model: any) {
     console.debug(`[if-resolver] => field = ${keyToResolve}`);

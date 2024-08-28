@@ -1,11 +1,11 @@
 import set from "lodash/set";
 
+import { useCustomIfExpression } from "@/core/composables/useCustomIfExpression";
 import { EngineField } from "@/types/engine/EngineField";
 import { EngineTextField } from "@/types/engine/controls";
 
 import { variableRegexp } from "../../core/engine/utils";
 import { useResolveVariables } from "./useResolveVariables";
-import { useCustomIfExpression } from "@/core/composables/useCustomIfExpression";
 
 export function useProps() {
   function bindProps(schema: EngineField, model: any = {}) {
@@ -72,9 +72,8 @@ export function useProps() {
     }
 
     for (let [key, value] of Object.entries(props)) {
-
-      if(typeof value === "string" && value.includes("if")){
-        useCustomIfExpression(key, props, schema)
+      if (typeof value === "string" && value.includes("if")) {
+        useCustomIfExpression(key, props, schema);
       }
 
       if (typeof value === "string" && variableRegexp.test(value)) {

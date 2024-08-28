@@ -1,29 +1,28 @@
 <template>
   <v-col
-    :class='layoutCssClass'
-    v-if='shouldRender'
-    :cols='cols'
-    v-show='hideField'
-    :style='mr'
+    :class="layoutCssClass"
+    v-if="shouldRender"
+    :cols="cols"
+    v-show="hideField"
+    :style="mr"
   >
     <component
       v-if="!schema.layout.component.includes('if')"
-      :is='`node-${schema.layout.component}`'
-      :schema='schema'
-      :model='model'
+      :is="`node-${schema.layout.component}`"
+      :schema="schema"
+      :model="model"
     />
   </v-col>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed } from "vue";
 
+import { useCustomIfExpression } from "@/core/composables/useCustomIfExpression";
 import { EngineField } from "@/types/engine/EngineField";
 
 import { useConditionalRendering } from "../../core/composables/useConditionalRendering";
 import { useSchemaCols } from "../../core/composables/useSchemaCols";
-import { useCustomIfExpression } from "@/core/composables/useCustomIfExpression";
-
 
 const props = defineProps<{
   schema: EngineField;
@@ -50,13 +49,11 @@ const mr = computed(() => {
     return `margin-right: ${((12 - (offset + cols.value)) / 12) * 100}%!important`;
   }
 });
-
-
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>
 
-<i18n lang='json'>
+<i18n lang="json">
 {
   "en": {},
   "pl": {}

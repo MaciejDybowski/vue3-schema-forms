@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { VueSchemaForms } from "@/components";
+import { expect } from "@storybook/jest";
+import { userEvent, within } from "@storybook/testing-library";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
-import { userEvent, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
 
 const meta = {
   title: "Forms/Features/If expression",
@@ -13,25 +13,25 @@ const meta = {
   argTypes: {
     schema: {
       control: "object",
-      description: "Schema u" /*table: { disable: true }*/
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
       control: "object",
-      description: "Model" /*table: { disable: true }*/
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
       control: "object",
-      description: "Opcje" /*table: { disable: true }*/
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    "update:modelValue": { table: { disable: true } }
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
-    options: {}
+    options: {},
   },
   parameters: {
-    controls: { hideNoControlsWarning: true } //https://github.com/storybookjs/storybook/issues/24422
-  }
+    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
+  },
 } satisfies Meta<typeof VueSchemaForms>;
 
 export default meta;
@@ -54,25 +54,30 @@ export const OnComponentSimpleField: Story = {
   args: {
     modelValue: {},
     schema: {
-      "type": "object",
-      "properties": {
-        "conditional": {
-          "label": "Choose component",
-          "layout": {
-            "component": "radio-button"
+      type: "object",
+      properties: {
+        conditional: {
+          label: "Choose component",
+          layout: {
+            component: "radio-button",
           },
-          "source": { "items": [{ "value": false, "title": "Text area" }, { "value": true, "title": "Text field" }] }
+          source: {
+            items: [
+              { value: false, title: "Text area" },
+              { value: true, title: "Text field" },
+            ],
+          },
         },
         fieldA: {
           label: "Field A",
           layout: {
-            component: "if(conditional==false,text-area,text-field)"
-          }
-        }
+            component: "if(conditional==false,text-area,text-field)",
+          },
+        },
       },
-      "required": []
-    } as Schema
-  }
+      required: [],
+    } as Schema,
+  },
 };
 
 export const OnComponentIfInDuplicatedSection: Story = {
@@ -91,14 +96,19 @@ export const OnComponentIfInDuplicatedSection: Story = {
   args: {
     modelValue: {},
     schema: {
-      "type": "object",
-      "properties": {
-        "conditional": {
-          "label": "Choose component",
-          "layout": {
-            "component": "radio-button"
+      type: "object",
+      properties: {
+        conditional: {
+          label: "Choose component",
+          layout: {
+            component: "radio-button",
           },
-          "source": { "items": [{ "value": false, "title": "Text area" }, { "value": true, "title": "Text field" }] }
+          source: {
+            items: [
+              { value: false, title: "Text area" },
+              { value: true, title: "Text field" },
+            ],
+          },
         },
         section: {
           layout: {
@@ -108,115 +118,114 @@ export const OnComponentIfInDuplicatedSection: Story = {
                 fieldA: {
                   label: "Field A",
                   layout: {
-                    component: "if(conditional==false,text-area,text-field)"
-                  }
-                }
-              }
-            }
-          }
-        }
+                    component: "if(conditional==false,text-area,text-field)",
+                  },
+                },
+              },
+            },
+          },
+        },
       },
-      "required": []
-    } as Schema
-  }
+      required: [],
+    } as Schema,
+  },
 };
 
 export const OnPropsSimpleField: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    let hint = document.getElementsByClassName("v-messages")
+    let hint = document.getElementsByClassName("v-messages");
     await expect(hint.length).toEqual(0);
 
     const option2 = canvas.getByLabelText("Euro");
     await userEvent.click(option2, { delay: 200 });
-    hint = document.getElementsByClassName("v-messages")
+    hint = document.getElementsByClassName("v-messages");
     await expect(hint.length).toEqual(1);
-
   },
   args: {
-    modelValue: { waluta: { value: "PLN", "title": "Polski złoty" } },
+    modelValue: { waluta: { value: "PLN", title: "Polski złoty" } },
     schema: {
-      "type": "object",
-      "properties": {
+      type: "object",
+      properties: {
         waluta: {
-          "label": "Waluta",
+          label: "Waluta",
           layout: {
-            component: "radio-button"
+            component: "radio-button",
           },
-          "source": {
-            "items": [
-              { "value": "PLN", "title": "Polski złoty" },
-              { "value": "EUR", "title": "Euro" }
+          source: {
+            items: [
+              { value: "PLN", title: "Polski złoty" },
+              { value: "EUR", title: "Euro" },
             ],
-            returnObject: true
-          }
+            returnObject: true,
+          },
         },
-        "kwotaNetto": {
-          "label": "Kwota netto",
-          "layout": {
-            "component": "text-field",
-            "props": {
+        kwotaNetto: {
+          label: "Kwota netto",
+          layout: {
+            component: "text-field",
+            props: {
               "persistent-hint": "if(waluta.value!='PLN',true,false)",
-              "hint": "Kwota netto PLN: {kwotaNettoPln:0}"
-            }
-          }
-        }
+              hint: "Kwota netto PLN: {kwotaNettoPln:0}",
+            },
+          },
+        },
       },
-      "required": []
-    } as Schema
-  }
+      required: [],
+    } as Schema,
+  },
 };
 
 export const OnPropsIfInDuplicatedSection: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    let hint = document.getElementsByClassName("v-messages")
+    let hint = document.getElementsByClassName("v-messages");
     await expect(hint.length).toEqual(0);
 
     const option2 = canvas.getByLabelText("Euro");
     await userEvent.click(option2, { delay: 200 });
-    hint = document.getElementsByClassName("v-messages")
+    hint = document.getElementsByClassName("v-messages");
     await expect(hint.length).toEqual(1);
   },
   args: {
-    modelValue: { waluta: { value: "PLN", "title": "Polski złoty" } },
+    modelValue: { waluta: { value: "PLN", title: "Polski złoty" } },
     schema: {
-      "type": "object",
-      "properties": {
+      type: "object",
+      properties: {
         waluta: {
-          "label": "Waluta",
+          label: "Waluta",
           layout: {
-            component: "radio-button"
+            component: "radio-button",
           },
-          "source": {
-            "items": [
-              { "value": "PLN", "title": "Polski złoty" },
-              { "value": "EUR", "title": "Euro" }
+          source: {
+            items: [
+              { value: "PLN", title: "Polski złoty" },
+              { value: "EUR", title: "Euro" },
             ],
-            returnObject: true
-          }
+            returnObject: true,
+          },
         },
         section: {
           layout: {
             component: "duplicated-section",
             schema: {
               properties: {
-                "kwotaNetto": {
-                  "label": "Kwota netto",
-                  "layout": {
-                    "component": "text-field",
-                    "props": {
+                kwotaNetto: {
+                  label: "Kwota netto",
+                  layout: {
+                    component: "text-field",
+                    props: {
                       "persistent-hint": "if(waluta.value!='PLN',true,false)",
-                      "hint": "Kwota netto PLN: {kwotaNettoPln:0}"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                      hint: "Kwota netto PLN: {kwotaNettoPln:0}",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
-      "required": []
-    } as Schema
-  }
+      required: [],
+    } as Schema,
+  },
 };

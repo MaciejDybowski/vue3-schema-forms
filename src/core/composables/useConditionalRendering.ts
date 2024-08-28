@@ -2,11 +2,11 @@ import { Expression, Value } from "expr-eval";
 import get from "lodash/get";
 import { ref } from "vue";
 
+import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
 import { EngineField } from "@/types/engine/EngineField";
 
 import { useFormModelStore } from "../../store/formModelStore";
 import betterParser from "../engine/evalExprParser";
-import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
 
 export function useConditionalRendering(schema: EngineField) {
   const formModelStore = useFormModelStore(schema.formId);
@@ -28,8 +28,6 @@ export function useConditionalRendering(schema: EngineField) {
       }
     });
   }
-
-
 
   return { shouldRender };
 }
