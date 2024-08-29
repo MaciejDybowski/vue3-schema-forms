@@ -87,7 +87,7 @@ const formModelStore = useFormModelStore(formId);
 const formReadySignalSent = ref(false);
 
 const debounced = {
-  formIsReady: (WAIT: number = 800) => debounce(formIsReady, WAIT),
+  formIsReady: (WAIT: number = 1500) => debounce(formIsReady, WAIT),
 };
 
 function formIsReady() {
@@ -106,7 +106,7 @@ function updateModel(event: NodeUpdateEvent) {
   formModelStore.updateFormModel(props.modelValue);
   emit("update:modelValue", props.modelValue);
 
-  debounced.formIsReady();
+  debounced.formIsReady()();
   if (formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, props.modelValue);
   }
@@ -129,7 +129,7 @@ watch(
 onMounted(async () => {
   formModelStore.updateFormModel(props.modelValue);
   await loadResolvedSchema();
-  debounced.formIsReady(3000);
+  debounced.formIsReady(3000)();
 });
 
 async function validate(option?: ValidationFromBehaviour) {
