@@ -247,7 +247,7 @@ export const UseDependenciesInLabel: Story = {
                 component: "text-field",
                 cols: 4,
               },
-              calculation: "SUM(value, data.items) - 300",
+              calculation: "SUM(value,data.items) - 300",
               type: "number",
             } as SchemaTextField,
           },

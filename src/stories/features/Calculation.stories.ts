@@ -293,7 +293,7 @@ export const SUM_function: Story = {
                 component: "text-field",
                 cols: 4,
               },
-              calculation: "SUM(value, data.items) - 300",
+              calculation: "SUM(value,data.items) - 300",
             } as SchemaTextField,
           },
         },

@@ -58,9 +58,6 @@ export function useCustomIfExpression(keyToResolve: string, object: any, schema:
       const prawda = matches[2];
       const falsz = matches[3];
 
-      let myExpr: Expression = betterParser.parse(wyrazenie as string);
-      console.debug(myExpr)
-
       return { wyrazenie, prawda, falsz };
     } else {
       // Jeśli dopasowanie się nie powiodło, zwróć null
