@@ -53,6 +53,9 @@ const localModel = computed({
       value = resolvedText;
     } else {
       switch (props.schema.type) {
+        case "text":
+          if (!value) break
+          break
         case "number":
           if (!value) break;
           value = formatNumber(value);

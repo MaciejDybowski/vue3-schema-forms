@@ -11,17 +11,17 @@ const meta = {
   argTypes: {
     schema: { control: "object", description: "Schema u" },
     model: { control: "object", description: "Model" },
-    options: { control: "object", description: "Opcje" },
+    options: { control: "object", description: "Opcje" }
   } as Partial<ArgTypes<any>>,
   args: {
     options: {
       fieldProps: {
         variant: "outlined",
-        density: "comfortable",
-      },
+        density: "comfortable"
+      }
     },
-    model: {},
-  },
+    model: {}
+  }
 } satisfies Meta<typeof DevelopmentTable>;
 
 export default meta;
@@ -29,18 +29,22 @@ type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
   args: {
-    model: { firstName: "Maciej", kurs: "4.3123" },
+    model: { test: "5242594678" },
     schema: {
       type: "object",
       properties: {
-        adresPelny: {
-          content: "{dostawca.adres}",
-          layout: {
-            component: "static-content",
-            tag: "p",
-          },
-        },
-      },
-    } as Schema,
-  },
+        "numberInt": {
+          "label": "Liczba całkowita",
+          "precision": 2,
+          "layout": {
+            "component": "number-field",
+            props: {
+              "min": 0,
+              "max": 5
+            }
+          }
+        }
+      }
+    } as Schema
+  }
 };
