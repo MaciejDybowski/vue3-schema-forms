@@ -2,14 +2,22 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { EngineOptions } from "@/types/engine/EngineOptions";
+import { usePrecision } from '@vueuse/math';
 
+/**
+ * @deprecated The composable should not be used
+ */
 export function useFormattedNumber(formOptions: EngineOptions) {
   const { locale } = useI18n();
   const showFormattedNumber = ref(true);
+
   const digitsAfterDecimalLocal = computed(() => {
     return formOptions.digitsAfterDecimal || 2;
   });
 
+  /**
+   * @deprecated The method should not be used
+   */
   function formatNumber(value: number, digitsAfterDecimal?: number) {
     let precision = 0;
     if (isNaN(digitsAfterDecimalLocal.value)) {
@@ -19,11 +27,15 @@ export function useFormattedNumber(formOptions: EngineOptions) {
       precision = digitsAfterDecimal;
     }
     const numFormatter = new Intl.NumberFormat(locale.value, {
-      minimumFractionDigits: precision
+      minimumFractionDigits: 0,
+      maximumFractionDigits: precision,
     });
     return numFormatter.format(value);
   }
 
+  /**
+   * @deprecated The method should not be used
+   */
   function parseNumberType(val: string, digitsAfterDecimal: number): number | null {
     if (val || parseFloat(val) == 0) {
       const valWithDot = (val + "").replaceAll(",", ".");
@@ -34,13 +46,18 @@ export function useFormattedNumber(formOptions: EngineOptions) {
   }
 
   function roundToDecimal(value: number, decimalPlaces: number): number {
-    const factor = Math.pow(10, isNaN(decimalPlaces) ? 2 : decimalPlaces);
-    return Math.round(value * factor) / factor;
+    return usePrecision(value, decimalPlaces).value
   }
 
   return {
     showFormattedNumber: showFormattedNumber,
+    /**
+     * @deprecated The method should not be used
+     */
     formatNumber: formatNumber,
+    /**
+     * @deprecated The method should not be used
+     */
     parseNumberType: parseNumberType
   };
 }

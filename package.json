@@ -38,7 +38,8 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@stoplight/json-ref-resolver": "3.1.6",
-    "@vueuse/core": "^10.11.0",
+    "@vueuse/core": "^10.11.1",
+    "@vueuse/math": "^11.0.3",
     "expr-eval": "^2.0.2",
     "flag-icons": "^7.2.3",
     "leaflet-geosearch": "^4.0.0",
@@ -59,7 +60,6 @@
     "vuetify": "^3.6.8"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@intlify/unplugin-vue-i18n": "0.13.0",
     "@storybook/addon-essentials": "^8.2.5",
@@ -75,6 +75,7 @@
     "@storybook/types": "^8.2.5",
     "@storybook/vue3": "^8.2.5",
     "@storybook/vue3-vite": "^8.2.5",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/test-utils": "^2.4.6",
