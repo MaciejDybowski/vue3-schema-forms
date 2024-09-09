@@ -1,11 +1,10 @@
-import { Expression, Value } from "expr-eval";
-import get from "lodash/get";
-import set from "lodash/set";
-import { computed, ref, watch } from "vue";
+import { Expression, Value } from 'expr-eval';
+import set from 'lodash/set';
+import { computed, ref, watch } from 'vue';
 
-import { EngineOptions } from "@/types/engine/EngineOptions";
+import { EngineOptions } from '@/types/engine/EngineOptions';
 
-import betterParser, { SUM } from "../engine/evalExprParser";
+import betterParser, { SUM } from '../engine/evalExprParser';
 
 export function useCalculation(key: string, calculation: string, model: object, formOptions: EngineOptions): number {
   const digitsAfterDecimalLocal = computed(() => {
@@ -17,12 +16,9 @@ export function useCalculation(key: string, calculation: string, model: object, 
 
   let myExpr: Expression = prepareCalcExpression(calculation, model);
 
-  myExpr.variables({ withMembers: true }).forEach((variable) => {
-    if (get(model, variable, null) == null) {
-      set(model, variable, 0);
-    }
-  });
-  result.value = myExpr.evaluate(model as Value);
+  if (myExpr.variables().every((variable) => variable in model)) {
+    result.value = myExpr.evaluate(model as Value);
+  }
 
   watch(model, () => {
     myExpr = prepareCalcExpression(originalCalc, model);
