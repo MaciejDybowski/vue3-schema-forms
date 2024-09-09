@@ -66,13 +66,13 @@ function focusin() {
 }
 
 function runCalculationIfExist() {
-  if (props.schema.calculation) {
+  if (props.schema.calculation && props.schema.calculation !== "") {
     localModel.value = useCalculation(props.schema.key, props.schema.calculation, props.model, props.schema.options);
   }
 }
 
 function runExpressionIfExist() {
-  if (props.schema.expression) {
+  if (props.schema.expression && props.schema.expression !== "") {
     localModel.value = useExpression(props.schema.key, props.schema.expression, props.model);
   }
 }

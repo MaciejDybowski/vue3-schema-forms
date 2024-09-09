@@ -9,6 +9,8 @@ export interface EngineTextField extends EngineField {
 
 export interface EngineNumberField extends EngineField {
   precision: number
+  calculation?: string;
+  expression?: string;
 }
 
 export interface EngineDataViewerField extends EngineField {

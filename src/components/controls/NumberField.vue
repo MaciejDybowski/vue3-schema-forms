@@ -12,8 +12,16 @@
 
 <script setup lang='ts'>
 import { EngineNumberField } from '@/types/engine/controls';
-import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
-import { computed, ref } from 'vue';
+import {
+  useCalculation,
+  useClass,
+  useExpression,
+  useFormModel,
+  useLabel,
+  useProps,
+  useRules,
+} from '@/core/composables';
+import { computed, onMounted, ref } from 'vue';
 import { NumberFormattingType, useNumber } from '@/core/composables/useNumber';
 
 const props = defineProps<{
@@ -65,6 +73,23 @@ function focusout() {
 function focusin() {
   showFormattedNumber.value = false;
 }
+
+function runCalculationIfExist() {
+  if (props.schema.calculation && props.schema.calculation !== "") {
+    localModel.value = useCalculation(props.schema.key, props.schema.calculation, props.model, props.schema.options);
+  }
+}
+
+function runExpressionIfExist() {
+  if (props.schema.expression && props.schema.expression !== "") {
+    localModel.value = useExpression(props.schema.key, props.schema.expression, props.model);
+  }
+}
+
+onMounted(() => {
+  runCalculationIfExist();
+  runExpressionIfExist();
+});
 </script>
 
 <style scoped lang='css'>
