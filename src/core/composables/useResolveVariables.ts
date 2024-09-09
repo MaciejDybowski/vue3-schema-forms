@@ -53,7 +53,7 @@ export function useResolveVariables(field: EngineField) {
         value = value[title];
       }
 
-      if (!value || value == defaultValue) {
+      if (!value) {
         allVariablesResolved = false;
       }
       inputString = inputString.replace(match, value + "");
