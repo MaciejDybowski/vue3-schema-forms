@@ -68,7 +68,7 @@ export function CALC_DATE_DIFF_RETURN_DAY(expression: string, model: object) {
   }
 }
 
-export function ARRAY_SIZE(expression: string, model: object): number {
+export function ARRAY_SIZE(expression: string, model: object) {
   let regex = /ARRAY_SIZE\((.*?)\)/;
   let match = regex.exec(expression);
   if (match) {
