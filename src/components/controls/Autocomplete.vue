@@ -34,8 +34,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, watch } from "vue";
-
-import { useFormModelStore } from "@/store/formModelStore";
 import { EngineDictionaryField } from "@/types/engine/controls";
 
 import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
@@ -56,14 +54,11 @@ const localModel = computed({
     return getValue(props.model, props.schema);
   },
   set(val: any) {
-    if (val && typeof val === "object") {
-      updateQuery(returnObject ? val[title] : val);
-    } else {
-      updateQuery(returnObject ? null : val);
+    if (val === null) {
+      query.value = '';
     }
-
     setValue(val, props.schema);
-  },
+  }
 });
 
 const {
@@ -78,7 +73,7 @@ const {
   paginationOptions,
   load,
   loadMoreRecords,
-  singleOptionAutoSelect,
+  singleOptionAutoSelect
 } = useDictionarySource(props.schema);
 
 onMounted(async () => {
@@ -98,10 +93,10 @@ onMounted(async () => {
 });
 
 function updateQuery(val: object | string) {
-  if (typeof val == "object") {
+  if (val && typeof val == "object") {
     query.value = val[title];
   }
-  if (typeof val == "string") {
+  if (val && typeof val == "string") {
     query.value = val;
   }
 }
