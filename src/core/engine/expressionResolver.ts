@@ -7,6 +7,7 @@ export const functions = {
   CALC_DATE_DIFF_RETURN_HOURS: CALC_DATE_DIFF_RETURN_HOURS,
   CALC_DATE_DIFF_RETURN_MINUTES: CALC_DATE_DIFF_RETURN_MINUTES,
   DELEGATION_DIET_CALC: DELEGATION_DIET_CALC,
+  ARRAY_SIZE: ARRAY_SIZE
 };
 
 export function FIND_OLDEST_DATE(expression: string, model: object) {
@@ -21,7 +22,7 @@ export function FIND_OLDEST_DATE(expression: string, model: object) {
     if (values.length > 1) {
       min = values
         .map((item) => item[parameterArray[0]])
-        .sort(function (a, b) {
+        .sort(function(a, b) {
           return Date.parse(a) - Date.parse(b);
         })[0];
     } else {
@@ -43,7 +44,7 @@ export function FIND_EARLIEST_DATE(expression: string, model: object) {
     if (values.length > 1) {
       max = values
         .map((item) => item[parameterArray[0]])
-        .sort(function (a, b) {
+        .sort(function(a, b) {
           return Date.parse(a) - Date.parse(b);
         })[values.length - 1];
     } else {
@@ -64,6 +65,15 @@ export function CALC_DATE_DIFF_RETURN_DAY(expression: string, model: object) {
     const date2 = get(model, parameterArray[1], 0);
     const result = calculateDateDifference(date1, date2);
     return isNaN(result.days) ? "" : result.days + "";
+  }
+}
+
+export function ARRAY_SIZE(expression: string, model: object): number {
+  let regex = /ARRAY_SIZE\((.*?)\)/;
+  let match = regex.exec(expression);
+  if (match) {
+    let arrayPath = match[1];
+    return get(arrayPath, model, []).length;
   }
 }
 
@@ -116,7 +126,7 @@ function calculateDateDifference(date1, date2) {
   return {
     days: diffInDays,
     hours: diffInHours,
-    minutes: diffInMinutes,
+    minutes: diffInMinutes
   };
 }
 
