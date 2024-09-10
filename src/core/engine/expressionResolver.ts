@@ -73,7 +73,7 @@ export function ARRAY_SIZE(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let arrayPath = match[1];
-    return get(arrayPath, model, []).length;
+    return get(model, arrayPath, []).length;
   }
 }
 
