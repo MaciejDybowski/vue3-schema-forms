@@ -7,7 +7,8 @@ export const functions = {
   CALC_DATE_DIFF_RETURN_HOURS: CALC_DATE_DIFF_RETURN_HOURS,
   CALC_DATE_DIFF_RETURN_MINUTES: CALC_DATE_DIFF_RETURN_MINUTES,
   DELEGATION_DIET_CALC: DELEGATION_DIET_CALC,
-  ARRAY_SIZE: ARRAY_SIZE
+  ARRAY_SIZE: ARRAY_SIZE,
+  HASH:HASH
 };
 
 export function FIND_OLDEST_DATE(expression: string, model: object) {
@@ -74,6 +75,15 @@ export function ARRAY_SIZE(expression: string, model: object) {
   if (match) {
     let arrayPath = match[1];
     return get(model, arrayPath, []).length;
+  }
+}
+
+export function HASH(expression: string) {
+  let regex = /ARRAY_SIZE\((.*?)\)/;
+  let match = regex.exec(expression);
+  if (match) {
+    let sizeOfHash = match[1];
+    return generateRandomHash(parseInt(sizeOfHash))
   }
 }
 
@@ -164,4 +174,17 @@ export function DELEGATION_DIET_CALC(expression: string, model: object) {
 
     return dietaNalezna;
   }
+}
+
+function generateRandomHash(length = 5) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charactersLength);
+    result += characters[randomIndex];
+  }
+
+  return result;
 }
