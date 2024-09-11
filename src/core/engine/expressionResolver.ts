@@ -1,4 +1,4 @@
-import get from "lodash/get";
+import get from 'lodash/get';
 
 export const functions = {
   FIND_OLDEST_DATE: FIND_OLDEST_DATE,
@@ -8,7 +8,7 @@ export const functions = {
   CALC_DATE_DIFF_RETURN_MINUTES: CALC_DATE_DIFF_RETURN_MINUTES,
   DELEGATION_DIET_CALC: DELEGATION_DIET_CALC,
   ARRAY_SIZE: ARRAY_SIZE,
-  HASH:HASH
+  HASH_GENERATOR: HASH_GENERATOR,
 };
 
 export function FIND_OLDEST_DATE(expression: string, model: object) {
@@ -16,10 +16,10 @@ export function FIND_OLDEST_DATE(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const values = get(model, parameterArray[1], []);
-    let min = "";
+    let min = '';
     if (values.length > 1) {
       min = values
         .map((item) => item[parameterArray[0]])
@@ -27,7 +27,7 @@ export function FIND_OLDEST_DATE(expression: string, model: object) {
           return Date.parse(a) - Date.parse(b);
         })[0];
     } else {
-      min = values.length == 0 ? "" : values[0][parameterArray[0]];
+      min = values.length == 0 ? '' : values[0][parameterArray[0]];
     }
     return min;
   }
@@ -38,10 +38,10 @@ export function FIND_EARLIEST_DATE(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const values = get(model, parameterArray[1], []);
-    let max = "";
+    let max = '';
     if (values.length > 1) {
       max = values
         .map((item) => item[parameterArray[0]])
@@ -49,7 +49,7 @@ export function FIND_EARLIEST_DATE(expression: string, model: object) {
           return Date.parse(a) - Date.parse(b);
         })[values.length - 1];
     } else {
-      max = values.length == 0 ? "" : values[0][parameterArray[0]];
+      max = values.length == 0 ? '' : values[0][parameterArray[0]];
     }
     return max;
   }
@@ -60,12 +60,12 @@ export function CALC_DATE_DIFF_RETURN_DAY(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const date1 = get(model, parameterArray[0], 0);
     const date2 = get(model, parameterArray[1], 0);
     const result = calculateDateDifference(date1, date2);
-    return isNaN(result.days) ? "" : result.days + "";
+    return isNaN(result.days) ? '' : result.days + '';
   }
 }
 
@@ -78,12 +78,12 @@ export function ARRAY_SIZE(expression: string, model: object) {
   }
 }
 
-export function HASH(expression: string) {
-  let regex = /ARRAY_SIZE\((.*?)\)/;
+export function HASH_GENERATOR(expression: string, model: object) {
+  let regex = /HASH_GENERATOR\((.*?)\)/;
   let match = regex.exec(expression);
   if (match) {
     let sizeOfHash = match[1];
-    return generateRandomHash(parseInt(sizeOfHash))
+    return generateRandomHash(parseInt(sizeOfHash));
   }
 }
 
@@ -92,12 +92,12 @@ export function CALC_DATE_DIFF_RETURN_HOURS(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const date1 = get(model, parameterArray[0], 0);
     const date2 = get(model, parameterArray[1], 0);
     const result = calculateDateDifference(date1, date2);
-    return isNaN(result.hours) ? "" : result.hours + "";
+    return isNaN(result.hours) ? '' : result.hours + '';
   }
 }
 
@@ -106,12 +106,12 @@ export function CALC_DATE_DIFF_RETURN_MINUTES(expression: string, model: object)
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const date1 = get(model, parameterArray[0], 0);
     const date2 = get(model, parameterArray[1], 0);
     const result = calculateDateDifference(date1, date2);
-    return isNaN(result.minutes) ? "" : result.minutes + "";
+    return isNaN(result.minutes) ? '' : result.minutes + '';
   }
 }
 
@@ -136,7 +136,7 @@ function calculateDateDifference(date1, date2) {
   return {
     days: diffInDays,
     hours: diffInHours,
-    minutes: diffInMinutes
+    minutes: diffInMinutes,
   };
 }
 
@@ -145,7 +145,7 @@ export function DELEGATION_DIET_CALC(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
     let dni = get(model, parameterArray[0], 0);
     let godziny = get(model, parameterArray[1], 0);
     let sniadania = get(model, parameterArray[2], 0);
@@ -176,7 +176,7 @@ export function DELEGATION_DIET_CALC(expression: string, model: object) {
   }
 }
 
-function generateRandomHash(length = 5) {
+function generateRandomHash(length: number) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   const charactersLength = characters.length;
