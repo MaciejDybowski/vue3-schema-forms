@@ -3,8 +3,6 @@ import { ArgTypes } from '@storybook/types';
 import { Meta, StoryObj } from '@storybook/vue3';
 
 import DevelopmentTable from '../components/app/DevelopmentTable.vue';
-import { Schema } from '../types/schema/Schema';
-import { EngineSourceField } from '../types/engine/controls';
 
 const meta = {
   title: 'Development Page',
@@ -30,87 +28,94 @@ type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
   args: {
-    model: { test: '5242594678' },
+    model: {},
     schema: {
-      type: 'object',
-      properties: {
-        'numberInt': {
-          'type': 'int',
-          'formatType': 'decimal',
-          'label': 'Int number',
-          'layout': {
-            'component': 'number-field',
-          },
-        },
-        'numberFloat': {
-          'type': 'float',
-          'formatType': 'decimal',
-          'label': 'Float number',
-          'layout': {
-            'component': 'number-field',
-          },
-        },
-        'numberFloatFourPlaces': {
-          'type': 'float',
-          'precision': 4,
-          'formatType': 'decimal',
-          'label': 'Float number with 4 decimal places',
-          'layout': {
-            'component': 'number-field',
-          },
-        },
-        'currency': {
-          'type': 'float',
-          'precision': 4,
-          'formatType': 'currency',
-          'label': 'Currency (current locale)',
-          'layout': {
-            'component': 'number-field',
-          },
-        },
-        'currencyOther': {
-          'type': 'float',
-          'precision': 3,
-          'formatType': 'currency',
-          'currency': 'USD',
-          'label': 'Currency other than locale',
-          'layout': {
-            'component': 'number-field',
-          },
-        },
-        'percent': {
-          'type': 'float',
-          'precision': 3,
-          'formatType': 'percent',
-          'label': 'percent',
-          'layout': {
-            'component': 'number-field',
-          },
-        },
-        currencySelect: {
-          label: 'Currency select',
-          layout: {
-            component: 'select',
-          },
-          source: {
+      'type': 'object', 'properties': {
+        'dostawca': {
+          'label': 'Wybierz dostawcę',
+          'layout': { 'component': 'select' },
+          'source': {
             items: [
-              { value: 'PLN', title: 'Polski złoty' },
-              { value: 'USD', title: 'Dolar' },
-              { value: 'EUR', title: 'Euro' },
+              { id: 1, label: 'Option 1' },
+              { id: 2, label: 'Option 2' },
+              { id: 3, lbel: 'Option 3' },
             ],
+            'title': 'label',
+            'value': 'id',
+            'returnObject': true,
           },
-        } as EngineSourceField,
-        'dynamicCurrency': {
-          'type': 'float',
-          'precision': 3,
-          'formatType': 'currency',
-          'currency': '{currencySelect}',
-          'label': 'Currency selected from SELECT',
+        },
+        'kod': {
+          'label': 'Kod dostawcy',
+          'layout': { 'component': 'data-viewer', 'if': 'dostawcaRejestr' },
+          'valueMapping': '{dostawca.id}',
+          'type': 'text',
+        },
+        'nazwa': {
+          'label': 'Nazwa dostawcy',
           'layout': {
-            'component': 'number-field',
+            'component': 'data-viewer',
+            'cols': { 'xs': 12, 'sm': 12, 'md': 12, 'lg': 12, 'xl': 6, 'xxl': 6 },
+            'if': 'dostawca',
           },
+          'valueMapping': '{dostawca.label}',
+          'type': 'text',
+        },
+        'nip': {
+          'label': 'NIP',
+          'layout': {
+            'component': 'data-viewer',
+            'cols': { 'xs': 12, 'sm': 12, 'md': 12, 'lg': 12, 'xl': 6, 'xxl': 6 },
+            'if': 'dostawca',
+          },
+          'valueMapping': '{dostawca.id}',
+          'type': 'text',
+        },
+
+      },
+    },
+  },
+};
+
+
+export const Table2: Story = {
+  args: {
+    model: {
+      faktura: {
+        waluta: {
+          id: 'USD',
         },
       },
-    } as Schema,
+      sumy: {
+        kwotaNettoPln: 23
+      }
+    },
+    schema: {
+      'type': 'object',
+      'properties': {
+        'kwotaNetto': {
+          'label': 'Kwota netto',
+          'layout': {
+            'cols': {
+              'xs': 12,
+              'sm': 12,
+              'md': 12,
+              'lg': 12,
+              'xl': 4,
+              'xxl': 4,
+            },
+            'component': 'number-field',
+            'props': {
+              'hint': 'Kwota netto PLN: {sumy.kwotaNettoPln}',
+              'persistent-hint': 'if(faktura.waluta.id!="PLN",true,false)',
+              'readonly': true,
+            },
+          },
+          'type': 'float',
+          'calculation': 'SUM(kwotaNetto,pozycjeDokumentu)',
+        },
+      },
+
+    },
   },
 };

@@ -3,16 +3,14 @@ import get from 'lodash/get';
 import dayjs from '@/components/controls/date/dayjs';
 
 import { EngineField } from '@/types/engine/EngineField';
-
-import { useFormattedNumber } from '../../core/composables';
 import { variableRegexp } from '../engine/utils';
 import { useDateFormat } from './useDateFormat';
 import { usePreparedModelForExpression } from '@/core/composables/usePreparedModelForExpression';
+import { useNumber } from '@/core/composables/useNumber';
 
 export function useResolveVariables(field: EngineField) {
-  const { formatNumber } = useFormattedNumber(field.options);
   const { dateFormat } = useDateFormat();
-
+  const { formattedNumber } = useNumber();
 
   function resolve(inputString: string, title: string = 'title') {
     let allVariablesResolved = true;
@@ -29,7 +27,7 @@ export function useResolveVariables(field: EngineField) {
       let value = get(model, variable, defaultValue);
 
       if (typeof value === 'number') {
-        value = formatNumber(value);
+        value = formattedNumber(value, 'decimal', field.precision ? Number(field.precision) : 2);
       }
       if (typeof value === 'string' && dayjs(value).isValid() && value.length == 10
         && (value.includes('/') || value.includes('.') || value.includes('-'))) {

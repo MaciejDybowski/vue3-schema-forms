@@ -70,7 +70,7 @@ export function useDictionarySource(field: EngineDictionaryField) {
   });
 
   const load = async (caller: string) => {
-    console.debug("Dictionary load call function = ", caller);
+    console.debug("[vue-schema-forms] => Dictionary load call function = ", caller);
     if (endpoint.allVariablesResolved) {
       loading.value = true;
       paginationOptions.value.resetPage();
@@ -91,7 +91,7 @@ export function useDictionarySource(field: EngineDictionaryField) {
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
     } else {
-      console.debug(`API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`);
+      console.debug(`[vue-schema-forms] => API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`);
     }
   };
   const loadMoreRecords = async () => {

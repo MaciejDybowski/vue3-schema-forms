@@ -21,4 +21,7 @@ export interface EngineField {
   // conditional rendering in duplicated section
   path?: string;
   index?: number;
+
+  // number
+  precision: string | number | undefined
 }

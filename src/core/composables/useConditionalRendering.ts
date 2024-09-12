@@ -42,7 +42,6 @@ export function useConditionalRendering(schema: EngineField) {
     const nata = jsonata(expression);
     model = usePreparedModelForExpression(schema);
     shouldRender.value = await nata.evaluate(model);
-    console.debug(shouldRender.value)
 
     formModelStore.$subscribe(async () => {
       model = usePreparedModelForExpression(schema);

@@ -97,7 +97,6 @@ watch(
       return;
     }
     const date = dayjs(val, modelFormat);
-    console.debug(date);
     pickerValue.value = date.toDate();
     inputValue.value = date.format(dateFormat.value);
   },
