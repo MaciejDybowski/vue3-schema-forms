@@ -21,7 +21,8 @@ export function useFormModel() {
   }
 
   function setValue(val: any, schema: EngineField) {
-    const event: NodeUpdateEvent = { key: schema.key, value: val !== undefined || val === 0 ? val : null };
+    console.debug(val)
+    const event: NodeUpdateEvent = { key: schema.key, value: (val !== undefined || val === 0) && val !== "" ? val : null };
     schema.on.input(event);
   }
 

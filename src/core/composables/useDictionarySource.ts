@@ -59,14 +59,14 @@ export function useDictionarySource(field: EngineDictionaryField) {
    */
   let query = ref("");
   watch(query, (value, oldValue) => {
-    if (value || (value === null && oldValue)) {
+    //if (value || (value === null && oldValue)) {
       const queryInData =
         data.value.filter((item: any) => {
           return item[title] === value || Object.values(item).includes(value);
         }).length > 0;
 
       queryInData ? debounced.load.cancel() : debounced.load("query");
-    }
+    //}
   });
 
   const load = async (caller: string) => {
