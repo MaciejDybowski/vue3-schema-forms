@@ -1,13 +1,13 @@
-import { Expression, Value } from 'expr-eval';
-import get from 'lodash/get';
-import { ref } from 'vue';
+import { Expression, Value } from "expr-eval";
+import jsonata from "jsonata";
+import get from "lodash/get";
+import { ref } from "vue";
 
-import { usePreparedModelForExpression } from '@/core/composables/usePreparedModelForExpression';
-import { EngineField } from '@/types/engine/EngineField';
+import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
+import { EngineField } from "@/types/engine/EngineField";
 
-import { useFormModelStore } from '../../store/formModelStore';
-import betterParser from '../engine/evalExprParser';
-import jsonata from 'jsonata';
+import { useFormModelStore } from "../../store/formModelStore";
+import betterParser from "../engine/evalExprParser";
 
 export function useConditionalRendering(schema: EngineField) {
   const formModelStore = useFormModelStore(schema.formId);
@@ -16,8 +16,8 @@ export function useConditionalRendering(schema: EngineField) {
   let model = {} as unknown;
 
   if (!shouldRender.value) {
-    if (schema.layout.if?.includes('nata-')) {
-      ifByJsonNata(schema.layout.if.replace('nata-', ''));
+    if (schema.layout.if?.includes("nata-")) {
+      ifByJsonNata(schema.layout.if.replace("nata-", ""));
     } else {
       ifByEvalExpression();
     }

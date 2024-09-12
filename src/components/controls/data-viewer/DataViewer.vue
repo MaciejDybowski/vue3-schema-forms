@@ -54,8 +54,8 @@ const localModel = computed({
     } else {
       switch (props.schema.type) {
         case "text":
-          if (!value) break
-          break
+          if (!value) break;
+          break;
         case "number":
           if (!value) break;
           value = formatNumber(value);
@@ -82,7 +82,7 @@ const localModel = computed({
 
 function runCalculationIfExist() {
   if (props.schema.calculation) {
-    localModel.value = useCalculation(props.schema.key, props.schema.calculation, props.model, props.schema.options);
+    localModel.value = useCalculation(props.schema);
   }
 }
 

@@ -6,7 +6,6 @@ import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
 
-
 const meta = {
   title: "Forms/Controls/NumberField",
   component: VueSchemaForms,
@@ -14,25 +13,25 @@ const meta = {
   argTypes: {
     schema: {
       control: "object",
-      description: "Schema u" /*table: { disable: true }*/
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
       control: "object",
-      description: "Model" /*table: { disable: true }*/
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
       control: "object",
-      description: "Opcje" /*table: { disable: true }*/
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    "update:modelValue": { table: { disable: true } }
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
-    options: {}
+    options: {},
   },
   parameters: {
-    controls: { hideNoControlsWarning: true } //https://github.com/storybookjs/storybook/issues/24422
-  }
+    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
+  },
 } satisfies Meta<typeof VueSchemaForms>;
 
 export default meta;
@@ -55,12 +54,12 @@ export const Integer: Story = {
           label: "Number (int)",
           type: "int",
           layout: {
-            component: "number-field"
-          }
-        }
-      }
-    } as Schema
-  }
+            component: "number-field",
+          },
+        },
+      },
+    } as Schema,
+  },
 };
 
 export const FloatStandard2DecimalPlaces: Story = {
@@ -79,12 +78,12 @@ export const FloatStandard2DecimalPlaces: Story = {
           label: "Number (float)",
           type: "float",
           layout: {
-            component: "number-field"
-          }
-        }
-      }
-    } as Schema
-  }
+            component: "number-field",
+          },
+        },
+      },
+    } as Schema,
+  },
 };
 
 export const FloatStandard4DecimalPlaces: Story = {
@@ -104,14 +103,13 @@ export const FloatStandard4DecimalPlaces: Story = {
           type: "float",
           precision: 4,
           layout: {
-            component: "number-field"
-          }
-        }
-      }
-    } as Schema
-  }
+            component: "number-field",
+          },
+        },
+      },
+    } as Schema,
+  },
 };
-
 
 export const CurrencyMode: Story = {
   play: async (context) => {
@@ -119,7 +117,7 @@ export const CurrencyMode: Story = {
     const field = await canvas.getByLabelText("Currency default");
     await userEvent.type(field, "1.34632", { delay: 300 });
     await expect(context.args.modelValue).toEqual({ currencyLocale: 1.3463 });
-    fireEvent.focusOut(field)
+    fireEvent.focusOut(field);
   },
   args: {
     modelValue: {},
@@ -129,15 +127,15 @@ export const CurrencyMode: Story = {
         currencyLocale: {
           label: "Currency default",
           type: "float",
-          'formatType': 'currency',
+          formatType: "currency",
           precision: 4,
           layout: {
-            component: "number-field"
-          }
-        }
-      }
-    } as Schema
-  }
+            component: "number-field",
+          },
+        },
+      },
+    } as Schema,
+  },
 };
 
 export const CurrencyModeProps: Story = {
@@ -146,7 +144,7 @@ export const CurrencyModeProps: Story = {
     const field = await canvas.getByLabelText("Currency props");
     await userEvent.type(field, "1.34632", { delay: 300 });
     await expect(context.args.modelValue).toEqual({ currencyProps: 1.346 });
-    fireEvent.focusOut(field)
+    fireEvent.focusOut(field);
   },
   args: {
     modelValue: {},
@@ -156,18 +154,17 @@ export const CurrencyModeProps: Story = {
         currencyProps: {
           label: "Currency props",
           type: "float",
-          'formatType': 'currency',
-          'currency': "USD",
+          formatType: "currency",
+          currency: "USD",
           precision: 3,
           layout: {
-            component: "number-field"
-          }
-        }
-      }
-    } as Schema
-  }
+            component: "number-field",
+          },
+        },
+      },
+    } as Schema,
+  },
 };
-
 
 export const PercentMode: Story = {
   play: async (context) => {
@@ -175,7 +172,7 @@ export const PercentMode: Story = {
     const field = await canvas.getByLabelText("Percent");
     await userEvent.type(field, "4.34", { delay: 300 });
     await expect(context.args.modelValue).toEqual({ percent: 4.34 });
-    fireEvent.focusOut(field)
+    fireEvent.focusOut(field);
   },
   args: {
     modelValue: {},
@@ -185,12 +182,12 @@ export const PercentMode: Story = {
         percent: {
           label: "Percent",
           type: "float",
-          'formatType': 'percent',
+          formatType: "percent",
           layout: {
-            component: "number-field"
-          }
-        }
-      }
-    } as Schema
-  }
+            component: "number-field",
+          },
+        },
+      },
+    } as Schema,
+  },
 };

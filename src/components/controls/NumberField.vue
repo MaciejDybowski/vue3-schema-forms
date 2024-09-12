@@ -1,34 +1,26 @@
 <template>
   <v-text-field
-    v-model='localModel'
-    :label='label'
-    v-bind='bindProps(schema, model)'
-    :rules='rules(schema)'
-    :class='bindClass(schema)'
-    @focusout='focusout'
-    @focusin='focusin'
+    v-model="localModel"
+    :label="label"
+    v-bind="bindProps(schema, model)"
+    :rules="rules(schema)"
+    :class="bindClass(schema)"
+    @focusout="focusout"
+    @focusin="focusin"
   />
 </template>
 
-<script setup lang='ts'>
-import { EngineNumberField } from '@/types/engine/controls';
-import {
-  useCalculation,
-  useClass,
-  useExpression,
-  useFormModel,
-  useLabel,
-  useProps,
-  useRules,
-} from '@/core/composables';
-import { computed, onMounted, ref } from 'vue';
-import { NumberFormattingType, useNumber } from '@/core/composables/useNumber';
+<script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
+
+import { useCalculation, useClass, useExpression, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
+import { NumberFormattingType, useNumber } from "@/core/composables/useNumber";
+import { EngineNumberField } from "@/types/engine/controls";
 
 const props = defineProps<{
   schema: EngineNumberField;
   model: object;
 }>();
-
 
 const { bindClass } = useClass();
 const { rules } = useRules();
@@ -39,14 +31,11 @@ const { getValue, setValue } = useFormModel();
 
 const showFormattedNumber = ref(true);
 
-const precision = props.schema.type == 'int' ? 0 :
-  ('precision' in props.schema ? props.schema.precision : 2);
+const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
 
-const formatType = ('formatType' in props.schema ?
-  props.schema.formatType :
-  'decimal') as NumberFormattingType;
+const formatType = ("formatType" in props.schema ? props.schema.formatType : "decimal") as NumberFormattingType;
 
-const currency = ('currency' in props.schema ? props.schema.currency : 'PLN') as string;
+const currency = ("currency" in props.schema ? props.schema.currency : "PLN") as string;
 
 const { roundTo, formattedNumber } = useNumber({
   currency: currency,
@@ -55,7 +44,7 @@ const { roundTo, formattedNumber } = useNumber({
 const localModel = computed({
   get(): string | number | null {
     let value = getValue(props.model, props.schema);
-    if (typeof value == 'string') {
+    if (typeof value == "string") {
       value = Number(value);
     }
     if (value && showFormattedNumber.value) {
@@ -78,13 +67,13 @@ function focusin() {
 }
 
 function runCalculationIfExist() {
-  if (props.schema.calculation && props.schema.calculation !== '') {
-    localModel.value = useCalculation(props.schema.key, props.schema.calculation, props.model, props.schema.options);
+  if (props.schema.calculation && props.schema.calculation !== "") {
+    localModel.value = useCalculation(props.schema);
   }
 }
 
 function runExpressionIfExist() {
-  if (props.schema.expression && props.schema.expression !== '') {
+  if (props.schema.expression && props.schema.expression !== "") {
     localModel.value = useExpression(props.schema.key, props.schema.expression, props.model);
   }
 }
@@ -95,6 +84,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang='css'>
-
-</style>
+<style scoped lang="css"></style>

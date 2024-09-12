@@ -34,6 +34,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, watch } from "vue";
+
 import { EngineDictionaryField } from "@/types/engine/controls";
 
 import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
@@ -55,10 +56,10 @@ const localModel = computed({
   },
   set(val: any) {
     if (val === null) {
-      query.value = '';
+      query.value = "";
     }
     setValue(val, props.schema);
-  }
+  },
 });
 
 const {
@@ -73,7 +74,7 @@ const {
   paginationOptions,
   load,
   loadMoreRecords,
-  singleOptionAutoSelect
+  singleOptionAutoSelect,
 } = useDictionarySource(props.schema);
 
 onMounted(async () => {

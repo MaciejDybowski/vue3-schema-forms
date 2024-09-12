@@ -794,30 +794,26 @@ export const simpleCalculationSchema: Schema = {
   properties: {
     field1: {
       label: "Field 1",
-      type: "number",
-      layout: { component: "text-field", cols: 2 },
+      layout: { component: "number-field", cols: 2 },
     },
     field2: {
       label: "Field 2",
-      type: "number",
-      layout: { component: "text-field", cols: 2 },
+      layout: { component: "number-field", cols: 2 },
     },
     field3: {
       label: "Result +",
       layout: {
-        component: "text-field",
+        component: "number-field",
         cols: 2,
       },
-      type: "number",
       calculation: "field1 + field2",
     } as SchemaTextField,
     field4: {
       label: "Result ^2",
       layout: {
-        component: "text-field",
+        component: "number-field",
         cols: 2,
       },
-      type: "number",
       calculation: "field3 * field3",
     } as SchemaTextField,
   },

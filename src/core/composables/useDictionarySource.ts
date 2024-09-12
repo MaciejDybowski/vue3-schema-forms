@@ -60,12 +60,12 @@ export function useDictionarySource(field: EngineDictionaryField) {
   let query = ref("");
   watch(query, (value, oldValue) => {
     //if (value || (value === null && oldValue)) {
-      const queryInData =
-        data.value.filter((item: any) => {
-          return item[title] === value || Object.values(item).includes(value);
-        }).length > 0;
+    const queryInData =
+      data.value.filter((item: any) => {
+        return item[title] === value || Object.values(item).includes(value);
+      }).length > 0;
 
-      queryInData ? debounced.load.cancel() : debounced.load("query");
+    queryInData ? debounced.load.cancel() : debounced.load("query");
     //}
   });
 
@@ -91,7 +91,9 @@ export function useDictionarySource(field: EngineDictionaryField) {
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
     } else {
-      console.debug(`[vue-schema-forms] => API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`);
+      console.debug(
+        `[vue-schema-forms] => API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`,
+      );
     }
   };
   const loadMoreRecords = async () => {

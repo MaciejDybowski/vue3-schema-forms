@@ -1,17 +1,22 @@
-import { Expression, Value } from 'expr-eval';
-import set from 'lodash/set';
-import { computed, ref, watch } from 'vue';
+import { Expression, Value } from "expr-eval";
+import set from "lodash/set";
+import { ref } from "vue";
 
-import { EngineOptions } from '@/types/engine/EngineOptions';
+import { useNumber } from "@/core/composables/useNumber";
+import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
+import { useFormModelStore } from "@/store/formModelStore";
+import { EngineField } from "@/types/engine/EngineField";
 
-import betterParser, { SUM } from '../engine/evalExprParser';
+import betterParser, { SUM } from "../engine/evalExprParser";
 
-export function useCalculation(key: string, calculation: string, model: object, formOptions: EngineOptions): number {
-  const digitsAfterDecimalLocal = computed(() => {
-    return formOptions.digitsAfterDecimal || 2;
-  });
+export function useCalculation(field: EngineField): number | null {
+  const { roundTo } = useNumber();
+  const formModelStore = useFormModelStore(field.formId);
+  let model = usePreparedModelForExpression(field);
+  const precision = field.precision ? Number(field.precision) : 2;
 
   let result = ref(0);
+  let calculation = field.calculation as string;
   let originalCalc = calculation;
 
   let myExpr: Expression = prepareCalcExpression(calculation, model);
@@ -20,23 +25,16 @@ export function useCalculation(key: string, calculation: string, model: object, 
     result.value = myExpr.evaluate(model as Value);
   }
 
-  watch(model, () => {
+  formModelStore.$subscribe(() => {
+    model = usePreparedModelForExpression(field);
     myExpr = prepareCalcExpression(originalCalc, model);
     executeCalc();
   });
 
-  watch(
-    formOptions,
-    () => {
-      executeCalc();
-    },
-    { deep: true },
-  );
-
   function executeCalc(): void {
     if (myExpr.variables().every((variable) => variable in model)) {
       result.value = myExpr.evaluate(model as Value);
-      set(model, key, roundToDecimal(result.value, digitsAfterDecimalLocal.value));
+      set(model, field.key, roundTo(result.value, precision));
     }
   }
 
@@ -45,10 +43,5 @@ export function useCalculation(key: string, calculation: string, model: object, 
     return betterParser.parse(calculation);
   }
 
-  function roundToDecimal(value: number, decimalPlaces: number): number {
-    const factor = Math.pow(10, isNaN(decimalPlaces) ? 2 : decimalPlaces);
-    return Math.round(value * factor) / factor;
-  }
-
-  return roundToDecimal(result.value, digitsAfterDecimalLocal.value);
+  return roundTo(result.value, precision);
 }

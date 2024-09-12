@@ -5,6 +5,7 @@ import Autocomplete from "./Autocomplete.vue";
 import ButtonField from "./ButtonField.vue";
 import CheckboxButton from "./CheckboxButton.vue";
 import Location from "./Location.vue";
+import NumberField from "./NumberField.vue";
 import PhoneInput from "./PhoneInput.vue";
 import RadioButton from "./RadioButton.vue";
 import Select from "./Select.vue";
@@ -17,7 +18,6 @@ import DataViewer from "./data-viewer/DataViewer.vue";
 import DatePicker from "./date/DatePicker.vue";
 import DateTimePicker from "./date/DateTimePicker.vue";
 import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
-import NumberField from "./NumberField.vue"
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,
@@ -36,5 +36,5 @@ export const vueSchemaFromControls: Components = {
   address: Address,
   button: ButtonField,
   switch: Switch,
-  "number-field": NumberField
+  "number-field": NumberField,
 };

@@ -67,7 +67,7 @@ function focusin() {
 
 function runCalculationIfExist() {
   if (props.schema.calculation && props.schema.calculation !== "") {
-    localModel.value = useCalculation(props.schema.key, props.schema.calculation, props.model, props.schema.options);
+    localModel.value = useCalculation(props.schema);
   }
 }
 

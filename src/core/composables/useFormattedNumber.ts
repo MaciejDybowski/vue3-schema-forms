@@ -2,7 +2,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { EngineOptions } from "@/types/engine/EngineOptions";
-import { usePrecision } from '@vueuse/math';
+import { usePrecision } from "@vueuse/math";
 
 /**
  * @deprecated The composable should not be used
@@ -46,7 +46,7 @@ export function useFormattedNumber(formOptions: EngineOptions) {
   }
 
   function roundToDecimal(value: number, decimalPlaces: number): number {
-    return usePrecision(value, decimalPlaces).value
+    return usePrecision(value, decimalPlaces).value;
   }
 
   return {
@@ -58,6 +58,6 @@ export function useFormattedNumber(formOptions: EngineOptions) {
     /**
      * @deprecated The method should not be used
      */
-    parseNumberType: parseNumberType
+    parseNumberType: parseNumberType,
   };
 }
