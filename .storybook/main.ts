@@ -1,4 +1,5 @@
 import type { StorybookConfig } from "@storybook/vue3-vite"
+import { mergeConfig } from "vitest/config";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
@@ -15,5 +16,24 @@ const config: StorybookConfig = {
     options: {},
   },
   docs: {},
+  async viteFinal(config) {
+    // Merge custom configuration into the default config
+    return mergeConfig(config, {
+      // Add dependencies to pre-optimization
+      optimizeDeps: {
+        include: ['storybook-dark-mode'],
+      },
+      server: {
+        proxy: {
+          '/api': {
+            target: "http://localhost:8081/",
+            changeOrigin: true,
+            secure: false,
+          },
+        },
+      },
+    });
+
+  }
 }
 export default config

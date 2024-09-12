@@ -70,7 +70,7 @@ export function useDictionarySource(field: EngineDictionaryField) {
   });
 
   const load = async (caller: string) => {
-    //console.debug("CALLER = ", caller);
+    console.debug("Dictionary load call function = ", caller);
     if (endpoint.allVariablesResolved) {
       loading.value = true;
       paginationOptions.value.resetPage();
