@@ -82,7 +82,7 @@ const localModel = computed({
 
 function runCalculationIfExist() {
   if (props.schema.calculation) {
-    localModel.value = useCalculation(props.schema);
+    localModel.value = useCalculation(props.schema, props.model);
   }
 }
 
