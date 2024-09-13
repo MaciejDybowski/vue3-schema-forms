@@ -36,7 +36,7 @@ import { Translation } from "@/types/shared/Translation";
 import * as components from "../src/components/index";
 
 export declare type Components = Record<string, Component>;
-export let formUpdateLogger = false;
+export let formUpdateLogger = true;
 
 export type VueSchemaForms = {
   install: (app: App) => void;

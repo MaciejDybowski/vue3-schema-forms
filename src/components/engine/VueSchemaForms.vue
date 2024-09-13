@@ -43,6 +43,7 @@ import { formUpdateLogger } from "../../main";
 import { useFormModelStore } from "../../store/formModelStore";
 import FormRoot from "./FormRoot.vue";
 import FormDefaultActions from "./validation/FormDefaultActions.vue";
+import { useEventBus } from "@vueuse/core";
 
 // register components to VueInstance if not installed yet by plugin options
 const instance = getCurrentInstance();
@@ -85,6 +86,7 @@ const formValid = ref(false);
 const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
 const formModelStore = useFormModelStore(formId);
 const formReadySignalSent = ref(false);
+const vueSchemaFormEventBus = useEventBus<string>('form-model')
 
 const debounced = {
   formIsReady: (WAIT: number = 1500) => debounce(formIsReady, WAIT),
@@ -105,6 +107,9 @@ function updateModel(event: NodeUpdateEvent) {
   set(props.modelValue, event.key, event.value);
   formModelStore.updateFormModel(props.modelValue);
   emit("update:modelValue", props.modelValue);
+
+  vueSchemaFormEventBus.emit('model-changed')
+  vueSchemaFormEventBus.emit('model-changed')
 
   debounced.formIsReady()();
   if (formUpdateLogger) {

@@ -79,41 +79,37 @@ export const Table1: Story = {
 
 export const Table2: Story = {
   args: {
-    model: {
-      faktura: {
-        waluta: {
-          id: "USD",
-        },
-      },
-      sumy: {
-        kwotaNettoPln: 23,
-      },
-    },
+    model: {},
     schema: {
       type: "object",
       properties: {
-        kwotaNetto: {
-          label: "Kwota netto",
+        poleA: {
+          label:"Pole 1",
           layout: {
-            cols: {
-              xs: 12,
-              sm: 12,
-              md: 12,
-              lg: 12,
-              xl: 4,
-              xxl: 4,
-            },
-            component: "number-field",
-            props: {
-              hint: "Kwota netto PLN: {sumy.kwotaNettoPln}",
-              "persistent-hint": 'if(faktura.waluta.id!="PLN",true,false)',
-              readonly: true,
-            },
-          },
-          type: "float",
-          calculation: "SUM(kwotaNetto,pozycjeDokumentu)",
+            component: "number-field"
+          }
         },
-      },
+        poleB: {
+          label:"Pole 2",
+          layout: {
+            component: "number-field"
+          }
+        },
+        wynik: {
+          label:"Wynik",
+          layout: {
+            component: "number-field"
+          },
+          calculation: "poleA + poleB"
+        },
+        ukryte: {
+          label: "ukryte",
+          layout: {
+            component: "text-field",
+            if: "wynik > 20"
+          },
+        }
+      } as any,
     },
   },
 };

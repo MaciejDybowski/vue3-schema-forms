@@ -8,6 +8,7 @@ import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 
 import betterParser, { SUM } from "../engine/evalExprParser";
+import { useEventBus } from "@vueuse/core";
 
 export function useCalculation(field: EngineField): number | null {
   const { roundTo } = useNumber();
@@ -18,6 +19,9 @@ export function useCalculation(field: EngineField): number | null {
   let result = ref(0);
   let calculation = field.calculation as string;
   let originalCalc = calculation;
+  const vueSchemaFormEventBus = useEventBus<string>('form-model')
+  const unsubscribe = vueSchemaFormEventBus.on(calculationListener)
+
 
   let myExpr: Expression = prepareCalcExpression(calculation, model);
 
@@ -25,11 +29,14 @@ export function useCalculation(field: EngineField): number | null {
     result.value = myExpr.evaluate(model as Value);
   }
 
-  formModelStore.$subscribe(() => {
+
+  function calculationListener(event: string) {
+    console.debug(event + "- calculation");
     model = usePreparedModelForExpression(field);
     myExpr = prepareCalcExpression(originalCalc, model);
     executeCalc();
-  });
+  }
+
 
   function executeCalc(): void {
     if (myExpr.variables().every((variable) => variable in model)) {
