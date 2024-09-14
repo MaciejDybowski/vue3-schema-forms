@@ -1,30 +1,31 @@
-import { Expression, Value } from "expr-eval";
-import { cloneDeep } from "lodash";
-import get from "lodash/get";
-import set from "lodash/set";
+import { Expression, Value } from 'expr-eval';
+import { cloneDeep } from 'lodash';
+import get from 'lodash/get';
+import set from 'lodash/set';
 
-import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
-import betterParser from "@/core/engine/evalExprParser";
-import { useFormModelStore } from "@/store/formModelStore";
-import { EngineField } from "@/types/engine/EngineField";
+import { usePreparedModelForExpression } from '@/core/composables/usePreparedModelForExpression';
+import betterParser from '@/core/engine/evalExprParser';
+import { EngineField } from '@/types/engine/EngineField';
+import { useEventBus } from '@vueuse/core';
+import { logger } from '@/main';
 
-export function useCustomIfExpression(keyToResolve: string, object: any, schema: EngineField) {
-  const formModelStore = useFormModelStore(schema.formId);
-  //console.debug(keyToResolve, object, object[keyToResolve].includes("if"));
+export function useCustomIfExpression() {
+  const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
-  if (object[keyToResolve].includes("if") || `${keyToResolve}Expression` in object) {
-    object[`${keyToResolve}Expression`] = cloneDeep(object[keyToResolve]);
+  function customIfExpressionResolve(keyToResolve: string, object: any, schema: EngineField) {
+    //console.debug(keyToResolve, object, object[keyToResolve].includes("if"));
 
-    let modelExpression = usePreparedModelForExpression(schema);
-    tryResolveIfExpression(modelExpression);
+    if (object[keyToResolve].includes('if') || `${keyToResolve}Expression` in object) {
 
-    formModelStore.$subscribe(() => {
-      modelExpression = usePreparedModelForExpression(schema);
-      tryResolveIfExpression(modelExpression);
-    });
+      const unsubscribe = vueSchemaFormEventBus.on((event, payloadIndex) => ifExpressionResolverListener(event, payloadIndex, keyToResolve, object, schema));
+      object[`${keyToResolve}Expression`] = cloneDeep(object[keyToResolve]);
+
+      let modelExpression = usePreparedModelForExpression(schema);
+      tryResolveIfExpression(keyToResolve, object, modelExpression);
+    }
   }
 
-  function tryResolveIfExpression(model: any) {
+  function tryResolveIfExpression(keyToResolve: string, object: any, model: any) {
     const result = parseIfStatement(object[`${keyToResolve}Expression`]);
     let ifResult = false;
     let myExpr: Expression = betterParser.parse(result?.wyrazenie as string);
@@ -32,16 +33,15 @@ export function useCustomIfExpression(keyToResolve: string, object: any, schema:
     if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
       ifResult = myExpr.evaluate(model as Value);
     }
-    //console.debug(myExpr)
-    let newValue = ifResult ? result?.prawda : result?.falsz;
-    //console.debug("newValue", newValue)
-    // object[keyToResolve] = newValue.slice(1, -1);
-    if (newValue == "true" || newValue == "false") {
-      newValue = newValue == "true";
-    }
 
-    set(object, keyToResolve, newValue);
-    //console.debug("After set", object)
+    let newValue = ifResult ? result?.prawda : result?.falsz;
+    if (newValue == 'true' || newValue == 'false') {
+      newValue = newValue == 'true';
+    }
+    const currentValue = get(object, keyToResolve, null);
+    if (currentValue !== newValue) {
+      set(object, keyToResolve, newValue);
+    }
   }
 
   function parseIfStatement(input) {
@@ -64,4 +64,14 @@ export function useCustomIfExpression(keyToResolve: string, object: any, schema:
       return null;
     }
   }
+
+  async function ifExpressionResolverListener(event: string, payloadIndex: number, keyToResolve: string, object: any, schema: EngineField) {
+    //if (schema.index == undefined || schema.index == payloadIndex) {
+      if (logger.customIfExpressionListener) console.debug(`[vue-schema-forms] [PropsIfExpressionResolverListener] => key=[${keyToResolve}], index=[${schema.index}]`);
+      let modelExpression = usePreparedModelForExpression(schema);
+      tryResolveIfExpression(keyToResolve, object, modelExpression);
+    //}
+  }
+
+  return { customIfExpressionResolve };
 }

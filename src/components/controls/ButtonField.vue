@@ -1,19 +1,19 @@
 <template>
   <v-btn
-    :class="bindClass(schema)"
-    v-bind="bindProps(schema)"
-    :color="primaryWhite"
+    :class='bindClass(schema)'
+    v-bind='fieldProps'
+    :color='primaryWhite'
   >
     {{ label }}
   </v-btn>
 </template>
 
-<script setup lang="ts">
-import { computed } from "vue";
-import { useTheme } from "vuetify";
+<script setup lang='ts'>
+import { computed, onMounted } from 'vue';
+import { useTheme } from 'vuetify';
 
-import { useClass, useLabel, useProps } from "@/core/composables";
-import { EngineField } from "@/types/engine/EngineField";
+import { useClass, useLabel, useProps } from '@/core/composables';
+import { EngineField } from '@/types/engine/EngineField';
 
 const props = defineProps<{
   schema: EngineField;
@@ -21,12 +21,16 @@ const props = defineProps<{
 }>();
 
 const { bindClass } = useClass();
-const { bindProps } = useProps();
+const { bindProps, fieldProps } = useProps();
 const { label } = useLabel(props.schema);
 
 const theme = useTheme();
+const primaryWhite = computed(() => (theme.current.value.dark ? 'white' : 'primary'));
 
-const primaryWhite = computed(() => (theme.current.value.dark ? "white" : "primary"));
+onMounted(() => {
+  bindProps(props.schema);
+});
+
 </script>
 
-<style scoped lang="css"></style>
+<style scoped lang='css'></style>

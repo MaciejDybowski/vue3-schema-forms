@@ -1,27 +1,27 @@
 <template>
   <v-autocomplete
-    :label="label"
-    v-model="localModel"
-    :items="items"
-    @update:search="debounced.search"
-    :no-filter="true"
-    item-title="formatted_address"
-    :return-object="true"
-    :rules="rules(schema)"
-    :class="bindClass(schema)"
-    v-bind="bindProps(schema)"
+    :label='label'
+    v-model='localModel'
+    :items='items'
+    @update:search='debounced.search'
+    :no-filter='true'
+    item-title='formatted_address'
+    :return-object='true'
+    :rules='rules(schema)'
+    :class='bindClass(schema)'
+    v-bind='fieldProps'
   >
   </v-autocomplete>
 </template>
 
-<script setup lang="ts">
-import { OpenStreetMapProvider } from "leaflet-geosearch";
-import { debounce } from "lodash";
-import { Ref, computed, ref } from "vue";
+<script setup lang='ts'>
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { debounce } from 'lodash';
+import { computed, onMounted, ref, Ref } from 'vue';
 
-import { EngineLocationField } from "@/types/engine/controls";
+import { EngineLocationField } from '@/types/engine/controls';
 
-import { useClass, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
+import { useClass, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
 
 interface Location {
   country: string;
@@ -50,7 +50,7 @@ const props = defineProps<{
 const { label } = useLabel(props.schema);
 const { rules } = useRules();
 const { bindClass } = useClass();
-const { bindProps } = useProps();
+const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 
 const localModel = computed({
@@ -66,12 +66,13 @@ const items: Ref<Location[]> = ref([]);
 
 const provider = new OpenStreetMapProvider({
   params: {
-    "accept-language": props.schema.results?.lang,
+    'accept-language': props.schema.results?.lang,
     countrycodes: props.schema.results?.lang,
     addressdetails: 1,
   },
   // https://nominatim.org/release-docs/develop/api/Search/#parameters
 });
+
 
 async function searchFunc(val: string) {
   if (val) {
@@ -104,4 +105,8 @@ async function searchFunc(val: string) {
 const debounced = {
   search: debounce(searchFunc, 600),
 };
+
+onMounted(() => {
+  bindProps(props.schema);
+});
 </script>

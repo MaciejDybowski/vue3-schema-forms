@@ -1,24 +1,24 @@
 <template>
   <v-select
-    v-model="localModel"
-    :label="label"
-    v-bind="bindProps(schema)"
-    :rules="rules(schema)"
-    :class="bindClass(schema)"
-    :item-title="title"
-    :item-value="value"
-    :items="data"
-    :loading="loading"
-    :return-object="returnObject as any"
+    v-model='localModel'
+    :label='label'
+    v-bind='fieldProps'
+    :rules='rules(schema)'
+    :class='bindClass(schema)'
+    :item-title='title'
+    :item-value='value'
+    :items='data'
+    :loading='loading'
+    :return-object='returnObject as any'
   ></v-select>
 </template>
 
-<script setup lang="ts">
-import { computed } from "vue";
+<script setup lang='ts'>
+import { computed, onMounted } from 'vue';
 
-import { EngineSourceField } from "@/types/engine/controls";
+import { EngineSourceField } from '@/types/engine/controls';
 
-import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from "../../core/composables";
+import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -26,10 +26,12 @@ const props = defineProps<{
 }>();
 const { label } = useLabel(props.schema);
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
-const { bindProps } = useProps();
+const { bindProps, fieldProps } = useProps();
 const { rules } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
+
+
 const localModel = computed({
   get(): string | number {
     return getValue(props.model, props.schema);
@@ -38,6 +40,10 @@ const localModel = computed({
     setValue(val, props.schema);
   },
 });
+
+onMounted(() => {
+  bindProps(props.schema);
+});
 </script>
 
-<style scoped lang="css"></style>
+<style scoped lang='css'></style>

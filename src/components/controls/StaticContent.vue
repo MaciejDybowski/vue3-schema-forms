@@ -19,10 +19,10 @@ const props = defineProps<{
   model: object;
 }>();
 
-const { resolve } = useResolveVariables(props.schema);
+const { resolve } = useResolveVariables();
 
 const resolvedContent = computed(() => {
-  return resolve(props.schema.content);
+  return resolve(props.schema,props.schema.content);
 });
 
 const { bindClass } = useClass();

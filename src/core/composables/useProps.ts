@@ -1,118 +1,139 @@
-import set from "lodash/set";
+import { useCustomIfExpression } from '@/core/composables/useCustomIfExpression';
+import { EngineField } from '@/types/engine/EngineField';
+import { EngineTextField } from '@/types/engine/controls';
 
-import { useCustomIfExpression } from "@/core/composables/useCustomIfExpression";
-import { EngineField } from "@/types/engine/EngineField";
-import { EngineTextField } from "@/types/engine/controls";
-
-import { variableRegexp } from "../../core/engine/utils";
-import { useResolveVariables } from "./useResolveVariables";
+import { variableRegexp } from '../../core/engine/utils';
+import { useResolveVariables } from './useResolveVariables';
+import { ref } from 'vue';
+import { useEventBus } from '@vueuse/core';
+import { cloneDeep } from 'lodash';
+import { logger } from '@/main';
 
 export function useProps() {
-  function bindProps(schema: EngineField, model: any = {}) {
-    let props: Record<string, string | number | boolean> = {};
-    const { resolve } = useResolveVariables(schema);
+  const { resolve } = useResolveVariables();
+  const { customIfExpressionResolve } = useCustomIfExpression();
+  const vueSchemaFormEventBus = useEventBus<string>('form-model');
+
+  let props = ref<Record<string, string | number | boolean>>({});
+  let propsClone = ref<Record<string, string | number | boolean>>({});
+
+
+  function bindProps(schema: EngineField) {
 
     switch (schema.layout.component) {
-      case "text-field":
-        props = {
+      case 'text-field':
+        props.value = {
           ...defaultTextFieldProperties,
           ...schema.options?.fieldProps,
           ...schema.options?.textFieldProps,
           ...schema.layout?.props,
         };
         if ((schema as EngineTextField).calculation) {
-          props.readOnly = true;
+          props.value.readonly = true;
         }
         break;
-      case "radio-button":
-        props = {
+      case 'radio-button':
+        props.value = {
           ...defaultRadioProps,
           ...schema.options?.fieldProps,
           ...schema.options?.radioButtonProps,
           ...schema.layout?.props,
         };
         break;
-      case "checkbox":
-        props = {
+      case 'checkbox':
+        props.value = {
           ...defaultCheckboxProperties,
           ...schema.options?.fieldProps,
           ...schema.options?.checkboxProps,
           ...schema.layout?.props,
         };
         break;
-      case "text-area":
-        props = {
+      case 'text-area':
+        props.value = {
           ...defaultTextAreaProps,
           ...schema.options?.fieldProps,
           ...schema.options?.textAreaProps,
           ...schema.layout?.props,
         };
         break;
-      case "select":
-        props = {
+      case 'select':
+        props.value = {
           ...defaultSelectProps,
           ...schema.options?.fieldProps,
           ...schema.options?.selectProps,
           ...schema.layout?.props,
         };
         break;
-      case "button":
-        props = {
+      case 'button':
+        props.value = {
           ...schema.options?.buttonProps,
           ...schema.layout?.props,
         };
         break;
       default:
-        props = {
-          "hide-details": "auto",
+        props.value = {
+          'hide-details': 'auto',
           ...schema.options?.fieldProps,
           ...schema.layout?.props,
         };
       //console.warn('component is not recognized - used default props');
     }
 
-    for (let [key, value] of Object.entries(props)) {
-      if (typeof value === "string" && value.includes("if")) {
-        useCustomIfExpression(key, props, schema);
+    propsClone.value = cloneDeep(props.value);
+
+    for (let [key, value] of Object.entries(props.value)) {
+      if (typeof value === 'string' && value.includes('if')) {
+        customIfExpressionResolve(key, props.value, schema);
       }
 
-      if (typeof value === "string" && variableRegexp.test(value)) {
-        const obj = resolve(value);
-        if (obj.allVariablesResolved) {
-          set(props, key, obj.resolvedText);
-        } else {
-          delete props[key];
-        }
+      if (typeof value === 'string' && variableRegexp.test(value)) {
+        const obj = resolve(schema, value);
+        props.value[key] = obj.resolvedText;
+
+        vueSchemaFormEventBus.on((event, payloadIndex) => propsValueMappingListener(event, payloadIndex, key, schema));
       }
     }
 
+    //console.debug(`[props] - ${schema.key}, index=${schema.index}`);
     return props;
   }
 
-  return { bindProps: bindProps };
+  async function propsValueMappingListener(event: string, payloadIndex: number, keyToResolve: string, schema: EngineField) {
+    //if (schema.index == undefined || schema.index == payloadIndex) {
+      await new Promise(r => setTimeout(r, 10));
+      const inputString = propsClone.value[keyToResolve];
+      const obj = resolve(schema, inputString as string);
+      props.value[keyToResolve] = obj.resolvedText;
+
+      if (logger.propsValueMappingListener) console.debug(`[vue-schema-forms] [PropsValueMappingListener] => key=[${keyToResolve}], value=[${obj.resolvedText}], index=[${payloadIndex}]`);
+    //}
+
+  }
+
+  return { bindProps: bindProps, fieldProps: props };
 }
 
 const defaultTextFieldProperties = {
-  "hide-details": "auto",
+  'hide-details': 'auto',
 };
 
 const defaultCheckboxProperties = {
-  density: "compact",
-  "hide-details": "auto",
+  density: 'compact',
+  'hide-details': 'auto',
   multiple: true,
 };
 
 const defaultRadioProps = {
-  density: "compact",
-  "hide-details": "auto",
+  density: 'compact',
+  'hide-details': 'auto',
 };
 
 const defaultTextAreaProps = {
   rows: 3,
-  "auto-grow": true,
-  "hide-details": "auto",
+  'auto-grow': true,
+  'hide-details': 'auto',
 };
 
 const defaultSelectProps = {
-  "hide-details": "auto",
+  'hide-details': 'auto',
 };

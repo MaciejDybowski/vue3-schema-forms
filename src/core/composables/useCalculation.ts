@@ -1,54 +1,59 @@
-import { Expression, Value } from "expr-eval";
-import set from "lodash/set";
-import { ref } from "vue";
+import { Expression, Value } from 'expr-eval';
+import set from 'lodash/set';
+import { ref } from 'vue';
 
-import { useNumber } from "@/core/composables/useNumber";
-import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
-import { useFormModelStore } from "@/store/formModelStore";
-import { EngineField } from "@/types/engine/EngineField";
+import { useNumber } from '@/core/composables/useNumber';
+import { usePreparedModelForExpression } from '@/core/composables/usePreparedModelForExpression';
+import { EngineField } from '@/types/engine/EngineField';
 
-import betterParser, { SUM } from "../engine/evalExprParser";
-import { useEventBus } from "@vueuse/core";
+import betterParser, { SUM } from '../engine/evalExprParser';
+import { useEventBus } from '@vueuse/core';
+import get from 'lodash/get';
+import { logger } from '@/main';
 
-export function useCalculation(field: EngineField): number | null {
+export function useCalculation() {
   const { roundTo } = useNumber();
-  const formModelStore = useFormModelStore(field.formId);
-  let model = usePreparedModelForExpression(field);
-  const precision = field.precision ? Number(field.precision) : 2;
+  const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
-  let result = ref(0);
-  let calculation = field.calculation as string;
-  let originalCalc = calculation;
-  const vueSchemaFormEventBus = useEventBus<string>('form-model')
-  const unsubscribe = vueSchemaFormEventBus.on(calculationListener)
+  function calculationFunc(field: EngineField, model: any): number | null {
+    let mergedModel = usePreparedModelForExpression(field);
+    const precision = field.precision ? Number(field.precision) : 2;
 
+    let result = ref(0);
+    let calculation = field.calculation as string;
 
-  let myExpr: Expression = prepareCalcExpression(calculation, model);
+    const unsubscribe = vueSchemaFormEventBus.on((event, payloadIndex) => calculationListener(event, payloadIndex, field, model));
 
-  if (myExpr.variables().every((variable) => variable in model)) {
-    result.value = myExpr.evaluate(model as Value);
-  }
+    let myExpr: Expression = prepareCalcExpression(calculation, mergedModel);
 
-
-  function calculationListener(event: string) {
-    console.debug(event + "- calculation");
-    model = usePreparedModelForExpression(field);
-    myExpr = prepareCalcExpression(originalCalc, model);
-    executeCalc();
-  }
-
-
-  function executeCalc(): void {
-    if (myExpr.variables().every((variable) => variable in model)) {
-      result.value = myExpr.evaluate(model as Value);
-      set(model, field.key, roundTo(result.value, precision));
+    if (myExpr.variables().every((variable) => variable in mergedModel)) {
+      result.value = myExpr.evaluate(mergedModel as Value);
     }
+
+    return roundTo(result.value, precision);
   }
 
-  function prepareCalcExpression(calculation: string, model: object): Expression {
-    calculation = SUM(calculation, model);
+  function calculationListener(event: string, payloadIndex: number, field: EngineField, model: any) {
+    //if (field.index == undefined || field.index == payloadIndex) {
+      if (logger.calculationListener) console.debug(`[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}`);
+      let calculation = field.calculation as string;
+      const precision = field.precision ? Number(field.precision) : 2;
+      const mergedModel = usePreparedModelForExpression(field);
+      let myExpr: Expression = prepareCalcExpression(calculation, mergedModel);
+      if (myExpr.variables().every((variable) => variable in mergedModel)) {
+        const result = myExpr.evaluate(mergedModel as Value);
+        const currentValue = get(model, field.key, null);
+        if (result !== currentValue) {
+          set(model, field.key, roundTo(result, precision));
+        }
+      }
+    //}
+  }
+
+  function prepareCalcExpression(calculation: string, mergedModel: object): Expression {
+    calculation = SUM(calculation, mergedModel);
     return betterParser.parse(calculation);
   }
 
-  return roundTo(result.value, precision);
+  return { calculationFunc };
 }

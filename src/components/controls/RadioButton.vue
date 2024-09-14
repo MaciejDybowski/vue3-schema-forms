@@ -1,46 +1,47 @@
 <template>
   <v-radio-group
-    v-model="localModel"
-    :label="label"
-    v-bind="bindProps(schema)"
-    :rules="rules(schema)"
-    :class="bindClass(schema)"
-    v-if="!loading"
+    v-model='localModel'
+    :label='label'
+    v-bind='fieldProps'
+    :rules='rules(schema)'
+    :class='bindClass(schema)'
+    v-if='!loading'
   >
     <template
-      v-for="(option, index) in data"
-      :key="option[value]"
+      v-for='(option, index) in data'
+      :key='option[value]'
     >
       <v-radio
-        v-bind="bindProps(schema)"
-        :value="option[value]"
-        :class="index !== data.length - 1 && !bindProps(schema).inline ? 'mb-2' : ''"
+        v-bind='fieldProps'
+        :value='option[value]'
+        :class="index !== data.length - 1 && !fieldProps.inline ? 'mb-2' : ''"
       >
-        <template #label="{ label }">
-          <div class="mr-2">{{ option[title] }}</div>
+        <template #label='{ label }'>
+          <div class='mr-2'>{{ option[title] }}</div>
         </template>
       </v-radio>
     </template>
   </v-radio-group>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, watch } from "vue";
+<script setup lang='ts'>
+import { computed, onMounted, watch } from 'vue';
 
-import { RadioField } from "@/types/engine/controls";
+import { RadioField } from '@/types/engine/controls';
 
-import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from "../../core/composables";
+import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
 
 const props = defineProps<{
   schema: RadioField;
   model: object;
 }>();
 const { label } = useLabel(props.schema);
-const { bindProps } = useProps();
+const { bindProps, fieldProps } = useProps();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const initValue: boolean = props.schema.initValue !== undefined ? props.schema.initValue : true;
+
 
 const localModel = computed({
   get(): string | number {
@@ -75,13 +76,14 @@ watch(loading, () => {
 });
 
 onMounted(async () => {
+  bindProps(props.schema);
   if (!loading.value && localModel.value == null && initValue) {
     localModel.value = data.value[0][value];
   }
 });
 </script>
 
-<style scoped lang="css">
+<style scoped lang='css'>
 :deep(.v-label) {
   margin-inline-start: 0 !important;
 }

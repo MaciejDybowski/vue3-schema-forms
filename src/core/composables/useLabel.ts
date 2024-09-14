@@ -8,13 +8,13 @@ import { useFormModelStore } from "../../store/formModelStore";
 
 export function useLabel(schema: EngineField) {
   const formModelStore = useFormModelStore(schema.formId);
-  const { resolve } = useResolveVariables(schema);
-  const label = ref(resolve(schema.label).resolvedText);
+  const { resolve } = useResolveVariables();
+  const label = ref(resolve(schema, schema.label).resolvedText);
   const labelWithFallbackMessage = label.value;
 
   if (schema?.label?.match(variableRegexp)) {
     formModelStore.$subscribe(() => {
-      const { resolvedText, allVariablesResolved } = resolve(schema.label);
+      const { resolvedText, allVariablesResolved } = resolve(schema, schema.label);
       allVariablesResolved ? (label.value = resolvedText) : (label.value = labelWithFallbackMessage);
     });
   }

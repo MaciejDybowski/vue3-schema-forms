@@ -1,28 +1,28 @@
 <template>
   <v-phone-input
-    :class="bindClass(schema)"
-    :label="label"
-    v-model="localModel"
+    :class='bindClass(schema)'
+    :label='label'
+    v-model='localModel'
     :invalid-message="(options: any) => t('phoneInvalid', { example: options.example })"
-    :country-props="bindProps(schema)"
-    :phone-props="bindProps(schema)"
-    v-bind="mergedPhoneInputProps"
-    :rules="rules(schema)"
-    name="phone"
-    type="tel"
+    :country-props='bindProps(schema)'
+    :phone-props='bindProps(schema)'
+    v-bind='fieldProps'
+    :rules='rules(schema)'
+    name='phone'
+    type='tel'
   >
   </v-phone-input>
 </template>
 
-<script setup lang="ts">
-import "flag-icons/css/flag-icons.min.css";
-import { VPhoneInput } from "v-phone-input";
-import "v-phone-input/dist/v-phone-input.css";
-import { computed } from "vue";
+<script setup lang='ts'>
+import 'flag-icons/css/flag-icons.min.css';
+import { VPhoneInput } from 'v-phone-input';
+import 'v-phone-input/dist/v-phone-input.css';
+import { computed, ref } from 'vue';
 
-import { EnginePhoneField } from "@/types/engine/controls";
+import { EnginePhoneField } from '@/types/engine/controls';
 
-import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
+import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from '../../core/composables';
 
 const props = defineProps<{
   schema: EnginePhoneField;
@@ -37,16 +37,21 @@ const { t } = useLocale();
 const { getValue, setValue } = useFormModel();
 
 const phoneInputProps = {
-  "country-icon-mode": "svg",
-  countryLabel: t("address.country"),
-  "guess-country": true,
-  "include-countries": ["pl", "gb", "ru", "de", "us", "es", "fr", "it"],
+  'country-icon-mode': 'svg',
+  countryLabel: t('address.country'),
+  'guess-country': true,
+  'include-countries': ['pl', 'gb', 'ru', 'de', 'us', 'es', 'fr', 'it'],
 };
 
-const mergedPhoneInputProps = {
-  ...phoneInputProps,
-  ...props.schema.phoneInputProps,
-};
+const propsRef = ref({});
+const fieldPropsMerged = computed(() => {
+  propsRef.value = {
+    ...bindProps(props.schema),
+    ...phoneInputProps,
+    ...props.schema.phoneInputProps,
+  };
+  return propsRef.value;
+});
 
 const localModel = computed({
   get(): string {
@@ -58,4 +63,4 @@ const localModel = computed({
 });
 </script>
 
-<style scoped lang="css"></style>
+<style scoped lang='css'></style>

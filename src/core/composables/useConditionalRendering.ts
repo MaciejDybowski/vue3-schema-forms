@@ -1,65 +1,56 @@
-import { Expression, Value } from "expr-eval";
-import jsonata from "jsonata";
-import get from "lodash/get";
-import { ref } from "vue";
+import { Expression, Value } from 'expr-eval';
+import jsonata from 'jsonata';
+import get from 'lodash/get';
+import { ref } from 'vue';
 
-import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
-import { EngineField } from "@/types/engine/EngineField";
+import { usePreparedModelForExpression } from '@/core/composables/usePreparedModelForExpression';
+import { EngineField } from '@/types/engine/EngineField';
+import betterParser from '../engine/evalExprParser';
+import { useEventBus } from '@vueuse/core';
+import { cloneDeep } from 'lodash';
+import { logger } from '@/main';
 
-import { useFormModelStore } from "../../store/formModelStore";
-import betterParser from "../engine/evalExprParser";
-import { useEventBus } from "@vueuse/core";
-import { cloneDeep } from "lodash";
+export function useConditionalRendering() {
+  let shouldRender = ref(true);
+  const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
-export function useConditionalRendering(schema: EngineField) {
-  const formModelStore = useFormModelStore(schema.formId);
-  const shouldRender = ref(!schema.layout.if);
-  let model = {} as unknown;
-  const vueSchemaFormEventBus = useEventBus<string>("form-model");
-  const unsubscribe = vueSchemaFormEventBus.on(conditionalRenderingListener);
-  const originalIf = ref(!shouldRender.value ? cloneDeep(schema.layout.if) : "");
+  async function shouldRenderField(schema: EngineField, registerListener: boolean = true) {
+    shouldRender.value = !schema.layout.if;
+    let model = usePreparedModelForExpression(schema);
+    const originalIf = ref(!shouldRender.value ? cloneDeep(schema.layout.if) : '');
 
-  if (!shouldRender.value) {
-    originalIf.value = cloneDeep(schema.layout.if);
-    if (schema.layout.if !== undefined && schema.layout.if?.includes("nata-")) {
-      ifByJsonNata(schema.layout.if.replace("nata-", ""));
-    } else {
-      ifByEvalExpression();
+    if (schema.layout.if !== undefined && schema.layout.if && registerListener) {
+      const unsubscribe = vueSchemaFormEventBus.on((event, payloadIndex) => conditionalRenderingListener(event, payloadIndex, schema));
+    }
+
+    if (!shouldRender.value) {
+      originalIf.value = cloneDeep(schema.layout.if);
+      if (schema.layout.if !== undefined && schema.layout.if?.includes('nata-')) {
+        await ifByJsonNata(schema.layout.if.replace('nata-', ''), model);
+      } else {
+        ifByEvalExpression(schema.layout.if as string, model);
+      }
     }
   }
 
-  function ifByEvalExpression() {
-    let myExpr: Expression = betterParser.parse(schema.layout.if as string);
-    model = usePreparedModelForExpression(schema);
+  function ifByEvalExpression(expression: string, model: any) {
+    let myExpr: Expression = betterParser.parse(expression);
     if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
       shouldRender.value = myExpr.evaluate(model as Value);
     }
   }
 
-  async function ifByJsonNata(expression: string) {
+  async function ifByJsonNata(expression: string, model: any) {
     const nata = jsonata(expression);
-    model = usePreparedModelForExpression(schema);
     shouldRender.value = await nata.evaluate(model);
   }
 
-  async function conditionalRenderingListener(event: string) {
-    console.debug(event + "- conditional");
-
-    model = usePreparedModelForExpression(schema);
-    if (originalIf.value.includes("nata-")) {
-      // if by JSON Nata
-      const expression = originalIf.value.replace("nata-", "");
-      const nata = jsonata(expression);
-      shouldRender.value = await nata.evaluate(model);
-    } else if (originalIf.value) {
-      // if by EvalExpr
-      let myExpr: Expression = betterParser.parse(originalIf.value as string);
-      if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
-        shouldRender.value = myExpr.evaluate(model as Value);
-        console.debug(shouldRender.value, model);
-      }
-    }
+  async function conditionalRenderingListener(event: string, payloadIndex: number, schema: EngineField) {
+    //if (schema.index == undefined || schema.index == payloadIndex) {
+      await shouldRenderField(schema, false);
+      if (logger.conditionalRenderingListener) console.debug(`[vue-schema-forms] [ConditionalRenderingListener] => key=[${schema.key}] shouldRender=[${shouldRender.value}]`);
+    //}
   }
 
-  return { shouldRender };
+  return { shouldRender, shouldRenderField };
 }
