@@ -21,13 +21,13 @@ import {
   useClass,
   useDateFormat,
   useDictionarySource,
-  useFormattedNumber,
   useFormModel,
   useLabel,
   useLocale,
   useResolveVariables,
 } from '../../../core/composables';
 import dayjs from '../date/dayjs';
+import { useNumber } from '@/core/composables/useNumber';
 
 const props = defineProps<{
   schema: EngineDataViewerField;
@@ -38,7 +38,7 @@ const { t } = useLocale();
 const { label } = useLabel(props.schema);
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
-const { formatNumber } = useFormattedNumber(props.schema.options);
+const { formattedNumber } = useNumber();
 const { dateFormat } = useDateFormat();
 const { resolve } = useResolveVariables();
 const { calculationFunc } = useCalculation();
@@ -50,7 +50,7 @@ const localModel = computed({
     let value = getValue(props.model, props.schema);
 
     if (isValueMapping) {
-      const { resolvedText } = resolve(props.schema,props.schema.valueMapping as string);
+      const { resolvedText } = resolve(props.schema, props.schema.valueMapping as string);
       value = resolvedText;
     } else {
       switch (props.schema.type) {
@@ -59,7 +59,7 @@ const localModel = computed({
           break;
         case 'number':
           if (!value) break;
-          value = formatNumber(value);
+          value = formattedNumber(value, 'decimal', props.schema.precision ? Number(props.schema.precision) : 2);
           break;
         case 'date':
           if (!value) break;

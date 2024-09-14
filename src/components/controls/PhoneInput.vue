@@ -4,9 +4,9 @@
     :label='label'
     v-model='localModel'
     :invalid-message="(options: any) => t('phoneInvalid', { example: options.example })"
-    :country-props='bindProps(schema)'
-    :phone-props='bindProps(schema)'
-    v-bind='fieldProps'
+    :country-props='fieldPropsMerged'
+    :phone-props='fieldPropsMerged'
+    v-bind='fieldPropsMerged'
     :rules='rules(schema)'
     name='phone'
     type='tel'
@@ -18,7 +18,7 @@
 import 'flag-icons/css/flag-icons.min.css';
 import { VPhoneInput } from 'v-phone-input';
 import 'v-phone-input/dist/v-phone-input.css';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { EnginePhoneField } from '@/types/engine/controls';
 
@@ -32,7 +32,7 @@ const props = defineProps<{
 const { label } = useLabel(props.schema);
 const { rules } = useRules();
 const { bindClass } = useClass();
-const { bindProps } = useProps();
+const { bindProps, fieldProps } = useProps();
 const { t } = useLocale();
 const { getValue, setValue } = useFormModel();
 
@@ -46,7 +46,7 @@ const phoneInputProps = {
 const propsRef = ref({});
 const fieldPropsMerged = computed(() => {
   propsRef.value = {
-    ...bindProps(props.schema),
+    ...fieldProps.value,
     ...phoneInputProps,
     ...props.schema.phoneInputProps,
   };
@@ -60,6 +60,10 @@ const localModel = computed({
   set(val: any) {
     setValue(val, props.schema);
   },
+});
+
+onMounted(() => {
+  bindProps(props.schema);
 });
 </script>
 

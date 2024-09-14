@@ -35,10 +35,10 @@ const formSwitch = ref({});
 const switchId = Math.random().toString().slice(2, 5);
 
 const localModel = computed({
-  get(): boolean {
+  get(): any {
     return getValue(props.model, props.schema);
   },
-  set(val: boolean) {
+  set(val: any) {
     setValue(val, props.schema);
   },
 });
@@ -47,7 +47,7 @@ const localModel = computed({
 onMounted(() => {
   bindProps(props.schema);
   if (!('default' in props.schema)) {
-    let falseValue = formSwitch.value[switchId].falseValue;
+    let falseValue = fieldProps.value['false-value'] as string | boolean | undefined;
     localModel.value = falseValue === undefined ? false : falseValue;
   }
 });

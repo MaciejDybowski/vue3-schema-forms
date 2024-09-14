@@ -29,7 +29,9 @@ const props = defineProps<{
   model: object;
 }>();
 
-//useCustomIfExpression('component', props.schema.layout, props.schema);
+const {customIfExpressionResolve} = useCustomIfExpression();
+
+customIfExpressionResolve('component', props.schema.layout, props.schema);
 
 const { shouldRender, shouldRenderField } = useConditionalRendering();
 const { cols, completionOfRow, isOffsetExist, offset, fillRow, hideField } = useSchemaCols(props.schema);

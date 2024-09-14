@@ -114,7 +114,7 @@ const computedOptions = computed(() => {
 
 function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
   set(localModel.value[indexOfArray], event.key, event.value);
-  setValue(localModel.value, props.schema, indexOfArray);
+  setValue(localModel, props.schema, indexOfArray);
 }
 
 function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, index: number) {
