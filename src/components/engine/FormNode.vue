@@ -21,8 +21,8 @@ import { computed, onMounted } from 'vue';
 import { useCustomIfExpression } from '@/core/composables/useCustomIfExpression';
 import { EngineField } from '@/types/engine/EngineField';
 
-import { useConditionalRendering } from '../../core/composables/useConditionalRendering';
-import { useSchemaCols } from '../../core/composables/useSchemaCols';
+import { useConditionalRendering } from '@/core/composables';
+import { useSchemaCols } from '@/core/composables/useSchemaCols';
 
 const props = defineProps<{
   schema: EngineField;

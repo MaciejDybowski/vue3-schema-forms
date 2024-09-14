@@ -25,7 +25,7 @@ import {
   useLabel,
   useLocale,
   useResolveVariables,
-} from '../../../core/composables';
+} from '@/core/composables';
 import dayjs from '../date/dayjs';
 import { useNumber } from '@/core/composables/useNumber';
 

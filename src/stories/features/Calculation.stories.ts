@@ -2,8 +2,7 @@
 import { VueSchemaForms } from '@/components';
 import {
   calculationSchemaInDuplicatedSection,
-  simpleCalculationSchema,
-  simpleCalculationWithDynamicDigits,
+  simpleCalculationSchema
 } from '@/stories/schemas';
 import { invoicePositionsSchema } from '@/tests/test-schemas';
 import { expect } from '@storybook/jest';

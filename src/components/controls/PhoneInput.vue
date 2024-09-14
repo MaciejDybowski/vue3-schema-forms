@@ -22,7 +22,7 @@ import { computed, onMounted, ref } from 'vue';
 
 import { EnginePhoneField } from '@/types/engine/controls';
 
-import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from '../../core/composables';
+import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from '@/core/composables';
 
 const props = defineProps<{
   schema: EnginePhoneField;
