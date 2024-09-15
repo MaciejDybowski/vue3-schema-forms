@@ -95,7 +95,7 @@ const isPastDateAvailable: boolean = 'pastDateAvailable' in props.schema ? (prop
 const isFutureDateAvailable: boolean =
   'futureDateAvailable' in props.schema ? (props.schema.futureDateAvailable as boolean) : true;
 const isCloseOnFirstClick: boolean = 'closeOnFirstClick' in props.schema ? (props.schema.closeOnFirstClick as boolean) : true;
-const modelFormat: string = 'formatInModel' in props.schema ? (props.schema.formatInModel as string) : 'YYYY-MM-DDTHH:mm:ss.sssZ';
+const modelFormat: string = 'formatInModel' in props.schema ? (props.schema.formatInModel as string) : 'YYYY-MM-DD';
 const isInputFocused = ref(false);
 const firstClickPick = ref<Date>();
 

@@ -1,35 +1,32 @@
 // @ts-nocheck
-import { VueSchemaForms } from '@/components';
-import {
-  calculationSchemaInDuplicatedSection,
-  simpleCalculationSchema
-} from '@/stories/schemas';
-import { invoicePositionsSchema } from '@/tests/test-schemas';
-import { expect } from '@storybook/jest';
-import { userEvent, within } from '@storybook/testing-library';
-import { Meta, StoryObj } from '@storybook/vue3';
+import { VueSchemaForms } from "@/components";
+import { calculationSchemaInDuplicatedSection, simpleCalculationSchema } from "@/stories/schemas";
+import { invoicePositionsSchema } from "@/tests/test-schemas";
+import { expect } from "@storybook/test";
+import { userEvent, within } from "@storybook/test";
+import { Meta, StoryObj } from "@storybook/vue3";
 
-import { Schema } from '../../types/schema/Schema';
-import { Layout, SchemaTextField } from '../../types/schema/elements';
+import { Schema } from "../../types/schema/Schema";
+import { Layout, SchemaTextField } from "../../types/schema/elements";
 
 const meta = {
-  title: 'Forms/Features/Calculations',
+  title: "Forms/Features/Calculations",
   component: VueSchemaForms,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
+      control: "object",
+      description: "Schema u" /*table: { disable: true }*/,
     },
     modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
+      control: "object",
+      description: "Model" /*table: { disable: true }*/,
     },
     options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
+      control: "object",
+      description: "Opcje" /*table: { disable: true }*/,
     },
-    'update:modelValue': { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } },
   },
   args: {
     modelValue: {},
@@ -56,10 +53,10 @@ type Story = StoryObj<typeof meta>;
 export const SimpleCalculation: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const field1 = canvas.getByLabelText('Field 1');
-    const field2 = canvas.getByLabelText('Field 2');
-    await userEvent.type(field1, '2', { delay: 200 });
-    await userEvent.type(field2, '13.25', { delay: 200 });
+    const field1 = canvas.getByLabelText("Field 1");
+    const field2 = canvas.getByLabelText("Field 2");
+    await userEvent.type(field1, "2", { delay: 200 });
+    await userEvent.type(field2, "13.25", { delay: 200 });
 
     await expect(context.args.modelValue).toEqual({
       field1: 2,
@@ -80,10 +77,10 @@ export const SimpleCalculation: Story = {
 export const DefaultPrecisionIsRoundTo2DecimalPlaces: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const field1 = canvas.getByLabelText('Field 1');
-    const field2 = canvas.getByLabelText('Field 2');
-    await userEvent.type(field1, '2');
-    await userEvent.type(field2, '13.25');
+    const field1 = canvas.getByLabelText("Field 1");
+    const field2 = canvas.getByLabelText("Field 2");
+    await userEvent.type(field1, "2");
+    await userEvent.type(field2, "13.25");
 
     await expect(context.args.modelValue).toEqual({
       field1: 2,
@@ -132,23 +129,22 @@ export const DefaultPrecisionIsRoundTo2DecimalPlaces: Story = {
   },
 };*/
 
-
 /**
  * Heavy calculations
  */
 export const calculationInDuplicatedSchema: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const addButton = await canvas.findByRole('button', { name: 'Add' });
+    const addButton = await canvas.findByRole("button", { name: "Add" });
     await userEvent.click(addButton);
 
-    const duplicatedSections = document.getElementsByClassName('duplicated-section-item');
+    const duplicatedSections = document.getElementsByClassName("duplicated-section-item");
     await expect(duplicatedSections[1]).toBeInTheDocument();
 
-    const field1 = await within(duplicatedSections[1]).findByLabelText('Field 1');
-    const field2 = await within(duplicatedSections[1]).findByLabelText('Field 2');
-    await userEvent.type(field1, '3', { delay: 100 });
-    await userEvent.type(field2, '7.5', { delay: 100 });
+    const field1 = await within(duplicatedSections[1]).findByLabelText("Field 1");
+    const field2 = await within(duplicatedSections[1]).findByLabelText("Field 2");
+    await userEvent.type(field1, "3", { delay: 100 });
+    await userEvent.type(field2, "7.5", { delay: 100 });
 
     const expectedModel = {
       items: [
@@ -192,9 +188,9 @@ export const invoiceItems: Story = {
   args: {
     modelValue: {
       invoiceItems: [
-        { product: 'Item 1', quantity: 2, netPrice: 90.5, tax: 0.18 },
-        { product: 'Item 2', quantity: 5, netPrice: 88.3, tax: 0.07 },
-        { product: 'Item 3', quantity: 6, netPrice: 113.55, tax: 0.23 },
+        { product: "Item 1", quantity: 2, netPrice: 90.5, tax: 0.18 },
+        { product: "Item 2", quantity: 5, netPrice: 88.3, tax: 0.07 },
+        { product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23 },
       ],
     },
     schema: invoicePositionsSchema,
@@ -207,13 +203,13 @@ export const SUM_function: Story = {
       data: {
         items: [
           {
-            product: 'Computer',
+            product: "Computer",
             quantity: 1,
             price: 3200,
             value: 3200,
           },
           {
-            product: 'Laptop',
+            product: "Laptop",
             quantity: 2,
             price: 1334.23,
             value: 2668.46,
@@ -230,12 +226,12 @@ export const SUM_function: Story = {
       data: {
         items: [
           {
-            product: 'Computer',
+            product: "Computer",
             quantity: 1,
             price: 3200,
           },
           {
-            product: 'Laptop',
+            product: "Laptop",
             quantity: 2,
             price: 1334.23,
           },
@@ -243,12 +239,12 @@ export const SUM_function: Story = {
       },
     },
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         description: {
           layout: {
-            component: 'static-content',
-            tag: 'span',
+            component: "static-content",
+            tag: "span",
           },
           content:
             'In order for there to be a summation option along with the operation of other calculation functions, "precalculations" were added when preparing the final expression. <br> The function accepts two parameters: <br> 1. Path to the variable to be summed <br>  2. Path to the variable, which is an array of data',
@@ -257,20 +253,20 @@ export const SUM_function: Story = {
           properties: {
             items: {
               layout: {
-                component: 'duplicated-section',
+                component: "duplicated-section",
                 schema: {
                   properties: {
-                    product: { label: 'Product', layout: { component: 'text-field', cols: 4 } },
+                    product: { label: "Product", layout: { component: "text-field", cols: 4 } },
                     quantity: {
-                      label: 'Quantity',
+                      label: "Quantity",
                       default: 1,
-                      layout: { component: 'number-field', cols: 2 },
+                      layout: { component: "number-field", cols: 2 },
                     },
-                    price: { label: 'Price', layout: { component: 'text-field', cols: 3 } },
+                    price: { label: "Price", layout: { component: "text-field", cols: 3 } },
                     value: {
-                      label: 'Value',
-                      layout: { component: 'number-field', cols: 3 },
-                      calculation: 'quantity * price',
+                      label: "Value",
+                      layout: { component: "number-field", cols: 3 },
+                      calculation: "quantity * price",
                     } as SchemaTextField,
                   },
                 },
@@ -281,12 +277,12 @@ export const SUM_function: Story = {
         summary: {
           properties: {
             sumValue: {
-              label: 'SUM(Value)-300',
+              label: "SUM(Value)-300",
               layout: {
-                component: 'number-field',
+                component: "number-field",
                 cols: 4,
               },
-              calculation: 'SUM(value,data.items) - 300',
+              calculation: "SUM(value,data.items) - 300",
             } as SchemaTextField,
           },
         },

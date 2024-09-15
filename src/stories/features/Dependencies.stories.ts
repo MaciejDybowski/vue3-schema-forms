@@ -2,8 +2,8 @@
 import { VueSchemaForms } from "@/components";
 import { REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI } from "@/stories/controls/Dictionary/responses";
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
-import { expect } from "@storybook/jest";
-import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/test";
+import { userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { EngineSourceField } from "../../types/engine/controls";

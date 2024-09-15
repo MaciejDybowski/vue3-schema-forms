@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/jest";
-import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/test";
+import { userEvent, within } from "@storybook/test";
 import { f } from "@storybook/theming/dist/create-3ae9aa71";
 import { Meta, StoryObj } from "@storybook/vue3";
 
@@ -179,7 +179,7 @@ export const RequiredAncCounter: Story = {
           layout: {
             component: "text-area",
             props: {
-              counter: 20,
+              counter: "20",
             },
           },
         },

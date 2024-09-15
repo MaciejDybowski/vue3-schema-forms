@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/jest";
-import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/test";
+import { userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import dayjs from "../../components/controls/date/dayjs";

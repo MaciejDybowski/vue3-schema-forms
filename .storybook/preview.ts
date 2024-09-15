@@ -8,7 +8,7 @@ import { createPinia } from 'pinia';
 const preview: Preview = {
   parameters: {
     locale: i18nConfig.locale,
-    actions: { argTypesRegex: '^on[A-Z].*' },
+    //actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -16,6 +16,8 @@ const preview: Preview = {
       },
     },
   },
+
+  tags: ['autodocs']
 };
 
 const pinia = createPinia();

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/jest";
-import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/test";
+import { userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import dayjs from "../../components/controls/date/dayjs";
@@ -46,7 +46,7 @@ export const Standard: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Date");
     await userEvent.type(field, "01/29/2024");
-    await expect(context.args.modelValue.simpleDate).toEqual("2024-01-29T00:00:00.000+01:00");
+    await expect(context.args.modelValue.simpleDate).toEqual("2024-01-29");
   },
   args: {
     modelValue: {},
@@ -66,10 +66,10 @@ export const Standard: Story = {
 
 export const ReadOnly: Story = {
   play: async (context) => {
-    //const canvas = within(context.canvasElement);
-    //const field = canvas.getByLabelText('Date');
-    //await userEvent.type(field, '01/29/2024');
-    //await expect(context.args.modelValue.simpleDate).toEqual('2024-01-29T00:00:00.000+01:00');
+    // const canvas = within(context.canvasElement);
+    // const field = canvas.getByLabelText('Date');
+    // await userEvent.type(field, '01/29/2024');
+    // await expect(context.args.modelValue.simpleDate).toEqual('2024-01-29T00:00:00.000+01:00');
   },
   args: {
     modelValue: {
@@ -127,7 +127,7 @@ export const PickFromMenu: Story = {
  */
 export const WithDefault: Story = {
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({ dateWithDefault: "2024-01-29T00:00:00.000+01:00" });
+    await expect(context.args.modelValue).toEqual({ dateWithDefault: "2024-01-29" });
   },
   args: {
     modelValue: {},

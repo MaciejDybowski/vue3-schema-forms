@@ -2,8 +2,8 @@
 import { VueSchemaForms } from "@/components";
 import { REQUEST_NOT_LAZY, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
-import { expect } from "@storybook/jest";
-import { fireEvent, userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/test";
+import { fireEvent, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../../types/schema/Schema";
