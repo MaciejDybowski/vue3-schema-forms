@@ -170,7 +170,7 @@ export const SimpleValidation: Story = {
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit);
 
-    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+    await expect(canvas.getAllByText("Form is valid")[0]).toBeInTheDocument();
   },
   args: {
     modelValue: {},
