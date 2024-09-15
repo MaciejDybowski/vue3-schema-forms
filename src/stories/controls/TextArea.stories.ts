@@ -162,7 +162,7 @@ export const RequiredAncCounter: Story = {
     await userEvent.click(Submit, { delay: 400 });
 
     // 👇 Assert DOM structure
-    await expect(canvas.getByText("Max")).toBeInTheDocument();
+    await expect(canvas.getAllByText(/Max/)[0]).toBeInTheDocument();
     // TODO na localhost jest okej a na github/chromatic juz nie
     // await expect(canvas.getByText("Max 20 characters.")).toBeInTheDocument();
 

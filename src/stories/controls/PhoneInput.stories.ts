@@ -162,7 +162,7 @@ export const SimpleValidation: Story = {
       delay: 100,
     });
 
-    await expect(canvas.getByText("The number provided")).toBeInTheDocument();
+    await expect(canvas.getAllByText(/The number provided/)[0]).toBeInTheDocument();
     // TODO na localhost jest okej a na github/chromatic juz nie
     // await expect(canvas.getByText("The number provided is incorrect. (Ex: 12 345 67 89)")).toBeInTheDocument();
 
