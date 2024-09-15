@@ -136,7 +136,7 @@ export const WithDefault: Story = {
       properties: {
         dateWithDefault: {
           label: "Date",
-          default: "2024-01-29T00:00:00.000+01:00",
+          default: "2024-01-29",
           layout: {
             component: "date-picker",
           },
