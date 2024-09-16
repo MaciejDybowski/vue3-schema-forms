@@ -97,7 +97,7 @@ function formIsReady() {
     emit('isFormReady');
     formReadySignalSent.value = true;
     if (logger.formUpdateLogger) {
-      console.debug(`[[vue-schema-forms] => Form ${formId}] sent ready signal`);
+      console.debug(`[vue-schema-forms] => Form ${formId}] sent ready signal`);
     }
   }
 }

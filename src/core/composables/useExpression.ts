@@ -42,7 +42,6 @@ export function useExpression() {
   }
 
   function expressionListener(event: string, key: string, expression: string, model: object) {
-    console.debug("Function Expression Listener")
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let f = functions[functionName];

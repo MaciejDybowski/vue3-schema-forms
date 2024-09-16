@@ -12,6 +12,7 @@ import { mapSliceTotalElements } from '../../components/controls/base/SliceRespo
 import { variableRegexp } from '../../core/engine/utils';
 import { useFormModelStore } from '../../store/formModelStore';
 import { useResolveVariables } from './useResolveVariables';
+import { logger } from "@/main";
 
 export function useDictionarySource(field: EngineDictionaryField) {
   const { resolve } = useResolveVariables();
@@ -70,7 +71,9 @@ export function useDictionarySource(field: EngineDictionaryField) {
   });
 
   const load = async (caller: string) => {
-    console.debug('[vue-schema-forms] => Dictionary load call function = ', caller);
+    if(logger.dictionaryLogger){
+      console.debug(`[vue-schema-forms] => Dictionary load call function = ${caller}, query=${query.value}}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`);
+    }
     if (endpoint.allVariablesResolved) {
       loading.value = true;
       paginationOptions.value.resetPage();
@@ -90,7 +93,8 @@ export function useDictionarySource(field: EngineDictionaryField) {
       data.value = get(response.data, responseReference.data, []);
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
-    } else {
+    }
+    if(logger.dictionaryLogger) {
       console.debug(
         `[vue-schema-forms] => API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`,
       );

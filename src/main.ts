@@ -40,13 +40,15 @@ export let logger = {
   customIfExpressionListener: false,
   propsValueMappingListener: false,
   conditionalRenderingListener: false,
+  dictionaryLogger: false
 };
 export type VueSchemaLoggers = {
   formUpdateLogger?:boolean
   calculationListener?:boolean
   customIfExpressionListener?:boolean
   propsValueMappingListener?:boolean
-  conditionalRenderingListener:boolean
+  conditionalRenderingListener?:boolean
+  dictionaryLogger?:boolean
 }
 
 export type VueSchemaForms = {
