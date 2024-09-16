@@ -39,7 +39,7 @@ import { SchemaOptions } from '@/types/schema/SchemaOptions';
 
 import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
 import { resolveSchemaWithLocale } from '../../core/engine/utils';
-import { formUpdateLogger, logger } from '../../main';
+import { logger } from '../../main';
 import { useFormModelStore } from '../../store/formModelStore';
 import FormRoot from './FormRoot.vue';
 import FormDefaultActions from './validation/FormDefaultActions.vue';
