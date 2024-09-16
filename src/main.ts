@@ -41,15 +41,20 @@ export let logger = {
   propsValueMappingListener: false,
   conditionalRenderingListener: false,
 };
-export let formUpdateLogger = true;
-
+export type VueSchemaLoggers = {
+  formUpdateLogger?:boolean
+  calculationListener?:boolean
+  customIfExpressionListener?:boolean
+  propsValueMappingListener?:boolean
+  conditionalRenderingListener:boolean
+}
 
 export type VueSchemaForms = {
   install: (app: App) => void;
 };
 
 export type VueSchemaFormsOptions = {
-  formUpdateLogger?: boolean;
+  logger?: VueSchemaLoggers;
   customComponents?: Components;
   installFormControls?: boolean;
 };
@@ -59,8 +64,8 @@ export type VueSchemaFormsOptions = {
 // export const schemaFormModelStoreInit = schemaFormModelStore;
 
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
-  if (options?.formUpdateLogger) {
-    formUpdateLogger = options.formUpdateLogger;
+  if (options?.logger) {
+    logger = {...logger, ...options.logger};
   }
 
   return {
