@@ -33,8 +33,11 @@ export function useCalculation() {
     return roundTo(result.value, precision);
   }
 
-  function calculationListener(event: string, payloadIndex: number, field: EngineField, model: any) {
+  async function calculationListener(event: string, payloadIndex: number, field: EngineField, model: any) {
     //if (field.index == undefined || field.index == payloadIndex) {
+    if(field.index == undefined){ // TODO - opoźnianie dla sum i obliczeń zbiorowych nie wiem czy to tak do końca powinno być
+      await new Promise(r => setTimeout(r, 1));
+    }
       if (logger.calculationListener) console.debug(`[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}`);
       let calculation = field.calculation as string;
       const precision = field.precision ? Number(field.precision) : 2;

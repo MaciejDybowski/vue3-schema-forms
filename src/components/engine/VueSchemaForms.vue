@@ -108,15 +108,14 @@ function updateModel(event: NodeUpdateEvent) {
   formModelStore.updateFormModel(props.modelValue);
   emit('update:modelValue', props.modelValue);
 
-
-  vueSchemaFormEventBus.emit('model-changed', event.index);
-
-  //vueSchemaFormEventBus.emit('model-changed')
-
-  debounced.formIsReady()();
   if (logger.formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, props.modelValue);
   }
+
+  vueSchemaFormEventBus.emit('model-changed', event.index);
+
+  debounced.formIsReady()();
+
 }
 
 async function loadResolvedSchema() {
