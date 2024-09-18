@@ -1,5 +1,5 @@
 <template>
-  <v-autocomplete
+  <v-combobox
     v-model="model"
     v-bind="attrs"
   >
@@ -28,11 +28,11 @@
         </v-list-item>
       </div>
     </template>
-  </v-autocomplete>
+  </v-combobox>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useAttrs } from "vue";
+import { computed, ref, useAttrs } from "vue";
 
 import { Pagination } from "./Pagination";
 

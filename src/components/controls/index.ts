@@ -18,6 +18,7 @@ import DataViewer from "./data-viewer/DataViewer.vue";
 import DatePicker from "./date/DatePicker.vue";
 import DateTimePicker from "./date/DateTimePicker.vue";
 import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
+import Combobox from "./Combobox.vue";
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,
@@ -29,6 +30,7 @@ export const vueSchemaFromControls: Components = {
   select: Select,
   "data-viewer": DataViewer,
   dictionary: Autocomplete,
+  "combobox": Combobox,
   "date-picker": DatePicker,
   "date-time-picker": DateTimePicker,
   phone: PhoneInput,
@@ -36,5 +38,5 @@ export const vueSchemaFromControls: Components = {
   address: Address,
   button: ButtonField,
   switch: Switch,
-  "number-field": NumberField,
+  "number-field": NumberField
 };
