@@ -114,7 +114,7 @@ const computedOptions = computed(() => {
 
 function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
   set(localModel.value[indexOfArray], event.key, event.value);
-  setValue(localModel, props.schema, indexOfArray);
+  setValue(localModel.value, props.schema, indexOfArray);
 }
 
 function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, index: number) {
@@ -122,10 +122,12 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
     case 'addBelow':
       nodes.value.splice(index + 1, 0, getClearNode.value);
       localModel.value.splice(index + 1, 0, {});
+      setValue(localModel.value, props.schema, index);
       return;
     case 'delete':
       nodes.value = nodes.value.filter((item, i) => i !== index);
       localModel.value = localModel.value.filter((item, i) => i !== index);
+      setValue(localModel.value, props.schema, index);
       return;
     default:
       console.error('Unknown action');
