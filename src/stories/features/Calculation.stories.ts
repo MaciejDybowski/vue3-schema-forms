@@ -199,6 +199,7 @@ export const invoiceItems: Story = {
 
 export const SUM_function: Story = {
   play: async (context) => {
+    await new Promise(r => setTimeout(r, 10));
     await expect(context.args.modelValue).toEqual({
       data: {
         items: [
