@@ -38,8 +38,7 @@ import { computed, onMounted, watch } from 'vue';
 import { EngineDictionaryField } from '@/types/engine/controls';
 
 import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
-import BaseAutocomplete from './base/BaseAutocomplete.vue';
-import BaseCombobox from "@/components/controls/base/BaseCombobox.vue";
+import BaseCombobox from '@/components/controls/base/BaseCombobox.vue';
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -57,9 +56,6 @@ const localModel = computed({
     return getValue(props.model, props.schema);
   },
   set(val: any) {
-    if (val === null) {
-      query.value = '';
-    }
     setValue(val, props.schema);
   },
 });
@@ -95,7 +91,10 @@ onMounted(async () => {
   });
 });
 
-function updateQuery(val: object | string) {
+function updateQuery(val: any) {
+  if (val === null || val === '') {
+    query.value = '';
+  }
   if (val && typeof val == 'object') {
     query.value = val[title];
   }

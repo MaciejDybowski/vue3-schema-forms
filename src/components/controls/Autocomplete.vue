@@ -56,9 +56,6 @@ const localModel = computed({
     return getValue(props.model, props.schema);
   },
   set(val: any) {
-    if (val === null) {
-      query.value = '';
-    }
     setValue(val, props.schema);
   },
 });
@@ -94,7 +91,10 @@ onMounted(async () => {
   });
 });
 
-function updateQuery(val: object | string) {
+function updateQuery(val: any) {
+  if (val === null || val === '') {
+    query.value = '';
+  }
   if (val && typeof val == 'object') {
     query.value = val[title];
   }
