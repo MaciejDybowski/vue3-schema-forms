@@ -40,15 +40,17 @@ export let logger = {
   customIfExpressionListener: false,
   propsValueMappingListener: false,
   conditionalRenderingListener: false,
-  dictionaryLogger: false
+  dictionaryLogger: false,
+  duplicatedSchemaWatchLogger: false,
 };
 export type VueSchemaLoggers = {
-  formUpdateLogger?:boolean
-  calculationListener?:boolean
-  customIfExpressionListener?:boolean
-  propsValueMappingListener?:boolean
-  conditionalRenderingListener?:boolean
-  dictionaryLogger?:boolean
+  formUpdateLogger?: boolean
+  calculationListener?: boolean
+  customIfExpressionListener?: boolean
+  propsValueMappingListener?: boolean
+  conditionalRenderingListener?: boolean
+  dictionaryLogger?: boolean,
+  duplicatedSchemaWatchLogger?: boolean
 }
 
 export type VueSchemaForms = {
@@ -67,7 +69,7 @@ export type VueSchemaFormsOptions = {
 
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
   if (options?.logger) {
-    logger = {...logger, ...options.logger};
+    logger = { ...logger, ...options.logger };
   }
 
   return {

@@ -100,6 +100,9 @@ const showSectionElements = computed(() => {
   }
 });
 
+const ordinalNumberInModel: boolean = duplicatedSectionOptions.value !== undefined &&
+'ordinalNumberInModel' in duplicatedSectionOptions.value ? duplicatedSectionOptions.value.ordinalNumberInModel : false;
+
 const computedOptions = computed(() => {
   const options = JSON.parse(JSON.stringify(props.schema.options));
 
@@ -121,12 +124,23 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
   switch (actionId) {
     case 'addBelow':
       nodes.value.splice(index + 1, 0, getClearNode.value);
-      localModel.value.splice(index + 1, 0, {});
+      localModel.value.splice(index + 1, 0, getClearModel.value);
       setValue(localModel.value, props.schema, index);
       return;
     case 'delete':
-      nodes.value = nodes.value.filter((item, i) => i !== index);
-      localModel.value = localModel.value.filter((item, i) => i !== index);
+      nodes.value = nodes.value.filter((item, i) => i !== index)
+        .map((item, index) => {
+          wrapPropertiesWithIndexAndPath(item.properties, index);
+          return item;
+        });
+
+      localModel.value = localModel.value.filter((item, i) => i !== index)
+        .map((item, index) => {
+          if (ordinalNumberInModel) {
+            item['ordinalNumber'] = index + 1;
+          }
+          return item;
+        });
       setValue(localModel.value, props.schema, index);
       return;
     default:
@@ -146,9 +160,21 @@ const getClearNode = computed((): Schema => {
   } as Schema;
 });
 
+const getClearModel = computed(() => {
+  const newLocalModel = {};
+  if (ordinalNumberInModel) {
+    newLocalModel['ordinalNumber'] = nodes.value.length;
+  }
+  return newLocalModel;
+});
+
 function addNode(): void {
   nodes.value.push(getClearNode.value);
-  localModel.value.push({});
+  localModel.value.push(getClearModel.value);
+
+  if (ordinalNumberInModel) {
+    setValue(localModel.value, props.schema, nodes.value.length - 1);
+  }
 }
 
 function changePosition(drag: VueDragable<Schema>) {
@@ -156,6 +182,18 @@ function changePosition(drag: VueDragable<Schema>) {
     let temp = localModel.value[drag.moved.newIndex];
     localModel.value[drag.moved.newIndex] = localModel.value[drag.moved.oldIndex];
     localModel.value[drag.moved.oldIndex] = temp;
+
+    if (ordinalNumberInModel) {
+      const tempOrdinal = localModel.value[drag.moved.newIndex]['ordinalNumber'];
+      localModel.value[drag.moved.newIndex]['ordinalNumber'] = localModel.value[drag.moved.oldIndex]['ordinalNumber'];
+      localModel.value[drag.moved.oldIndex]['ordinalNumber'] = tempOrdinal;
+    }
+
+    nodes.value = nodes.value.map((item, index) => {
+      wrapPropertiesWithIndexAndPath(item.properties, index);
+      return item;
+    });
+
   } else {
     console.warn('Error with draggable');
   }

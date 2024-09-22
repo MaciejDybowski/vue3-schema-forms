@@ -26,10 +26,48 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const LpInDuplicatedSection: Story = {
+  args: {
+    model: {},
+    schema: {
+      type: 'object',
+      properties: {
+        invoiceItems: {
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                paragraph: {
+                  content: 'Pozycja nr. {ordinalNumber}',
+                  type: 'text',
+                  layout: {
+                    component: 'static-content',
+                    tag: 'span',
+                  },
+                },
+                product: {
+                  label: 'Lp. {ordinalNumber} - Product',
+                  layout: { component: 'text-field', cols: 12 },
+                },
+              },
+            },
+            options: {
+              showDivider: true,
+              ordinalNumberInModel: true,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 
 export const Table1: Story = {
   args: {
-    model: {},
+    model: {
+      slownik: 'S003631',
+    },
     schema: {
       type: 'object',
       properties: {
@@ -42,6 +80,7 @@ export const Table1: Story = {
             'url': '/api/v1/dostawcy',
             'value': 'kod',
             'title': 'nazwa',
+            'returnObject': false,
           },
         },
       },
