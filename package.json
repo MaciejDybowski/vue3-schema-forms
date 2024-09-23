@@ -64,7 +64,6 @@
     "vuetify": "^3.6.8"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^1.9.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@intlify/unplugin-vue-i18n": "0.13.0",
     "@storybook/addon-essentials": "^8.3.0",
