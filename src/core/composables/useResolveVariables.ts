@@ -41,6 +41,9 @@ export function useResolveVariables() {
         value = value[title];
       }
 
+      if (value == null && defaultValue !== null) {
+        value = defaultValue;
+      }
       if (!value) {
         allVariablesResolved = false;
       }
