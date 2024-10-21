@@ -19,6 +19,7 @@ import DatePicker from "./date/DatePicker.vue";
 import DateTimePicker from "./date/DateTimePicker.vue";
 import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
 import Combobox from "./Combobox.vue";
+import Divider from "./Divider.vue"
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,
@@ -38,5 +39,6 @@ export const vueSchemaFromControls: Components = {
   address: Address,
   button: ButtonField,
   switch: Switch,
-  "number-field": NumberField
+  "number-field": NumberField,
+  divider: Divider
 };

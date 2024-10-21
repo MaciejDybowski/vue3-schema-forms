@@ -140,3 +140,78 @@ export const TextWithVariablesAndHTML: Story = {
     } as Schema,
   },
 };
+
+export const DividerDefault: Story = {
+  play: async () => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        divider: {
+          layout: {
+            component: "divider",
+          }
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const DividerThickness: Story = {
+  play: async () => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        divider: {
+          layout: {
+            component: "divider"
+          },
+          thickness: 20,
+
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const DividerColor: Story = {
+  play: async () => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        divider: {
+          layout: {
+            component: "divider",
+          },
+          thickness: 5,
+          color: "#B80D1AAD",
+          opacity:'100'
+        },
+      },
+    } as Schema,
+  },
+};
+
+
+export const DividerOpacity: Story = {
+  play: async () => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        divider: {
+          layout: {
+            component: "divider",
+          },
+          opacity:'25',
+        },
+      },
+    } as Schema,
+  },
+};

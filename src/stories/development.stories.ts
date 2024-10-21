@@ -1,22 +1,22 @@
 // @ts-nocheck
-import { ArgTypes } from '@storybook/types';
-import { Meta, StoryObj } from '@storybook/vue3';
+import { ArgTypes } from "@storybook/types";
+import { Meta, StoryObj } from "@storybook/vue3";
 
-import DevelopmentTable from '../components/app/DevelopmentTable.vue';
+import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 
 const meta = {
-  title: 'Development Page',
+  title: "Development Page",
   component: DevelopmentTable,
   argTypes: {
-    schema: { control: 'object', description: 'Schema u' },
-    model: { control: 'object', description: 'Model' },
-    options: { control: 'object', description: 'Opcje' },
+    schema: { control: "object", description: "Schema u" },
+    model: { control: "object", description: "Model" },
+    options: { control: "object", description: "Opcje" },
   } as Partial<ArgTypes<any>>,
   args: {
     options: {
       fieldProps: {
-        variant: 'outlined',
-        density: 'comfortable',
+        variant: "outlined",
+        density: "comfortable",
       },
     },
     model: {},
@@ -26,62 +26,29 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const LpInDuplicatedSection: Story = {
-  args: {
-    model: {},
-    schema: {
-      type: 'object',
-      properties: {
-        invoiceItems: {
-          layout: {
-            component: 'duplicated-section',
-            schema: {
-              properties: {
-                paragraph: {
-                  content: 'Pozycja nr. {ordinalNumber}',
-                  type: 'text',
-                  layout: {
-                    component: 'static-content',
-                    tag: 'span',
-                  },
-                },
-                product: {
-                  label: 'Lp. {ordinalNumber} - Product',
-                  layout: { component: 'text-field', cols: 12 },
-                },
-              },
-            },
-            options: {
-              showDivider: true,
-              ordinalNumberInModel: true,
-            },
-          },
-        },
-      },
-    },
-  },
-};
 
 
 export const Table1: Story = {
   args: {
-    model: {
-      slownik: 'S003631',
-    },
+    model: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        slownik: {
-          label: 'Slownik',
+        poleA: {
+          label: "Pole 1",
           layout: {
-            component: 'dictionary',
+            component: "number-field",
+            cols: 6
           },
-          source: {
-            'url': '/api/v1/dostawcy',
-            'value': 'kod',
-            'title': 'nazwa',
-            'returnObject': false,
+        },
+        divider: {
+          layout: {
+            component: "divider",
+            cols: 6,
           },
+          thickness: 1,
+          color: "#F2FF00FF",
+          opacity:'75',
         },
       },
     },
@@ -92,36 +59,36 @@ export const Table2: Story = {
   args: {
     model: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         poleA: {
-          label: 'Pole 1',
+          label: "Pole 1",
           layout: {
-            component: 'number-field',
+            component: "number-field",
           },
         },
         poleB: {
-          label: 'Pole 2',
+          label: "Pole 2",
           layout: {
-            component: 'number-field',
+            component: "number-field",
             props: {
-              hint: 'Pole1 = {poleA}',
-              'persistent-hint': 'if(faktura.waluta.id!=\'PLN\',true,false)',
+              hint: "Pole1 = {poleA}",
+              "persistent-hint": "if(faktura.waluta.id!='PLN',true,false)",
             },
           },
         },
         wynik: {
-          label: 'Wynik',
+          label: "Wynik",
           layout: {
-            component: 'number-field',
+            component: "number-field",
           },
-          calculation: 'poleA + poleB',
+          calculation: "poleA + poleB",
         },
         ukryte: {
-          label: 'ukryte',
+          label: "ukryte",
           layout: {
-            component: 'text-field',
-            if: 'wynik > 20',
+            component: "text-field",
+            if: "wynik > 20",
           },
         },
       } as any,
@@ -132,243 +99,243 @@ export const Table2: Story = {
 export const Table3: Story = {
   args: {
     model: {
-      faktura: { kurs: 3.2321, waluta: { id: 'USD', label: 'USD' } },
+      faktura: { kurs: 3.2321, waluta: { id: "USD", label: "USD" } },
       pozycjeDokumentu: [
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
           kwotaBruttoPln: 0,
         },
         {
-          stawkaVat: { id: 23, label: '23%' },
-          aureaSectionId: 'wS4Hr',
+          stawkaVat: { id: 23, label: "23%" },
+          aureaSectionId: "wS4Hr",
           czystyVat: 0,
           kwotaBrutto: 0,
           kwotaNettoPln: 0,
@@ -377,32 +344,32 @@ export const Table3: Story = {
       ],
     },
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         faktura: {
           properties: {
             kurs: {
-              label: 'kurs',
+              label: "kurs",
               default: 3.2321,
               layout: {
-                component: 'number-field',
+                component: "number-field",
                 cols: 2,
               },
             },
             waluta: {
-              label: 'Waluta',
-              default: { id: 'USD', label: 'USD' },
+              label: "Waluta",
+              default: { id: "USD", label: "USD" },
               layout: {
                 cols: 4,
-                component: 'select',
+                component: "select",
               },
               source: {
                 items: [
-                  { id: 'PLN', label: 'PLN' },
-                  { id: 'USD', label: 'USD' },
+                  { id: "PLN", label: "PLN" },
+                  { id: "USD", label: "USD" },
                 ],
-                title: 'label',
-                value: 'id',
+                title: "label",
+                value: "id",
                 returnObject: true,
               },
             },
@@ -410,108 +377,108 @@ export const Table3: Story = {
         },
         pozycjeDokumentu: {
           layout: {
-            component: 'duplicated-section',
+            component: "duplicated-section",
             schema: {
-              type: 'object',
+              type: "object",
               properties: {
                 aureaSectionId: {
-                  label: 'Identyfiaktor sekcji powielanej',
+                  label: "Identyfiaktor sekcji powielanej",
                   layout: {
-                    component: 'text-field',
+                    component: "text-field",
                     hide: true,
                     cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 6, xxl: 6 },
                   },
-                  expression: 'HASH_GENERATOR(5)',
+                  expression: "HASH_GENERATOR(5)",
                 },
                 czystyVat: {
-                  label: 'Czysty Vat',
+                  label: "Czysty Vat",
                   layout: {
-                    component: 'number-field',
+                    component: "number-field",
                     hide: true,
                     cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 6, xxl: 6 },
                   },
-                  type: 'float',
-                  calculation: 'stawkaVat.id/100*kwotaNetto',
+                  type: "float",
+                  calculation: "stawkaVat.id/100*kwotaNetto",
                 },
                 opis: {
-                  label: 'W jakim celu usługa towar zostały zakupione',
-                  layout: { component: 'text-area' },
+                  label: "W jakim celu usługa towar zostały zakupione",
+                  layout: { component: "text-area" },
                 },
                 kwotaNetto: {
-                  label: 'Kwota netto',
+                  label: "Kwota netto",
                   layout: {
                     cols: 4,
-                    component: 'number-field',
+                    component: "number-field",
                     props: {
-                      hint: 'Kwota netto PLN: {kwotaNettoPln}',
-                      'persistent-hint': 'if(faktura.waluta.id!=\'PLN\',true,false)',
+                      hint: "Kwota netto PLN: {kwotaNettoPln}",
+                      "persistent-hint": "if(faktura.waluta.id!='PLN',true,false)",
                     },
                   },
-                  type: 'float',
-                  precision: '2',
+                  type: "float",
+                  precision: "2",
                 },
                 stawkaVat: {
-                  label: 'Stawka VAT',
-                  default: { id: 23, label: '23%' },
+                  label: "Stawka VAT",
+                  default: { id: 23, label: "23%" },
                   layout: {
                     cols: 4,
-                    component: 'select',
+                    component: "select",
                   },
                   source: {
                     items: [
-                      { id: 23, label: '23%' },
-                      { id: 0, label: '0%' },
+                      { id: 23, label: "23%" },
+                      { id: 0, label: "0%" },
                     ],
-                    title: 'label',
-                    value: 'id',
+                    title: "label",
+                    value: "id",
                     returnObject: true,
                     lazy: true,
                     singleOptionAutoSelect: true,
                   },
                 },
                 kwotaBrutto: {
-                  label: 'Kwota brutto',
+                  label: "Kwota brutto",
                   layout: {
                     cols: 4,
-                    component: 'number-field',
+                    component: "number-field",
                     props: {
-                      hint: 'Kwota brutto PLN: {kwotaBruttoPln}',
-                      'persistent-hint': 'if(faktura.waluta.id!=\'PLN\',true,false)',
+                      hint: "Kwota brutto PLN: {kwotaBruttoPln}",
+                      "persistent-hint": "if(faktura.waluta.id!='PLN',true,false)",
                       readonly: true,
                     },
                   },
-                  type: 'float',
-                  calculation: 'kwotaNetto+(stawkaVat.id/100*kwotaNetto)',
-                  precision: '2',
+                  type: "float",
+                  calculation: "kwotaNetto+(stawkaVat.id/100*kwotaNetto)",
+                  precision: "2",
                 },
                 kwotaNettoPln: {
-                  label: 'Kwota netto PLN ( ukryta )',
+                  label: "Kwota netto PLN ( ukryta )",
                   layout: {
                     cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 4, xxl: 4 },
-                    component: 'number-field',
+                    component: "number-field",
 
                     hide: true,
                   },
-                  type: 'float',
-                  precision: '2',
-                  calculation: 'kwotaNetto*faktura.kurs',
+                  type: "float",
+                  precision: "2",
+                  calculation: "kwotaNetto*faktura.kurs",
                 },
                 kwotaBruttoPln: {
-                  label: 'Kwota brutto przeliczona na PLN (ukryte)',
+                  label: "Kwota brutto przeliczona na PLN (ukryte)",
                   layout: {
                     cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 4, xxl: 4 },
-                    component: 'number-field',
+                    component: "number-field",
 
                     hide: true,
                   },
-                  type: 'float',
-                  precision: '2',
-                  calculation: 'kwotaBrutto*faktura.kurs',
+                  type: "float",
+                  precision: "2",
+                  calculation: "kwotaBrutto*faktura.kurs",
                 },
                 rodzajKosztu: {
-                  label: 'rodzajKosztu',
+                  label: "rodzajKosztu",
                   layout: {
-                    component: 'select',
+                    component: "select",
                     cols: 4,
                     fillRow: true,
                   },
@@ -519,7 +486,7 @@ export const Table3: Story = {
                     items: [
                       {
                         id: 1,
-                        label: 'Option1',
+                        label: "Option1",
                         fieldA: true,
                         fieldB: true,
                         fieldC: true,
@@ -528,7 +495,7 @@ export const Table3: Story = {
                       },
                       {
                         id: 1,
-                        label: 'Option2',
+                        label: "Option2",
                         fieldA: false,
                         fieldB: false,
                         fieldC: true,
@@ -537,7 +504,7 @@ export const Table3: Story = {
                       },
                       {
                         id: 1,
-                        label: 'Option3',
+                        label: "Option3",
                         fieldA: true,
                         fieldB: false,
                         fieldC: true,
@@ -545,30 +512,30 @@ export const Table3: Story = {
                         fieldE: true,
                       },
                     ],
-                    title: 'label',
-                    value: 'id',
+                    title: "label",
+                    value: "id",
                     returnObject: true,
                   },
                 },
                 fieldA: {
-                  label: 'fieldA',
-                  layout: { component: 'text-field', cols: 6, if: 'rodzajKosztu.fieldA==true' },
+                  label: "fieldA",
+                  layout: { component: "text-field", cols: 6, if: "rodzajKosztu.fieldA==true" },
                 },
                 fieldB: {
-                  label: 'fieldB',
-                  layout: { component: 'text-field', cols: 6, if: 'rodzajKosztu.fieldB==true' },
+                  label: "fieldB",
+                  layout: { component: "text-field", cols: 6, if: "rodzajKosztu.fieldB==true" },
                 },
                 fieldC: {
-                  label: 'fieldC',
-                  layout: { component: 'text-field', cols: 6, if: 'rodzajKosztu.fieldC==true' },
+                  label: "fieldC",
+                  layout: { component: "text-field", cols: 6, if: "rodzajKosztu.fieldC==true" },
                 },
                 fieldD: {
-                  label: 'fieldD',
-                  layout: { component: 'text-field', cols: 6, if: 'rodzajKosztu.fieldD==true' },
+                  label: "fieldD",
+                  layout: { component: "text-field", cols: 6, if: "rodzajKosztu.fieldD==true" },
                 },
                 fieldE: {
-                  label: 'fieldE',
-                  layout: { component: 'text-field', cols: 6, if: 'rodzajKosztu.fieldE==true' },
+                  label: "fieldE",
+                  layout: { component: "text-field", cols: 6, if: "rodzajKosztu.fieldE==true" },
                 },
               },
             } as any,
