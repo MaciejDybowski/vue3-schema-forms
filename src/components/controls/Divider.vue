@@ -12,10 +12,11 @@
 import { computed, onMounted } from "vue";
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
-import { EngineTextField } from "@/types/engine/controls";
+import { EngineDividerField } from "@/types/engine/controls";
+
 
 const props = defineProps<{
-  schema: EngineTextField;
+  schema: EngineDividerField;
   model: object;
 }>();
 

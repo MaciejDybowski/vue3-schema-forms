@@ -7,6 +7,12 @@ export interface EngineTextField extends EngineField {
   expression?: string;
 }
 
+export interface EngineDividerField extends EngineField {
+  thickness: number;
+  color: string;
+  opacity: string;
+}
+
 export interface EngineNumberField extends EngineField {
   precision: number;
   calculation?: string;
