@@ -9,11 +9,18 @@
     :clearable='!fieldProps.readonly'
     :rules='dateRules'
     @update:model-value='dateTyping'
-    append-inner-icon='mdi-calendar'
-    @click:append-inner='pickerModel = !pickerModel'
     :class='bindClass(schema)'
     v-bind='{ ...attrs, ...fieldProps }'
-  />
+  >
+    <template v-slot:append-inner>
+      <v-btn
+        :readonly="fieldProps.readonly as boolean"
+        icon="mdi-calendar"
+        variant="plain"
+        @click="pickerModel = !pickerModel"
+      />
+    </template>
+  </v-text-field>
   <v-menu
     v-model='pickerModel'
     :close-on-content-click='false'
