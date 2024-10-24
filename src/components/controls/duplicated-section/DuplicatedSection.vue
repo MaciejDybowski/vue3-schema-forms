@@ -41,7 +41,7 @@
         prepend-icon='mdi-plus'
         color='primary'
         v-bind='schema.options.buttonProps'
-        @click='addNode'
+        @click='runDuplicatedSectionButtonLogic'
       >
         {{ getAddBtnText }}
       </v-btn>
@@ -174,9 +174,17 @@ const getClearModel = computed(() => {
   return newLocalModel;
 });
 
-function addNode(): void {
-  nodes.value.push(getClearNode.value);
-  localModel.value.push({...getClearModel.value});
+function runDuplicatedSectionButtonLogic(): void {
+
+  if(getAddBtnMode.value == 'add'){
+    nodes.value.push(getClearNode.value);
+    localModel.value.push({...getClearModel.value});
+  }
+  if(getAddBtnMode.value == 'copy'){
+    nodes.value.push(getClearNode.value);
+    localModel.value.push({...localModel.value[localModel.value.length - 1]});
+  }
+
 
   if (ordinalNumberInModel) {
     setValue(localModel.value, props.schema, nodes.value.length - 1);
@@ -213,6 +221,14 @@ const getAddBtnText = computed(() => {
   }
 });
 
+const getAddBtnMode = computed(() => {
+  if (duplicatedSectionOptions.value?.addBtnMode) {
+    return duplicatedSectionOptions.value.addBtnMode;
+  } else {
+    return "add"
+  }
+})
+
 const isShowDivider = computed(() => {
   if (duplicatedSectionOptions.value?.showDivider) {
     return duplicatedSectionOptions.value.showDivider;
@@ -242,7 +258,7 @@ function init(): void {
       localModel.value.push(isDefaultExist ? {} : sections[index]);
     });
   } else {
-    addNode();
+    runDuplicatedSectionButtonLogic();
   }
 }
 
