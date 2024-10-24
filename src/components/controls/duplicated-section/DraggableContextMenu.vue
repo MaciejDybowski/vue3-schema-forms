@@ -52,6 +52,12 @@ const actions = reactive([
     translationKey: "deleteAction",
   },
   {
+    actionId: "copyBelow",
+    icon: "mdi-content-copy",
+    iconColor: "success",
+    translationKey: "copyBelowAction",
+  },
+  {
     actionId: "addBelow",
     icon: "mdi-playlist-plus",
     iconColor: "success",
@@ -87,11 +93,13 @@ const emit = defineEmits<{
 {
   "en": {
     "deleteAction": "Delete",
-    "addBelowAction": "Add below"
+    "addBelowAction": "Add below",
+    "copyBelowAction": "Copy below"
   },
   "pl": {
     "deleteAction": "Usuń",
-    "addBelowAction": "Dodaj poniżej"
+    "addBelowAction": "Dodaj poniżej",
+    "copyBelowAction": "Kopiuj poniżej"
   }
 }
 </i18n>

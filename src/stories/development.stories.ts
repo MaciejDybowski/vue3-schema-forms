@@ -61,34 +61,20 @@ export const Table2: Story = {
     schema: {
       type: "object",
       properties: {
-        poleA: {
-          label: "Pole 1",
+        invoiceItems: {
           layout: {
-            component: "number-field",
-          },
-        },
-        poleB: {
-          label: "Pole 2",
-          layout: {
-            component: "number-field",
-            props: {
-              hint: "Pole1 = {poleA}",
-              "persistent-hint": "if(faktura.waluta.id!='PLN',true,false)",
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                product: {
+                  label: 'Product',
+                  layout: { component: 'text-field', cols: 12 },
+                },
+              },
             },
-          },
-        },
-        wynik: {
-          label: "Wynik",
-          layout: {
-            component: "number-field",
-          },
-          calculation: "poleA + poleB",
-        },
-        ukryte: {
-          label: "ukryte",
-          layout: {
-            component: "text-field",
-            if: "wynik > 20",
+            options: {
+              showDivider: true,
+            },
           },
         },
       } as any,

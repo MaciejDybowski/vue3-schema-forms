@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang='ts'>
-import { isArray } from 'lodash';
+import { cloneDeep, isArray } from "lodash";
 import get from 'lodash/get';
 import set from 'lodash/set';
 import { v4 as uuidv4 } from 'uuid';
@@ -143,6 +143,12 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
         });
       setValue(localModel.value, props.schema, index);
       return;
+    case "copyBelow":
+      nodes.value.splice(index + 1, 0, getClearNode.value);
+      const copiedModel = ref(cloneDeep(localModel.value[index]))
+      localModel.value.splice(index + 1, 0, copiedModel.value);
+      setValue(localModel.value, props.schema, index);
+      return;
     default:
       console.error('Unknown action');
   }
@@ -170,7 +176,7 @@ const getClearModel = computed(() => {
 
 function addNode(): void {
   nodes.value.push(getClearNode.value);
-  localModel.value.push(getClearModel.value);
+  localModel.value.push({...getClearModel.value});
 
   if (ordinalNumberInModel) {
     setValue(localModel.value, props.schema, nodes.value.length - 1);
