@@ -12,7 +12,7 @@ export function useRules() {
 
     if (schema.required) {
       rules.push((value: any) => {
-        if (value || value == false) return true;
+        if ((value || value == false) && value !== "") return true;
         return t('required');
       });
     }

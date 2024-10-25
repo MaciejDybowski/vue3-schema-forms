@@ -30,25 +30,95 @@ type Story = StoryObj<typeof meta>;
 
 export const Table1: Story = {
   args: {
-    model: {},
+    model: {
+      pozycjeDokumentu: [
+        {
+          kwotaNetto: 13.23,
+          "kwotaBrutto": 16.28,
+          "kwotaBruttoManuallyChanged": true
+        },{
+          kwotaNetto: 100,
+          "kwotaBrutto": 16.28,
+        }
+      ]
+    },
     schema: {
       type: "object",
       properties: {
-        poleA: {
-          label: "Pole 1",
+        kwotaNetto: {
+          label: "Kwota netto",
           layout: {
+            cols: 3,
             component: "number-field",
-            cols: 6
           },
+          type: "float",
+          precision: "2",
         },
-        divider: {
+        pozycjeDokumentu: {
           layout: {
-            component: "divider",
-            cols: 6,
+            component: "duplicated-section",
+            schema: {
+              type: "object",
+              properties: {
+
+                kwotaNetto: {
+                  label: "Kwota netto",
+                  layout: {
+                    cols: 3,
+                    component: "number-field",
+                  },
+                  type: "float",
+                  precision: "2",
+                },
+                stawkaVat: {
+                  label: "Stawka VAT",
+                  default: { id: 23, label: "23%" },
+                  layout: {
+                    cols: 3,
+                    component: "select",
+                  },
+                  source: {
+                    items: [
+                      { id: 23, label: "23%" },
+                      { id: 0, label: "0%" },
+                      { id: 3, label: "3%" },
+                      { id: 8, label: "8%" },
+                    ],
+                    title: "label",
+                    value: "id",
+                    returnObject: true,
+                    lazy: true,
+                    singleOptionAutoSelect: true,
+                  },
+                },
+                czystyVat: {
+                  label: "Czysty Vat",
+                  layout: {
+                    component: "number-field",
+                    hide: false,
+                    cols: 3,
+                  },
+                  type: "float",
+                  calculation: "stawkaVat.id/100*kwotaNetto",
+                },
+                kwotaBrutto: {
+                  label: "Kwota brutto",
+                  layout: {
+                    cols: 3,
+                    component: "number-field",
+
+                  },
+                  type: "float",
+                  calculation: "kwotaNetto+czystyVat",
+                  precision: "2",
+                },
+
+              },
+            } as any,
+            options: {
+              showDivider: true,
+            },
           },
-          thickness: 1,
-          color: "#F2FF00FF",
-          opacity:'75',
         },
       },
     },
