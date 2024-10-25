@@ -2,15 +2,17 @@
   <component
     :is='schema.layout.tag'
     v-if='resolvedContent.allVariablesResolved'
-    v-html='resolvedContent.resolvedText'
     :class='bindClass(schema)'
-  />
+    v-bind="fieldProps"
+  >
+    <div v-html='resolvedContent.resolvedText'/>
+  </component>
 </template>
 
 <script setup lang='ts'>
-import { computed } from 'vue';
+import { computed, onMounted } from "vue";
 
-import { useClass, useResolveVariables } from '@/core/composables';
+import { useClass, useProps, useResolveVariables } from "@/core/composables";
 import { EngineStaticField } from '@/types/engine/controls';
 
 const props = defineProps<{
@@ -19,12 +21,19 @@ const props = defineProps<{
 }>();
 
 const { resolve } = useResolveVariables();
+const {bindProps, fieldProps} = useProps()
 
 const resolvedContent = computed(() => {
   return resolve(props.schema, props.schema.content);
 });
 
 const { bindClass } = useClass();
+
+onMounted(() => {
+  bindProps(props.schema);
+
+  console.debug(fieldProps.value)
+})
 </script>
 
 <style scoped lang='css'></style>

@@ -141,6 +141,35 @@ export const TextWithVariablesAndHTML: Story = {
   },
 };
 
+export const GenerateVuetifyStaticComponent: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText("Is difference between Value A = 123 and Value B = 321")).toBeInTheDocument();
+  },
+  args: {
+    modelValue: {
+      valueA: "123",
+      valueB: "321"
+    },
+    schema: {
+      type: "object",
+      properties: {
+        alert: {
+          content: "Is difference between Value A = {valueA} and Value B = {valueB}",
+          layout: {
+            component: "static-content",
+            tag: "v-alert",
+            props: {
+              type:"warning",
+              variant: "outlined"
+            }
+          }
+        }
+      } as any,
+    },
+  },
+};
+
 export const DividerDefault: Story = {
   play: async () => {},
   args: {

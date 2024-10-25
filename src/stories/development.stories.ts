@@ -27,6 +27,30 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 
+export const Table0: Story = {
+  args: {
+    model: {
+      valueA: "123",
+      valueB: "321"
+    },
+    schema: {
+      type: "object",
+      properties: {
+        alert: {
+          content: "Is difference between Value A = {valueA} and Value B = {valueB}",
+          layout: {
+            component: "static-content",
+            tag: "v-alert",
+            props: {
+              type:"warning",
+              variant: "outlined"
+            }
+          }
+        }
+      } as any,
+    },
+  },
+};
 
 export const Table1: Story = {
   args: {

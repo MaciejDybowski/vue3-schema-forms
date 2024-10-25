@@ -2,7 +2,7 @@ import { useCustomIfExpression } from '@/core/composables/useCustomIfExpression'
 import { EngineField } from '@/types/engine/EngineField';
 import { EngineTextField } from '@/types/engine/controls';
 
-import { variableRegexp } from '../../core/engine/utils';
+import { variableRegexp } from "@/core/engine/utils";
 import { useResolveVariables } from './useResolveVariables';
 import { ref } from 'vue';
 import { useEventBus } from '@vueuse/core';
@@ -70,6 +70,12 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
+      case "static-content": {
+        props.value = {
+          ...schema.layout?.props,
+        }
+        break
+      }
       default:
         props.value = {
           'hide-details': 'auto',
