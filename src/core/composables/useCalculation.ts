@@ -7,14 +7,14 @@ import { useNumber } from "@/core/composables/useNumber";
 import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
 import { logger } from "@/main";
 import { EngineField } from "@/types/engine/EngineField";
-import { useEventBus } from "@vueuse/core";
+import { Fn, useEventBus } from "@vueuse/core";
 
 import betterParser, { SUM } from "../engine/evalExprParser";
 
 export function useCalculation() {
   const { roundTo } = useNumber();
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
-  const unsubscribeListener = ref(null);
+  const unsubscribeListener = ref<Fn>(() => {});
   const calculationResultWasModified = ref(false);
 
   function calculationFunc(field: EngineField, model: any): number | null {

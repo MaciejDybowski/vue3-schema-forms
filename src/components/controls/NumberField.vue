@@ -59,7 +59,7 @@ const formatType = ("formatType" in props.schema ? props.schema.formatType : "de
 
 const currency = ("currency" in props.schema ? props.schema.currency : "PLN") as string;
 
-const roundOption: RoundOption = "roundOption" in props.schema ? props.schema.roundOption : "round";
+const roundOption: RoundOption = "roundOption" in props.schema ? props.schema.roundOption as RoundOption : "round";
 
 const { roundTo, formattedNumber } = useNumber({
   currency: currency,
@@ -100,7 +100,7 @@ const showIconForVisualizationOfManuallyChangedResult = computed(() => {
 function userTyping(val: any) {
   if (isCalculationDefined.value) {
     if (logger.calculationListener)
-      console.debug(`[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}, manualResult=${val}`);
+      console.debug(`[vue-schema-forms] [CalculationListener], key=${props.schema.key}, index=${props.schema.index}, manualResult=${val}`);
     unsubscribeListener.value();
     localModel.value = val;
     set(props.model, `${props.schema.key}ManuallyChanged`, true);
