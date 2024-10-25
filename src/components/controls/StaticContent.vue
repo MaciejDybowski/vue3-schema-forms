@@ -31,8 +31,6 @@ const { bindClass } = useClass();
 
 onMounted(() => {
   bindProps(props.schema);
-
-  console.debug(fieldProps.value)
 })
 </script>
 
