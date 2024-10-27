@@ -6,6 +6,11 @@ export interface Source {
   returnObject?: boolean;
 }
 
+export interface AvatarSource {
+  thumbnail: string,
+  preview: string,
+}
+
 export interface SimpleSource extends Source {
   url?: string;
   items?: Array<any>;

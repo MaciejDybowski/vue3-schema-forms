@@ -76,6 +76,12 @@ export function useProps() {
         }
         break
       }
+      case "avatar": {
+        props.value = {
+          ...schema.layout?.props,
+        }
+        break
+      }
       default:
         props.value = {
           'hide-details': 'auto',

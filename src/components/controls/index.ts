@@ -20,6 +20,7 @@ import DateTimePicker from "./date/DateTimePicker.vue";
 import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
 import Combobox from "./Combobox.vue";
 import Divider from "./Divider.vue"
+import AvatarField from "@/components/controls/AvatarField.vue";
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,
@@ -40,5 +41,6 @@ export const vueSchemaFromControls: Components = {
   button: ButtonField,
   switch: Switch,
   "number-field": NumberField,
-  divider: Divider
+  divider: Divider,
+  "avatar":  AvatarField
 };

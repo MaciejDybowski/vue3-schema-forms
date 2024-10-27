@@ -1,10 +1,14 @@
 import { EngineField } from "@/types/engine/EngineField";
 import { LocationResult } from "@/types/shared/LocationResult";
-import { DictionarySource, SimpleSource, Source } from "@/types/shared/Source";
+import { AvatarSource, DictionarySource, SimpleSource, Source } from "@/types/shared/Source";
 
 export interface EngineTextField extends EngineField {
   calculation?: string;
   expression?: string;
+}
+
+export interface EngineAvatarField extends EngineField {
+  source: AvatarSource
 }
 
 export interface EngineDividerField extends EngineField {

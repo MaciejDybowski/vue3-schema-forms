@@ -26,24 +26,28 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-
 export const Table0: Story = {
   args: {
-    model: {
-      valueA: "123",
-      valueB: "321"
-    },
+    model: {},
     schema: {
       type: "object",
       properties: {
-        alert: {
-          content: "Is difference between Value A = {valueA} and Value B = {valueB}",
+        field: {
           layout: {
-            component: "static-content",
-            tag: "v-alert",
+            component: "text-field",
+            cols: 10
+          }
+        },
+        avatar: {
+          source: {
+            thumbnail: "/api/v1/users/c7dfb33d-b863-40d0-97d1-d8e0c9d2de0a/avatar?size=40",
+            preview: "/api/v1/users/c7dfb33d-b863-40d0-97d1-d8e0c9d2de0a/avatar?size=300",
+          },
+          layout: {
+            component: "avatar",
+            cols: 2,
             props: {
-              type:"warning",
-              variant: "outlined"
+              rounded: 0
             }
           }
         }
