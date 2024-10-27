@@ -65,8 +65,8 @@ const { t } = useI18n();
 
 const theme = useTheme();
 
-const thumbnail = ref(null);
-const preview = ref(null);
+const thumbnail = ref<HTMLImageElement>();
+const preview = ref<HTMLImageElement>();
 const resolvedThumbnail = computed(() => {
   return resolve(props.schema, props.schema.source.thumbnail);
 });
