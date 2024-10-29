@@ -42,23 +42,26 @@ export function useConditionalRendering() {
     let myExpr: Expression = betterParser.parse(expression);
     if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
       shouldRender.value = myExpr.evaluate(model as Value);
-      lastValueOfShouldRender.value = shouldRender.value
+      resetModelValueWhenFalse()
     } else {
       if(lastValueOfShouldRender.value){
         set(model, key, null);
       }
     }
   }
-
   async function ifByJsonNata(expression: string, key:string, model: any) {
     const nata = jsonata(expression);
     shouldRender.value = await nata.evaluate(model);
+    resetModelValueWhenFalse()
+  }
 
-    if(lastValueOfShouldRender.value && shouldRender.value){
+  function resetModelValueWhenFalse(){
+    if(lastValueOfShouldRender.value && !shouldRender.value){
       set(model, key, null);
     }
     lastValueOfShouldRender.value = shouldRender.value
   }
+
 
   async function conditionalRenderingListener(event: string, payloadIndex: number, schema: EngineField) {
     //if (schema.index == undefined || schema.index == payloadIndex) {
