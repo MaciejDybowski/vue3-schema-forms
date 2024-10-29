@@ -11,6 +11,7 @@ import { useEventBus } from "@vueuse/core";
 
 import betterParser from "../engine/evalExprParser";
 import set from "lodash/set";
+import { k } from "vite/dist/node/types.d-aGj9QkWt";
 
 export function useConditionalRendering() {
   let shouldRender = ref(true);
@@ -42,7 +43,7 @@ export function useConditionalRendering() {
     let myExpr: Expression = betterParser.parse(expression);
     if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
       shouldRender.value = myExpr.evaluate(model as Value);
-      resetModelValueWhenFalse()
+      resetModelValueWhenFalse(model, key)
     } else {
       if(lastValueOfShouldRender.value){
         set(model, key, null);
@@ -52,10 +53,10 @@ export function useConditionalRendering() {
   async function ifByJsonNata(expression: string, key:string, model: any) {
     const nata = jsonata(expression);
     shouldRender.value = await nata.evaluate(model);
-    resetModelValueWhenFalse()
+    resetModelValueWhenFalse(model, key)
   }
 
-  function resetModelValueWhenFalse(){
+  function resetModelValueWhenFalse(model: object, key:string){
     if(lastValueOfShouldRender.value && !shouldRender.value){
       set(model, key, null);
     }
