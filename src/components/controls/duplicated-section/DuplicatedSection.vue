@@ -41,7 +41,7 @@
         color="primary"
         prepend-icon="mdi-plus"
         v-bind="schema.options.buttonProps"
-        @click="runDuplicatedSectionButtonLogic"
+        @click="runDuplicatedSectionButtonLogic(false)"
       >
         {{ getAddBtnText }}
       </v-btn>
