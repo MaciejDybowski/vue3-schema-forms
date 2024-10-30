@@ -20,7 +20,9 @@ export function useRules() {
     if (schema.layout.props && 'counter' in schema.layout.props) {
       const props = schema.layout.props;
       rules.push((value: string) => {
-        return value?.length <= props.counter || t('counter', { counter: props.counter });
+        if(value?.length <= props.counter ||
+          value == null || value == "") return true
+        return t('counter', { counter: props.counter })
       });
     }
 
