@@ -1,9 +1,13 @@
 //@ts-nocheck
+import ImagePreview from "@/components/controls/ImagePreview.vue";
+
 import { Components } from "@/main";
 
 import Autocomplete from "./Autocomplete.vue";
 import ButtonField from "./ButtonField.vue";
 import CheckboxButton from "./CheckboxButton.vue";
+import Combobox from "./Combobox.vue";
+import Divider from "./Divider.vue";
 import Location from "./Location.vue";
 import NumberField from "./NumberField.vue";
 import PhoneInput from "./PhoneInput.vue";
@@ -18,9 +22,7 @@ import DataViewer from "./data-viewer/DataViewer.vue";
 import DatePicker from "./date/DatePicker.vue";
 import DateTimePicker from "./date/DateTimePicker.vue";
 import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
-import Combobox from "./Combobox.vue";
-import Divider from "./Divider.vue"
-import AvatarField from "@/components/controls/AvatarField.vue";
+
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,
@@ -32,7 +34,7 @@ export const vueSchemaFromControls: Components = {
   select: Select,
   "data-viewer": DataViewer,
   dictionary: Autocomplete,
-  "combobox": Combobox,
+  combobox: Combobox,
   "date-picker": DatePicker,
   "date-time-picker": DateTimePicker,
   phone: PhoneInput,
@@ -42,5 +44,5 @@ export const vueSchemaFromControls: Components = {
   switch: Switch,
   "number-field": NumberField,
   divider: Divider,
-  "avatar":  AvatarField
+  "image-preview": ImagePreview,
 };
