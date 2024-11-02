@@ -5,33 +5,26 @@
   >
     <template
       v-for="(_, slot) in $slots"
-      v-slot:[slot]="scope"
+      v-slot:[slot]
     >
-      <slot
-        :name="slot"
-        v-bind="scope"
-      />
+      <slot :name="slot"></slot>
     </template>
 
     <template #append-item>
       <div v-if="lazy && isNextPage">
-        <v-list-item
-          class="pa-0 d-flex justify-center"
-          v-intersect="loadMore"
-        >
-          <div v-show="appending">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            ></v-progress-circular>
-          </div>
+        <v-list-item v-intersect="loadMore">
+          <v-progress-linear
+            v-show="appending"
+            color="primary"
+            indeterminate
+          ></v-progress-linear>
         </v-list-item>
       </div>
     </template>
   </v-autocomplete>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, ref, useAttrs } from "vue";
 
 import { Pagination } from "./Pagination";
@@ -76,4 +69,4 @@ function loadMore(isIntersecting) {
 }
 </script>
 
-<style scoped lang="css"></style>
+<style lang="css" scoped></style>
