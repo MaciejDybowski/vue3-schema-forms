@@ -3,11 +3,8 @@
     v-model="model"
     v-bind="attrs"
   >
-    <template
-      v-for="(_, slot) in $slots"
-      v-slot:[slot]
-    >
-      <slot :name="slot"></slot>
+    <template v-for="(_, name) in $slots" #[name]="scope">
+      <slot :name v-bind="scope ?? {}" />
     </template>
 
     <template #append-item>

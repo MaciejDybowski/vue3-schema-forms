@@ -3,11 +3,9 @@
     v-model="model"
     v-bind="attrs"
   >
-    <template
-      v-for="(_, slot) in $slots"
-      v-slot:[slot]
-    >
-      <slot :name="slot"></slot>
+
+    <template v-for="(_, name) in $slots" #[name]="scope">
+      <slot :name v-bind="scope ?? {}" />
     </template>
 
     <template #append-item>
@@ -25,11 +23,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, useAttrs } from "vue";
+import { computed, ref, useAttrs, useSlots } from "vue";
 
 import { Pagination } from "./Pagination";
 
 const attrs = useAttrs();
+const slots = useSlots()
+console.log(slots)
 const props = withDefaults(
   defineProps<{
     modelValue: any;
