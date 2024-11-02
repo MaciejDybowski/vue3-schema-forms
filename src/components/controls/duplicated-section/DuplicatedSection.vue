@@ -150,13 +150,14 @@ function handleDraggableContextAction(actionId: "delete" | "addBelow" | string, 
     case "copyBelow":
       nodes.value.splice(index + 1, 0, getClearNode.value);
       const copiedModel = ref(cloneDeep(localModel.value[index]));
-
       if (ordinalNumberInModel) {
         copiedModel.value["ordinalNumber"] = ++copiedModel.value["ordinalNumber"];
         localModel.value.splice(index + 1, 0, copiedModel.value);
         for (let i = index + 2; i < localModel.value.length; i++) {
           localModel.value[i]["ordinalNumber"] = localModel.value[i]["ordinalNumber"] + 1;
         }
+      } else {
+        localModel.value.splice(index + 1, 0, copiedModel.value);
       }
 
       setValue(localModel.value, props.schema, index);
