@@ -59,11 +59,14 @@ export function useDictionarySource(field: EngineDictionaryField) {
     3. request query = US dollar will not execute.
    */
   let query = ref('');
-  watch(query, (value, oldValue) => {
-    //if (value || (value === null && oldValue)) {
+  watch(query, (currentQuery, previousQuery) => {
     const queryInData =
       data.value.filter((item: any) => {
-        return item[title] === value || Object.values(item).includes(value);
+        if(returnObject) {
+          return item[title] === currentQuery || Object.values(item).includes(currentQuery);
+        } else {
+          return item[title] == currentQuery
+        }
       }).length > 0;
 
     queryInData ? debounced.load.cancel() : debounced.load('query');

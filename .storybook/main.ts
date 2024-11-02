@@ -26,8 +26,8 @@ const config: StorybookConfig = {
       server: {
         proxy: {
           '/api': {
-            target: "http://localhost:8081/",
-            changeOrigin: true,
+            target: "http://localhost:8081",
+            changeOrigin: false,
             secure: false,
           },
         },

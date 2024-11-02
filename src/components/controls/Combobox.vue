@@ -1,55 +1,70 @@
 <template>
   <base-combobox
-    :label='label'
-    v-model='localModel'
-    v-bind='fieldProps'
-    :class='bindClass(schema)'
-    :rules='rules(schema)'
-    :item-title='title'
-    :item-value='value'
-    :items='data'
-    :loading='loading'
-    :return-object='returnObject as any'
-    :auto-select-first='true'
-    :lazy='lazy'
-    :options='paginationOptions'
-    @loadMoreRecords='loadMoreRecords'
-    :search='query'
-    @update:search='updateQuery'
-    :no-filter='true'
+    v-model="localModel"
+    :auto-select-first="true"
+    :class="bindClass(schema)"
+    :item-title="title"
+    :item-value="value"
+    :items="data"
+    :label="label"
+    :lazy="lazy"
+    :loading="loading"
+    :no-filter="true"
+    :options="paginationOptions"
+    :return-object="returnObject as any"
+    :rules="rules(schema)"
+    :search="query"
+    v-bind="fieldProps"
+    @focus="fetchDictionaryData"
+    @loadMoreRecords="loadMoreRecords"
+    @update:search="updateQuery"
   >
+    <template #no-data>
+      <v-list-item v-if="loading">
+        <v-progress-linear
+          color="primary"
+          indeterminate
+        ></v-progress-linear>
+      </v-list-item>
+      <v-list-item
+        v-else
+        :title="t('noData')"
+      />
+    </template>
     <template
-      #item='{ item, props }'
-      v-if='description !== null'
+      v-if="description !== null"
+      #item="{ item, props }"
     >
       <v-list-item
-        v-bind='props'
-        :title='item.title'
-        :subtitle='item.raw[description]'
+        :subtitle="item.raw[description]"
+        :title="item.title"
+        v-bind="props"
       >
       </v-list-item>
     </template>
   </base-combobox>
 </template>
 
-<script setup lang='ts'>
-import { computed, onMounted, watch } from 'vue';
+<script lang="ts" setup>
+import { computed, onMounted, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-import { EngineDictionaryField } from '@/types/engine/controls';
+import BaseCombobox from "@/components/controls/base/BaseCombobox.vue";
 
-import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
-import BaseCombobox from '@/components/controls/base/BaseCombobox.vue';
+import { EngineDictionaryField } from "@/types/engine/controls";
+
+import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
   model: object;
 }>();
+const { t } = useI18n();
 const { label } = useLabel(props.schema);
 const { fieldProps, bindProps } = useProps();
 const { rules } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
-
 
 const localModel = computed({
   get(): any {
@@ -75,37 +90,62 @@ const {
   singleOptionAutoSelect,
 } = useDictionarySource(props.schema);
 
-onMounted(async () => {
-  localModel.value ? updateQuery(localModel.value) : await load('autocomplete');
 
+onMounted(async () => {
+  bindProps(props.schema);
+  if (localModel.value) {
+    updateQuery(localModel.value);
+  }
   if (data.value.length === 1 && singleOptionAutoSelect) {
-    localModel.value = data.value[0];
+    if(returnObject){
+      localModel.value = data.value[0];
+    } else {
+      localModel.value = data.value[0][value]
+    }
   }
 
   watch(data, () => {
     if (data.value.length === 1 && singleOptionAutoSelect) {
       if (JSON.stringify(localModel.value) !== JSON.stringify(data.value[0])) {
-        localModel.value = data.value[0];
+        if(returnObject){
+          localModel.value = data.value[0];
+        } else {
+          localModel.value = data.value[0][value]
+        }
       }
     }
   });
 });
 
 function updateQuery(val: any) {
-  if (val === null || val === '') {
-    query.value = '';
+  if (val === null || val === "") {
+    query.value = "";
   }
-  if (val && typeof val == 'object') {
+  if (val && typeof val == "object") {
+    data.value.push(localModel.value);
     query.value = val[title];
   }
-  if (val && typeof val == 'string') {
+  if (val && typeof val == "string") {
     query.value = val;
   }
 }
 
-onMounted(() => {
-  bindProps(props.schema);
-});
+async function fetchDictionaryData() {
+  if (data.value.length == 0) {
+    await load("combobox");
+  }
+}
 </script>
 
-<style scoped lang='css'></style>
+<style lang="css" scoped></style>
+
+<i18n lang="json">
+{
+  "en": {
+    "noData": "No data available."
+  },
+  "pl": {
+    "noData": "Brak danych."
+  }
+}
+</i18n>
