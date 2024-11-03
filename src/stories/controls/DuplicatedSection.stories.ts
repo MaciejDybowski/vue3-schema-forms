@@ -305,7 +305,7 @@ export const CopyBelowAction: Story = {
 
 export const CopyModeOfButton: Story = {
   play: async (context) => {
-    /*const canvas = within(context.canvasElement);
+    const canvas = within(context.canvasElement);
 
     const input1 = await canvas.findByLabelText('Product');
     await userEvent.type(input1, 'Item 1', { delay: 100 });
@@ -328,7 +328,7 @@ export const CopyModeOfButton: Story = {
 
     await expect(context.args.modelValue).toEqual({
       invoiceItems: [{ product: 'Item 1' }, { product: 'Item 1' }],
-    });*/
+    });
   },
   args: {
     modelValue: {},

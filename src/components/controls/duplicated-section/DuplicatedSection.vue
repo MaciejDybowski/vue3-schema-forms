@@ -38,6 +38,7 @@
     <v-col>
       <v-btn
         v-if="isEditable && showSectionElements"
+        :id="getAddBtnMode === 'feature' ? 'addBtnRef' : 'addBtn' "
         color="primary"
         prepend-icon="mdi-plus"
         v-bind="schema.options.buttonProps"
@@ -45,6 +46,34 @@
       >
         {{ getAddBtnText }}
       </v-btn>
+
+      <v-dialog
+        activator="#addBtnRef"
+        max-width="900"
+      >
+        <template v-slot:default="{ isActive }">
+          <v-card title="Title">
+            <v-card-text>
+              <component
+                :is="batchAddComponent['batch-add-dialog-body']"
+                menu-feature-id="waluty"
+                view-id="20519-tabela"
+              />
+            </v-card-text>
+            <template v-slot:actions>
+              <v-btn
+                class="ml-auto"
+                color="primary"
+                v-bind="schema.options.buttonProps"
+                variant="elevated"
+                @click="isActive.value = false"
+              >
+                {{ t("close") }}
+              </v-btn>
+            </template>
+          </v-card>
+        </template>
+      </v-dialog>
     </v-col>
   </v-row>
 </template>
@@ -70,7 +99,7 @@ import FormRoot from "../../engine/FormRoot.vue";
 import DraggableContextMenu from "./DraggableContextMenu.vue";
 import DraggableIcon from "./DraggableIcon.vue";
 import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
-import { addons } from "@storybook/manager-api";
+import { duplicatedSectionBatchAddComponent } from "@/main";
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;
@@ -86,6 +115,8 @@ const dragOptions = ref({
   disabled: false,
   ghostClass: "ghost",
 });
+
+const batchAddComponent = duplicatedSectionBatchAddComponent
 
 const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedSectionOptions);
 
@@ -194,7 +225,7 @@ function runDuplicatedSectionButtonLogic(init = false): void {
   }
   if (getAddBtnMode.value == "copy") {
     nodes.value.push(getClearNode.value);
-    addNewModelToDuplicatedSectionWhenCopyBtnMode(init)
+    addNewModelToDuplicatedSectionWhenCopyBtnMode(init);
   }
 
   if (ordinalNumberInModel) {
@@ -202,7 +233,7 @@ function runDuplicatedSectionButtonLogic(init = false): void {
   }
 }
 
-function addNewModelToDuplicatedSectionWhenCopyBtnMode(init = false){
+function addNewModelToDuplicatedSectionWhenCopyBtnMode(init = false) {
   if (init) {
     localModel.value.push({ ...getClearModel.value });
   } else {
@@ -279,7 +310,7 @@ function init(): void {
       } as Schema);
       localModel.value.push(isDefaultExist ? {} : sections[index]);
     });
-  } else {
+  } else if (getAddBtnMode.value !== "feature") {
     runDuplicatedSectionButtonLogic(true);
   }
 }
@@ -320,10 +351,12 @@ onMounted(() => {
 <i18n lang="json">
 {
   "en": {
-    "addAction": "Add"
+    "addAction": "Add",
+    "close": "Close"
   },
   "pl": {
-    "addAction": "Dodaj"
+    "addAction": "Dodaj",
+    "close": "Zamknij"
   }
 }
 </i18n>

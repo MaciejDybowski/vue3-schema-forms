@@ -3,6 +3,7 @@ import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
+import { DictionarySource } from "../types/shared/Source";
 
 const meta = {
   title: "Development Page",
@@ -26,6 +27,34 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const Table_Integration: Story = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        items: {
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                product: {
+                  label: 'Item',
+                  layout: { component: 'text-field', cols: 12 },
+                },
+              },
+            },
+            options: {
+              showDivider: true,
+              addBtnMode: "feature",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 export const Table0: Story = {
   args: {
     model: {},
@@ -33,19 +62,20 @@ export const Table0: Story = {
       type: "object",
       properties: {
         field: {
+          label: "text",
           layout: {
             component: "text-field",
-            cols: 10
+            cols: 11
           }
         },
-        avatar: {
+        productImg: {
           source: {
-            thumbnail: "/api/v1/users/c7dfb33d-b863-40d0-97d1-d8e0c9d2de0a/avatar?size=40",
-            preview: "/api/v1/users/c7dfb33d-b863-40d0-97d1-d8e0c9d2de0a/avatar?size=300",
+            thumbnail: "/api/v1/features/test/images/test?Workspace-Id=test&width=40&height=40",
+            preview: "/api/v1/features/test/images/test?Workspace-Id=test&width=500&height=500"
           },
           layout: {
-            component: "avatar",
-            cols: 2,
+            component: "image-preview",
+            cols: 1,
             props: {
               rounded: 0
             }
@@ -59,94 +89,37 @@ export const Table0: Story = {
 export const Table1: Story = {
   args: {
     model: {
-      pozycjeDokumentu: [
-        {
-          kwotaNetto: 13.23,
-          "kwotaBrutto": 16.28,
-          "kwotaBruttoManuallyChanged": true
-        },{
-          kwotaNetto: 100,
-          "kwotaBrutto": 16.28,
-        }
-      ]
+
     },
     schema: {
       type: "object",
       properties: {
-        kwotaNetto: {
-          label: "Kwota netto",
+        slownik: {
+          label: "Słownik",
           layout: {
-            cols: 3,
-            component: "number-field",
+            component: "dictionary",
           },
-          type: "float",
-          precision: "2",
+          source: {
+            url: "/api/v1/rodzaje-kosztow",
+            title: "nazwa",
+            value: "kod",
+            description: "kod",
+            singleOptionAutoSelect: true,
+            returnObject: false,
+          } as DictionarySource,
         },
-        pozycjeDokumentu: {
+        slownik2: {
+          label: "Słownik",
           layout: {
-            component: "duplicated-section",
-            schema: {
-              type: "object",
-              properties: {
-
-                kwotaNetto: {
-                  label: "Kwota netto",
-                  layout: {
-                    cols: 3,
-                    component: "number-field",
-                  },
-                  type: "float",
-                  precision: "2",
-                },
-                stawkaVat: {
-                  label: "Stawka VAT",
-                  default: { id: 23, label: "23%" },
-                  layout: {
-                    cols: 3,
-                    component: "select",
-                  },
-                  source: {
-                    items: [
-                      { id: 23, label: "23%" },
-                      { id: 0, label: "0%" },
-                      { id: 3, label: "3%" },
-                      { id: 8, label: "8%" },
-                    ],
-                    title: "label",
-                    value: "id",
-                    returnObject: true,
-                    lazy: true,
-                    singleOptionAutoSelect: true,
-                  },
-                },
-                czystyVat: {
-                  label: "Czysty Vat",
-                  layout: {
-                    component: "number-field",
-                    hide: false,
-                    cols: 3,
-                  },
-                  type: "float",
-                  calculation: "stawkaVat.id/100*kwotaNetto",
-                },
-                kwotaBrutto: {
-                  label: "Kwota brutto",
-                  layout: {
-                    cols: 3,
-                    component: "number-field",
-
-                  },
-                  type: "float",
-                  calculation: "kwotaNetto+czystyVat",
-                  precision: "2",
-                },
-
-              },
-            } as any,
-            options: {
-              showDivider: true,
-            },
+            component: "combobox",
           },
+          source: {
+            url: "/api/v1/rodzaje-kosztow",
+            title: "nazwa",
+            value: "kod",
+            singleOptionAutoSelect: false,
+            returnObject: false,
+          } as DictionarySource,
         },
       },
     },

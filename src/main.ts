@@ -32,6 +32,8 @@ import { StaticContentTag } from '@/types/shared/StaticContentTag';
 import { Translation } from '@/types/shared/Translation';
 
 import * as components from '../src/components/index';
+import DuplicatedSectionBatchAddDialogBody
+  from "@/components/controls/duplicated-section/DuplicatedSectionBatchAddDialogBody.vue";
 
 export declare type Components = Record<string, Component>;
 export let logger = {
@@ -43,6 +45,9 @@ export let logger = {
   dictionaryLogger: false,
   duplicatedSchemaWatchLogger: false,
 };
+
+export let duplicatedSectionBatchAddComponent = { 'batch-add-dialog-body': DuplicatedSectionBatchAddDialogBody} as Components
+
 export type VueSchemaLoggers = {
   formUpdateLogger?: boolean
   calculationListener?: boolean
@@ -61,6 +66,7 @@ export type VueSchemaFormsOptions = {
   logger?: VueSchemaLoggers;
   customComponents?: Components;
   installFormControls?: boolean;
+  duplicatedSectionBatchAddComponent?: Components
 };
 
 // jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
@@ -70,6 +76,9 @@ export type VueSchemaFormsOptions = {
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
   if (options?.logger) {
     logger = { ...logger, ...options.logger };
+  }
+  if(options?.duplicatedSectionBatchAddComponent) {
+    duplicatedSectionBatchAddComponent = options?.duplicatedSectionBatchAddComponent;
   }
 
   return {
