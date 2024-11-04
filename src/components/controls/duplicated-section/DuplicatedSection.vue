@@ -298,6 +298,7 @@ function init(): void {
     sections = props.schema.default as Array<any>;
     isDefaultExist = true;
   }
+
   if (sections.length > 0) {
     sections.forEach((item: any, index: number) => {
       nodes.value.push({
@@ -308,7 +309,12 @@ function init(): void {
           : wrapPropertiesWithIndexAndPath(JSON.parse(JSON.stringify(props.schema.layout.schema?.properties)), index),
         required: props.schema.layout.schema?.required,
       } as Schema);
+
+      if(ordinalNumberInModel){
+       sections[index]["ordinalNumber"] = index+1;
+      }
       localModel.value.push(isDefaultExist ? {} : sections[index]);
+
     });
   } else if (getAddBtnMode.value !== "feature") {
     runDuplicatedSectionButtonLogic(true);
