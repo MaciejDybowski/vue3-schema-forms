@@ -1,6 +1,7 @@
 import { EngineOptions } from "@/types/engine/EngineOptions";
 import { Layout } from "@/types/shared/Layout";
 import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
+import { EventHandlerDefinition } from "@/types/shared/EventHandlerDefinition";
 
 export interface EngineField {
   formId: string;
@@ -25,4 +26,7 @@ export interface EngineField {
   // number
   precision?: string | number | undefined;
   calculation?: string;
+
+  //events
+  onChange?: EventHandlerDefinition
 }

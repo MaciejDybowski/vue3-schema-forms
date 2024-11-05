@@ -27,7 +27,56 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Table_Integration: Story = {
+export const onChangeAction: Story = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        actionOnChange_1: {
+          label: "Action on change value",
+          layout: {
+            component: "text-field",
+          },
+          onChange: {
+            mode: "request",
+            url: "/api/v1/tasks/{dataId}/scripts/sprawdz_czy_duplikat", // lub ogólny endpoint lub uzależniony od zmiennych w modelu,
+            method: "POST",
+            body: {
+              nip: "{daneDostawcy.nip}",
+              numerFaktury: "{faktura.nrFaktury}"
+            }
+          }
+        },
+
+        actionOnChange_2: {
+          label: "Action on change value",
+          layout: {
+            component: "text-field",
+          },
+          onChange: {
+            mode: "request",
+            url: "/api/v1/sprawdz-czy-aktywny-vatowiec?nip?{daneDostawcy.nip}",
+            method: "GET",
+          }
+        },
+
+        actionOnChange_3: {
+          label: "Action on change value",
+          layout: {
+            component: "text-field",
+          },
+          onChange: {
+            mode: "action",
+            code: "sprawdz_czy_duplikat" // cała logika spada na akcje
+           }
+        },
+      },
+    },
+  },
+};
+
+export const Dialog_Table_Integration: Story = {
   args: {
     model: {},
     schema: {
@@ -55,7 +104,7 @@ export const Table_Integration: Story = {
   },
 };
 
-export const Table0: Story = {
+export const Images: Story = {
   args: {
     model: {},
     schema: {
@@ -70,8 +119,8 @@ export const Table0: Story = {
         },
         productImg: {
           source: {
-            thumbnail: "/api/v1/features/test/images/test?Workspace-Id=test&width=40&height=40",
-            preview: "/api/v1/features/test/images/test?Workspace-Id=test&width=500&height=500"
+            thumbnail: "/qwert",
+            preview: ""
           },
           layout: {
             component: "image-preview",
@@ -86,7 +135,7 @@ export const Table0: Story = {
   },
 };
 
-export const Table1: Story = {
+export const Dictionaries: Story = {
   args: {
     model: {
 
@@ -126,9 +175,13 @@ export const Table1: Story = {
   },
 };
 
-export const Table2: Story = {
+export const OrdinalNumber: Story = {
   args: {
-    model: {},
+    model: {
+      invoiceItems: [
+        {product: "Maciej"}, {product: "Karol"}
+      ]
+    },
     schema: {
       type: "object",
       properties: {
@@ -145,6 +198,7 @@ export const Table2: Story = {
             },
             options: {
               showDivider: true,
+              ordinalNumberInModel: true
             },
           },
         },
