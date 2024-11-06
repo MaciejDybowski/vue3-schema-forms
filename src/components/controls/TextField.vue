@@ -6,6 +6,7 @@
       v-bind='fieldProps'
       :rules='rules(schema)'
       :class='bindClass(schema)'
+      @update:model-value="onChange(schema, model)"
     />
   </div>
 </template>
@@ -15,6 +16,7 @@ import { computed, onMounted } from 'vue';
 
 import { useClass, useExpression, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
 import { EngineTextField } from '@/types/engine/controls';
+import { useEventHandler } from "@/core/composables/useEventHandler";
 
 const props = defineProps<{
   schema: EngineTextField;
@@ -27,6 +29,7 @@ const { bindProps, fieldProps } = useProps();
 const { resolveExpression } = useExpression();
 const { label } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
+const {onChange} = useEventHandler()
 
 const localModel = computed({
   get(): string | number {

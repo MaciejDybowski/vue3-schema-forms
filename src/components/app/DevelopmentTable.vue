@@ -8,6 +8,7 @@
       :default-form-actions="true"
       :validation-behaviour="'messages'"
       @is-form-ready="startWatcher"
+      @call-action="handleAction"
     >
       <!--      <template #formActions>-->
       <!--        <v-row>-->
@@ -38,6 +39,7 @@ import { Schema } from "@/types/schema/Schema";
 import { SchemaOptions } from "@/types/schema/SchemaOptions";
 
 import PropsViewer from "./PropsViewer.vue";
+import { an } from "vitest/dist/reporters-BECoY4-b";
 
 const showJSONs = ref(true);
 
@@ -58,6 +60,10 @@ async function validate() {
 
 function startWatcher() {
   console.debug("Form is ready");
+}
+
+function handleAction(payload: any){
+  console.debug("Form action called", payload);
 }
 </script>
 

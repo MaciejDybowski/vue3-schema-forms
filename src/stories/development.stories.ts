@@ -29,7 +29,14 @@ type Story = StoryObj<typeof meta>;
 
 export const onChangeAction: Story = {
   args: {
-    model: {},
+    model: {
+      daneDostawcy: {
+        nip: "99912312",
+      },
+      faktura: {
+        nrFaktury: "nr-123-123",
+      },
+    },
     schema: {
       type: "object",
       properties: {
@@ -40,13 +47,13 @@ export const onChangeAction: Story = {
           },
           onChange: {
             mode: "request",
-            url: "/api/v1/tasks/{dataId}/scripts/sprawdz_czy_duplikat", // lub ogólny endpoint lub uzależniony od zmiennych w modelu,
+            url: "/api/v1/tasks/{context.dataId}/scripts/sprawdz_czy_duplikat", // lub ogólny endpoint lub uzależniony od zmiennych w modelu,
             method: "POST",
             body: {
               nip: "{daneDostawcy.nip}",
-              numerFaktury: "{faktura.nrFaktury}"
-            }
-          }
+              numerFaktury: "{faktura.nrFaktury}",
+            },
+          },
         },
 
         actionOnChange_2: {
@@ -58,7 +65,7 @@ export const onChangeAction: Story = {
             mode: "request",
             url: "/api/v1/sprawdz-czy-aktywny-vatowiec?nip?{daneDostawcy.nip}",
             method: "GET",
-          }
+          },
         },
 
         actionOnChange_3: {
@@ -68,9 +75,27 @@ export const onChangeAction: Story = {
           },
           onChange: {
             mode: "action",
-            code: "sprawdz_czy_duplikat" // cała logika spada na akcje
-           }
+            code: "callScript", // cała logika spada na akcje
+            params: {
+              scriptName: "sprawdz_czy_duplikat",
+            },
+            body: {
+              nip: "{daneDostawcy.nip}",
+              numerFaktury: "{faktura.nrFaktury}",
+            },
+          },
         },
+      },
+    },
+    options: {
+      context: {
+        token: "eftasd@#1Token",
+        dataId: "#1",
+        menuFeatureId: "task-handling",
+      },
+      fieldProps: {
+        variant: "outlined",
+        density: "comfortable",
       },
     },
   },
@@ -84,12 +109,12 @@ export const Dialog_Table_Integration: Story = {
       properties: {
         items: {
           layout: {
-            component: 'duplicated-section',
+            component: "duplicated-section",
             schema: {
               properties: {
                 product: {
-                  label: 'Item',
-                  layout: { component: 'text-field', cols: 12 },
+                  label: "Item",
+                  layout: { component: "text-field", cols: 12 },
                 },
               },
             },
@@ -114,32 +139,37 @@ export const Images: Story = {
           label: "text",
           layout: {
             component: "text-field",
-            cols: 11
-          }
+            cols: 11,
+          },
         },
         productImg: {
           source: {
-            thumbnail: "/qwert",
-            preview: ""
+            thumbnail: "/api/images/{productImageId}?token={token}",
+            preview: "/api/v1/features/test/images/test?Workspace-Id=test&width=500&height=500",
           },
           layout: {
             component: "image-preview",
             cols: 1,
             props: {
-              rounded: 0
-            }
-          }
-        }
+              rounded: 0,
+            },
+          },
+        },
       } as any,
+    },
+    options: {
+      context: {
+        token: "eftasd@#1Token",
+        dataId: "#1",
+        menuFeatureId: "task-handling",
+      },
     },
   },
 };
 
 export const Dictionaries: Story = {
   args: {
-    model: {
-
-    },
+    model: {},
     schema: {
       type: "object",
       properties: {
@@ -178,27 +208,25 @@ export const Dictionaries: Story = {
 export const OrdinalNumber: Story = {
   args: {
     model: {
-      invoiceItems: [
-        {product: "Maciej"}, {product: "Karol"}
-      ]
+      invoiceItems: [{ product: "Maciej" }, { product: "Karol" }],
     },
     schema: {
       type: "object",
       properties: {
         invoiceItems: {
           layout: {
-            component: 'duplicated-section',
+            component: "duplicated-section",
             schema: {
               properties: {
                 product: {
-                  label: 'Product',
-                  layout: { component: 'text-field', cols: 12 },
+                  label: "Product",
+                  layout: { component: "text-field", cols: 12 },
                 },
               },
             },
             options: {
               showDivider: true,
-              ordinalNumberInModel: true
+              ordinalNumberInModel: true,
             },
           },
         },

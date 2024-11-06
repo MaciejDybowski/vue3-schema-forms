@@ -18,6 +18,7 @@
     @focus="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
     @update:search="updateQuery"
+    @change="onChange(schema, model)"
   >
     <template #no-data>
       <v-list-item v-if="loading">
@@ -53,6 +54,7 @@ import { EngineDictionaryField } from "@/types/engine/controls";
 
 import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
 import BaseAutocomplete from "./base/BaseAutocomplete.vue";
+import { useEventHandler } from "@/core/composables/useEventHandler";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -64,6 +66,7 @@ const { fieldProps, bindProps } = useProps();
 const { rules } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
+const {onChange} = useEventHandler()
 
 const localModel = computed({
   get(): any {

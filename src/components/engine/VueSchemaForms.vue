@@ -74,6 +74,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: 'update:modelValue', val: any): void;
   (e: 'isFormReady');
+  (e: 'callAction', payload: {code: string, body: Record<any, any>, params: Record<any, any>});
 }>();
 
 let loading = ref(true);
@@ -86,7 +87,13 @@ const formValid = ref(false);
 const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
 const formModelStore = useFormModelStore(formId);
 const formReadySignalSent = ref(false);
+
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
+const actionHandlerEventBus = useEventBus<string>('form-action');
+
+actionHandlerEventBus.on((event, payload) =>
+  emit("callAction", payload)
+);
 
 const debounced = {
   formIsReady: (WAIT: number = 1500) => debounce(formIsReady, WAIT),
@@ -132,6 +139,8 @@ watch(
   },
   { deep: true },
 );
+
+
 onMounted(async () => {
   formModelStore.updateFormModel(props.modelValue);
   await loadResolvedSchema();
