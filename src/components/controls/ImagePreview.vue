@@ -86,6 +86,7 @@ function handleImageError() {
 }
 
 onMounted(() => {
+  console.debug(props.schema)
   bindProps(props.schema);
 });
 </script>
