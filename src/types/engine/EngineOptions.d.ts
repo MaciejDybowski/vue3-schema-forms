@@ -7,4 +7,5 @@ export interface EngineOptions {
   checkboxProps: Record<string, any>;
   selectProps: Record<string, any>;
   digitsAfterDecimal: number;
+  context?: Record<string, any>;
 }

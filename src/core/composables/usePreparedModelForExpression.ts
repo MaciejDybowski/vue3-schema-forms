@@ -23,5 +23,7 @@ export function usePreparedModelForExpression(schema: EngineField) {
   } else {
     modelForResolveExpression = formModelStore.getFormModel;
   }
+
+  modelForResolveExpression = {...modelForResolveExpression, context: schema.options?.context || {}}
   return modelForResolveExpression;
 }
