@@ -3,9 +3,9 @@
     <vue-schema-forms
       ref="myForm"
       v-model="model"
-      :schema="schema"
-      :options="options"
       :default-form-actions="true"
+      :options="options"
+      :schema="schema"
       :validation-behaviour="'messages'"
       @is-form-ready="startWatcher"
       @call-action="handleAction"
@@ -30,7 +30,7 @@
   />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
 
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
@@ -39,7 +39,6 @@ import { Schema } from "@/types/schema/Schema";
 import { SchemaOptions } from "@/types/schema/SchemaOptions";
 
 import PropsViewer from "./PropsViewer.vue";
-import { an } from "vitest/dist/reporters-BECoY4-b";
 
 const showJSONs = ref(true);
 
@@ -62,12 +61,17 @@ function startWatcher() {
   console.debug("Form is ready");
 }
 
-function handleAction(payload: any){
-  console.debug("Form action called", payload);
+async function handleAction(payload: any) {
+  console.debug("Form action called... 3s response...", payload);
+
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
+  model.value["czyDuplikat"] = !model.value["czyDuplikat"];
+  model.value["poleB"] = "qwe";
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>
 
 <i18n lang="json">
 {

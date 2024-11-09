@@ -1,49 +1,49 @@
 <template>
-  <v-form :ref='(el) => (formRef[formId] = el)'>
+  <v-form :ref="(el) => (formRef[formId] = el)">
     <form-root
-      v-if='!loading'
-      :form-id='formId'
-      :model='modelValue'
-      :schema='resolvedSchema'
-      :options='options'
-      @update:model='updateModel'
+      v-if="!loading"
+      :form-id="formId"
+      :model="modelValue"
+      :options="options"
+      :schema="resolvedSchema"
+      @update:model="updateModel"
     />
 
-    <slot name='formActions'>
+    <slot name="formActions">
       <form-default-actions
-        v-if='defaultFormActions'
-        :form-valid='formValid'
-        :error-messages='errorMessages'
-        @validate='validate(validationBehaviour)'
-        @reset-validation='resetValidation'
-        @reset='reset'
+        v-if="defaultFormActions"
+        :error-messages="errorMessages"
+        :form-valid="formValid"
+        @reset="reset"
+        @validate="validate(validationBehaviour)"
+        @reset-validation="resetValidation"
       />
     </slot>
   </v-form>
 </template>
 
-<script setup lang='ts'>
-import { debounce } from 'lodash';
-import set from 'lodash/set';
-import { getCurrentInstance, onMounted, Ref, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+<script lang="ts" setup>
+import { debounce } from "lodash";
+import set from "lodash/set";
+import { Ref, getCurrentInstance, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-import { vueSchemaFromControls } from '@/components/controls';
+import { vueSchemaFromControls } from "@/components/controls";
 
-import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
-import { ValidationFromBehaviour } from '@/types/engine/ValidationFromBehaviour';
-import { ValidationFromError } from '@/types/engine/ValidationFromError';
-import { ValidationFromItem } from '@/types/engine/ValidationFromItem';
-import { Schema } from '@/types/schema/Schema';
-import { SchemaOptions } from '@/types/schema/SchemaOptions';
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
+import { ValidationFromBehaviour } from "@/types/engine/ValidationFromBehaviour";
+import { ValidationFromError } from "@/types/engine/ValidationFromError";
+import { ValidationFromItem } from "@/types/engine/ValidationFromItem";
+import { Schema } from "@/types/schema/Schema";
+import { SchemaOptions } from "@/types/schema/SchemaOptions";
+import { useEventBus } from "@vueuse/core";
 
-import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
-import { resolveSchemaWithLocale } from '../../core/engine/utils';
-import { logger } from '../../main';
-import { useFormModelStore } from '../../store/formModelStore';
-import FormRoot from './FormRoot.vue';
-import FormDefaultActions from './validation/FormDefaultActions.vue';
-import { useEventBus } from '@vueuse/core';
+import usePerformanceAPI from "../../core/composables/usePerformanceAPI";
+import { resolveSchemaWithLocale } from "../../core/engine/utils";
+import { actionWatcherTimeInSeconds, logger } from "../../main";
+import { useFormModelStore } from "../../store/formModelStore";
+import FormRoot from "./FormRoot.vue";
+import FormDefaultActions from "./validation/FormDefaultActions.vue";
 
 // register components to VueInstance if not installed yet by plugin options
 const instance = getCurrentInstance();
@@ -67,14 +67,14 @@ const props = withDefaults(
   }>(),
   {
     defaultFormActions: false,
-    validationBehaviour: 'scroll',
+    validationBehaviour: "scroll",
   },
 );
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', val: any): void;
-  (e: 'isFormReady');
-  (e: 'callAction', payload: {code: string, body: Record<any, any>, params: Record<any, any>});
+  (e: "update:modelValue", val: any): void;
+  (e: "isFormReady");
+  (e: "callAction", payload: { code: string; body: Record<any, any>; params: Record<any, any> });
 }>();
 
 let loading = ref(true);
@@ -88,12 +88,26 @@ const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
 const formModelStore = useFormModelStore(formId);
 const formReadySignalSent = ref(false);
 
-const vueSchemaFormEventBus = useEventBus<string>('form-model');
-const actionHandlerEventBus = useEventBus<string>('form-action');
+const vueSchemaFormEventBus = useEventBus<string>("form-model");
+const actionHandlerEventBus = useEventBus<string>("form-action");
 
-actionHandlerEventBus.on((event, payload) =>
-  emit("callAction", payload)
-);
+actionHandlerEventBus.on(async (event, payload) => {
+  if (formReadySignalSent.value) {
+    emit("callAction", payload);
+
+    const modelWatcher = watch(props.modelValue, (newValue, oldValue) => {
+      if (logger.eventEmitterListener) {
+        console.debug(
+          `[vue-schema-forms] => I'm listening for model changes after emit action for ${actionWatcherTimeInSeconds}`,
+        );
+      }
+      vueSchemaFormEventBus.emit("model-changed", null);
+    });
+    setTimeout(() => {
+      modelWatcher();
+    }, actionWatcherTimeInSeconds * 1000);
+  }
+});
 
 const debounced = {
   formIsReady: (WAIT: number = 1500) => debounce(formIsReady, WAIT),
@@ -101,7 +115,7 @@ const debounced = {
 
 function formIsReady() {
   if (!formReadySignalSent.value) {
-    emit('isFormReady');
+    emit("isFormReady");
     formReadySignalSent.value = true;
     if (logger.formUpdateLogger) {
       console.debug(`[vue-schema-forms] => Form ${formId}] sent ready signal`);
@@ -113,16 +127,14 @@ function updateModel(event: NodeUpdateEvent) {
   debounced.formIsReady().cancel();
   set(props.modelValue, event.key, event.value);
   formModelStore.updateFormModel(props.modelValue);
-  emit('update:modelValue', props.modelValue);
+  emit("update:modelValue", props.modelValue);
 
   if (logger.formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, props.modelValue);
   }
 
-  vueSchemaFormEventBus.emit('model-changed', event.index);
-
+  vueSchemaFormEventBus.emit("model-changed", event.index);
   debounced.formIsReady()();
-
 }
 
 async function loadResolvedSchema() {
@@ -134,17 +146,16 @@ async function loadResolvedSchema() {
 watch(
   locale,
   async () => {
-    console.debug('[vue-schema-forms] => Reload form in other language');
+    console.debug("[vue-schema-forms] => Reload form in other language");
     await loadResolvedSchema();
   },
   { deep: true },
 );
 
-
 onMounted(async () => {
   formModelStore.updateFormModel(props.modelValue);
   await loadResolvedSchema();
-  debounced.formIsReady(3000)();
+  debounced.formIsReady(2000)();
 });
 
 async function validate(option?: ValidationFromBehaviour) {
@@ -158,19 +169,19 @@ async function validate(option?: ValidationFromBehaviour) {
     errorMessages.value = [];
   }
 
-  if (!valid && option === 'scroll') {
+  if (!valid && option === "scroll") {
     let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
     const item = arr.find((item: ValidationFromItem) => !item.isValid);
-    const itemRef = document.getElementById(item?.id + '');
+    const itemRef = document.getElementById(item?.id + "");
     if (item)
       itemRef?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
+        behavior: "smooth",
+        block: "center",
       });
     return { valid };
   }
 
-  if (!valid && option === 'messages') {
+  if (!valid && option === "messages") {
     let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
     errorMessages.value = arr
       .filter((item: ValidationFromItem) => !item.isValid)
@@ -187,10 +198,10 @@ async function validate(option?: ValidationFromBehaviour) {
     return { valid, messages: errorMessages.value };
   }
 
-  if (valid && option === 'messages') {
+  if (valid && option === "messages") {
     return { valid, messages: [] };
   }
-  if (valid && option === 'scroll') {
+  if (valid && option === "scroll") {
     return { valid };
   }
 }
@@ -212,7 +223,7 @@ defineExpose({
 });
 </script>
 
-<style lang='scss'>
+<style lang="scss">
 .required-input {
   .v-label:first-child:after,
   .v-field-label::after {
@@ -222,7 +233,7 @@ defineExpose({
 }
 </style>
 
-<i18n lang='json'>
+<i18n lang="json">
 {
   "en": {},
   "pl": {}

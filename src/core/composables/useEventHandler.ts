@@ -42,8 +42,8 @@ export function useEventHandler() {
     let params = createParamsObject(eventDefinition, field);
 
     const { resolvedText, allVariablesResolved } = resolve(field, eventDefinition.url);
-    console.debug("URL = ", resolvedText);
-    console.debug(body);
+    //console.debug("URL = ", resolvedText);
+    //console.debug(body);
     /*const response = await axios({
       method: eventDefinition.method,
       url: eventDefinition.url,

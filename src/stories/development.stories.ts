@@ -30,6 +30,7 @@ type Story = StoryObj<typeof meta>;
 export const onChangeAction: Story = {
   args: {
     model: {
+      czyDuplikat: false,
       daneDostawcy: {
         nip: "99912312",
       },
@@ -40,34 +41,19 @@ export const onChangeAction: Story = {
     schema: {
       type: "object",
       properties: {
-        actionOnChange_1: {
-          label: "Action on change value",
+        poleA: {
+          label:"FieldA",
           layout: {
             component: "text-field",
-          },
-          onChange: {
-            mode: "request",
-            url: "/api/v1/tasks/{context.dataId}/scripts/sprawdz_czy_duplikat", // lub ogólny endpoint lub uzależniony od zmiennych w modelu,
-            method: "POST",
-            body: {
-              nip: "{daneDostawcy.nip}",
-              numerFaktury: "{faktura.nrFaktury}",
-            },
-          },
+            if: "czyDuplikat == true"
+          }
         },
-
-        actionOnChange_2: {
-          label: "Action on change value",
+        poleB: {
+          label:"FieldB",
           layout: {
             component: "text-field",
-          },
-          onChange: {
-            mode: "request",
-            url: "/api/v1/sprawdz-czy-aktywny-vatowiec?nip?{daneDostawcy.nip}",
-            method: "GET",
-          },
+          }
         },
-
         actionOnChange_3: {
           label: "Action on change value",
           layout: {
@@ -85,6 +71,26 @@ export const onChangeAction: Story = {
             },
           },
         },
+        sekcja: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                fieldA: {
+                  layout: {
+                    component: "text-field"
+                  }
+                },
+                fieldB: {
+                  layout: {
+                    component: "text-field",
+                    if: "czyDuplikat == true"
+                  }
+                }
+              }
+            }
+          }
+        }
       },
     },
     options: {
