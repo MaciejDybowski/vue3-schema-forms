@@ -6,19 +6,19 @@ import { SchemaSimpleValidation } from "@/types/shared/SchemaSimpleValidation";
 import { useEventBus } from "@vueuse/core";
 
 import { useLocale } from "../../core/composables/useLocale";
+import { ref, Ref } from "vue";
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
 export function useRules() {
   const { t } = useLocale();
-  const vueSchemaFormEventBus = useEventBus<string>("form-model");
+  let rules: Ref<any[] >= ref([]);
 
   function buildInRules(schema: EngineField) {
-    let rules: any[] = [];
 
     if (schema.required) {
-      rules.push((value: any) => {
+      rules.value.push((value: any) => {
         if ((value || value == false) && value !== "") return true;
         return t("required");
       });
@@ -26,7 +26,7 @@ export function useRules() {
 
     if (schema.layout.props && "counter" in schema.layout.props) {
       const props = schema.layout.props;
-      rules.push((value: string) => {
+      rules.value.push((value: string) => {
         if (value?.length <= props.counter || value == null || value == "") return true;
         return t("counter", { counter: props.counter });
       });
@@ -53,8 +53,8 @@ export function useRules() {
     return rules;
   }
 
-  function conditionalRequired(schema: EngineField, ruleDefinition: SchemaSimpleValidation, rules: any) {
-    rules.push(async (currentValue: any) => {
+  function conditionalRequired(schema: EngineField, ruleDefinition: SchemaSimpleValidation, rules: Ref<any[]>) {
+    rules.value.push(async (currentValue: any) => {
       let model = usePreparedModelForExpression(schema);
       const nata = jsonata(ruleDefinition.rule as string);
       const conditionResult = await nata.evaluate(model);
@@ -72,5 +72,5 @@ export function useRules() {
     });
   }
 
-  return { rules: buildInRules };
+  return { rules: buildInRules, refRules: rules };
 }

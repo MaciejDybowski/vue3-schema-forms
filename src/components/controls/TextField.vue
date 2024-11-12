@@ -4,7 +4,7 @@
       v-model='localModel'
       :label='label'
       v-bind='fieldProps'
-      :rules='rules(schema)'
+      :rules='refRules'
       :class='bindClass(schema)'
       @update:model-value="onChange(schema, model)"
     />
@@ -24,12 +24,14 @@ const props = defineProps<{
 }>();
 
 const { bindClass } = useClass();
-const { rules } = useRules();
+const { rules, refRules } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { resolveExpression } = useExpression();
 const { label } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const {onChange} = useEventHandler()
+
+
 
 const localModel = computed({
   get(): string | number {
@@ -48,6 +50,7 @@ function runExpressionIfExist() {
 }
 
 onMounted(() => {
+  rules(props.schema)
   bindProps(props.schema);
   runExpressionIfExist();
 });
