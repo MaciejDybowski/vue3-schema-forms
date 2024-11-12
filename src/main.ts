@@ -69,7 +69,7 @@ export type VueSchemaFormsOptions = {
   customComponents?: Components;
   installFormControls?: boolean;
   duplicatedSectionBatchAddComponent?: Components
-  actionWatcherTimeInSeconds: number;
+  actionWatcherTimeInSeconds?: number;
 };
 
 // jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
