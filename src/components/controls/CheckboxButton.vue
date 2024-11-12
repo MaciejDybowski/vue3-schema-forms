@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="'checkbox-root ' + bindClass(schema)"
+    :class="'checkbox-root ' + bindClass(schema) + requiredInputClass"
     v-if='!loading'
   >
     <label
@@ -16,7 +16,7 @@
       <v-checkbox
         v-model='localModel'
         v-bind='fieldProps'
-        :rules='rules(schema)'
+        :rules='rules'
         :label='option[title]'
         :value='option[value]'
         :hide-details="index == data.length - 1 ? 'auto' : true"
@@ -43,7 +43,7 @@ const props = defineProps<{
 
 const { label } = useLabel(props.schema);
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
@@ -76,6 +76,7 @@ const localModel = computed({
 });
 
 onMounted(() => {
+  bindRules(props.schema);
   bindProps(props.schema);
 });
 </script>

@@ -1,22 +1,22 @@
 <template>
-  <div class='node-text-field'>
+  <div class="node-text-field">
     <v-text-field
-      v-model='localModel'
-      :label='label'
-      v-bind='fieldProps'
-      :rules='refRules'
-      :class='bindClass(schema)'
+      v-model="localModel"
+      :class="bindClass(schema) + requiredInputClass"
+      :label="label"
+      :rules="rules"
+      v-bind="fieldProps"
       @update:model-value="onChange(schema, model)"
     />
   </div>
 </template>
 
-<script setup lang='ts'>
-import { computed, onMounted } from 'vue';
+<script lang="ts" setup>
+import { computed, onMounted } from "vue";
 
-import { useClass, useExpression, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
-import { EngineTextField } from '@/types/engine/controls';
+import { useClass, useExpression, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
 import { useEventHandler } from "@/core/composables/useEventHandler";
+import { EngineTextField } from "@/types/engine/controls";
 
 const props = defineProps<{
   schema: EngineTextField;
@@ -24,14 +24,12 @@ const props = defineProps<{
 }>();
 
 const { bindClass } = useClass();
-const { rules, refRules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { resolveExpression } = useExpression();
 const { label } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
-const {onChange} = useEventHandler()
-
-
+const { onChange } = useEventHandler();
 
 const localModel = computed({
   get(): string | number {
@@ -42,23 +40,22 @@ const localModel = computed({
   },
 });
 
-
 function runExpressionIfExist() {
-  if (props.schema.expression && props.schema.expression !== '') {
+  if (props.schema.expression && props.schema.expression !== "") {
     localModel.value = resolveExpression(props.schema.key, props.schema.expression, props.model);
   }
 }
 
 onMounted(() => {
-  rules(props.schema)
+  bindRules(props.schema);
   bindProps(props.schema);
   runExpressionIfExist();
 });
 </script>
 
-<style scoped lang='css'></style>
+<style lang="css" scoped></style>
 
-<i18n lang='json'>
+<i18n lang="json">
 {
   "en": {},
   "pl": {}

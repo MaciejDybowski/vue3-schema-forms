@@ -3,8 +3,8 @@
     v-model='localModel'
     :label='label'
     v-bind='fieldProps'
-    :rules='rules(schema)'
-    :class='bindClass(schema)'
+    :rules='rules'
+    :class='bindClass(schema) + requiredInputClass'
     v-if='!loading'
   >
     <template
@@ -64,7 +64,7 @@ const localModel = computed({
   },
 });
 
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 
 watch(loading, () => {
   if (data.value.length === 0) {
@@ -76,6 +76,7 @@ watch(loading, () => {
 });
 
 onMounted(async () => {
+  bindRules(props.schema);
   bindProps(props.schema);
   if (!loading.value && localModel.value == null && initValue) {
     localModel.value = data.value[0][value];

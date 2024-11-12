@@ -1,9 +1,9 @@
 <template>
   <v-text-field
     v-model="localModel"
-    :class="bindClass(schema)"
+    :class="bindClass(schema) + requiredInputClass"
     :label="label"
-    :rules="rules(schema)"
+    :rules="rules"
     v-bind="fieldProps"
     @focusin="focusin"
     @focusout="focusout"
@@ -44,7 +44,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { bindClass } = useClass();
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { fieldProps, bindProps } = useProps();
 const { resolveExpression } = useExpression();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
@@ -133,6 +133,7 @@ function runExpressionIfExist() {
 }
 
 onMounted(() => {
+  bindRules(props.schema);
   bindProps(props.schema);
   runCalculationIfExist();
   runExpressionIfExist();

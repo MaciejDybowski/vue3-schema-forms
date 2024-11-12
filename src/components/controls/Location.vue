@@ -7,8 +7,8 @@
     :no-filter='true'
     item-title='formatted_address'
     :return-object='true'
-    :rules='rules(schema)'
-    :class='bindClass(schema)'
+    :rules='rules'
+    :class='bindClass(schema) + requiredInputClass'
     v-bind='fieldProps'
   >
   </v-autocomplete>
@@ -48,7 +48,7 @@ const props = defineProps<{
 }>();
 
 const { label } = useLabel(props.schema);
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
@@ -107,6 +107,7 @@ const debounced = {
 };
 
 onMounted(() => {
+  bindRules(props.schema);
   bindProps(props.schema);
 });
 </script>

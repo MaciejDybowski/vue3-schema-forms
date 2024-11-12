@@ -3,7 +3,7 @@
     ref="inputFieldRef"
     v-model="inputValue"
     v-maska="maskOptions"
-    :class="bindClass(schema)"
+    :class="bindClass(schema) + requiredInputClass"
     :clearable="!fieldProps.readonly"
     :focused="isInputFocused || pickerModel"
     :label="label"
@@ -60,7 +60,7 @@ import dayjs from "./dayjs";
 const { locale, t } = useLocale();
 const props = defineProps<{ schema: EngineDateField; model: object }>();
 const { label } = useLabel(props.schema);
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
@@ -77,6 +77,7 @@ const localModel = computed({
 });
 
 onMounted(() => {
+  bindRules(props.schema);
   bindProps(props.schema);
 });
 
@@ -189,7 +190,7 @@ const dateRules = computed(() => {
   if (!isFutureDateAvailable) {
     rulesArray.push(isDateInFuture);
   }
-  return [...rulesArray, ...rules(props.schema)];
+  return [...rulesArray, ...rules.value];
 });
 
 function isValidDate(val: string) {

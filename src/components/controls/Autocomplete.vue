@@ -2,7 +2,7 @@
   <base-autocomplete
     v-model="localModel"
     :auto-select-first="true"
-    :class="bindClass(schema)"
+    :class="bindClass(schema) + requiredInputClass"
     :item-title="title"
     :item-value="value"
     :items="data"
@@ -12,7 +12,7 @@
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
-    :rules="rules(schema)"
+    :rules="rules"
     :search="query"
     v-bind="fieldProps"
     @focus="fetchDictionaryData"
@@ -63,7 +63,7 @@ const props = defineProps<{
 const { t } = useI18n();
 const { label } = useLabel(props.schema);
 const { fieldProps, bindProps } = useProps();
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const {onChange} = useEventHandler()
@@ -93,6 +93,7 @@ const {
 } = useDictionarySource(props.schema);
 
 onMounted(async () => {
+  bindRules(props.schema)
   bindProps(props.schema);
   if (localModel.value) {
     updateQuery(localModel.value);

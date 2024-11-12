@@ -2,9 +2,9 @@
   <v-textarea
     v-model='localModel'
     :label='label'
-    :rules='rules(schema)'
+    :rules='rules'
     v-bind='fieldProps'
-    :class='bindClass(schema)'
+    :class='bindClass(schema) + requiredInputClass'
   />
 </template>
 
@@ -19,7 +19,7 @@ const props = defineProps<{
   model: object;
 }>();
 const { label } = useLabel(props.schema);
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
@@ -34,6 +34,7 @@ const localModel = computed({
 });
 
 onMounted(() => {
+  bindRules(props.schema);
   bindProps(props.schema);
 });
 

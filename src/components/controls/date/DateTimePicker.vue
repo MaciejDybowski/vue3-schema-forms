@@ -9,7 +9,7 @@
     :clearable='!fieldProps.readonly'
     :rules='dateRules'
     @update:model-value='dateTyping'
-    :class='bindClass(schema)'
+    :class='bindClass(schema) + requiredInputClass'
     v-bind='{ ...attrs, ...fieldProps }'
   >
     <template v-slot:append-inner>
@@ -89,7 +89,7 @@ import dayjs from './dayjs';
 const { locale, t } = useLocale();
 const props = defineProps<{ schema: EngineDateField; model: object }>();
 const { label } = useLabel(props.schema);
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
@@ -107,6 +107,7 @@ const localModel = computed({
 
 
 onMounted(() => {
+  bindRules(props.schema);
   bindProps((props.schema));
 });
 
@@ -229,7 +230,7 @@ const dateRules = computed(() => {
   if (!isFutureDateAvailable) {
     rulesArray.push(isDateInFuture);
   }
-  return [...rulesArray, ...rules(props.schema)];
+  return [...rulesArray, ...rules.value];
 });
 
 function isValidDate(val: string) {

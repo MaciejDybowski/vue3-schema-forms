@@ -37,7 +37,7 @@ import DuplicatedSectionBatchAddDialogBody
 
 export declare type Components = Record<string, Component>;
 export let logger = {
-  formUpdateLogger: true,
+  formUpdateLogger: false,
   calculationListener: false,
   customIfExpressionListener: false,
   propsValueMappingListener: false,

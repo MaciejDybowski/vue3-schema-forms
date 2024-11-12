@@ -1,13 +1,13 @@
 <template>
   <v-phone-input
-    :class='bindClass(schema)'
+    :class='bindClass(schema) + requiredInputClass'
     :label='label'
     v-model='localModel'
     :invalid-message="(options: any) => t('phoneInvalid', { example: options.example })"
     :country-props='fieldPropsMerged'
     :phone-props='fieldPropsMerged'
     v-bind='fieldPropsMerged'
-    :rules='rules(schema)'
+    :rules='rules'
     name='phone'
     type='tel'
   >
@@ -30,7 +30,7 @@ const props = defineProps<{
 }>();
 
 const { label } = useLabel(props.schema);
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { t } = useLocale();

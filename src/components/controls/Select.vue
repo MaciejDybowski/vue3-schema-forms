@@ -3,8 +3,8 @@
     v-model='localModel'
     :label='label'
     v-bind='fieldProps'
-    :rules='rules(schema)'
-    :class='bindClass(schema)'
+    :rules='rules'
+    :class='bindClass(schema) + requiredInputClass'
     :item-title='title'
     :item-value='value'
     :items='data'
@@ -27,7 +27,7 @@ const props = defineProps<{
 const { label } = useLabel(props.schema);
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { bindProps, fieldProps } = useProps();
-const { rules } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 
@@ -42,6 +42,7 @@ const localModel = computed({
 });
 
 onMounted(() => {
+  bindRules(props.schema);
   bindProps(props.schema);
 });
 </script>

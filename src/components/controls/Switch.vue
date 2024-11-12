@@ -1,10 +1,11 @@
 <template>
   <v-switch
     v-model='localModel'
-    :class='bindClass(schema)'
+    :class='bindClass(schema) + requiredInputClass'
     v-bind='fieldProps'
     :color='primaryWhite'
     :label='label'
+    :rules="rules"
     :ref='(el) => (formSwitch[switchId] = el)'
   />
 </template>
@@ -14,7 +15,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useTheme } from 'vuetify';
 import { VSwitch } from 'vuetify/components';
 
-import { useClass, useFormModel, useLabel, useProps } from '@/core/composables';
+import { useClass, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
 import { EngineField } from '@/types/engine/EngineField';
 
 const props = defineProps<{
@@ -26,6 +27,7 @@ const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { label } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
+const { bindRules, rules, requiredInputClass } = useRules();
 
 const theme = useTheme();
 
@@ -45,6 +47,7 @@ const localModel = computed({
 
 
 onMounted(() => {
+  bindRules(props.schema);
   bindProps(props.schema);
   if (!('default' in props.schema)) {
     let falseValue = fieldProps.value['false-value'] as string | boolean | undefined;

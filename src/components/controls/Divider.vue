@@ -45,11 +45,7 @@ const opacity = computed(() => {
 });
 
 const { bindClass } = useClass();
-const { rules } = useRules();
 const { bindProps, fieldProps } = useProps();
-
-const { label } = useLabel(props.schema);
-const { getValue, setValue } = useFormModel();
 
 onMounted(() => {
   bindProps(props.schema);
