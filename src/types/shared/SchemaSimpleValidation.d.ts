@@ -1,5 +1,7 @@
 export interface SchemaSimpleValidation {
-  regexp: RegExp;
-  message: string;
+  name: string,
+  rule?: string
+  regexp?: RegExp;
+  message?: string;
   nullable?: boolean;
 }

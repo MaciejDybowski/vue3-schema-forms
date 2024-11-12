@@ -2,8 +2,11 @@
 import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
+
+
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { DictionarySource } from "../types/shared/Source";
+
 
 const meta = {
   title: "Development Page",
@@ -688,6 +691,36 @@ export const Table3: Story = {
               showDivider: true,
             },
           },
+        },
+      },
+    },
+  },
+};
+
+export const ConditionalRequired: Story = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        fieldA: {
+          label: "Czy wymagane pole?",
+          layout: {
+            component: "switch",
+          },
+        },
+        fieldB: {
+          label: "Pole z zależną wymagalnością",
+          layout: {
+            component: "text-field",
+          },
+          validations: [
+            {
+              name: "conditional-required",
+              message: "Moje pole XD",
+              rule: "fieldA=true"
+            },
+          ],
         },
       },
     },
