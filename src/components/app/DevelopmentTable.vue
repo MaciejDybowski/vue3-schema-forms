@@ -68,6 +68,8 @@ async function handleAction(payload: any) {
 
   model.value["czyDuplikat"] = !model.value["czyDuplikat"];
   model.value["poleB"] = "qwe";
+
+  payload.callback()
 }
 </script>
 

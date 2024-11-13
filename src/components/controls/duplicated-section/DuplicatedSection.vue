@@ -58,6 +58,7 @@
                 :is="batchAddComponent['batch-add-dialog-body']"
                 menu-feature-id="waluty"
                 view-id="20519-tabela"
+                @selected-items="selectedItems"
               />
             </v-card-text>
             <template v-slot:actions>
@@ -66,9 +67,9 @@
                 color="primary"
                 v-bind="schema.options.buttonProps"
                 variant="elevated"
-                @click="isActive.value = false"
+                @click="closeAndAddBatch(isActive)"
               >
-                {{ t("close") }}
+                {{ t("closeAndAdd") }}
               </v-btn>
             </template>
           </v-card>
@@ -83,7 +84,7 @@ import { cloneDeep, isArray } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, Ref, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
 
@@ -117,6 +118,17 @@ const dragOptions = ref({
 });
 
 const batchAddComponent = duplicatedSectionBatchAddComponent
+const batchItems = ref([])
+function selectedItems(selectedItems: []) {
+  batchItems.value = selectedItems
+}
+function closeAndAddBatch(isActive:Ref<boolean>) {
+  isActive.value = false
+  batchItems.value.forEach((item) => {
+    localModel.value.push(item)
+    nodes.value.push(getClearNode.value)
+  })
+}
 
 const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedSectionOptions);
 
@@ -358,11 +370,13 @@ onMounted(() => {
 {
   "en": {
     "addAction": "Add",
-    "close": "Close"
+    "close": "Close",
+    "closeAndAdd": "Close and add"
   },
   "pl": {
     "addAction": "Dodaj",
-    "close": "Zamknij"
+    "close": "Zamknij",
+    "closeAndAdd": "Dodaj i zamknij"
   }
 }
 </i18n>

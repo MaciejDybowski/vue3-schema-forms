@@ -40,7 +40,7 @@ import { useEventBus } from "@vueuse/core";
 
 import usePerformanceAPI from "../../core/composables/usePerformanceAPI";
 import { resolveSchemaWithLocale } from "../../core/engine/utils";
-import { actionWatcherTimeInSeconds, logger } from "../../main";
+import { logger } from "../../main";
 import { useFormModelStore } from "../../store/formModelStore";
 import FormRoot from "./FormRoot.vue";
 import FormDefaultActions from "./validation/FormDefaultActions.vue";
@@ -91,21 +91,13 @@ const formReadySignalSent = ref(false);
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const actionHandlerEventBus = useEventBus<string>("form-action");
 
+function actionCallback() {
+  vueSchemaFormEventBus.emit("model-changed", null);
+}
+
 actionHandlerEventBus.on(async (event, payload) => {
   if (formReadySignalSent.value) {
-    emit("callAction", payload);
-
-    const modelWatcher = watch(props.modelValue, (newValue, oldValue) => {
-      if (logger.eventEmitterListener) {
-        console.debug(
-          `[vue-schema-forms] => I'm listening for model changes after emit action for ${actionWatcherTimeInSeconds}`,
-        );
-      }
-      vueSchemaFormEventBus.emit("model-changed", null);
-    });
-    setTimeout(() => {
-      modelWatcher();
-    }, actionWatcherTimeInSeconds * 1000);
+    emit("callAction", { ...payload, callback: actionCallback });
   }
 });
 

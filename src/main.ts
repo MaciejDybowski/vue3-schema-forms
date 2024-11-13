@@ -48,7 +48,6 @@ export let logger = {
 };
 
 export let duplicatedSectionBatchAddComponent = { 'batch-add-dialog-body': DuplicatedSectionBatchAddDialogBody} as Components
-export let actionWatcherTimeInSeconds = 5;
 export type VueSchemaLoggers = {
   formUpdateLogger?: boolean
   calculationListener?: boolean
@@ -69,7 +68,6 @@ export type VueSchemaFormsOptions = {
   customComponents?: Components;
   installFormControls?: boolean;
   duplicatedSectionBatchAddComponent?: Components
-  actionWatcherTimeInSeconds?: number;
 };
 
 // jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
@@ -110,10 +108,6 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
             app.component(`node-${componentName}`, component);
           }
         }
-      }
-
-      if(options?.actionWatcherTimeInSeconds){
-        actionWatcherTimeInSeconds = options.actionWatcherTimeInSeconds
       }
     },
   };

@@ -121,7 +121,7 @@ export const Dialog_Table_Integration: Story = {
             component: "duplicated-section",
             schema: {
               properties: {
-                product: {
+                nazwa: {
                   label: "Item",
                   layout: { component: "text-field", cols: 12 },
                 },
