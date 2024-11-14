@@ -38,7 +38,7 @@
     <v-col>
       <v-btn
         v-if="isEditable && showSectionElements"
-        :id="getAddBtnMode === 'feature' ? 'addBtnRef' : 'addBtn' "
+        :id="getAddBtnMode === 'feature' ? 'addBtnRef' : 'addBtn'"
         color="primary"
         prepend-icon="mdi-plus"
         v-bind="schema.options.buttonProps"
@@ -84,29 +84,31 @@ import { cloneDeep, isArray } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
-import { computed, onMounted, Ref, ref } from "vue";
+import { Ref, computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
 
 import { useFormModel } from "@/core/composables";
+import { duplicatedSectionBatchAddComponent } from "@/main";
 import { VueDragable } from "@/types/VueDragable";
 import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 import { EngineDuplicatedSection } from "@/types/engine/controls";
 import { Schema } from "@/types/schema/Schema";
 import { SchemaField } from "@/types/schema/SchemaField";
 import { DuplicatedSectionOptions } from "@/types/shared/DuplicatedSectionOptions";
+import { useEventBus } from "@vueuse/core";
 
 import FormRoot from "../../engine/FormRoot.vue";
 import DraggableContextMenu from "./DraggableContextMenu.vue";
 import DraggableIcon from "./DraggableIcon.vue";
 import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
-import { duplicatedSectionBatchAddComponent } from "@/main";
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;
   model: object;
 }>();
 
+const actionHandlerEventBus = useEventBus<string>("form-action");
 const nodes = ref([] as Array<Schema>);
 const localModel = ref([] as Array<any>);
 const drag = ref(false);
@@ -117,17 +119,17 @@ const dragOptions = ref({
   ghostClass: "ghost",
 });
 
-const batchAddComponent = duplicatedSectionBatchAddComponent
-const batchItems = ref([])
+const batchAddComponent = duplicatedSectionBatchAddComponent;
+const batchItems = ref([]);
 function selectedItems(selectedItems: []) {
-  batchItems.value = selectedItems
+  batchItems.value = selectedItems;
 }
-function closeAndAddBatch(isActive:Ref<boolean>) {
-  isActive.value = false
+function closeAndAddBatch(isActive: Ref<boolean>) {
+  isActive.value = false;
   batchItems.value.forEach((item) => {
-    localModel.value.push(item)
-    nodes.value.push(getClearNode.value)
-  })
+    localModel.value.push(item);
+    nodes.value.push(getClearNode.value);
+  });
 }
 
 const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedSectionOptions);
@@ -231,6 +233,15 @@ const getClearModel = computed(() => {
 });
 
 function runDuplicatedSectionButtonLogic(init = false): void {
+  if (getAddBtnMode.value == "action" && duplicatedSectionOptions.value.action) {
+    let payloadObject = {
+      code: duplicatedSectionOptions.value.action.code,
+      body: null,
+      params: null,
+    };
+
+    actionHandlerEventBus.emit("form-action", payloadObject);
+  }
   if (getAddBtnMode.value == "add") {
     nodes.value.push(getClearNode.value);
     localModel.value.push({ ...getClearModel.value });
@@ -322,11 +333,10 @@ function init(): void {
         required: props.schema.layout.schema?.required,
       } as Schema);
 
-      if(ordinalNumberInModel){
-       sections[index]["ordinalNumber"] = index+1;
+      if (ordinalNumberInModel) {
+        sections[index]["ordinalNumber"] = index + 1;
       }
       localModel.value.push(isDefaultExist ? {} : sections[index]);
-
     });
   } else if (getAddBtnMode.value !== "feature") {
     runDuplicatedSectionButtonLogic(true);

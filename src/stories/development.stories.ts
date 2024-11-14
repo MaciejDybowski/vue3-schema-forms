@@ -138,6 +138,37 @@ export const Dialog_Table_Integration: Story = {
   },
 };
 
+export const Dialog_Table_Action: Story = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        items: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                nazwa: {
+                  label: "Item",
+                  layout: { component: "text-field", cols: 12 },
+                },
+              },
+            },
+            options: {
+              showDivider: true,
+              addBtnMode: "action",
+              action: {
+                code: "batchItemAdd"
+              }
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 export const Images: Story = {
   args: {
     model: {},

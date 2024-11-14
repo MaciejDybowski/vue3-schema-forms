@@ -1,6 +1,11 @@
 export interface DuplicatedSectionOptions {
   addBtnText: string | { $ref: string };
-  addBtnMode: 'add' | 'copy' | "feature"
+  addBtnMode: 'add' | 'copy' | "feature" | "action"
   showDivider: boolean;
   ordinalNumberInModel: boolean
+  action?: ActionDefinition
+}
+
+export interface ActionDefinition {
+  code?: string
 }
