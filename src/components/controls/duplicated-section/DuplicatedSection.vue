@@ -142,7 +142,7 @@ const { getValue, setValue } = useFormModel();
 // tego już nie wykryję a zmianę potrzebuję zrobić na szybko :)
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 vueSchemaFormEventBus.on(async (event, payload) => {
-  if(nodes.value.length !== get(props.model, props.schema.key, []).length) {
+  if(payload == null && nodes.value.length !== get(props.model, props.schema.key, []).length) {
     init()
   }
 });
