@@ -84,7 +84,7 @@ import { cloneDeep, isArray } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
-import { Ref, computed, onMounted, ref } from "vue";
+import { Ref, computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
 
@@ -135,6 +135,17 @@ function closeAndAddBatch(isActive: Ref<boolean>) {
 const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedSectionOptions);
 
 const { getValue, setValue } = useFormModel();
+
+// TODO
+// Będzie potrzebne lepsze sprawdzenie czy np. jakaś akcja aplikacji trzeciej nie zmienia modelu formularza
+// moze tutaj pokusić się o obliczenie jakiegoś skrótu albo SHA bo może się zmienić np. ilość w pozycji z 1 -> 2
+// tego już nie wykryję a zmianę potrzebuję zrobić na szybko :)
+const vueSchemaFormEventBus = useEventBus<string>("form-model");
+vueSchemaFormEventBus.on(async (event, payload) => {
+  if(nodes.value.length !== get(props.model, props.schema.key, []).length) {
+    init()
+  }
+});
 
 const isEditable: boolean = "editable" in props.schema ? (props.schema.editable as boolean) : true;
 const showSectionElements = computed(() => {

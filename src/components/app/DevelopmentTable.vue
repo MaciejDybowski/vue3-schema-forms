@@ -66,8 +66,11 @@ async function handleAction(payload: any) {
 
   await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  model.value["czyDuplikat"] = !model.value["czyDuplikat"];
-  model.value["poleB"] = "qwe";
+  // model.value["czyDuplikat"] = !model.value["czyDuplikat"];
+  // model.value["poleB"] = "qwe";
+
+
+  model.value['items'] = [{"nazwa": "Test"}]
 
   payload.callback()
 }
