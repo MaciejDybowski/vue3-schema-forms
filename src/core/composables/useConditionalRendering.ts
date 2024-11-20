@@ -65,6 +65,8 @@ export function useConditionalRendering() {
 
 
   async function conditionalRenderingListener(event: string, payloadIndex: number, schema: EngineField) {
+    // TODO - reakcja na sumy była jeden update z tyłu
+    await new Promise((r) => setTimeout(r, 2));
     //if (schema.index == undefined || schema.index == payloadIndex) {
     await shouldRenderField(schema, false);
     if (logger.conditionalRenderingListener)
