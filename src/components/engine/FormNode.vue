@@ -3,11 +3,10 @@
     :class='layoutCssClass'
     v-if='shouldRender'
     :cols='cols'
-    v-show='hideField'
+    v-show='hideField && shouldRender'
     :style='mr'
   >
     <component
-      v-if="!schema.layout.component.includes('if')"
       :is='`node-${schema.layout.component}`'
       :schema='schema'
       :model='model'
