@@ -92,7 +92,7 @@ const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const actionHandlerEventBus = useEventBus<string>("form-action");
 
 function actionCallback() {
-  vueSchemaFormEventBus.emit("model-changed", null);
+  vueSchemaFormEventBus.emit("model-changed", "action-callback");
 }
 
 actionHandlerEventBus.on(async (event, payload) => {
@@ -102,7 +102,7 @@ actionHandlerEventBus.on(async (event, payload) => {
 });
 
 const debounced = {
-  formIsReady: (WAIT: number = 1500) => debounce(formIsReady, WAIT),
+  formIsReady: (WAIT: number = 1000) => debounce(formIsReady, WAIT),
 };
 
 function formIsReady() {
@@ -147,7 +147,7 @@ watch(
 onMounted(async () => {
   formModelStore.updateFormModel(props.modelValue);
   await loadResolvedSchema();
-  debounced.formIsReady(2000)();
+  debounced.formIsReady(800)();
 });
 
 async function validate(option?: ValidationFromBehaviour) {

@@ -84,7 +84,7 @@ import { cloneDeep, isArray } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
-import { Ref, computed, onMounted, ref, watch } from "vue";
+import { Ref, computed, onMounted, ref, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
 
@@ -136,13 +136,9 @@ const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedS
 
 const { getValue, setValue } = useFormModel();
 
-// TODO
-// Będzie potrzebne lepsze sprawdzenie czy np. jakaś akcja aplikacji trzeciej nie zmienia modelu formularza
-// moze tutaj pokusić się o obliczenie jakiegoś skrótu albo SHA bo może się zmienić np. ilość w pozycji z 1 -> 2
-// tego już nie wykryję a zmianę potrzebuję zrobić na szybko :)
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 vueSchemaFormEventBus.on(async (event, payload) => {
-  if(payload == null && nodes.value.length !== get(props.model, props.schema.key, []).length) {
+  if(payload == "action-callback" && JSON.stringify(localModel.value) !== JSON.stringify(get(props.model, props.schema.key, []))) {
     init()
   }
 });
@@ -326,6 +322,7 @@ const isShowDivider = computed(() => {
 
 function init(): void {
   nodes.value = [];
+  localModel.value = [];
   let isDefaultExist = false;
   let sections: Object[] = get(props.model, props.schema.key, []) || []; //lodash error with default value = array
   if (sections.length === 0 && isArray(props.schema.default)) {
