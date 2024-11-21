@@ -39,15 +39,13 @@ export function useRules() {
           // listener for visualization "live" required input with red *, validation works properly without it !!
           vueSchemaFormEventBus.on((event, payloadIndex) => ruleListener(event, payloadIndex, schema, ruleDefinition));
         } else {
-          // other types/names
-          // TODO
-          /*  rules.push((value: string) => {
-      //     if (new RegExp(item.regexp, 'g').test(value)) {
-      //       return true;
-      //     }
-      //     return item.message;
-      //   });
-      */
+          rules.value.push(async (value: any) => {
+            let model = usePreparedModelForExpression(schema);
+            const nata = jsonata(ruleDefinition.rule as string);
+            const conditionResult = await nata.evaluate(model);
+            if (conditionResult) return true;
+            return ruleDefinition.message;
+          });
         }
       });
     }

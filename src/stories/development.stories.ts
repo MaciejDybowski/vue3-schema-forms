@@ -2,11 +2,8 @@
 import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
-
-
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { DictionarySource } from "../types/shared/Source";
-
 
 const meta = {
   title: "Development Page",
@@ -30,6 +27,37 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const RuleWithJSONNataAndContext: Story = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        fieldA: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+          validations: [
+            {
+              name: "not-logged-user",
+              rule: "fieldA != context.userInfo.id or $not($exists(fieldA))",
+              message: "You can not."
+            }
+          ]
+        },
+      },
+    },
+    options: {
+      context: {
+        userInfo: {
+          id: "maciek"
+        }
+      }
+    }
+  },
+};
+
 export const onChangeAction: Story = {
   args: {
     model: {
@@ -45,17 +73,17 @@ export const onChangeAction: Story = {
       type: "object",
       properties: {
         poleA: {
-          label:"FieldA",
+          label: "FieldA",
           layout: {
             component: "text-field",
-            if: "czyDuplikat == true"
-          }
+            if: "czyDuplikat == true",
+          },
         },
         poleB: {
-          label:"FieldB",
+          label: "FieldB",
           layout: {
             component: "text-field",
-          }
+          },
         },
         actionOnChange_3: {
           label: "Action on change value",
@@ -74,26 +102,26 @@ export const onChangeAction: Story = {
             },
           },
         },
-        sekcja: {
+        items: {
           layout: {
             component: "duplicated-section",
             schema: {
               properties: {
-                fieldA: {
+                nazwa: {
                   layout: {
-                    component: "text-field"
-                  }
+                    component: "text-field",
+                  },
                 },
                 fieldB: {
                   layout: {
                     component: "text-field",
-                    if: "czyDuplikat == true"
-                  }
-                }
-              }
-            }
-          }
-        }
+                    if: "czyDuplikat == true",
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
     options: {
@@ -138,12 +166,20 @@ export const Dialog_Table_Integration: Story = {
   },
 };
 
+
+
 export const Dialog_Table_Action: Story = {
   args: {
     model: {},
     schema: {
       type: "object",
       properties: {
+        fieldA: {
+          label: "Fiela D",
+          layout: {
+            component: "text-field",
+          },
+        },
         items: {
           layout: {
             component: "duplicated-section",
@@ -159,8 +195,8 @@ export const Dialog_Table_Action: Story = {
               showDivider: true,
               addBtnMode: "action",
               action: {
-                code: "batchItemAdd"
-              }
+                code: "batchItemAdd",
+              },
             },
           },
         },
@@ -248,30 +284,412 @@ export const Dictionaries: Story = {
 export const OrdinalNumber: Story = {
   args: {
     model: {
-      invoiceItems: [{ product: "Maciej" }, { product: "Karol" }],
-    },
-    schema: {
-      type: "object",
-      properties: {
-        invoiceItems: {
-          layout: {
-            component: "duplicated-section",
-            schema: {
-              properties: {
-                product: {
-                  label: "Product",
-                  layout: { component: "text-field", cols: 12 },
-                },
-              },
-            },
-            options: {
-              showDivider: true,
-              ordinalNumberInModel: true,
-            },
+      "code": "0078-00",
+      "category": {
+        "id": "znicze",
+        "label": "znicze"
+      },
+      "attributes": [
+        {
+          "definition": {
+            "code": "ilosc-w-opakowaniu",
+            "label": "Ilość w opakowaniu",
+            "valueType": "NUMBER"
           },
+          "textValue": null,
+          "numberValue": "6",
+          "dateValue": null,
+          "dictionaryValue": null
         },
-      } as any,
+        {
+          "definition": {
+            "code": "czas-palenia",
+            "label": "Czas Palenia",
+            "valueType": "NUMBER"
+          },
+          "textValue": null,
+          "numberValue": "26",
+          "dateValue": null,
+          "dictionaryValue": null
+        },
+        {
+          "definition": {
+            "code": "waga-calkowita-kg",
+            "label": "Waga całkowita kg",
+            "valueType": "NUMBER"
+          },
+          "textValue": null,
+          "numberValue": "0.53",
+          "dateValue": null,
+          "dictionaryValue": null
+        },
+        {
+          "definition": {
+            "code": "wysokosc",
+            "label": "Wysokosc",
+            "valueType": "NUMBER"
+          },
+          "textValue": null,
+          "numberValue": "25.5",
+          "dateValue": null,
+          "dictionaryValue": null
+        },
+      ],
+      "prices": [
+        {
+          "priceType": {
+            "id": "cena-c",
+            "label": "Cena C"
+          },
+          "currency": {
+            "id": "116",
+            "label": "PLN",
+            "digitsAfterDecimal": 2
+          },
+          "amount": 6.8
+        },
+        {
+          "priceType": {
+            "id": "cena-b",
+            "label": "Cena B"
+          },
+          "currency": {
+            "id": "116",
+            "label": "PLN",
+            "digitsAfterDecimal": 2
+          },
+          "amount": 6.1
+        },
+        {
+          "priceType": {
+            "id": "cena-a",
+            "label": "Cena A"
+          },
+          "currency": {
+            "id": "116",
+            "label": "PLN",
+            "digitsAfterDecimal": 2
+          },
+          "amount": 5.5
+        },
+      ],
+      "basicData": {
+        "productNumber": "0078#00",
+        "name": "tq",
+        "description": null,
+        "catalogIndex": null,
+        "barcode": null
+      },
+      "audit": {
+        "createdBy": {
+          "id": "migration",
+          "username": null,
+          "firstName": null,
+          "lastName": "Migracja",
+          "email": null
+        },
+        "createdAt": "2024-11-19T17:30:37.519918Z",
+        "modifiedBy": {
+          "id": "migration",
+          "username": null,
+          "firstName": null,
+          "lastName": "Migracja",
+          "email": null
+        },
+        "modifiedAt": "2024-11-19T17:30:37.519918Z"
+      },
+      "imageName": "main"
     },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "extraText1": {
+          "content": "Dane podstawowe:",
+          "layout": {
+            "component": "static-content",
+            "tag": "h2"
+          }
+        },
+        "basicData": {
+          "properties": {
+            "productNumber": {
+              "label": "Numer produktu",
+              "layout": {
+                "component": "text-field"
+              }
+            },
+            "name": {
+              "label": " Nazwa",
+              "layout": {
+                "component": "text-field"
+              }
+            },
+            "catalogIndex": {
+              "label": "Indeks katalogowy",
+              "layout": {
+                "component": "text-field"
+              }
+            },
+            "barcode": {
+              "label": "Kod kreskowy (EAN)",
+              "layout": {
+                "component": "text-field"
+              }
+            },
+            "description": {
+              "label": "Opis",
+              "layout": {
+                "component": "text-area",
+                "props": {
+                  "counter": 4000
+                }
+              }
+            }
+          },
+          "required": [
+            "productNumber",
+            "name"
+          ]
+        },
+        "category": {
+          "label": "Kategoria produktu",
+          "layout": {
+            "component": "dictionary"
+          },
+          "source": {
+            "url": "/api/dictionaries?feature-id=product-categories&lm=basicData.name&vm=code",
+            "title": "label",
+            "value": "code",
+            "singleOptionAutoSelect": true,
+            "lazy": true,
+            "returnObject": true
+          }
+        },
+        "static-content-839": {
+          "content": "Atrybuty dodatkowe:",
+          "layout": {
+            "component": "static-content",
+            "tag": "h2"
+          }
+        },
+        "attributes": {
+          "layout": {
+            "component": "duplicated-section",
+            "cols": {
+              "xs": 12,
+              "sm": 12,
+              "md": 12,
+              "lg": 12,
+              "xl": 12,
+              "xxl": 12
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "label": "Atrybut",
+                  "layout": {
+                    "component": "dictionary",
+                    "cols": {
+                      "xs": 12,
+                      "sm": 12,
+                      "md": 12,
+                      "lg": 12,
+                      "xl": 6,
+                      "xxl": 6
+                    }
+                  },
+                  "source": {
+                    "url": "/api/dictionaries?feature-id=attribute-definitions&lm=basicData.name&vm=code&customAttributes=valueType%2C%7BbasicData.valueType%7D%2Cdictionary%2C%7Bdictionary.code%7D",
+                    "title": "label",
+                    "value": "code",
+                    "lazy": true,
+                    "singleOptionAutoSelect": true,
+                    "returnObject": true
+                  }
+                },
+                "dictionaryValue": {
+                  "label": "Słownik",
+                  "layout": {
+                    "component": "dictionary",
+                    "if": "definition.valueType=='DICTIONARY'",
+                    "cols": {
+                      "xs": 12,
+                      "sm": 12,
+                      "md": 12,
+                      "lg": 12,
+                      "xl": 6,
+                      "xxl": 6
+                    }
+                  },
+                  "source": {
+                    "url": "/api/dictionaries?feature-id=dictionary-entries&lm=basicData.value&vm=basicData.value&filter=dictionary.code%3D%3D{definition.dictionary}",
+                    "title": "label",
+                    "value": "name",
+                    "lazy": true,
+                    "singleOptionAutoSelect": true
+                  }
+                },
+                "dateValue": {
+                  "label": "Data",
+                  "layout": {
+                    "component": "date-picker",
+                    "if": "definition.valueType=='DATE'",
+                    "cols": {
+                      "xs": 12,
+                      "sm": 12,
+                      "md": 12,
+                      "lg": 12,
+                      "xl": 6,
+                      "xxl": 6
+                    }
+                  }
+                },
+                "numberValue": {
+                  "label": "Liczba",
+                  "layout": {
+                    "component": "number-field",
+                    "if": "definition.valueType=='NUMBER'",
+                    "cols": {
+                      "xs": 12,
+                      "sm": 12,
+                      "md": 12,
+                      "lg": 12,
+                      "xl": 6,
+                      "xxl": 6
+                    }
+                  },
+                  "type": "float"
+                },
+                "textValue": {
+                  "label": "Tekst",
+                  "layout": {
+                    "component": "text-field",
+                    "if": "definition.valueType=='TEXT'",
+                    "cols": {
+                      "xs": 12,
+                      "sm": 12,
+                      "md": 12,
+                      "lg": 12,
+                      "xl": 6,
+                      "xxl": 6
+                    }
+                  }
+                }
+              },
+              "required": []
+            },
+            "options": {
+              "addBtnText": "Dodaj atrybut",
+              "showDivider": false,
+              "ordinalNumberInModel": false
+            },
+            "editable": true,
+            "showElements": true,
+            "props": {}
+          }
+        },
+        "divider-509": {
+          "layout": {
+            "component": "divider"
+          }
+        },
+        "static-content-615": {
+          "content": "Ceny:",
+          "layout": {
+            "component": "static-content",
+            "tag": "h2"
+          }
+        },
+        "prices": {
+          "layout": {
+            "component": "duplicated-section",
+            "cols": {
+              "xs": 12,
+              "sm": 12,
+              "md": 12,
+              "lg": 12,
+              "xl": 12,
+              "xxl": 12
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "priceType": {
+                  "label": "Typ ceny",
+                  "layout": {
+                    "cols": {
+                      "xs": 12,
+                      "sm": 12,
+                      "md": 12,
+                      "lg": 12,
+                      "xl": 4,
+                      "xxl": 4
+                    },
+                    "component": "dictionary"
+                  },
+                  "source": {
+                    "url": "/api/dictionaries?feature-id=price-types&lm=basicData.name&vm=code",
+                    "title": "label",
+                    "value": "code",
+                    "returnObject": true,
+                    "lazy": true,
+                    "singleOptionAutoSelect": true
+                  }
+                },
+                "amount": {
+                  "label": "Wartość",
+                  "layout": {
+                    "cols": {
+                      "xs": 12,
+                      "sm": 12,
+                      "md": 12,
+                      "lg": 12,
+                      "xl": 5,
+                      "xxl": 5
+                    },
+                    "component": "number-field"
+                  },
+                  "type": "float",
+                  "precision": "2"
+                },
+                "currency": {
+                  "label": "Waluta",
+                  "layout": {
+                    "cols": {
+                      "xs": 12,
+                      "sm": 12,
+                      "md": 12,
+                      "lg": 12,
+                      "xl": 3,
+                      "xxl": 3
+                    },
+                    "component": "dictionary"
+                  },
+                  "source": {
+                    "url": "/api/dictionaries?feature-id=currencies&lm=basicData.alphabeticCode&vm=id&customAttributes=digitsAfterDecimal%2C%7BbasicData.digitsAfterDecimal%7D",
+                    "title": "label",
+                    "value": "id"
+                  }
+                }
+              },
+              "required": []
+            },
+            "options": {
+              "addBtnText": "Dodaj cenę",
+              "showDivider": false,
+              "ordinalNumberInModel": false
+            },
+            "editable": true,
+            "showElements": true,
+            "props": {}
+          }
+        }
+      },
+      "required": [
+        "category"
+      ]
+    }
   },
 };
 
@@ -749,7 +1167,7 @@ export const ConditionalRequired: Story = {
             {
               name: "conditional-required",
               message: "Moje pole XD",
-              rule: "fieldA=true"
+              rule: "fieldA=true",
             },
           ],
         },
