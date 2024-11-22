@@ -1,10 +1,14 @@
 import { debounce } from "lodash";
 
+
+
 import { useResolveVariables } from "@/core/composables/useResolveVariables";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineField } from "@/types/engine/EngineField";
 import { EventHandlerDefinition } from "@/types/shared/EventHandlerDefinition";
 import { useEventBus } from "@vueuse/core";
+import set from "lodash/set";
+
 
 export function useEventHandler() {
   const { resolve } = useResolveVariables();
@@ -32,9 +36,18 @@ export function useEventHandler() {
       case "action":
         actionMode(eventDefinition, field, model);
         break;
+      case "change-model":
+        changeMode(eventDefinition, field, model);
+        break;
       default:
         console.warn(`Event definition mode not found. [${eventDefinition.mode}]`);
     }
+  }
+
+  function changeMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
+    eventDefinition.variables?.forEach((variable) => {
+      set(model, variable.path, variable.value)
+    })
   }
 
   function requestMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {

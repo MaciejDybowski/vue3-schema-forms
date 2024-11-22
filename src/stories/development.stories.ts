@@ -27,35 +27,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Table: Story = {
-  args: {
-    model: {},
-    schema: {
-      type: "object",
-      properties: {
-        fieldA: {
-          label: "Field A",
-          layout: {
-            component: "text-field",
-          }
-        },
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
-            url: "/api/currencies",
-            title: "label",
-            value: "id",
-          } as DictionarySource,
-        }
-      },
-      required: ['currency', "fieldA"]
-    },
 
-  },
-};
 
 
 export const Dialog_Table_Integration: Story = {
