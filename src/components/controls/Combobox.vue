@@ -47,19 +47,18 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, watch } from "vue";
-import { useI18n } from "vue-i18n";
 
 import BaseCombobox from "@/components/controls/base/BaseCombobox.vue";
 
 import { EngineDictionaryField } from "@/types/engine/controls";
 
-import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
+import { useClass, useDictionarySource, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
   model: object;
 }>();
-const { t } = useI18n();
+const { t } = useLocale();
 const { label } = useLabel(props.schema);
 const { fieldProps, bindProps } = useProps();
 const { bindRules, rules, requiredInputClass } = useRules();
@@ -90,7 +89,6 @@ const {
   singleOptionAutoSelect,
 } = useDictionarySource(props.schema);
 
-
 onMounted(async () => {
   bindProps(props.schema);
   bindRules(props.schema);
@@ -98,20 +96,20 @@ onMounted(async () => {
     updateQuery(localModel.value);
   }
   if (data.value.length === 1 && singleOptionAutoSelect) {
-    if(returnObject){
+    if (returnObject) {
       localModel.value = data.value[0];
     } else {
-      localModel.value = data.value[0][value]
+      localModel.value = data.value[0][value];
     }
   }
 
   watch(data, () => {
     if (data.value.length === 1 && singleOptionAutoSelect) {
       if (JSON.stringify(localModel.value) !== JSON.stringify(data.value[0])) {
-        if(returnObject){
+        if (returnObject) {
           localModel.value = data.value[0];
         } else {
-          localModel.value = data.value[0][value]
+          localModel.value = data.value[0][value];
         }
       }
     }

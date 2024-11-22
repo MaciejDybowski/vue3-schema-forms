@@ -52,7 +52,15 @@ import { useI18n } from "vue-i18n";
 
 import { EngineDictionaryField } from "@/types/engine/controls";
 
-import { useClass, useDictionarySource, useFormModel, useLabel, useProps, useRules } from "../../core/composables";
+import {
+  useClass,
+  useDictionarySource,
+  useFormModel,
+  useLabel,
+  useLocale,
+  useProps,
+  useRules
+} from "../../core/composables";
 import BaseAutocomplete from "./base/BaseAutocomplete.vue";
 import { useEventHandler } from "@/core/composables/useEventHandler";
 
@@ -60,11 +68,11 @@ const props = defineProps<{
   schema: EngineDictionaryField;
   model: object;
 }>();
-const { t } = useI18n();
+const { t } = useLocale();
 const { label } = useLabel(props.schema);
-const { fieldProps, bindProps } = useProps();
-const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
+const { bindRules, rules, requiredInputClass } = useRules();
+const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const {onChange} = useEventHandler()
 
