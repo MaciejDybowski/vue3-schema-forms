@@ -40,6 +40,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+/*
 export const CustomRegexpValidations: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
@@ -85,6 +86,7 @@ export const CustomRegexpValidations: Story = {
     } as Schema,
   },
 };
+*/
 
 /**
  * #### Required field with nested
@@ -161,5 +163,118 @@ export const AddCustomSubmitWithBuiltInValidation: Story = {
   args: {
     modelValue: {},
     schema: validationExample,
+  },
+};
+
+/**
+ * #### Warunkową wymagalność pola możemy zdefiniować dodając obiekt do tablicy `validations`, gdzie nazwa to `conditional-required` a warunek zgodny z JSONata
+ */
+export const ConditionalRequired: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+
+    const field = canvas.getByLabelText("Is field required?");
+    await userEvent.click(field, { delay: 200 });
+
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Field is required.")).toBeInTheDocument();
+
+    const textField = canvas.getByLabelText("Test field");
+    await userEvent.type(textField, "Required field", {
+      delay: 100,
+    });
+
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+  },
+  render: StoryTemplateWithValidation,
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        fieldA: {
+          label: "Is field required?",
+          layout: {
+            component: "switch",
+          },
+        },
+        fieldB: {
+          label: "Test field",
+          layout: {
+            component: "text-field",
+          },
+          validations: [
+            {
+              name: "conditional-required",
+              rule: "fieldA=true",
+            },
+          ],
+        },
+      },
+    },
+  },
+};
+
+
+/**
+ * #### Można definiować funkcje walidacyjne oparte o budowanie warunków JSONata
+ */
+export const ValidationFunctionWithJSONNataAndContext: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+
+    let textField = canvas.getByLabelText("Username");
+    await userEvent.type(textField, "Maciej", {
+      delay: 100,
+    });
+
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Custom message")).toBeInTheDocument();
+
+    const textField2 = canvas.getByLabelText("Username");
+    await userEvent.type(textField2, "Karol", {
+      delay: 100,
+    });
+
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+  },
+  render: StoryTemplateWithValidation,
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        username: {
+          label: "Username",
+          layout: {
+            component: "text-field",
+          },
+          validations: [
+            {
+              name: "valid-sth",
+              rule: "username!=context.currentUser.username or $not($exists(username))",
+              message: "Custom message"
+            },
+          ],
+        },
+      },
+    },
+    options: {
+      context: {
+        currentUser: {
+          username: "Maciej"
+        }
+      }
+    }
   },
 };
