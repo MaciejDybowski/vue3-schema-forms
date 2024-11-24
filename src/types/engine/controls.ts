@@ -7,6 +7,10 @@ export interface EngineTextField extends EngineField {
   expression?: string;
 }
 
+export interface EngineImageField extends EngineField {
+  src: string
+}
+
 export interface EngineAvatarField extends EngineField {
   source: AvatarSource
 }

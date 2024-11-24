@@ -16,4 +16,5 @@ export type SchemaComponent =
   | "address"
   | "button"
   | "avatar"
-  | "switch";
+  | "switch"
+  | "image";

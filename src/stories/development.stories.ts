@@ -2,8 +2,11 @@
 import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
+
+
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { DictionarySource } from "../types/shared/Source";
+
 
 const meta = {
   title: "Development Page",
@@ -26,6 +29,7 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
 
 
 
@@ -589,5 +593,3 @@ export const Table3: Story = {
     },
   },
 };
-
-

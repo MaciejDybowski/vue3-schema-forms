@@ -82,6 +82,11 @@ export function useProps() {
         }
         break
       }
+      case "image":
+        props.value = {
+          ...schema.layout?.props,
+        }
+        break;
       default:
         props.value = {
           'hide-details': 'auto',
