@@ -65,6 +65,21 @@ const { roundTo, formattedNumber } = useNumber({
   currency: currency,
 });
 
+const lastValue = ref<any>(null);
+function isOnlyZeros(str) {
+  return /^0+$/.test(str);
+}
+function parseDigitWithOnlyZeroFraction(value: number){
+  let lastFraction = lastValue.value?.toString().split(".")[1];
+  lastFraction = lastFraction?.slice(0, lastFraction.length - 1);
+  let current = value ? value.toString().split(".")[1] : null;
+  if (isOnlyZeros(lastFraction) && current == undefined) {
+    return value+`.${lastFraction}`
+  }
+  return value;
+}
+
+
 const localModel = computed({
   get(): string | number | null {
     let value = getValue(props.model, props.schema);
@@ -74,9 +89,12 @@ const localModel = computed({
     if (value && showFormattedNumber.value) {
       return formattedNumber(value, formatType, precision);
     }
+
+    value = parseDigitWithOnlyZeroFraction(value)
     return value;
   },
   set(val: any) {
+    lastValue.value = localModel.value;
     val = roundTo(val, precision, roundOption);
     setValue(val, props.schema);
   },
