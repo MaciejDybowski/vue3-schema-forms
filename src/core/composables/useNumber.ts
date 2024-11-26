@@ -54,6 +54,7 @@ export function useNumber(options?: NumberFormatterOptions) {
 
   function formattedNumber(value: number, type: NumberFormattingType = "decimal", precision: number = 0) {
     if (value) {
+      value = Number(value);
       switch (type) {
         case "decimal":
           return n(value, decimal(precision) as any);
