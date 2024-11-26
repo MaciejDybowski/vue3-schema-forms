@@ -59,26 +59,28 @@ const formatType = ("formatType" in props.schema ? props.schema.formatType : "de
 
 const currency = ("currency" in props.schema ? props.schema.currency : "PLN") as string;
 
-const roundOption: RoundOption = "roundOption" in props.schema ? props.schema.roundOption as RoundOption : "round";
+const roundOption: RoundOption = "roundOption" in props.schema ? (props.schema.roundOption as RoundOption) : "round";
 
 const { roundTo, formattedNumber } = useNumber({
   currency: currency,
 });
 
 const lastValue = ref<any>(null);
+
 function isOnlyZeros(str) {
   return /^0+$/.test(str);
 }
-function parseDigitWithOnlyZeroFraction(value: number){
+
+function parseDigitWithOnlyZeroFraction(value: number) {
   let lastFraction = lastValue.value?.toString().split(".")[1];
   lastFraction = lastFraction?.slice(0, lastFraction.length - 1);
   let current = value ? value.toString().split(".")[1] : null;
+
   if (isOnlyZeros(lastFraction) && current == undefined) {
-    return value+`.${lastFraction}`
+    return value + `.${lastFraction}`;
   }
   return value;
 }
-
 
 const localModel = computed({
   get(): string | number | null {
@@ -89,8 +91,11 @@ const localModel = computed({
     if (value && showFormattedNumber.value) {
       return formattedNumber(value, formatType, precision);
     }
+    if (value === 0) {
+      return value;
+    }
 
-    value = parseDigitWithOnlyZeroFraction(value)
+    value = parseDigitWithOnlyZeroFraction(value);
     return value;
   },
   set(val: any) {
@@ -105,8 +110,8 @@ const isCalculationDefined = computed(() => {
 });
 
 const isValueFromModelAndNotChangedManually = computed(() => {
-  return (!localModel.value || (localModel.value && !(`${props.schema.key}ManuallyChanged` in props.model)))
-})
+  return !localModel.value || (localModel.value && !(`${props.schema.key}ManuallyChanged` in props.model));
+});
 
 const showIconForVisualizationOfManuallyChangedResult = computed(() => {
   return (
@@ -118,9 +123,10 @@ const showIconForVisualizationOfManuallyChangedResult = computed(() => {
 function userTyping(val: any) {
   if (isCalculationDefined.value) {
     if (logger.calculationListener)
-      console.debug(`[vue-schema-forms] [CalculationListener], key=${props.schema.key}, index=${props.schema.index}, manualResult=${val}`);
+      console.debug(
+        `[vue-schema-forms] [CalculationListener], key=${props.schema.key}, index=${props.schema.index}, manualResult=${val}`,
+      );
     unsubscribeListener.value();
-    localModel.value = val;
     set(props.model, `${props.schema.key}ManuallyChanged`, true);
     calculationResultWasModified.value = true;
   }
@@ -136,7 +142,7 @@ function focusin() {
 
 function runCalculationIfExist() {
   if (isCalculationDefined.value) {
-    if (isValueFromModelAndNotChangedManually.value){
+    if (isValueFromModelAndNotChangedManually.value) {
       localModel.value = calculationFunc(props.schema, props.model);
     } else {
       calculationFunc(props.schema, props.model);
