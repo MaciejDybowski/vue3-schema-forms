@@ -1,8 +1,10 @@
 // @ts-nocheck
 import { VueSchemaForms } from "@/components";
-import { expect, userEvent, within } from "@storybook/test";
+import { REQUEST_PAGE_0_1 } from "@/stories/controls/Dictionary/responses";
+import { expect, fireEvent, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
+import { DictionarySource } from "../../types/shared/Source";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 const meta = {
@@ -123,5 +125,147 @@ export const ResetValueOnChange: Story = {
       },
       required: [],
     },
+  },
+};
+
+export const ResetValueOnChangeInDuplicatedSection: Story = {
+  render: StoryTemplateWithValidation,
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+
+    let textField = canvas.getByLabelText("Field A");
+    await userEvent.type(textField, "Changed", {
+      delay: 100,
+    });
+    await new Promise((r) => setTimeout(r, 1000));
+    await expect(context.args.modelValue).toEqual({
+      section: [{ fieldA: "Changed", fieldB: null }],
+    });
+  },
+  args: {
+    modelValue: {
+      section: [
+        {
+          fieldB: "Maciej",
+        },
+      ],
+    },
+    schema: {
+      type: "object",
+      properties: {
+        section: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                fieldA: {
+                  label: "Field A",
+                  layout: {
+                    component: "text-field",
+                  },
+                  onChange: {
+                    mode: "change-model",
+                    variables: [
+                      {
+                        path: "fieldB",
+                        value: null,
+                      },
+                    ],
+                  },
+                },
+                fieldB: {
+                  label: "Field B",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      required: [],
+    },
+  },
+};
+
+export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
+  render: StoryTemplateWithValidation,
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText("Currency");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    const list = document.getElementsByClassName("v-list");
+    fireEvent.scroll(list[0], { target: { scrollTop: 0 } });
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[0], { delay: 200 });
+
+    await new Promise((r) => setTimeout(r, 1000));
+    await expect(context.args.modelValue).toEqual({
+      section: [
+        {
+          currency: {
+            id: "AFN",
+            label: "Afgani",
+            digitsAfterDecimal: "2",
+          },
+          fieldB: null,
+        },
+      ],
+    });
+  },
+  args: {
+    modelValue: {
+      section: [
+        {
+          fieldB: "Maciej",
+        },
+      ],
+    },
+    schema: {
+      type: "object",
+      properties: {
+        section: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                currency: {
+                  label: "Currency",
+                  layout: {
+                    component: "dictionary",
+                  },
+                  source: {
+                    url: "/api/currencies",
+                    title: "label",
+                    value: "id",
+                  } as DictionarySource,
+                  onChange: {
+                    mode: "change-model",
+                    variables: [
+                      {
+                        path: "fieldB",
+                        value: null,
+                      },
+                    ],
+                  },
+                } as SchemaSourceField,
+                fieldB: {
+                  label: "Field B",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      required: [],
+    },
+  },
+  parameters: {
+    mockData: [REQUEST_PAGE_0_1],
   },
 };

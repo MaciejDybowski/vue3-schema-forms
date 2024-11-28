@@ -18,7 +18,7 @@
     @focus="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
     @update:search="updateQuery"
-    @change="onChange(schema, model)"
+    @update:modelValue="onChange(schema, model)"
   >
     <template #no-data>
       <v-list-item v-if="loading">
