@@ -28,6 +28,7 @@ export function useResolveVariables() {
       let value = get(model, variable, defaultValue);
       if (typeof value === 'number' && value !== 0) {
         value = formattedNumber(value, 'decimal', field.precision ? Number(field.precision) : 2);
+        value = value.replaceAll(",", ".")
       }
       if (
         typeof value === 'string' &&
