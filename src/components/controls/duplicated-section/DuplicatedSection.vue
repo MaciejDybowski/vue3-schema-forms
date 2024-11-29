@@ -84,7 +84,7 @@ import { cloneDeep, isArray } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
-import { Ref, computed, onMounted, ref, watch, nextTick } from "vue";
+import { Ref, computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
 
@@ -138,8 +138,11 @@ const { getValue, setValue } = useFormModel();
 
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 vueSchemaFormEventBus.on(async (event, payload) => {
-  if(payload == "action-callback" && JSON.stringify(localModel.value) !== JSON.stringify(get(props.model, props.schema.key, []))) {
-    init()
+  if (
+    payload == "action-callback"/* &&
+    JSON.stringify(localModel.value) !== JSON.stringify(get(props.model, props.schema.key, []))*/
+  ) {
+    init();
   }
 });
 
@@ -356,7 +359,11 @@ function wrapPropertiesWithIndexAndPath(properties: Record<string, SchemaField>,
     if ("properties" in value) {
       wrapPropertiesWithIndexAndPath(value.properties as any, index);
     } else {
-      value["path"] = props.schema.key;
+      if (props.schema["path"] !== undefined && props.schema["index"] != undefined) {
+        value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key;
+      } else {
+        value["path"] = props.schema.key;
+      }
       value["index"] = index;
     }
   }
