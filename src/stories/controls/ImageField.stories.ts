@@ -4,9 +4,12 @@ import { expect } from "@storybook/test";
 import { userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
+
+
 import { Schema } from "../../types/schema/Schema";
 import { SchemaTextField } from "../../types/schema/elements";
 import { StoryTemplateWithValidation } from "../templates/story-template";
+
 
 const meta = {
   title: "Forms/Controls/Image",
@@ -40,13 +43,20 @@ export default meta;
 
 export const Image = {
   args: {
-    model: {},
+    modelValue: {
+      image: {
+        id: "main",
+        dataId: "1273-00",
+        name: "1273-00.jpg",
+        lastModifiedAt: null,
+      },
+    },
     schema: {
       type: "object",
       properties: {
-        fieldC: {
-          src: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
-          //src: "/api/v1/features/{context.menuFeatureId}/images/main?Workspace-Id={context.workspaceId}&dataId={dataId}&width={width}&height={height}&lastModifiedAt=",
+        image: {
+          //src: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
+          src: "/api/v1/features/{context.menuFeatureId}/images/{id}?Workspace-Id={context.workspaceId}&dataId={dataId}&width={width}&height={height}&lastModifiedAt=",
           layout: {
             component: "image",
             props: {

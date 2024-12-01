@@ -121,9 +121,11 @@ const dragOptions = ref({
 
 const batchAddComponent = duplicatedSectionBatchAddComponent;
 const batchItems = ref([]);
+
 function selectedItems(selectedItems: []) {
   batchItems.value = selectedItems;
 }
+
 function closeAndAddBatch(isActive: Ref<boolean>) {
   isActive.value = false;
   batchItems.value.forEach((item) => {
@@ -139,7 +141,7 @@ const { getValue, setValue } = useFormModel();
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 vueSchemaFormEventBus.on(async (event, payload) => {
   if (
-    payload == "action-callback"/* &&
+    payload == "action-callback" /* &&
     JSON.stringify(localModel.value) !== JSON.stringify(get(props.model, props.schema.key, []))*/
   ) {
     init();
@@ -358,13 +360,18 @@ function wrapPropertiesWithIndexAndPath(properties: Record<string, SchemaField>,
   for (let [key, value] of Object.entries(properties)) {
     if ("properties" in value) {
       wrapPropertiesWithIndexAndPath(value.properties as any, index);
+    } else if (value.layout?.schema) {
+      console.debug("field with wrpped", props.schema.key, key)
+      wrapPropertiesWithIndexAndPath(value.layout.schema.properties as any, index);
     } else {
+      console.debug("schema", props.schema);
       if (props.schema["path"] !== undefined && props.schema["index"] != undefined) {
         value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key;
       } else {
         value["path"] = props.schema.key;
       }
       value["index"] = index;
+      console.debug(value);
     }
   }
 

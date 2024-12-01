@@ -2,11 +2,7 @@
 import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
-
-
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
-import { DictionarySource } from "../types/shared/Source";
-
 
 const meta = {
   title: "Development Page",
@@ -30,9 +26,154 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-
-
-
+export const Table1: Story = {
+  args: {
+    model: {
+      test: 1,
+      test2: 2,
+      test3: {
+        fieldA: "QWERR",
+      },
+      products: [
+        {
+          dataId: "4700-01",
+          category: {
+            dataId: "znicze",
+            name: "znicze",
+          },
+          image: {
+            id: "main",
+            dataId: "1273-00",
+            name: "1273-00.jpg",
+            lastModifiedAt: null,
+          },
+          basicData: {
+            productNumber: "4700#01",
+            name: "Znicz zalewany 13cm (0h)",
+            description: null,
+            catalogIndex: null,
+            barcode: null,
+          },
+          price: 4.9,
+          attributes: [
+            {
+              definition: {
+                dataId: "gramatura",
+                name: "Gramatura",
+                valueType: "NUMBER",
+              },
+              value: "0",
+            },
+            {
+              definition: {
+                dataId: "wysokosc",
+                name: "Wysokosc",
+                valueType: "NUMBER",
+              },
+              value: "13",
+            },
+          ],
+          ordinalNumber: 1,
+        },
+      ],
+    },
+    schema: {
+      type: "object",
+      properties: {
+        products: {
+          layout: {
+            component: "duplicated-section",
+            cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+            schema: {
+              type: "object",
+              properties: {
+                exampleGroup: {
+                  layout: {
+                    component: "fields-group",
+                    cols: 3,
+                    schema: {
+                      properties: {
+                        basicData: {
+                          content: "Symbol: {basicData.productNumber: -}</br>Kategoria: {category.name: -} ",
+                          layout: {
+                            component: "static-content",
+                            tag: "p",
+                            cols: { xs: 12, sm: 12, md: 12, lg: 5, xl: 5, xxl: 5 },
+                          },
+                        },
+                        attributes: {
+                          layout: {
+                            component: "duplicated-section",
+                            cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+                            schema: {
+                              type: "object",
+                              properties: {
+                                attribute: {
+                                  content: "{definition.name:Definicja}: {value:Wartość} ",
+                                  layout: { component: "static-content", tag: "p" },
+                                },
+                              },
+                              required: [],
+                            },
+                            options: { addBtnText: "Add element", showDivider: false, ordinalNumberInModel: false },
+                            editable: true,
+                            showElements: true,
+                            props: {},
+                          },
+                        },
+                        price: {
+                          label: "Cena netto",
+                          layout: { component: "number-field", props: { readonly: true } },
+                          type: "float",
+                          precision: "2",
+                          sectionKey: "products",
+                        },
+                      },
+                    },
+                  },
+                },
+                image: {
+                  //src: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
+                  src: "/api/v1/features/{context.menuFeatureId}/images/{id}?Workspace-Id={context.workspaceId}&dataId={dataId}&width={width}&height={height}&lastModifiedAt=",
+                  layout: {
+                    cols: 6,
+                    component: "image",
+                    props: {
+                      "aspect-ratio": 1,
+                      width: "300",
+                      height: "295",
+                      cover: true,
+                    },
+                  },
+                },
+              },
+              required: [],
+            },
+            options: {
+              addBtnText: "Dodaj produkty",
+              showDivider: true,
+              ordinalNumberInModel: true,
+              addBtnMode: "action",
+              action: { code: "batchAddProducts" },
+            },
+            editable: true,
+            showElements: true,
+            props: {},
+          },
+          editable: true,
+          showElements: true,
+        },
+      },
+      required: [],
+    },
+    options: {
+      context: {
+        workspaceId: "znicze",
+        menuFeatureId: "product-details",
+      },
+    },
+  },
+};
 
 export const Dialog_Table_Integration: Story = {
   args: {
@@ -136,10 +277,6 @@ export const Images: Story = {
     },
   },
 };
-
-
-
-
 
 export const Table3: Story = {
   args: {
