@@ -1,7 +1,7 @@
 <template>
   <v-img
-    v-if="!image404Error"
-    :src="srcForImage"
+    v-if="!image404Error && srcForImage.allVariablesResolved"
+    :src="srcForImage.resolvedText"
     class="bg-white"
     v-bind="fieldProps"
     @error="handleImageError"
@@ -55,7 +55,7 @@ const srcForImage = computed(() => {
     url = url.replace("{dataId}", localModel.value["dataId"])
   }
   //console.debug(`[IMG URL] => ${url}`)
-  return resolve(props.schema, url).resolvedText;
+  return resolve(props.schema, url);
 });
 
 const image404Error = ref(false);
