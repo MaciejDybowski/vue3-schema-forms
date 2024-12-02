@@ -43,8 +43,10 @@ const srcForImage = computed(() => {
   const defaultHeight = "height" in fieldProps.value ? (fieldProps.value.height as string) : "150";
 
   let url = props.schema.src.replace("{width}", defaultWidth).replace("{height}", defaultHeight);
-  url = url.replace("{id}", localModel.value["id"])
-  url = url.replace("{dataId}", localModel.value["dataId"])
+  if(localModel.value){
+    url = url.replace("{id}", localModel.value["id"])
+    url = url.replace("{dataId}", localModel.value["dataId"])
+  }
   //console.debug(`[IMG URL] => ${url}`)
   return resolve(props.schema, url).resolvedText;
 });
