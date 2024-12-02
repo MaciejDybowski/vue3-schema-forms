@@ -8,6 +8,8 @@ import { EngineField } from '@/types/engine/EngineField';
 
 import { variableRegexp } from '../engine/utils';
 import { useDateFormat } from './useDateFormat';
+import { useFormModelStore } from "@/store/formModelStore";
+import jsonata from "jsonata";
 
 export function useResolveVariables() {
   const { dateFormat } = useDateFormat();
@@ -16,7 +18,7 @@ export function useResolveVariables() {
   function resolve(field: EngineField, inputString: string, title: string = 'title') {
     let allVariablesResolved = true;
 
-    inputString?.match(variableRegexp)?.forEach((match: string) => {
+    inputString?.match(variableRegexp)?.forEach( (match: string) => {
       const unwrapped = match.slice(1, -1);
       const split = unwrapped.split(':');
       const variable = split[0];
@@ -24,8 +26,17 @@ export function useResolveVariables() {
       const defaultValue = split.length === 2 ? split[1] : null;
 
       const model = usePreparedModelForExpression(field);
-
       let value = get(model, variable, defaultValue);
+
+      /* TODO - przepisać na JSONata
+      const formModelStore = useFormModelStore(field.formId);
+      const model = formModelStore.getFormModel
+      const fieldToVariable = field.path ? field.path + "["+ field.index + "]." + variable: variable
+      console.debug(fieldToVariable)
+      const nata = jsonata(fieldToVariable);
+      let value = await nata.evaluate(model);
+      */
+
       if (typeof value === 'number' && value !== 0) {
         value = formattedNumber(value, 'decimal', field.precision ? Number(field.precision) : 2);
         value = value.replaceAll(",", ".")

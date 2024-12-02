@@ -356,22 +356,21 @@ function init(): void {
   }
 }
 
-function wrapPropertiesWithIndexAndPath(properties: Record<string, SchemaField>, index: number): Record<string, SchemaField> {
+function wrapPropertiesWithIndexAndPath(properties: Record<string, SchemaField>, index: number, rootSchema:any = null): Record<string, SchemaField> {
   for (let [key, value] of Object.entries(properties)) {
     if ("properties" in value) {
       wrapPropertiesWithIndexAndPath(value.properties as any, index);
     } else if (value.layout?.schema) {
-      console.debug("field with wrpped", props.schema.key, key)
-      wrapPropertiesWithIndexAndPath(value.layout.schema.properties as any, index);
+      value["path"] = props.schema.key;
+      value["index"]= index
+      wrapPropertiesWithIndexAndPath(value.layout.schema.properties as any, index, value);
     } else {
-      console.debug("schema", props.schema);
       if (props.schema["path"] !== undefined && props.schema["index"] != undefined) {
         value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key;
       } else {
         value["path"] = props.schema.key;
       }
       value["index"] = index;
-      console.debug(value);
     }
   }
 
