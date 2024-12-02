@@ -7,10 +7,17 @@
     @error="handleImageError"
   ></v-img>
   <template v-else>
-    <v-img
-      src="src/static/error-404.png"
+    <div class="d-flex flex-column align-center justify-center"
+         style="width: 100px; height: 100px; border: 1px black solid"
+    >
+      <span>404</span>
+      <br>
+      <span>Not Found</span>
+    </div>
+<!--    <v-img
+      src="public/error-404.png"
       v-bind="fieldProps"
-    />
+    />-->
   </template>
 </template>
 
