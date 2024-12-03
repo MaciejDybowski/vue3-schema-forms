@@ -103,6 +103,7 @@ const {
 onMounted(async () => {
   bindRules(props.schema)
   bindProps(props.schema);
+
   if (localModel.value) {
     updateQuery(localModel.value);
   }
@@ -142,7 +143,7 @@ function updateQuery(val: any) {
 }
 
 async function fetchDictionaryData() {
-  if (data.value.length == 0) {
+  if (data.value.length == 0 && (!fieldProps.value.readonly)) {
     await load("autocomplete");
   }
 }
