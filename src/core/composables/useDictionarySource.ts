@@ -39,10 +39,10 @@ export function useDictionarySource(field: EngineDictionaryField) {
 
   const isApiContainsDependency = source.url.match(variableRegexp);
   if (isApiContainsDependency !== null) {
-    endpoint = resolve(field, source.url, title);
+    endpoint = resolve(field, source.url, title, true);
 
     formModelStore.$subscribe(() => {
-      const temp = resolve(field, source.url, title);
+      const temp = resolve(field, source.url, title, true);
       if (temp.resolvedText !== endpoint.resolvedText) {
         endpoint = temp;
         debounced.load('watcher');

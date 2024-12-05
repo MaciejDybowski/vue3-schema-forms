@@ -13,9 +13,9 @@ import jsonata from "jsonata";
 
 export function useResolveVariables() {
   const { dateFormat } = useDateFormat();
-  const { formattedNumber } = useNumber();
+  const { formattedNumber, roundTo } = useNumber();
 
-  function resolve(field: EngineField, inputString: string, title: string = 'title') {
+  function resolve(field: EngineField, inputString: string, title: string = 'title', rawNumber= false) {
     let allVariablesResolved = true;
 
     inputString?.match(variableRegexp)?.forEach( (match: string) => {
@@ -38,8 +38,14 @@ export function useResolveVariables() {
       */
 
       if (typeof value === 'number' && value !== 0) {
-        value = formattedNumber(value, 'decimal', field.precision ? Number(field.precision) : 2);
-        value = value.replaceAll(",", ".")
+        if(rawNumber){
+          // gdy chcemy używać liczb w adresie URL to nie może być to kropka ani nie może być to formatowane
+          // TODO
+          value = Number(value);
+          value = value.replaceAll(",", ".")
+        } else {
+          value = formattedNumber(value, 'decimal', field.precision ? Number(field.precision) : 2);
+        }
       }
       if (
         typeof value === 'string' &&
