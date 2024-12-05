@@ -40,9 +40,12 @@ export function useResolveVariables() {
           // gdy chcemy używać liczb w adresie URL to nie może być to kropka ani nie może być to formatowane
           // TODO
           value = Number(value);
-          if (value && !isNaN(value)) {
+          console.debug("value przed", value)
+          if (!!value && !isNaN(value)) {
+
             value = value + "";
-            value = value.replaceAll(",", ".");
+            console.debug("value", value)
+            value = value?.replaceAll(",", ".");
           }
         } else {
           value = formattedNumber(value, "decimal", field.precision ? Number(field.precision) : 2);
