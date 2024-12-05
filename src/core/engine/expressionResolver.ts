@@ -1,4 +1,5 @@
 import get from "lodash/get";
+import jsonata from "jsonata";
 
 export const functions = {
   FIND_OLDEST_DATE: FIND_OLDEST_DATE,
@@ -9,7 +10,19 @@ export const functions = {
   DELEGATION_DIET_CALC: DELEGATION_DIET_CALC,
   ARRAY_SIZE: ARRAY_SIZE,
   HASH_GENERATOR: HASH_GENERATOR,
+  JSONATA: JSONATA,
 };
+
+export async function JSONATA(expression: string, model: object){
+  let regex = /JSONATA\((.*?)\)/;
+  let match = regex.exec(expression);
+  if(match) {
+    let nataExpression = expression.slice(8).slice(0, -1);
+    const nata = jsonata(nataExpression);
+    return await nata.evaluate(model);
+  }
+
+}
 
 export function FIND_OLDEST_DATE(expression: string, model: object) {
   let regex = /FIND_OLDEST_DATE\((.*?)\)/;

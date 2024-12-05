@@ -40,16 +40,17 @@ const localModel = computed({
   },
 });
 
-function runExpressionIfExist() {
+async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
-    localModel.value = resolveExpression(props.schema.key, props.schema.expression, props.model);
+    localModel.value = await  resolveExpression(props.schema.key, props.schema.expression, props.model);
+    console.debug(localModel.value)
   }
 }
 
-onMounted(() => {
+onMounted( async() => {
   bindRules(props.schema);
   bindProps(props.schema);
-  runExpressionIfExist();
+  await runExpressionIfExist();
 });
 </script>
 

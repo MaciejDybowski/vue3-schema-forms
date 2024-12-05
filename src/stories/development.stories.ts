@@ -26,6 +26,70 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const Table0: Story = {
+  args: {
+    model: {
+      "products": [
+        {
+          "rodzajKosztu": {"id": "213"},
+          "kwotaBrutto": 23.321
+        },
+        {
+          "rodzajKosztu": {"id": "212133"},
+          "kwotaBrutto": 100.321
+        }
+      ]
+    },
+    schema: {
+      properties: {
+        products: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                rodzajKosztu: {
+                  label: "Rodzaj kosztu",
+                  type:"object",
+                  valueMapping: "{rodzajKosztu.id}",
+                  layout: {
+                    component: "data-viewer",
+                    cols: 6,
+                  },
+                },
+                kwotaBrutto: {
+                  label: "Kwota brutto",
+                  type: "number",
+                  precision: 3,
+                  layout: {
+                    component: "number-field",
+                    cols: 6,
+                  },
+                },
+              },
+            },
+          },
+        },
+        sklejenieRodzaj: {
+          expression:"JSONATA(products.rodzajKosztu.id ~> $join(\",\"))",
+          label: "Próba sklejenie expresion jsonNata",
+          layout: {
+            component: "text-field",
+            cols:6
+          }
+        },
+        sklejenieKwoty: {
+          expression:"JSONATA(products.kwotaBrutto ~> $map($string) ~> $join(\",\"))",
+          label: "Próba sklejenie expresion jsonNata",
+          layout: {
+            component: "text-field",
+            cols:6
+          }
+        }
+      },
+    },
+  },
+};
+
 export const Table1: Story = {
   args: {
     model: {

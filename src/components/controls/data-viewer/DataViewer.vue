@@ -50,11 +50,12 @@ const localModel = computed({
     let value = getValue(props.model, props.schema);
 
     if (isValueMapping) {
+
       const { resolvedText } = resolve(props.schema, props.schema.valueMapping as string);
       value = resolvedText;
     }
     switch (props.schema.type) {
-      case "text":
+      case "text" :
         if (!value) break;
         break;
       case "number":
@@ -70,7 +71,7 @@ const localModel = computed({
         value = parsePhoneNumber(value).formatNational();
         break;
       default:
-        console.warn("Type of data not recognized");
+        //console.warn("Type of data not recognized =" + props.schema.type);
     }
 
     return value !== "null" && !!value ? value : t("emptyValue");

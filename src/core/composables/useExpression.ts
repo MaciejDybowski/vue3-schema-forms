@@ -8,19 +8,20 @@ import get from 'lodash/get';
 export function useExpression() {
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
-  function resolveExpression(key: string, expression: string, model: object) {
+  async function resolveExpression(key: string, expression: string, model: object) {
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let result = ref();
       let f = functions[functionName];
-      result.value = f(expression, model);
+      result.value = await f(expression, model);
 
-      if (!functionName.includes('_GENERATOR')) {
-        const unsubscribe = vueSchemaFormEventBus.on((event) => expressionListener(event, key, expression, model));
-        watch(model, () => {
-          result.value = f(expression, model);
+      if (!functionName.includes('_GENERATOR') ) {
+        const unsubscribe = vueSchemaFormEventBus.on(async (event) => await expressionListener(event, key, expression, model));
+        // Do usunięcia jak się nic nie wykrzaczy po 5.12.2024 :)
+        /*watch(model, async () => {
+          result.value = await f(expression, model);
           set(model, key, result.value);
-        });
+        });*/
       }
 
       return result.value;
@@ -41,11 +42,11 @@ export function useExpression() {
     }
   }
 
-  function expressionListener(event: string, key: string, expression: string, model: object) {
+  async function expressionListener(event: string, key: string, expression: string, model: object) {
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let f = functions[functionName];
-      const result = f(expression, model);
+      const result = await f(expression, model);
       const currentValue = get(model, key, null);
       if (result !== currentValue) {
         set(model, key, result);
