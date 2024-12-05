@@ -43,7 +43,6 @@ const localModel = computed({
 async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
     localModel.value = await  resolveExpression(props.schema.key, props.schema.expression, props.model);
-    console.debug(localModel.value)
   }
 }
 
