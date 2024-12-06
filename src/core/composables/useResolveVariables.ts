@@ -40,11 +40,8 @@ export function useResolveVariables() {
           // gdy chcemy używać liczb w adresie URL to nie może być to kropka ani nie może być to formatowane
           // TODO
           value = Number(value);
-          console.debug("value przed", value)
           if (!!value && !isNaN(value)) {
-
             value = value + "";
-            console.debug("value", value)
             value = value?.replaceAll(",", ".");
           }
         } else {

@@ -36,6 +36,7 @@ import { useCalculation, useClass, useExpression, useFormModel, useLabel, usePro
 import { NumberFormattingType, RoundOption, useNumber } from "@/core/composables/useNumber";
 import { logger } from "@/main";
 import { EngineNumberField } from "@/types/engine/controls";
+import { useEventHandler } from "@/core/composables/useEventHandler";
 
 const props = defineProps<{
   schema: EngineNumberField;
@@ -50,6 +51,7 @@ const { resolveExpression } = useExpression();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
 const { label } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
+const { onChange } = useEventHandler();
 
 const showFormattedNumber = ref(true);
 
@@ -130,6 +132,7 @@ function userTyping(val: any) {
     set(props.model, `${props.schema.key}ManuallyChanged`, true);
     calculationResultWasModified.value = true;
   }
+  onChange(props.schema, props.model)
 }
 
 function focusout() {
