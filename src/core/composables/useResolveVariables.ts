@@ -60,7 +60,7 @@ export function useResolveVariables() {
         value = value[title];
       }
 
-      if ((value == null && defaultValue !== null) || value == "") {
+      if ((value == null && defaultValue !== null) || (value == "" && value != 0)) {
         value = defaultValue;
       }
       if (!value) {
