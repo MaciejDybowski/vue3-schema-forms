@@ -79,7 +79,7 @@ export const WithDefault: Story = {
       properties: {
         textAreaWithDefault: {
           label: "Description",
-          default: "Lorem ipsum...",
+          defaultValue: "Lorem ipsum...",
           layout: {
             component: "text-area",
           },

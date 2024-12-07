@@ -74,7 +74,7 @@ export const WithDefault: Story = {
       properties: {
         phoneInput: {
           label: 'Phone Input',
-          default: '+48510333202',
+          defaultValue: '+48510333202',
           layout: {
             component: 'phone',
           },

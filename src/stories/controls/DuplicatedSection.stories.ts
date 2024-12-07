@@ -115,7 +115,7 @@ export const WithDefaults: Story = {
       type: "object",
       properties: {
         invoiceItems: {
-          default: [{ product: "Item1" }, { product: "Item2" }],
+          defaultValue: [{ product: "Item1" }, { product: "Item2" }],
           layout: {
             component: "duplicated-section",
             schema: {
@@ -386,7 +386,7 @@ export const DeleteAction: Story = {
       type: "object",
       properties: {
         invoiceItems: {
-          default: [{ product: "Item 1" }, { product: "Item 2" }],
+          defaultValue: [{ product: "Item 1" }, { product: "Item 2" }],
           layout: {
             component: "duplicated-section",
             schema: {
@@ -440,7 +440,7 @@ export const AddBelowAction: Story = {
       type: "object",
       properties: {
         invoiceItems: {
-          default: [{ product: "Item 1" }, { product: "Item 2" }],
+          defaultValue: [{ product: "Item 1" }, { product: "Item 2" }],
           layout: {
             component: "duplicated-section",
             schema: {

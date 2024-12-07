@@ -260,7 +260,7 @@ export const SUM_function: Story = {
                     product: { label: "Product", layout: { component: "text-field", cols: 4 } },
                     quantity: {
                       label: "Quantity",
-                      default: 1,
+                      defaultValue: 1,
                       layout: { component: "number-field", cols: 2 },
                     },
                     price: { label: "Price", layout: { component: "text-field", cols: 3 } },

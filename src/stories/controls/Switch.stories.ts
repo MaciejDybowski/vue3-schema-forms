@@ -74,7 +74,7 @@ export const Default: Story = {
       type: "object",
       properties: {
         switchDefault: {
-          default: true,
+          defaultValue: true,
           label: "Change it!",
           layout: {
             component: "switch",

@@ -7,14 +7,14 @@ import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 export function useFormModel() {
   function getValue(model: object, schema: EngineField, defaultValue: any = null): any {
     const value = get(model, schema.key, defaultValue);
-    if (schema.default !== undefined && schema.default !== null && value === null) {
-      const defaultValue = schema.default;
+    if (schema.defaultValue !== undefined && schema.defaultValue !== null && value === null) {
+      const defaultValue = schema.defaultValue;
       setValue(defaultValue, schema);
-      set(schema, 'default', null);
+      set(schema, 'defaultValue', null);
       return defaultValue;
     }
     if (value !== null) {
-      set(schema, 'default', null);
+      set(schema, 'defaultValue', null);
     }
 
     return value;

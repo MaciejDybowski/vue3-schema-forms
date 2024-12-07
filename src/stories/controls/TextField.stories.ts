@@ -76,7 +76,7 @@ export const WithDefault: Story = {
       properties: {
         textFieldWithDefault: {
           label: "Text field",
-          default: "Item 1",
+          defaultValue: "Item 1",
           layout: {
             component: "text-field",
           },

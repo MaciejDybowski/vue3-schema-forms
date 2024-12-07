@@ -330,8 +330,8 @@ function init(): void {
   localModel.value = [];
   let isDefaultExist = false;
   let sections: Object[] = get(props.model, props.schema.key, []) || []; //lodash error with default value = array
-  if (sections.length === 0 && isArray(props.schema.default)) {
-    sections = props.schema.default as Array<any>;
+  if (sections.length === 0 && isArray(props.schema.defaultValue)) {
+    sections = props.schema.defaultValue as Array<any>;
     isDefaultExist = true;
   }
 
@@ -380,7 +380,7 @@ function wrapPropertiesWithIndexAndPath(properties: Record<string, SchemaField>,
 function mapPropertiesIfDefault(fieldDefinition: Record<string, SchemaField>, defaultValue: object) {
   let itemsWithDefault = {};
   for (let [key, value] of Object.entries(fieldDefinition)) {
-    itemsWithDefault[key] = Object.assign({ ...value, default: defaultValue[key] });
+    itemsWithDefault[key] = Object.assign({ ...value, defaultValue: defaultValue[key] });
   }
   return itemsWithDefault;
 }

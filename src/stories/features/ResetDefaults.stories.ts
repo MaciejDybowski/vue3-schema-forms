@@ -61,7 +61,7 @@ export const DefaultVariablesWhenReset: Story = {
       properties: {
         fieldA: {
           label: "Field A",
-          default: "Random text",
+          defaultValue: "Random text",
           layout: {
             component: "text-field",
           },

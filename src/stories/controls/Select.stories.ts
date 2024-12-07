@@ -91,7 +91,7 @@ export const WithDefault: Story = {
           layout: {
             component: "select",
           },
-          default: 3,
+          defaultValue: 3,
           source: {
             items: [
               { value: 1, title: "Option 1" },

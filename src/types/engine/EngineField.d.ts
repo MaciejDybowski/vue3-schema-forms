@@ -14,7 +14,7 @@ export interface EngineField {
 
   // moze do dziedziczenia z SchemaField.d.ts
   label: string;
-  default?: number | string | boolean | object | Array<any> | undefined | null;
+  defaultValue?: number | string | boolean | object | Array<any> | undefined | null;
   type?: SchemaFieldType;
   layout: Layout;
   validations: any;

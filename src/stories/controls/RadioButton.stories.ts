@@ -121,7 +121,7 @@ export const WithDefault: Story = {
           layout: {
             component: "radio-button",
           },
-          default: 3,
+          defaultValue: 3,
           source: {
             items: [
               { value: 1, title: "Option 1" },
@@ -216,7 +216,7 @@ export const CustomMappingReturnObjectDefault: Story = {
           layout: {
             component: "radio-button",
           },
-          default: { id: 2, text: "Option 2" },
+          defaultValue: { id: 2, text: "Option 2" },
           source: {
             items: [
               { id: 1, text: "Option 1" },
