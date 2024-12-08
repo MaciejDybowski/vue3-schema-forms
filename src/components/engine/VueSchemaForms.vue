@@ -91,7 +91,8 @@ const formReadySignalSent = ref(false);
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const actionHandlerEventBus = useEventBus<string>("form-action");
 
-function actionCallback() {
+async function actionCallback() {
+  await new Promise((r) => setTimeout(r, 100));
   vueSchemaFormEventBus.emit("model-changed", "action-callback");
 }
 
