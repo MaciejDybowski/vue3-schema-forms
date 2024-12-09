@@ -30,7 +30,7 @@ const props = defineProps<{
 
 const {resolveJSONataExpression} = useJSONataExpression();
 
-await resolveJSONataExpression('component', props.schema.layout, props.schema);
+//await resolveJSONataExpression('component', props.schema.layout, props.schema);
 
 const { shouldRender, shouldRenderField } = useConditionalRendering();
 const { cols, completionOfRow, isOffsetExist, offset, fillRow, hideField } = useSchemaCols(props.schema);
