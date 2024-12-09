@@ -147,6 +147,7 @@ watch(
 
 onMounted(async () => {
   formModelStore.updateFormModel(props.modelValue);
+  formModelStore.updateFormContext(props.options && props.options.context ? props.options.context : {})
   await loadResolvedSchema();
   debounced.formIsReady(800)();
 });

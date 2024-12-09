@@ -278,3 +278,52 @@ export const ValidationFunctionWithJSONNataAndContext: Story = {
     }
   },
 };
+
+export const ValidationFunctionInSections: Story = {
+  play: async (context) => {
+  },
+  render: StoryTemplateWithValidation,
+  args: {
+    modelValue: {
+      "pozycjeDokumentu": [
+        {"fieldA":"Karol"},
+        {"fieldA":"Maciej"}
+      ]
+    },
+    schema: {
+      type: "object",
+      properties: {
+        pozycjeDokumentu: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                fieldA: {
+                  label: "FieldA",
+                  layout: {
+                    component: "text-field",
+                    cols: 6
+                  },
+                  validations: [
+                    {
+                      name: "valid-sth",
+                      rule: "pozycjeDokumentu[].fieldA!=context.currentUser.username",
+                      message: "Custom message"
+                    },
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+    },
+    options: {
+      context: {
+        currentUser: {
+          username: "Maciej"
+        }
+      }
+    }
+  },
+}

@@ -7,6 +7,7 @@ import { SchemaSimpleValidation } from "@/types/shared/SchemaSimpleValidation";
 import { useEventBus } from "@vueuse/core";
 
 import { useLocale } from "../../core/composables/useLocale";
+import { useFormModelStore } from "@/store/formModelStore";
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
 export function useRules() {
@@ -40,9 +41,16 @@ export function useRules() {
           vueSchemaFormEventBus.on((event, payloadIndex) => ruleListener(event, payloadIndex, schema, ruleDefinition));
         } else {
           rules.value.push(async (value: any) => {
-            let model = usePreparedModelForExpression(schema);
+            // probuje uzupelnic sciezke do aktualnego wiersza w tablicy
+            if(schema.path){
+              ruleDefinition.rule = ruleDefinition.rule?.replaceAll(schema.path+"[]",`${schema.path}[${schema.index}]`)
+            }
+
+            let model = useFormModelStore(schema.formId).getFormModelForResolve
+            console.debug(model)
             const nata = jsonata(ruleDefinition.rule as string);
             const conditionResult = await nata.evaluate(model);
+
             if (conditionResult) return true;
             return ruleDefinition.message;
           });
