@@ -1,4 +1,4 @@
-import { useCustomIfExpression } from '@/core/composables/useCustomIfExpression';
+import { useJSONataExpression } from '@/core/composables/useJSONataExpression';
 import { EngineField } from '@/types/engine/EngineField';
 import { EngineTextField } from '@/types/engine/controls';
 
@@ -11,14 +11,14 @@ import { logger } from '@/main';
 
 export function useProps() {
   const { resolve } = useResolveVariables();
-  const { customIfExpressionResolve } = useCustomIfExpression();
+  const { resolveJSONataExpression } = useJSONataExpression();
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
   let props = ref<Record<string, string | number | boolean>>({});
   let propsClone = ref<Record<string, string | number | boolean>>({});
 
 
-  function bindProps(schema: EngineField) {
+  async function bindProps(schema: EngineField) {
 
     switch (schema.layout.component) {
       case 'text-field':
@@ -99,8 +99,8 @@ export function useProps() {
     propsClone.value = cloneDeep(props.value);
 
     for (let [key, value] of Object.entries(props.value)) {
-      if (typeof value === 'string' && value.includes('if')) {
-        customIfExpressionResolve(key, props.value, schema);
+      if (typeof value === 'string' && value.includes('nata(')) {
+        await resolveJSONataExpression(key, props.value, schema);
       }
 
       if (typeof value === 'string' && variableRegexp.test(value)) {

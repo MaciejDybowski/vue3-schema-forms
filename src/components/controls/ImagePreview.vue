@@ -85,9 +85,8 @@ function handleImageError() {
   image404Error.value = true;
 }
 
-onMounted(() => {
-  console.debug(props.schema)
-  bindProps(props.schema);
+onMounted(async () => {
+  await bindProps(props.schema);
 });
 </script>
 

@@ -159,8 +159,8 @@ function runExpressionIfExist() {
   }
 }
 
-onMounted(() => {
-  bindRules(props.schema);
+onMounted(async () => {
+  await bindRules(props.schema);
   bindProps(props.schema);
   runCalculationIfExist();
   runExpressionIfExist();

@@ -106,8 +106,8 @@ const debounced = {
   search: debounce(searchFunc, 600),
 };
 
-onMounted(() => {
+onMounted(async () => {
   bindRules(props.schema);
-  bindProps(props.schema);
+  await bindProps(props.schema);
 });
 </script>

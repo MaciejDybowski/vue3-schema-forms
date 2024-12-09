@@ -90,7 +90,7 @@ const {
 } = useDictionarySource(props.schema);
 
 onMounted(async () => {
-  bindProps(props.schema);
+  await bindProps(props.schema);
   bindRules(props.schema);
   if (localModel.value) {
     updateQuery(localModel.value);

@@ -17,7 +17,7 @@
 <script setup lang='ts'>
 import { computed, onMounted } from 'vue';
 
-import { useCustomIfExpression } from '@/core/composables/useCustomIfExpression';
+import { useJSONataExpression } from '@/core/composables/useJSONataExpression';
 import { EngineField } from '@/types/engine/EngineField';
 
 import { useConditionalRendering } from '@/core/composables';
@@ -28,9 +28,9 @@ const props = defineProps<{
   model: object;
 }>();
 
-const {customIfExpressionResolve} = useCustomIfExpression();
+const {resolveJSONataExpression} = useJSONataExpression();
 
-customIfExpressionResolve('component', props.schema.layout, props.schema);
+await resolveJSONataExpression('component', props.schema.layout, props.schema);
 
 const { shouldRender, shouldRenderField } = useConditionalRendering();
 const { cols, completionOfRow, isOffsetExist, offset, fillRow, hideField } = useSchemaCols(props.schema);

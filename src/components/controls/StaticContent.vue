@@ -29,8 +29,8 @@ const resolvedContent = computed(() => {
 
 const { bindClass } = useClass();
 
-onMounted(() => {
-  bindProps(props.schema);
+onMounted(async () => {
+  await bindProps(props.schema);
 })
 </script>
 

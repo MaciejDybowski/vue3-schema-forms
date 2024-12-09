@@ -47,8 +47,8 @@ const opacity = computed(() => {
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 
-onMounted(() => {
-  bindProps(props.schema);
+onMounted(async () => {
+  await bindProps(props.schema);
 });
 </script>
 

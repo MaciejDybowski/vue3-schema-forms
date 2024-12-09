@@ -102,7 +102,7 @@ const {
 
 onMounted(async () => {
   bindRules(props.schema)
-  bindProps(props.schema);
+  await bindProps(props.schema);
 
   if (localModel.value) {
     updateQuery(localModel.value);

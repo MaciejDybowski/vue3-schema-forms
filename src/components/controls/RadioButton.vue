@@ -77,7 +77,7 @@ watch(loading, () => {
 
 onMounted(async () => {
   bindRules(props.schema);
-  bindProps(props.schema);
+  await bindProps(props.schema);
   if (!loading.value && localModel.value == null && initValue) {
     localModel.value = data.value[0][value];
   }

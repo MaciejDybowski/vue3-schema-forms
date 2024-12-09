@@ -76,9 +76,9 @@ const localModel = computed({
   },
 });
 
-onMounted(() => {
+onMounted(async () => {
   bindRules(props.schema);
-  bindProps(props.schema);
+  await bindProps(props.schema);
 });
 
 const currentDate = new Date();

@@ -27,8 +27,8 @@ const { label } = useLabel(props.schema);
 const theme = useTheme();
 const primaryWhite = computed(() => (theme.current.value.dark ? 'white' : 'primary'));
 
-onMounted(() => {
-  bindProps(props.schema);
+onMounted(async () => {
+  await bindProps(props.schema);
 });
 
 </script>

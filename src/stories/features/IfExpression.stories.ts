@@ -38,9 +38,11 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+// nagle przestało wykrywać textArea w tescie
 export const OnComponentSimpleField: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
+
     let textArea = document.getElementsByClassName("v-textarea");
     await expect(textArea.length).toEqual(1);
     const option2 = canvas.getByLabelText("Text field");
@@ -71,7 +73,7 @@ export const OnComponentSimpleField: Story = {
         fieldA: {
           label: "Field A",
           layout: {
-            component: "if(conditional==false,text-area,text-field)",
+            component: "nata(conditional=false ? 'text-area' : 'text-field')",
           },
         },
       },
@@ -80,6 +82,7 @@ export const OnComponentSimpleField: Story = {
   },
 };
 
+// nagle przestało wykrywać textArea w tescie
 export const OnComponentIfInDuplicatedSection: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
@@ -118,7 +121,7 @@ export const OnComponentIfInDuplicatedSection: Story = {
                 fieldA: {
                   label: "Field A",
                   layout: {
-                    component: "if(conditional==false,text-area,text-field)",
+                    component: "nata(conditional=false ? 'text-area' :'text-field')",
                   },
                 },
               },
@@ -165,7 +168,7 @@ export const OnPropsSimpleField: Story = {
           layout: {
             component: "text-field",
             props: {
-              "persistent-hint": "if(waluta.value!='PLN',true,false)",
+              "persistent-hint": "nata(waluta.value!='PLN' ? true : false)",
               hint: "Kwota netto PLN: {kwotaNettoPln:0}",
             },
           },
@@ -215,7 +218,7 @@ export const OnPropsIfInDuplicatedSection: Story = {
                   layout: {
                     component: "text-field",
                     props: {
-                      "persistent-hint": "if(waluta.value!='PLN',true,false)",
+                      "persistent-hint": "nata(waluta.value!='PLN' ? true :false)",
                       hint: "Kwota netto PLN: {kwotaNettoPln:0}",
                     },
                   },

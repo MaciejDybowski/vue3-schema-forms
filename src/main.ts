@@ -39,7 +39,7 @@ export declare type Components = Record<string, Component>;
 export let logger = {
   formUpdateLogger: false,
   calculationListener: false,
-  customIfExpressionListener: false,
+  JSONataExpressionListener: false,
   propsValueMappingListener: false,
   conditionalRenderingListener: false,
   dictionaryLogger: false,
