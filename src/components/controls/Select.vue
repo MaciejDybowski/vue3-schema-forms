@@ -42,7 +42,7 @@ const localModel = computed({
 });
 
 onMounted(async () => {
-  bindRules(props.schema);
+  await bindRules(props.schema);
   await bindProps(props.schema);
 });
 </script>

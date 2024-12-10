@@ -16,7 +16,7 @@ export function useRules() {
   let rules: Ref<any[]> = ref([]);
   let requiredInputClass = ref("");
 
-  function bindRules(schema: EngineField) {
+  async function bindRules(schema: EngineField) {
     if (schema.required) {
       requiredInputClass.value = " required-input";
       rules.value.push((value: any) => {
@@ -45,9 +45,7 @@ export function useRules() {
             if(schema.path){
               ruleDefinition.rule = ruleDefinition.rule?.replaceAll(schema.path+"[]",`${schema.path}[${schema.index}]`)
             }
-
             let model = useFormModelStore(schema.formId).getFormModelForResolve
-            console.debug(model)
             const nata = jsonata(ruleDefinition.rule as string);
             const conditionResult = await nata.evaluate(model);
 

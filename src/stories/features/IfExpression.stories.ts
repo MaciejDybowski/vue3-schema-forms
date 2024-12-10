@@ -121,7 +121,7 @@ export const OnComponentIfInDuplicatedSection: Story = {
                 fieldA: {
                   label: "Field A",
                   layout: {
-                    component: "nata(conditional=false ? 'text-area' :'text-field')",
+                    component: "nata(conditional=false?'text-area':'text-field')",
                   },
                 },
               },

@@ -149,6 +149,38 @@ export const ExposedValidationAndScroll: Story = {
   },
 };
 
+export const ExposedValidationAndScrollWithRules: Story = {
+  args: {
+    defaultFormActions: true,
+    validationBehaviour: "scroll",
+    modelValue: {},
+    schema: {
+      properties: {
+        fieldA: {
+          label:"Field A",
+          layout: {
+            component: "text-field"
+          },
+          validations: [
+            {
+              name: "valid-sth",
+              rule: "fieldA != fieldB",
+              message: "Custom message"
+            },
+          ],
+        },
+        fieldB: {
+          label: "Field B",
+          layout: {
+            component: "text-field"
+          }
+        }
+      }
+    },
+  },
+};
+
+
 export const ExposedValidationAndMessages: Story = {
   args: {
     defaultFormActions: true,

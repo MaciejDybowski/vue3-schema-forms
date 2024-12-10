@@ -47,7 +47,7 @@ const localModel = computed({
 
 
 onMounted(async () => {
-  bindRules(props.schema);
+  await bindRules(props.schema);
   await bindProps(props.schema);
   if (!('defaultValue' in props.schema)) {
     let falseValue = fieldProps.value['false-value'] as string | boolean | undefined;

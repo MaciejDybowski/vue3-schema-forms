@@ -101,7 +101,7 @@ const {
 } = useDictionarySource(props.schema);
 
 onMounted(async () => {
-  bindRules(props.schema)
+  await bindRules(props.schema)
   await bindProps(props.schema);
 
   if (localModel.value) {
