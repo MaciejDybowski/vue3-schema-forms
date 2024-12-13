@@ -40,7 +40,58 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/*
+export const RegexpWithDependencies: Story = {
+  render: StoryTemplateWithValidation,
+  play: async (context) => {
+
+    const canvas = within(context.canvasElement);
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 100 });
+
+    const field = canvas.getByLabelText("Field with validation");
+    await userEvent.type(field, "3.2123", { delay: 100 });
+
+    await expect(canvas.getByText("Zbyt dużo znaków po przecinku")).toBeInTheDocument();
+
+  },
+  args: {
+    modelValue: {
+      fieldA: 3,
+    },
+    schema: {
+      properties: {
+        fieldA: {
+          label: "FieldA",
+          type: "int",
+          layout: {
+            component: "number-field"
+          }
+        },
+        fieldWithValidation: {
+          label: "Field with validation",
+          type: "float",
+          precision: 5,
+          layout: {
+            component: "number-field",
+          },
+          validations: [
+            {
+              "name": "regexpForDigitsLimitation",
+              "message": "Akceptowalna jest tylko liczba dodatnia",
+              "regexp": "^[0-9]\\d*(\\.\\d+)?$"
+            },
+            {
+              "name": "regexpForDigitsLimitation",
+              "message": "Zbyt dużo znaków po przecinku",
+              "regexp": "^\\d+(\\.\\d{0,{fieldA}})?$",
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+
 export const CustomRegexpValidations: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
@@ -74,7 +125,6 @@ export const CustomRegexpValidations: Story = {
           ],
         } as SchemaField,
       },
-      required: [""],
       i18n: {
         pl: {
           emailIsNotValid: "Adres e-mail nie jest poprawny",
@@ -86,7 +136,6 @@ export const CustomRegexpValidations: Story = {
     } as Schema,
   },
 };
-*/
 
 /**
  * #### Required field with nested
@@ -313,6 +362,10 @@ export const ValidationFunctionWithJSONNataAndContext: Story = {
 
 export const ValidationFunctionInSections: Story = {
   play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Value=Maciej is not allowed.")).toBeInTheDocument();
   },
   render: StoryTemplateWithValidation,
   args: {
@@ -340,7 +393,7 @@ export const ValidationFunctionInSections: Story = {
                     {
                       name: "valid-sth",
                       rule: "pozycjeDokumentu[].fieldA!=context.currentUser.username",
-                      message: "Custom message"
+                      message: "Value=Maciej is not allowed."
                     },
                   ]
                 }
