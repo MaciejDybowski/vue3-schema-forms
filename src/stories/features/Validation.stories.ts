@@ -285,7 +285,7 @@ export const ConditionalRequired: Story = {
           },
         },
         fieldB: {
-          label: "Test field",
+          label: "Text-field",
           layout: {
             component: "text-field",
           },
@@ -293,6 +293,66 @@ export const ConditionalRequired: Story = {
             {
               name: "conditional-required",
               rule: "fieldA=true",
+            },
+          ],
+        },
+      },
+    },
+  },
+};
+
+export const ConditionalRequiredWithDefault: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Field is required.")).toBeInTheDocument();
+
+    const select = canvas.getByLabelText("Select with condition");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[1], { delay: 200 });
+
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+  },
+  render: StoryTemplateWithValidation,
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        description: {
+          content: "When field could be not defined on start you should add option 'or $not($exists(your_field))' for default value of required",
+          layout: {
+            component: "static-content",
+            tag: "span"
+          }
+        },
+        fieldC: {
+          label: "Select with condition",
+          layout: {
+            component: "select"
+          },
+          source: {
+            items: [
+              { value: "yes", title: "Field is required" },
+              { value: "no", title: "Field is not required" },
+            ],
+            returnObject: true
+          },
+        },
+        fieldD: {
+          label: "Text-area",
+          layout: {
+            component: "text-area",
+          },
+          validations: [
+            {
+              name: "conditional-required",
+              rule: "fieldC.value='yes' or $not($exists(fieldC))",
             },
           ],
         },
