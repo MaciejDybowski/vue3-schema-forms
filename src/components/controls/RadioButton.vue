@@ -35,7 +35,7 @@ const props = defineProps<{
   schema: RadioField;
   model: object;
 }>();
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { bindProps, fieldProps } = useProps();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { bindClass } = useClass();
@@ -76,6 +76,7 @@ watch(loading, () => {
 });
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
   if (!loading.value && localModel.value == null && initValue) {

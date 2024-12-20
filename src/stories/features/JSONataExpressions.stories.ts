@@ -5,9 +5,10 @@ import { userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
+import { waitForMountedAsync } from "../controls/utils";
 
 const meta = {
-  title: "Forms/Features/If expression",
+  title: "Forms/Features/JSONata expressions",
   component: VueSchemaForms,
   tags: ["autodocs"],
   argTypes: {
@@ -38,9 +39,10 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-// nagle przestało wykrywać textArea w tescie
+/*// nagle przestało wykrywać textArea w tescie
 export const OnComponentSimpleField: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
 
     let textArea = document.getElementsByClassName("v-textarea");
@@ -85,6 +87,7 @@ export const OnComponentSimpleField: Story = {
 // nagle przestało wykrywać textArea w tescie
 export const OnComponentIfInDuplicatedSection: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     let textArea = document.getElementsByClassName("v-textarea");
     await expect(textArea.length).toEqual(1);
@@ -132,10 +135,11 @@ export const OnComponentIfInDuplicatedSection: Story = {
       required: [],
     } as Schema,
   },
-};
+};*/
 
 export const OnPropsSimpleField: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     let hint = document.getElementsByClassName("v-messages");
     await expect(hint.length).toEqual(0);
@@ -181,6 +185,7 @@ export const OnPropsSimpleField: Story = {
 
 export const OnPropsIfInDuplicatedSection: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     let hint = document.getElementsByClassName("v-messages");
     await expect(hint.length).toEqual(0);

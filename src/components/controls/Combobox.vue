@@ -59,7 +59,7 @@ const props = defineProps<{
   model: object;
 }>();
 const { t } = useLocale();
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { fieldProps, bindProps } = useProps();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
@@ -90,6 +90,7 @@ const {
 } = useDictionarySource(props.schema);
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   await bindProps(props.schema);
   await bindRules(props.schema);
   if (localModel.value) {

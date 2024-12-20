@@ -356,6 +356,12 @@ function init(): void {
   }
 }
 
+/*
+  na potrzeby draggable/ustawiania modeli/rozwiązywania zaleznosci
+  pole dostaje swoją scieżkę i index aby móc np się odwołać do pola w takiej postaci {products[].dataId}, sam index pola
+  jest uzupełniany dynamicznie. Sprawdzałem na zagnieżdzonych tablicach typu: {products[].items[].item} w połączeniu z logiką
+  w useResolveVariable daje niezłe możliwości
+*/
 function wrapPropertiesWithIndexAndPath(properties: Record<string, SchemaField>, index: number, rootSchema:any = null): Record<string, SchemaField> {
   for (let [key, value] of Object.entries(properties)) {
     if ("properties" in value) {
@@ -366,9 +372,14 @@ function wrapPropertiesWithIndexAndPath(properties: Record<string, SchemaField>,
       wrapPropertiesWithIndexAndPath(value.layout.schema.properties as any, index, value);
     } else {
       if (props.schema["path"] !== undefined && props.schema["index"] != undefined) {
-        value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key;
+        if(props.schema.layout.schema){ // jesteśmy w sekcji powielanej i napotykamy sekcje powielana
+          value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key + "[]";
+        } else {
+          value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key;
+        }
       } else {
-        value["path"] = props.schema.key;
+        console.debug("value", value)
+        value["path"] = props.schema.key+"[]";
       }
       value["index"] = index;
     }

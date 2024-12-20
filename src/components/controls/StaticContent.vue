@@ -10,10 +10,11 @@
 </template>
 
 <script setup lang='ts'>
-import { computed, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
 import { useClass, useProps, useResolveVariables } from "@/core/composables";
 import { EngineStaticField } from '@/types/engine/controls';
+import { useEventBus } from "@vueuse/core";
 
 const props = defineProps<{
   schema: EngineStaticField;
@@ -23,14 +24,18 @@ const props = defineProps<{
 const { resolve } = useResolveVariables();
 const {bindProps, fieldProps} = useProps()
 
-const resolvedContent = computed(() => {
-  return resolve(props.schema, props.schema.content);
-});
-
+const resolvedContent = ref<any>({ resolvedText: null, allVariablesResolved: false })
 const { bindClass } = useClass();
+
+const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 onMounted(async () => {
   await bindProps(props.schema);
+
+  resolvedContent.value = await resolve(props.schema, props.schema.content)
+  const unsubscribe = vueSchemaFormEventBus.on( async (event, payloadIndex) => {
+    resolvedContent.value = await resolve(props.schema, props.schema.content)
+  });
 })
 </script>
 

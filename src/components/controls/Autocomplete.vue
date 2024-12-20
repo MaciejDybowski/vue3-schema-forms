@@ -48,7 +48,6 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, watch } from "vue";
-import { useI18n } from "vue-i18n";
 
 import { EngineDictionaryField } from "@/types/engine/controls";
 
@@ -69,7 +68,7 @@ const props = defineProps<{
   model: object;
 }>();
 const { t } = useLocale();
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
@@ -98,9 +97,10 @@ const {
   load,
   loadMoreRecords,
   singleOptionAutoSelect,
-} = useDictionarySource(props.schema);
+} = await useDictionarySource(props.schema);
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   await bindRules(props.schema)
   await bindProps(props.schema);
 

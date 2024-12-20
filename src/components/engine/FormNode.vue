@@ -1,42 +1,36 @@
 <template>
   <v-col
-    :class='layoutCssClass'
-    v-if='shouldRender'
-    :cols='cols'
-    v-show='hideField && shouldRender'
-    :style='mr'
+    v-if="shouldRender"
+    v-show="hideField && shouldRender"
+    :class="layoutCssClass"
+    :cols="cols"
+    :style="mr"
   >
     <component
-      :is='`node-${schema.layout.component}`'
-      :schema='schema'
-      :model='model'
+      :is="`node-${schema.layout.component}`"
+      :model="model"
+      :schema="schema"
     />
   </v-col>
 </template>
 
-<script setup lang='ts'>
-import { computed, onMounted } from 'vue';
+<script lang="ts" setup>
+import { computed, onMounted } from "vue";
 
-import { useJSONataExpression } from '@/core/composables/useJSONataExpression';
-import { EngineField } from '@/types/engine/EngineField';
-
-import { useConditionalRendering } from '@/core/composables';
-import { useSchemaCols } from '@/core/composables/useSchemaCols';
+import { useConditionalRendering } from "@/core/composables";
+import { useSchemaCols } from "@/core/composables/useSchemaCols";
+import { EngineField } from "@/types/engine/EngineField";
 
 const props = defineProps<{
   schema: EngineField;
   model: object;
 }>();
 
-const {resolveJSONataExpression} = useJSONataExpression();
-
-//await resolveJSONataExpression('component', props.schema.layout, props.schema);
-
 const { shouldRender, shouldRenderField } = useConditionalRendering();
 const { cols, completionOfRow, isOffsetExist, offset, fillRow, hideField } = useSchemaCols(props.schema);
 
 const layoutCssClass = computed(() => {
-  let cssString = '';
+  let cssString = "";
 
   if (isOffsetExist) {
     cssString += `offset-${offset}`;
@@ -54,12 +48,11 @@ const mr = computed(() => {
 onMounted(async () => {
   await shouldRenderField(props.schema);
 });
-
 </script>
 
-<style scoped lang='css'></style>
+<style lang="css" scoped></style>
 
-<i18n lang='json'>
+<i18n lang="json">
 {
   "en": {},
   "pl": {}

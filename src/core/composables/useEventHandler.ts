@@ -23,18 +23,18 @@ export function useEventHandler() {
     }
   }
 
-  function onChangeDebounced(field: EngineField, model: object) {
+  async function onChangeDebounced(field: EngineField, model: object) {
     let eventDefinition: EventHandlerDefinition = field.onChange as EventHandlerDefinition;
     if (eventDefinition.mode == "request") {
-      requestMode(eventDefinition, field, model);
+      await requestMode(eventDefinition, field, model);
     }
 
     switch (eventDefinition.mode) {
       case "request":
-        requestMode(eventDefinition, field, model);
+        await requestMode(eventDefinition, field, model);
         break;
       case "action":
-        actionMode(eventDefinition, field, model);
+        await actionMode(eventDefinition, field, model);
         break;
       case "change-model":
         changeMode(eventDefinition, field, model);
@@ -50,11 +50,11 @@ export function useEventHandler() {
     })
   }
 
-  function requestMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
+  async function requestMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
     let body = createBodyObject(eventDefinition, field);
     let params = createParamsObject(eventDefinition, field);
 
-    const { resolvedText, allVariablesResolved } = resolve(field, eventDefinition.url);
+    const { resolvedText, allVariablesResolved } = await resolve(field, eventDefinition.url);
     //console.debug("URL = ", resolvedText);
     //console.debug(body);
     /*const response = await axios({
@@ -64,9 +64,9 @@ export function useEventHandler() {
     });*/
   }
 
-  function actionMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
-    let body = createBodyObject(eventDefinition, field);
-    let params = createParamsObject(eventDefinition, field);
+  async function actionMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
+    let body = await createBodyObject(eventDefinition, field);
+    let params = await createParamsObject(eventDefinition, field);
 
     const actionHandlerEventBus = useEventBus<string>("form-action");
 
@@ -79,30 +79,50 @@ export function useEventHandler() {
     actionHandlerEventBus.emit("form-action", payloadObject);
   }
 
-  function createBodyObject(eventDefinition: EventHandlerDefinition, field: EngineField) {
+  async function createBodyObject(eventDefinition: EventHandlerDefinition, field: EngineField) {
     let body = {};
     if (
       (eventDefinition.method == "POST" && eventDefinition.body) ||
       (eventDefinition.mode == "action" && eventDefinition.body)
     ) {
-      Object.entries(eventDefinition.body).forEach(([key, value]) => {
-        const { resolvedText, allVariablesResolved } = resolve(field, value as string);
-        body[key] = allVariablesResolved ? resolvedText : null;
+
+      const entries = Object.entries(eventDefinition.body);
+      const resolvedEntries = await Promise.all(
+        entries.map(async ([key, value]) => {
+          if (typeof value === "string" && variableRegexp.test(value)) {
+            const { resolvedText, allVariablesResolved } = await resolve(field, value as string);
+            return [key, allVariablesResolved ? resolvedText : null];
+          } else {
+            return [key, value];
+          }
+        })
+      );
+
+      resolvedEntries.forEach(([key, value]) => {
+        body[key as string] = value;
       });
     }
     return body;
   }
 
-  function createParamsObject(eventDefinition: EventHandlerDefinition, field: EngineField) {
+  async function createParamsObject(eventDefinition: EventHandlerDefinition, field: EngineField) {
     let params = {};
+
     if (eventDefinition.params) {
-      Object.entries(eventDefinition.params).forEach(([key, value]) => {
-        if (typeof value === "string" && variableRegexp.test(value)) {
-          const { resolvedText, allVariablesResolved } = resolve(field, value as string);
-          params[key] = allVariablesResolved ? resolvedText : null;
-        } else {
-          params[key] = value;
-        }
+      const entries = Object.entries(eventDefinition.params);
+      const resolvedEntries = await Promise.all(
+        entries.map(async ([key, value]) => {
+          if (typeof value === "string" && variableRegexp.test(value)) {
+            const { resolvedText, allVariablesResolved } = await resolve(field, value as string);
+            return [key, allVariablesResolved ? resolvedText : null];
+          } else {
+            return [key, value];
+          }
+        })
+      );
+
+      resolvedEntries.forEach(([key, value]) => {
+        params[key as string] = value;
       });
     }
     return params;

@@ -5,6 +5,7 @@ import { userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
+import { waitForMountedAsync } from "./utils";
 
 const meta = {
   title: "Forms/Controls/Switch",
@@ -40,6 +41,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Standard: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     //await userEvent.type(field, "This is standard text area...", { delay: 100 });
@@ -63,6 +65,7 @@ export const Standard: Story = {
 
 export const Default: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     //await userEvent.type(field, "This is standard text area...", { delay: 100 });
@@ -87,6 +90,7 @@ export const Default: Story = {
 
 export const ChangeValueTest: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     await userEvent.click(field, { delay: 200 });
@@ -110,6 +114,7 @@ export const ChangeValueTest: Story = {
 
 export const CustomMappingValues: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
 
@@ -137,6 +142,7 @@ export const CustomMappingValues: Story = {
 
 export const CustomMappingValuesChangeTest: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     await userEvent.click(field, { delay: 200 });
@@ -164,6 +170,7 @@ export const CustomMappingValuesChangeTest: Story = {
 
 export const MultipleConfiguration: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it! - custom");
     await userEvent.click(field, { delay: 200 });

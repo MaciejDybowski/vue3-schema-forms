@@ -8,6 +8,7 @@ import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { SimpleSource } from "../../types/schema/elements";
 import { StoryTemplateWithValidation } from "../templates/story-template";
+import { waitForMountedAsync } from "./utils";
 
 const meta = {
   title: "Forms/Controls/Select",
@@ -181,6 +182,7 @@ export const CustomMappingReturnObject: Story = {
 export const CustomMappingReturnObjectDefault: Story = {
   name: "Custom mapper + obj + default",
   play: async (context) => {
+    await waitForMountedAsync()
     await expect(context.args.modelValue).toEqual({
       selectCustomMappingObjectDefault: {
         id: 2,
@@ -198,7 +200,7 @@ export const CustomMappingReturnObjectDefault: Story = {
           layout: {
             component: "select",
           },
-          default: { id: 2, text: "Option 2" },
+          defaultValue: { id: 2, text: "Option 2" },
           source: {
             items: [
               { id: 1, text: "Option 1" },

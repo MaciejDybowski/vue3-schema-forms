@@ -7,6 +7,7 @@ import { Meta, StoryObj } from "@storybook/vue3";
 import { Schema } from "../../types/schema/Schema";
 import { SchemaLocationField } from "../../types/schema/elements";
 import { StoryTemplateWithValidation } from "../templates/story-template";
+import { waitForMountedAsync } from "./utils";
 
 const meta = {
   title: "Forms/Controls/Location",
@@ -67,6 +68,7 @@ export const Standard: Story = {
 
 export const WithLangAndCountryLimits: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Location field");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });

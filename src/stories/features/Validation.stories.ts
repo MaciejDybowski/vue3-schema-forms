@@ -7,6 +7,7 @@ import { Meta, StoryObj } from "@storybook/vue3";
 import { Schema } from "../../types/schema/Schema";
 import { SchemaField } from "../../types/schema/elements";
 import { StoryTemplateWithCustomValidation, StoryTemplateWithValidation } from "../templates/story-template";
+import { waitForMountedAsync } from "../controls/utils";
 
 const meta = {
   title: "Forms/Features/Validations",
@@ -95,6 +96,7 @@ export const RegexpWithDependencies: Story = {
 export const CustomRegexpValidations: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 100 });
@@ -119,7 +121,7 @@ export const CustomRegexpValidations: Story = {
           },
           validations: [
             {
-              regexp: "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+              regexp: "([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9_-]+)",
               message: { $ref: "#/i18n/~$locale~/emailIsNotValid" },
             },
           ],
@@ -252,6 +254,7 @@ export const AddCustomSubmitWithBuiltInValidation: Story = {
  */
 export const ConditionalRequired: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText("Validate");
@@ -264,7 +267,7 @@ export const ConditionalRequired: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Field is required.")).toBeInTheDocument();
 
-    const textField = canvas.getByLabelText("Test field");
+    const textField = canvas.getByLabelText("Text-field");
     await userEvent.type(textField, "Required field", {
       delay: 100,
     });
@@ -303,6 +306,7 @@ export const ConditionalRequired: Story = {
 
 export const ConditionalRequiredWithDefault: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText("Validate");
@@ -367,6 +371,7 @@ export const ConditionalRequiredWithDefault: Story = {
  */
 export const ValidationFunctionWithJSONNataAndContext: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText("Validate");
@@ -422,6 +427,7 @@ export const ValidationFunctionWithJSONNataAndContext: Story = {
 
 export const ValidationFunctionInSections: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 200 });

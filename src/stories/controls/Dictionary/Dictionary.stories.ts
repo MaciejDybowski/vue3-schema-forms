@@ -8,6 +8,7 @@ import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../../types/schema/Schema";
 import { DictionarySource, SchemaSourceField } from "../../../types/schema/elements";
+import { waitForMountedAsync } from "../utils";
 
 const meta = {
   title: "Forms/Controls/Dictionary [autocomplete]",
@@ -43,8 +44,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Standard: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
+
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText("Currency");
+    const select = await canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
     const list = document.getElementsByClassName("v-list");
@@ -89,6 +92,7 @@ export const Standard: Story = {
 
 export const WithSearch: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -129,6 +133,7 @@ export const WithSearch: Story = {
 
 export const ReturnValue: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -167,6 +172,7 @@ export const ReturnValue: Story = {
 export const Required: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -211,6 +217,7 @@ export const Required: Story = {
 
 export const LazyLoadingDisabled: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });

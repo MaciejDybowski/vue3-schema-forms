@@ -104,7 +104,7 @@ export function useProps() {
       }
 
       if (typeof value === 'string' && variableRegexp.test(value)) {
-        const obj = resolve(schema, value);
+        const obj = await resolve(schema, value);
         props.value[key] = obj.resolvedText;
 
         vueSchemaFormEventBus.on((event, payloadIndex) => propsValueMappingListener(event, payloadIndex, key, schema));
@@ -119,7 +119,7 @@ export function useProps() {
     //if (schema.index == undefined || schema.index == payloadIndex) {
       await new Promise(r => setTimeout(r, 10));
       const inputString = propsClone.value[keyToResolve];
-      const obj = resolve(schema, inputString as string);
+      const obj = await resolve(schema, inputString as string);
       props.value[keyToResolve] = obj.resolvedText;
 
       if (logger.propsValueMappingListener) console.debug(`[vue-schema-forms] [PropsValueMappingListener] => key=[${keyToResolve}], value=[${obj.resolvedText}], index=[${payloadIndex}]`);

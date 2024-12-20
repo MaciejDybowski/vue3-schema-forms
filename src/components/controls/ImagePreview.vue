@@ -65,7 +65,7 @@ const props = defineProps<{
 
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { resolve } = useResolveVariables();
 const { t } = useI18n();
 
@@ -86,6 +86,7 @@ function handleImageError() {
 }
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   await bindProps(props.schema);
 });
 </script>

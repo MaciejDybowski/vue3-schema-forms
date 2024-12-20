@@ -18,7 +18,7 @@ export function useExpression() {
       if (!functionName.includes('_GENERATOR') ) {
         const unsubscribe = vueSchemaFormEventBus.on(async (event) => await expressionListener(event, key, expression, model));
         // Do usunięcia jak się nic nie wykrzaczy po 5.12.2024 :)
-        /*watch(model, async () => {
+        /*watch(model async () => {
           result.value = await f(expression, model);
           set(model, key, result.value);
         });*/
@@ -47,6 +47,7 @@ export function useExpression() {
     if (functionName) {
       let f = functions[functionName];
       const result = await f(expression, model);
+      console.debug(model,result)
       const currentValue = get(model, key, null);
       if (result !== currentValue) {
         set(model, key, result);

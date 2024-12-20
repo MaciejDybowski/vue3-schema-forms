@@ -6,6 +6,7 @@ import { Meta, StoryObj } from "@storybook/vue3";
 
 import { DictionarySource } from "../../types/shared/Source";
 import { StoryTemplateWithValidation } from "../templates/story-template";
+import { waitForMountedAsync } from "../controls/utils";
 
 const meta = {
   title: "Forms/Features/On change events",
@@ -85,6 +86,7 @@ export const CallActionWithParametersAndRequestBody: Story = {
 export const ResetValueOnChange: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
 
     let textField = canvas.getByLabelText("Field A");
@@ -131,6 +133,7 @@ export const ResetValueOnChange: Story = {
 export const ResetValueOnChangeInDuplicatedSection: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
 
     let textField = canvas.getByLabelText("Field A");
@@ -192,6 +195,7 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
 export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });

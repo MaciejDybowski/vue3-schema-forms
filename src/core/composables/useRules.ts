@@ -47,8 +47,8 @@ export function useRules() {
             }
             let model = useFormModelStore(schema.formId).getFormModelForResolve;
             const nata = jsonata(ruleDefinition.rule as string);
-            const conditionResult = await nata.evaluate(model);
 
+            const conditionResult = await nata.evaluate(model);
             if (conditionResult) return true;
             return ruleDefinition.message;
           });

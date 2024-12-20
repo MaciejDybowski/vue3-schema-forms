@@ -8,6 +8,7 @@ import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { SimpleSource, Source } from "../../types/schema/elements";
 import { StoryTemplateWithValidation } from "../templates/story-template";
+import { waitForMountedAsync } from "./utils";
 
 const meta = {
   title: "Forms/Controls/Checkbox",
@@ -77,6 +78,7 @@ export const Standard: Story = {
 export const WithDefault: Story = {
   name: "With default (value)",
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     await expect(context.args.modelValue).toEqual({ checkboxWithDefault: [3] });
     const option2 = canvas.getByLabelText("Option 2");
@@ -110,6 +112,7 @@ export const WithDefault: Story = {
 export const CustomMapping: Story = {
   name: "Custom mapping",
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText("Option 2");
     await expect(option2).toBeInTheDocument();
@@ -142,6 +145,7 @@ export const CustomMapping: Story = {
 export const CustomMappingReturnObject: Story = {
   name: "Custom mapper + return obj",
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText("Option 2");
     await userEvent.click(option2, { delay: 200 });
@@ -176,6 +180,7 @@ export const CustomMappingReturnObject: Story = {
 export const CustomMappingReturnObjectDefault: Story = {
   name: "Custom mapper + obj + default",
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const option3 = canvas.getByLabelText("Option 3");
     await userEvent.click(option3, { delay: 200 });
@@ -233,6 +238,7 @@ export const GetOptionsFromAPI: Story = {
     ],
   },
   play: async ({ canvasElement }) => {
+    await waitForMountedAsync()
     const canvas = within(canvasElement);
     await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for api call
     await expect(canvas.getByText("Option 4")).toBeInTheDocument();
@@ -269,6 +275,7 @@ export const SimpleValidation: Story = {
   name: "Checkbox with required annotation",
   render: StoryTemplateWithValidation,
   play: async ({ canvasElement }) => {
+    await waitForMountedAsync()
     const canvas = within(canvasElement);
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 600 });

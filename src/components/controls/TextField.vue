@@ -27,7 +27,7 @@ const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { resolveExpression } = useExpression();
-const { label } = useLabel(props.schema);
+  const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 
@@ -42,11 +42,12 @@ const localModel = computed({
 
 async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
-    localModel.value = await  resolveExpression(props.schema.key, props.schema.expression, props.model);
+    localModel.value = await resolveExpression(props.schema.key, props.schema.expression, props.model);
   }
 }
 
 onMounted( async() => {
+  await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
   await runExpressionIfExist();

@@ -26,10 +26,235 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const JSONATAResolveVariable: Story = {
+  args: {
+    model: {
+      dataId: "#01",
+      name: "Main name",
+      products: [
+        {
+          dataId: "1",
+          name:"Test",
+          description: "Test",
+          items: [
+            {item: "maciek"},
+
+          ]
+        },
+        {
+          dataId: "2",
+          name:"Test2",
+          description: "Test2",
+          items: [
+            {item: "daniel"}
+          ]
+        }
+      ],
+      products2: [
+        {
+          dataId: "1",
+          name:"Test",
+          description: "Test",
+          items: [
+            {item: "maciek"},
+
+          ]
+        },
+        {
+          dataId: "2",
+          name:"Test2",
+          description: "Test2",
+          items: [
+            {item: "daniel"}
+          ]
+        }
+      ]
+    },
+    schema: {
+      properties: {
+        dataId: {
+          label:"DataId {dataId}",
+          layout: {
+            component: "text-field"
+          }
+        },
+        name: {
+          label: "Name",
+          layout: {
+            component: "text-field"
+          },
+        },
+        products: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                dataId: {
+                  label:"dataId",
+                  layout: {
+                    component: "text-field",
+                    cols: 3
+                  }
+                },
+                name: {
+                  label:"name",
+                  layout: {
+                    component: "text-field",
+                    cols: 3
+                  },
+                },
+                merge2: {
+                  content: "{dataId} głowne, {products[].dataId} - w sekcji",
+                  layout: {
+                    component: "static-content",
+                    tag: "span",
+                    cols:3
+                  }
+                },
+                items:{
+                  layout: {
+                    component: "duplicated-section",
+                    schema: {
+                      properties: {
+                        item: {
+                          label: "Item",
+                          layout: {
+                            component: "text-field",
+                            cols:6
+                          }
+                        },
+                        turboMerge: {
+                          content: "{dataId} głowne, {products[].dataId} sekcja, {products[].items[].item}",
+                          layout: {
+                            component: "static-content",
+                            tag: "span",
+                            cols:3
+                          }
+                        },
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        group: {
+          layout: {
+            component:"fields-group",
+            cols:6,
+            schema: {
+              properties: {
+                products2: {
+                  layout: {
+                    component: "duplicated-section",
+                    schema: {
+                      properties: {
+                        dataId: {
+                          label:"dataId",
+                          layout: {
+                            component: "text-field",
+                            cols: 3
+                          }
+                        },
+                        name: {
+                          label:"name",
+                          layout: {
+                            component: "text-field",
+                            cols: 3
+                          },
+                        },
+                        merge2: {
+                          content: "{dataId} głowne, {products[].dataId} - w sekcji",
+                          layout: {
+                            component: "static-content",
+                            tag: "span",
+                            cols:3
+                          }
+                        },
+                        items:{
+                          layout: {
+                            component: "duplicated-section",
+                            schema: {
+                              properties: {
+                                item: {
+                                  label: "Item",
+                                  layout: {
+                                    component: "text-field",
+                                    cols:6
+                                  }
+                                },
+                                turboMerge: {
+                                  content: "{dataId} głowne, {products[].dataId} sekcja, {products[].items[].item}",
+                                  layout: {
+                                    component: "static-content",
+                                    tag: "span",
+                                    cols:3
+                                  }
+                                },
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+export const Tableo1: Story = {
+  args: {
+    model: {
+
+    },
+    schema: {
+      properties: {
+        faktura: {
+          properties:{
+            kurs: {
+              label:"Kurs",
+              defaultValuee: 1,
+              layout: {
+                component: "number-field"
+              }
+            }
+          }
+        },
+        kwotaNetto: {
+          label: "Kwota netto",
+          layout: {
+            component: "number-field",
+            props: {
+              "hint": "Kwota netoo PLN: {kwotaNettoPln}",
+              "persistent-hint": true
+            }
+          }
+        },
+        kwotaNettoPln: {
+          label: "kwotaNettoPln",
+          layout:{
+            component: "number-field",
+          },
+          calculation: "kwotaNetto * faktura.kurs"
+        }
+      }
+    }
+  }
+}
+
 export const Table0: Story = {
   args: {
     model: {
-      "products": [
+      "pozycjeDokumentu": [
         {
           "rodzajKosztu": {"id": "213"},
           "kwotaBrutto": 23.321
@@ -42,7 +267,7 @@ export const Table0: Story = {
     },
     schema: {
       properties: {
-        products: {
+        pozycjeDokumentu: {
           layout: {
             component: "duplicated-section",
             schema: {
@@ -50,7 +275,7 @@ export const Table0: Story = {
                 rodzajKosztu: {
                   label: "Rodzaj kosztu",
                   type:"object",
-                  valueMapping: "{rodzajKosztu.id}",
+                  valueMapping: "{pozycjeDokumentu[].rodzajKosztu.id}",
                   layout: {
                     component: "data-viewer",
                     cols: 6,
@@ -70,16 +295,16 @@ export const Table0: Story = {
           },
         },
         sklejenieRodzaj: {
-          expression:"JSONATA(products.rodzajKosztu.id ~> $join(\",\"))",
-          label: "Próba sklejenie expresion jsonNata",
+          expression:"JSONATA(pozycjeDokumentu.rodzajKosztu.id ~> $join(\",\"))",
+          label: "Próba sklejenie rodzaj expresion jsonNata",
           layout: {
             component: "text-field",
             cols:6
           }
         },
         sklejenieKwoty: {
-          expression:"JSONATA(products.kwotaBrutto ~> $map($string) ~> $join(\",\"))",
-          label: "Próba sklejenie expresion jsonNata",
+          expression:"JSONATA(pozycjeDokumentu.kwotaBrutto ~> $map(function($v) { $replace(\"limitKosztowPln>\" & $string($v), \".\", \",\")}) ~> $join(\";\"))",
+          label: "Próba sklejenie kwoty expresion jsonNata",
           layout: {
             component: "text-field",
             cols:6
@@ -158,7 +383,7 @@ export const Table1: Story = {
                     schema: {
                       properties: {
                         basicData: {
-                          content: "Symbol: {basicData.productNumber: -}</br>Kategoria: {category.name: -} ",
+                          content: "Symbol: {basicData.productNumber}</br>Kategoria: {category.name} ",
                           layout: {
                             component: "static-content",
                             tag: "p",
@@ -173,7 +398,7 @@ export const Table1: Story = {
                               type: "object",
                               properties: {
                                 attribute: {
-                                  content: "{definition.name:Definicja}: {value:Wartość} ",
+                                  content: "{definition.name}: {value:Wartość} ",
                                   layout: { component: "static-content", tag: "p" },
                                 },
                               },
@@ -596,7 +821,7 @@ export const Table3: Story = {
           properties: {
             kurs: {
               label: "kurs",
-              default: 3.2321,
+              "defaultValue": 3.2321,
               layout: {
                 component: "number-field",
                 cols: 2,
@@ -604,7 +829,7 @@ export const Table3: Story = {
             },
             waluta: {
               label: "Waluta",
-              default: { id: "USD", label: "USD" },
+              defaultValue: { id: "USD", label: "USD" },
               layout: {
                 cols: 4,
                 component: "select",
@@ -665,7 +890,7 @@ export const Table3: Story = {
                 },
                 stawkaVat: {
                   label: "Stawka VAT",
-                  default: { id: 23, label: "23%" },
+                  defaultValue: { id: 23, label: "23%" },
                   layout: {
                     cols: 4,
                     component: "select",

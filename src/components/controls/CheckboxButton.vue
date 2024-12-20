@@ -41,7 +41,7 @@ const props = defineProps<{
   model: object;
 }>();
 
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
@@ -76,6 +76,7 @@ const localModel = computed({
 });
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
 });

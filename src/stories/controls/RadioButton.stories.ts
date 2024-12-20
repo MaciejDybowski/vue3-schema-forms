@@ -8,6 +8,7 @@ import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { Source } from "../../types/schema/elements";
 import { StoryTemplateWithValidation } from "../templates/story-template";
+import { waitForMountedAsync } from "./utils";
 
 const meta = {
   title: "Forms/Controls/RadioButton",
@@ -43,6 +44,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Standard: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     await expect(context.args.modelValue).toEqual({ radioButton: 1 });
     const option2 = canvas.getByLabelText("Option 2");
@@ -74,6 +76,7 @@ export const Standard: Story = {
 
 export const NoInitValue: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     await expect(context.args.modelValue).toEqual({});
     const option2 = canvas.getByLabelText("Option 2");
@@ -138,6 +141,7 @@ export const WithDefault: Story = {
 export const CustomMapping: Story = {
   name: "Custom mapping",
   play: async (context) => {
+    await waitForMountedAsync()
     await expect(context.args.modelValue).toEqual({ radioButtonCustomMapping: 1 });
   },
   args: {
@@ -168,6 +172,7 @@ export const CustomMapping: Story = {
 export const CustomMappingReturnObject: Story = {
   name: "Custom mapper + return obj",
   play: async (context) => {
+    await waitForMountedAsync()
     await expect(context.args.modelValue).toEqual({ radioButtonCustomMappingObject: { id: 1, text: "Option 1" } });
   },
   args: {
@@ -199,6 +204,7 @@ export const CustomMappingReturnObject: Story = {
 export const CustomMappingReturnObjectDefault: Story = {
   name: "Custom mapper + obj + default",
   play: async (context) => {
+    await waitForMountedAsync()
     await expect(context.args.modelValue).toEqual({
       radioButtonCustomMappingObjectDefault: {
         id: 2,

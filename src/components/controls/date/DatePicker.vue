@@ -59,7 +59,7 @@ import dayjs from "./dayjs";
 
 const { locale, t } = useLocale();
 const props = defineProps<{ schema: EngineDateField; model: object }>();
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
@@ -77,6 +77,7 @@ const localModel = computed({
 });
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
 });

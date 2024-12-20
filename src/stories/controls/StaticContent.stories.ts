@@ -6,6 +6,7 @@ import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
 import { Layout } from "../../types/schema/elements";
+import { waitForMountedAsync } from "./utils";
 
 const meta = {
   title: "Forms/Static content",
@@ -109,6 +110,7 @@ export const Examples: Story = {
 
 export const TextWithVariablesAndHTML: Story = {
   play: async ({ canvasElement }) => {
+    await waitForMountedAsync()
     const canvas = within(canvasElement);
     await expect(canvas.getByText("Hello Maciej Dybowski!")).toBeInTheDocument();
   },
@@ -143,6 +145,7 @@ export const TextWithVariablesAndHTML: Story = {
 
 export const GenerateVuetifyStaticComponent: Story = {
   play: async ({ canvasElement }) => {
+    await waitForMountedAsync()
     const canvas = within(canvasElement);
     await expect(canvas.getByText("Is difference between Value A = 123 and Value B = 321")).toBeInTheDocument();
   },

@@ -9,17 +9,22 @@ import { useEventBus } from '@vueuse/core';
 export function useLabel(schema: EngineField) {
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const { resolve } = useResolveVariables();
-  const label = ref(resolve(schema, schema.label).resolvedText);
+  const label = ref(schema.label);
   const labelWithFallbackMessage = label.value;
 
   if (schema?.label?.match(variableRegexp)) {
     const unsubscribe = vueSchemaFormEventBus.on((event, payloadIndex) => labelResolverListener(event, payloadIndex));
   }
 
-  async function labelResolverListener(event: string, payloadIndex: number) {
-    const { resolvedText, allVariablesResolved } = resolve(schema, schema.label, 'title');
+  async function bindLabel(schema: EngineField) {
+    const { resolvedText, allVariablesResolved } = await resolve(schema, schema.label, 'title');
     allVariablesResolved ? (label.value = resolvedText) : (label.value = labelWithFallbackMessage);
   }
 
-  return { label };
+  async function labelResolverListener(event: string, payloadIndex: number) {
+    const { resolvedText, allVariablesResolved } = await resolve(schema, schema.label, 'title');
+    allVariablesResolved ? (label.value = resolvedText) : (label.value = labelWithFallbackMessage);
+  }
+
+  return { label, bindLabel,};
 }

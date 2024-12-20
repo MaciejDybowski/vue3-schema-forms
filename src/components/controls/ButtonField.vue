@@ -22,12 +22,13 @@ const props = defineProps<{
 
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 
 const theme = useTheme();
 const primaryWhite = computed(() => (theme.current.value.dark ? 'white' : 'primary'));
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   await bindProps(props.schema);
 });
 

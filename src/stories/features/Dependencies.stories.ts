@@ -2,13 +2,19 @@
 import { VueSchemaForms } from "@/components";
 import { REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI } from "@/stories/controls/Dictionary/responses";
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
+import { expect, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema, SchemaOptions } from "../../types/schema/Schema";
-import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "../../types/schema/elements";
+import {
+  DictionarySource,
+  Layout,
+  SchemaSourceField,
+  SchemaTextField,
+  SimpleSource
+} from "../../types/schema/elements";
+import { waitForMountedAsync } from "../controls/utils";
 
 const meta = {
   title: "Forms/Features/Dependencies",
@@ -17,33 +23,301 @@ const meta = {
   argTypes: {
     schema: {
       control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
+      description: "Schema u" /*table: { disable: true }*/
     },
     modelValue: {
       control: "object",
-      description: "Model" /*table: { disable: true }*/,
+      description: "Model" /*table: { disable: true }*/
     },
     options: {
       control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
+      description: "Opcje" /*table: { disable: true }*/
     },
-    "update:modelValue": { table: { disable: true } },
+    "update:modelValue": { table: { disable: true } }
   },
   args: {
     modelValue: {},
-    options: {},
+    options: {}
   },
   parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
+    controls: { hideNoControlsWarning: true } //https://github.com/storybookjs/storybook/issues/24422
+  }
 } satisfies Meta<typeof VueSchemaForms>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+
+export const step1: Story = {
+  name: "Step1. Simple, no nested",
+  play: async (context) => {
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      properties: {
+        fieldA: {
+          label: "Field A",
+          layout: {
+            component: "text-field"
+          }
+        },
+        fieldB: {
+          content: "This is text with value of fieldA: {fieldA:Default value}",
+          layout: {
+            component: "static-content",
+            tag: "span"
+          }
+        }
+      }
+    }
+  }
+};
+
+export const step2: Story = {
+  name: "Step2. Simple, nested object",
+  play: async (context) => {
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      properties: {
+        fieldA: {
+          label: "Field A",
+          defaultValue: { value: 1, title: "Option 1" },
+          layout: {
+            component: "select"
+          },
+          source: {
+            items: [
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" }
+            ]
+          }
+        },
+        fieldB: {
+          content: "This is text with value of fieldA: {fieldA:Default value}",
+          layout: {
+            component: "static-content",
+            tag: "span"
+          }
+        },
+        fieldC: {
+          content: "This is text with value of fieldA: {fieldA.value:Default value}",
+          layout: {
+            component: "static-content",
+            tag: "span"
+          }
+        },
+        fieldD: {
+          content: "This is text with value of fieldA: {fieldA.title:Default value}",
+          layout: {
+            component: "static-content",
+            tag: "span"
+          }
+        }
+      }
+    }
+  }
+};
+
+export const step3: Story = {
+  name: "Step3. In duplicated section",
+  play: async (context) => {
+  },
+  args: {
+    modelValue: {
+      fieldB: "Root level",
+      products: [
+        {
+          dataId: 1,
+          name: "any value #1"
+        },
+        {
+          dataId: 2,
+          name: "any value #2"
+        }
+      ]
+    },
+    schema: {
+      properties: {
+        fieldB: {
+          label:"Root level field",
+          layout: {
+            component: "text-field",
+          }
+        },
+        divider: {
+          layout: {
+            component: "divider"
+          },
+          thickness: 20,
+          color: "blue"
+        },
+        products: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                dataId: {
+                  label:"dataId",
+                  layout: {
+                    component: "text-field",
+                  }
+                },
+                name: {
+                  label:"name",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+                merge2: {
+                  content: "#{products[].dataId} - {fieldB} - {products[].name}",
+                  layout: {
+                    component: "static-content",
+                    tag: "span",
+                  }
+                },
+              }
+            }
+          }
+        },
+
+      }
+    }
+  }
+};
+
+export const step4: Story = {
+  name: "Step4. In duplicated section with nested duplicated",
+  play: async (context) => {
+  },
+  args: {
+    modelValue: {
+      fieldB: "Root level",
+      testObject: {
+        testField: "Test value"
+      },
+      products: [
+        {
+          dataId: 1,
+          name: "Item 1",
+          prices: [
+            {
+              "id": 99,
+              "value": 23.1
+            },
+            {
+              "id": 999,
+              "value": 1.23
+            }
+          ]
+        },
+        {
+          dataId: 300,
+          name: "Item 300",
+          prices: [
+            {
+              "id": 300,
+              "value": 300
+            },
+            {
+              "id": 301,
+              "value": 301
+            }
+          ]
+        },
+      ]
+    },
+    schema: {
+      properties: {
+        fieldB: {
+          label:"Root level field",
+          layout: {
+            component: "text-field",
+          }
+        },
+        divider: {
+          layout: {
+            component: "divider"
+          },
+          thickness: 20,
+          color: "blue"
+        },
+        products: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                dataId: {
+                  label:"dataId",
+                  layout: {
+                    component: "text-field",
+                  }
+                },
+                name: {
+                  label:"name",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+                prices: {
+                  layout: {
+                    component: "duplicated-section",
+                    schema: {
+                      properties: {
+                        id: {
+                          label: "price id",
+                          layout: {
+                            component: "text-field",
+                            cols: 2
+                          }
+                        },
+                        value: {
+                          label: "price value",
+                          type: "float",
+                          precision: 2,
+                          layout: {
+                            component: "number-field",
+                            cols: 2
+                          }
+                        },
+                        testField: {
+                          content: "#{products[].dataId} - {fieldB} - {products[].name}, multi nested price Id = {products[].prices[].id},  {testObject.testField}",
+                          layout: {
+                            component: "static-content",
+                            tag: "span",
+                            cols: 8
+                          }
+                        }
+                      }
+                    },
+                  }
+                },
+                merge2: {
+                  content: "#{products[].dataId} - {fieldB} - {products[].name}, {testObject.testField}",
+                  layout: {
+                    component: "static-content",
+                    tag: "span",
+                  }
+                },
+
+              }
+            }
+          }
+        },
+
+      }
+    }
+  }
+};
+
+
 export const UseFormVariablesInFieldProps: Story = {
   play: async (context) => {
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const currency = canvas.getByLabelText("Currency");
 
@@ -73,7 +347,7 @@ export const UseFormVariablesInFieldProps: Story = {
   args: {
     modelValue: {
       amount: 32,
-      items: [{ item: "Item 1", quantity: 3, price: 32.21 }],
+      items: [{ item: "Item 1", quantity: 3, price: 32.21 }]
     },
     schema: {
       properties: {
@@ -81,13 +355,13 @@ export const UseFormVariablesInFieldProps: Story = {
           label: "Currency",
           layout: {
             component: "dictionary",
-            cols: 3,
+            cols: 3
           },
           source: {
             url: "/api/currencies",
             title: "label",
-            value: "id",
-          } as DictionarySource,
+            value: "id"
+          } as DictionarySource
         } as SchemaSourceField,
         amount: {
           label: "Amount (outside)",
@@ -98,9 +372,9 @@ export const UseFormVariablesInFieldProps: Story = {
             props: {
               suffix: "{currency.id}",
               hint: "Digits after decimal = {currency.digitsAfterDecimal}",
-              "persistent-hint": true,
-            },
-          },
+              "persistent-hint": true
+            }
+          }
         } as SchemaTextField,
         items: {
           layout: {
@@ -109,13 +383,13 @@ export const UseFormVariablesInFieldProps: Story = {
               properties: {
                 item: {
                   label: "Item",
-                  layout: { component: "text-field", cols: 3 },
+                  layout: { component: "text-field", cols: 3 }
                 },
                 quantity: {
                   label: "Quantity",
                   type: "number",
                   default: 1,
-                  layout: { component: "text-field", cols: 3 },
+                  layout: { component: "text-field", cols: 3 }
                 },
                 price: {
                   label: "Price",
@@ -123,8 +397,8 @@ export const UseFormVariablesInFieldProps: Story = {
                   layout: { component: "text-field", cols: 3 },
                   props: {
                     suffix: "{currency.id}",
-                    "persistent-hint": true,
-                  },
+                    "persistent-hint": true
+                  }
                 },
                 summary: {
                   label: "Amount",
@@ -135,24 +409,24 @@ export const UseFormVariablesInFieldProps: Story = {
                     props: {
                       suffix: "{currency.id}",
                       hint: "Digits after decimal = {currency.digitsAfterDecimal}",
-                      "persistent-hint": true,
-                    },
+                      "persistent-hint": true
+                    }
                   },
-                  calculation: "quantity * price",
-                } as SchemaTextField,
-              },
-            },
-          },
-        },
-      },
+                  calculation: "quantity * price"
+                } as SchemaTextField
+              }
+            }
+          }
+        }
+      }
     } as Schema,
     options: {
-      digitsAfterDecimal: "{currency.digitsAfterDecimal}",
-    } as SchemaOptions,
+      digitsAfterDecimal: "{currency.digitsAfterDecimal}"
+    } as SchemaOptions
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI],
-  },
+    mockData: [REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI]
+  }
 };
 
 export const UseDependenciesInLabel: Story = {
@@ -179,15 +453,15 @@ export const UseDependenciesInLabel: Story = {
           {
             product: "Computer",
             quantity: 1,
-            price: 3200,
+            price: 3200
           },
           {
             product: "Laptop",
             quantity: 2,
-            price: 1334.23,
-          },
-        ],
-      },
+            price: 1334.23
+          }
+        ]
+      }
     },
     schema: {
       type: "object",
@@ -201,12 +475,12 @@ export const UseDependenciesInLabel: Story = {
               source: {
                 items: [
                   { value: "net", title: "at net prices", formatted: "net" },
-                  { value: "gross", title: "at gross prices", formatted: "gross" },
+                  { value: "gross", title: "at gross prices", formatted: "gross" }
                 ],
-                returnObject: true,
-              } as SimpleSource,
-            } as EngineSourceField,
-          },
+                returnObject: true
+              } as SimpleSource
+            } as EngineSourceField
+          }
         },
         data: {
           properties: {
@@ -220,24 +494,24 @@ export const UseDependenciesInLabel: Story = {
                       label: "Quantity",
                       type: "number",
                       default: 1,
-                      layout: { component: "text-field", cols: 2 },
+                      layout: { component: "text-field", cols: 2 }
                     },
                     price: {
                       label: "Price ({invoiceMetadata.pricing.formatted})",
                       type: "number",
-                      layout: { component: "text-field", cols: 3 },
+                      layout: { component: "text-field", cols: 3 }
                     },
                     value: {
                       label: "Value",
                       type: "number",
                       layout: { component: "text-field", cols: 3 },
-                      calculation: "quantity * price",
-                    } as SchemaTextField,
-                  },
-                },
-              } as Layout,
-            },
-          },
+                      calculation: "quantity * price"
+                    } as SchemaTextField
+                  }
+                }
+              } as Layout
+            }
+          }
         },
         summary: {
           properties: {
@@ -245,16 +519,16 @@ export const UseDependenciesInLabel: Story = {
               label: "SUM(Value)",
               layout: {
                 component: "text-field",
-                cols: 4,
+                cols: 4
               },
               calculation: "SUM(value,data.items) - 300",
-              type: "number",
-            } as SchemaTextField,
-          },
-        },
-      },
-    } as Schema,
-  },
+              type: "number"
+            } as SchemaTextField
+          }
+        }
+      }
+    } as Schema
+  }
 };
 
 export const UseVariableDependencyWithFallbackMessage: Story = {
@@ -287,28 +561,28 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
             "If we want to have dependencies and a default value when this value is not yet in the model then we do it as follows: <b>path_to_variable:value_default</b>",
           layout: {
             component: "static-content",
-            tag: "span",
-          },
+            tag: "span"
+          }
         },
         country: {
           label: "Country",
           layout: {
             component: "select",
             cols: 3,
-            fillRow: true,
+            fillRow: true
           },
           source: {
-            items: [{ value: "PL", title: "Poland" }],
-          } as SimpleSource,
+            items: [{ value: "PL", title: "Poland" }]
+          } as SimpleSource
         },
         textField: {
           label: "Telephone with {country:your country} prefix",
           layout: {
             component: "text-field",
-            cols: 3,
-          },
-        },
-      },
-    } as Schema,
-  },
+            cols: 3
+          }
+        }
+      }
+    } as Schema
+  }
 };

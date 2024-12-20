@@ -18,7 +18,7 @@ const props = defineProps<{
   schema: EngineField;
   model: object;
 }>();
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { bindClass } = useClass();
@@ -34,6 +34,7 @@ const localModel = computed({
 });
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
 });

@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { parsePhoneNumber } from "libphonenumber-js";
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 
 import {
   useCalculation,
@@ -28,6 +28,8 @@ import { useNumber } from "@/core/composables/useNumber";
 import { EngineDataViewerField, EngineDictionaryField } from "@/types/engine/controls";
 
 import dayjs from "../date/dayjs";
+import { computedAsync, useEventBus } from "@vueuse/core";
+import { b } from "vitest/dist/suite-BWgaIsVn";
 
 const props = defineProps<{
   schema: EngineDataViewerField;
@@ -35,7 +37,7 @@ const props = defineProps<{
 }>();
 
 const { t } = useLocale();
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const { formattedNumber } = useNumber();
@@ -45,39 +47,39 @@ const { calculationFunc } = useCalculation();
 
 const isValueMapping = !!props.schema.valueMapping;
 
-const localModel = computed({
-  get(): string | number {
-    let value = getValue(props.model, props.schema);
 
-    if (isValueMapping) {
-      const { resolvedText } = resolve(props.schema, props.schema.valueMapping as string);
-      value = resolvedText;
-    }
-    switch (props.schema.type) {
-      case "text" :
-        if (!value) break;
-        break;
-      case "number":
-        if (!value) break;
-        value = formattedNumber(value, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
-        break;
-      case "date":
-        if (!value) break;
-        value = dayjs(value).format(dateFormat.value);
-        break;
-      case "phone":
-        if (!value) break;
-        value = parsePhoneNumber(value).formatNational();
-        break;
-      default:
-        //console.warn("Type of data not recognized =" + props.schema.type);
-    }
 
-    return value !== "null" && !!value ? value : t("emptyValue");
-  },
-  set(val: any) {
-    setValue(val, props.schema);
-  },
+const localModel = ref<any>(null);
+
+watchEffect(async () => {
+  let value = getValue(props.model, props.schema);
+
+  if (isValueMapping) {
+    const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
+    value = resolvedText;
+  }
+
+  switch (props.schema.type) {
+    case "text":
+      if (!value) break;
+      break;
+    case "number":
+      if (!value || typeof value == "string") break;
+      value = formattedNumber(value, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
+      break;
+    case "date":
+      if (!value) break;
+      value = dayjs(value).format(dateFormat.value);
+      break;
+    case "phone":
+      if (!value) break;
+      value = parsePhoneNumber(value).formatNational();
+      break;
+    default:
+    // console.warn("Type of data not recognized =" + props.schema.type);
+  }
+
+  localModel.value = value !== "null" && !!value ? value : t("emptyValue");
 });
 
 function runCalculationIfExist() {
@@ -88,7 +90,7 @@ function runCalculationIfExist() {
 
 async function resolveIfDictionary() {
   if ("source" in props.schema && props.schema.source && "url" in props.schema.source) {
-    const { data, load, singleOptionAutoSelect } = useDictionarySource(props.schema as EngineDictionaryField);
+    const { data, load, singleOptionAutoSelect } = await useDictionarySource(props.schema as EngineDictionaryField);
 
     await load("dataViewer");
 
@@ -97,10 +99,11 @@ async function resolveIfDictionary() {
     }
   }
 }
+await resolveIfDictionary();
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   runCalculationIfExist();
-  await resolveIfDictionary();
 });
 </script>
 

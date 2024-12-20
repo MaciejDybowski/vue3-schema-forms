@@ -14,7 +14,7 @@ import { useFormModelStore } from '../../store/formModelStore';
 import { useResolveVariables } from './useResolveVariables';
 import { logger } from '@/main';
 
-export function useDictionarySource(field: EngineDictionaryField) {
+export async function useDictionarySource(field: EngineDictionaryField) {
   const { resolve } = useResolveVariables();
   const source: DictionarySource = field.source;
   const title = source.title ? source.title : 'title';
@@ -39,10 +39,10 @@ export function useDictionarySource(field: EngineDictionaryField) {
 
   const isApiContainsDependency = source.url.match(variableRegexp);
   if (isApiContainsDependency !== null) {
-    endpoint = resolve(field, source.url, title, true);
+    endpoint = await resolve(field, source.url, title, true);
 
-    formModelStore.$subscribe(() => {
-      const temp = resolve(field, source.url, title, true);
+    formModelStore.$subscribe(async () => {
+      const temp = await resolve(field, source.url, title, true);
       if (temp.resolvedText !== endpoint.resolvedText) {
         endpoint = temp;
         debounced.load('watcher');

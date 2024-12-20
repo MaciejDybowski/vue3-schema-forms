@@ -49,7 +49,7 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { fieldProps, bindProps } = useProps();
 const { resolveExpression } = useExpression();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
-const { label } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 
@@ -160,6 +160,7 @@ function runExpressionIfExist() {
 }
 
 onMounted(async () => {
+  await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
   runCalculationIfExist();
