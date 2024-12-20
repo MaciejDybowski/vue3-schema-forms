@@ -111,7 +111,7 @@ export function useProps() {
       }
     }
 
-    //console.debug(`[props] - ${schema.key}, index=${schema.index}`);
+    //console.debug(`[props] - ${schema.key}, index=${schema.index}, props=`, props.value);
     return props;
   }
 

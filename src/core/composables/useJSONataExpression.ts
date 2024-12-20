@@ -19,6 +19,7 @@ export function useJSONataExpression() {
     if (object[keyToResolve].includes('nata(') || `${keyToResolve}Expression` in object) {
       const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) => expressionResolverListener(event, payloadIndex, keyToResolve, object, schema));
       object[`${keyToResolve}Expression`] = cloneDeep(object[keyToResolve]);
+      delete object[keyToResolve];
 
       let modelExpression = usePreparedModelForExpression(schema);
       await tryResolveExpression(keyToResolve, object, modelExpression);

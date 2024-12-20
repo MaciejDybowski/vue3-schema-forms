@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import jsonata from "jsonata";
 
 import { useNumber } from "@/core/composables/useNumber";
@@ -6,8 +7,6 @@ import { EngineField } from "@/types/engine/EngineField";
 
 import { variableRegexp } from "../engine/utils";
 import { useDateFormat } from "./useDateFormat";
-import dayjs from "dayjs";
-import { controlOrMetaKey } from "@storybook/manager-api";
 
 export function useResolveVariables() {
   const { dateFormat } = useDateFormat();
@@ -27,39 +26,14 @@ export function useResolveVariables() {
         const formModelStore = useFormModelStore(field.formId);
         const model = formModelStore.getFormModelForResolve;
 
-        if(variable.includes("[]") && field.path){
-          const splitPath = field.path?.split(".")
-          const splitVariable = variable.split(".")
-
-          console.debug(splitPath, splitVariable)
-          splitVariable.forEach((item,index) => {
-
-          })
-          // variable = splitVariable.join(".")
-
-          // to obsłużyło poziom 2 tablica w tablicy
-          console.debug(`[${field.key}] variable to resolve = `, variable)
-          console.debug(`fieldPath = ${field.path}, fieldIndex = ${field.index}`)
-
-
-          let temp = dopasujTablice(splitPath, splitVariable)
-          console.debug("temp", temp)
-          variable = temp.join(".")
-
-          variable = variable.replace("[]", `[${field.index}]`)
-          console.debug("after", variable)
-          // if(variable.includes("[]")){
-          //   variable = variable.replace(field.path, field.path+`[${field.index}]`)
-          // }
-          // to obsłużyło poziom 1 zagnieżdzenia tablicy
+        if (variable.includes("[]") && field.path) {
+          variable = fillPath(field.path, field.index as number, variable);
         }
-        //console.debug(variable)
-
 
         const nata = jsonata(variable);
         let value = await nata.evaluate(model);
 
-        value = doSthWithValue(field, value, defaultValue, title, rawNumber)
+        value = doSthWithValue(field, value, defaultValue, title, rawNumber);
         inputString = inputString.replace(match, value + "");
 
         if (!value) {
@@ -71,19 +45,28 @@ export function useResolveVariables() {
     return { resolvedText: inputString, allVariablesResolved };
   }
 
+  function fillPath(fieldPath: string, fieldIndex: number, variable: string) {
+    const splitPath = fieldPath.split(".");
+    const splitVariable = variable.split(".");
+    splitVariable.forEach((item, index) => {});
+    let temp = dopasujTablice(splitPath, splitVariable);
+    variable = temp.join(".");
+    return variable.replace("[]", `[${fieldIndex}]`);
+  }
+
   function dopasujTablice(tablicaA, tablicaB) {
     // Funkcja pomocnicza do wyodrębnienia nazwy pola bez indeksu
     function ekstraktNazwa(pole) {
-      return pole.split('[')[0];
+      return pole.split("[")[0];
     }
 
     // Iterujemy po tablicy B i próbujemy uzupełnić indeksy
-    return tablicaB.map(elementB => {
+    return tablicaB.map((elementB) => {
       // Jeśli element ma "[]", próbujemy dopasować do tablicy A
       if (elementB.includes("[]")) {
         const nazwaB = ekstraktNazwa(elementB);
         // Znajdź pierwszy pasujący element z tablicy A
-        const dopasowany = tablicaA.find(a => ekstraktNazwa(a) === nazwaB);
+        const dopasowany = tablicaA.find((a) => ekstraktNazwa(a) === nazwaB);
         // Zastąp element B, jeśli znaleziono dopasowanie
         return dopasowany || elementB;
       }
@@ -91,26 +74,8 @@ export function useResolveVariables() {
       return elementB;
     });
   }
-  function uzupelnijTablice(tablicaA, tablicaB) {
-    // Funkcja pomocnicza do wyodrębnienia nazwy pola bez nawiasów kwadratowych
-    function ekstraktNazwa(pole) {
-      return pole.replace(/\[\]$/, ""); // Usuwa końcowe "[]"
-    }
 
-    // Tworzymy nową tablicę wynikową
-    const wynik = tablicaA.map(elementA => {
-      const nazwaA = ekstraktNazwa(elementA);
-      // Sprawdzamy, czy w tablicy B istnieje element z nazwą i "[]"
-      const istniejeWTablicyB = tablicaB.some(
-        elementB => ekstraktNazwa(elementB) === nazwaA && elementB.endsWith("[]")
-      );
-      // Jeśli istnieje, dodajemy "[]", w przeciwnym razie pozostawiamy bez zmian
-      return istniejeWTablicyB ? `${nazwaA}[]` : elementA;
-    });
-    return wynik;
-  }
-
-  function doSthWithValue(field, value: any, defaultValue: any, title, rawNumber=false){
+  function doSthWithValue(field, value: any, defaultValue: any, title, rawNumber = false) {
     if (typeof value === "number" && value !== 0) {
       if (rawNumber) {
         // gdy chcemy używać liczb w adresie URL to nie może być to kropka ani nie może być to formatowane
@@ -143,5 +108,5 @@ export function useResolveVariables() {
     return value;
   }
 
-  return { resolve };
+  return { resolve, fillPath };
 }

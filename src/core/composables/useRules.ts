@@ -2,6 +2,7 @@ import jsonata from "jsonata";
 import { Ref, ref } from "vue";
 
 import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
+import { useResolveVariables } from "@/core/composables/useResolveVariables";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { SchemaSimpleValidation } from "@/types/shared/SchemaSimpleValidation";
@@ -15,6 +16,7 @@ export function useRules() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
   let rules: Ref<any[]> = ref([]);
   let requiredInputClass = ref("");
+  const { fillPath } = useResolveVariables();
 
   async function bindRules(schema: EngineField) {
     if (schema.required) {
@@ -40,57 +42,61 @@ export function useRules() {
           // listener for visualization "live" required input with red *, validation works properly without it !!
           vueSchemaFormEventBus.on((event, payloadIndex) => ruleListener(event, payloadIndex, schema, ruleDefinition));
         } else if (ruleDefinition.rule) {
-          rules.value.push(async (value: any) => {
-            // probuje uzupelnic sciezke do aktualnego wiersza w tablicy
-            if (schema.path) {
-              ruleDefinition.rule = ruleDefinition.rule?.replaceAll(schema.path + "[]", `${schema.path}[${schema.index}]`);
-            }
-            let model = useFormModelStore(schema.formId).getFormModelForResolve;
-            const nata = jsonata(ruleDefinition.rule as string);
-
-            const conditionResult = await nata.evaluate(model);
-            if (conditionResult) return true;
-            return ruleDefinition.message;
-          });
+         resolveValidationFunctionWithJSONataRule(ruleDefinition, schema)
         } else if (ruleDefinition.regexp) {
-          rules.value.push(async  (value: string) => {
-
-            const regexp = new RegExp("{([^{}]+?)}", "g");
-            let regexpString = ruleDefinition.regexp+""
-
-            const matches = regexpString.match(regexp);
-
-            if (matches) {
-              await Promise.all(
-                matches.map(async (wrappedVariable) => {
-                  const variablePathWithoutBrackets = wrappedVariable.slice(1, -1);
-
-                  if (schema.path) {
-                    ruleDefinition.rule = ruleDefinition.rule?.replaceAll(
-                      schema.path + "[]",
-                      `${schema.path}[${schema.index}]`
-                    );
-                  }
-
-                  let model = useFormModelStore(schema.formId).getFormModelForResolve;
-                  const nata = jsonata(variablePathWithoutBrackets);
-                  const result = await nata.evaluate(model);
-
-                  if (result) {
-                    regexpString = regexpString.replace(wrappedVariable, result);
-                  }
-                })
-              );
-            }
-            if (new RegExp(regexpString, "g").test(value)) {
-              return true;
-            }
-            return ruleDefinition.message;
-          });
+          resolveValidationFunctionWithRegexp(ruleDefinition, schema);
         }
       });
     }
     return rules;
+  }
+
+  async function resolveValidationFunctionWithRegexp(ruleDefinition: SchemaSimpleValidation, schema: EngineField) {
+    rules.value.push(async (value: string) => {
+      const regexp = new RegExp("{([^{}]+?)}", "g");
+      let regexpString = ruleDefinition.regexp + "";
+
+      const matches = regexpString.match(regexp);
+
+      if (matches) {
+        await Promise.all(
+          matches.map(async (wrappedVariable) => {
+            const variablePathWithoutBrackets = wrappedVariable.slice(1, -1);
+
+            if (schema.path) {
+              ruleDefinition.rule = ruleDefinition.rule?.replaceAll(schema.path + "[]", `${schema.path}[${schema.index}]`);
+            }
+
+            let model = useFormModelStore(schema.formId).getFormModelForResolve;
+            const nata = jsonata(variablePathWithoutBrackets);
+            const result = await nata.evaluate(model);
+
+            if (result) {
+              regexpString = regexpString.replace(wrappedVariable, result);
+            }
+          }),
+        );
+      }
+      if (new RegExp(regexpString, "g").test(value)) {
+        return true;
+      }
+      return ruleDefinition.message;
+    });
+  }
+
+  async function resolveValidationFunctionWithJSONataRule(ruleDefinition: SchemaSimpleValidation, schema: EngineField){
+    rules.value.push(async (value: any) => {
+      if (schema.path) {
+        ruleDefinition.rule = fillPath(schema.path, schema.index as number, ruleDefinition.rule as string);
+      }
+
+      let model = useFormModelStore(schema.formId).getFormModelForResolve;
+      const nata = jsonata(ruleDefinition.rule as string);
+
+      const conditionResult = await nata.evaluate(model);
+      if (conditionResult) return true;
+      return ruleDefinition.message;
+    });
   }
 
   async function ruleListener(event: string, payloadIndex: number, schema: EngineField, ruleDefinition: SchemaSimpleValidation) {

@@ -237,3 +237,68 @@ export const OnPropsIfInDuplicatedSection: Story = {
     } as Schema,
   },
 };
+
+export const UseJSONataFunctions: Story = {
+  name:"JSONata function in action",
+  args: {
+    modelValue: {
+      "pozycjeDokumentu": [
+        {
+          "rodzajKosztu": {"id": "213"},
+          "kwotaBrutto": 23.321
+        },
+        {
+          "rodzajKosztu": {"id": "212133"},
+          "kwotaBrutto": 100.321
+        }
+      ]
+    },
+    schema: {
+      properties: {
+        pozycjeDokumentu: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                rodzajKosztu: {
+                  label: "Rodzaj kosztu",
+                  type:"object",
+                  valueMapping: "{pozycjeDokumentu[].rodzajKosztu.id}",
+                  layout: {
+                    component: "data-viewer",
+                    cols: 6,
+                  },
+                },
+                kwotaBrutto: {
+                  label: "Kwota brutto",
+                  type: "number",
+                  precision: 3,
+                  layout: {
+                    component: "number-field",
+                    cols: 6,
+                  },
+                },
+              },
+            },
+          },
+        },
+        sklejenieRodzaj: {
+          expression:"JSONATA(pozycjeDokumentu.rodzajKosztu.id ~> $join(\",\"))",
+          label: "Próba sklejenie rodzaj expresion jsonNata",
+          layout: {
+            component: "text-field",
+            cols:6
+          }
+        },
+        sklejenieKwoty: {
+          expression:"JSONATA(pozycjeDokumentu.kwotaBrutto ~> $map(function($v) { $replace(\"limitKosztowPln>\" & $string($v), \".\", \",\")}) ~> $join(\";\"))",
+          label: "Próba sklejenie kwoty expresion jsonNata",
+          layout: {
+            component: "text-field",
+            cols:6
+          }
+        }
+      },
+    },
+  },
+};

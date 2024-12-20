@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import { parsePhoneNumber } from "libphonenumber-js";
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, ref, watch, watchEffect } from "vue";
 
 import {
   useCalculation,
@@ -68,21 +68,25 @@ watchEffect(async () => {
   localModel.value = value ? value : t("emptyValue");
 });
 
+watch(localModel, async () => {
+
+});
+
 function formatter(value: any) {
   switch (props.schema.type) {
     case "text":
-      if (!value) break;
+      if (!value || value == "null") break;
       break;
     case "number":
-      if (!value || typeof value == "string") break;
+      if (!value || typeof value == "string" || value == "null") break;
       value = formattedNumber(value, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
       break;
     case "date":
-      if (!value) break;
+      if (!value || value == "null") break;
       value = dayjs(value).format(dateFormat.value);
       break;
     case "phone":
-      if (!value) break;
+      if (!value || value == "null") break;
       value = parsePhoneNumber(value).formatNational();
       break;
     default:
@@ -93,7 +97,8 @@ function formatter(value: any) {
 
 function runCalculationIfExist() {
   if (props.schema.calculation) {
-    localModel.value = calculationFunc(props.schema, props.model);
+    const result = calculationFunc(props.schema, props.model);
+    localModel.value = formattedNumber(result as any, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
   }
 }
 
@@ -102,15 +107,16 @@ async function resolveIfDictionary() {
     const { data, load, singleOptionAutoSelect } = await useDictionarySource(props.schema as EngineDictionaryField);
 
     await load("dataViewer");
+    console.debug(data.value);
 
     if (data.value.length === 1 && singleOptionAutoSelect) {
       localModel.value = data.value[0];
     }
   }
 }
-await resolveIfDictionary();
 
 onMounted(async () => {
+  await resolveIfDictionary();
   await bindLabel(props.schema);
   runCalculationIfExist();
 });

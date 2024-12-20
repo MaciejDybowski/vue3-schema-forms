@@ -271,9 +271,7 @@ export const StandardDictionary: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
-      phone: "+48510333202",
-    },
+    modelValue: {},
     schema: {
       properties: {
         description: {
@@ -409,7 +407,6 @@ export const StandardCalcVariable: Story = {
         result: {
           label: "Result of calc",
           type: "number",
-          valueMapping: "{result}",
           layout: {
             component: "data-viewer",
           },
@@ -422,6 +419,7 @@ export const StandardCalcVariable: Story = {
 
 export const VariableInDuplicatedSection: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Currency: PLN");
     await expect(field).toBeInTheDocument();

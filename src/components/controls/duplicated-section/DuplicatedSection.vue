@@ -378,13 +378,11 @@ function wrapPropertiesWithIndexAndPath(properties: Record<string, SchemaField>,
           value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key;
         }
       } else {
-        console.debug("value", value)
         value["path"] = props.schema.key+"[]";
       }
       value["index"] = index;
     }
   }
-
   return properties;
 }
 
