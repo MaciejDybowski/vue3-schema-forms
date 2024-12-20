@@ -10,9 +10,9 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { parsePhoneNumber } from "libphonenumber-js";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { onMounted, ref, watchEffect } from "vue";
 
 import {
   useCalculation,
@@ -26,10 +26,9 @@ import {
 } from "@/core/composables";
 import { useNumber } from "@/core/composables/useNumber";
 import { EngineDataViewerField, EngineDictionaryField } from "@/types/engine/controls";
+import { useEventBus } from "@vueuse/core";
 
 import dayjs from "../date/dayjs";
-import { computedAsync, useEventBus } from "@vueuse/core";
-import { b } from "vitest/dist/suite-BWgaIsVn";
 
 const props = defineProps<{
   schema: EngineDataViewerField;
@@ -46,8 +45,7 @@ const { resolve } = useResolveVariables();
 const { calculationFunc } = useCalculation();
 
 const isValueMapping = !!props.schema.valueMapping;
-
-
+const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 const localModel = ref<any>(null);
 
@@ -57,8 +55,20 @@ watchEffect(async () => {
   if (isValueMapping) {
     const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
     value = resolvedText;
+    const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) => {
+      const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
+      value = resolvedText;
+      value = formatter(value);
+      localModel.value = value ? value : t("emptyValue");
+    });
   }
 
+  value = formatter(value);
+
+  localModel.value = value ? value : t("emptyValue");
+});
+
+function formatter(value: any) {
   switch (props.schema.type) {
     case "text":
       if (!value) break;
@@ -78,9 +88,8 @@ watchEffect(async () => {
     default:
     // console.warn("Type of data not recognized =" + props.schema.type);
   }
-
-  localModel.value = value !== "null" && !!value ? value : t("emptyValue");
-});
+  return value;
+}
 
 function runCalculationIfExist() {
   if (props.schema.calculation) {
@@ -107,7 +116,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.v-field-label--floating) {
   visibility: visible !important;
 }

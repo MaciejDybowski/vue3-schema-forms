@@ -94,8 +94,16 @@ export const step2: Story = {
               { value: 1, title: "Option 1" },
               { value: 2, title: "Option 2" },
               { value: 3, title: "Option 3" }
-            ]
+            ],
+            returnObject: true,
           }
+        },
+        divider: {
+          layout: {
+            component: "divider"
+          },
+          thickness: 10,
+          color: "blue"
         },
         fieldB: {
           content: "This is text with value of fieldA: {fieldA:Default value}",
@@ -117,7 +125,35 @@ export const step2: Story = {
             component: "static-content",
             tag: "span"
           }
-        }
+        },
+        divider2: {
+          layout: {
+            component: "divider"
+          },
+          thickness: 10,
+          color: "blue"
+        },
+        fieldE: {
+          label: "This is text with value of fieldA: {fieldA:Default value}",
+          valueMapping: "{fieldA:Default value}",
+          layout: {
+            component: "data-viewer",
+          }
+        },
+        fieldF: {
+          label: "This is text with value of fieldA: {fieldA.value:Default value}",
+          valueMapping: "{fieldA.value:Default value}",
+          layout: {
+            component: "data-viewer",
+          }
+        },
+        fieldG: {
+          label: "This is text with value of fieldA: {fieldA.title:Default value}",
+          valueMapping: "{fieldA.title:Default value}",
+          layout: {
+            component: "data-viewer",
+          }
+        },
       }
     }
   }
@@ -314,8 +350,155 @@ export const step4: Story = {
   }
 };
 
+export const step5: Story = {
+  name: "Step5. In group",
+  play: async (context) => {
+  },
+  args: {
+    modelValue: {
+      fieldA: "value in field group",
+    },
+    schema: {
+      properties: {
+        group: {
+          layout: {
+            component: "fields-group",
+            schema: {
+              properties: {
+                fieldA: {
+                  label:"Root level field",
+                  layout: {
+                    component: "text-field",
+                  }
+                },
+              }
+            }
+          }
+        },
+        divider: {
+          layout: {
+            component: "divider"
+          },
+          thickness: 20,
+          color: "blue"
+        },
+        fieldB: {
+          content: "This is text with value of fieldA: {fieldA:Default value}",
+          layout: {
+            component: "static-content",
+            tag: "span"
+          }
+        }
+      },
+    }
+  }
+};
+
+export const UseDependenciesInLabel: Story = {
+  name: "Step6. With label",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+
+    await context.step("Resolved deps on load", async () => {
+      let labelResolved = await canvas.findAllByText("Price (net)");
+      await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
+    });
+
+    await context.step("Resolved when variable changed", async () => {
+      const gross = canvas.getByLabelText("at gross prices");
+      await userEvent.click(gross, { delay: 200 });
+
+      let labelResolved = await canvas.findAllByText("Price (gross)");
+      await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
+    });
+  },
+  args: {
+    modelValue: {
+      data: {
+        items: [
+          {
+            product: "Computer",
+            quantity: 1,
+            price: 3200
+          },
+          {
+            product: "Laptop",
+            quantity: 2,
+            price: 1334.23
+          }
+        ]
+      }
+    },
+    schema: {
+      type: "object",
+      properties: {
+        invoiceMetadata: {
+          properties: {
+            pricing: {
+              label: "The invoice is issued:",
+              layout: { component: "radio-button", cols: 3, fillRow: true } as Layout,
+              default: { value: "net", title: "at net prices", formatted: "net" },
+              source: {
+                items: [
+                  { value: "net", title: "at net prices", formatted: "net" },
+                  { value: "gross", title: "at gross prices", formatted: "gross" }
+                ],
+                returnObject: true
+              } as SimpleSource
+            } as EngineSourceField
+          }
+        },
+        data: {
+          properties: {
+            items: {
+              layout: {
+                component: "duplicated-section",
+                schema: {
+                  properties: {
+                    product: { label: "Product", layout: { component: "text-field", cols: 4 } },
+                    quantity: {
+                      label: "Quantity",
+                      type: "number",
+                      default: 1,
+                      layout: { component: "text-field", cols: 2 }
+                    },
+                    price: {
+                      label: "Price ({invoiceMetadata.pricing.formatted})",
+                      type: "number",
+                      layout: { component: "text-field", cols: 3 }
+                    },
+                    value: {
+                      label: "Value",
+                      type: "number",
+                      layout: { component: "text-field", cols: 3 },
+                      calculation: "quantity * price"
+                    } as SchemaTextField
+                  }
+                }
+              } as Layout
+            }
+          }
+        },
+        summary: {
+          properties: {
+            sumValue: {
+              label: "SUM(Value)",
+              layout: {
+                component: "text-field",
+                cols: 4
+              },
+              calculation: "SUM(value,data.items) - 300",
+              type: "number"
+            } as SchemaTextField
+          }
+        }
+      }
+    } as Schema
+  }
+};
 
 export const UseFormVariablesInFieldProps: Story = {
+  name: "Step7. In props",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -429,109 +612,9 @@ export const UseFormVariablesInFieldProps: Story = {
   }
 };
 
-export const UseDependenciesInLabel: Story = {
-  play: async (context) => {
-    const canvas = within(context.canvasElement);
-
-    await context.step("Resolved deps on load", async () => {
-      let labelResolved = await canvas.findAllByText("Price (net)");
-      await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
-    });
-
-    await context.step("Resolved when variable changed", async () => {
-      const gross = canvas.getByLabelText("at gross prices");
-      await userEvent.click(gross, { delay: 200 });
-
-      let labelResolved = await canvas.findAllByText("Price (gross)");
-      await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
-    });
-  },
-  args: {
-    modelValue: {
-      data: {
-        items: [
-          {
-            product: "Computer",
-            quantity: 1,
-            price: 3200
-          },
-          {
-            product: "Laptop",
-            quantity: 2,
-            price: 1334.23
-          }
-        ]
-      }
-    },
-    schema: {
-      type: "object",
-      properties: {
-        invoiceMetadata: {
-          properties: {
-            pricing: {
-              label: "The invoice is issued:",
-              layout: { component: "radio-button", cols: 3, fillRow: true } as Layout,
-              default: { value: "net", title: "at net prices", formatted: "net" },
-              source: {
-                items: [
-                  { value: "net", title: "at net prices", formatted: "net" },
-                  { value: "gross", title: "at gross prices", formatted: "gross" }
-                ],
-                returnObject: true
-              } as SimpleSource
-            } as EngineSourceField
-          }
-        },
-        data: {
-          properties: {
-            items: {
-              layout: {
-                component: "duplicated-section",
-                schema: {
-                  properties: {
-                    product: { label: "Product", layout: { component: "text-field", cols: 4 } },
-                    quantity: {
-                      label: "Quantity",
-                      type: "number",
-                      default: 1,
-                      layout: { component: "text-field", cols: 2 }
-                    },
-                    price: {
-                      label: "Price ({invoiceMetadata.pricing.formatted})",
-                      type: "number",
-                      layout: { component: "text-field", cols: 3 }
-                    },
-                    value: {
-                      label: "Value",
-                      type: "number",
-                      layout: { component: "text-field", cols: 3 },
-                      calculation: "quantity * price"
-                    } as SchemaTextField
-                  }
-                }
-              } as Layout
-            }
-          }
-        },
-        summary: {
-          properties: {
-            sumValue: {
-              label: "SUM(Value)",
-              layout: {
-                component: "text-field",
-                cols: 4
-              },
-              calculation: "SUM(value,data.items) - 300",
-              type: "number"
-            } as SchemaTextField
-          }
-        }
-      }
-    } as Schema
-  }
-};
 
 export const UseVariableDependencyWithFallbackMessage: Story = {
+  name: "Example of fallback message",
   play: async (context) => {
     const canvas = within(context.canvasElement);
 

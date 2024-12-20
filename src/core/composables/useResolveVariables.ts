@@ -60,10 +60,7 @@ export function useResolveVariables() {
         let value = await nata.evaluate(model);
 
         value = doSthWithValue(field, value, defaultValue, title, rawNumber)
-
         inputString = inputString.replace(match, value + "");
-
-        console.debug(inputString)
 
         if (!value) {
           allVariablesResolved = false;
