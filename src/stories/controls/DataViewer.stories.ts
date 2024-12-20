@@ -418,3 +418,57 @@ export const StandardCalcVariable: Story = {
     } as Schema,
   },
 };
+
+export const VariableInDuplicatedSection: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const field = canvas.getByText("Currency: PLN");
+    await expect(field).toBeInTheDocument();
+  },
+  args: {
+    modelValue: {
+      a: 4000.25,
+      b: 100,
+      currency: {
+        id: "PLN",
+        rate: 32.1,
+      },
+    },
+    schema: {
+      properties: {
+        currency: {
+          properties: {
+            id: {
+              label: "Currency",
+              layout: {
+                component: "text-field",
+              }
+            },
+            rate: {
+              label: "Rate",
+              layout: {
+                component: "number-field",
+              }
+            }
+          }
+        },
+        items: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                testField: {
+                  label: "Currency: {currency.id}",
+                  valueMapping: "{currency.rate}",
+                  layout: {
+                    component: "data-viewer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    } as Schema,
+  },
+};
