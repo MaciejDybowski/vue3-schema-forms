@@ -137,6 +137,7 @@ export const StandardDate: Story = {
         date: {
           label: "Read value from model [date]",
           type: "date",
+          valueMapping: "{date}",
           layout: {
             component: "data-viewer",
           },

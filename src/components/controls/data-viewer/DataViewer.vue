@@ -55,18 +55,18 @@ const localModel = computed({
     }
     switch (props.schema.type) {
       case "text" :
-        if (!value) break;
+        if (!value || value == "null") break;
         break;
       case "number":
-        if (!value) break;
+        if (!value || value == "null") break;
         value = formattedNumber(value, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
         break;
       case "date":
-        if (!value) break;
+        if (!value || value == "null") break;
         value = dayjs(value).format(dateFormat.value);
         break;
       case "phone":
-        if (!value) break;
+        if (!value || value == "null") break;
         value = parsePhoneNumber(value).formatNational();
         break;
       default:
