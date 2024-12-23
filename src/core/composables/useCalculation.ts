@@ -1,4 +1,3 @@
-import { Expression } from "expr-eval";
 import jsonata from "jsonata";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -9,8 +8,6 @@ import { logger, useResolveVariables } from "@/main";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { Fn, useEventBus } from "@vueuse/core";
-
-import betterParser, { SUM } from "../engine/evalExprParser";
 
 export function useCalculation() {
   const { roundTo } = useNumber();
@@ -69,11 +66,6 @@ export function useCalculation() {
       }
       set(model, field.key, roundTo(result, precision));
     }
-  }
-
-  function prepareCalcExpression(calculation: string, mergedModel: object): Expression {
-    calculation = SUM(calculation, mergedModel);
-    return betterParser.parse(calculation);
   }
 
   return { calculationFunc, unsubscribeListener, calculationResultWasModified };

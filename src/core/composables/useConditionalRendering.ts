@@ -1,7 +1,5 @@
-import { Expression, Value } from "expr-eval";
 import jsonata from "jsonata";
 import { cloneDeep } from "lodash";
-import get from "lodash/get";
 import set from "lodash/set";
 import { ref } from "vue";
 
@@ -9,8 +7,6 @@ import { logger } from "@/main";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { useEventBus } from "@vueuse/core";
-
-import betterParser from "../engine/evalExprParser";
 
 export function useConditionalRendering() {
   let shouldRender = ref(true);
@@ -31,22 +27,11 @@ export function useConditionalRendering() {
 
     if (!shouldRender.value) {
       originalIf.value = cloneDeep(schema.layout.if);
-      if (schema.layout.if !== undefined && schema.layout.if?.includes("nata-")) {
-        await ifByJsonNata(schema.layout.if.replace("nata-", ""), schema.key, model);
-      } else {
-        ifByEvalExpression(schema.layout.if as string, schema.key, model);
-      }
-    }
-  }
-
-  function ifByEvalExpression(expression: string, key: string, model: any) {
-    let myExpr: Expression = betterParser.parse(expression);
-    if (myExpr.variables({ withMembers: true }).every((variable) => get(model, variable, null) !== null)) {
-      shouldRender.value = myExpr.evaluate(model as Value);
-      resetModelValueWhenFalse(model, key);
-    } else {
-      if (lastValueOfShouldRender.value) {
-        set(model, key, null);
+      if (schema.layout.if !== undefined && schema.layout.if?.includes("nata(")) {
+        const match = schema.layout.if.match(/^nata\((.*)\)$/);
+        if(match){
+          await ifByJsonNata(match[1], schema.key, model);
+        }
       }
     }
   }

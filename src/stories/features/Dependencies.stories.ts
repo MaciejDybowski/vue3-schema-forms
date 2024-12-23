@@ -5,16 +5,13 @@ import { StoryTemplateWithValidation } from "@/stories/templates/story-template"
 import { expect, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
+
+
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema, SchemaOptions } from "../../types/schema/Schema";
-import {
-  DictionarySource,
-  Layout,
-  SchemaSourceField,
-  SchemaTextField,
-  SimpleSource
-} from "../../types/schema/elements";
+import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "../../types/schema/elements";
 import { waitForMountedAsync } from "../controls/utils";
+
 
 const meta = {
   title: "Forms/Features/Dependencies",
@@ -668,4 +665,178 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
       }
     } as Schema
   }
+};
+
+export const ComplexExample: Story = {
+  args: {
+    modelValue: {
+      dataId: "#01",
+      name: "Main name",
+      products: [
+        {
+          dataId: "1",
+          name: "Test",
+          description: "Test",
+          items: [{ item: "Test" }],
+        },
+        {
+          dataId: "2",
+          name: "Test2",
+          description: "Test2",
+          items: [{ item: "Test2" }],
+        },
+      ],
+      products2: [
+        {
+          dataId: "1",
+          name: "Test",
+          description: "Test",
+          items: [{ item: "Test" }],
+        },
+        {
+          dataId: "2",
+          name: "Test2",
+          description: "Test2",
+          items: [{ item: "Test2" }],
+        },
+      ],
+    },
+    schema: {
+      properties: {
+        dataId: {
+          label: "DataId {dataId}",
+          layout: {
+            component: "text-field",
+          },
+        },
+        name: {
+          label: "Name",
+          layout: {
+            component: "text-field",
+          },
+        },
+        products: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                dataId: {
+                  label: "dataId",
+                  layout: {
+                    component: "text-field",
+                    cols: 3,
+                  },
+                },
+                name: {
+                  label: "name",
+                  layout: {
+                    component: "text-field",
+                    cols: 3,
+                  },
+                },
+                merge2: {
+                  content: "{dataId} main, {products[].dataId} - w section",
+                  layout: {
+                    component: "static-content",
+                    tag: "span",
+                    cols: 3,
+                  },
+                },
+                items: {
+                  layout: {
+                    component: "duplicated-section",
+                    schema: {
+                      properties: {
+                        item: {
+                          label: "Item",
+                          layout: {
+                            component: "text-field",
+                            cols: 6,
+                          },
+                        },
+                        turboMerge: {
+                          content: "{dataId} main, {products[].dataId} section, {products[].items[].item}",
+                          layout: {
+                            component: "static-content",
+                            tag: "span",
+                            cols: 3,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        group: {
+          layout: {
+            component: "fields-group",
+            cols: 6,
+            schema: {
+              properties: {
+                products2: {
+                  layout: {
+                    component: "duplicated-section",
+                    schema: {
+                      properties: {
+                        dataId: {
+                          label: "dataId",
+                          layout: {
+                            component: "text-field",
+                            cols: 3,
+                          },
+                        },
+                        name: {
+                          label: "name",
+                          layout: {
+                            component: "text-field",
+                            cols: 3,
+                          },
+                        },
+                        merge2: {
+                          content: "{dataId} głowne, {products[].dataId} - w sekcji",
+                          layout: {
+                            component: "static-content",
+                            tag: "span",
+                            cols: 3,
+                          },
+                        },
+                        items: {
+                          layout: {
+                            component: "duplicated-section",
+                            schema: {
+                              properties: {
+                                item: {
+                                  label: "Item",
+                                  layout: {
+                                    component: "text-field",
+                                    cols: 6,
+                                  },
+                                },
+                                turboMerge: {
+                                  content: "{dataId} głowne, {products[].dataId} sekcja, {products[].items[].item}",
+                                  layout: {
+                                    component: "static-content",
+                                    tag: "span",
+                                    cols: 3,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
