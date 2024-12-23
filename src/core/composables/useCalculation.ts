@@ -1,11 +1,12 @@
-import { Expression, Value } from "expr-eval";
+import { Expression } from "expr-eval";
+import jsonata from "jsonata";
 import get from "lodash/get";
 import set from "lodash/set";
 import { ref } from "vue";
 
 import { useNumber } from "@/core/composables/useNumber";
-import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
-import { logger } from "@/main";
+import { logger, useResolveVariables } from "@/main";
+import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { Fn, useEventBus } from "@vueuse/core";
 
@@ -16,53 +17,58 @@ export function useCalculation() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
   const unsubscribeListener = ref<Fn>(() => {});
   const calculationResultWasModified = ref(false);
+  const { fillPath } = useResolveVariables();
 
-  function calculationFunc(field: EngineField, model: any): number | null {
-    let mergedModel = usePreparedModelForExpression(field);
+  async function calculationFunc(field: EngineField, model: any): Promise<number | null> {
+    const formModelStore = useFormModelStore(field.formId);
+    const mergedModel = formModelStore.getFormModelForResolve;
+
     const precision = field.precision ? Number(field.precision) : 2;
 
     let result = ref(0);
     let calculation = field.calculation as string;
 
-    unsubscribeListener.value = vueSchemaFormEventBus.on((event, payloadIndex) =>
-      calculationListener(event, payloadIndex, field, model),
+    unsubscribeListener.value = vueSchemaFormEventBus.on(
+      async (event, payloadIndex) => await calculationListener(event, payloadIndex, field, model),
     );
 
-    let myExpr: Expression = prepareCalcExpression(calculation, mergedModel);
-
-    if (myExpr.variables().every((variable) => variable in mergedModel)) {
-      result.value = myExpr.evaluate(mergedModel as Value);
+    try {
+      calculation = fillPath(field.path as string, field.index as number, calculation);
+      const nata = jsonata(calculation);
+      result.value = await nata.evaluate(mergedModel);
+    } catch (error) {
+      result.value = 0;
     }
 
     return roundTo(result.value, precision);
   }
 
   async function calculationListener(event: string, payloadIndex: number, field: EngineField, model: any) {
-    //if (field.index == undefined || field.index == payloadIndex) {
-    if (field.index == undefined) {
-      // TODO - opoźnianie dla sum i obliczeń zbiorowych nie wiem czy to tak do końca powinno być
-      await new Promise((r) => setTimeout(r, 1));
-    }
+    await new Promise((r) => setTimeout(r, 1));
     if (logger.calculationListener)
       console.debug(`[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}`);
     let calculation = field.calculation as string;
     const precision = field.precision ? Number(field.precision) : 2;
-    const mergedModel = usePreparedModelForExpression(field);
-    let myExpr: Expression = prepareCalcExpression(calculation, mergedModel);
-    if (myExpr.variables().every((variable) => variable in mergedModel)) {
 
-      const result = myExpr.evaluate(mergedModel as Value);
-      if (logger.calculationListener)
-        console.debug(`[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}, result=${result}`);
-      const currentValue = get(model, field.key, null);
-      if (result !== currentValue) {
-        if (`${field.key}ManuallyChanged` in mergedModel && mergedModel[`${field.key}ManuallyChanged`] == true) {
-          return;
-        }
-        set(model, field.key, roundTo(result, precision));
-      }
+    const formModelStore = useFormModelStore(field.formId);
+    const mergedModel = formModelStore.getFormModelForResolve;
+    let result = 0;
+    try {
+      calculation = fillPath(field.path as string, field.index as number, calculation);
+      const nata = jsonata(calculation);
+
+      result = await nata.evaluate(mergedModel);
+    } catch (error) {
+      result = 0;
     }
-    //}
+
+    const currentValue = get(model, field.key, null);
+    if (result !== currentValue) {
+      if (`${field.key}ManuallyChanged` in mergedModel && mergedModel[`${field.key}ManuallyChanged`] == true) {
+        return;
+      }
+      set(model, field.key, roundTo(result, precision));
+    }
   }
 
   function prepareCalcExpression(calculation: string, mergedModel: object): Expression {

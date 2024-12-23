@@ -1,7 +1,6 @@
 import jsonata from "jsonata";
 import { Ref, ref } from "vue";
 
-import { usePreparedModelForExpression } from "@/core/composables/usePreparedModelForExpression";
 import { useResolveVariables } from "@/core/composables/useResolveVariables";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
@@ -42,7 +41,7 @@ export function useRules() {
           // listener for visualization "live" required input with red *, validation works properly without it !!
           vueSchemaFormEventBus.on((event, payloadIndex) => ruleListener(event, payloadIndex, schema, ruleDefinition));
         } else if (ruleDefinition.rule) {
-         resolveValidationFunctionWithJSONataRule(ruleDefinition, schema)
+          resolveValidationFunctionWithJSONataRule(ruleDefinition, schema);
         } else if (ruleDefinition.regexp) {
           resolveValidationFunctionWithRegexp(ruleDefinition, schema);
         }
@@ -84,7 +83,7 @@ export function useRules() {
     });
   }
 
-  async function resolveValidationFunctionWithJSONataRule(ruleDefinition: SchemaSimpleValidation, schema: EngineField){
+  async function resolveValidationFunctionWithJSONataRule(ruleDefinition: SchemaSimpleValidation, schema: EngineField) {
     rules.value.push(async (value: any) => {
       if (schema.path) {
         ruleDefinition.rule = fillPath(schema.path, schema.index as number, ruleDefinition.rule as string);
@@ -100,7 +99,8 @@ export function useRules() {
   }
 
   async function ruleListener(event: string, payloadIndex: number, schema: EngineField, ruleDefinition: SchemaSimpleValidation) {
-    let model = usePreparedModelForExpression(schema);
+    const formModelStore = useFormModelStore(schema.formId);
+    const model = formModelStore.getFormModelForResolve;
     const nata = jsonata(ruleDefinition.rule as string);
     const conditionResult = await nata.evaluate(model);
     if (conditionResult) {
@@ -112,7 +112,8 @@ export function useRules() {
 
   function conditionalRequired(schema: EngineField, ruleDefinition: SchemaSimpleValidation, rules: Ref<any[]>) {
     rules.value.push(async (currentValue: any) => {
-      let model = usePreparedModelForExpression(schema);
+      const formModelStore = useFormModelStore(schema.formId);
+      const model = formModelStore.getFormModelForResolve;
       const nata = jsonata(ruleDefinition.rule as string);
       const conditionResult = await nata.evaluate(model);
 

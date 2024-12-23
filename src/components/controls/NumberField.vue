@@ -143,12 +143,12 @@ function focusin() {
   showFormattedNumber.value = false;
 }
 
-function runCalculationIfExist() {
+async function runCalculationIfExist() {
   if (isCalculationDefined.value) {
     if (isValueFromModelAndNotChangedManually.value) {
-      localModel.value = calculationFunc(props.schema, props.model);
+      localModel.value = await calculationFunc(props.schema, props.model);
     } else {
-      calculationFunc(props.schema, props.model);
+      await calculationFunc(props.schema, props.model);
     }
   }
 }
@@ -163,7 +163,7 @@ onMounted(async () => {
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
-  runCalculationIfExist();
+  await runCalculationIfExist();
   runExpressionIfExist();
 });
 </script>

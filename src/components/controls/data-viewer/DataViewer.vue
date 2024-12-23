@@ -5,14 +5,14 @@
     </label>
     <div
       class="v-field__input"
-      v-html="localModel"
+      v-html="localModelForValueMapping ? localModelForValueMapping : localModel"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { parsePhoneNumber } from "libphonenumber-js";
-import { onMounted, ref, watch, watchEffect } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 import {
   useCalculation,
@@ -46,30 +46,35 @@ const { calculationFunc } = useCalculation();
 
 const isValueMapping = !!props.schema.valueMapping;
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
+const localModelForValueMapping = ref<any>(null)
+const localModel = computed({
+  get(): string | number {
+    let value = getValue(props.model, props.schema);
 
-const localModel = ref<any>(null);
-
-watchEffect(async () => {
-  let value = getValue(props.model, props.schema);
-
-  if (isValueMapping) {
-    const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
-    value = resolvedText;
-    const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) => {
-      const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
-      value = resolvedText;
-      value = formatter(value);
-      localModel.value = value ? value : t("emptyValue");
-    });
-  }
-
-  value = formatter(value);
-
-  localModel.value = value ? value : t("emptyValue");
-});
-
-watch(localModel, async () => {
-
+    switch (props.schema.type) {
+      case "text":
+        if (!value || value == "null") break;
+        break;
+      case "number":
+        if (!value || value == "null") break;
+        value = formattedNumber(value, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
+        break;
+      case "date":
+        if (!value || value == "null") break;
+        value = dayjs(value).format(dateFormat.value);
+        break;
+      case "phone":
+        if (!value || value == "null") break;
+        value = parsePhoneNumber(value).formatNational();
+        break;
+      default:
+      //console.warn("Type of data not recognized =" + props.schema.type);
+    }
+    return value !== "null" && !!value ? value : t("emptyValue");
+  },
+  set(val: any) {
+    setValue(val, props.schema);
+  },
 });
 
 function formatter(value: any) {
@@ -95,10 +100,9 @@ function formatter(value: any) {
   return value;
 }
 
-function runCalculationIfExist() {
+async function runCalculationIfExist() {
   if (props.schema.calculation) {
-    const result = calculationFunc(props.schema, props.model);
-    localModel.value = formattedNumber(result as any, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
+    localModel.value = await calculationFunc(props.schema, props.model);
   }
 }
 
@@ -107,18 +111,33 @@ async function resolveIfDictionary() {
     const { data, load, singleOptionAutoSelect } = await useDictionarySource(props.schema as EngineDictionaryField);
 
     await load("dataViewer");
-    console.debug(data.value);
 
     if (data.value.length === 1 && singleOptionAutoSelect) {
       localModel.value = data.value[0];
+      setValue(localModel.value, props.schema);
     }
   }
+}
+
+if (isValueMapping) {
+  const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) => {
+    const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
+    if (localModel.value !== resolvedText) {
+      const result = formatter(resolvedText)
+      localModelForValueMapping.value = result;
+    }
+  });
 }
 
 onMounted(async () => {
   await resolveIfDictionary();
   await bindLabel(props.schema);
-  runCalculationIfExist();
+  await runCalculationIfExist();
+  if (isValueMapping) {
+    const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
+    const result = formatter(resolvedText)
+    localModelForValueMapping.value = result;
+  }
 });
 </script>
 

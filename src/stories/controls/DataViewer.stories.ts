@@ -412,6 +412,13 @@ export const StandardCalcVariable: Story = {
           },
           calculation: "a + b",
         },
+        result2: {
+          label: "Result of calc 2",
+          valueMapping: "{result} {currency.id}",
+          layout: {
+            component: "data-viewer",
+          },
+        },
       },
     } as Schema,
   },

@@ -25,7 +25,6 @@ export function useResolveVariables() {
 
         const formModelStore = useFormModelStore(field.formId);
         const model = formModelStore.getFormModelForResolve;
-
         if (variable.includes("[]") && field.path) {
           variable = fillPath(field.path, field.index as number, variable);
         }
@@ -46,31 +45,29 @@ export function useResolveVariables() {
   }
 
   function fillPath(fieldPath: string, fieldIndex: number, variable: string) {
+    if(fieldPath == undefined && fieldPath == undefined) {
+      return variable;
+    }
     const splitPath = fieldPath.split(".");
     const splitVariable = variable.split(".");
+    //console.debug(splitVariable, splitPath)
     splitVariable.forEach((item, index) => {});
     let temp = dopasujTablice(splitPath, splitVariable);
     variable = temp.join(".");
-    return variable.replace("[]", `[${fieldIndex}]`);
+    return variable.replaceAll("[]", `[${fieldIndex}]`);
   }
 
   function dopasujTablice(tablicaA, tablicaB) {
-    // Funkcja pomocnicza do wyodrębnienia nazwy pola bez indeksu
+
     function ekstraktNazwa(pole) {
       return pole.split("[")[0];
     }
-
-    // Iterujemy po tablicy B i próbujemy uzupełnić indeksy
     return tablicaB.map((elementB) => {
-      // Jeśli element ma "[]", próbujemy dopasować do tablicy A
       if (elementB.includes("[]")) {
         const nazwaB = ekstraktNazwa(elementB);
-        // Znajdź pierwszy pasujący element z tablicy A
         const dopasowany = tablicaA.find((a) => ekstraktNazwa(a) === nazwaB);
-        // Zastąp element B, jeśli znaleziono dopasowanie
         return dopasowany || elementB;
       }
-      // Jeśli element nie ma "[]", przepisz go bez zmian
       return elementB;
     });
   }

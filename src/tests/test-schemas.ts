@@ -194,18 +194,18 @@ export const invoicePositionsSchema: Schema = {
             },
             quantity: {
               label: "Quantity",
-              layout: { component: "text-field", cols: 1 },
+              layout: { component: "number-field", cols: 1 },
               type: "number",
             },
             netPrice: {
               label: "Net price",
-              layout: { component: "text-field", cols: 2 },
+              layout: { component: "number-field", cols: 2 },
             },
             tax: { label: "Tax", layout: { component: "text-field", cols: 3 } },
             summary: {
               label: "Summary",
-              layout: { component: "text-field", cols: 3 },
-              calculation: "quantity * (netPrice+netPrice*tax)",
+              layout: { component: "number-field", cols: 3 },
+              calculation: "invoiceItems[].quantity * (invoiceItems[].netPrice+invoiceItems[].netPrice*invoiceItems[].tax)",
             } as SchemaTextField,
           },
         },
