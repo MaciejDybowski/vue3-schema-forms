@@ -48,21 +48,12 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, watch } from "vue";
-import { useI18n } from "vue-i18n";
 
+import { useEventHandler } from "@/core/composables/useEventHandler";
 import { EngineDictionaryField } from "@/types/engine/controls";
 
-import {
-  useClass,
-  useDictionarySource,
-  useFormModel,
-  useLabel,
-  useLocale,
-  useProps,
-  useRules
-} from "../../core/composables";
+import { useClass, useDictionarySource, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
 import BaseAutocomplete from "./base/BaseAutocomplete.vue";
-import { useEventHandler } from "@/core/composables/useEventHandler";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -74,7 +65,7 @@ const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
-const {onChange} = useEventHandler()
+const { onChange } = useEventHandler();
 
 const localModel = computed({
   get(): any {
@@ -101,7 +92,7 @@ const {
 } = useDictionarySource(props.schema);
 
 onMounted(async () => {
-  await bindRules(props.schema)
+  await bindRules(props.schema);
   await bindProps(props.schema);
 
   if (localModel.value) {
@@ -109,20 +100,20 @@ onMounted(async () => {
   }
 
   if (data.value.length === 1 && singleOptionAutoSelect) {
-    if(returnObject){
+    if (returnObject) {
       localModel.value = data.value[0];
     } else {
-      localModel.value = data.value[0][value]
+      localModel.value = data.value[0][value];
     }
   }
 
   watch(data, () => {
     if (data.value.length === 1 && singleOptionAutoSelect) {
       if (JSON.stringify(localModel.value) !== JSON.stringify(data.value[0])) {
-        if(returnObject){
+        if (returnObject) {
           localModel.value = data.value[0];
         } else {
-          localModel.value = data.value[0][value]
+          localModel.value = data.value[0][value];
         }
       }
     }
@@ -143,7 +134,11 @@ function updateQuery(val: any) {
 }
 
 async function fetchDictionaryData() {
-  if (data.value.length == 0 && (!fieldProps.value.readonly)) {
+  /*
+    <=1 - próba dla słowników, które mają już wybraną wartość, żeby po kliknięciu nie była ta jedna a jakiś zestaw
+     danych słownikowych, dodatkowo w useDictionarySource dodałem też, że query jest wyzględniane gdy data > 1
+   */
+  if (data.value.length <= 1 && !fieldProps.value.readonly) {
     await load("autocomplete");
   }
 }
