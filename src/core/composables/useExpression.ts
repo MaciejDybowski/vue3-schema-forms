@@ -47,7 +47,6 @@ export function useExpression() {
     if (functionName) {
       let f = functions[functionName];
       const result = await f(expression, model);
-      console.debug(model,result)
       const currentValue = get(model, key, null);
       if (result !== currentValue) {
         set(model, key, result);

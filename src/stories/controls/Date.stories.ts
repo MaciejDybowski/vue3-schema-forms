@@ -98,7 +98,6 @@ export const PickFromMenu: Story = {
     const canvas = within(context.canvasElement);
     //const field = canvas.getByLabelText('Date');
     const icon = document.getElementsByClassName("mdi-calendar");
-    console.debug(icon);
     await userEvent.click(icon[0]);
 
     const dateButton = document.getElementsByClassName("v-btn__content");

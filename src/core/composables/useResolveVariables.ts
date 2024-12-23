@@ -50,7 +50,6 @@ export function useResolveVariables() {
     }
     const splitPath = fieldPath.split(".");
     const splitVariable = variable.split(".");
-    //console.debug(splitVariable, splitPath)
     splitVariable.forEach((item, index) => {});
     let temp = dopasujTablice(splitPath, splitVariable);
     variable = temp.join(".");
