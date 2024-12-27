@@ -3,6 +3,8 @@ import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
+import { expect, userEvent, within } from "@storybook/test";
+import { Schema } from "../types/schema/Schema";
 
 const meta = {
   title: "Development Page",
@@ -28,6 +30,17 @@ type Story = StoryObj<typeof meta>;
 
 
 
-
-
-
+export const TableView: Story = {
+  args: {
+    schema: {
+      type: "object",
+      properties: {
+        textArea: {
+          layout: {
+            component: "table",
+          },
+        },
+      },
+    } as Schema,
+  },
+};

@@ -24,6 +24,7 @@ import DateTimePicker from "./date/DateTimePicker.vue";
 import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
 import GroupOfFields from "@/components/controls/fields-group/FieldsGroup.vue";
 import Image from "@/components/controls/Image.vue";
+import TableField from "@/components/controls/table/TableField.vue";
 
 
 export const vueSchemaFromControls: Components = {
@@ -48,5 +49,6 @@ export const vueSchemaFromControls: Components = {
   divider: Divider,
 /*  "image-preview": ImagePreview,*/
   "image": Image,
-  "fields-group": GroupOfFields
+  "fields-group": GroupOfFields,
+  "table": TableField
 };
