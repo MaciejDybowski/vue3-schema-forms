@@ -7,21 +7,21 @@ export type NumberFormattingType = "decimal" | "currency" | "percent";
 export type NumberFormatterOptions = {
   currency: string;
 };
-
+// TODO - uprzątnąć te options bo to nikomu niepotrzebne, zrobić tak jak zrobiłem na tabelce no i trzeba ogarnąć sterowanie min/max digits
 export function useNumber(options?: NumberFormatterOptions) {
   const { n, numberFormats } = useI18n();
 
   const decimal = (precision: number) => {
     return {
       style: "decimal",
-      minimumFractionDigits: 0,
+      minimumFractionDigits: precision,
       maximumFractionDigits: precision,
     };
   };
   const percent = (precision: number) => {
     return {
       style: "percent",
-      minimumFractionDigits: 0,
+      minimumFractionDigits: precision,
       maximumFractionDigits: precision,
     };
   };
@@ -30,7 +30,7 @@ export function useNumber(options?: NumberFormatterOptions) {
       style: "currency",
       currency: currency,
       notation: "standard",
-      minimumFractionDigits: 0,
+      minimumFractionDigits: precision,
       maximumFractionDigits: precision,
     };
   };
