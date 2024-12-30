@@ -18,6 +18,7 @@
       class="d-flex align-center"
     >
       <v-text-field
+        ref="editableCellRef"
         v-model="model"
         clearable
         v-bind="{
@@ -25,9 +26,9 @@
           density: 'compact',
           autofocus: true,
         }"
-        @blur="debounced.save"
+        @blur="debounced.save(false)"
         @click:append-inner="model = null"
-        @keyup.enter="debounced.save"
+        @keyup.enter="editableCellRef ? editableCellRef.blur() : null"
         @keyup.esc="showInput = false"
       />
     </div>
@@ -37,18 +38,26 @@
 <script lang="ts" setup>
 import { debounce } from "lodash";
 import { ref, useAttrs } from "vue";
+import { VTextField } from "vuetify/lib/components/index.mjs";
 
 const model = defineModel();
+const emit = defineEmits<{
+  (e: "update:row", val: any): void;
+}>();
 const attrs = useAttrs();
 const showInput = ref(false);
-
+const editableCellRef = ref<InstanceType<typeof VTextField>>();
 const debounced = {
   save: debounce(saveValue, 100),
 };
+const isSaving = ref(false);
 
 async function saveValue() {
   try {
     console.debug(`Trying save value ${model.value} to API`);
+    // TODO API call and response = full row
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    emit("update:row", { location: model.value });
   } catch (e) {
     console.error(e);
   } finally {

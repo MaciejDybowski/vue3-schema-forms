@@ -1,40 +1,48 @@
 env:
   browser: true
-  es2022: true # Vuetify recommended
+  es2022: true # Ensures compatibility with modern JavaScript features
   node: true
+
 extends:
-  - plugin:vue/vue3-recommended
-  - standard-with-typescript
-  - plugin:import/recommended
-  - plugin:import/typescript
-  - plugin:vuejs-accessibility/recommended
-  - plugin:vuetify/base
-  - plugin:yaml/recommended
-  - "@vue/eslint-config-prettier"
+  - plugin:vue/vue3-recommended # Recommended rules for Vue 3
+  - standard-with-typescript # Standard.js with TypeScript support
+  - plugin:import/recommended # Rules for import/export syntax
+  - plugin:import/typescript # Enhances TypeScript module resolution
+  - plugin:vuejs-accessibility/recommended # Enforces accessibility best practices in Vue
+  - plugin:vuetify/base # Ensures Vuetify best practices
+  - plugin:yaml/recommended # YAML file linting rules
+  - "@vue/eslint-config-prettier" # Disables conflicting Prettier rules
+
 overrides:
   - files:
       - "*.html"
-    processor: vue/.vue
-parser: vue-eslint-parser
+    processor: vue/.vue # Allows linting within Vue <template> blocks
+
+parser: vue-eslint-parser # Required parser for Vue files
 parserOptions:
-  ecmaVersion: latest
-  parser: "@typescript-eslint/parser"
-  sourceType: module
-  createDefaultProgram: true
+  ecmaVersion: latest # Use the latest ECMAScript features
+  parser: "@typescript-eslint/parser" # TypeScript parser
+  sourceType: module # Enables ES Modules
+  createDefaultProgram: true # Useful for TypeScript type-checking
   project:
     - ./tsconfig.app.json
     - ./tsconfig.node.json
   extraFileExtensions:
     - .vue
+
 plugins:
-  - import
-  - tsdoc
-  - html
-  - yaml
-  - vue
+  - import # Handles import/export rules
+  - tsdoc # Lints TypeScript doc comments
+  - html # Enables linting in inline scripts within HTML
+  - yaml # For YAML files
+  - vue # Vue-specific rules
+
 rules:
-  require-jsdoc: warn
-  no-unused-vars: warn
+  # General rules
+  require-jsdoc: warn # Encourage documentation comments
+  no-unused-vars: warn # Warn on unused variables
+
+  # TypeScript-specific rules
   "@typescript-eslint/array-type":
     - error
     - default: array
@@ -43,31 +51,61 @@ rules:
   "@typescript-eslint/no-confusing-void-expression": off
   "@typescript-eslint/no-dynamic-delete": off
   "@typescript-eslint/no-extraneous-class": off
-  "@typescript-eslint/no-floating-promises": off
+  "@typescript-eslint/no-floating-promises": warn # Detect unhandled promises
   "@typescript-eslint/prefer-nullish-coalescing": off
   "@typescript-eslint/strict-boolean-expressions": off
   "@typescript-eslint/triple-slash-reference": off
+
+  # Import rules
   import/default: off
-  import/no-default-export: off
-  tsdoc/syntax: warn
+  import/no-default-export: warn # Prefer named exports for consistency
+  import/order: # Enforce a specific order for imports
+    - error
+    - groups:
+        - type
+        - builtin
+        - external
+        - internal
+        - parent
+        - sibling
+        - index
+      alphabetize: # Correct indentation
+        order: asc
+        caseInsensitive: true
+
+  # Vue-specific rules
   vue/html-self-closing:
     - error
     - html:
-        void: always
+        void: always # Ensure self-closing tags for void elements
   vue/multi-word-component-names: warn
-  vue/no-template-shadow: off # for Vuetify tooltip fix
-  vuetify/no-deprecated-components: warn # for Vuetify Labs Fix (v-data-tables etc.)
+  vue/no-template-shadow: off # Allow shadowed variables in templates (Vuetify compatibility)
+  vue/require-prop-types: error # Enforce prop type definitions
+  vue/require-default-prop: error # Ensure default values for props
+  vue/component-name-in-template-casing:
+    - error
+    - "PascalCase" # Enforce consistent casing for component names in templates
+
+  # Vuetify-specific rules
+  vuetify/no-deprecated-components: warn # Detect deprecated Vuetify components
+
 settings:
+  # Parser settings for different file types
   import/parsers:
     "@typescript-eslint/parser":
       - .ts
       - .tsx
     vue-eslint-parser:
       - .vue
+
+  # Module resolution
   import/resolver:
-    typescript: true
-    node: true
-    alias:
+    typescript: # Use TypeScript for resolution
+      project:
+        - ./tsconfig.app.json
+        - ./tsconfig.node.json
+    node: true # Node.js module resolution
+    alias: # Custom alias resolution
       map:
         - ["@", "./src"]
         - ["~", "./node_modules"]
@@ -77,5 +115,7 @@ settings:
         - .jsx
         - .tsx
         - .vue
+
+  # Vite settings for ESLint
   vite:
     configPath: ./vite.config.ts
