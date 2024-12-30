@@ -7,31 +7,32 @@ export type NumberFormattingType = "decimal" | "currency" | "percent";
 export type NumberFormatterOptions = {
   currency: string;
 };
+
 // TODO - uprzątnąć te options bo to nikomu niepotrzebne, zrobić tak jak zrobiłem na tabelce no i trzeba ogarnąć sterowanie min/max digits
 export function useNumber(options?: NumberFormatterOptions) {
   const { n, numberFormats } = useI18n();
 
-  const decimal = (precision: number) => {
+  const decimal = (precisionMin: number, precisionMax: number) => {
     return {
       style: "decimal",
-      minimumFractionDigits: precision,
-      maximumFractionDigits: precision,
+      minimumFractionDigits: precisionMin,
+      maximumFractionDigits: precisionMax,
     };
   };
-  const percent = (precision: number) => {
+  const percent = (precisionMin: number, precisionMax: number) => {
     return {
       style: "percent",
-      minimumFractionDigits: precision,
-      maximumFractionDigits: precision,
+      minimumFractionDigits: precisionMin,
+      maximumFractionDigits: precisionMax,
     };
   };
-  const currency = (currency: string = "PLN", precision: number) => {
+  const currency = (currency: string = "PLN", precisionMin: number, precisionMax: number) => {
     return {
       style: "currency",
       currency: currency,
       notation: "standard",
-      minimumFractionDigits: precision,
-      maximumFractionDigits: precision,
+      minimumFractionDigits: precisionMin,
+      maximumFractionDigits: precisionMax,
     };
   };
 
@@ -52,16 +53,16 @@ export function useNumber(options?: NumberFormatterOptions) {
     }
   }
 
-  function formattedNumber(value: number, type: NumberFormattingType = "decimal", precision: number = 0) {
+  function formattedNumber(value: number, type: NumberFormattingType = "decimal", precisionMin: number = 0, precisionMax: number = 0) {
     if (value) {
       value = Number(value);
       switch (type) {
         case "decimal":
-          return n(value, decimal(precision) as any);
+          return n(value, decimal(precisionMin, precisionMax) as any);
         case "currency":
-          return n(value, currency(options?.currency, precision) as any);
+          return n(value, currency(options?.currency, precisionMin, precisionMax) as any);
         case "percent":
-          return n(value / 100, percent(precision) as any);
+          return n(value / 100, percent(precisionMin, precisionMax) as any);
         default:
           console.warn("Number formatting type nod found");
       }

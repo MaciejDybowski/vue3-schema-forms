@@ -56,6 +56,7 @@ const { onChange } = useEventHandler();
 const showFormattedNumber = ref(true);
 
 const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
+const precisionMin = 0
 
 const formatType = ("formatType" in props.schema ? props.schema.formatType : "decimal") as NumberFormattingType;
 
@@ -91,7 +92,7 @@ const localModel = computed({
       value = Number(value);
     }
     if (value && showFormattedNumber.value) {
-      return formattedNumber(value, formatType, precision);
+      return formattedNumber(value, formatType, precisionMin, precision);
     }
     if (value === 0) {
       return value;

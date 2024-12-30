@@ -57,7 +57,7 @@ const localModel = computed({
         break;
       case "number":
         if (!value || value == "null") break;
-        value = formattedNumber(value, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
+        value = formattedNumber(value, "decimal", 0, props.schema.precision ? Number(props.schema.precision) : 0);
         break;
       case "date":
         if (!value || value == "null") break;
