@@ -82,7 +82,7 @@ export function useResolveVariables() {
           value = value?.replaceAll(",", ".");
         }
       } else {
-        value = formattedNumber(value, "decimal", field.precision ? Number(field.precision) : 2);
+        value = formattedNumber(value, "decimal", 0,field.precision ? Number(field.precision) : 2);
       }
     }
     if (
