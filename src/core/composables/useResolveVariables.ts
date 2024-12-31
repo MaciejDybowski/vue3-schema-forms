@@ -97,7 +97,7 @@ export function useResolveVariables() {
       value = value[title];
     }
 
-    if ((value == null && defaultValue !== null) || (value == "" && value != 0)) {
+    if ((value == null && defaultValue !== null) || (value == "" && value != 0) || value == undefined) {
       value = defaultValue;
     }
 

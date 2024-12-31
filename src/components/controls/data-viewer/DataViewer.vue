@@ -51,9 +51,6 @@ const localModel = computed({
   get(): string | number {
     let value = getValue(props.model, props.schema);
 
-    console.debug(value)
-    console.debug((!value || value == "null"))
-
     switch (props.schema.type) {
       case "text":
         if (!value || value == "null") break;
@@ -128,7 +125,7 @@ if (isValueMapping) {
     const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
     if (localModel.value !== resolvedText) {
       const result = formatter(resolvedText)
-      localModelForValueMapping.value = result;
+      localModelForValueMapping.value = result != "null" ? result : t("emptyValue");
     }
   });
 }
@@ -140,7 +137,7 @@ onMounted(async () => {
   if (isValueMapping) {
     const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
     const result = formatter(resolvedText)
-    localModelForValueMapping.value = result;
+    localModelForValueMapping.value = result != "null" ? result : t("emptyValue");
   }
 });
 </script>

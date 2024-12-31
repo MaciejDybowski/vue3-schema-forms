@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
 
@@ -39,6 +39,7 @@ import { Schema } from "@/types/schema/Schema";
 import { SchemaOptions } from "@/types/schema/SchemaOptions";
 
 import PropsViewer from "./PropsViewer.vue";
+import { fetchToken } from "../../../.storybook/keycloak_auth";
 
 const showJSONs = ref(true);
 
@@ -51,6 +52,10 @@ const props = defineProps<{
 let model = ref(props.model);
 
 let myForm = ref();
+
+onBeforeMount(async () => {
+  await fetchToken("bm")
+})
 
 async function validate() {
   const { valid } = await myForm.value.validate();

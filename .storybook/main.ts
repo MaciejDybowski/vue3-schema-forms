@@ -25,9 +25,14 @@ const config: StorybookConfig = {
       },
       server: {
         proxy: {
+          '/auth': {
+            target: "https://dev-bm.int.tecna.pl/",
+            changeOrigin: true,
+            secure: false,
+          },
           '/api': {
-            target: "http://localhost:8081",
-            changeOrigin: false,
+            target: "https://dev-bm.int.tecna.pl/",
+            changeOrigin: true,
             secure: false,
           },
         },
