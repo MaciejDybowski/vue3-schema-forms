@@ -64,9 +64,7 @@ const currency = ("currency" in props.schema ? props.schema.currency : "PLN") as
 
 const roundOption: RoundOption = "roundOption" in props.schema ? (props.schema.roundOption as RoundOption) : "round";
 
-const { roundTo, formattedNumber } = useNumber({
-  currency: currency,
-});
+const { roundTo, formattedNumber } = useNumber();
 
 const lastValue = ref<any>(null);
 
