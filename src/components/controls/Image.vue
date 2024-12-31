@@ -1,23 +1,20 @@
 <template>
   <v-img
-    v-if="!image404Error && srcForImage.allVariablesResolved"
+    v-if="!image404Error && srcForImage && srcForImage.allVariablesResolved"
     :src="srcForImage.resolvedText"
     class="bg-white"
     v-bind="fieldProps"
     @error="handleImageError"
   ></v-img>
   <template v-else>
-    <div class="d-flex flex-column align-center justify-center"
-         style="width: 100px; height: 100px; border: 1px black solid"
+    <div
+      class="d-flex flex-column align-center justify-center"
+      style="width: 100px; height: 100px; border: 1px black solid"
     >
       <span>404</span>
-      <br>
+      <br />
       <span>Not Found</span>
     </div>
-<!--    <v-img
-      src="public/error-404.png"
-      v-bind="fieldProps"
-    />-->
   </template>
 </template>
 
@@ -45,18 +42,20 @@ const localModel = computed({
   },
 });
 
-const srcForImage = computed(() => {
+const srcForImage = ref();
+
+async function updateImageUrl() {
   const defaultWidth = "width" in fieldProps.value ? (fieldProps.value.width as string) : "200";
   const defaultHeight = "height" in fieldProps.value ? (fieldProps.value.height as string) : "150";
 
   let url = props.schema.src.replace("{width}", defaultWidth).replace("{height}", defaultHeight);
-  if(localModel.value){
-    url = url.replace("{id}", localModel.value["id"])
-    url = url.replace("{dataId}", localModel.value["dataId"])
+  if (localModel.value) {
+    url = url.replace("{id}", localModel.value["id"]);
+    url = url.replace("{dataId}", localModel.value["dataId"]);
   }
-  //console.debug(`[IMG URL] => ${url}`)
-  return resolve(props.schema, url);
-});
+
+  srcForImage.value = await resolve(props.schema, url);
+}
 
 const image404Error = ref(false);
 
@@ -65,6 +64,7 @@ function handleImageError() {
 }
 
 onMounted(async () => {
+  await updateImageUrl();
   await bindProps(props.schema);
 });
 </script>

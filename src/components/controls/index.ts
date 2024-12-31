@@ -1,5 +1,4 @@
 //@ts-nocheck
-import ImagePreview from "@/components/controls/ImagePreview.vue";
 
 import { Components } from "@/main";
 
