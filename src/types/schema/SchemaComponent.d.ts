@@ -1,5 +1,6 @@
 export type SchemaComponent =
   | "text-field"
+  | "number-field"
   | "duplicated-section"
   | "static-content"
   | "radio-button"

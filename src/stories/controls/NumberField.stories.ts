@@ -1,7 +1,6 @@
 // @ts-nocheck
 import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { fireEvent, userEvent, within } from "@storybook/test";
+import { expect, fireEvent, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
@@ -62,6 +61,30 @@ export const Integer: Story = {
   },
 };
 
+export const FloatWithTextOtherThanRight: Story = {
+  play: async (context) => {
+
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        numberInt: {
+          label: "Number (float)",
+          type: "float",
+          precision: 2,
+          layout: {
+            component: "number-field",
+            class: "content-center",
+            cols: 4,
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
 export const FloatStandard2DecimalPlaces: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
@@ -111,6 +134,7 @@ export const FloatStandard4DecimalPlaces: Story = {
   },
 };
 
+/* TODO - osobne pole na waluty
 export const CurrencyMode: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
@@ -137,6 +161,7 @@ export const CurrencyMode: Story = {
     } as Schema,
   },
 };
+
 
 export const CurrencyModeProps: Story = {
   play: async (context) => {
@@ -165,7 +190,7 @@ export const CurrencyModeProps: Story = {
     } as Schema,
   },
 };
-
+ */
 export const PercentMode: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);

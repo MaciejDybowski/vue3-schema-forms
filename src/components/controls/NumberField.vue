@@ -33,10 +33,10 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useCalculation, useClass, useExpression, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
+import { useEventHandler } from "@/core/composables/useEventHandler";
 import { NumberFormattingType, RoundOption, useNumber } from "@/core/composables/useNumber";
 import { logger } from "@/main";
 import { EngineNumberField } from "@/types/engine/controls";
-import { useEventHandler } from "@/core/composables/useEventHandler";
 
 const props = defineProps<{
   schema: EngineNumberField;
@@ -56,7 +56,7 @@ const { onChange } = useEventHandler();
 const showFormattedNumber = ref(true);
 
 const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
-const precisionMin = 0
+const precisionMin = 0;
 
 const formatType = ("formatType" in props.schema ? props.schema.formatType : "decimal") as NumberFormattingType;
 
@@ -131,7 +131,7 @@ function userTyping(val: any) {
     set(props.model, `${props.schema.key}ManuallyChanged`, true);
     calculationResultWasModified.value = true;
   }
-  onChange(props.schema, props.model)
+  onChange(props.schema, props.model);
 }
 
 function focusout() {
@@ -167,7 +167,19 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+.content-right :deep(input) {
+  text-align: right;
+}
+
+.content-center :deep(input) {
+  text-align: center;
+}
+
+.content-left :deep(input) {
+  text-align: left;
+}
+</style>
 
 <i18n lang="json">
 {
