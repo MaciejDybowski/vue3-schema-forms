@@ -51,6 +51,9 @@ const localModel = computed({
   get(): string | number {
     let value = getValue(props.model, props.schema);
 
+    console.debug(value)
+    console.debug((!value || value == "null"))
+
     switch (props.schema.type) {
       case "text":
         if (!value || value == "null") break;
@@ -58,6 +61,7 @@ const localModel = computed({
       case "number":
         if (!value || value == "null") break;
         value = formattedNumber(value, "decimal", 0, props.schema.precision ? Number(props.schema.precision) : 0);
+        console.debug("po",value)
         break;
       case "date":
         if (!value || value == "null") break;

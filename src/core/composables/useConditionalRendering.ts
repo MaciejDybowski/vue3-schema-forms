@@ -14,7 +14,10 @@ export function useConditionalRendering() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
   async function shouldRenderField(schema: EngineField, registerListener: boolean = true) {
-    shouldRender.value = !schema.layout.if;
+    // first use of function, set variable from schema only once
+    if(registerListener){
+      shouldRender.value = !schema.layout.if;
+    }
     const formModelStore = useFormModelStore(schema.formId);
     const model = formModelStore.getFormModelForResolve;
     const originalIf = ref(!shouldRender.value ? cloneDeep(schema.layout.if) : "");

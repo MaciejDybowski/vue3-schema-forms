@@ -29,6 +29,30 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 
+export const Table0: Story = {
+  args: {
+    schema: {
+      type: "object",
+      properties: {
+        fieldA: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+            cols:4,
+          },
+        },
+        fieldB: {
+          label: "Field B",
+          layout: {
+            component: "text-field",
+            cols:4,
+            if: "nata(fieldA='test')"
+          },
+        },
+      },
+    } as Schema,
+  },
+};
 
 export const TableView: Story = {
   args: {

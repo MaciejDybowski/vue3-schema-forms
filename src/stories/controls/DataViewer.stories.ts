@@ -104,6 +104,7 @@ export const StandardNumber: Story = {
         number: {
           label: "Read value from model [number]",
           type: "number",
+          precision: 2,
           layout: {
             component: "data-viewer",
           },
@@ -366,6 +367,7 @@ export const StandardCalc: Story = {
         result: {
           label: "Result of calc",
           type: "number",
+          precision: 2,
           layout: {
             component: "data-viewer",
           },
@@ -407,6 +409,7 @@ export const StandardCalcVariable: Story = {
         result: {
           label: "Result of calc",
           type: "number",
+          precision: 2,
           layout: {
             component: "data-viewer",
           },

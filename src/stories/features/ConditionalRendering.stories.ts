@@ -76,10 +76,10 @@ export const ConditionalWithDuplicatedSection: Story = {
     const renderedField = canvas.queryByText("Some field with if");
     await expect(renderedField).toEqual(null);
 
-    const field = canvas.getByLabelText("Test");
+    const field = await canvas.getByLabelText("Test");
     await userEvent.type(field, "root", { delay: 100 });
 
-    const ifField = canvas.getByLabelText("Some field with if");
+    const ifField = await canvas.getByLabelText("Some field with if");
     await userEvent.type(ifField, "Test", { delay: 100 });
 
     await expect(context.args.modelValue).toEqual({
@@ -119,7 +119,7 @@ export const ConditionalWithDuplicatedSection: Story = {
                     },
                     someFieldWithIf: {
                       label: "Some field with if",
-                      layout: { component: "text-field", cols: 3, if: "data.test=='root'" },
+                      layout: { component: "text-field", cols: 3, if: "nata(data.test='root')" },
                     },
                   },
                 },
@@ -195,7 +195,7 @@ export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
                           layout: {
                             component: "text-field",
                             cols: 3,
-                            if: 'dane.someField=="root"',
+                            if: 'nata(dane.someField="root")',
                           },
                         },
                         someFieldWithIf2: {
@@ -203,7 +203,7 @@ export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
                           layout: {
                             component: "text-field",
                             cols: 3,
-                            if: 'data.test=="root"',
+                            if: 'nata(data.test="root")',
                           },
                         },
                       },
