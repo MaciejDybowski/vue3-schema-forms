@@ -11,7 +11,9 @@ export async function fetchToken(workspaceId: string) {
     data: {
       client_id: clientId,
       client_secret: clientSecret,
-      grant_type: 'client_credentials',
+      grant_type: 'password',
+      username: "tecna",
+      password: "tecna1"
     },
     headers: {
       'Content-type': 'application/x-www-form-urlencoded',
