@@ -84,9 +84,6 @@ export async function useDictionarySource(field: EngineDictionaryField) {
       paginationOptions.value.resetPage();
       const { url, params } = prepareUrl();
 
-      console.debug(query.value);
-      console.debug(data.value);
-
       const response = await axios.get(`${url}?${params}`, {
         params: lazy.value
           ? {

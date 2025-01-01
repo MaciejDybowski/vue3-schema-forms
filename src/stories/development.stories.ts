@@ -209,7 +209,7 @@ export const Table0: Story = {
                     cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
                     component: "number-field",
                     props: {
-                      hint: "Kwota PLN: {pozycjeDokumentu[]kwotaNettoPln:0}, Kurs: {faktura.kurs:0}",
+                      hint: "Kwota PLN: {pozycjeDokumentu[].kwotaNettoPln:0}, Kurs: {faktura.kurs:0}",
                       "persistent-hint": "nata(faktura.waluta.id!='PLN')",
                     },
                   },
@@ -246,7 +246,7 @@ export const Table0: Story = {
                     },
                   },
                   type: "float",
-                  calculation: "pozycjeDokumentu[].stawkaVat.mnoznik/100*pozycjeDokumentu[].kwotaNetto",
+                  calculation: "$number(pozycjeDokumentu[].stawkaVat.mnoznik) / 100 * pozycjeDokumentu[].kwotaNetto",
                   sectionKey: "pozycjeDokumentu",
                   precision: "2",
                   roundOption: "ceil",
@@ -275,14 +275,12 @@ export const Table0: Story = {
                   layout: {
                     cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
                     component: "number-field",
-                    props: { hint: "" },
                     hide: true,
                     if: "",
                   },
                   type: "float",
                   precision: "2",
-                  calculation: "pozycjeDokumentu[].kwotaNetto*faktura.kurs",
-                  sectionKey: "pozycjeDokumentu",
+                  calculation: "pozycjeDokumentu[].kwotaNetto * faktura.kurs",
                 },
                 kwotaVatPln: {
                   label: "Kwota VAT PLN",
