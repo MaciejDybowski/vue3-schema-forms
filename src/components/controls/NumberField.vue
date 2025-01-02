@@ -1,5 +1,6 @@
 <template>
   <v-text-field
+    v-if="!loading"
     v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
     :label="label"
@@ -56,7 +57,7 @@ const { onChange } = useEventHandler();
 const showFormattedNumber = ref(true);
 
 const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
-const precisionMin = 0;
+const precisionMin = props.schema.type == "int" ? 0 : "precisionMin" in props.schema ? props.schema.precision : 0;
 
 const formatType = ("formatType" in props.schema ? props.schema.formatType : "decimal") as NumberFormattingType;
 
@@ -158,15 +159,16 @@ function runExpressionIfExist() {
   }
 }
 
+const loading = ref(true);
 
 onMounted(async () => {
+  loading.value = true
   await runCalculationIfExist();
   await bindProps(props.schema);
-  await bindLabel(props.schema);
   await bindRules(props.schema);
-
-
+  await bindLabel(props.schema);
   runExpressionIfExist();
+  loading.value = false
 });
 </script>
 

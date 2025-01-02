@@ -117,7 +117,7 @@ export function useProps() {
 
   async function propsValueMappingListener(event: string, payloadIndex: number, keyToResolve: string, schema: EngineField) {
     //if (schema.index == undefined || schema.index == payloadIndex) {
-      await new Promise(r => setTimeout(r, 10));
+      await new Promise(r => setTimeout(r, 4));
       const inputString = propsClone.value[keyToResolve];
       const obj = await resolve(schema, inputString as string);
       props.value[keyToResolve] = obj.resolvedText;

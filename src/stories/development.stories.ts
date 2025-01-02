@@ -29,6 +29,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Table0: Story = {
   args: {
+    model: {
+"faktura":{"waluta":{"id":"USD","label":"Dolar amerykański"},"kurs":4},"pozycjeDokumentu":[{"ordinalNumber":1,"aureaSectionId":"jmfFf","kwotaNettoPln":4212483,"kwotaVatPln":968871.09,"kwotaBruttoPln":5181354.09,"kwotaBrutto":16141.29,"kwotaVAT":3018.29,"kwotaNetto":13123,"stawkaVat":{"id":"23","label":"23%","mnoznik":"23"},"rodzajKosztu":{"id":"4027400","label":"4027400 - Czynsz samoch. Ciężarowy","czyPoleNrProjektu":"false","czyPoleRodzinaEl5":"false","czyPoleRodzinaEl4":"false","czyPoleOsobaDoRefatkury":"false","czyPoleNrRejestracyjny":"true","czyPoleNrZleceniaSerwisowegoDbs":"false","czyPoleNazwaKlienta":"false","czyPoleAkronim":"false","czyPoleOpisDokumentu":"true","czyPoleDataPrzyjeciaPrzyjazdu":"false","czyPoleCelSpotkania":"false","czyPoleDealDbs":"false","czyPoleNosnik":"true","czyPoleLiczbaOsob":"false"},"osobyWybraneDoAutoryzacji":null,"miejscePowstaniaKosztu":{"id":"CD820","label":"CD820 - CRS Refakturowanie Poznań"},"nosnik":"3","nrRejestracyjny":"2"},{"ordinalNumber":2,"aureaSectionId":"frFJN","kwotaNettoPln":39483,"kwotaVatPln":9081.09,"kwotaBruttoPln":48564.09,"kwotaBrutto":151.29,"kwotaVAT":28.29,"kwotaNetto":123,"stawkaVat":{"id":"23","label":"23%","mnoznik":"23"},"rodzajKosztu":{"id":"4022200","label":"4022200 - Utrzymanie czystości  Warsztat","czyPoleNrProjektu":"false","czyPoleRodzinaEl5":"false","czyPoleRodzinaEl4":"false","czyPoleOsobaDoRefatkury":"false","czyPoleNrRejestracyjny":"false","czyPoleNrZleceniaSerwisowegoDbs":"false","czyPoleNazwaKlienta":"false","czyPoleAkronim":"false","czyPoleOpisDokumentu":"true","czyPoleDataPrzyjeciaPrzyjazdu":"false","czyPoleCelSpotkania":"false","czyPoleDealDbs":"false","czyPoleNosnik":"false","czyPoleLiczbaOsob":"false"},"osobyWybraneDoAutoryzacji":null,"miejscePowstaniaKosztu":{"id":"CD820","label":"CD820 - CRS Refakturowanie Poznań"}}],"podsumowanie":{"lPozycji":2},"sumy":{"fakturaOplacona":false,"dyspozycjaWartosci":false,"kwotaNetto":13246,"kwotaVat":3046.58,"kwotaBrutto":16292.58,"kwotaNettoPln":4251966,"kwotaVatPln":977952.18,"kwotaBruttoPln":5229918.18},"dekretacja":{"nieZnamOsoby":false}
+    },
     schema: {
       type: "object",
       properties: {
@@ -210,7 +213,7 @@ export const Table0: Story = {
                     component: "number-field",
                     props: {
                       hint: "Kwota PLN: {pozycjeDokumentu[].kwotaNettoPln}, Kurs: {faktura.kurs}",
-                      "persistent-hint": "nata(faktura.waluta.id!='PLN')",
+                      "persistent-hint": "nata(faktura.waluta.id!='PLN'? true : false)",
                     },
                   },
                   type: "float",
@@ -242,7 +245,7 @@ export const Table0: Story = {
                     cols: { xs: 12, sm: 12, md: 12, lg: 2, xl: 2, xxl: 2 },
                     props: {
                       hint: "Kwota PLN: {pozycjeDokumentu[].kwotaVatPln:0}",
-                      "persistent-hint": "nata(faktura.waluta.id!='PLN')",
+                      "persistent-hint": "nata(faktura.waluta.id!='PLN'? true : false)",
                     },
                   },
                   type: "float",
@@ -258,7 +261,7 @@ export const Table0: Story = {
                     component: "number-field",
                     props: {
                       hint: "Kwota PLN: {pozycjeDokumentu[].kwotaBruttoPln:0}, Kurs: {faktura.kurs:0}",
-                      "persistent-hint": "nata(faktura.waluta.id!='PLN')",
+                      "persistent-hint": "nata(faktura.waluta.id!='PLN'? true : false)",
                     },
                   },
                   type: "float",
@@ -708,7 +711,7 @@ export const Table0: Story = {
                 component: "number-field",
                 props: {
                   hint: "Kwota netto PLN: {sumy.kwotaNettoPln}",
-                  "persistent-hint": 'nata(faktura.waluta.id!="PLN")',
+                  "persistent-hint": "nata(faktura.waluta.id!='PLN'? true : false)",
                   readonly: true,
                 },
               },
@@ -724,7 +727,7 @@ export const Table0: Story = {
                 props: {
                   readonly: true,
                   hint: "Kwota VAT PLN: {sumy.kwotaVatPln}",
-                  "persistent-hint": 'nata(faktura.waluta.id!="PLN")',
+                  "persistent-hint": "nata(faktura.waluta.id!='PLN'? true : false)",
                 },
               },
               type: "float",
@@ -738,7 +741,7 @@ export const Table0: Story = {
                 component: "number-field",
                 props: {
                   hint: "Kwota brutto PLN: {sumy.kwotaBruttoPln}",
-                  "persistent-hint": 'nata(faktura.waluta.id!="PLN")',
+                  "persistent-hint": "nata(faktura.waluta.id!='PLN'? true : false)",
                   readonly: true,
                 },
               },

@@ -46,7 +46,7 @@ const { calculationFunc } = useCalculation();
 
 const isValueMapping = !!props.schema.valueMapping;
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
-const localModelForValueMapping = ref<any>(null)
+const localModelForValueMapping = ref<any>(null);
 const localModel = computed({
   get(): string | number {
     let value = getValue(props.model, props.schema);
@@ -57,8 +57,13 @@ const localModel = computed({
         break;
       case "number":
         if (!value || value == "null") break;
-        value = formattedNumber(value, "decimal", 0, props.schema.precision ? Number(props.schema.precision) : 0);
-        console.debug("po",value)
+        value = formattedNumber(
+          value,
+          "decimal",
+          props.schema.precisionMin ? Number(props.schema.precisionMin) : 0,
+          props.schema.precision ? Number(props.schema.precision) : 0,
+        );
+        console.debug("po", value);
         break;
       case "date":
         if (!value || value == "null") break;
@@ -85,7 +90,12 @@ function formatter(value: any) {
       break;
     case "number":
       if (!value || typeof value == "string" || value == "null") break;
-      value = formattedNumber(value, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
+      value = formattedNumber(
+        value,
+        "decimal",
+        props.schema.precisionMin ? Number(props.schema.precisionMin) : 0,
+        props.schema.precision ? Number(props.schema.precision) : 2,
+      );
       break;
     case "date":
       if (!value || value == "null") break;
@@ -124,7 +134,7 @@ if (isValueMapping) {
   const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) => {
     const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
     if (localModel.value !== resolvedText) {
-      const result = formatter(resolvedText)
+      const result = formatter(resolvedText);
       localModelForValueMapping.value = result != "null" ? result : t("emptyValue");
     }
   });
@@ -136,7 +146,7 @@ onMounted(async () => {
   await runCalculationIfExist();
   if (isValueMapping) {
     const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
-    const result = formatter(resolvedText)
+    const result = formatter(resolvedText);
     localModelForValueMapping.value = result != "null" ? result : t("emptyValue");
   }
 });

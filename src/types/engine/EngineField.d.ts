@@ -25,6 +25,7 @@ export interface EngineField {
 
   // number
   precision?: string | number | undefined;
+  precisionMin?: string | number | undefined;
   calculation?: string;
 
   //events

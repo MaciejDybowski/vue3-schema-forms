@@ -74,7 +74,7 @@ export const SimpleCalculation: Story = {
 /**
  *
  */
-export const DefaultPrecisionIsRoundTo2DecimalPlaces: Story = {
+export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText("Field 1");
