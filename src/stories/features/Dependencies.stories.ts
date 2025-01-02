@@ -464,31 +464,13 @@ export const UseDependenciesInLabel: Story = {
                       type: "number",
                       layout: { component: "text-field", cols: 3 }
                     },
-                    value: {
-                      label: "Value",
-                      type: "number",
-                      layout: { component: "text-field", cols: 3 },
-                      calculation: "quantity * price"
-                    } as SchemaTextField
                   }
                 }
               } as Layout
             }
           }
         },
-        summary: {
-          properties: {
-            sumValue: {
-              label: "SUM(Value)",
-              layout: {
-                component: "text-field",
-                cols: 4
-              },
-              calculation: "SUM(value,data.items) - 300",
-              type: "number"
-            } as SchemaTextField
-          }
-        }
+
       }
     } as Schema
   }

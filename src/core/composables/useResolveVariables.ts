@@ -44,8 +44,8 @@ export function useResolveVariables() {
     return { resolvedText: inputString, allVariablesResolved };
   }
 
-  function fillPath(fieldPath: string, fieldIndex: number, variable: string) {
-    if(fieldPath == undefined && fieldPath == undefined) {
+  function fillPath(fieldPath: string| undefined, fieldIndex: number | undefined, variable: string) {
+    if(!fieldPath && !fieldPath) {
       return variable;
     }
     const splitPath = fieldPath.split(".");

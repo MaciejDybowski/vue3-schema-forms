@@ -209,7 +209,7 @@ export const Table0: Story = {
                     cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
                     component: "number-field",
                     props: {
-                      hint: "Kwota PLN: {pozycjeDokumentu[].kwotaNettoPln:0}, Kurs: {faktura.kurs:0}",
+                      hint: "Kwota PLN: {pozycjeDokumentu[].kwotaNettoPln}, Kurs: {faktura.kurs}",
                       "persistent-hint": "nata(faktura.waluta.id!='PLN')",
                     },
                   },
@@ -246,7 +246,7 @@ export const Table0: Story = {
                     },
                   },
                   type: "float",
-                  calculation: "$number(pozycjeDokumentu[].stawkaVat.mnoznik) / 100 * pozycjeDokumentu[].kwotaNetto",
+                  calculation: "$number(pozycjeDokumentu[].stawkaVat.mnoznik)/100*pozycjeDokumentu[].kwotaNetto",
                   sectionKey: "pozycjeDokumentu",
                   precision: "2",
                   roundOption: "ceil",
@@ -275,12 +275,14 @@ export const Table0: Story = {
                   layout: {
                     cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
                     component: "number-field",
+                    props: { hint: "" },
                     hide: true,
                     if: "",
                   },
                   type: "float",
                   precision: "2",
-                  calculation: "pozycjeDokumentu[].kwotaNetto * faktura.kurs",
+                  calculation: "pozycjeDokumentu[].kwotaNetto*faktura.kurs",
+                  sectionKey: "pozycjeDokumentu",
                 },
                 kwotaVatPln: {
                   label: "Kwota VAT PLN",
@@ -630,7 +632,272 @@ export const Table0: Story = {
           editable: true,
           showElements: true,
         },
-
+        "divider-3": {
+          layout: { component: "divider" },
+          color: "#263238",
+          opacity: "100",
+          thickness: 2,
+          label: "divider-454665_cloned192_cloned",
+        },
+        htmlpodsumowanie: {
+          content: "Podsumowanie - kwoty otrzymane",
+          layout: { component: "static-content", tag: "h3" },
+        },
+        podsumowanie: {
+          properties: {
+            lPozycji: {
+              label: "Liczba pozycji",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                fillRow: true,
+                component: "number-field",
+                props: { readonly: true },
+              },
+              type: "int",
+              expression: "ARRAY_SIZE(pozycjeDokumentu)",
+            },
+            kwotaNetto: {
+              label: "Kwota netto",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: { readonly: "nata(tech.czyPominacOcr=true)" },
+                if: "",
+              },
+              type: "float",
+            },
+            kwotaVat: {
+              label: "Kwota VAT",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: { readonly: "nata(tech.czyPominacOcr=true)" },
+              },
+              type: "float",
+            },
+            kwotaBrutto: {
+              label: "Kwota brutto",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: { readonly: "nata(tech.czyPominacOcr=true)" },
+              },
+              type: "float",
+              precision: "2",
+            },
+          },
+          required: [],
+        },
+        "divider-4": {
+          layout: { component: "divider" },
+          color: "#263238",
+          opacity: "100",
+          thickness: 2,
+          label: "divider-454665_cloned192_cloned702_cloned",
+        },
+        htmlSumyOpisuMeryt: {
+          content: "<b>Sumy opisu merytorycznego</b>",
+          layout: { component: "static-content", tag: "p" },
+        },
+        sumy: {
+          properties: {
+            kwotaNetto: {
+              label: "Kwota netto",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: {
+                  hint: "Kwota netto PLN: {sumy.kwotaNettoPln}",
+                  "persistent-hint": 'nata(faktura.waluta.id!="PLN")',
+                  readonly: true,
+                },
+              },
+              type: "float",
+              calculation: "$sum(pozycjeDokumentu.kwotaNetto)",
+              precision: "2",
+            },
+            kwotaVat: {
+              label: "Kwota VAT",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: {
+                  readonly: true,
+                  hint: "Kwota VAT PLN: {sumy.kwotaVatPln}",
+                  "persistent-hint": 'nata(faktura.waluta.id!="PLN")',
+                },
+              },
+              type: "float",
+              calculation: "$sum(pozycjeDokumentu.kwotaVAT)",
+              precision: "2",
+            },
+            kwotaBrutto: {
+              label: "Kwota brutto",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: {
+                  hint: "Kwota brutto PLN: {sumy.kwotaBruttoPln}",
+                  "persistent-hint": 'nata(faktura.waluta.id!="PLN")',
+                  readonly: true,
+                },
+              },
+              type: "float",
+              calculation: "$sum(pozycjeDokumentu.kwotaBrutto)",
+              precision: "2",
+            },
+            alert: {
+              content: "Niezgodność kwot podsumowania faktury z kwotami sumami opisu merytorycznego",
+              layout: {
+                component: "static-content",
+                tag: "v-alert",
+                props: { variant: "outlined", type: "warning", density: "compact" },
+                if: "nata(podsumowanie.kwotaNetto != sumy.kwotaNetto or podsumowanie.kwotaVat != sumy.kwotaVat or podsumowanie.kwotaBrutto != sumy.kwotaBrutto)",
+              },
+            },
+            kwotaNettoPln: {
+              label: "Przeliczona kwota netto na PLN (ukryte)",
+              layout: {
+                cols: { xs: 4, sm: 4, md: 4, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                hide: true,
+              },
+              type: "float",
+              calculation: "sumy.kwotaNetto*faktura.kurs",
+              precision: "2",
+            },
+            kwotaVatPln: {
+              label: "Ukryta kwota VAT w PLN",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                hide: true,
+              },
+              type: "float",
+              precision: "2",
+              calculation: "sumy.kwotaVat*faktura.kurs",
+            },
+            kwotaBruttoPln: {
+              label: "Przeliczona kwota brutto na PLN (ukryte)",
+              layout: {
+                cols: { xs: 4, sm: 4, md: 4, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                hide: true,
+              },
+              type: "float",
+              calculation: "sumy.kwotaBrutto*faktura.kurs",
+              precision: "2",
+            },
+            fakturaOplacona: {
+              label: "Faktura opłacona",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
+                component: "switch",
+                fillRow: true,
+              },
+            },
+            dyspozycjaWartosci: {
+              label: "Dyspozycja wartości zapłaty faktury",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
+                component: "switch",
+                fillRow: true,
+                props: { "false-value": false, "true-value": true },
+              },
+            },
+            doZaplatyNetto: {
+              label: "Do zapłaty kwota netto",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "text-field",
+                if: "nata(sumy.dyspozycjaWartosci=true)",
+              },
+            },
+            doZaplatyVAT: {
+              label: "Kwota VAT",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "text-field",
+                if: "nata(sumy.dyspozycjaWartosci=true)",
+              },
+            },
+            doZaplatyKwotaBrutto: {
+              label: "Do zapłaty kwota brutto",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "text-field",
+                if: "nata(sumy.dyspozycjaWartosci=true)",
+              },
+            },
+          },
+          required: [],
+        },
+        "divider-5": {
+          layout: { component: "divider" },
+          color: "#263238",
+          opacity: "100",
+          thickness: 2,
+          label: "divider-4242_cloned",
+        },
+        htmlAdnotacja: {
+          content: "Adnotacja",
+          layout: { component: "static-content", tag: "h3", if: "nata($exists(faktura.numerKsef))" },
+          label: "htmlRejestracja963_cloned",
+        },
+        adnotacje: {
+          content: "{adnotacje:Brak danych}",
+          layout: { component: "static-content", tag: "p", if: "nata($exists(faktura.numerKsef))" },
+        },
+        htmlRejestracja: { content: "Rejestracja", layout: { component: "static-content", tag: "h3" } },
+        rejestracja: {
+          content:
+            "<b>Osoba rejestrująca:</b> {rejestracja.osobaRejestrujaca.firstName:Brak danych}&nbsp{rejestracja.osobaRejestrujaca.lastName:Brak danych} <b> Akceptacja: </b> {rejestracja.decyzjaRejestracja:Brak danych} &nbsp <b> Data akceptacji: </b> {rejestracja.dataRejestracji:Brak danych}",
+          layout: { component: "static-content", tag: "p" },
+        },
+        htmldekretacja: { content: "Dekretacja", layout: { component: "static-content", tag: "h3" } },
+        dekretacja: {
+          properties: {
+            decyzjaOpisMerytoryczny: {
+              label: "Decyzja",
+              layout: { component: "select" },
+              source: {
+                items: [
+                  { value: "zatwierdz", title: "Zatwierdź" },
+                  {
+                    value: "anuluj",
+                    title: "Anuluj",
+                  },
+                  { value: "doPoprawy", title: "Do poprawy" },
+                ],
+                returnObject: true,
+              },
+            },
+            osobyWybraneDoKsiegowania: {
+              label: "Osoba księgująca",
+              layout: {
+                component: "user-input",
+                props: { multiple: true, maxSelection: 1 },
+                if: "nata(dekretacja.nieZnamOsoby=false)",
+              },
+              filter: { group: null },
+              source: {
+                url: "/api/dictionaries?feature-id=uzytkownicy-przypisani-do-dostawcow&vm=uzytkownikId&customAttributes=username%2C%7BuzytkownikNazwa%7D%2CfirstName%2C%7BuzytkownikImie%7D%2ClastName%2C%7BuzytkownikNazwisko%7D%2Cemail%2C%7BuzytkownikEmail%7D%2Clabels%2C%7Betykiety%7D&filter=dostawcaId%3D%3D{dostawca.id}%3Brola%3D%3D%22ksiegujacy%22&sort=etykiety%2Casc&sort=uzytkownikNazwa%2Casc",
+              },
+              validations: [
+                {
+                  name: "conditional-required",
+                  rule: "dekretacja.decyzjaOpisMerytoryczny.value != 'doPoprawy'  or $not($exists(dekretacja.decyzjaOpisMerytoryczny))",
+                  message: null,
+                },
+              ],
+            },
+            nieZnamOsoby: {
+              label: "Nie znam osoby księgującej, przypisz do ogólnej grupy księgowych",
+              layout: { component: "switch" },
+            },
+          },
+          required: ["decyzjaOpisMerytoryczny"],
+        },
       },
       required: [],
     },

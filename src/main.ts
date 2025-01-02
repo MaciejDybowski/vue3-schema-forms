@@ -1,6 +1,7 @@
-import { App, Component } from 'vue';
+import { App, Component } from "vue";
 
-import { vueSchemaFromControls } from '@/components/controls';
+import { vueSchemaFromControls } from "@/components/controls";
+import DuplicatedSectionBatchAddDialogBody from "@/components/controls/duplicated-section/DuplicatedSectionBatchAddDialogBody.vue";
 
 import {
   useCalculation,
@@ -17,27 +18,25 @@ import {
   useResolveVariables,
   useRules,
   useSource,
-} from '@/core/composables';
-import { EngineField } from '@/types/engine/EngineField';
-import { Schema } from '@/types/schema/Schema';
-import { SchemaComponent } from '@/types/schema/SchemaComponent';
-import { SchemaField } from '@/types/schema/SchemaField';
-import { SchemaOptions } from '@/types/schema/SchemaOptions';
-import { Cols } from '@/types/shared/Cols';
-import { DuplicatedSectionOptions } from '@/types/shared/DuplicatedSectionOptions';
-import { Layout } from '@/types/shared/Layout';
-import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
-import { Source } from '@/types/shared/Source';
-import { StaticContentTag } from '@/types/shared/StaticContentTag';
-import { Translation } from '@/types/shared/Translation';
+} from "@/core/composables";
+import { EngineField } from "@/types/engine/EngineField";
+import { Schema } from "@/types/schema/Schema";
+import { SchemaComponent } from "@/types/schema/SchemaComponent";
+import { SchemaField } from "@/types/schema/SchemaField";
+import { SchemaOptions } from "@/types/schema/SchemaOptions";
+import { Cols } from "@/types/shared/Cols";
+import { DuplicatedSectionOptions } from "@/types/shared/DuplicatedSectionOptions";
+import { Layout } from "@/types/shared/Layout";
+import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
+import { Source } from "@/types/shared/Source";
+import { StaticContentTag } from "@/types/shared/StaticContentTag";
+import { Translation } from "@/types/shared/Translation";
 
-import * as components from '../src/components/index';
-import DuplicatedSectionBatchAddDialogBody
-  from "@/components/controls/duplicated-section/DuplicatedSectionBatchAddDialogBody.vue";
+import * as components from "../src/components/index";
 
 export declare type Components = Record<string, Component>;
 export let logger = {
-  formUpdateLogger: true,
+  formUpdateLogger: false,
   calculationListener: false,
   JSONataExpressionListener: false,
   propsValueMappingListener: false,
@@ -47,17 +46,17 @@ export let logger = {
   eventEmitterListener: false,
 };
 
-export let duplicatedSectionBatchAddComponent = { 'batch-add-dialog-body': DuplicatedSectionBatchAddDialogBody} as Components
+export let duplicatedSectionBatchAddComponent = { "batch-add-dialog-body": DuplicatedSectionBatchAddDialogBody } as Components;
 export type VueSchemaLoggers = {
-  formUpdateLogger?: boolean
-  calculationListener?: boolean
-  customIfExpressionListener?: boolean
-  propsValueMappingListener?: boolean
-  conditionalRenderingListener?: boolean
-  dictionaryLogger?: boolean,
-  duplicatedSchemaWatchLogger?: boolean
-  eventEmitterListener?:boolean
-}
+  formUpdateLogger?: boolean;
+  calculationListener?: boolean;
+  customIfExpressionListener?: boolean;
+  propsValueMappingListener?: boolean;
+  conditionalRenderingListener?: boolean;
+  dictionaryLogger?: boolean;
+  duplicatedSchemaWatchLogger?: boolean;
+  eventEmitterListener?: boolean;
+};
 
 export type VueSchemaForms = {
   install: (app: App) => void;
@@ -67,7 +66,7 @@ export type VueSchemaFormsOptions = {
   logger?: VueSchemaLoggers;
   customComponents?: Components;
   installFormControls?: boolean;
-  duplicatedSectionBatchAddComponent?: Components
+  duplicatedSectionBatchAddComponent?: Components;
 };
 
 // jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
@@ -78,7 +77,7 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
   if (options?.logger) {
     logger = { ...logger, ...options.logger };
   }
-  if(options?.duplicatedSectionBatchAddComponent) {
+  if (options?.duplicatedSectionBatchAddComponent) {
     duplicatedSectionBatchAddComponent = options?.duplicatedSectionBatchAddComponent;
   }
 

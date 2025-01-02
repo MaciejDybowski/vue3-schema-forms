@@ -158,11 +158,14 @@ function runExpressionIfExist() {
   }
 }
 
+
 onMounted(async () => {
+  await runCalculationIfExist();
+  await bindProps(props.schema);
   await bindLabel(props.schema);
   await bindRules(props.schema);
-  await bindProps(props.schema);
-  await runCalculationIfExist();
+
+
   runExpressionIfExist();
 });
 </script>

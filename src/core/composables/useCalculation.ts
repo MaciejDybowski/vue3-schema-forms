@@ -41,9 +41,7 @@ export function useCalculation() {
   }
 
   async function calculationListener(event: string, payloadIndex: number, field: EngineField, model: any) {
-    await new Promise((r) => setTimeout(r, 1));
-    if (logger.calculationListener)
-      console.debug(`[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}`);
+    await new Promise((r) => setTimeout(r, 5));
     let calculation = field.calculation as string;
     const precision = field.precision ? Number(field.precision) : 2;
 
@@ -55,6 +53,12 @@ export function useCalculation() {
       const nata = jsonata(calculation);
 
       result = await nata.evaluate(mergedModel);
+      if (logger.calculationListener) {
+        console.debug(`[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}, result=${result}`);
+      }
+      if (!result) {
+        result = 0;
+      }
     } catch (error) {
       result = 0;
     }
