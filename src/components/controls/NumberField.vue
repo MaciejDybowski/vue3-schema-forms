@@ -56,6 +56,7 @@ const { onChange } = useEventHandler();
 const showFormattedNumber = ref(true);
 
 const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
+const precisionMin = props.schema.type == "int" ? 0 : "precisionMin" in props.schema ? props.schema.precision : 0;
 
 const formatType = ("formatType" in props.schema ? props.schema.formatType : "decimal") as NumberFormattingType;
 
@@ -63,9 +64,7 @@ const currency = ("currency" in props.schema ? props.schema.currency : "PLN") as
 
 const roundOption: RoundOption = "roundOption" in props.schema ? (props.schema.roundOption as RoundOption) : "round";
 
-const { roundTo, formattedNumber } = useNumber({
-  currency: currency,
-});
+const { roundTo, formattedNumber } = useNumber();
 
 const lastValue = ref<any>(null);
 
@@ -91,7 +90,7 @@ const localModel = computed({
       value = Number(value);
     }
     if (value && showFormattedNumber.value) {
-      return formattedNumber(value, formatType, precision);
+      return formattedNumber(value, formatType, precisionMin, precision);
     }
     if (value === 0) {
       return value;
@@ -167,7 +166,19 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+.content-right :deep(input) {
+  text-align: right;
+}
+
+.content-center :deep(input) {
+  text-align: center;
+}
+
+.content-left :deep(input) {
+  text-align: left;
+}
+</style>
 
 <i18n lang="json">
 {

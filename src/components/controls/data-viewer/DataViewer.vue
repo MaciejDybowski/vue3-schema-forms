@@ -10,7 +10,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { parsePhoneNumber } from "libphonenumber-js";
 import { computed, onMounted } from "vue";
 
@@ -54,12 +54,17 @@ const localModel = computed({
       value = resolvedText;
     }
     switch (props.schema.type) {
-      case "text" :
+      case "text":
         if (!value || value == "null") break;
         break;
       case "number":
         if (!value || value == "null") break;
-        value = formattedNumber(value, "decimal", props.schema.precision ? Number(props.schema.precision) : 2);
+        value = formattedNumber(
+          value,
+          "decimal",
+          props.schema.precisionMin ? Number(props.schema.precisionMin) : 0,
+          props.schema.precision ? Number(props.schema.precision) : 2,
+        );
         break;
       case "date":
         if (!value || value == "null") break;
@@ -70,7 +75,7 @@ const localModel = computed({
         value = parsePhoneNumber(value).formatNational();
         break;
       default:
-        //console.warn("Type of data not recognized =" + props.schema.type);
+      //console.warn("Type of data not recognized =" + props.schema.type);
     }
 
     return value !== "null" && !!value ? value : t("emptyValue");
@@ -104,7 +109,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.v-field-label--floating) {
   visibility: visible !important;
 }
