@@ -36,11 +36,14 @@
 </template>
 
 <script lang="ts" setup>
-import { debounce } from "lodash";
+import { debounce, merge } from "lodash";
 import { ref, useAttrs } from "vue";
 import { VTextField } from "vuetify/lib/components/index.mjs";
 
 const model = defineModel();
+const props = defineProps<{
+  headerKey: string;
+}>();
 const emit = defineEmits<{
   (e: "update:row", val: any): void;
 }>();
@@ -57,7 +60,10 @@ async function saveValue() {
     console.debug(`Trying save value ${model.value} to API`);
     // TODO API call and response = full row
     // await new Promise((resolve) => setTimeout(resolve, 3000));
-    emit("update:row", { location: model.value });
+    const payload = {};
+    payload[props.headerKey] = model.value;
+
+    emit("update:row", payload);
   } catch (e) {
     console.error(e);
   } finally {

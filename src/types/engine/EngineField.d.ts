@@ -28,6 +28,9 @@ export interface EngineField {
   precisionMin?: string | number | undefined;
   calculation?: string;
 
+  // table
+  aggregates?: object
+
   //events
   onChange?: EventHandlerDefinition
 }

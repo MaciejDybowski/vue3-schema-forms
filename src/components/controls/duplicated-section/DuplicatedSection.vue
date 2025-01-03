@@ -141,7 +141,7 @@ const { getValue, setValue } = useFormModel();
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 vueSchemaFormEventBus.on(async (event, payload) => {
   if (
-    payload == "action-callback" /* &&
+    payload == "action-callback" || payload == 'table-aggregates' /* &&
     JSON.stringify(localModel.value) !== JSON.stringify(get(props.model, props.schema.key, []))*/
   ) {
     init();

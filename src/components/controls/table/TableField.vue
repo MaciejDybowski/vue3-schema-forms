@@ -20,6 +20,7 @@
 
       <editable-cell
         v-else
+        :headerKey="header.key"
         v-model="items[index][header.key]"
         v-bind="fieldProps"
         @update:row="updateRow($event, index)"
@@ -30,17 +31,19 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { debounce } from "lodash";
+import { debounce, merge } from "lodash";
 import { computed, onMounted, ref } from "vue";
 
 import EditableCell from "@/components/controls/table/EditableCell.vue";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 
 import { useProps } from "@/core/composables";
-import { EngineTextField } from "@/types/engine/controls";
+import { EngineField } from "@/types/engine/EngineField";
+import { useEventBus } from "@vueuse/core";
 
+const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const props = defineProps<{
-  schema: EngineTextField;
+  schema: EngineField;
   model: object;
 }>();
 const { bindProps, fieldProps } = useProps();
@@ -117,12 +120,42 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
 });
 
 function updateRow(value: any, index: number) {
-  items.value[index] = value;
+  items.value[index] = merge(items.value[index], value);
+
+  if (props.schema.aggregates) {
+    console.debug("Wołam API o agregaty do wyświetlenia");
+    /* 
+      powiedzmy że api zwraca obiekt z agregatami
+      
+     */
+    const response = {
+      fieldA: 1,
+      fieldB: 100,
+      fieldC: 1000,
+      fieldD: {
+        fieldE: "test",
+      },
+      fieldF: [
+        {
+          fieldG: "test1",
+        },
+        {
+          fieldG: "test2",
+        },
+        {
+          fieldG: "test3",
+        },
+      ],
+    };
+
+    merge(props.model, response);
+    vueSchemaFormEventBus.emit("model-changed", "table-aggregates");
+  }
 }
 
 async function loadData(params: TableFetchOptions) {
   try {
-    console.debug("Loading data for table field with params ", params)
+    console.debug("Loading data for table field with params ", params);
     loading.value = true;
     const url = ""; // TODO
     const sort = params.sort ? mapSort(params.sort) : null;
