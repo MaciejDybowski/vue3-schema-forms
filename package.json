@@ -61,7 +61,7 @@
     "vue": "^3.4.27",
     "vue-i18n": "^9.13.1",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.6.8"
+    "vuetify": "^3.7.6"
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",

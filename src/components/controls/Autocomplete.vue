@@ -97,7 +97,7 @@ const {
   load,
   loadMoreRecords,
   singleOptionAutoSelect,
-} = await useDictionarySource(props.schema);
+} =  useDictionarySource(props.schema);
 
 onMounted(async () => {
   await bindLabel(props.schema);

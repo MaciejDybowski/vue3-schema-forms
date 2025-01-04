@@ -24,7 +24,7 @@ const thickness = computed(() => {
   if (props.schema.thickness) {
     return props.schema.thickness;
   } else {
-    return null;
+    return undefined;
   }
 });
 
@@ -32,7 +32,7 @@ const color = computed(() => {
   if (props.schema.color) {
     return props.schema.color;
   } else {
-    return null;
+    return undefined;
   }
 });
 

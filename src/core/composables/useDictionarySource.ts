@@ -14,7 +14,7 @@ import { variableRegexp } from "../../core/engine/utils";
 import { useFormModelStore } from "../../store/formModelStore";
 import { useResolveVariables } from "./useResolveVariables";
 
-export async function useDictionarySource(field: EngineDictionaryField) {
+export  function useDictionarySource(field: EngineDictionaryField) {
   const { resolve } = useResolveVariables();
   const source: DictionarySource = field.source;
   const title = source.title ? source.title : "title";
@@ -39,7 +39,7 @@ export async function useDictionarySource(field: EngineDictionaryField) {
 
   const isApiContainsDependency = source.url.match(variableRegexp);
   if (isApiContainsDependency !== null) {
-    endpoint = await resolve(field, source.url, title, true);
+    //endpoint = await resolve(field, source.url, title, true);
 
     formModelStore.$subscribe(async () => {
       const temp = await resolve(field, source.url, title, true);
@@ -74,6 +74,7 @@ export async function useDictionarySource(field: EngineDictionaryField) {
   });
 
   const load = async (caller: string) => {
+    endpoint = await resolve(field, source.url, title, true);
     if (logger.dictionaryLogger) {
       console.debug(
         `[vue-schema-forms] => Dictionary load call function = ${caller}, query=${query.value}}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
@@ -107,6 +108,7 @@ export async function useDictionarySource(field: EngineDictionaryField) {
     }
   };
   const loadMoreRecords = async () => {
+    endpoint = await resolve(field, source.url, title, true);
     if (endpoint.allVariablesResolved) {
       loading.value = true;
       const { url, params } = prepareUrl();

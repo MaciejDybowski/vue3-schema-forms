@@ -46,7 +46,7 @@ const mr = computed(() => {
 });
 
 onMounted(async () => {
-  await shouldRenderField(props.schema);
+  await shouldRenderField(props.schema, props.model);
 });
 </script>
 

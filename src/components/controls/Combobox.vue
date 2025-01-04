@@ -87,7 +87,7 @@ const {
   load,
   loadMoreRecords,
   singleOptionAutoSelect,
-} = await useDictionarySource(props.schema);
+} = useDictionarySource(props.schema);
 
 onMounted(async () => {
   await bindLabel(props.schema);
@@ -131,7 +131,7 @@ function updateQuery(val: any) {
 }
 
 async function fetchDictionaryData() {
-  if (data.value.length <= 1 && (!fieldProps.value.readonly)) {
+  if (data.value.length <= 1 && !fieldProps.value.readonly) {
     await load("combobox");
   }
 }
