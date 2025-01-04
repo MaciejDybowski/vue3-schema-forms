@@ -6,6 +6,12 @@ export interface Source {
   returnObject?: boolean;
 }
 
+export interface TableSource {
+  headers: string,
+  data: string,
+  updateRow: string,
+}
+
 export interface AvatarSource {
   thumbnail: string,
   preview: string,

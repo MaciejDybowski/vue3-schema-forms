@@ -20,10 +20,9 @@
 
       <editable-cell
         v-else
-        :headerKey="header.key"
         v-model="items[index][header.key]"
         v-bind="fieldProps"
-        @update:row="updateRow($event, index)"
+        @update:row="updateRow($event, index, header.key, items[index])"
       />
     </template>
   </v-data-table>
@@ -38,12 +37,13 @@ import EditableCell from "@/components/controls/table/EditableCell.vue";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 
 import { useProps } from "@/core/composables";
-import { EngineField } from "@/types/engine/EngineField";
+import { variableRegexp } from "@/core/engine/utils";
+import { EngineTableField } from "@/types/engine/EngineTableField";
 import { useEventBus } from "@vueuse/core";
 
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const props = defineProps<{
-  schema: EngineField;
+  schema: EngineTableField;
   model: object;
 }>();
 const { bindProps, fieldProps } = useProps();
@@ -55,18 +55,22 @@ const debounced = {
 
 const headers = [
   {
+    title: "ID",
+    key: "id",
+  },
+  {
     title: "Name",
     key: "name",
   },
   {
     title: "Location",
     key: "location",
-    editable: true,
     minWidth: "150px",
     maxWidth: "150px",
   },
   {
     title: "Height",
+    editable: true,
     key: "height",
   },
   {
@@ -119,8 +123,31 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
   };
 });
 
-function updateRow(value: any, index: number) {
-  items.value[index] = merge(items.value[index], value);
+function updateRow(value: any, index: number, headerKey: string, row: any) {
+  try {
+    const payload = {};
+    payload[headerKey] = value;
+
+    let updateRowURL = props.schema.source.updateRow;
+    if (props.schema.source.updateRow.match(variableRegexp)) {
+      const matches = props.schema.source.updateRow.match(variableRegexp);
+      if (matches) {
+        matches.forEach((variable) => {
+          const unwrapped = variable.slice(1, -1);
+          updateRowURL = updateRowURL.replaceAll(variable, row[unwrapped]);
+        });
+      }
+    }
+    console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
+    //axios.put(props.schema.source.updateRow, payload)
+    // temp code
+    const response = row;
+    response[headerKey] = value;
+    items.value[index] = merge(items.value[index], response);
+    // end temp code
+  } catch (e) {
+    console.error(e);
+  }
 
   if (props.schema.aggregates) {
     console.debug("Wołam API o agregaty do wyświetlenia");
@@ -173,8 +200,9 @@ async function loadData(params: TableFetchOptions) {
     });
 
     items.value = [
-      // Existing items
+      // Existing items with IDs added
       {
+        id: 1,
         name: "🍎 Apple",
         location: "Washington",
         height: "0.1",
@@ -182,6 +210,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0001",
       },
       {
+        id: 2,
         name: "🍌 Banana",
         location: "Ecuador",
         height: "0.2",
@@ -189,6 +218,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0002",
       },
       {
+        id: 3,
         name: "🍇 Grapes",
         location: "Italy",
         height: "0.02",
@@ -196,6 +226,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.00001",
       },
       {
+        id: 4,
         name: "🍉 Watermelon",
         location: "China",
         height: "0.4",
@@ -203,6 +234,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.03",
       },
       {
+        id: 5,
         name: "🍍 Pineapple",
         location: "Thailand",
         height: "0.3",
@@ -210,6 +242,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.005",
       },
       {
+        id: 6,
         name: "🍒 Cherries",
         location: "Turkey",
         height: "0.02",
@@ -217,6 +250,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.00001",
       },
       {
+        id: 7,
         name: "🥭 Mango",
         location: "India",
         height: "0.15",
@@ -224,6 +258,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0005",
       },
       {
+        id: 8,
         name: "🍓 Strawberry",
         location: "USA",
         height: "0.03",
@@ -231,6 +266,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.00002",
       },
       {
+        id: 9,
         name: "🍑 Peach",
         location: "China",
         height: "0.09",
@@ -238,14 +274,16 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0004",
       },
       {
+        id: 10,
         name: "🥝 Kiwi",
         location: "New Zealand",
         height: "0.05",
         base: "0.05",
         volume: "0.0001",
       },
-      // New items
+      // New items with IDs added
       {
+        id: 11,
         name: "🍋 Lemon",
         location: "Spain",
         height: "0.08",
@@ -253,6 +291,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0003",
       },
       {
+        id: 12,
         name: "🍈 Melon",
         location: "France",
         height: "0.25",
@@ -260,6 +299,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.01",
       },
       {
+        id: 13,
         name: "🍐 Pear",
         location: "Argentina",
         height: "0.12",
@@ -267,6 +307,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0008",
       },
       {
+        id: 14,
         name: "🍏 Green Apple",
         location: "Australia",
         height: "0.1",
@@ -274,6 +315,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0001",
       },
       {
+        id: 15,
         name: "🍊 Orange",
         location: "Florida",
         height: "0.09",
@@ -281,6 +323,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0005",
       },
       {
+        id: 16,
         name: "🍍 Jackfruit",
         location: "Philippines",
         height: "0.5",
@@ -288,6 +331,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.1",
       },
       {
+        id: 17,
         name: "🍏 Avocado",
         location: "Mexico",
         height: "0.2",
@@ -295,6 +339,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.002",
       },
       {
+        id: 18,
         name: "🍅 Tomato",
         location: "Italy",
         height: "0.04",
@@ -302,6 +347,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.00003",
       },
       {
+        id: 19,
         name: "🥥 Coconut",
         location: "Sri Lanka",
         height: "0.3",
@@ -309,6 +355,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.02",
       },
       {
+        id: 20,
         name: "🍋 Lime",
         location: "Brazil",
         height: "0.06",
@@ -316,6 +363,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0002",
       },
       {
+        id: 21,
         name: "🍇 Blueberry",
         location: "Canada",
         height: "0.01",
@@ -323,6 +371,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.000005",
       },
       {
+        id: 22,
         name: "🍈 Honeydew",
         location: "South Korea",
         height: "0.3",
@@ -330,6 +379,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.015",
       },
       {
+        id: 23,
         name: "🍊 Clementine",
         location: "Morocco",
         height: "0.08",
@@ -337,6 +387,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0004",
       },
       {
+        id: 24,
         name: "🍒 Cranberries",
         location: "USA",
         height: "0.02",
@@ -344,6 +395,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.00001",
       },
       {
+        id: 25,
         name: "🥭 Papaya",
         location: "Malaysia",
         height: "0.35",
@@ -351,6 +403,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.005",
       },
       {
+        id: 26,
         name: "🍓 Raspberry",
         location: "Poland",
         height: "0.02",
@@ -358,6 +411,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.000015",
       },
       {
+        id: 27,
         name: "🍑 Nectarine",
         location: "Greece",
         height: "0.08",
@@ -365,6 +419,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0004",
       },
       {
+        id: 28,
         name: "🍐 Quince",
         location: "Iran",
         height: "0.1",
@@ -372,6 +427,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0006",
       },
       {
+        id: 29,
         name: "🥝 Guava",
         location: "Vietnam",
         height: "0.1",
@@ -379,6 +435,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0007",
       },
       {
+        id: 30,
         name: "🍎 Persimmon",
         location: "Japan",
         height: "0.12",
@@ -386,6 +443,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0008",
       },
       {
+        id: 31,
         name: "🍌 Plantain",
         location: "Colombia",
         height: "0.25",
@@ -393,6 +451,7 @@ async function loadData(params: TableFetchOptions) {
         volume: "0.0003",
       },
       {
+        id: 32,
         name: "🍇 Blackberries",
         location: "Germany",
         height: "0.03",

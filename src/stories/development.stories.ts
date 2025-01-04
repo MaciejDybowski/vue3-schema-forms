@@ -53,9 +53,9 @@ export const TableView: Story = {
             url: "/api/table-views/{viewId}/aggregates",
           },
           source: {
-            headers: "/api/table-views/{viewId}/headers?fields=field0,field1,field2:editable,field3,field4",
+            headers: "/api/table-views/{viewId}/headers?fields=id,name,location,height:editable,base,volume",
             url: "/api/table-views/{viewId}/data",
-            updateRow: "/api/v1/update/row/api/{field0}",
+            updateRow: "/api/v1/update/row/api/{id}",
           },
           layout: {
             component: "table",
