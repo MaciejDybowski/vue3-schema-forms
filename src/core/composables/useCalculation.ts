@@ -42,6 +42,9 @@ export function useCalculation() {
 
   async function calculationListener(event: string, payloadIndex: number, field: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 5));
+    if(field.index == undefined){ // sumy poza sekcja powielana mialy hazard
+      await new Promise((r) => setTimeout(r, 1));
+    }
     let calculation = field.calculation as string;
     const precision = field.precision ? Number(field.precision) : 2;
 

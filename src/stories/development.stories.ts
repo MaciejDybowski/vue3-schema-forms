@@ -29,77 +29,232 @@ type Story = StoryObj<typeof meta>;
 
 export const BMProcess: Story = {
   args: {
+    model: {
+      faktura: {
+        kurs: 1,
+        waluta: {
+          label:"Polski złoty",
+          id: "PLN",
+        }
+      },
+      podsumowanie: {
+        kwotaNetto: 100,
+        kwotaVat: 23,
+        kwotaBrutto: 123
+      }
+    },
     schema: {
       type: "object",
       properties: {
-        htmlDaneDost: { content: "Dane dostawcy", layout: { component: "static-content", tag: "h3" } },
-        tech: {
-          properties: {
-            oddzial: {
-              label: "Oddział",
-              layout: { component: "dictionary", props: { clearable: true } },
-              source: {
-                url: "/api/dictionaries?feature-id=oddzialy&lm=nazwa&vm=id",
-                title: "label",
-                value: "id",
-                lazy: true,
-                returnObject: true,
-                singleOptionAutoSelect: true,
+        pozycjeDokumentu: {
+          layout: {
+            component: "duplicated-section",
+            cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+            schema: {
+              type: "object",
+              properties: {
+                aureaSectionId: {
+                  label: "Identyfiaktor sekcji powielanej",
+                  layout: {
+                    component: "text-field",
+                    hide: true,
+                    cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
+                  },
+                  expression: "HASH_GENERATOR(5)",
+                  sectionKey: "pozycjeDokumentu",
+                },
+                kwotaNetto: {
+                  label: "Kwota netto",
+                  layout: {
+                    cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                    component: "number-field",
+                    props: {
+                      hint: "Kwota PLN: {pozycjeDokumentu[].kwotaNettoPln}, Kurs: {faktura.kurs}",
+                      "persistent-hint": "nata(faktura.waluta.id!='PLN')",
+                    },
+                  },
+                  type: "float",
+                  precision: "2",
+                  sectionKey: "pozycjeDokumentu",
+                  precisionMin: "2",
+                },
+                stawkaVat: {
+                  defaultValue: {
+                    "mnoznik": 23,
+                    id: "23",
+                    label: "23%"
+                  },
+                  label: "Stawka VAT",
+                  layout: {
+                    cols: { xs: 12, sm: 12, md: 12, lg: 2, xl: 2, xxl: 2 },
+                    component: "dictionary",
+                    props: { clearable: true },
+                  },
+                  source: {
+                    url: "/api/dictionaries?feature-id=stawki-podatkowe&lm=nazwa&vm=kod&customAttributes=mnoznik%2C%7Bmnoznik%7D",
+                    title: "label",
+                    value: "id",
+                    returnObject: true,
+                    lazy: true,
+                    singleOptionAutoSelect: true,
+                  },
+                  sectionKey: "pozycjeDokumentu",
+                },
+                kwotaVAT: {
+                  label: "Kwota VAT",
+                  layout: {
+                    component: "number-field",
+                    hide: false,
+                    cols: { xs: 12, sm: 12, md: 12, lg: 2, xl: 2, xxl: 2 },
+                    props: {
+                      hint: "Kwota PLN: {pozycjeDokumentu[].kwotaVatPln:0}",
+                      "persistent-hint": "nata(faktura.waluta.id!='PLN')",
+                    },
+                  },
+                  type: "float",
+                  calculation: "$number(pozycjeDokumentu[].stawkaVat.mnoznik)/100*pozycjeDokumentu[].kwotaNetto",
+                  sectionKey: "pozycjeDokumentu",
+                  precision: "2",
+                  roundOption: "ceil",
+                  precisionMin: "2",
+                },
+                kwotaBrutto: {
+                  label: "Kwota brutto",
+                  layout: {
+                    cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                    component: "number-field",
+                    props: {
+                      hint: "Kwota PLN: {pozycjeDokumentu[].kwotaBruttoPln:0}, Kurs: {faktura.kurs:0}",
+                      "persistent-hint": "nata(faktura.waluta.id!='PLN')",
+                    },
+                  },
+                  type: "float",
+                  calculation: "pozycjeDokumentu[].kwotaNetto+pozycjeDokumentu[].kwotaVAT",
+                  precision: "2",
+                  sectionKey: "pozycjeDokumentu",
+                  onChange: {
+                    mode: "change-model",
+                    variables: [{ path: "osobyWybraneDoAutoryzacji", value: null }],
+                  },
+                  precisionMin: "2",
+                },
+                kwotaNettoPln: {
+                  label: "Kwota netto PLN",
+                  layout: {
+                    cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                    component: "number-field",
+                    props: { hint: "" },
+                    hide: true,
+                    if: "",
+                  },
+                  type: "float",
+                  precision: "2",
+                  calculation: "pozycjeDokumentu[].kwotaNetto*faktura.kurs",
+                  sectionKey: "pozycjeDokumentu",
+                  precisionMin: "2",
+                },
+                kwotaVatPln: {
+                  label: "Kwota VAT PLN",
+                  layout: {
+                    cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                    component: "number-field",
+                    hide: true,
+                  },
+                  type: "int",
+                  calculation: "pozycjeDokumentu[].kwotaVAT*faktura.kurs",
+                  sectionKey: "pozycjeDokumentu",
+                },
+                kwotaBruttoPln: {
+                  label: "Kwota brutto PLN",
+                  layout: {
+                    cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                    component: "number-field",
+                    props: { hint: "" },
+                    hide: true,
+                    if: "",
+                  },
+                  type: "float",
+                  precision: "2",
+                  calculation: "pozycjeDokumentu[].kwotaBrutto*faktura.kurs",
+                  sectionKey: "pozycjeDokumentu",
+                },
               },
             },
-            czyPominacOcr: {
-              label: "",
-              layout: { component: "checkbox", props: { multiple: false } },
-              source: { items: [{ value: true, title: "Pomiń OCR" }] },
+            props: {},
+            options: {
+              showDivider: true,
+              addBtnText: "Dodaj pozycję",
+              ordinalNumberInModel: true,
+              addBtnMode: "copy",
             },
           },
-          required: ["oddzial"],
+          editable: true,
+          showElements: true,
         },
-        dostawca: {
-          label: "Wybierz dostawcę",
-          layout: { component: "dictionary", if: "nata(tech.czyPominacOcr=true)" },
-          source: {
-            url: "/api/dictionaries?feature-id=dostawcy-rejestr&lm=nazwa&vm=id&customAttributes=nazwa%2C%7Bnazwa%7D%2Ckod%2C%7Bkod%7D%2Cnip%2C%7Bnip%7D%2Cadres%2C%7Badres%7D%2CkodPocztowy%2C%7BkodPocztowy%7D%2Cmiejscowosc%2C%7Bmiejscowosc%7D%2Ckraj%2C%7Bkraj%7D%2CnazwaWyswietlana%2C%7Bnazwa%7D%20-%20%7Bkod%7D%20-%20%7Bnip%7D",
-            title: "nazwaWyswietlana",
-            value: "id",
-            returnObject: true,
-            singleOptionAutoSelect: true,
-            lazy: true,
+        sumy: {
+          properties: {
+            kwotaNetto: {
+              label: "Kwota netto",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: {
+                  hint: "Kwota netto PLN: {sumy.kwotaNettoPln}",
+                  "persistent-hint": 'nata(faktura.waluta.id!="PLN")',
+                  readonly: true,
+                },
+              },
+              type: "float",
+              calculation: "$sum(pozycjeDokumentu.kwotaNetto)",
+              precision: "2",
+              precisionMin: "2",
+            },
+            kwotaVat: {
+              label: "Kwota VAT",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: {
+                  readonly: true,
+                  hint: "Kwota VAT PLN: {sumy.kwotaVatPln}",
+                  "persistent-hint": 'nata(faktura.waluta.id!="PLN")',
+                },
+              },
+              type: "float",
+              calculation: "$sum(pozycjeDokumentu.kwotaVAT)",
+              precision: "2",
+              precisionMin: "2",
+            },
+            kwotaBrutto: {
+              label: "Kwota brutto",
+              layout: {
+                cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: {
+                  hint: "Kwota brutto PLN: {sumy.kwotaBruttoPln}",
+                  "persistent-hint": 'nata(faktura.waluta.id!="PLN")',
+                  readonly: true,
+                },
+              },
+              type: "float",
+              calculation: "$sum(pozycjeDokumentu.kwotaBrutto)",
+              precision: "2",
+              precisionMin: "2",
+            },
+            alert: {
+              content: "Niezgodność kwot podsumowania faktury z kwotami sumami opisu merytorycznego",
+              layout: {
+                component: "static-content",
+                tag: "v-alert",
+                props: { variant: "outlined", type: "warning", density: "compact" },
+                if: "nata(podsumowanie.kwotaNetto != sumy.kwotaNetto or podsumowanie.kwotaVat != sumy.kwotaVat or podsumowanie.kwotaBrutto != sumy.kwotaBrutto)",
+              },
+            },
           },
-        },
-        kod: {
-          label: "Kod dostawcy",
-          layout: { component: "data-viewer", if: "nata($exists(dostawca))" },
-          valueMapping: "{dostawca.kod}",
-          type: "text",
-        },
-        nazwa: {
-          label: "Nazwa dostawcy",
-          layout: {
-            component: "data-viewer",
-            cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
-            if: "nata($exists(dostawca))",
-          },
-          valueMapping: "{dostawca.label}",
-          type: "text",
-        },
-        nip: {
-          label: "NIP",
-          layout: {
-            component: "data-viewer",
-            cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
-            if: "nata($exists(dostawca))",
-          },
-          valueMapping: "{dostawca.nip}",
-          type: "text",
-        },
-        adres: {
-          content:
-            "{dostawca.adres:Brak danych} <br>{dostawca.kodPocztowy:Brak danych} {dostawca.miejscowosc:Brak danych}, {dostawca.kraj:Brak danych} <br><br>Saldo: {dostawca.saldo:Brak danych}",
-          layout: { component: "static-content", tag: "p", if: "nata($exists(dostawca))" },
+          required: [],
         },
       },
-      required: ["dostawca"],
+      required: [],
     },
   },
 };
