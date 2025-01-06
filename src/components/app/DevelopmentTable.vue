@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container v-if="!loading">
     <vue-schema-forms
       ref="myForm"
       v-model="model"
@@ -52,9 +52,12 @@ const props = defineProps<{
 let model = ref(props.model);
 
 let myForm = ref();
-
+let loading = ref(true)
 onBeforeMount(async () => {
+  loading.value = true;
   await fetchToken("bm")
+  await new Promise((r) => setTimeout(r, 200));
+  loading.value = false;
 })
 
 async function validate() {

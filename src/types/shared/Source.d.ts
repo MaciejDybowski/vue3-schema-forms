@@ -30,3 +30,12 @@ export interface DictionarySource extends Source {
   lazy?: boolean;
   singleOptionAutoSelect?: boolean;
 }
+
+export interface UserInputSource {
+  url?: string;
+  itemsPerPage?: number;
+  lazy?: boolean;
+  multiple?: boolean;
+  maxSelection?: number;
+  showMenuItemsOnFocusIn?: boolean;
+}

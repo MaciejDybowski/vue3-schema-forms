@@ -1,6 +1,6 @@
 import { EngineField } from "@/types/engine/EngineField";
 import { LocationResult } from "@/types/shared/LocationResult";
-import { AvatarSource, DictionarySource, SimpleSource, Source } from "@/types/shared/Source";
+import { AvatarSource, DictionarySource, SimpleSource, Source, UserInputSource } from "@/types/shared/Source";
 
 export interface EngineTextField extends EngineField {
   calculation?: string;
@@ -62,6 +62,10 @@ export interface EnginePhoneField extends EngineField {
 
 export interface EngineDictionaryField extends EngineField {
   source: DictionarySource;
+}
+
+export interface EngineUserField extends EngineField {
+  source: UserInputSource;
 }
 
 export interface EngineLocationField extends EngineField {

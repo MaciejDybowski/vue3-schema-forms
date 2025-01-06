@@ -1,0 +1,267 @@
+<template>
+  <base-autocomplete
+    v-model="localModel"
+    v-model:menu="menu"
+    :hide-no-data="false"
+    :items="items"
+    :label="label"
+    :lazy="true"
+    :loading="loading"
+    :multiple="multiple"
+    :no-data-text="t('noData')"
+    :options="pagination"
+    :search="query"
+    item-title="firstName"
+    item-value="id"
+    no-filter
+    return-object
+    v-bind="fieldProps"
+    @focus="focusIn($event)"
+    @loadMoreRecords="loadMoreRecords"
+  >
+    <template #selection="{ item }">
+      <v-chip
+        :closable="('readonly' in fieldProps && fieldProps.readonly) as boolean"
+        close-icon="mdi-close"
+        label
+        variant="outlined"
+        @click:close="removeValue(item.raw)"
+      >
+        <span>
+          {{ item.raw.firstName }}
+          {{ item.raw.lastName }}
+        </span>
+      </v-chip>
+    </template>
+
+    <template #item="{ item, props: p }">
+      <v-list-item
+        class="px-3"
+        v-bind="p"
+        title=""
+        @click="menu = false"
+      >
+        <v-list-item-title>
+          <v-row
+            align="center"
+            dense
+          >
+            <v-col cols="auto">
+              <avatar-provider :id="item.raw.id"/>
+            </v-col>
+            <v-col
+              class="user-details"
+              cols="auto"
+            >
+              <span class="font-weight-bold">{{ item.raw.firstName }} {{ item.raw.lastName }}</span>
+              <br />
+              <span>{{ item.raw.email }}</span>
+            </v-col>
+          </v-row>
+        </v-list-item-title>
+<!--        <template #append>
+          <div v-if="prepareLabels.length > 0">
+            <tcn-au-label
+              v-for="element in prepareLabels(item.raw)"
+              :key="element.id"
+              :model-value="element"
+              class="ma-0 mr-2"
+              size="small"
+              v-bind="p"
+            />
+          </div>
+        </template>-->
+      </v-list-item>
+    </template>
+
+    <template #no-data>
+      <v-list-item v-if="loading">
+        <v-progress-linear
+          color="primary"
+          indeterminate
+        ></v-progress-linear>
+      </v-list-item>
+      <v-list-item
+        v-else
+        :title="t('noData')"
+      />
+    </template>
+  </base-autocomplete>
+</template>
+
+<script lang="ts" setup>
+import axios from "axios";
+import { isArray } from "lodash";
+import get from "lodash/get";
+import { computed, onMounted, ref } from "vue";
+
+import BaseAutocomplete from "@/components/controls/base/BaseAutocomplete.vue";
+import { Pagination } from "@/components/controls/base/Pagination";
+import { mapSliceTotalElements } from "@/components/controls/base/SliceResponse";
+
+import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "@/core/composables";
+import { useEventHandler } from "@/core/composables/useEventHandler";
+import { variableRegexp } from "@/core/engine/utils";
+import { User } from "@/types/engine/User";
+import { EngineUserField } from "@/types/engine/controls";
+import { useEventBus } from "@vueuse/core";
+import AvatarProvider from "@/components/controls/user-input/AvatarProvider.vue";
+
+const props = defineProps<{
+  schema: EngineUserField;
+  model: object;
+}>();
+
+const { t } = useLocale();
+const { bindClass } = useClass();
+const { bindRules, rules, requiredInputClass } = useRules();
+const { bindProps, fieldProps } = useProps();
+
+const { label, bindLabel } = useLabel(props.schema);
+const { getValue, setValue } = useFormModel();
+const { onChange } = useEventHandler();
+const { resolve } = useResolveVariables();
+
+const localModel = computed({
+  get(): User | User[] | undefined | null {
+    return getValue(props.model, props.schema);
+  },
+  set(val: any) {
+    if (typeof val !== "string") {
+      if (multiple && maxSelection > 0 && isArray(val)) {
+        val.length > maxSelection && val.shift();
+      }
+      setValue(val, props.schema);
+    }
+  },
+});
+
+// DEFAULTS VALUES //
+const usersAPIEndpoint = ref<string>("/api/workspaces/members");
+
+const query = ref("");
+const pagination = props.schema.source.itemsPerPage
+  ? ref(new Pagination(props.schema.source.itemsPerPage))
+  : ref(new Pagination(10));
+const menu = ref(false);
+const multiple = props.schema.source.multiple ? props.schema.source.multiple : true;
+const showMenuItemsOnFocusIn = props.schema.source.showMenuItemsOnFocusIn ? props.schema.source.showMenuItemsOnFocusIn : false;
+const maxSelection = props.schema.source.maxSelection ? props.schema.source.maxSelection : 0;
+const loading = ref(false);
+
+const items = ref([]);
+
+async function focusIn(event: any) {
+  if (items.value.length == 0) {
+    await load();
+  }
+  if (showMenuItemsOnFocusIn) {
+    event.target.click();
+  }
+}
+
+async function load() {
+  try {
+    loading.value = true;
+    pagination.value.resetPage();
+    const obj = {
+      query: query.value,
+      page: 0,
+      size: pagination.value.getItemsPerPage(),
+    };
+
+    const response = await axios.get(usersAPIEndpoint.value, {
+      params: {
+        ...obj,
+      },
+    });
+
+    items.value = get(response.data, "content", []);
+    pagination.value.setTotalElements(mapSliceTotalElements(response.data));
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function loadMoreRecords() {
+  try {
+    if (pagination.value.isNextPage()) {
+      const obj = {
+        query: query.value,
+        page: pagination.value.getPage() + 1,
+        size: pagination.value.getItemsPerPage(),
+      };
+
+      const response = await axios.get(usersAPIEndpoint.value, {
+        params: {
+          ...obj,
+        },
+      });
+      pagination.value.nextPage();
+      items.value = items.value.concat(get(response.data, "content", []));
+      pagination.value.setTotalElements(mapSliceTotalElements(response.data));
+    }
+  } catch (error: any) {
+    console.error(error);
+    //  handleError(error, this.t("usersLoadingError"));
+  }
+}
+
+async function checkIfURLHasDependency() {
+  const isApiContainsDependency = !(usersAPIEndpoint.value.match(variableRegexp) == null);
+  if (isApiContainsDependency) {
+    const { resolvedText, allVariablesResolved } = await resolve(props.schema, usersAPIEndpoint.value, "title", true);
+
+    if (allVariablesResolved) {
+      usersAPIEndpoint.value = resolvedText;
+    } else {
+      console.debug(`API call was blocked, not every variable from endpoint was resolved ${usersAPIEndpoint.value}`);
+    }
+
+    const vueSchemaFormEventBus = useEventBus<string>("form-model");
+    const unsubscribe = vueSchemaFormEventBus.on(async (event) => await listener(event, props.schema.key));
+
+    const listener = async (event: string, key: string) => {
+      const temp = await resolve(props.schema, usersAPIEndpoint.value, "title", true);
+      if (temp.resolvedText !== usersAPIEndpoint.value) {
+        usersAPIEndpoint.value = temp.resolvedText;
+        await load();
+      }
+    };
+  }
+}
+
+function removeValue(item: User) {
+  if (multiple) {
+    localModel.value = (localModel.value as User[]).filter((val) => val != item);
+  } else {
+    localModel.value = null;
+  }
+}
+
+onMounted(async () => {
+  await bindLabel(props.schema);
+  await bindRules(props.schema);
+  await bindProps(props.schema);
+
+  if (props.schema.source.url) {
+    usersAPIEndpoint.value = props.schema.source.url;
+  }
+  await checkIfURLHasDependency();
+});
+</script>
+
+<style lang="css" scoped></style>
+
+<i18n lang="json">
+{
+  "en": {
+    "noData": "No users available."
+  },
+  "pl": {
+    "noData": "Brak dostępnych użytkowników."
+  }
+}
+</i18n>

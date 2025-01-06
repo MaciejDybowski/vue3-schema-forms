@@ -27,21 +27,42 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const UserInput: Story = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        userInput: {
+          label: "Użytkownicy",
+          layout: {
+            component: "user-input",
+          },
+          source: {
+            maxSelection:1
+          }
+        },
+      },
+      required: [],
+    },
+  },
+};
+
 export const BMProcess: Story = {
   args: {
     model: {
       faktura: {
         kurs: 1,
         waluta: {
-          label:"Polski złoty",
+          label: "Polski złoty",
           id: "PLN",
-        }
+        },
       },
       podsumowanie: {
         kwotaNetto: 100,
         kwotaVat: 23,
-        kwotaBrutto: 123
-      }
+        kwotaBrutto: 123,
+      },
     },
     schema: {
       type: "object",
@@ -80,9 +101,9 @@ export const BMProcess: Story = {
                 },
                 stawkaVat: {
                   defaultValue: {
-                    "mnoznik": 23,
+                    mnoznik: 23,
                     id: "23",
-                    label: "23%"
+                    label: "23%",
                   },
                   label: "Stawka VAT",
                   layout: {

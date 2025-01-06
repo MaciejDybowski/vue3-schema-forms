@@ -24,6 +24,7 @@ import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
 import GroupOfFields from "@/components/controls/fields-group/FieldsGroup.vue";
 import Image from "@/components/controls/Image.vue";
 import TableField from "@/components/controls/table/TableField.vue";
+import UserInput from "@/components/controls/user-input/UserInput.vue";
 
 
 export const vueSchemaFromControls: Components = {
@@ -49,5 +50,6 @@ export const vueSchemaFromControls: Components = {
 /*  "image-preview": ImagePreview,*/
   "image": Image,
   "fields-group": GroupOfFields,
-  "table": TableField
+  "table": TableField,
+  "user-input": UserInput
 };

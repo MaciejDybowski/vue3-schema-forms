@@ -22,6 +22,7 @@ const config: StorybookConfig = {
       // Add dependencies to pre-optimization
       optimizeDeps: {
         include: ['storybook-dark-mode'],
+        exclude: ['node_modules/.cache/storybook']
       },
       server: {
         proxy: {
