@@ -37,8 +37,7 @@
     <template #item="{ item, props: p }">
       <v-list-item
         class="px-3"
-        v-bind="p"
-        title=""
+        v-bind="{ ...p, title: '' }"
         @click="menu = false"
       >
         <v-list-item-title>
@@ -47,7 +46,10 @@
             dense
           >
             <v-col cols="auto">
-              <avatar-provider :id="item.raw.id"/>
+              <avatar-provider
+                :id="item.raw.id"
+                :initials="makeInitials(item.raw)"
+              />
             </v-col>
             <v-col
               class="user-details"
@@ -59,18 +61,17 @@
             </v-col>
           </v-row>
         </v-list-item-title>
-<!--        <template #append>
-          <div v-if="prepareLabels.length > 0">
-            <tcn-au-label
-              v-for="element in prepareLabels(item.raw)"
+        <template #append>
+          <div v-if="labels.length > 0">
+            <user-input-label
+              v-for="element in labels(item.raw)"
               :key="element.id"
-              :model-value="element"
-              class="ma-0 mr-2"
-              size="small"
-              v-bind="p"
+              :element="element"
+              v-bind="$attrs"
+              variant="flat"
             />
           </div>
-        </template>-->
+        </template>
       </v-list-item>
     </template>
 
@@ -98,14 +99,16 @@ import { computed, onMounted, ref } from "vue";
 import BaseAutocomplete from "@/components/controls/base/BaseAutocomplete.vue";
 import { Pagination } from "@/components/controls/base/Pagination";
 import { mapSliceTotalElements } from "@/components/controls/base/SliceResponse";
+import AvatarProvider from "@/components/controls/user-input/AvatarProvider.vue";
+import UserInputLabel from "@/components/controls/user-input/UserInputLabel.vue";
 
 import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "@/core/composables";
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { variableRegexp } from "@/core/engine/utils";
+import { Label } from "@/types/engine/Label";
 import { User } from "@/types/engine/User";
 import { EngineUserField } from "@/types/engine/controls";
 import { useEventBus } from "@vueuse/core";
-import AvatarProvider from "@/components/controls/user-input/AvatarProvider.vue";
 
 const props = defineProps<{
   schema: EngineUserField;
@@ -224,6 +227,7 @@ async function checkIfURLHasDependency() {
     const unsubscribe = vueSchemaFormEventBus.on(async (event) => await listener(event, props.schema.key));
 
     const listener = async (event: string, key: string) => {
+      await new Promise((r) => setTimeout(r, 50));
       const temp = await resolve(props.schema, usersAPIEndpoint.value, "title", true);
       if (temp.resolvedText !== usersAPIEndpoint.value) {
         usersAPIEndpoint.value = temp.resolvedText;
@@ -238,6 +242,72 @@ function removeValue(item: User) {
     localModel.value = (localModel.value as User[]).filter((val) => val != item);
   } else {
     localModel.value = null;
+  }
+}
+
+function makeInitials(item: any) {
+  if ("firstName" in item && "lastName" in item) {
+    return item.firstName.charAt(0).toUpperCase() + item.lastName.charAt(0).toUpperCase();
+  } else if ("email" in item) {
+    return item.email.charAt(0).toUpperCase() + item.email.charAt(1).toUpperCase();
+  }
+}
+
+function labels(item: User): Label[] {
+  if ("labels" in item) {
+    const providedLabels: Label[] =
+      props.schema.options.userInputProps && props.schema.options.userInputProps.labels
+        ? props.schema.options.userInputProps.labels
+        : [];
+
+    // array ['labelId', 'labelId2']
+    if (Array.isArray(item.labels)) {
+      if (providedLabels.length > 0) {
+        const userLabels: string[] = item.labels;
+        return providedLabels.filter((element) => userLabels.includes(element.id));
+      } else {
+        return item.labels.map((id) => ({
+          id: id,
+          title: id,
+          backgroundColor: "primary",
+          textColor: "white",
+        }));
+      }
+    }
+
+    // string separated by coma
+    if (item.labels && item.labels.includes(",")) {
+      const labels = item.labels.split(",");
+      if (providedLabels.length > 0) {
+        return providedLabels.filter((element) => labels.includes(element.id));
+      } else {
+        return labels.map((id) => ({
+          id: id,
+          title: id,
+          backgroundColor: "primary",
+          textColor: "white",
+        }));
+      }
+    }
+    // one string = label
+    else if (item.labels) {
+      if (providedLabels.length > 0) {
+        return providedLabels.filter((element) => element.id == item.labels);
+      } else {
+        return [
+          {
+            id: item.labels,
+            title: item.labels,
+            backgroundColor: "primary",
+            textColor: "white",
+          },
+        ];
+      }
+    }
+
+    return [];
+  } else {
+    return [];
   }
 }
 

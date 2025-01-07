@@ -18,4 +18,5 @@ export type SchemaComponent =
   | "button"
   | "avatar"
   | "switch"
+  | "user-input"
   | "image";

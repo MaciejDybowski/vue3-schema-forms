@@ -2,10 +2,17 @@
   <v-avatar
     v-if="!loading"
     :size="size"
+    color="primary"
   >
     <v-img
+      v-if="image"
       :alt="`user-${id}-avatar`"
       :src="image"
+    />
+    <span
+      v-else
+      class="text-white"
+      v-html="initials"
     />
   </v-avatar>
   <div
@@ -23,6 +30,7 @@ const props = withDefaults(
   defineProps<{
     size?: number;
     id: string;
+    initials: string;
   }>(),
   {
     size: 32,
@@ -51,7 +59,11 @@ async function fetchUserAvatarById(id: string, size: number): Promise<any> {
     },
   });
 
-  image.value = (await toBase64(response.data)) as string;
+  try {
+    image.value = (await toBase64(response.data)) as string;
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 onMounted(async () => {

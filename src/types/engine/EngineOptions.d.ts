@@ -1,3 +1,5 @@
+import { Label } from "@/types/engine/Label";
+
 export interface EngineOptions {
   fieldProps: Record<string, any>;
   textFieldProps: Record<string, any>;
@@ -8,4 +10,7 @@ export interface EngineOptions {
   selectProps: Record<string, any>;
   digitsAfterDecimal: number;
   context?: Record<string, any>;
+  userInputProps?: Record<string, any> & {
+    labels?: Label[];
+  }
 }

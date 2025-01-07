@@ -14,7 +14,7 @@ export function useProps() {
   const { resolveJSONataExpression } = useJSONataExpression();
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
-  let props = ref<Record<string, string | number | boolean>>({});
+  let props = ref<Record<string, string | number | boolean | any>>({});
   let propsClone = ref<Record<string, string | number | boolean>>({});
 
 
@@ -84,6 +84,13 @@ export function useProps() {
       }
       case "image":
         props.value = {
+          ...schema.layout?.props,
+        }
+        break;
+      case "user-input":
+        props.value = {
+          'hide-details': 'auto',
+          ...schema.options?.fieldProps,
           ...schema.layout?.props,
         }
         break;
