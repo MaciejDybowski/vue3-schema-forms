@@ -57,158 +57,159 @@ export const UserInput: Story = {
 export const BMProcess: Story = {
   args: {
     model: {
-      "metadane": {
-        "sciezkaPlikuFaktury": null,
-        "nazwaPlikuFaktury": null
+      metadane: {
+        sciezkaPlikuFaktury: null,
+        nazwaPlikuFaktury: null,
       },
-      "tech": {
-        "czyPominacOcr": true,
-        "oddzial": {
-          "id": "fb01ef61-43c6-43c2-b0b1-918e8b72037d",
-          "label": "Rzeszów"
+      tech: {
+        czyPominacOcr: true,
+        oddzial: {
+          id: "fb01ef61-43c6-43c2-b0b1-918e8b72037d",
+          label: "Rzeszów",
         },
-        "czyObiegSkrocony": false,
-        "czyDuplikat": true
+        czyObiegSkrocony: false,
+        czyDuplikat: true,
       },
-      "dostawca": {
-        "id": "3c3466be-9e83-4863-9925-8c065076ee95",
-        "label": "HADEX GAZ SP ZOO",
-        "kod": "S011547",
-        "kraj": "PL",
-        "nip": "7811700284",
-        "nazwaWyswietlana": "HADEX GAZ SP ZOO - S011547 - 7811700284",
-        "kodPocztowy": "60-451",
-        "miejscowosc": "POZNAŃ",
-        "adres": "J.H. DĄBROWSKIEGO 536",
-        "nazwa": "HADEX GAZ SP ZOO",
-        "saldo": "Kl. 0311201 - Nieprzeterminowane: 23921.72; Przeterminowane: 0.00; Kl. 0311202 - Nieprzeterminowane: 6906.14; Przeterminowane: 2287.80"
+      dostawca: {
+        id: "3c3466be-9e83-4863-9925-8c065076ee95",
+        label: "HADEX GAZ SP ZOO",
+        kod: "S011547",
+        kraj: "PL",
+        nip: "7811700284",
+        nazwaWyswietlana: "HADEX GAZ SP ZOO - S011547 - 7811700284",
+        kodPocztowy: "60-451",
+        miejscowosc: "POZNAŃ",
+        adres: "J.H. DĄBROWSKIEGO 536",
+        nazwa: "HADEX GAZ SP ZOO",
+        saldo:
+          "Kl. 0311201 - Nieprzeterminowane: 23921.72; Przeterminowane: 0.00; Kl. 0311202 - Nieprzeterminowane: 6906.14; Przeterminowane: 2287.80",
       },
-      "kod": null,
-      "nazwa": null,
-      "nip": null,
-      "adres": null,
-      "rejestracja": {
-        "osobyWybraneDoOpisu": [
+      kod: null,
+      nazwa: null,
+      nip: null,
+      adres: null,
+      rejestracja: {
+        osobyWybraneDoOpisu: [
           {
-            "id": "05a4d8ec-3413-4b6e-bcf3-292ad61f8694",
-            "label": "05a4d8ec-3413-4b6e-bcf3-292ad61f8694",
-            "firstName": "Adam",
-            "lastName": "Dyszak",
-            "email": "adam.dyszak@b-m.pl",
-            "username": "adam.dyszak",
-            "labels": "dostawca_osoba_przypisana"
-          }
+            id: "05a4d8ec-3413-4b6e-bcf3-292ad61f8694",
+            label: "05a4d8ec-3413-4b6e-bcf3-292ad61f8694",
+            firstName: "Adam",
+            lastName: "Dyszak",
+            email: "adam.dyszak@b-m.pl",
+            username: "adam.dyszak",
+            labels: "dostawca_osoba_przypisana",
+          },
         ],
-        "decyzjaRejestracja": {
-          "value": "zatwierdz",
-          "title": "Zatwierdź"
+        decyzjaRejestracja: {
+          value: "zatwierdz",
+          title: "Zatwierdź",
         },
-        "osobaRejestrujaca": {
-          "firstName": "Tecna",
-          "lastName": "Tecna",
-          "id": "1304370d-3d81-475b-8f34-7550e85ae491",
-          "email": "tecna12@tecna.pl",
-          "username": "TECNA"
+        osobaRejestrujaca: {
+          firstName: "Tecna",
+          lastName: "Tecna",
+          id: "1304370d-3d81-475b-8f34-7550e85ae491",
+          email: "tecna12@tecna.pl",
+          username: "TECNA",
         },
-        "dataRejestracji": "2025-01-05"
+        dataRejestracji: "2025-01-05",
       },
-      "faktura": {
-        "nrReferencyjny": "DMS-100316",
-        "nrFaktury": "1",
-        "typDokumentu": {
-          "id": "VAT",
-          "label": "Faktura podstawowa"
+      faktura: {
+        nrReferencyjny: "DMS-100316",
+        nrFaktury: "1",
+        typDokumentu: {
+          id: "VAT",
+          label: "Faktura podstawowa",
         },
-        "dataWystawienia": "2025-01-05",
-        "dataWplywu": "2025-01-05",
-        "dataSprzedazy": "2025-01-05",
-        "waluta": {
-          "id": "PLN",
-          "label": "Polski złoty"
+        dataWystawienia: "2025-01-05",
+        dataWplywu: "2025-01-05",
+        dataSprzedazy: "2025-01-05",
+        waluta: {
+          id: "PLN",
+          label: "Polski złoty",
         },
-        "kurs": 1
+        kurs: 1,
       },
-      "dodajDostawce": false,
-      "podsumowanie": {
-        "lPozycji": 1,
-        "kwotaNetto": 100,
-        "kwotaVat": 23,
-        "kwotaBrutto": 123
+      dodajDostawce: false,
+      podsumowanie: {
+        lPozycji: 1,
+        kwotaNetto: 100,
+        kwotaVat: 23,
+        kwotaBrutto: 123,
       },
-      "pozycjeDokumentu": [
+      pozycjeDokumentu: [
         {
-          "ordinalNumber": 1,
-          "aureaSectionId": "HBf4s",
-          "kwotaNettoPln": 100,
-          "kwotaVatPln": 23,
-          "kwotaBruttoPln": 123,
-          "kwotaBrutto": 123,
-          "kwotaVAT": 23,
-          "nazwa": "Maszyna",
-          "opis": "Test",
-          "kwotaNetto": 100,
-          "stawkaVat": {
-            "id": "23",
-            "label": "23%",
-            "mnoznik": "23"
+          ordinalNumber: 1,
+          aureaSectionId: "HBf4s",
+          kwotaNettoPln: 100,
+          kwotaVatPln: 23,
+          kwotaBruttoPln: 123,
+          kwotaBrutto: 123,
+          kwotaVAT: 23,
+          nazwa: "Maszyna",
+          opis: "Test",
+          kwotaNetto: 100,
+          stawkaVat: {
+            id: "23",
+            label: "23%",
+            mnoznik: "23",
           },
-          "rodzajKosztu": {
-            "id": "4025100",
-            "label": "4025100 - Remonty drobne biura",
-            "czyPoleNrProjektu": "false",
-            "czyPoleRodzinaEl5": "false",
-            "czyPoleRodzinaEl4": "false",
-            "czyPoleOsobaDoRefatkury": "false",
-            "czyPoleNrRejestracyjny": "false",
-            "czyPoleNrZleceniaSerwisowegoDbs": "false",
-            "czyPoleNazwaKlienta": "false",
-            "czyPoleAkronim": "false",
-            "czyPoleOpisDokumentu": "true",
-            "czyPoleDataPrzyjeciaPrzyjazdu": "false",
-            "czyPoleCelSpotkania": "false",
-            "czyPoleDealDbs": "false",
-            "czyPoleNosnik": "false",
-            "czyPoleLiczbaOsob": "false"
+          rodzajKosztu: {
+            id: "4025100",
+            label: "4025100 - Remonty drobne biura",
+            czyPoleNrProjektu: "false",
+            czyPoleRodzinaEl5: "false",
+            czyPoleRodzinaEl4: "false",
+            czyPoleOsobaDoRefatkury: "false",
+            czyPoleNrRejestracyjny: "false",
+            czyPoleNrZleceniaSerwisowegoDbs: "false",
+            czyPoleNazwaKlienta: "false",
+            czyPoleAkronim: "false",
+            czyPoleOpisDokumentu: "true",
+            czyPoleDataPrzyjeciaPrzyjazdu: "false",
+            czyPoleCelSpotkania: "false",
+            czyPoleDealDbs: "false",
+            czyPoleNosnik: "false",
+            czyPoleLiczbaOsob: "false",
           },
-          "osobyWybraneDoAutoryzacji": null,
-          "miejscePowstaniaKosztu": {
-            "id": "CD820",
-            "label": "CD820 - CRS Refakturowanie Poznań"
-          }
-        }
-      ],
-      "sumy": {
-        "fakturaOplacona": false,
-        "dyspozycjaWartosci": false,
-        "kwotaNetto": 0,
-        "kwotaVat": 0,
-        "kwotaBrutto": 0,
-        "kwotaNettoPln": 0,
-        "kwotaVatPln": 0,
-        "kwotaBruttoPln": 0,
-        "alert": null,
-        "doZaplatyNetto": null,
-        "doZaplatyVAT": null,
-        "doZaplatyKwotaBrutto": null
-      },
-      "dekretacja": {
-        "nieZnamOsoby": false,
-        "decyzjaOpisMerytoryczny": {
-          "value": "zatwierdz",
-          "title": "Zatwierdź"
+          osobyWybraneDoAutoryzacji: null,
+          miejscePowstaniaKosztu: {
+            id: "CD820",
+            label: "CD820 - CRS Refakturowanie Poznań",
+          },
         },
-        "osobyWybraneDoKsiegowania": [
+      ],
+      sumy: {
+        fakturaOplacona: false,
+        dyspozycjaWartosci: false,
+        kwotaNetto: 0,
+        kwotaVat: 0,
+        kwotaBrutto: 0,
+        kwotaNettoPln: 0,
+        kwotaVatPln: 0,
+        kwotaBruttoPln: 0,
+        alert: null,
+        doZaplatyNetto: null,
+        doZaplatyVAT: null,
+        doZaplatyKwotaBrutto: null,
+      },
+      dekretacja: {
+        nieZnamOsoby: false,
+        decyzjaOpisMerytoryczny: {
+          value: "zatwierdz",
+          title: "Zatwierdź",
+        },
+        osobyWybraneDoKsiegowania: [
           {
-            "id": "4b2696da-8c73-4f92-ba39-399c430ad40e",
-            "label": "4b2696da-8c73-4f92-ba39-399c430ad40e",
-            "firstName": "Marta",
-            "lastName": "Gajda",
-            "email": "marta.gajda@b-m.pl",
-            "username": "marta.gajda",
-            "labels": ""
-          }
-        ]
-      }
+            id: "4b2696da-8c73-4f92-ba39-399c430ad40e",
+            label: "4b2696da-8c73-4f92-ba39-399c430ad40e",
+            firstName: "Marta",
+            lastName: "Gajda",
+            email: "marta.gajda@b-m.pl",
+            username: "marta.gajda",
+            labels: "",
+          },
+        ],
+      },
     },
     schema: {
       type: "object",
@@ -1120,13 +1121,11 @@ export const TableView: Story = {
           },
         },
         tableOfProducts: {
-          aggregates: {
-            url: "/api/table-views/{viewId}/aggregates",
+          actions: {
+            'nazwaKlienta': "redirectActionCode"
           },
           source: {
-            headers: "/api/table-views/{viewId}/headers?fields=id,name,location,height:editable,base,volume",
-            url: "/api/table-views/{viewId}/data",
-            updateRow: "/api/v1/update/row/api/{id}",
+            data: "/api/customer-pricelists/{pricelistId}/details?fields=content,aggregates,pageable",
           },
           layout: {
             component: "table",

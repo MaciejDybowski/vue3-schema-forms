@@ -25,6 +25,27 @@
         @update:row="updateRow($event, index, header.key, items[index])"
       />
     </template>
+
+    <template v-slot:body.append="{}">
+      <tr v-for="(aggregateKey, i) in Object.keys(aggregates)">
+        <td
+          v-for="(header, headerIndex) in headers"
+          :key="i"
+        >
+          <div v-if="headerIndex == 0">
+            {{ parseAggregateKey(aggregateKey as AggregateTypes) }}
+          </div>
+
+          <div v-if="header.key in aggregates[aggregateKey]">
+            {{ aggregates[aggregateKey][header.key] }}
+          </div>
+
+          <div v-else>
+            <!-- empty table cells for columns that don't need a sum -->
+          </div>
+        </td>
+      </tr>
+    </template>
   </v-data-table>
 </template>
 
@@ -36,7 +57,7 @@ import { computed, onMounted, ref } from "vue";
 import EditableCell from "@/components/controls/table/EditableCell.vue";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 
-import { useProps } from "@/core/composables";
+import { useLocale, useProps } from "@/core/composables";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTableField } from "@/types/engine/EngineTableField";
 import { useEventBus } from "@vueuse/core";
@@ -82,6 +103,29 @@ const headers = [
     key: "volume",
   },
 ];
+
+const aggregates = {
+  sum: {
+    height: 400,
+    base: 3,
+  },
+  avg: {
+    height: 200,
+    base: 1.5,
+  },
+};
+
+const { t } = useLocale();
+type AggregateTypes = "sum" | "avg";
+
+function parseAggregateKey(code: AggregateTypes): string {
+  switch (code) {
+    case "sum":
+      return t("sum");
+    case "avg":
+      return t("avg");
+  }
+}
 
 const items = ref<any[]>([]);
 const itemsTotalElements = ref(0);
@@ -482,7 +526,13 @@ onMounted(async () => {
 
 <i18n lang="json">
 {
-  "en": {},
-  "pl": {}
+  "en": {
+    "sum": "Total",
+    "avg": "Average"
+  },
+  "pl": {
+    "sum": "Suma",
+    "avg": "Średnia"
+  }
 }
 </i18n>
