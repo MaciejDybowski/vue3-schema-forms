@@ -14,7 +14,15 @@
       :key="header.key"
       #[`item.${header.key}`]="{ item, index }"
     >
-      <span v-if="!header.editable">
+      <span v-if="!header.editable && !(header.key in actions)">
+        {{ item[header.key] }}
+      </span>
+
+      <span
+        v-else-if="header.key in actions"
+        class="link"
+        @click="callAction(item, header.key)"
+      >
         {{ item[header.key] }}
       </span>
 
@@ -27,7 +35,10 @@
     </template>
 
     <template v-slot:body.append="{}">
-      <tr v-for="(aggregateKey, i) in Object.keys(aggregates)">
+      <tr
+        v-for="(aggregateKey, i) in Object.keys(aggregates)"
+        class="v-data-table__tr-aggregates"
+      >
         <td
           v-for="(header, headerIndex) in headers"
           :key="i"
@@ -61,6 +72,8 @@ import { useLocale, useProps } from "@/core/composables";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTableField } from "@/types/engine/EngineTableField";
 import { useEventBus } from "@vueuse/core";
+
+const actionHandlerEventBus = useEventBus<string>("form-action");
 
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const props = defineProps<{
@@ -114,6 +127,8 @@ const aggregates = {
     base: 1.5,
   },
 };
+
+const actions = props.schema.actions;
 
 const { t } = useLocale();
 type AggregateTypes = "sum" | "avg";
@@ -516,13 +531,73 @@ async function loadData(params: TableFetchOptions) {
   }
 }
 
+function callAction(item: any, key: string) {
+  console.debug(`Action is enable on ${key} with action code ${actions[key]}`);
+
+  let payloadObject = {
+    code: actions[key],
+    body: item,
+  };
+
+  actionHandlerEventBus.emit("form-action", payloadObject);
+  console.debug("Action payload", payloadObject);
+}
+
 onMounted(async () => {
   await bindProps(props.schema);
   debounced.load(fetchDataParams.value);
 });
 </script>
 
-<style lang="css" scoped></style>
+<style lang="scss" scoped>
+.v-data-table__tr-aggregates {
+  background-color: lightgrey;
+}
+
+.link {
+  cursor: pointer;
+  // text-underline-offset: 4px;
+  text-decoration: none;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.36) 0, rgba(0, 0, 0, 0.36) 8px, transparent 8px, transparent 100%) bottom
+    left / 12px 1px repeat-x;
+  display: inline;
+  padding-bottom: 0px;
+}
+
+table .link {
+  display: table-cell;
+}
+
+.link:hover {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.36) 0, rgba(0, 0, 0, 0.36) 2px, transparent 2px, transparent 100%) bottom
+    left / 1px 1px repeat-x;
+}
+
+.theme--dark {
+  .link {
+    // text-underline-offset: 4px;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.36) 0,
+        rgba(255, 255, 255, 0.36) 8px,
+        transparent 8px,
+        transparent 100%
+      )
+      bottom left / 12px 1px repeat-x;
+  }
+
+  .link:hover {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.36) 0,
+        rgba(255, 255, 255, 0.36) 2px,
+        transparent 2px,
+        transparent 100%
+      )
+      bottom left / 1px 1px repeat-x;
+  }
+}
+</style>
 
 <i18n lang="json">
 {

@@ -1122,7 +1122,7 @@ export const TableView: Story = {
         },
         tableOfProducts: {
           actions: {
-            'nazwaKlienta': "redirectActionCode"
+            'name': "redirectActionCode"
           },
           source: {
             data: "/api/customer-pricelists/{pricelistId}/details?fields=content,aggregates,pageable",
