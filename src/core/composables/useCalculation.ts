@@ -3,6 +3,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { ref } from "vue";
 
+import { useEventHandler } from "@/core/composables/useEventHandler";
 import { useNumber } from "@/core/composables/useNumber";
 import { logger, useResolveVariables } from "@/main";
 import { useFormModelStore } from "@/store/formModelStore";
@@ -11,6 +12,7 @@ import { Fn, useEventBus } from "@vueuse/core";
 
 export function useCalculation() {
   const { roundTo } = useNumber();
+  const {onChange} = useEventHandler();
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
   const unsubscribeListener = ref<Fn>(() => {});
   const calculationResultWasModified = ref(false);
@@ -42,7 +44,8 @@ export function useCalculation() {
 
   async function calculationListener(event: string, payloadIndex: number, field: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 5));
-    if(field.index == undefined){ // sumy poza sekcja powielana mialy hazard
+    if (field.index == undefined) {
+      // sumy poza sekcja powielana mialy hazard
       await new Promise((r) => setTimeout(r, 1));
     }
     let calculation = field.calculation as string;
@@ -72,6 +75,7 @@ export function useCalculation() {
         return;
       }
       set(model, field.key, roundTo(result, precision));
+      await onChange(field, model);
     }
   }
 
