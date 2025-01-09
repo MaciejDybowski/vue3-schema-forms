@@ -63,7 +63,7 @@
 <script lang="ts" setup>
 import axios from "axios";
 import { debounce, merge } from "lodash";
-import { computed, onMounted, ref } from "vue";
+import { ComputedRef, computed, onMounted, ref } from "vue";
 
 import EditableCell from "@/components/controls/table/EditableCell.vue";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
@@ -71,6 +71,7 @@ import { mapQuery, mapSort } from "@/components/controls/table/utils";
 import { useLocale, useProps } from "@/core/composables";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTableField } from "@/types/engine/EngineTableField";
+import { TableHeader } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
@@ -87,35 +88,20 @@ const debounced = {
   load: debounce(loadData, 200),
 };
 
-const headers = [
-  {
-    title: "ID",
-    key: "id",
-  },
-  {
-    title: "Name",
-    key: "name",
-  },
-  {
-    title: "Location",
-    key: "location",
-    minWidth: "150px",
-    maxWidth: "150px",
-  },
-  {
-    title: "Height",
-    editable: true,
-    key: "height",
-  },
-  {
-    title: "Base",
-    key: "base",
-  },
-  {
-    title: "Volume",
-    key: "volume",
-  },
-];
+const headers: ComputedRef<TableHeader[]> = computed(() => {
+  return props.schema.source.headers.map((item: TableHeader) => {
+    const header: TableHeader = {
+      key: item.key,
+      title: item.title,
+      type: item.type,
+    };
+
+    if (item.editable) {
+      header["editable"] = item.editable;
+    }
+    return header;
+  });
+});
 
 const aggregates = {
   sum: {
@@ -128,7 +114,7 @@ const aggregates = {
   },
 };
 
-const actions = props.schema.actions;
+const actions = props.schema.actions ? props.schema.actions : {};
 
 const { t } = useLocale();
 type AggregateTypes = "sum" | "avg";
@@ -243,7 +229,7 @@ async function loadData(params: TableFetchOptions) {
   try {
     console.debug("Loading data for table field with params ", params);
     loading.value = true;
-    const url = ""; // TODO
+    const url = ""; // props.schema.source.data TODO
     const sort = params.sort ? mapSort(params.sort) : null;
     const query = mapQuery(params.query);
     const filter = params.filter ? params.filter : null;

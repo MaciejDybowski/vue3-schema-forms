@@ -1126,6 +1126,39 @@ export const TableView: Story = {
           },
           source: {
             data: "/api/customer-pricelists/{pricelistId}/details?fields=content,aggregates,pageable",
+            headers: [
+              {
+                title: "ID",
+                key: "id",
+                type: "TEXT"
+              },
+              {
+                title: "Name",
+                key: "name",
+                type: "TEXT"
+              },
+              {
+                title: "Location",
+                key: "location",
+                type: "TEXT"
+              },
+              {
+                title: "Height",
+                editable: true,
+                key: "height",
+                type: "TEXT"
+              },
+              {
+                title: "Base",
+                key: "base",
+                type: "TEXT"
+              },
+              {
+                title: "Volume",
+                key: "volume",
+                type: "TEXT"
+              },
+            ]
           },
           layout: {
             component: "table",

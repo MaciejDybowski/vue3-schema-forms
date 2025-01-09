@@ -7,14 +7,22 @@ export interface Source {
 }
 
 export interface TableSource {
-  headers: string,
-  data: string,
-  updateRow: string,
+  headers: TableHeader[];
+  data: string;
+  updateRow: string;
+}
+
+export interface TableHeader {
+  key: string;
+  title: string;
+  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME";
+  editable?: boolean;
+  properties?: Record<string, any>;
 }
 
 export interface AvatarSource {
-  thumbnail: string,
-  preview: string,
+  thumbnail: string;
+  preview: string;
 }
 
 export interface SimpleSource extends Source {
