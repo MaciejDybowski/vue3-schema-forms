@@ -1122,43 +1122,37 @@ export const TableView: Story = {
         },
         tableOfProducts: {
           actions: {
-            'name': "redirectActionCode"
+            "partner.name": "redirectActionCode",
           },
           source: {
-            data: "http://localhost:8904/api/v1/customers/000da22b-b305-459c-8876-34e39effd2aa/relationships?feature-id=customers",
+            data: "/api/v1/customers/000da22b-b305-459c-8876-34e39effd2aa/relationships?feature-id=customers",
             headers: [
               {
                 title: "ID",
-                key: "id",
-                type: "TEXT"
+                key: "partner.id",
+                type: "TEXT",
               },
               {
-                title: "Name",
-                key: "name",
-                type: "TEXT"
+                title: "Partner name",
+                key: "partner.name",
+                type: "TEXT",
               },
               {
-                title: "Location",
-                key: "location",
-                type: "TEXT"
+                title: "Number",
+                key: "partner.number",
+                type: "TEXT",
               },
               {
-                title: "Height",
-                editable: true,
-                key: "height",
-                type: "TEXT"
+                title: "Function ID",
+                key: "function.id",
+                type: "TEXT",
               },
               {
-                title: "Base",
-                key: "base",
-                type: "TEXT"
+                title: "Function Name",
+                key: "function.name",
+                type: "TEXT",
               },
-              {
-                title: "Volume",
-                key: "volume",
-                type: "TEXT"
-              },
-            ]
+            ],
           },
           layout: {
             component: "table",

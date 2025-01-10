@@ -40,6 +40,7 @@ import { SchemaOptions } from "@/types/schema/SchemaOptions";
 
 import PropsViewer from "./PropsViewer.vue";
 import { fetchToken } from "../../../.storybook/keycloak_auth";
+import axios from "axios";
 
 const showJSONs = ref(true);
 
@@ -55,8 +56,9 @@ let myForm = ref();
 let loading = ref(true)
 onBeforeMount(async () => {
   loading.value = true;
-  await fetchToken("bm")
-  await new Promise((r) => setTimeout(r, 200));
+  //await fetchToken("bm")
+  axios.defaults.headers.common['Workspace-Id'] = "forte";
+  //await new Promise((r) => setTimeout(r, 200));
   loading.value = false;
 })
 
