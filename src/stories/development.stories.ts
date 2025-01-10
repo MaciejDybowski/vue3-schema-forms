@@ -1125,7 +1125,7 @@ export const TableView: Story = {
             'name': "redirectActionCode"
           },
           source: {
-            data: "/api/customer-pricelists/{pricelistId}/details?fields=content,aggregates,pageable",
+            data: "http://localhost:8904/api/v1/customers/000da22b-b305-459c-8876-34e39effd2aa/relationships?feature-id=customers",
             headers: [
               {
                 title: "ID",
