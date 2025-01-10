@@ -92,7 +92,7 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { isArray } from "lodash";
+import { debounce, isArray } from "lodash";
 import get from "lodash/get";
 import { computed, onMounted, ref } from "vue";
 
@@ -124,6 +124,10 @@ const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
+
+const debounced = {
+  load: debounce(load, 300)
+}
 
 const localModel = computed({
   get(): User | User[] | undefined | null {
@@ -164,6 +168,7 @@ async function focusIn(event: any) {
 }
 
 async function load() {
+  console.debug("load data")
   try {
     loading.value = true;
     pagination.value.resetPage();
@@ -228,10 +233,10 @@ async function checkIfURLHasDependency() {
 
     const listener = async (event: string, key: string) => {
       await new Promise((r) => setTimeout(r, 50));
-      const temp = await resolve(props.schema, usersAPIEndpoint.value, "title", true);
+      const temp = await resolve(props.schema, props.schema.source.url as string, "title", true);
       if (temp.resolvedText !== usersAPIEndpoint.value) {
         usersAPIEndpoint.value = temp.resolvedText;
-        await load();
+        debounced.load()
       }
     };
   }

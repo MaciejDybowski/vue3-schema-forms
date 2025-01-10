@@ -148,7 +148,7 @@ async function runCalculationIfExist() {
     if (isValueFromModelAndNotChangedManually.value) {
       localModel.value = await calculationFunc(props.schema, props.model);
     } else {
-      await calculationFunc(props.schema, props.model);
+      //await calculationFunc(props.schema, props.model);
     }
   }
 }

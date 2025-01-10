@@ -63,7 +63,6 @@ const localModel = computed({
           props.schema.precisionMin ? Number(props.schema.precisionMin) : 0,
           props.schema.precision ? Number(props.schema.precision) : 0,
         );
-        console.debug("po", value);
         break;
       case "date":
         if (!value || value == "null") break;
