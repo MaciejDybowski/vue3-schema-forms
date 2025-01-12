@@ -2,6 +2,7 @@
   <base-autocomplete
     v-model="localModel"
     v-model:menu="menu"
+    :class="bindClass(schema) + requiredInputClass"
     :hide-no-data="false"
     :items="items"
     :label="label"
@@ -10,6 +11,7 @@
     :multiple="multiple"
     :no-data-text="t('noData')"
     :options="pagination"
+    :rules="rules"
     :search="query"
     item-title="firstName"
     item-value="id"
@@ -92,7 +94,7 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { debounce, isArray } from "lodash";
+import { debounce } from "lodash";
 import get from "lodash/get";
 import { computed, onMounted, ref } from "vue";
 
@@ -122,12 +124,11 @@ const { bindProps, fieldProps } = useProps();
 
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
-const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 
 const debounced = {
-  load: debounce(load, 300)
-}
+  load: debounce(load, 300),
+};
 
 const localModel = computed({
   get(): User | User[] | undefined | null {
@@ -135,9 +136,6 @@ const localModel = computed({
   },
   set(val: any) {
     if (typeof val !== "string") {
-      if (multiple && maxSelection > 0 && isArray(val)) {
-        val.length > maxSelection && val.shift();
-      }
       setValue(val, props.schema);
     }
   },
@@ -153,7 +151,6 @@ const pagination = props.schema.source.itemsPerPage
 const menu = ref(false);
 const multiple = props.schema.source.multiple ? props.schema.source.multiple : true;
 const showMenuItemsOnFocusIn = props.schema.source.showMenuItemsOnFocusIn ? props.schema.source.showMenuItemsOnFocusIn : false;
-const maxSelection = props.schema.source.maxSelection ? props.schema.source.maxSelection : 0;
 const loading = ref(false);
 
 const items = ref([]);
@@ -168,7 +165,6 @@ async function focusIn(event: any) {
 }
 
 async function load() {
-  console.debug("load data")
   try {
     loading.value = true;
     pagination.value.resetPage();
@@ -236,7 +232,6 @@ async function checkIfURLHasDependency() {
       const temp = await resolve(props.schema, props.schema.source.url as string, "title", true);
       if (temp.resolvedText !== usersAPIEndpoint.value) {
         usersAPIEndpoint.value = temp.resolvedText;
-        debounced.load()
       }
     };
   }

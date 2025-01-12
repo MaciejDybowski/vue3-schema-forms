@@ -1,6 +1,7 @@
 <template>
   <v-autocomplete
     v-model="model"
+    :multiple="multiple"
     v-bind="attrs"
   >
     <template
@@ -28,6 +29,7 @@
 </template>
 
 <script lang="ts" setup>
+import { isArray } from "lodash";
 import { computed, ref, useAttrs } from "vue";
 
 import { Pagination } from "./Pagination";
@@ -38,9 +40,13 @@ const props = withDefaults(
     modelValue: any;
     lazy?: boolean;
     options?: Pagination;
+    maxSelection?: number;
+    multiple?: boolean;
   }>(),
   {
     lazy: false,
+    multiple: false,
+    maxSelection: 0,
   },
 );
 
@@ -49,6 +55,9 @@ const model = computed({
     return props.modelValue;
   },
   set(val: any[]) {
+    if (props.multiple && props.maxSelection > 0 && isArray(val)) {
+      val.length > props.maxSelection && val.shift();
+    }
     emit("update:modelValue", val);
   },
 });
