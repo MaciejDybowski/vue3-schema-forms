@@ -1,4 +1,8 @@
 //@ts-nocheck
+import Image from "@/components/controls/Image.vue";
+import GroupOfFields from "@/components/controls/fields-group/FieldsGroup.vue";
+import TableViewField from "@/components/controls/table/TableViewField.vue";
+import UserInput from "@/components/controls/user-input/UserInput.vue";
 
 import { Components } from "@/main";
 
@@ -21,11 +25,6 @@ import DataViewer from "./data-viewer/DataViewer.vue";
 import DatePicker from "./date/DatePicker.vue";
 import DateTimePicker from "./date/DateTimePicker.vue";
 import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
-import GroupOfFields from "@/components/controls/fields-group/FieldsGroup.vue";
-import Image from "@/components/controls/Image.vue";
-import TableField from "@/components/controls/table/TableField.vue";
-import UserInput from "@/components/controls/user-input/UserInput.vue";
-
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,
@@ -47,9 +46,9 @@ export const vueSchemaFromControls: Components = {
   switch: Switch,
   "number-field": NumberField,
   divider: Divider,
-/*  "image-preview": ImagePreview,*/
-  "image": Image,
+  /*  "image-preview": ImagePreview,*/
+  image: Image,
   "fields-group": GroupOfFields,
-  "table": TableField,
-  "user-input": UserInput
+  "table-view": TableViewField,
+  "user-input": UserInput,
 };

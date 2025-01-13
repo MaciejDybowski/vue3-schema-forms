@@ -69,20 +69,21 @@ import { ComputedRef, computed, onMounted, ref } from "vue";
 import EditableCell from "@/components/controls/table/EditableCell.vue";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 
-import { useLocale, useProps } from "@/core/composables";
+import { useLocale, useProps, useResolveVariables } from "@/core/composables";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTableField } from "@/types/engine/EngineTableField";
 import { TableHeader } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
-
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const props = defineProps<{
   schema: EngineTableField;
   model: object;
 }>();
+
 const { bindProps, fieldProps } = useProps();
+const { resolve } = useResolveVariables();
 
 const loading = ref(true);
 const debounced = {
@@ -104,7 +105,7 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
   });
 });
 
-const aggregates = {}
+const aggregates = {};
 /*const aggregates = {
   sum: {
     height: 400,
@@ -235,7 +236,9 @@ async function loadData(params: TableFetchOptions) {
   try {
     console.debug("Loading data for table field with params ", params);
     loading.value = true;
-    const url = props.schema.source.data;
+
+    const url = await resolve(props.schema, props.schema.source.data);
+
     const sort = params.sort ? mapSort(params.sort) : null;
     const query = mapQuery(params.query);
     const filter = params.filter ? params.filter : null;
