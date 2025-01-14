@@ -272,7 +272,7 @@ export const TableView: Story = {
             ],
           },
           layout: {
-            component: "table",
+            component: "table-view",
           },
         },
 

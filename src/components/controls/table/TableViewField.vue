@@ -14,18 +14,26 @@
       :key="header.key"
       #[`item.${header.key}`]="{ item, index }"
     >
-      <span v-if="!header.editable && !(header.key in actions)">
+      <!-- zwykły tekst -->
+      <span
+        v-if="isStandardValueToDisplay(header)"
+        :class="isConnectionWithActions(header) ? 'link' : ''"
+        @click="isConnectionWithActions(header) ? callAction(item, header.key) : () => {}"
+      >
         {{ extractValueFromItem(header.key, item) }}
       </span>
 
+      <!-- link do akcji z AureaDashboard
       <span
-        v-else-if="header.key in actions"
+        v-else-if="isConnectionWithActions(header)"
         class="link"
         @click="callAction(item, header.key)"
       >
         {{ extractValueFromItem(header.key, item) }}
       </span>
+       -->
 
+      <!-- edytowalna wartość -->
       <editable-cell
         v-else
         v-model="items[index][header.key]"
@@ -277,6 +285,14 @@ function callAction(item: any, key: string) {
 
   actionHandlerEventBus.emit("form-action", payloadObject);
   console.debug("Action payload", payloadObject);
+}
+
+function isStandardValueToDisplay(header: TableHeader): boolean {
+  return !header.editable && !(header.key in actions);
+}
+
+function isConnectionWithActions(header: TableHeader): boolean {
+  return header.key in actions;
 }
 
 onMounted(async () => {
