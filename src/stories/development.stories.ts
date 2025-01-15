@@ -246,12 +246,17 @@ export const TableView: Story = {
             headers: [
               {
                 title: "ID",
-                key: "partner.id",
+                key: "dataId",
                 type: "TEXT",
               },
               {
                 title: "Partner name",
                 key: "partner.name",
+                type: "TEXT",
+              },
+              {
+                title: "Join variables",
+                key: "<b>{partner.name}</b> oraz {partner.number}",
                 type: "TEXT",
               },
               {

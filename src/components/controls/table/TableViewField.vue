@@ -14,24 +14,17 @@
       :key="header.key"
       #[`item.${header.key}`]="{ item, index }"
     >
-      <!-- zwykły tekst -->
-      <span
-        v-if="isStandardValueToDisplay(header)"
+      <!-- zwykły tekst lub akcja -->
+      <table-cell
+        v-if="isStandardValueToDisplay(header) || isConnectionWithActions(header)"
         :class="isConnectionWithActions(header) ? 'link' : ''"
+        :type="header.type"
         @click="isConnectionWithActions(header) ? callAction(item, header.key) : () => {}"
+        v-html="extractValueFromItem(header.key, item)"
+        :item="item"
+        :path="header.key"
       >
-        {{ extractValueFromItem(header.key, item) }}
-      </span>
-
-      <!-- link do akcji z AureaDashboard
-      <span
-        v-else-if="isConnectionWithActions(header)"
-        class="link"
-        @click="callAction(item, header.key)"
-      >
-        {{ extractValueFromItem(header.key, item) }}
-      </span>
-       -->
+      </table-cell>
 
       <!-- edytowalna wartość -->
       <editable-cell
@@ -70,11 +63,13 @@
 
 <script lang="ts" setup>
 import axios from "axios";
+import jsonata from "jsonata";
 import { debounce, merge } from "lodash";
 import get from "lodash/get";
 import { ComputedRef, computed, onMounted, ref } from "vue";
 
 import EditableCell from "@/components/controls/table/EditableCell.vue";
+import TableCell from "@/components/controls/table/TableCell.vue";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 
 import { useLocale, useProps, useResolveVariables } from "@/core/composables";
@@ -236,8 +231,32 @@ function updateRow(value: any, index: number, headerKey: string, row: any) {
   }
 }
 
-function extractValueFromItem(key: string, item: object) {
-  return get(item, key, null);
+async function extractValueFromItem(key: string, item: object) {
+  if (key.match(variableRegexp)) {
+    const arrayOfVariables = key.match(variableRegexp);
+    if (!!arrayOfVariables) {
+      for await (const match of arrayOfVariables) {
+        const unwrapped = match.slice(1, -1);
+        const split = unwrapped.split(":");
+        let variable = split[0];
+        const defaultValue = split.length === 2 ? split[1] : null;
+
+        const model = item;
+
+        const nata = jsonata(variable);
+        let value = await nata.evaluate(model);
+
+        if ((value == null && defaultValue !== null) || (value == "" && value != 0) || value == undefined) {
+          value = defaultValue;
+        }
+
+        key = key.replace(match, value + "");
+        return key;
+      }
+    }
+  } else {
+    return get(item, key, null);
+  }
 }
 
 async function loadData(params: TableFetchOptions) {
@@ -245,7 +264,7 @@ async function loadData(params: TableFetchOptions) {
     console.debug("Loading data for table field with params ", params);
     loading.value = true;
 
-    const url = await resolve(props.schema, props.schema.source.data);
+    const url = (await resolve(props.schema, props.schema.source.data)).resolvedText;
 
     const sort = params.sort ? mapSort(params.sort) : null;
     const query = mapQuery(params.query);

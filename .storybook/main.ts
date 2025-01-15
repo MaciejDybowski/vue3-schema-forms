@@ -32,7 +32,7 @@ const config: StorybookConfig = {
             secure: false,
           },
           '/api': {
-            target: "https://dev-bm.int.tecna.pl/",
+            target: "http://localhost:8904/",
             changeOrigin: true,
             secure: false,
           },

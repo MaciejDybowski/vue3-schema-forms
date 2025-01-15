@@ -43,6 +43,7 @@
     "@stoplight/json-ref-resolver": "3.1.6",
     "@vueuse/core": "^10.11.1",
     "@vueuse/math": "^11.0.3",
+    "dompurify": "^3.2.3",
     "expr-eval": "^2.0.2",
     "flag-icons": "^7.2.3",
     "jsonata": "^2.0.5",
