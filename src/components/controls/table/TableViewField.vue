@@ -14,20 +14,15 @@
       :key="header.key"
       #[`item.${header.key}`]="{ item, index }"
     >
-      <!-- zwykły tekst lub akcja -->
       <table-cell
-        v-if="isStandardValueToDisplay(header) || isConnectionWithActions(header)"
-        :class="isConnectionWithActions(header) ? 'link' : ''"
-        :type="header.type"
-        @click="isConnectionWithActions(header) ? callAction(item, header.key) : () => {}"
-        v-html="extractValueFromItem(header.key, item)"
+        v-if="!header.editable"
+        :actions="actions"
+        :header="header"
         :item="item"
-        :path="header.key"
       >
       </table-cell>
 
-      <!-- edytowalna wartość -->
-      <editable-cell
+      <table-editable-cell
         v-else
         v-model="items[index][header.key]"
         v-bind="fieldProps"
@@ -63,13 +58,11 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import jsonata from "jsonata";
 import { debounce, merge } from "lodash";
-import get from "lodash/get";
 import { ComputedRef, computed, onMounted, ref } from "vue";
 
-import EditableCell from "@/components/controls/table/EditableCell.vue";
 import TableCell from "@/components/controls/table/TableCell.vue";
+import TableEditableCell from "@/components/controls/table/TableEditableCell.vue";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 
 import { useLocale, useProps, useResolveVariables } from "@/core/composables";
@@ -78,7 +71,6 @@ import { EngineTableField } from "@/types/engine/EngineTableField";
 import { TableHeader } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
 
-const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const props = defineProps<{
   schema: EngineTableField;
@@ -231,34 +223,6 @@ function updateRow(value: any, index: number, headerKey: string, row: any) {
   }
 }
 
-async function extractValueFromItem(key: string, item: object) {
-  if (key.match(variableRegexp)) {
-    const arrayOfVariables = key.match(variableRegexp);
-    if (!!arrayOfVariables) {
-      for await (const match of arrayOfVariables) {
-        const unwrapped = match.slice(1, -1);
-        const split = unwrapped.split(":");
-        let variable = split[0];
-        const defaultValue = split.length === 2 ? split[1] : null;
-
-        const model = item;
-
-        const nata = jsonata(variable);
-        let value = await nata.evaluate(model);
-
-        if ((value == null && defaultValue !== null) || (value == "" && value != 0) || value == undefined) {
-          value = defaultValue;
-        }
-
-        key = key.replace(match, value + "");
-        return key;
-      }
-    }
-  } else {
-    return get(item, key, null);
-  }
-}
-
 async function loadData(params: TableFetchOptions) {
   try {
     console.debug("Loading data for table field with params ", params);
@@ -282,36 +246,11 @@ async function loadData(params: TableFetchOptions) {
 
     items.value = response.data.content;
     itemsTotalElements.value = items.value.length;
-
-    /*
-    items.value = mapContent(response.data);
-    itemsTotalElements.value = mapSliceTotalElements(response.data);
-     */
   } catch (e) {
     console.error(e);
   } finally {
     loading.value = false;
   }
-}
-
-function callAction(item: any, key: string) {
-  console.debug(`Action is enable on ${key} with action code ${actions[key]}`);
-
-  let payloadObject = {
-    code: actions[key],
-    body: item,
-  };
-
-  actionHandlerEventBus.emit("form-action", payloadObject);
-  console.debug("Action payload", payloadObject);
-}
-
-function isStandardValueToDisplay(header: TableHeader): boolean {
-  return !header.editable && !(header.key in actions);
-}
-
-function isConnectionWithActions(header: TableHeader): boolean {
-  return header.key in actions;
 }
 
 onMounted(async () => {
@@ -323,50 +262,6 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .v-data-table__tr-aggregates {
   background-color: lightgrey;
-}
-
-.link {
-  cursor: pointer;
-  // text-underline-offset: 4px;
-  text-decoration: none;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.36) 0, rgba(0, 0, 0, 0.36) 8px, transparent 8px, transparent 100%) bottom
-    left / 12px 1px repeat-x;
-  display: inline;
-  padding-bottom: 0px;
-}
-
-table .link {
-  display: table-cell;
-}
-
-.link:hover {
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.36) 0, rgba(0, 0, 0, 0.36) 2px, transparent 2px, transparent 100%) bottom
-    left / 1px 1px repeat-x;
-}
-
-.theme--dark {
-  .link {
-    // text-underline-offset: 4px;
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.36) 0,
-        rgba(255, 255, 255, 0.36) 8px,
-        transparent 8px,
-        transparent 100%
-      )
-      bottom left / 12px 1px repeat-x;
-  }
-
-  .link:hover {
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.36) 0,
-        rgba(255, 255, 255, 0.36) 2px,
-        transparent 2px,
-        transparent 100%
-      )
-      bottom left / 1px 1px repeat-x;
-  }
 }
 </style>
 

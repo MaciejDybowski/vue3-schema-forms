@@ -256,7 +256,7 @@ export const TableView: Story = {
               },
               {
                 title: "Join variables",
-                key: "<b>{partner.name}</b> oraz {partner.number}",
+                key: "<b>{partner.name}</b> oraz {partner.number}. Bardzo długi teskt który </br> powinien się zawijać gdziekolwiek może </br> albo może powinien rozszerzać tabelkę na </br>prawo i lewo :D",
                 type: "TEXT",
               },
               {
