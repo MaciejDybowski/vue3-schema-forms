@@ -20,6 +20,7 @@
     v-bind="fieldProps"
     @focus="focusIn($event)"
     @loadMoreRecords="loadMoreRecords"
+    @update:search="updateQuery"
   >
     <template #selection="{ item }">
       <v-chip
@@ -96,7 +97,7 @@
 import axios from "axios";
 import { debounce } from "lodash";
 import get from "lodash/get";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import BaseAutocomplete from "@/components/controls/base/BaseAutocomplete.vue";
 import { Pagination } from "@/components/controls/base/Pagination";
@@ -105,7 +106,6 @@ import AvatarProvider from "@/components/controls/user-input/AvatarProvider.vue"
 import UserInputLabel from "@/components/controls/user-input/UserInputLabel.vue";
 
 import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "@/core/composables";
-import { useEventHandler } from "@/core/composables/useEventHandler";
 import { variableRegexp } from "@/core/engine/utils";
 import { Label } from "@/types/engine/Label";
 import { User } from "@/types/engine/User";
@@ -311,6 +311,10 @@ function labels(item: User): Label[] {
   }
 }
 
+function updateQuery(val: any) {
+  query.value = val;
+  debounced.load();
+}
 onMounted(async () => {
   await bindLabel(props.schema);
   await bindRules(props.schema);
