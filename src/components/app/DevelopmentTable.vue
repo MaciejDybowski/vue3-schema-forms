@@ -6,7 +6,7 @@
       :default-form-actions="true"
       :options="options"
       :schema="schema"
-      :validation-behaviour="'messages'"
+      :validation-behaviour="'scroll'"
       @is-form-ready="startWatcher"
       @call-action="handleAction"
     >

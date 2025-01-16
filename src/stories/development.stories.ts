@@ -27,6 +27,116 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const AlertErrorConnectionWithValidation: Story = {
+  args: {
+    model: {},
+    schema: {
+      properties: {
+        alert2: {
+          content: "Inny alert z tekstem",
+          layout: {
+            component: "static-content",
+            tag: "v-alert",
+            props: {
+              type: "warning",
+              variant: "outlined",
+            },
+          },
+        },
+        alert: {
+          content: "Error message!",
+          layout: {
+            component: "static-content",
+            tag: "v-alert",
+            props: {
+              type: "error",
+              variant: "outlined",
+            },
+          },
+        },
+        field: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field2: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field3: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field4: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field5: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field6: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field7: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field8: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field9: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field10: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+        field: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+      },
+    },
+  },
+};
+
 export const UserInput: Story = {
   args: {
     model: {},
@@ -211,7 +321,78 @@ export const BMProcess: Story = {
         ],
       },
     },
-    schema: {"type":"object","properties":{"htmlDaneDost":{"content":"Dane dostawcy","layout":{"component":"static-content","tag":"h3"}},"tech":{"properties":{"oddzial":{"label":"Oddział","layout":{"component":"dictionary","props":{"clearable":true}},"source":{"url":"/api/dictionaries?feature-id=oddzialy&lm=nazwa&vm=id","title":"label","value":"id","lazy":true,"returnObject":true,"singleOptionAutoSelect":true}},"czyPominacOcr":{"label":"","layout":{"component":"checkbox","props":{"multiple":false}},"source":{"items":[{"value":true,"title":"Pomiń OCR"}]}}},"required":["oddzial"]},"dostawca":{"label":"Wybierz dostawcę","layout":{"component":"dictionary","if":"nata(tech.czyPominacOcr=true)"},"source":{"url":"/api/dictionaries?feature-id=dostawcy-rejestr&lm=nazwa&vm=id&customAttributes=nazwa%2C%7Bnazwa%7D%2Ckod%2C%7Bkod%7D%2Cnip%2C%7Bnip%7D%2Cadres%2C%7Badres%7D%2CkodPocztowy%2C%7BkodPocztowy%7D%2Cmiejscowosc%2C%7Bmiejscowosc%7D%2Ckraj%2C%7Bkraj%7D%2CnazwaWyswietlana%2C%7Bnazwa%7D%20-%20%7Bkod%7D%20-%20%7Bnip%7D","title":"nazwaWyswietlana","value":"id","returnObject":true,"singleOptionAutoSelect":true,"lazy":true}},"kod":{"label":"Kod dostawcy","layout":{"component":"data-viewer","if":"nata(dostawca != null)"},"valueMapping":"{dostawca.kod}","type":"text"},"nazwa":{"label":"Nazwa dostawcy","layout":{"component":"data-viewer","cols":{"xs":12,"sm":12,"md":12,"lg":6,"xl":6,"xxl":6},"if":"nata(dostawca != null)"},"valueMapping":"{dostawca.label}","type":"text"},"nip":{"label":"NIP","layout":{"component":"data-viewer","cols":{"xs":12,"sm":12,"md":12,"lg":6,"xl":6,"xxl":6},"if":"nata(dostawca != null)"},"valueMapping":"{dostawca.nip}","type":"text"},"adres":{"content":"{dostawca.adres:Brak danych} <br>{dostawca.kodPocztowy:Brak danych} {dostawca.miejscowosc:Brak danych}, {dostawca.kraj:Brak danych} <br><br>Saldo: {dostawca.saldo:Brak danych}","layout":{"component":"static-content","tag":"p","if":"nata(dostawca != null)"}}},"required":["dostawca"]},
+    schema: {
+      type: "object",
+      properties: {
+        htmlDaneDost: { content: "Dane dostawcy", layout: { component: "static-content", tag: "h3" } },
+        tech: {
+          properties: {
+            oddzial: {
+              label: "Oddział",
+              layout: { component: "dictionary", props: { clearable: true } },
+              source: {
+                url: "/api/dictionaries?feature-id=oddzialy&lm=nazwa&vm=id",
+                title: "label",
+                value: "id",
+                lazy: true,
+                returnObject: true,
+                singleOptionAutoSelect: true,
+              },
+            },
+            czyPominacOcr: {
+              label: "",
+              layout: { component: "checkbox", props: { multiple: false } },
+              source: { items: [{ value: true, title: "Pomiń OCR" }] },
+            },
+          },
+          required: ["oddzial"],
+        },
+        dostawca: {
+          label: "Wybierz dostawcę",
+          layout: { component: "dictionary", if: "nata(tech.czyPominacOcr=true)" },
+          source: {
+            url: "/api/dictionaries?feature-id=dostawcy-rejestr&lm=nazwa&vm=id&customAttributes=nazwa%2C%7Bnazwa%7D%2Ckod%2C%7Bkod%7D%2Cnip%2C%7Bnip%7D%2Cadres%2C%7Badres%7D%2CkodPocztowy%2C%7BkodPocztowy%7D%2Cmiejscowosc%2C%7Bmiejscowosc%7D%2Ckraj%2C%7Bkraj%7D%2CnazwaWyswietlana%2C%7Bnazwa%7D%20-%20%7Bkod%7D%20-%20%7Bnip%7D",
+            title: "nazwaWyswietlana",
+            value: "id",
+            returnObject: true,
+            singleOptionAutoSelect: true,
+            lazy: true,
+          },
+        },
+        kod: {
+          label: "Kod dostawcy",
+          layout: { component: "data-viewer", if: "nata(dostawca != null)" },
+          valueMapping: "{dostawca.kod}",
+          type: "text",
+        },
+        nazwa: {
+          label: "Nazwa dostawcy",
+          layout: {
+            component: "data-viewer",
+            cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
+            if: "nata(dostawca != null)",
+          },
+          valueMapping: "{dostawca.label}",
+          type: "text",
+        },
+        nip: {
+          label: "NIP",
+          layout: {
+            component: "data-viewer",
+            cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
+            if: "nata(dostawca != null)",
+          },
+          valueMapping: "{dostawca.nip}",
+          type: "text",
+        },
+        adres: {
+          content:
+            "{dostawca.adres:Brak danych} <br>{dostawca.kodPocztowy:Brak danych} {dostawca.miejscowosc:Brak danych}, {dostawca.kraj:Brak danych} <br><br>Saldo: {dostawca.saldo:Brak danych}",
+          layout: { component: "static-content", tag: "p", if: "nata(dostawca != null)" },
+        },
+      },
+      required: ["dostawca"],
+    },
   },
 };
 
@@ -259,21 +440,21 @@ export const TableView: Story = {
                 key: "<b>{partner.name}</b> oraz {partner.number}.",
                 type: "TEXT",
               },
-            /*  {
-                title: "Number",
-                key: "partner.number",
-                type: "TEXT",
-              },
-              {
-                title: "Function ID",
-                key: "function.id",
-                type: "TEXT",
-              },
-              {
-                title: "Function Name",
-                key: "function.name",
-                type: "TEXT",
-              },*/
+              /*  {
+                  title: "Number",
+                  key: "partner.number",
+                  type: "TEXT",
+                },
+                {
+                  title: "Function ID",
+                  key: "function.id",
+                  type: "TEXT",
+                },
+                {
+                  title: "Function Name",
+                  key: "function.name",
+                  type: "TEXT",
+                },*/
               {
                 title: "Number",
                 key: "number",

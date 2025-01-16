@@ -147,19 +147,49 @@ watch(
 
 onMounted(async () => {
   formModelStore.updateFormModel(props.modelValue);
-  formModelStore.updateFormContext(props.options && props.options.context ? props.options.context : {})
+  formModelStore.updateFormContext(props.options && props.options.context ? props.options.context : {});
   await loadResolvedSchema();
   debounced.formIsReady(800)();
 });
 
 async function validate(option?: ValidationFromBehaviour) {
+  let preValid = true;
+  errorMessages.value = [];
+
+  // Alert error block validation !
+  const alertElements = document.querySelectorAll('[role="alert"]');
+  alertElements.forEach((alertElement) => {
+    const isError = alertElement.classList.contains("v-alert") && alertElement.classList.contains("text-error");
+    const alertText = alertElement.textContent;
+
+    if (isError && option == "messages") {
+      preValid = false;
+      errorMessages.value.push({
+        id: Math.random().toString(16).slice(2),
+        label: "Alert",
+        messages: [alertText + ""],
+      });
+    }
+
+    if (isError && option == "scroll") {
+      preValid = false;
+      const alert = document.getElementById(alertElement?.id + "");
+      if (alert)
+        alert?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+    }
+  });
+  // END
+
   const { valid } = await formRef.value[formId].validate();
-  formValid.value = valid;
+  formValid.value = valid && preValid;
 
   if (!option) {
     return { valid };
   }
-  if (valid) {
+  if (formValid.value) {
     errorMessages.value = [];
   }
 
