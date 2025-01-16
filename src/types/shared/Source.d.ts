@@ -15,7 +15,7 @@ export interface TableSource {
 export interface TableHeader {
   key: string;
   title: string;
-  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME";
+  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" |"IMAGE";
   editable?: boolean;
   properties?: Record<string, any>;
 }

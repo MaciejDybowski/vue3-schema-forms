@@ -245,6 +245,11 @@ async function loadData(params: TableFetchOptions) {
     });
 
     items.value = response.data.content;
+    items.value = items.value.map((item: any) => {
+      item.image = "/_default_upload_bucket/OHS823E3-P79F%20%285%29_1.jpg"
+      item.number = 4.321
+      return item
+    });
     itemsTotalElements.value = items.value.length;
   } catch (e) {
     console.error(e);

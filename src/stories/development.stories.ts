@@ -256,10 +256,10 @@ export const TableView: Story = {
               },
               {
                 title: "Join variables",
-                key: "<b>{partner.name}</b> oraz {partner.number}. Bardzo długi teskt który </br> powinien się zawijać gdziekolwiek może </br> albo może powinien rozszerzać tabelkę na </br>prawo i lewo :D",
+                key: "<b>{partner.name}</b> oraz {partner.number}.",
                 type: "TEXT",
               },
-              {
+            /*  {
                 title: "Number",
                 key: "partner.number",
                 type: "TEXT",
@@ -273,6 +273,17 @@ export const TableView: Story = {
                 title: "Function Name",
                 key: "function.name",
                 type: "TEXT",
+              },*/
+              {
+                title: "Number",
+                key: "number",
+                type: "NUMBER",
+                align: "end",
+              },
+              {
+                title: "Image",
+                key: "image",
+                type: "IMAGE",
               },
             ],
           },

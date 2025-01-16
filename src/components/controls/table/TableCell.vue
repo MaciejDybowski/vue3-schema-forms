@@ -1,6 +1,24 @@
 <template>
-  <div @click="isConnectionWithActions ? callAction() : () => {}">
-    <div v-html="htmlContent" />
+  <div
+    v-if="header.type == 'TEXT'"
+    @click="isConnectionWithActions ? callAction() : () => {}"
+  >
+    <span v-html="htmlContent" />
+  </div>
+
+  <div v-if="header.type == 'NUMBER'"
+       class="text-right"
+  >
+    {{ numberContent }}
+  </div>
+  <div v-if="header.type == 'IMAGE'">
+
+    <v-avatar
+      :rounded="0"
+      :size="32"
+    >
+      <v-img :src="domain + extractValueByPath(header.key)" />
+    </v-avatar>
   </div>
 </template>
 
@@ -9,6 +27,7 @@ import jsonata from "jsonata";
 import get from "lodash/get";
 import { onMounted, ref } from "vue";
 
+import { useNumber } from "@/core/composables/useNumber";
 import { variableRegexp } from "@/core/engine/utils";
 import { TableHeader } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
@@ -18,9 +37,11 @@ const props = defineProps<{
   item: object;
   actions: Record<string, string>;
 }>();
-
+const { formattedNumber } = useNumber();
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const htmlContent = ref<string>("");
+const numberContent = ref<string | null>(null);
+const domain = "https://dev-forte-pim.int.tecna.pl" //window.location.origin;
 const isConnectionWithActions = ref<boolean>(false);
 
 const actionVariable = ref("");
@@ -72,7 +93,7 @@ function checkConnectionWithActions(unwrapped: string, mode: "assign" | "replace
 
     switch (mode) {
       case "assign":
-        htmlContent.value = wrapIntoSpanWithLinkClass(get(props.item, props.header.key, null));
+        htmlContent.value = wrapIntoSpanWithLinkClass(extractValueByPath(props.header.key));
         break;
       case "replace":
         htmlContent.value = htmlContent.value.replace(`{${unwrapped}}`, wrapIntoSpanWithLinkClass(value));
@@ -81,7 +102,7 @@ function checkConnectionWithActions(unwrapped: string, mode: "assign" | "replace
   } else {
     switch (mode) {
       case "assign":
-        htmlContent.value = get(props.item, props.header.key, null);
+        htmlContent.value = extractValueByPath(props.header.key);
         break;
       case "replace":
         htmlContent.value = htmlContent.value.replace(`{${unwrapped}}`, value);
@@ -94,11 +115,27 @@ function wrapIntoSpanWithLinkClass(value: string) {
   return `<span class='link'>${value}</span>`;
 }
 
+function extractValueByPath(path: string) {
+  return get(props.item, path, null);
+}
+
 onMounted(async () => {
-  if (props.header.key.match(variableRegexp)) {
-    await simpleResolveVariable();
-  } else {
-    checkConnectionWithActions(props.header.key);
+  switch (props.header.type) {
+    case "TEXT":
+      if (props.header.key.match(variableRegexp)) {
+        await simpleResolveVariable();
+      } else {
+        checkConnectionWithActions(props.header.key);
+      }
+      break;
+    case "NUMBER":
+      const properties = props.header.properties;
+      const minPrecision = properties && properties.minPrecision ? properties.minPrecision : 0;
+      const maxPrecision = properties && properties.maxPrecision ? properties.maxPrecision : 2;
+
+      numberContent.value = formattedNumber(extractValueByPath(props.header.key), "decimal", minPrecision, maxPrecision);
+      console.debug(numberContent.value)
+      break;
   }
 });
 </script>
