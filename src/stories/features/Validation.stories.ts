@@ -478,3 +478,39 @@ export const ValidationFunctionInSections: Story = {
     }
   },
 }
+
+export const AlertErrorConnectionWithValidation: Story = {
+  play: async (context) => {
+    await waitForMountedAsync()
+    const canvas = within(context.canvasElement);
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Error message!")).toBeInTheDocument();
+  },
+  render: StoryTemplateWithValidation,
+  args: {
+    modelValue: {},
+    schema: {
+      properties: {
+
+        alert: {
+          content: "Error message!",
+          layout: {
+            component: "static-content",
+            tag: "v-alert",
+            props: {
+              type: "error",
+              variant: "outlined",
+            },
+          },
+        },
+        field: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
+      },
+    },
+  },
+};
