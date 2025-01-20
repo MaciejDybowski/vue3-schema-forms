@@ -9,6 +9,20 @@
     class="bg-transparent"
     density="compact"
   >
+    <template #top>
+      <v-row dense>
+        <v-spacer />
+        <v-col cols="auto">
+          <v-btn
+            rounded
+            color="primary"
+            size="small"
+            text="Add products"
+            @click="runTableBtnLogic"
+          />
+        </v-col>
+      </v-row>
+    </template>
     <template
       v-for="header in headers"
       :key="header.key"
@@ -71,7 +85,15 @@ import { EngineTableField } from "@/types/engine/EngineTableField";
 import { TableHeader } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
 
+const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
+
+vueSchemaFormEventBus.on(async (event, payload) => {
+  if (payload == "action-callback" || payload == "table-aggregates") {
+    debounced.load(fetchDataParams.value);
+  }
+});
+
 const props = defineProps<{
   schema: EngineTableField;
   model: object;
@@ -246,9 +268,9 @@ async function loadData(params: TableFetchOptions) {
 
     items.value = response.data.content;
     items.value = items.value.map((item: any) => {
-      item.image = "/_default_upload_bucket/OHS823E3-P79F%20%285%29_1.jpg"
-      item.number = 4.321
-      return item
+      item.image = "/_default_upload_bucket/OHS823E3-P79F%20%285%29_1.jpg";
+      item.number = 4.321;
+      return item;
     });
     itemsTotalElements.value = items.value.length;
   } catch (e) {
@@ -256,6 +278,23 @@ async function loadData(params: TableFetchOptions) {
   } finally {
     loading.value = false;
   }
+}
+
+function runTableBtnLogic() {
+  //if (getAddBtnMode.value == "action" && duplicatedSectionOptions.value.action) {
+  let payloadObject = {
+    code: "batchAdd",
+    body: null,
+    params: {
+      featureId: "products",
+      viewId: "54599-tabela",
+      batchAddAttributePath: "dataId",
+      scriptName: "dodaj_produkty_do_oferty",
+    },
+  };
+
+  actionHandlerEventBus.emit("form-action", payloadObject);
+  //}
 }
 
 onMounted(async () => {
