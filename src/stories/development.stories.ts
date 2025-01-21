@@ -33,22 +33,203 @@ export const Forte: Story = {
     schema: {
       type: "object",
       properties: {
-        customer: {
-          label: "Customer",
-          layout: {
-            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-            component: "dictionary",
-            props: { clearable: true },
+        offerInfo: {
+          properties: {
+            number: {
+              content: "Offer No: 2025/01/PLO/134",
+              layout: {
+                component: "static-content",
+                tag: "h1",
+                cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+              },
+            },
+            createdBy: {
+              label: "Created by",
+              layout: {
+                component: "data-viewer",
+                cols: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 },
+              },
+              valueMapping: "{offerInfo.createdBy:Jan Kowalski}",
+            },
+            createdAt: {
+              label: "Created at",
+              layout: {
+                component: "data-viewer",
+                cols: { xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 },
+              },
+              valueMapping: "{offerInfo.createdAt:21-01-2025}",
+            },
           },
-          source: {
-            url: "/api/dictionaries?feature-id=customers&lm=basicData.name&vm=dataId&customAttributes=name%2C%7BbasicData.name%7D%2CtaxNumber%2C%7BbasicData.taxNumber%7D%2CcurrencyCode%2C%7BbusinessData.defaultCurrencyCode%7D%2CshipCountry%2C%7BshipCountry.label%7D%2Csegment%2C%7Bsegment.label%7D%2CsalesRegion%2C%7BsalesRegion.label%7D%2CincotermsRule%2C%7BdefaultIncotermsRule.label%7D%7D",
-            title: "label",
-            value: "id",
-            returnObject: true,
-            lazy: true,
-            singleOptionAutoSelect: true,
+          required: [],
+        },
+        customerData: {
+          content:
+            "<b>Customer:</b></br> \n{customer.name:No data}\n<br> {customer.shipCountry:No data}, {customer.salesRegion:No data}",
+          layout: { component: "static-content", tag: "p" },
+        },
+        offerConditions: {
+          properties: {
+            currencyCode: {
+              label: "Currency",
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: "dictionary",
+                props: { clearable: false },
+              },
+              source: { url: "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId", title: "label", value: "id", returnObject: true },
+            },
+            currencyRate: {
+              label: "Currency rate",
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: "number-field",
+                props: { readonly: true },
+              },
+              type: "float",
+            },
+            vatRate: {
+              label: "VAT rate (%)",
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: "select",
+                fillRow: true,
+              },
+              source: {
+                items: [
+                  { value: "23", title: "23" },
+                  { value: "22", title: "22" },
+                  {
+                    value: "25",
+                    title: "25",
+                  },
+                ],
+              },
+            },
+          },
+          required: [],
+        },
+        "static-content-953": {
+          content: "Transport conditions",
+          layout: { component: "static-content", tag: "h3" },
+        },
+        transportConditions: {
+          properties: {
+            incotermsRule: {
+              label: "Incoterms® rule",
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: "dictionary",
+              },
+              source: {
+                url: "/api/dictionaries?feature-id=incoterms-rules&lm=dataId&vm=dataId",
+                title: "label",
+                value: "id",
+                returnObject: true,
+                lazy: true,
+                singleOptionAutoSelect: true,
+              },
+            },
+            transportRate: {
+              label: "Transport rate",
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: "text-field",
+              },
+              defaultValue: null,
+            },
+            "static-content-965": {
+              content: "If the Incoterms are changed, the Transport Rate field must be completed.",
+              layout: {
+                component: "static-content",
+                tag: "v-alert",
+                cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+                props: { type: "warning", density: "compact", variant: "tonal" },
+              },
+            },
+          },
+          required: [],
+        },
+        "static-content-413": {
+          content: "Calculation rules",
+          layout: { component: "static-content", tag: "h3" },
+        },
+        calculationRules: {
+          properties: {
+            discountPercent: {
+              label: "Customer discount (%)",
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: "text-field",
+                props: { hint: "", "persistent-hint": true },
+              },
+              defaultValue: null,
+              expression: "",
+            },
+            retailPriceFactor: {
+              label: "Retail price factor",
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: "text-field",
+                props: { hint: "", "persistent-hint": true },
+                fillRow: true,
+              },
+              defaultValue: null,
+            },
+          },
+          required: [],
+        },
+        "static-content-678": {
+          content: "Standard customer discounts retrieved from SAP. Retail price factor must be set to calculate retail price.",
+          layout: {
+            component: "static-content",
+            tag: "v-alert",
+            cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+            props: { variant: "text", type: "info", density: "compact" },
           },
         },
+        "static-content-868": {
+          content:
+            '<b>Other costs:</b><br/>\n<ul style="margin-left:20px">\n<li><b>Additional label</b>: 0,50 PLN per package</li>\n<li><b>Custom logistic service</b>: 5 PLN per product</li>\n</ul>',
+          layout: { component: "static-content", tag: "p" },
+        },
+        "divider-212": { layout: { component: "divider" } },
+        "static-content-963": { content: "Products", layout: { component: "static-content", tag: "h3" } },
+        "table-view-831": {
+          layout: { component: "table-view" },
+          source: {
+            data: "/api/v1/offers/{offer.id}/offer-items?feature-id=2",
+            headers: [
+              { title: "Product", key: "<b>{product.name: Product name}</b> </br>{product.number:1}\n" +
+                  "<br/>\n" +
+                  "Program: {product.programName}", type: "TEXT" },
+              {
+                title: "Scale quantity",
+                key: "scaleQuantity",
+                type: "NUMBER",
+                editable: true
+              },
+              {
+                title: "Invoice price (NN)",
+                key: "invoicePrice",
+                type: "NUMBER",
+                editable: true
+              },
+              { title: "MaT [%]", type: "TEXT", key: "details.marginPercent" },
+              {
+                title: "Recommended price",
+                type: "TEXT",
+                key: "{details.recommendedInvoicePrice} NN\n </br>" +
+                  "{details.recommendedNnnPrice} NNN\n </br>" +
+                  "{details.recommendedNnnExwPrice} NNN EXW",
+              },
+              { title: "Retail price", type: "TEXT", key: "{details.retailPriceNet:No value} net\n" +
+                  "</br>\n" +
+                  "{details.retailPriceGross: No value} gross" },
+            ],
+          },
+          actions: {},
+        },
+        "divider-707": { layout: { component: "divider" } },
       },
       required: [],
     },
@@ -373,6 +554,12 @@ export const TableView: Story = {
                   key: "function.name",
                   type: "TEXT",
                 },*/
+              {
+                title: "Editable",
+                key: "editableText",
+                type: "TEXT",
+                editable: true,
+              },
               {
                 title: "Number",
                 key: "number",
