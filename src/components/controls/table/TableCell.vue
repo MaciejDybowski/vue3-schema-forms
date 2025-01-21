@@ -17,7 +17,7 @@
       :rounded="0"
       :size="32"
     >
-      <v-img :src="domain + extractValueByPath(header.key)" />
+      <v-img :src="extractValueByPath(header.key)" />
     </v-avatar>
   </div>
 </template>
@@ -116,6 +116,7 @@ function wrapIntoSpanWithLinkClass(value: string) {
 }
 
 function extractValueByPath(path: string) {
+  console.debug(get(props.item, path, null))
   return get(props.item, path, null);
 }
 

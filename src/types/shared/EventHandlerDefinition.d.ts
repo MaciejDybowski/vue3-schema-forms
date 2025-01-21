@@ -1,5 +1,5 @@
 export interface EventHandlerDefinition {
-  mode:  "action" | "request" | "change-model"
+  mode:  "action" | "request" | "change-model" | "emit-event";
   url: string,
   method: "GET" | "POST" | "DELETE",
   body?: Record<string, string|boolean|object|number>
@@ -7,6 +7,7 @@ export interface EventHandlerDefinition {
   code?: string
   script?:string
   variables?: Array<EventVariable>
+  eventSignal?: string
 }
 
 export interface EventVariable {

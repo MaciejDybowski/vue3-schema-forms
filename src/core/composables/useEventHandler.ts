@@ -1,14 +1,11 @@
 import { debounce } from "lodash";
-
-
+import set from "lodash/set";
 
 import { useResolveVariables } from "@/core/composables/useResolveVariables";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineField } from "@/types/engine/EngineField";
 import { EventHandlerDefinition } from "@/types/shared/EventHandlerDefinition";
 import { useEventBus } from "@vueuse/core";
-import set from "lodash/set";
-
 
 export function useEventHandler() {
   const { resolve } = useResolveVariables();
@@ -39,6 +36,9 @@ export function useEventHandler() {
       case "change-model":
         changeMode(eventDefinition, field, model);
         break;
+      case "emit-event":
+        emitEvent(eventDefinition, field, model);
+        break;
       default:
         console.warn(`Event definition mode not found. [${eventDefinition.mode}]`);
     }
@@ -46,8 +46,13 @@ export function useEventHandler() {
 
   function changeMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
     eventDefinition.variables?.forEach((variable) => {
-      set(model, variable.path, variable.value)
-    })
+      set(model, variable.path, variable.value);
+    });
+  }
+
+  function emitEvent(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
+    const vueSchemaFormEventBus = useEventBus<string>("form-model");
+    vueSchemaFormEventBus.emit("model-changed", eventDefinition.eventSignal as string);
   }
 
   async function requestMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
@@ -85,7 +90,6 @@ export function useEventHandler() {
       (eventDefinition.method == "POST" && eventDefinition.body) ||
       (eventDefinition.mode == "action" && eventDefinition.body)
     ) {
-
       const entries = Object.entries(eventDefinition.body);
       const resolvedEntries = await Promise.all(
         entries.map(async ([key, value]) => {
@@ -95,7 +99,7 @@ export function useEventHandler() {
           } else {
             return [key, value];
           }
-        })
+        }),
       );
 
       resolvedEntries.forEach(([key, value]) => {
@@ -118,7 +122,7 @@ export function useEventHandler() {
           } else {
             return [key, value];
           }
-        })
+        }),
       );
 
       resolvedEntries.forEach(([key, value]) => {
