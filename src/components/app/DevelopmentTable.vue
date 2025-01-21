@@ -56,9 +56,8 @@ let myForm = ref();
 let loading = ref(true)
 onBeforeMount(async () => {
   loading.value = true;
-  //await fetchToken("forte")
-  axios.defaults.headers.common['Workspace-Id'] = "forte" ;
-  //await new Promise((r) => setTimeout(r, 200));
+  await fetchToken("forte")
+  await new Promise((r) => setTimeout(r, 200));
   loading.value = false;
 })
 

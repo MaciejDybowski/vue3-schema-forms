@@ -27,7 +27,33 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-
+export const Forte: Story = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        customer: {
+          label: "Customer",
+          layout: {
+            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+            component: "dictionary",
+            props: { clearable: true },
+          },
+          source: {
+            url: "/api/dictionaries?feature-id=customers&lm=basicData.name&vm=dataId&customAttributes=name%2C%7BbasicData.name%7D%2CtaxNumber%2C%7BbasicData.taxNumber%7D%2CcurrencyCode%2C%7BbusinessData.defaultCurrencyCode%7D%2CshipCountry%2C%7BshipCountry.label%7D%2Csegment%2C%7Bsegment.label%7D%2CsalesRegion%2C%7BsalesRegion.label%7D%2CincotermsRule%2C%7BdefaultIncotermsRule.label%7D%7D",
+            title: "label",
+            value: "id",
+            returnObject: true,
+            lazy: true,
+            singleOptionAutoSelect: true,
+          },
+        },
+      },
+      required: [],
+    },
+  },
+};
 
 export const UserInput: Story = {
   args: {

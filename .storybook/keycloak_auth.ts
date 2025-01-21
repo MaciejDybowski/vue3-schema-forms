@@ -1,9 +1,9 @@
 import axios from "axios";
 
 export async function fetchToken(workspaceId: string) {
-  const url = "https://dev-bm.int.tecna.pl/auth/realms/aurea/protocol/openid-connect/token"
-  const clientId = "public"
-  const clientSecret = "SYFeLlkspcQ2XTqWCaU0MlIRQHAdO885"
+  const url = "https://dev-forte.int.tecna.pl/auth/realms/aurea/protocol/openid-connect/token"
+  const clientId = "aurea-web"
+  const clientSecret = ""
 
   const response = await axios({
     method: 'POST',

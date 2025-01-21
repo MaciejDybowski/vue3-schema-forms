@@ -27,12 +27,12 @@ const config: StorybookConfig = {
       server: {
         proxy: {
           '/auth': {
-            target: "https://dev-bm.int.tecna.pl/",
+            target: "https://dev-forte.int.tecna.pl/",
             changeOrigin: true,
             secure: false,
           },
           '/api': {
-            target: "http://localhost:8904/",
+            target: "https://dev-forte.int.tecna.pl/",
             changeOrigin: true,
             secure: false,
           },
