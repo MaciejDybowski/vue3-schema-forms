@@ -1,14 +1,14 @@
 <template>
   <div>
     <span
-      v-if="!showInput && model"
+      v-if="!showInput && model != null"
       class="text-decoration-underline cursor-pointer"
       @click="showInput = true"
     >
       {{ model }}
     </span>
     <v-btn
-      v-else-if="!showInput && !model"
+      v-else-if="!showInput && (model == '' || model == null)"
       icon="mdi-pencil"
       size="x-small"
       @click="showInput = true"
