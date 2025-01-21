@@ -13,8 +13,8 @@
       <v-row dense>
         <v-col cols="auto">
           <v-btn
-            rounded
             color="primary"
+            rounded
             size="small"
             text="Add products"
             @click="runTableBtnLogic"
@@ -113,6 +113,13 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
       title: item.title,
       type: item.type,
     };
+
+    if (item.properties) {
+      for (const [key, value] of Object.entries(item.properties)) {
+        header[key] = value;
+        //console.log(`${key}: ${value}`);
+      }
+    }
 
     if (item.editable) {
       header["editable"] = item.editable;
