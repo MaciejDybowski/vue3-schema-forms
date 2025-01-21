@@ -11,7 +11,6 @@
   >
     <template #top>
       <v-row dense>
-        <v-spacer />
         <v-col cols="auto">
           <v-btn
             rounded
