@@ -219,7 +219,11 @@ export const Forte: Story = {
               {
                 title: "Image",
                 key: "product.mainImageUrl",
-                type: "IMAGE"
+                type: "IMAGE",
+                properties: {
+                  minWidth: 64,
+                  maxWidth: 64,
+                }
               },
               {
                 title: "Product",
