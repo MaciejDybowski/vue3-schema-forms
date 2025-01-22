@@ -13,8 +13,8 @@
       <v-row dense>
         <v-col cols="auto">
           <v-btn
-            rounded
             color="primary"
+            rounded
             size="small"
             text="Add products"
             @click="runTableBtnLogic"
@@ -88,7 +88,7 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 vueSchemaFormEventBus.on(async (event, payload) => {
-  if (payload == "action-callback" || payload == "table-aggregates") {
+  if (payload == "action-callback" || payload == "table-aggregates" || payload == "table-refresh") {
     debounced.load(fetchDataParams.value);
   }
 });
@@ -113,6 +113,13 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
       title: item.title,
       type: item.type,
     };
+
+    if (item.properties) {
+      for (const [key, value] of Object.entries(item.properties)) {
+        header[key] = value;
+        //console.log(`${key}: ${value}`);
+      }
+    }
 
     if (item.editable) {
       header["editable"] = item.editable;
@@ -286,7 +293,7 @@ function runTableBtnLogic() {
     body: null,
     params: {
       featureId: "products",
-      viewId: "54599-tabela",
+      viewId: "68304-tabela",
       batchAddAttributePath: "dataId",
       scriptName: "dodaj_produkty_do_oferty",
     },

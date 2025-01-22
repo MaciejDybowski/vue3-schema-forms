@@ -6,18 +6,21 @@
     <span v-html="htmlContent" />
   </div>
 
-  <div v-if="header.type == 'NUMBER'"
-       class="text-right"
+  <div
+    v-if="header.type == 'NUMBER'"
+    class="text-right"
   >
     {{ numberContent }}
   </div>
   <div v-if="header.type == 'IMAGE'">
-
     <v-avatar
       :rounded="0"
-      :size="32"
+      :size="'maxWidth' in header ? header.maxWidth as number : 32"
     >
-      <v-img :src="domain + extractValueByPath(header.key)" />
+      <v-img
+        :src="extractValueByPath(header.key)"
+        cover
+      />
     </v-avatar>
   </div>
 </template>
@@ -41,7 +44,7 @@ const { formattedNumber } = useNumber();
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const htmlContent = ref<string>("");
 const numberContent = ref<string | null>(null);
-const domain = "https://dev-forte-pim.int.tecna.pl" //window.location.origin;
+const domain = "https://dev-forte-pim.int.tecna.pl"; //window.location.origin;
 const isConnectionWithActions = ref<boolean>(false);
 
 const actionVariable = ref("");
@@ -116,6 +119,7 @@ function wrapIntoSpanWithLinkClass(value: string) {
 }
 
 function extractValueByPath(path: string) {
+  console.debug(get(props.item, path, null));
   return get(props.item, path, null);
 }
 
@@ -134,7 +138,7 @@ onMounted(async () => {
       const maxPrecision = properties && properties.maxPrecision ? properties.maxPrecision : 2;
 
       numberContent.value = formattedNumber(extractValueByPath(props.header.key), "decimal", minPrecision, maxPrecision);
-      console.debug(numberContent.value)
+      console.debug(numberContent.value);
       break;
   }
 });
