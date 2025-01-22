@@ -11,14 +11,16 @@
   >
     <template #top>
       <v-row dense>
-        <v-col cols="auto">
+        <v-col
+          v-for="button in buttons"
+          cols="auto"
+        >
           <v-btn
-            color="primary"
-            rounded
-            size="small"
-            text="Add products"
-            @click="runTableBtnLogic"
-          />
+            v-bind="{ ...tableButtonDefaultProps, ...button.btnProps }"
+            @click="runTableBtnLogic(button)"
+          >
+            {{ button.label }}
+          </v-btn>
         </v-col>
       </v-row>
     </template>
@@ -27,6 +29,18 @@
       :key="header.key"
       #[`item.${header.key}`]="{ item, index }"
     >
+      <div v-if="header.key == 'actions'">
+        <v-btn
+          v-for="action in header.actions"
+          :size="24"
+          flat
+          rounded
+          @click="runTableActionLogic(action)"
+        >
+          <v-icon v-bind="action.props"> {{ action.icon }}</v-icon>
+        </v-btn>
+      </div>
+
       <table-cell
         v-if="!header.editable"
         :actions="actions"
@@ -81,7 +95,7 @@ import { mapQuery, mapSort } from "@/components/controls/table/utils";
 import { useLocale, useProps, useResolveVariables } from "@/core/composables";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTableField } from "@/types/engine/EngineTableField";
-import { TableHeader } from "@/types/shared/Source";
+import { TableButton, TableHeader } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
@@ -106,6 +120,13 @@ const debounced = {
   load: debounce(loadData, 200),
 };
 
+const tableButtonDefaultProps = {
+  rounded: true,
+  size: "small",
+  color: "primary",
+};
+
+//  TODO - czy potrzebne to wgl takie mapowania bo i tak lecimy 1:1
 const headers: ComputedRef<TableHeader[]> = computed(() => {
   return props.schema.source.headers.map((item: TableHeader) => {
     const header: TableHeader = {
@@ -124,8 +145,21 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
     if (item.editable) {
       header["editable"] = item.editable;
     }
+
+    if (item.key == "actions") {
+      header["actions"] = item.actions;
+    }
+
     return header;
   });
+});
+
+const buttons: ComputedRef<TableButton[]> = computed(() => {
+  if (props.schema.source.buttons) {
+    return props.schema.source.buttons;
+  } else {
+    return [] as TableButton[];
+  }
 });
 
 const aggregates = {};
@@ -273,11 +307,6 @@ async function loadData(params: TableFetchOptions) {
     });
 
     items.value = response.data.content;
-    /* items.value = items.value.map((item: any) => {
-       item.image = "/_default_upload_bucket/OHS823E3-P79F%20%285%29_1.jpg";
-       item.number = 4.321;
-       return item;
-     });*/
     itemsTotalElements.value = items.value.length;
   } catch (e) {
     console.error(e);
@@ -286,21 +315,22 @@ async function loadData(params: TableFetchOptions) {
   }
 }
 
-function runTableBtnLogic() {
-  //if (getAddBtnMode.value == "action" && duplicatedSectionOptions.value.action) {
-  let payloadObject = {
-    code: "batchAdd",
-    body: null,
-    params: {
-      featureId: "products",
-      viewId: "68304-tabela",
-      batchAddAttributePath: "dataId",
-      scriptName: "dodaj_produkty_do_oferty",
-    },
-  };
-
-  actionHandlerEventBus.emit("form-action", payloadObject);
-  //}
+function runTableBtnLogic(btn: TableButton) {
+  switch (btn.mode) {
+    case "action":
+      let payloadObject = {
+        code: btn.config.code,
+        body: null,
+        params: {
+          featureId: btn.config.featureId,
+          viewId: btn.config.viewId,
+          batchAddAttributePath: btn.config.batchAddAttributePath,
+          scriptName: btn.config.scriptName,
+        },
+      };
+      actionHandlerEventBus.emit("form-action", payloadObject);
+      break;
+  }
 }
 
 onMounted(async () => {
