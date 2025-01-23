@@ -10,14 +10,30 @@ export interface TableSource {
   headers: TableHeader[];
   data: string;
   updateRow: string;
+  buttons?: TableButton[];
 }
 
 export interface TableHeader {
   key: string;
   title: string;
-  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" |"IMAGE";
+  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE";
   editable?: boolean;
   properties?: Record<string, any>;
+}
+
+export interface TableButton {
+  label: string | { $ref: string };
+  mode: "action" | string;
+  btnProps?: Record<string, any>;
+  config: Record<string, any> & TableButtonBatchAddConfig;
+}
+
+export interface TableButtonBatchAddConfig {
+  code: string;
+  featureId: string;
+  viewId: string;
+  batchAddAttributePath: string;
+  scriptName: string;
 }
 
 export interface AvatarSource {

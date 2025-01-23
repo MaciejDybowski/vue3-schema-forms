@@ -11,17 +11,17 @@ const meta = {
   argTypes: {
     schema: { control: "object", description: "Schema u" },
     model: { control: "object", description: "Model" },
-    options: { control: "object", description: "Opcje" }
+    options: { control: "object", description: "Opcje" },
   } as Partial<ArgTypes<any>>,
   args: {
     options: {
       fieldProps: {
         variant: "outlined",
-        density: "comfortable"
-      }
+        density: "comfortable",
+      },
     },
-    model: {}
-  }
+    model: {},
+  },
 } satisfies Meta<typeof DevelopmentTable>;
 
 export default meta;
@@ -33,39 +33,26 @@ export const Forte: Story = {
     schema: {
       type: "object",
       properties: {
-        offerInfo: {
-          properties: {
-            number: {
-              content: "Offer No: 2025/01/PLO/134",
-              layout: {
-                component: "static-content",
-                tag: "h1",
-                cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 }
-              }
-            },
-            createdBy: {
-              label: "Created by",
-              layout: {
-                component: "data-viewer",
-                cols: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 }
-              },
-              valueMapping: "{offerInfo.createdBy:Jan Kowalski}"
-            },
-            createdAt: {
-              label: "Created at",
-              layout: {
-                component: "data-viewer",
-                cols: { xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 }
-              },
-              valueMapping: "{offerInfo.createdAt:21-01-2025}"
-            }
-          },
-          required: []
-        },
         customerData: {
           content:
             "<b>Customer:</b></br> \n{customer.name:No data}\n<br> {customer.shipCountry:No data}, {customer.salesRegion:No data}",
-          layout: { component: "static-content", tag: "p" }
+          layout: { component: "static-content", tag: "p", cols: 8 },
+        },
+        createdBy: {
+          label: "Created by",
+          layout: {
+            component: "data-viewer",
+            cols: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 },
+          },
+          valueMapping: "{offerInfo.createdBy:Jan Kowalski}",
+        },
+        createdAt: {
+          label: "Created at",
+          layout: {
+            component: "data-viewer",
+            cols: { xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 },
+          },
+          valueMapping: "{offerInfo.createdAt:21-01-2025}",
         },
         offerConditions: {
           properties: {
@@ -74,30 +61,30 @@ export const Forte: Story = {
               layout: {
                 cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
                 component: "dictionary",
-                props: { clearable: false }
+                props: { clearable: false },
               },
               source: {
                 url: "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId",
                 title: "label",
                 value: "id",
-                returnObject: true
-              }
+                returnObject: true,
+              },
             },
             currencyRate: {
               label: "Currency rate",
               layout: {
                 cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
                 component: "number-field",
-                props: { readonly: true }
+                props: { readonly: true },
               },
-              type: "float"
+              type: "float",
             },
             vatRate: {
               label: "VAT rate (%)",
               layout: {
                 cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
                 component: "select",
-                fillRow: true
+                fillRow: true,
               },
               source: {
                 items: [
@@ -105,17 +92,17 @@ export const Forte: Story = {
                   { value: "22", title: "22" },
                   {
                     value: "25",
-                    title: "25"
-                  }
-                ]
-              }
-            }
+                    title: "25",
+                  },
+                ],
+              },
+            },
           },
-          required: []
+          required: [],
         },
         "static-content-953": {
           content: "Transport conditions",
-          layout: { component: "static-content", tag: "h3" }
+          layout: { component: "static-content", tag: "h3" },
         },
         transportConditions: {
           properties: {
@@ -123,7 +110,7 @@ export const Forte: Story = {
               label: "Incoterms® rule",
               layout: {
                 cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-                component: "dictionary"
+                component: "dictionary",
               },
               source: {
                 url: "/api/dictionaries?feature-id=incoterms-rules&lm=dataId&vm=dataId",
@@ -131,16 +118,16 @@ export const Forte: Story = {
                 value: "id",
                 returnObject: true,
                 lazy: true,
-                singleOptionAutoSelect: true
-              }
+                singleOptionAutoSelect: true,
+              },
             },
             transportRate: {
               label: "Transport rate",
               layout: {
                 cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-                component: "text-field"
+                component: "text-field",
               },
-              defaultValue: null
+              defaultValue: null,
             },
             "static-content-965": {
               content: "If the Incoterms are changed, the Transport Rate field must be completed.",
@@ -148,15 +135,15 @@ export const Forte: Story = {
                 component: "static-content",
                 tag: "v-alert",
                 cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
-                props: { type: "warning", density: "compact", variant: "tonal" }
-              }
-            }
+                props: { type: "warning", density: "compact", variant: "tonal" },
+              },
+            },
           },
-          required: []
+          required: [],
         },
         "static-content-413": {
           content: "Calculation rules",
-          layout: { component: "static-content", tag: "h3" }
+          layout: { component: "static-content", tag: "h3" },
         },
         calculationRules: {
           properties: {
@@ -165,35 +152,35 @@ export const Forte: Story = {
               layout: {
                 cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
                 component: "text-field",
-                props: { hint: "", "persistent-hint": true }
+                props: { hint: "", "persistent-hint": true },
               },
               defaultValue: null,
-              expression: ""
+              expression: "",
             },
-            "retailPriceFactor": {
-              "label": "Retail price factor",
-              "layout": {
-                "cols": {
-                  "xs": 12,
-                  "sm": 12,
-                  "md": 12,
-                  "lg": 4,
-                  "xl": 4,
-                  "xxl": 4
+            retailPriceFactor: {
+              label: "Retail price factor",
+              layout: {
+                cols: {
+                  xs: 12,
+                  sm: 12,
+                  md: 12,
+                  lg: 4,
+                  xl: 4,
+                  xxl: 4,
                 },
-                "fillRow": true,
-                "component": "number-field"
+                fillRow: true,
+                component: "number-field",
               },
-              "type": "float",
-              "precision": "2",
-              "precisionMin": "2",
+              type: "float",
+              precision: "2",
+              precisionMin: "2",
               onChange: {
                 mode: "emit-event",
-                "eventSignal": "table-refresh"
-              }
-            }
+                eventSignal: "table-refresh",
+              },
+            },
           },
-          required: []
+          required: [],
         },
         "static-content-678": {
           content: "Standard customer discounts retrieved from SAP. Retail price factor must be set to calculate retail price.",
@@ -201,13 +188,13 @@ export const Forte: Story = {
             component: "static-content",
             tag: "v-alert",
             cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
-            props: { variant: "text", type: "info", density: "compact" }
-          }
+            props: { variant: "text", type: "info", density: "compact" },
+          },
         },
         "static-content-868": {
           content:
-            "<b>Other costs:</b><br/>\n<ul style=\"margin-left:20px\">\n<li><b>Additional label</b>: 0,50 PLN per package</li>\n<li><b>Custom logistic service</b>: 5 PLN per product</li>\n</ul>",
-          layout: { component: "static-content", tag: "p" }
+            '<b>Other costs:</b><br/>\n<ul style="margin-left:20px">\n<li><b>Additional label</b>: 0,50 PLN per package</li>\n<li><b>Custom logistic service</b>: 5 PLN per product</li>\n</ul>',
+          layout: { component: "static-content", tag: "p" },
         },
         "divider-212": { layout: { component: "divider" } },
         "static-content-963": { content: "Products", layout: { component: "static-content", tag: "h3" } },
@@ -223,45 +210,45 @@ export const Forte: Story = {
                 properties: {
                   minWidth: 64,
                   maxWidth: 64,
-                }
+                },
               },
               {
                 title: "Product",
                 key: "<b>{product.name: Product name}</b> </br>{product.number:1}\n<br/>\nProgram: {product.programName}",
-                type: "TEXT"
+                type: "TEXT",
               },
               {
                 title: "Scale quantity",
                 key: "scaleQuantity",
                 type: "NUMBER",
-                editable: true
+                editable: true,
               },
               {
                 title: "Invoice price (NN)",
                 key: "invoicePrice",
                 type: "NUMBER",
-                editable: true
+                editable: true,
               },
               { title: "MaT [%]", type: "TEXT", key: "details.marginPercent" },
               {
                 title: "Recommended price",
                 type: "TEXT",
-                key: "{details.recommendedInvoicePrice} NN\n </br>{details.recommendedNnnPrice} NNN\n </br>{details.recommendedNnnExwPrice} NNN EXW"
+                key: "{details.recommendedInvoicePrice} NN\n </br>{details.recommendedNnnPrice} NNN\n </br>{details.recommendedNnnExwPrice} NNN EXW",
               },
               {
                 title: "Retail price",
                 type: "TEXT",
-                key: "{details.retailPriceNet:No value} net\n</br>\n{details.retailPriceGross: No value} gross"
-              }
-            ]
+                key: "{details.retailPriceNet:No value} net\n</br>\n{details.retailPriceGross: No value} gross",
+              },
+            ],
           },
-          actions: {}
+          actions: {},
         },
-        "divider-707": { layout: { component: "divider" } }
+        "divider-707": { layout: { component: "divider" } },
       },
-      required: []
-    }
-  }
+      required: [],
+    },
+  },
 };
 
 export const UserInput: Story = {
@@ -273,22 +260,22 @@ export const UserInput: Story = {
         textInput: {
           label: "Text",
           layout: {
-            component: "text-field"
-          }
+            component: "text-field",
+          },
         },
         userInput: {
           label: "Użytkownicy",
           layout: {
-            component: "user-input"
+            component: "user-input",
           },
           source: {
-            maxSelection: 1
-          }
-        }
+            maxSelection: 1,
+          },
+        },
       },
-      required: []
-    }
-  }
+      required: [],
+    },
+  },
 };
 
 export const BMProcess: Story = {
@@ -296,16 +283,16 @@ export const BMProcess: Story = {
     model: {
       metadane: {
         sciezkaPlikuFaktury: null,
-        nazwaPlikuFaktury: null
+        nazwaPlikuFaktury: null,
       },
       tech: {
         czyPominacOcr: true,
         oddzial: {
           id: "fb01ef61-43c6-43c2-b0b1-918e8b72037d",
-          label: "Rzeszów"
+          label: "Rzeszów",
         },
         czyObiegSkrocony: false,
-        czyDuplikat: true
+        czyDuplikat: true,
       },
       dostawca: {
         id: "3c3466be-9e83-4863-9925-8c065076ee95",
@@ -319,7 +306,7 @@ export const BMProcess: Story = {
         adres: "J.H. DĄBROWSKIEGO 536",
         nazwa: "HADEX GAZ SP ZOO",
         saldo:
-          "Kl. 0311201 - Nieprzeterminowane: 23921.72; Przeterminowane: 0.00; Kl. 0311202 - Nieprzeterminowane: 6906.14; Przeterminowane: 2287.80"
+          "Kl. 0311201 - Nieprzeterminowane: 23921.72; Przeterminowane: 0.00; Kl. 0311202 - Nieprzeterminowane: 6906.14; Przeterminowane: 2287.80",
       },
       kod: null,
       nazwa: null,
@@ -334,44 +321,44 @@ export const BMProcess: Story = {
             lastName: "Dyszak",
             email: "adam.dyszak@b-m.pl",
             username: "adam.dyszak",
-            labels: "dostawca_osoba_przypisana"
-          }
+            labels: "dostawca_osoba_przypisana",
+          },
         ],
         decyzjaRejestracja: {
           value: "zatwierdz",
-          title: "Zatwierdź"
+          title: "Zatwierdź",
         },
         osobaRejestrujaca: {
           firstName: "Tecna",
           lastName: "Tecna",
           id: "1304370d-3d81-475b-8f34-7550e85ae491",
           email: "tecna12@tecna.pl",
-          username: "TECNA"
+          username: "TECNA",
         },
-        dataRejestracji: "2025-01-05"
+        dataRejestracji: "2025-01-05",
       },
       faktura: {
         nrReferencyjny: "DMS-100316",
         nrFaktury: "1",
         typDokumentu: {
           id: "VAT",
-          label: "Faktura podstawowa"
+          label: "Faktura podstawowa",
         },
         dataWystawienia: "2025-01-05",
         dataWplywu: "2025-01-05",
         dataSprzedazy: "2025-01-05",
         waluta: {
           id: "PLN",
-          label: "Polski złoty"
+          label: "Polski złoty",
         },
-        kurs: 1
+        kurs: 1,
       },
       dodajDostawce: false,
       podsumowanie: {
         lPozycji: 1,
         kwotaNetto: 100,
         kwotaVat: 23,
-        kwotaBrutto: 123
+        kwotaBrutto: 123,
       },
       pozycjeDokumentu: [
         {
@@ -388,7 +375,7 @@ export const BMProcess: Story = {
           stawkaVat: {
             id: "23",
             label: "23%",
-            mnoznik: "23"
+            mnoznik: "23",
           },
           rodzajKosztu: {
             id: "4025100",
@@ -406,14 +393,14 @@ export const BMProcess: Story = {
             czyPoleCelSpotkania: "false",
             czyPoleDealDbs: "false",
             czyPoleNosnik: "false",
-            czyPoleLiczbaOsob: "false"
+            czyPoleLiczbaOsob: "false",
           },
           osobyWybraneDoAutoryzacji: null,
           miejscePowstaniaKosztu: {
             id: "CD820",
-            label: "CD820 - CRS Refakturowanie Poznań"
-          }
-        }
+            label: "CD820 - CRS Refakturowanie Poznań",
+          },
+        },
       ],
       sumy: {
         fakturaOplacona: false,
@@ -427,13 +414,13 @@ export const BMProcess: Story = {
         alert: null,
         doZaplatyNetto: null,
         doZaplatyVAT: null,
-        doZaplatyKwotaBrutto: null
+        doZaplatyKwotaBrutto: null,
       },
       dekretacja: {
         nieZnamOsoby: false,
         decyzjaOpisMerytoryczny: {
           value: "zatwierdz",
-          title: "Zatwierdź"
+          title: "Zatwierdź",
         },
         osobyWybraneDoKsiegowania: [
           {
@@ -443,10 +430,10 @@ export const BMProcess: Story = {
             lastName: "Gajda",
             email: "marta.gajda@b-m.pl",
             username: "marta.gajda",
-            labels: ""
-          }
-        ]
-      }
+            labels: "",
+          },
+        ],
+      },
     },
     schema: {
       type: "object",
@@ -463,16 +450,16 @@ export const BMProcess: Story = {
                 value: "id",
                 lazy: true,
                 returnObject: true,
-                singleOptionAutoSelect: true
-              }
+                singleOptionAutoSelect: true,
+              },
             },
             czyPominacOcr: {
               label: "",
               layout: { component: "checkbox", props: { multiple: false } },
-              source: { items: [{ value: true, title: "Pomiń OCR" }] }
-            }
+              source: { items: [{ value: true, title: "Pomiń OCR" }] },
+            },
           },
-          required: ["oddzial"]
+          required: ["oddzial"],
         },
         dostawca: {
           label: "Wybierz dostawcę",
@@ -483,44 +470,44 @@ export const BMProcess: Story = {
             value: "id",
             returnObject: true,
             singleOptionAutoSelect: true,
-            lazy: true
-          }
+            lazy: true,
+          },
         },
         kod: {
           label: "Kod dostawcy",
           layout: { component: "data-viewer", if: "nata(dostawca != null)" },
           valueMapping: "{dostawca.kod}",
-          type: "text"
+          type: "text",
         },
         nazwa: {
           label: "Nazwa dostawcy",
           layout: {
             component: "data-viewer",
             cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
-            if: "nata(dostawca != null)"
+            if: "nata(dostawca != null)",
           },
           valueMapping: "{dostawca.label}",
-          type: "text"
+          type: "text",
         },
         nip: {
           label: "NIP",
           layout: {
             component: "data-viewer",
             cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
-            if: "nata(dostawca != null)"
+            if: "nata(dostawca != null)",
           },
           valueMapping: "{dostawca.nip}",
-          type: "text"
+          type: "text",
         },
         adres: {
           content:
             "{dostawca.adres:Brak danych} <br>{dostawca.kodPocztowy:Brak danych} {dostawca.miejscowosc:Brak danych}, {dostawca.kraj:Brak danych} <br><br>Saldo: {dostawca.saldo:Brak danych}",
-          layout: { component: "static-content", tag: "p", if: "nata(dostawca != null)" }
-        }
+          layout: { component: "static-content", tag: "p", if: "nata(dostawca != null)" },
+        },
       },
-      required: ["dostawca"]
-    }
-  }
+      required: ["dostawca"],
+    },
+  },
 };
 
 export const TableView: Story = {
@@ -534,20 +521,20 @@ export const TableView: Story = {
           precision: 2,
           layout: {
             component: "number-field",
-            cols: 4
-          }
+            cols: 4,
+          },
         },
         description: {
           content:
             "Description of datatable, lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
           layout: {
             component: "static-content",
-            tag: "span"
-          }
+            tag: "span",
+          },
         },
         tableOfProducts: {
           actions: {
-            "partner.name": "redirectActionCode"
+            "partner.name": "redirectActionCode",
           },
           source: {
             data: "/api/v1/customers/000da22b-b305-459c-8876-34e39effd2aa/relationships?feature-id=customers",
@@ -555,17 +542,18 @@ export const TableView: Story = {
               {
                 title: "ID",
                 key: "dataId",
-                type: "TEXT"
+                type: "TEXT",
               },
               {
                 title: "Partner name",
                 key: "partner.name",
-                type: "TEXT"
+                type: "TEXT",
+                action: "redirectActionCode",
               },
               {
                 title: "Join variables",
                 key: "<b>{partner.name}</b> oraz {partner.number}.",
-                type: "TEXT"
+                type: "TEXT",
               },
               /*  {
                   title: "Number",
@@ -586,7 +574,7 @@ export const TableView: Story = {
                 title: "Number",
                 key: "number",
                 type: "NUMBER",
-                align: "end"
+                align: "end",
               },
               {
                 title: "Image",
@@ -595,13 +583,58 @@ export const TableView: Story = {
                 properties: {
                   minWidth: 64,
                   maxWidth: 64,
-                }
-              }
-            ]
+                },
+              },
+              {
+                title: "Actions",
+                key: "actions",
+                actions: [
+                  {
+                    icon: "mdi-delete-outline",
+                    target: "DELETE:/api/v1/offers/{offer.id}/offer-items/{dataId}",
+                    props: {
+                      color: "error",
+                    },
+                  },
+                ],
+              },
+            ],
+            buttons: [
+              {
+                label: "Add products",
+                btnProps: {
+                  color: "primary",
+                  rounded: false,
+                },
+                mode: "action",
+                config: {
+                  code: "batchAdd",
+                  featureId: "products",
+                  viewId: "68304-tabela",
+                  batchAddAttributePath: "dataId",
+                  scriptName: "dodaj_produkty_do_oferty",
+                },
+              },
+              {
+                label: "Add products",
+                btnProps: {
+                  color: "primary",
+                  rounded: false,
+                },
+                mode: "action",
+                config: {
+                  code: "batchAdd",
+                  featureId: "products",
+                  viewId: "68304-tabela",
+                  batchAddAttributePath: "dataId",
+                  scriptName: "dodaj_produkty_do_oferty",
+                },
+              },
+            ],
           },
           layout: {
-            component: "table-view"
-          }
+            component: "table-view",
+          },
         },
 
         fieldA: {
@@ -610,8 +643,8 @@ export const TableView: Story = {
           precision: 2,
           layout: {
             component: "number-field",
-            cols: 4
-          }
+            cols: 4,
+          },
         },
         fieldB: {
           label: "Aggregate Two",
@@ -619,8 +652,8 @@ export const TableView: Story = {
           precision: 2,
           layout: {
             component: "number-field",
-            cols: 4
-          }
+            cols: 4,
+          },
         },
         fieldC: {
           label: "Aggregate Three",
@@ -628,8 +661,8 @@ export const TableView: Story = {
           precision: 2,
           layout: {
             component: "number-field",
-            cols: 4
-          }
+            cols: 4,
+          },
         },
         fieldD: {
           properties: {
@@ -637,10 +670,10 @@ export const TableView: Story = {
               label: "Aggregate Four",
               layout: {
                 component: "text-field",
-                cols: 2
-              }
-            }
-          }
+                cols: 2,
+              },
+            },
+          },
         },
         fieldF: {
           layout: {
@@ -651,22 +684,22 @@ export const TableView: Story = {
                   label: "Aggregate five",
                   layout: {
                     component: "text-field",
-                    cols: 4
-                  }
-                }
-              }
-            }
-          }
+                    cols: 4,
+                  },
+                },
+              },
+            },
+          },
         },
 
         hideField: {
           label: "Hide Field",
           layout: {
             component: "text-field",
-            if: "nata(fieldC > 500)"
-          }
-        }
-      }
-    } as Schema
-  }
+            if: "nata(fieldC > 500)",
+          },
+        },
+      },
+    } as Schema,
+  },
 };
