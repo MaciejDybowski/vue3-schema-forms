@@ -333,6 +333,10 @@ function runTableBtnLogic(btn: TableButton) {
   }
 }
 
+function runTableActionLogic(action){
+  console.debug("TODO", action)
+}
+
 onMounted(async () => {
   await bindProps(props.schema);
   debounced.load(fetchDataParams.value);

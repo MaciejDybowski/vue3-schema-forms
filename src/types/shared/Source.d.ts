@@ -19,6 +19,7 @@ export interface TableHeader {
   type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE";
   editable?: boolean;
   properties?: Record<string, any>;
+  actions?: any[]
 }
 
 export interface TableButton {
