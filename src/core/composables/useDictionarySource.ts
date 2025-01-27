@@ -90,7 +90,7 @@ export function useDictionarySource(field: EngineDictionaryField) {
           ? {
               page: paginationOptions.value.getPage(),
               size: paginationOptions.value.getItemsPerPage(),
-              query: query.value && data.value.length >= 1 ? query.value : null,
+              query: (query.value && data.value.length >= 1) || data.value.length == 0 ? query.value : null,
             }
           : {
               query: query.value ? query.value : null,
