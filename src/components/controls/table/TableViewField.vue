@@ -24,6 +24,17 @@
         </v-col>
       </v-row>
     </template>
+
+    <template
+      v-for="header in headers"
+      :key="header.key"
+      #[`header.${header.key}`]
+    >
+      <div :class="header.type === 'NUMBER' ? 'text-right' : ''">
+        {{ header.title }}
+      </div>
+    </template>
+
     <template
       v-for="header in headers"
       :key="header.key"
@@ -333,8 +344,8 @@ function runTableBtnLogic(btn: TableButton) {
   }
 }
 
-function runTableActionLogic(action){
-  console.debug("TODO", action)
+function runTableActionLogic(action) {
+  console.debug("TODO", action);
 }
 
 onMounted(async () => {
