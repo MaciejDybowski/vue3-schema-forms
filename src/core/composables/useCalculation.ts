@@ -5,7 +5,7 @@ import { ref } from "vue";
 
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { useNumber } from "@/core/composables/useNumber";
-import { logger, useResolveVariables } from "@/main";
+import { logger, useFormModel, useResolveVariables } from "@/main";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { Fn, useEventBus } from "@vueuse/core";
@@ -17,6 +17,7 @@ export function useCalculation() {
   const unsubscribeListener = ref<Fn>(() => {});
   const calculationResultWasModified = ref(false);
   const { fillPath } = useResolveVariables();
+  const { getValue, setValue } = useFormModel();
 
   async function calculationFunc(field: EngineField, model: any): Promise<number | null> {
     const formModelStore = useFormModelStore(field.formId);
@@ -70,11 +71,14 @@ export function useCalculation() {
     }
 
     const currentValue = get(model, field.key, null);
-    if (result !== currentValue) {
+    if (roundTo(result, precision) !== currentValue) {
       if (`${field.key}ManuallyChanged` in mergedModel && mergedModel[`${field.key}ManuallyChanged`] == true) {
         return;
       }
-      set(model, field.key, roundTo(result, precision));
+      // TODO - do testów na 30.01 jak działa to super
+      //set(model, field.key, roundTo(result, precision));
+      setValue(roundTo(result, precision), field);
+
       await onChange(field, model);
     }
   }
