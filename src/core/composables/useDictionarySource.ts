@@ -14,7 +14,7 @@ import { variableRegexp } from "../../core/engine/utils";
 import { useFormModelStore } from "../../store/formModelStore";
 import { useResolveVariables } from "./useResolveVariables";
 
-export  function useDictionarySource(field: EngineDictionaryField) {
+export function useDictionarySource(field: EngineDictionaryField) {
   const { resolve } = useResolveVariables();
   const source: DictionarySource = field.source;
   const title = source.title ? source.title : "title";
@@ -90,7 +90,7 @@ export  function useDictionarySource(field: EngineDictionaryField) {
           ? {
               page: paginationOptions.value.getPage(),
               size: paginationOptions.value.getItemsPerPage(),
-              query: query.value && data.value.length > 1 ? query.value : null,
+              query: (query.value && data.value.length >= 1) || data.value.length == 0 ? query.value : null,
             }
           : {
               query: query.value ? query.value : null,

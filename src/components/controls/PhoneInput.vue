@@ -40,7 +40,9 @@ const phoneInputProps = {
   'country-icon-mode': 'svg',
   countryLabel: t('address.country'),
   'guess-country': true,
-  'include-countries': ['pl', 'gb', 'ru', 'de', 'us', 'es', 'fr', 'it'],
+  'include-countries': [
+    'al', 'ad', 'at', 'be', 'by', 'ba', 'bg', 'hr', 'me', 'cz', 'dk', 'ee', 'fi', 'fr', 'de', 'gr', 'es', 'nl', 'ie', 'is', 'xk', 'li', 'lt', 'lu', 'lv', 'mk', 'mt', 'md', 'mc', 'pl', 'pt', 'ru', 'ro', 'sm', 'rs', 'sk', 'si', 'ch', 'se', 'tr', 'ua', 'va', 'hu', 'gb', 'it', 'ca', 'mx', 'ar', 'br', 'cn', 'jp', 'au', 'us'
+  ]
 };
 
 const propsRef = ref({});
