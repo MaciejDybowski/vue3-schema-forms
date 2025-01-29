@@ -627,7 +627,7 @@ export const TopSlotAndButtons: Story = {
                 },
                 mode: "action",
                 config: {
-                  code: "batchAdd",
+                  code: "batchAdd", // na froncie jest sprawdzanie jak batchAdd to i tak woła skrypt bo w obsłudze zadanie jest tylko jedna uniwersalna akcja
                   featureId: "products",
                   viewId: "68304-tabela",
                   batchAddAttributePath: "dataId",

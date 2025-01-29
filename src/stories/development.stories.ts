@@ -596,6 +596,13 @@ export const TableView: Story = {
                       color: "error",
                     },
                   },
+                  {
+                    icon: "mdi-delete-outline",
+                    target: "DELETE:/api/v1/offers/{offer.id}/offer-items/{dataId}",
+                    props: {
+                      color: "error",
+                    },
+                  },
                 ],
               },
             ],
