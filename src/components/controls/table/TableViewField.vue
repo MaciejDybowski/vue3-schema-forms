@@ -4,8 +4,8 @@
     v-model:loading="loading"
     v-model:page="tableOptions.page"
     v-model:sort-by="tableOptions.sortBy"
-    :headers="headers"
     :items="items"
+    :headers="headers"
     class="bg-transparent"
     density="compact"
   >
@@ -242,28 +242,27 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
   };
 });
 
-function updateRow(value: any, index: number, headerKey: string, row: any) {
+async function updateRow(value: any, index: number, headerKey: string, row: any) {
   try {
     const payload = {};
     payload[headerKey] = value;
 
-    let updateRowURL = props.schema.source.updateRow;
-    if (props.schema.source.updateRow.match(variableRegexp)) {
-      const matches = props.schema.source.updateRow.match(variableRegexp);
+    let updateRowURL = props.schema.source.data;
+    updateRowURL = (await resolve(props.schema, props.schema.source.data)).resolvedText;
+    updateRowURL += "/{dataId}";
+    if ((props.schema.source.data + "/{dataId}").match(variableRegexp)) {
+      const matches = (props.schema.source.data + "/{dataId}").match(variableRegexp);
       if (matches) {
         matches.forEach((variable) => {
           const unwrapped = variable.slice(1, -1);
-          updateRowURL = updateRowURL.replaceAll(variable, row[unwrapped]);
+          updateRowURL = updateRowURL.replaceAll(variable, get(row, unwrapped, null));
         });
       }
     }
-    console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
-    //axios.put(props.schema.source.updateRow, payload)
-    // temp code
-    const response = row;
-    response[headerKey] = value;
-    items.value[index] = merge(items.value[index], response);
-    // end temp code
+    //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
+    const response = await axios.post(updateRowURL, payload);
+    items.value[index] = response.data;
+
   } catch (e) {
     console.error(e);
   }
@@ -303,6 +302,8 @@ async function loadData(params: TableFetchOptions) {
   try {
     console.debug("Loading data for table field with params ", params);
     loading.value = true;
+    items.value = [];
+    itemsTotalElements.value = 0;
 
     const url = (await resolve(props.schema, props.schema.source.data)).resolvedText;
 

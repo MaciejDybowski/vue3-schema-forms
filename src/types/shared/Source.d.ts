@@ -9,14 +9,13 @@ export interface Source {
 export interface TableSource {
   headers: TableHeader[];
   data: string;
-  updateRow: string;
   buttons?: TableButton[];
 }
 
 export interface TableHeader {
   key: string;
   title: string;
-  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE";
+  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE" | "ICON";
   editable?: boolean;
   properties?: Record<string, any>;
   actions?: any[];

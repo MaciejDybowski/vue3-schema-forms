@@ -6,6 +6,10 @@
     <span v-html="htmlContent" />
   </div>
 
+  <div v-if="header.type == `ICON`">
+    <v-icon v-if="extractValueByPath(header.key) !== null">{{ extractValueByPath(header.key) }}</v-icon>
+  </div>
+
   <div
     v-if="header.type == 'NUMBER'"
     class="text-right"
@@ -34,7 +38,7 @@
 <script lang="ts" setup>
 import jsonata from "jsonata";
 import get from "lodash/get";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 
 import { useNumber } from "@/core/composables/useNumber";
 import { variableRegexp } from "@/core/engine/utils";
@@ -49,7 +53,28 @@ const props = defineProps<{
 const { formattedNumber } = useNumber();
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const htmlContent = ref<string>("");
-const numberContent = ref<string | null>(null);
+
+// TODO - czy nie ma lepszego sposobu na zachowanie reaktywności??
+watchEffect(async () => {
+  switch (props.header.type) {
+    case "TEXT":
+      if (props.header.key.match(variableRegexp)) {
+        await simpleResolveVariable();
+      } else {
+        checkConnectionWithActions(props.header.key);
+      }
+      break;
+  }
+});
+
+const numberContent = computed(() => {
+  const properties = props.header.properties;
+  const minPrecision = properties && properties.minPrecision ? properties.minPrecision : 0;
+  const maxPrecision = properties && properties.maxPrecision ? properties.maxPrecision : 2;
+
+  return formattedNumber(extractValueByPath(props.header.key), "decimal", minPrecision, maxPrecision);
+});
+
 const domain = window.location.origin;
 const isConnectionWithActions = ref<boolean>(false);
 
@@ -57,7 +82,7 @@ const actionVariable = ref("");
 const actionCode = ref("");
 
 function callAction() {
-  console.debug(`Action is enable on ${actionVariable.value} with action code ${actionCode.value}`);
+  //console.debug(`Action is enable on ${actionVariable.value} with action code ${actionCode.value}`);
 
   let payloadObject = {
     code: props.actions[actionVariable.value],
@@ -65,7 +90,7 @@ function callAction() {
   };
 
   actionHandlerEventBus.emit("form-action", payloadObject);
-  console.debug("Action payload", payloadObject);
+  //console.debug("Action payload", payloadObject);
 }
 
 async function simpleResolveVariable() {
@@ -136,13 +161,6 @@ onMounted(async () => {
       } else {
         checkConnectionWithActions(props.header.key);
       }
-      break;
-    case "NUMBER":
-      const properties = props.header.properties;
-      const minPrecision = properties && properties.minPrecision ? properties.minPrecision : 0;
-      const maxPrecision = properties && properties.maxPrecision ? properties.maxPrecision : 2;
-
-      numberContent.value = formattedNumber(extractValueByPath(props.header.key), "decimal", minPrecision, maxPrecision);
       break;
   }
 });

@@ -29,7 +29,11 @@ type Story = StoryObj<typeof meta>;
 
 export const Forte: Story = {
   args: {
-    model: {},
+    model: {
+      offer: {
+        id: "maciek-offer",
+      }
+    },
     schema: {
       type: "object",
       properties: {
@@ -201,7 +205,7 @@ export const Forte: Story = {
         "table-view-831": {
           layout: { component: "table-view" },
           source: {
-            data: "/api/v1/offers/{offer.id}/offer-items?feature-id=2",
+            data: "/api/v1/offers/{offer.id}/offer-items",
             headers: [
               {
                 title: "Image",
@@ -218,15 +222,14 @@ export const Forte: Story = {
                 type: "TEXT",
               },
               {
-                title: "Scale quantity",
-                key: "scaleQuantity",
-                type: "NUMBER",
-                editable: true,
+                title: "",
+                key: "palletQuantityIcon",
+                type: "ICON",
               },
               {
                 title: "Invoice price (NN)",
                 key: "invoicePrice",
-                type: "NUMBER",
+                type: "TEXT",
                 editable: true,
               },
               { title: "MaT [%]", type: "TEXT", key: "details.marginPercent" },
@@ -241,7 +244,7 @@ export const Forte: Story = {
                 key: "{details.retailPriceNet:No value} net\n</br>\n{details.retailPriceGross: No value} gross",
               },
               {
-                title: "Actions",
+                title: "",
                 key: "actions",
                 actions: [
                   {
