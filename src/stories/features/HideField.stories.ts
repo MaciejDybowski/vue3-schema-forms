@@ -6,6 +6,7 @@ import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaTextField } from "../../types/schema/elements";
+import { waitForMountedAsync } from "../controls/utils";
 
 const meta = {
   title: "Forms/Features/Hide fields",
@@ -41,6 +42,7 @@ type Story = StoryObj<typeof meta>;
 
 export const HideFields: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText("Visible field");
     const field2 = canvas.getByLabelText("Visible field 2");

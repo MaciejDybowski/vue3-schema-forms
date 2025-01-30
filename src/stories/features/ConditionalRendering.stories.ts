@@ -1,8 +1,7 @@
 // @ts-nocheck
 import { VueSchemaForms } from "@/components";
 import { conditionSchema } from "@/stories/schemas";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
+import { expect, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
@@ -66,6 +65,50 @@ export const ConditionStory: Story = {
   args: {
     modelValue: {},
     schema: conditionSchema,
+  },
+};
+
+export const ConditionWithCalcStory: Story = {
+  name: "if with calcs",
+  play: async ({ canvasElement }) => {
+
+  },
+  args: {
+    modelValue: {
+      a:10,
+      b:99
+    },
+    schema: {
+      type: "object",
+      properties: {
+        a: {
+          label: "A",
+          layout: {
+            component: "number-field",
+          },
+        },
+        b: {
+          label: "B",
+          layout: {
+            component: "number-field",
+          },
+        },
+        c: {
+          label: "Result",
+          layout: {
+            component: "number-field",
+          },
+          calculation: "a + b",
+        },
+        secretCode: {
+          label: "Result",
+          layout: {
+            component: "text-field",
+            if: "nata(c>100)",
+          },
+        },
+      },
+    },
   },
 };
 
