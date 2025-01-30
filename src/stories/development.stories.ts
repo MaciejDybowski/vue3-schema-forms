@@ -240,6 +240,44 @@ export const Forte: Story = {
                 type: "TEXT",
                 key: "{details.retailPriceNet:No value} net\n</br>\n{details.retailPriceGross: No value} gross",
               },
+              {
+                title: "Actions",
+                key: "actions",
+                actions: [
+                  {
+                    icon: "mdi-delete-outline",
+                    mode: "action",
+                    code: "callScript",
+                    config: {
+                      params: {
+                        script: "delete_product_from_offer",
+                      },
+                      body: {
+                        dataId: "{product.id}",
+                      },
+                    },
+                    props: {
+                      color: "error",
+                    },
+                  },
+                  {
+                    icon: "mdi-shipping-pallet",
+                    mode: "action",
+                    code: "callScript",
+                    config: {
+                      params: {
+                        script: "add_pallet_price",
+                      },
+                      body: {
+                        dataId: "{product.id}",
+                      },
+                    },
+                    props: {
+                      color: "primary",
+                    },
+                  },
+                ],
+              },
             ],
           },
           actions: {},

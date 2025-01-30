@@ -22,9 +22,12 @@ export interface TableHeader {
   actions?: any[];
 }
 
-export interface TableHeaderActions {
+export interface TableHeaderAction {
   icon: string;
   props?: Record<string, any>;
+  mode: "action" | string;
+  config: Record<string, any>;
+  code?: string
 }
 
 export interface TableButton {

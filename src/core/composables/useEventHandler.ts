@@ -132,5 +132,5 @@ export function useEventHandler() {
     return params;
   }
 
-  return { onChange };
+  return { onChange,  createParamsObject, createBodyObject};
 }

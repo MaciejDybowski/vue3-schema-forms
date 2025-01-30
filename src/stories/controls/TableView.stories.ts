@@ -490,7 +490,7 @@ export const ActionField: Story = {
             component: "table-view",
           },
           actions: {
-            "name": "redirectActionCode",
+            name: "redirectActionCode",
           },
           source: {
             data: "/mock-data/table-view-mock",
@@ -540,7 +540,7 @@ export const ActionFieldAdvanced: Story = {
             component: "table-view",
           },
           actions: {
-            "name": "redirectActionCode",
+            name: "redirectActionCode",
           },
           source: {
             data: "/mock-data/table-view-mock",
@@ -687,9 +687,34 @@ export const ContextActions: Story = {
                 actions: [
                   {
                     icon: "mdi-delete-outline",
-                    target: "DELETE:/api/v1/offers/{offer.id}/offer-items/{dataId}",
+                    mode: "action",
+                    code: "callScript",
+                    config: {
+                      params: {
+                        scriptName: "delete_product_from_offer",
+                      },
+                      body: {
+                        name: "{name}",
+                      },
+                    },
                     props: {
                       color: "error",
+                    },
+                  },
+                  {
+                    icon: "mdi-shipping-pallet",
+                    mode: "action",
+                    code: "callScript",
+                    config: {
+                      params: {
+                        scriptName: "add_pallet_price",
+                      },
+                      body: {
+                        name: "{name}",
+                      },
+                    },
+                    props: {
+                      color: "primary",
                     },
                   },
                 ],

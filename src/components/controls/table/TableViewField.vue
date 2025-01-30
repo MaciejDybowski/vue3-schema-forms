@@ -46,7 +46,7 @@
           :size="24"
           flat
           rounded
-          @click="runTableActionLogic(action)"
+          @click="runTableActionLogic(action, item)"
         >
           <v-icon v-bind="action.props"> {{ action.icon }}</v-icon>
         </v-btn>
@@ -97,6 +97,7 @@
 <script lang="ts" setup>
 import axios from "axios";
 import { debounce, merge } from "lodash";
+import get from "lodash/get";
 import { ComputedRef, computed, onMounted, ref } from "vue";
 
 import TableCell from "@/components/controls/table/TableCell.vue";
@@ -104,9 +105,10 @@ import TableEditableCell from "@/components/controls/table/TableEditableCell.vue
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 
 import { useLocale, useProps, useResolveVariables } from "@/core/composables";
+import { useEventHandler } from "@/core/composables/useEventHandler";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTableField } from "@/types/engine/EngineTableField";
-import { TableButton, TableHeader } from "@/types/shared/Source";
+import { TableButton, TableHeader, TableHeaderAction } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
@@ -125,6 +127,7 @@ const props = defineProps<{
 
 const { bindProps, fieldProps } = useProps();
 const { resolve } = useResolveVariables();
+const { createParamsObject, createBodyObject } = useEventHandler();
 
 const loading = ref(true);
 const debounced = {
@@ -344,8 +347,44 @@ function runTableBtnLogic(btn: TableButton) {
   }
 }
 
-function runTableActionLogic(action) {
+async function runTableActionLogic(action: TableHeaderAction, item: any) {
   console.debug("TODO", action);
+
+  switch (action.mode) {
+    case "action":
+      const actionHandlerEventBus = useEventBus<string>("form-action");
+
+      const obj = {
+        mode: "action",
+        body: action.config.body,
+        params: action.config.params,
+      };
+
+      let body = await createBodyObjectFromRow(obj as any, item);
+      let params = await createParamsObject(obj as any, props.schema);
+
+      let payloadObject = {
+        code: action.code,
+        body: body,
+        params: params,
+      };
+
+      actionHandlerEventBus.emit("form-action", payloadObject);
+      console.debug("Action payload", payloadObject);
+      break;
+
+    default:
+      console.warn("unknown action mode");
+  }
+}
+
+async function createBodyObjectFromRow(actionObj: any, row: any) {
+  let body = {};
+  for (const [key, value] of Object.entries(actionObj.body)) {
+    const unwrapped = (value as string).slice(1, -1);
+    body[key] = get(row, unwrapped, null);
+  }
+  return body;
 }
 
 onMounted(async () => {
