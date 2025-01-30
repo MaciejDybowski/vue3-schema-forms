@@ -279,6 +279,23 @@ export const Forte: Story = {
                 ],
               },
             ],
+            buttons: [
+              {
+                label: "Add products",
+                btnProps: {
+                  color: "primary",
+                  rounded: false,
+                },
+                mode: "action",
+                config: {
+                  code: "batchAdd", // na froncie jest sprawdzanie jak batchAdd to i tak woła skrypt bo w obsłudze zadanie jest tylko jedna uniwersalna akcja
+                  featureId: "products",
+                  viewId: "68304-tabela",
+                  batchAddAttributePath: "dataId",
+                  scriptName: "dodaj_produkty_do_oferty",
+                },
+              },
+            ],
           },
           actions: {},
         },
