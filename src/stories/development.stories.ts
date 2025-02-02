@@ -27,12 +27,288 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const ForteStart: Story = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        "static-content-917": {
+          content:
+            "Select an option displayed as:\n<br>\n(Payer Number) Payer Name - (Sold to Party Number) Sold to Party Name if the payer and sold-to party are different.\n<br>\n(Sold to Party Number) Sold to Party Name if they are the same.",
+          layout: {
+            component: "static-content",
+            tag: "v-alert",
+            props: { type: "info", density: "default", variant: "tonal" },
+            cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+          },
+        },
+        customer: {
+          label: "Customer",
+          layout: {
+            cols: { xs: 12, sm: 8, md: 8, lg: 8, xl: 8, xxl: 8 },
+            component: "dictionary",
+            props: { clearable: true },
+          },
+          source: {
+            url: "/api/dictionaries?feature-id=payers-soldtoparties&lm=description&vm=soldToParty.id&customAttributes=customerId%2C%7BsoldToParty.id%7D%2CpricelistPayerId%2C%7Bpayer.id%7D",
+            title: "label",
+            value: "id",
+            returnObject: true,
+            lazy: true,
+            singleOptionAutoSelect: true,
+          },
+        },
+        groupOne: {
+          layout: {
+            component: "fields-group",
+            cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+            schema: {
+              type: "object",
+              properties: {
+                "static-content-945": {
+                  content:
+                    "Select the pricelist associated with the previously chosen Sold to Party. The pricelist may be available at different hierarchy levels. If no hierarchical pricelist is found, you can choose a pricelist at the Sold to Party level.",
+                  layout: {
+                    component: "static-content",
+                    tag: "v-alert",
+                    props: { type: "info", variant: "tonal", density: "default" },
+                    cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+                  },
+                },
+                pricelist: {
+                  label: "Price list",
+                  layout: {
+                    cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+                    component: "dictionary",
+                  },
+                  source: {
+                    url: "/api/dictionaries?feature-id=customer-pricelists&lm=pricelistName&vm=pricelistName&filter=id.customerId%3D%3D{customer.customerId}%20and%20id.pricelistPayerId%3D%3D{customer.pricelistPayerId}",
+                    title: "label",
+                    value: "id",
+                    returnObject: true,
+                    lazy: true,
+                    singleOptionAutoSelect: true,
+                  },
+                },
+                offer: {
+                  properties: {
+                    type: {
+                      label: "Offer type",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "select",
+                        fillRow: true,
+                      },
+                      source: {
+                        items: [
+                          { value: "STD", title: "Offer" },
+                          {
+                            value: "ONE",
+                            title: "One time-deal offer",
+                          },
+                          { value: "EVT", title: "Event" },
+                        ],
+                        returnObject: true,
+                      },
+                    },
+                    event: {
+                      label: "Event",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "dictionary",
+                        if: "nata(offer.type.value='EVT')",
+                      },
+                      source: {
+                        url: "",
+                        title: "label",
+                        value: "id",
+                        returnObject: true,
+                        lazy: true,
+                        singleOptionAutoSelect: true,
+                      },
+                    },
+                    eventYear: {
+                      label: "Event year",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "dictionary",
+                        if: "nata(offer.type.value='EVT')",
+                      },
+                      source: {
+                        url: "",
+                        title: "label",
+                        value: "id",
+                        returnObject: true,
+                        lazy: true,
+                        singleOptionAutoSelect: true,
+                      },
+                    },
+                    currency: {
+                      label: "Currency",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "dictionary",
+                        props: { clearable: false },
+                        if: "",
+                        fillRow: true,
+                      },
+                      source: {
+                        url: "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId",
+                        title: "label",
+                        value: "id",
+                        lazy: true,
+                        returnObject: true,
+                        singleOptionAutoSelect: true,
+                      },
+                    },
+                    vatRate: {
+                      label: "Vat rate (%)",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "dictionary",
+                        props: { clearable: true },
+                        if: "",
+                      },
+                      source: {
+                        url: "/api/dictionaries?feature-id=vat-rates&lm=vatRate&vm=dataId",
+                        title: "label",
+                        value: "id",
+                        lazy: true,
+                        returnObject: true,
+                        singleOptionAutoSelect: true,
+                      },
+                    },
+                  },
+                  required: ["type", "currency"],
+                },
+              },
+              required: ["pricelist"],
+            },
+            if: "nata(customer!=null)",
+          },
+        },
+        groupTwo: {
+          layout: {
+            component: "fields-group",
+            cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+            schema: {
+              type: "object",
+              properties: {
+                "static-content-706": {
+                  content: "Transport conditions",
+                  layout: { component: "static-content", tag: "h3" },
+                },
+                "dictionary-604": {
+                  label: "Incoterms® rule",
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    component: "dictionary",
+                    props: { clearable: false },
+                  },
+                  source: { url: "", title: "label", value: "id" },
+                },
+                "dictionary-604575_cloned": {
+                  label: "Transport rate",
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    component: "dictionary",
+                    props: { clearable: false },
+                  },
+                  source: { url: "", title: "label", value: "id" },
+                },
+                "static-content-706013_cloned": {
+                  content: "Calculation rules",
+                  layout: { component: "static-content", tag: "h3" },
+                  label: "static-content-706013_cloned",
+                },
+                CustomerDiscount: {
+                  label: "Customer discount (%)",
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    component: "dictionary",
+                    props: { clearable: false },
+                  },
+                  source: { url: "", title: "label", value: "id" },
+                },
+                RetailPriceFactor: {
+                  label: "Retail price factor",
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    component: "dictionary",
+                    props: { clearable: false },
+                  },
+                  source: { url: "", title: "label", value: "id" },
+                },
+                OtherCosts: {
+                  content: "Other costs",
+                  layout: { component: "static-content", tag: "h3" },
+                  label: "static-content-706013_cloned136_cloned",
+                },
+                "duplicated-section-381": {
+                  layout: {
+                    component: "duplicated-section",
+                    cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+                    schema: {
+                      type: "object",
+                      properties: {
+                        CostName: {
+                          label: "Cost name",
+                          layout: {
+                            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                            component: "dictionary",
+                            props: { clearable: false },
+                          },
+                          source: { url: "", title: "label", value: "id" },
+                          sectionKey: "duplicated-section-381",
+                        },
+                        UnitCostPerProduct: {
+                          label: "Unit cost per product",
+                          layout: {
+                            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                            component: "dictionary",
+                            props: { clearable: false },
+                          },
+                          source: { url: "", title: "label", value: "id" },
+                          sectionKey: "duplicated-section-381",
+                        },
+                        UnitCostPerPackage: {
+                          label: "Unit cost per package",
+                          layout: {
+                            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                            component: "dictionary",
+                            props: { clearable: false },
+                          },
+                          source: { url: "", title: "label", value: "id" },
+                          sectionKey: "duplicated-section-381",
+                        },
+                      },
+                      required: [],
+                    },
+                    options: { addBtnText: "Add element", showDivider: false, ordinalNumberInModel: false },
+                    editable: true,
+                    showElements: true,
+                    props: {},
+                  },
+                },
+              },
+              required: [],
+            },
+            if: "nata(customer!=null and pricelist!=null)",
+          },
+        },
+      },
+      required: ["customer"],
+    },
+  },
+};
+
 export const Forte: Story = {
   args: {
     model: {
       offer: {
         id: "maciek-offer",
-      }
+      },
     },
     schema: {
       type: "object",
@@ -40,168 +316,200 @@ export const Forte: Story = {
         customerData: {
           content:
             "<b>Customer:</b></br> \n{customer.name:No data}\n<br> {customer.shipCountry:No data}, {customer.salesRegion:No data}",
-          layout: { component: "static-content", tag: "p", cols: 8 },
-        },
-        createdBy: {
-          label: "Created by",
-          layout: {
-            component: "data-viewer",
-            cols: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 },
-          },
-          valueMapping: "{offerInfo.createdBy:Jan Kowalski}",
-        },
-        createdAt: {
-          label: "Created at",
-          layout: {
-            component: "data-viewer",
-            cols: { xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 },
-          },
-          valueMapping: "{offerInfo.createdAt:21-01-2025}",
-        },
-        offerConditions: {
-          properties: {
-            currencyCode: {
-              label: "Currency",
-              layout: {
-                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-                component: "dictionary",
-                props: { clearable: false },
-              },
-              source: {
-                url: "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId",
-                title: "label",
-                value: "id",
-                returnObject: true,
-              },
-            },
-            currencyRate: {
-              label: "Currency rate",
-              layout: {
-                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-                component: "number-field",
-                props: { readonly: true },
-              },
-              type: "float",
-            },
-            vatRate: {
-              label: "VAT rate (%)",
-              layout: {
-                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-                component: "select",
-                fillRow: true,
-              },
-              source: {
-                items: [
-                  { value: "23", title: "23" },
-                  { value: "22", title: "22" },
-                  {
-                    value: "25",
-                    title: "25",
-                  },
-                ],
-              },
-            },
-          },
-          required: [],
-        },
-        "static-content-953": {
-          content: "Transport conditions",
-          layout: { component: "static-content", tag: "h3" },
-        },
-        transportConditions: {
-          properties: {
-            incotermsRule: {
-              label: "Incoterms® rule",
-              layout: {
-                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-                component: "dictionary",
-              },
-              source: {
-                url: "/api/dictionaries?feature-id=incoterms-rules&lm=dataId&vm=dataId",
-                title: "label",
-                value: "id",
-                returnObject: true,
-                lazy: true,
-                singleOptionAutoSelect: true,
-              },
-            },
-            transportRate: {
-              label: "Transport rate",
-              layout: {
-                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-                component: "text-field",
-              },
-              defaultValue: null,
-            },
-            "static-content-965": {
-              content: "If the Incoterms are changed, the Transport Rate field must be completed.",
-              layout: {
-                component: "static-content",
-                tag: "v-alert",
-                cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
-                props: { type: "warning", density: "compact", variant: "tonal" },
-              },
-            },
-          },
-          required: [],
-        },
-        "static-content-413": {
-          content: "Calculation rules",
-          layout: { component: "static-content", tag: "h3" },
-        },
-        calculationRules: {
-          properties: {
-            discountPercent: {
-              label: "Customer discount (%)",
-              layout: {
-                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-                component: "text-field",
-                props: { hint: "", "persistent-hint": true },
-              },
-              defaultValue: null,
-              expression: "",
-            },
-            retailPriceFactor: {
-              label: "Retail price factor",
-              layout: {
-                cols: {
-                  xs: 12,
-                  sm: 12,
-                  md: 12,
-                  lg: 4,
-                  xl: 4,
-                  xxl: 4,
-                },
-                fillRow: true,
-                component: "number-field",
-              },
-              type: "float",
-              precision: "2",
-              precisionMin: "2",
-              onChange: {
-                mode: "emit-event",
-                eventSignal: "table-refresh",
-              },
-            },
-          },
-          required: [],
-        },
-        "static-content-678": {
-          content: "Standard customer discounts retrieved from SAP. Retail price factor must be set to calculate retail price.",
           layout: {
             component: "static-content",
-            tag: "v-alert",
+            tag: "p",
             cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
-            props: { variant: "text", type: "info", density: "compact" },
           },
         },
-        "static-content-868": {
-          content:
-            '<b>Other costs:</b><br/>\n<ul style="margin-left:20px">\n<li><b>Additional label</b>: 0,50 PLN per package</li>\n<li><b>Custom logistic service</b>: 5 PLN per product</li>\n</ul>',
+        offerInfo: {
+          properties: {
+            createdBy: {
+              label: "Created by",
+              layout: {
+                component: "data-viewer",
+                cols: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 },
+              },
+              valueMapping: "{audit.createdBy:Jan Kowalski}",
+            },
+            createdAt: {
+              label: "Created at",
+              layout: {
+                component: "data-viewer",
+                cols: { xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 },
+              },
+              valueMapping: "{audit.createdAt:03-02-2025}",
+            },
+          },
+          required: [],
+        },
+        PriceList: {
+          content: "<b>Price list:</b></br> \n{price.list:No data}\n",
           layout: { component: "static-content", tag: "p" },
+        },
+        showAdditionalData: { label: "Advanced options", layout: { component: "switch" } },
+        groupOfData: {
+          layout: {
+            component: "fields-group",
+            cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+            schema: {
+              type: "object",
+              properties: {
+                offerConditions: {
+                  properties: {
+                    currencyCode: {
+                      label: "Currency",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "dictionary",
+                        props: { clearable: false },
+                      },
+                      source: {
+                        url: "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId",
+                        title: "label",
+                        value: "id",
+                        returnObject: true,
+                      },
+                      sectionKey: "groupOfData",
+                    },
+                    currencyRate: {
+                      label: "Currency rate",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "number-field",
+                        props: { readonly: true },
+                      },
+                      type: "float",
+                      sectionKey: "groupOfData",
+                    },
+                    vatRate: {
+                      label: "VAT rate (%)",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "select",
+                        fillRow: true,
+                      },
+                      source: {
+                        items: [
+                          { value: "23", title: "23" },
+                          {
+                            value: "22",
+                            title: "22",
+                          },
+                          { value: "25", title: "25" },
+                        ],
+                      },
+                      sectionKey: "groupOfData",
+                    },
+                  },
+                  required: [],
+                },
+                "static-content-953": {
+                  content: "Transport conditions",
+                  layout: { component: "static-content", tag: "h3" },
+                  sectionKey: "groupOfData",
+                },
+                transportConditions: {
+                  properties: {
+                    incotermsRule: {
+                      label: "Incoterms® rule",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "dictionary",
+                      },
+                      source: {
+                        url: "/api/dictionaries?feature-id=incoterms-rules&lm=dataId&vm=dataId",
+                        title: "label",
+                        value: "id",
+                        returnObject: true,
+                        lazy: true,
+                        singleOptionAutoSelect: true,
+                      },
+                      sectionKey: "groupOfData",
+                    },
+                    transportRate: {
+                      label: "Transport rate",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "text-field",
+                      },
+                      defaultValue: null,
+                      sectionKey: "groupOfData",
+                    },
+                    "static-content-965": {
+                      content: "If the Incoterms are changed, the Transport Rate field must be completed.",
+                      layout: {
+                        component: "static-content",
+                        tag: "v-alert",
+                        cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+                        props: { type: "warning", density: "compact", variant: "tonal" },
+                      },
+                      sectionKey: "groupOfData",
+                    },
+                  },
+                  required: [],
+                },
+                "static-content-413": {
+                  content: "Calculation rules",
+                  layout: { component: "static-content", tag: "h3" },
+                  sectionKey: "groupOfData",
+                },
+                calculationRules: {
+                  properties: {
+                    retailPriceFactor: {
+                      label: "Retail price factor",
+                      layout: {
+                        cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                        fillRow: true,
+                        component: "number-field",
+                      },
+                      type: "float",
+                      precision: "2",
+                      precisionMin: "2",
+                      onChange: { mode: "emit-event", eventSignal: "table-refresh" },
+                      sectionKey: "groupOfData",
+                    },
+                    discountPercent: {
+                      label: "Customer discount (%)",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "text-field",
+                        props: { hint: "", "persistent-hint": true },
+                      },
+                      defaultValue: null,
+                      expression: "",
+                      sectionKey: "groupOfData",
+                    },
+                  },
+                  required: [],
+                },
+                "static-content-678": {
+                  content:
+                    "Standard customer discounts retrieved from SAP. Retail price factor must be set to calculate retail price.",
+                  layout: {
+                    component: "static-content",
+                    tag: "v-alert",
+                    props: { variant: "text", type: "info", density: "compact" },
+                  },
+                  sectionKey: "groupOfData",
+                },
+                "static-content-868": {
+                  content:
+                    '<b>Other costs:</b><br/>\n<ul style="margin-left:20px">\n<li><b>Additional label</b>: 0,50 PLN per package</li>\n<li><b>Custom logistic service</b>: 5 PLN per product</li>\n</ul>',
+                  layout: { component: "static-content", tag: "p" },
+                  sectionKey: "groupOfData",
+                },
+              },
+              required: [],
+            },
+            props: {},
+            options: { showDivider: false, addBtnText: "Add" },
+            if: "nata(showAdditionalData=true)",
+          },
         },
         "divider-212": { layout: { component: "divider" } },
         "static-content-963": { content: "Products", layout: { component: "static-content", tag: "h3" } },
+
         "table-view-831": {
           layout: { component: "table-view" },
           source: {
