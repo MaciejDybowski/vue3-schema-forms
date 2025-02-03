@@ -24,7 +24,7 @@
   >
     <template #selection="{ item }">
       <v-chip
-        :closable="('readonly' in fieldProps && fieldProps.readonly) as boolean"
+        :closable="!fieldProps.readonly"
         close-icon="mdi-close"
         label
         variant="outlined"
@@ -97,7 +97,7 @@
 import axios from "axios";
 import { debounce } from "lodash";
 import get from "lodash/get";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 import BaseAutocomplete from "@/components/controls/base/BaseAutocomplete.vue";
 import { Pagination } from "@/components/controls/base/Pagination";
@@ -137,6 +137,7 @@ const localModel = computed({
   set(val: any) {
     if (typeof val !== "string") {
       setValue(val, props.schema);
+      query.value = "";
     }
   },
 });
@@ -156,7 +157,7 @@ const loading = ref(false);
 const items = ref([]);
 
 async function focusIn(event: any) {
-  if (items.value.length == 0) {
+  if (items.value.length == 0 && !fieldProps.value.readonly) {
     await load();
   }
   if (showMenuItemsOnFocusIn) {
@@ -315,6 +316,7 @@ function updateQuery(val: any) {
   query.value = val;
   debounced.load();
 }
+
 onMounted(async () => {
   await bindLabel(props.schema);
   await bindRules(props.schema);

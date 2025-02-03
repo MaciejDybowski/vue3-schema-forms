@@ -18,6 +18,7 @@
     @focus="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
     @update:search="updateQuery"
+    :clearable="!fieldProps.readonly"
   >
     <template #no-data>
       <v-list-item v-if="loading">

@@ -19,6 +19,7 @@
     @loadMoreRecords="loadMoreRecords"
     @update:search="updateQuery"
     @update:modelValue="onChange(schema, model)"
+    :clearable="!fieldProps.readonly"
   >
     <template #no-data>
       <v-list-item v-if="loading">
@@ -62,6 +63,7 @@ import {
   useRules
 } from "../../core/composables";
 import BaseAutocomplete from "./base/BaseAutocomplete.vue";
+import { VTextField } from "vuetify/components";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
