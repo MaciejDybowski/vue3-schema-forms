@@ -88,7 +88,7 @@ import { Ref, computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
 
-import { useFormModel } from "@/core/composables";
+import { useFormModel, useProps } from "@/core/composables";
 import { duplicatedSectionBatchAddComponent } from "@/main";
 import { VueDragable } from "@/types/VueDragable";
 import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
@@ -118,6 +118,7 @@ const dragOptions = ref({
   disabled: false,
   ghostClass: "ghost",
 });
+const { bindProps, fieldProps } = useProps();
 
 const batchAddComponent = duplicatedSectionBatchAddComponent;
 const batchItems = ref([]);
@@ -141,16 +142,17 @@ const { getValue, setValue } = useFormModel();
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 vueSchemaFormEventBus.on(async (event, payload) => {
   if (
-    payload == "action-callback" || payload == 'table-aggregates' /* &&
+    payload == "action-callback" ||
+    payload == "table-aggregates" /* &&
     JSON.stringify(localModel.value) !== JSON.stringify(get(props.model, props.schema.key, []))*/
   ) {
     init();
   }
 });
 
-const isEditable: boolean = "editable" in props.schema ? (props.schema.editable as boolean) : true;
+let isEditable: Ref<boolean> = ref("editable" in props.schema ? (props.schema.editable as boolean) : true)
 const showSectionElements = computed(() => {
-  if (isEditable) {
+  if (isEditable.value) {
     return "showElements" in props.schema ? (props.schema.showElements as boolean) : true;
   } else {
     return false;
@@ -165,7 +167,7 @@ const ordinalNumberInModel: boolean =
 const computedOptions = computed(() => {
   const options = JSON.parse(JSON.stringify(props.schema.options));
 
-  if (!isEditable) {
+  if (!isEditable.value) {
     if (!("fieldProps" in options)) {
       options.fieldProps = {};
     }
@@ -362,23 +364,28 @@ function init(): void {
   jest uzupełniany dynamicznie. Sprawdzałem na zagnieżdzonych tablicach typu: {products[].items[].item} w połączeniu z logiką
   w useResolveVariable daje niezłe możliwości
 */
-function wrapPropertiesWithIndexAndPath(properties: Record<string, SchemaField>, index: number, rootSchema:any = null): Record<string, SchemaField> {
+function wrapPropertiesWithIndexAndPath(
+  properties: Record<string, SchemaField>,
+  index: number,
+  rootSchema: any = null,
+): Record<string, SchemaField> {
   for (let [key, value] of Object.entries(properties)) {
     if ("properties" in value) {
       wrapPropertiesWithIndexAndPath(value.properties as any, index);
     } else if (value.layout?.schema) {
       value["path"] = props.schema.key;
-      value["index"]= index
+      value["index"] = index;
       wrapPropertiesWithIndexAndPath(value.layout.schema.properties as any, index, value);
     } else {
       if (props.schema["path"] !== undefined && props.schema["index"] != undefined) {
-        if(props.schema.layout.schema){ // jesteśmy w sekcji powielanej i napotykamy sekcje powielana
+        if (props.schema.layout.schema) {
+          // jesteśmy w sekcji powielanej i napotykamy sekcje powielana
           value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key + "[]";
         } else {
           value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key;
         }
       } else {
-        value["path"] = props.schema.key+"[]";
+        value["path"] = props.schema.key + "[]";
       }
       value["index"] = index;
     }
@@ -394,8 +401,10 @@ function mapPropertiesIfDefault(fieldDefinition: Record<string, SchemaField>, de
   return itemsWithDefault;
 }
 
-onMounted(() => {
+onMounted(async () => {
   init();
+  await bindProps(props.schema);
+  isEditable.value = !fieldProps.value.readonly
 });
 </script>
 

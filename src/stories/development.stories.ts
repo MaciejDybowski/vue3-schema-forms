@@ -83,7 +83,7 @@ export const ForteStart: Story = {
                     component: "dictionary",
                   },
                   source: {
-                    url: "/api/dictionaries?feature-id=customer-pricelists&lm=pricelistName&vm=pricelistName&filter=id.customerId%3D%3D{customer.customerId}%20and%20id.pricelistPayerId%3D%3D{customer.pricelistPayerId}",
+                    url: "/api/dictionaries?feature-id=customer-pricelists&lm=pricelistPath&vm=id.pricelistCustomerId&filter=id.customerId%3D%3D{customer.customerId}&customAttributes=defaultCurrencyCode%2C%7Bsettings.defaultCurrencyCode%7D%2CdefaultIncotermsRule%2C%7Bsettings.defaultIncotermsRule%7D%2ClastQuarterTransportCostRateEurM3%2C%7Bsettings.lastQuarterTransportCostRateEurM3%7D%2CdiscountPercent%2C%7Bsettings.discountPercent%7D",
                     title: "label",
                     value: "id",
                     returnObject: true,
@@ -294,7 +294,7 @@ export const ForteStart: Story = {
               },
               required: [],
             },
-            if: "nata(customer!=null and pricelist!=null)",
+            if: "nata(customer!=null and offer!=null)",
           },
         },
       },
