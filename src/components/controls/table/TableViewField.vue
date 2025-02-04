@@ -4,10 +4,11 @@
     v-model:loading="loading"
     v-model:page="tableOptions.page"
     v-model:sort-by="tableOptions.sortBy"
-    :items="items"
     :headers="headers"
+    :items="items"
     class="bg-transparent"
     density="compact"
+    :hover="true"
   >
     <template #top>
       <v-row dense>
@@ -41,15 +42,24 @@
       #[`item.${header.key}`]="{ item, index }"
     >
       <div v-if="header.key == 'actions'">
-        <v-btn
-          v-for="action in header.actions"
-          :size="24"
-          flat
-          rounded
-          @click="runTableActionLogic(action, item)"
+        <table-action-menu
+          :show="true"
+          icon="mdi-dots-vertical"
         >
-          <v-icon v-bind="action.props"> {{ action.icon }}</v-icon>
-        </v-btn>
+          <v-list density="compact">
+            <v-list-item
+              v-for="action in header.actions"
+              density="compact"
+              link
+              @click="runTableActionLogic(action, item)"
+            >
+              <template #prepend>
+                <v-icon v-bind="action.props"> {{ action.icon }}</v-icon>
+              </template>
+              <v-list-item-title> #TODO</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </table-action-menu>
       </div>
 
       <table-cell
@@ -100,6 +110,7 @@ import { debounce, merge } from "lodash";
 import get from "lodash/get";
 import { ComputedRef, computed, onMounted, ref } from "vue";
 
+import TableActionMenu from "@/components/controls/table/TableActionMenu.vue";
 import TableCell from "@/components/controls/table/TableCell.vue";
 import TableEditableCell from "@/components/controls/table/TableEditableCell.vue";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
@@ -147,6 +158,7 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
       key: item.key,
       title: item.title,
       type: item.type,
+      valueMapping: item.valueMapping,
     };
 
     if (item.properties) {
@@ -262,16 +274,15 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
     //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
     const response = await axios.post(updateRowURL, payload);
     items.value[index] = response.data;
-
   } catch (e) {
     console.error(e);
   }
 
   if (props.schema.aggregates) {
     console.debug("Wołam API o agregaty do wyświetlenia");
-    /* 
+    /*
       powiedzmy że api zwraca obiekt z agregatami
-      
+
      */
     const response = {
       fieldA: 1,

@@ -229,26 +229,31 @@ export const Standard: Story = {
               {
                 title: "Name",
                 key: "name",
+                valueMapping: "name",
                 type: "TEXT",
               },
               {
                 title: "Location",
                 key: "location",
+                valueMapping: "location",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 key: "height",
+                valueMapping: "height",
                 type: "TEXT",
               },
               {
                 title: "Base",
                 key: "base",
+                valueMapping: "base",
                 type: "TEXT",
               },
               {
                 title: "Volume",
                 key: "volume",
+                valueMapping: "volume",
                 type: "TEXT",
               },
             ],
@@ -286,26 +291,31 @@ export const NumberFields: Story = {
               {
                 title: "Name",
                 key: "name",
+                valueMapping: "name",
                 type: "TEXT",
               },
               {
                 title: "Location",
                 key: "location",
+                valueMapping: "location",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 key: "height",
+                valueMapping: "height",
                 type: "TEXT",
               },
               {
                 title: "Base",
                 key: "base",
+                valueMapping: "base",
                 type: "NUMBER",
               },
               {
                 title: "Volume",
                 key: "volume",
+                valueMapping:  "volume",
                 type: "NUMBER",
               },
             ],
@@ -342,22 +352,26 @@ export const JoinValues: Story = {
             headers: [
               {
                 title: "Name and location",
-                key: "{name}, {location}",
+                key: "nameAndLocation",
+                valueMapping: "{name}, {location}",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 key: "height",
+                valueMapping: "height",
                 type: "TEXT",
               },
               {
                 title: "Base",
                 key: "base",
+                valueMapping: "base",
                 type: "TEXT",
               },
               {
                 title: "Volume",
                 key: "volume",
+                valueMapping: "volume",
                 type: "TEXT",
               },
             ],
@@ -394,22 +408,26 @@ export const JoinValuesWithHtmlAndExtraText: Story = {
             headers: [
               {
                 title: "Name and location",
-                key: "<b>{name}</b>, location: {location}",
+                key: "nameAndLocation",
+                valueMapping: "<b>{name}</b>, location: {location}",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 key: "height",
+                valueMapping: "height",
                 type: "TEXT",
               },
               {
                 title: "Base",
                 key: "base",
+                valueMapping: "base",
                 type: "TEXT",
               },
               {
                 title: "Volume",
                 key: "volume",
+                valueMapping: "volume",
                 type: "TEXT",
               },
             ],
@@ -447,16 +465,19 @@ export const EditableField: Story = {
               {
                 title: "Name",
                 key: "name",
+                valueMapping: "name",
                 type: "TEXT",
               },
               {
                 title: "Location",
                 key: "location",
+                valueMapping:  "location",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 key: "height",
+                valueMapping:  "height",
                 editable: true,
                 type: "NUMBER",
               },
@@ -498,16 +519,19 @@ export const ActionField: Story = {
               {
                 title: "Name",
                 key: "name",
+                valueMapping: "name",
                 type: "TEXT",
               },
               {
                 title: "Location",
                 key: "location",
+                valueMapping:  "location",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 editable: true,
+                valueMapping: "height",
                 type: "NUMBER",
               },
             ],
@@ -547,17 +571,20 @@ export const ActionFieldAdvanced: Story = {
             headers: [
               {
                 title: "Name",
-                key: "{name} and extra text, other variable {base}",
+                valueMapping: "{name} and extra text, other variable {base}",
+                key: "name",
                 type: "TEXT",
               },
               {
                 title: "Location",
                 key: "location",
+                valueMapping:  "location",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 editable: true,
+                valueMapping: "height",
                 type: "NUMBER",
               },
             ],
@@ -595,26 +622,31 @@ export const TopSlotAndButtons: Story = {
               {
                 title: "Name",
                 key: "name",
+                valueMapping: "name",
                 type: "TEXT",
               },
               {
                 title: "Location",
                 key: "location",
+                valueMapping:  "location",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 key: "height",
+                valueMapping: "height",
                 type: "TEXT",
               },
               {
                 title: "Base",
                 key: "base",
+                valueMapping: "base",
                 type: "TEXT",
               },
               {
                 title: "Volume",
                 key: "volume",
+                valueMapping: "volume",
                 type: "TEXT",
               },
             ],
@@ -669,16 +701,19 @@ export const ContextActions: Story = {
               {
                 title: "Name",
                 key: "name",
+                valueMapping: "name",
                 type: "TEXT",
               },
               {
                 title: "Location",
                 key: "location",
+                valueMapping:  "location",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 key: "height",
+                valueMapping: "height",
                 type: "TEXT",
               },
               {

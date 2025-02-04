@@ -51,7 +51,7 @@ export const ForteStart: Story = {
             props: { clearable: true },
           },
           source: {
-            url: "/api/dictionaries?feature-id=payers-soldtoparties&lm=description&vm=soldToParty.id&customAttributes=customerId%2C%7BsoldToParty.id%7D%2CpricelistPayerId%2C%7Bpayer.id%7D",
+            url: "/api/dictionaries?feature-id=payers-soldtoparties&lm=description&vm=soldToParty.id&customAttributes=customerId%2C%7BsoldToParty.id%7D%2Cname%2C%7Bdescription%7D",
             title: "label",
             value: "id",
             returnObject: true,
@@ -517,7 +517,8 @@ export const Forte: Story = {
             headers: [
               {
                 title: "Image",
-                key: "product.mainImageUrl",
+                key: "mainImageUrl",
+                valueMapping: "product.mainImageUrl",
                 type: "IMAGE",
                 properties: {
                   minWidth: 64,
@@ -526,30 +527,55 @@ export const Forte: Story = {
               },
               {
                 title: "Product",
-                key: "<b>{product.name: Product name}</b> </br>{product.number:1}\n<br/>\nProgram: {product.programName}",
+                key: "product",
+                valueMapping:
+                  "<b>{product.name: Product name}</b> </br>{product.number:1}\n<br/>\nProgram: {product.programName}",
                 type: "TEXT",
               },
               {
                 title: "",
                 key: "palletQuantityIcon",
+                valueMapping: "palletQuantityIcon",
                 type: "ICON",
               },
               {
                 title: "Invoice price (NN)",
                 key: "invoicePrice",
+                valueMapping: "invoicePrice",
                 type: "TEXT",
                 editable: true,
               },
-              { title: "MaT [%]", type: "TEXT", key: "details.marginPercent" },
+              { title: "MaT [%]", type: "TEXT", key: "marginPercent", valueMapping: "details.marginPercent" },
+              {
+                title: "Recommended margin [%]",
+                type: "NUMBER",
+                key: "recommendedMargin",
+                valueMapping: "details.recommendedMarginPercent"
+              },
               {
                 title: "Recommended price",
                 type: "TEXT",
-                key: "{details.recommendedInvoicePrice} NN\n </br>{details.recommendedNnnPrice} NNN\n </br>{details.recommendedNnnExwPrice} NNN EXW",
+                key: "recommendedPrice",
+                valueMapping:
+                  "{details.recommendedInvoicePrice} NN\n </br>{details.recommendedNnnPrice} NNN\n </br>{details.recommendedNnnExwPrice} NNN EXW",
+              },
+              {
+                title: "Retail factor",
+                type: "NUMBER",
+                key: "retailFactor",
+                valueMapping: "retailFactor",
               },
               {
                 title: "Retail price",
                 type: "TEXT",
-                key: "{details.retailPriceNet:No value} net\n</br>\n{details.retailPriceGross: No value} gross",
+                key: "retailPrice",
+                valueMapping: "{details.retailPriceNet:No value} net\n</br>\n{details.retailPriceGross: No value} gross",
+              },
+              {
+                title: "Retail target price",
+                type: "NUMBER",
+                key: "retailTargetPrice",
+                editable: true,
               },
               {
                 title: "",
@@ -601,9 +627,9 @@ export const Forte: Story = {
                 config: {
                   code: "batchAdd", // na froncie jest sprawdzanie jak batchAdd to i tak woła skrypt bo w obsłudze zadanie jest tylko jedna uniwersalna akcja
                   featureId: "products",
-                  viewId: "68304-tabela",
+                  viewId: "94578-tabela",
                   batchAddAttributePath: "dataId",
-                  scriptName: "dodaj_produkty_do_oferty",
+                  scriptName: "add_products_to_offer",
                 },
               },
             ],

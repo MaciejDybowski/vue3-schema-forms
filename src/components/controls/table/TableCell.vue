@@ -7,7 +7,7 @@
   </div>
 
   <div v-if="header.type == `ICON`">
-    <v-icon v-if="extractValueByPath(header.key) !== null">{{ extractValueByPath(header.key) }}</v-icon>
+    <v-icon v-if="extractValueByPath(header.valueMapping) !== null">{{ extractValueByPath(header.valueMapping) }}</v-icon>
   </div>
 
   <div
@@ -26,8 +26,8 @@
       <v-img
         :src="
           header.properties && header.properties.addDomain == true
-            ? domain + extractValueByPath(header.key)
-            : extractValueByPath(header.key)
+            ? domain + extractValueByPath(header.valueMapping)
+            : extractValueByPath(header.valueMapping)
         "
         cover
       />
@@ -54,25 +54,14 @@ const { formattedNumber } = useNumber();
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const htmlContent = ref<string>("");
 
-// TODO - czy nie ma lepszego sposobu na zachowanie reaktywności??
-watchEffect(async () => {
-  switch (props.header.type) {
-    case "TEXT":
-      if (props.header.key.match(variableRegexp)) {
-        await simpleResolveVariable();
-      } else {
-        checkConnectionWithActions(props.header.key);
-      }
-      break;
-  }
-});
+
 
 const numberContent = computed(() => {
   const properties = props.header.properties;
   const minPrecision = properties && properties.minPrecision ? properties.minPrecision : 0;
   const maxPrecision = properties && properties.maxPrecision ? properties.maxPrecision : 2;
 
-  return formattedNumber(extractValueByPath(props.header.key), "decimal", minPrecision, maxPrecision);
+  return formattedNumber(extractValueByPath(props.header.valueMapping), "decimal", minPrecision, maxPrecision);
 });
 
 const domain = window.location.origin;
@@ -94,8 +83,8 @@ function callAction() {
 }
 
 async function simpleResolveVariable() {
-  htmlContent.value = props.header.key;
-  const arrayOfVariables = props.header.key.match(variableRegexp);
+  htmlContent.value = props.header.valueMapping;
+  const arrayOfVariables = props.header.valueMapping.match(variableRegexp);
   if (!!arrayOfVariables) {
     await Promise.all(
       arrayOfVariables.map(async (wrappedVariable) => {
@@ -127,7 +116,7 @@ function checkConnectionWithActions(unwrapped: string, mode: "assign" | "replace
 
     switch (mode) {
       case "assign":
-        htmlContent.value = wrapIntoSpanWithLinkClass(extractValueByPath(props.header.key));
+        htmlContent.value = wrapIntoSpanWithLinkClass(extractValueByPath(props.header.valueMapping));
         break;
       case "replace":
         htmlContent.value = htmlContent.value.replace(`{${unwrapped}}`, wrapIntoSpanWithLinkClass(value));
@@ -136,7 +125,7 @@ function checkConnectionWithActions(unwrapped: string, mode: "assign" | "replace
   } else {
     switch (mode) {
       case "assign":
-        htmlContent.value = extractValueByPath(props.header.key);
+        htmlContent.value = extractValueByPath(props.header.valueMapping);
         break;
       case "replace":
         htmlContent.value = htmlContent.value.replace(`{${unwrapped}}`, value);
@@ -156,10 +145,23 @@ function extractValueByPath(path: string) {
 onMounted(async () => {
   switch (props.header.type) {
     case "TEXT":
-      if (props.header.key.match(variableRegexp)) {
+      if (props.header.valueMapping.match(variableRegexp)) {
         await simpleResolveVariable();
       } else {
-        checkConnectionWithActions(props.header.key);
+        checkConnectionWithActions(props.header.valueMapping);
+      }
+      break;
+  }
+});
+
+// TODO - czy nie ma lepszego sposobu na zachowanie reaktywności??
+watchEffect(async () => {
+  switch (props.header.type) {
+    case "TEXT":
+      if (props.header.valueMapping.match(variableRegexp)) {
+        await simpleResolveVariable();
+      } else {
+        checkConnectionWithActions(props.header.valueMapping);
       }
       break;
   }

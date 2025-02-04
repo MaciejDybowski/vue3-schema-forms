@@ -14,6 +14,7 @@ export interface TableSource {
 
 export interface TableHeader {
   key: string;
+  valueMapping: string
   title: string;
   type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE" | "ICON";
   editable?: boolean;
