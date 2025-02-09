@@ -7,14 +7,15 @@ import { logger } from "@/main";
 import { EngineDictionaryField } from "@/types/engine/controls";
 import { ResponseReference } from "@/types/shared/ResponseReference";
 import { DictionarySource } from "@/types/shared/Source";
+import { useEventBus } from "@vueuse/core";
 
 import { Pagination } from "../../components/controls/base/Pagination";
 import { mapSliceTotalElements } from "../../components/controls/base/SliceResponse";
 import { variableRegexp } from "../../core/engine/utils";
-import { useFormModelStore } from "../../store/formModelStore";
 import { useResolveVariables } from "./useResolveVariables";
 
 export function useDictionarySource(field: EngineDictionaryField) {
+  const vueSchemaFormEventBus = useEventBus<string>("form-model");
   const { resolve } = useResolveVariables();
   const source: DictionarySource = field.source;
   const title = source.title ? source.title : "title";
@@ -35,13 +36,15 @@ export function useDictionarySource(field: EngineDictionaryField) {
 
   let endpoint = { resolvedText: source.url, allVariablesResolved: true }; // default wrapper object
 
-  const formModelStore = useFormModelStore(field.formId);
-
   const isApiContainsDependency = source.url.match(variableRegexp);
   if (isApiContainsDependency !== null) {
-    //endpoint = await resolve(field, source.url, title, true);
-
-    formModelStore.$subscribe(async () => {
+    resolve(field, source.url, title, true).then(temp => {
+      if (temp.resolvedText !== endpoint.resolvedText) {
+        endpoint = temp;
+        debounced.load("watcher");
+      }
+    })
+    const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) => {
       const temp = await resolve(field, source.url, title, true);
       if (temp.resolvedText !== endpoint.resolvedText) {
         endpoint = temp;
@@ -77,7 +80,7 @@ export function useDictionarySource(field: EngineDictionaryField) {
     endpoint = await resolve(field, source.url, title, true);
     if (logger.dictionaryLogger) {
       console.debug(
-        `[vue-schema-forms] => Dictionary load call function = ${caller}, query=${query.value}}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
+        `[vue-schema-forms] => Dictionary load call function = ${caller}, query=${query.value}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
       );
     }
     if (endpoint.allVariablesResolved) {
@@ -100,11 +103,12 @@ export function useDictionarySource(field: EngineDictionaryField) {
       data.value = get(response.data, responseReference.data, []);
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
-    }
-    if (logger.dictionaryLogger) {
-      console.debug(
-        `[vue-schema-forms] => API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`,
-      );
+    } else {
+      if (logger.dictionaryLogger) {
+        console.debug(
+          `[vue-schema-forms] => API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`,
+        );
+      }
     }
   };
   const loadMoreRecords = async () => {

@@ -105,7 +105,7 @@ const PAGE_0 = {
     },
     {
       name: "🍓 Strawberry",
-      location: "USA",
+      location: "Poland",
       height: "0.03",
       base: "0.03",
       volume: "0.00002",
@@ -724,6 +724,95 @@ export const ContextActions: Story = {
                     icon: "mdi-delete-outline",
                     mode: "action",
                     code: "callScript",
+                    config: {
+                      params: {
+                        scriptName: "delete_product_from_offer",
+                      },
+                      body: {
+                        name: "{name}",
+                      },
+                    },
+                    props: {
+                      color: "error",
+                    },
+                  },
+                  {
+                    icon: "mdi-shipping-pallet",
+                    mode: "action",
+                    code: "callScript",
+                    config: {
+                      params: {
+                        scriptName: "add_pallet_price",
+                      },
+                      body: {
+                        name: "{name}",
+                      },
+                    },
+                    props: {
+                      color: "primary",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    mockData: [REQUEST_PAGE_0_1],
+  },
+};
+
+export const ContextActionsWithCondition: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "Use JSON nata expression to make condition on table context action",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Name",
+                key: "name",
+                valueMapping: "name",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping:  "location",
+                type: "TEXT",
+              },
+              {
+                title: "Height",
+                key: "height",
+                valueMapping: "height",
+                type: "TEXT",
+              },
+              {
+                title: "Actions",
+                key: "actions",
+                actions: [
+                  {
+                    icon: "mdi-delete-outline",
+                    mode: "action",
+                    code: "callScript",
+                    condition: "location='Poland'",
                     config: {
                       params: {
                         scriptName: "delete_product_from_offer",

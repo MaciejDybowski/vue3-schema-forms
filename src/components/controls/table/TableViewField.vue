@@ -5,10 +5,10 @@
     v-model:page="tableOptions.page"
     v-model:sort-by="tableOptions.sortBy"
     :headers="headers"
+    :hover="true"
     :items="items"
     class="bg-transparent"
     density="compact"
-    :hover="true"
   >
     <template #top>
       <v-row dense>
@@ -41,26 +41,11 @@
       :key="header.key"
       #[`item.${header.key}`]="{ item, index }"
     >
-      <div v-if="header.key == 'actions'">
-        <table-action-menu
-          :show="true"
-          icon="mdi-dots-vertical"
-        >
-          <v-list density="compact">
-            <v-list-item
-              v-for="action in header.actions"
-              density="compact"
-              link
-              @click="runTableActionLogic(action, item)"
-            >
-              <template #prepend>
-                <v-icon v-bind="action.props"> {{ action.icon }}</v-icon>
-              </template>
-              <v-list-item-title> #TODO</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </table-action-menu>
-      </div>
+      <table-action-menu-wrapper
+        v-if="header.key == 'actions' && header.actions"
+        :header="header"
+        :item="item"
+      />
 
       <table-cell
         v-if="!header.editable"
@@ -110,7 +95,7 @@ import { debounce, merge } from "lodash";
 import get from "lodash/get";
 import { ComputedRef, computed, onMounted, ref } from "vue";
 
-import TableActionMenu from "@/components/controls/table/TableActionMenu.vue";
+import TableActionMenuWrapper from "@/components/controls/table/TableActionMenuWrapper.vue";
 import TableCell from "@/components/controls/table/TableCell.vue";
 import TableEditableCell from "@/components/controls/table/TableEditableCell.vue";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
@@ -360,8 +345,6 @@ function runTableBtnLogic(btn: TableButton) {
 }
 
 async function runTableActionLogic(action: TableHeaderAction, item: any) {
-  console.debug("TODO", action);
-
   switch (action.mode) {
     case "action":
       const actionHandlerEventBus = useEventBus<string>("form-action");

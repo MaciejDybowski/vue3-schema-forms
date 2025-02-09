@@ -4,6 +4,7 @@ export function useLocale() {
   const { t, locale } = useI18n({
     messages: {
       en: {
+        noActions: "No actions available.",
         save: "Save",
         close: "Close",
         required: "Field is required.",
@@ -24,6 +25,7 @@ export function useLocale() {
         },
       },
       pl: {
+        noActions: "Brak dostępnych akcji.",
         save: "Zapisz",
         close: "Zamknij",
         required: "Pole jest wymagane.",
