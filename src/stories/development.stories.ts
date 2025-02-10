@@ -341,359 +341,362 @@ export const Forte: Story = {
     schema: {
       type: "object",
       properties: {
-        "customerData": {
-          "content": "<b>Customer:</b></br> \n{customer.name:No data}\n<br> {customer.shipCountry:No data}, {customer.salesRegion:No data}",
-          "layout": {
-            "component": "static-content",
-            "tag": "p",
-            "cols": {
-              "xs": 12,
-              "sm": 12,
-              "md": 12,
-              "lg": 8,
-              "xl": 8,
-              "xxl": 8
-            }
-          }
-        },
-        "offer": {
-          "properties": {
-            "createdBy": {
-              "label": "Created by",
-              "layout": {
-                "component": "data-viewer",
-                "cols": {
-                  "xs": 2,
-                  "sm": 2,
-                  "md": 2,
-                  "lg": 2,
-                  "xl": 2,
-                  "xxl": 2
-                }
-              },
-              "valueMapping": "{offer.createdBy}"
+        customerData: {
+          content:
+            "<b>Customer:</b></br> \n{customer.name:No data}\n<br> {customer.shipCountry:No data}, {customer.salesRegion:No data}",
+          layout: {
+            component: "static-content",
+            tag: "p",
+            cols: {
+              xs: 12,
+              sm: 12,
+              md: 12,
+              lg: 8,
+              xl: 8,
+              xxl: 8,
             },
-            "createdAt": {
-              "label": "Created at",
-              "layout": {
-                "component": "data-viewer",
-                "cols": {
-                  "xs": 1,
-                  "sm": 1,
-                  "md": 1,
-                  "lg": 2,
-                  "xl": 2,
-                  "xxl": 2
-                }
-              },
-              "valueMapping": "{offer.createdAt}"
-            }
           },
-          "required": []
         },
-        "PriceList": {
-          "content": "<b>Price list:</b></br> \n{pricelist. label:No data}\n",
-          "layout": {
-            "component": "static-content",
-            "tag": "p"
-          }
-        },
-        "showAdditionalData": {
-          "label": "Advanced options",
-          "layout": {
-            "component": "switch"
-          }
-        },
-        "groupOfData": {
-          "layout": {
-            "component": "fields-group",
-            "cols": {
-              "xs": 12,
-              "sm": 12,
-              "md": 12,
-              "lg": 12,
-              "xl": 12,
-              "xxl": 12
+        offer: {
+          properties: {
+            createdBy: {
+              label: "Created by",
+              layout: {
+                component: "data-viewer",
+                cols: {
+                  xs: 2,
+                  sm: 2,
+                  md: 2,
+                  lg: 2,
+                  xl: 2,
+                  xxl: 2,
+                },
+              },
+              valueMapping: "{offer.createdBy}",
             },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "offer": {
-                  "properties": {
-                    "currency": {
-                      "label": "Currency",
-                      "layout": {
-                        "cols": {
-                          "xs": 12,
-                          "sm": 6,
-                          "md": 6,
-                          "lg": 4,
-                          "xl": 4,
-                          "xxl": 4
+            createdAt: {
+              label: "Created at",
+              layout: {
+                component: "data-viewer",
+                cols: {
+                  xs: 1,
+                  sm: 1,
+                  md: 1,
+                  lg: 2,
+                  xl: 2,
+                  xxl: 2,
+                },
+              },
+              valueMapping: "{offer.createdAt}",
+            },
+          },
+          required: [],
+        },
+        PriceList: {
+          content: "<b>Price list:</b></br> \n{pricelist. label:No data}\n",
+          layout: {
+            component: "static-content",
+            tag: "p",
+          },
+        },
+        showAdditionalData: {
+          label: "Advanced options",
+          layout: {
+            component: "switch",
+          },
+        },
+        groupOfData: {
+          layout: {
+            component: "fields-group",
+            cols: {
+              xs: 12,
+              sm: 12,
+              md: 12,
+              lg: 12,
+              xl: 12,
+              xxl: 12,
+            },
+            schema: {
+              type: "object",
+              properties: {
+                offer: {
+                  properties: {
+                    currency: {
+                      label: "Currency",
+                      layout: {
+                        cols: {
+                          xs: 12,
+                          sm: 6,
+                          md: 6,
+                          lg: 4,
+                          xl: 4,
+                          xxl: 4,
                         },
-                        "component": "dictionary",
-                        "props": {
-                          "clearable": false
-                        }
+                        component: "dictionary",
+                        props: {
+                          clearable: false,
+                        },
                       },
-                      "source": {
-                        "url": "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId",
-                        "title": "label",
-                        "value": "id",
-                        "returnObject": true
+                      source: {
+                        url: "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId",
+                        title: "label",
+                        value: "id",
+                        returnObject: true,
                       },
-                      "sectionKey": "groupOfData"
+                      sectionKey: "groupOfData",
                     },
-                    "currencyRate": {
-                      "label": "Currency rate",
-                      "layout": {
-                        "cols": {
-                          "xs": 12,
-                          "sm": 6,
-                          "md": 6,
-                          "lg": 4,
-                          "xl": 4,
-                          "xxl": 4
+                    currencyRate: {
+                      label: "Currency rate",
+                      layout: {
+                        cols: {
+                          xs: 12,
+                          sm: 6,
+                          md: 6,
+                          lg: 4,
+                          xl: 4,
+                          xxl: 4,
                         },
-                        "component": "number-field",
-                        "props": {
-                          "readonly": true
-                        }
+                        component: "number-field",
+                        props: {
+                          readonly: true,
+                        },
                       },
-                      "type": "float",
-                      "sectionKey": "groupOfData"
+                      type: "float",
+                      sectionKey: "groupOfData",
                     },
-                    "vatRate": {
-                      "label": "VAT rate (%)",
-                      "layout": {
-                        "cols": {
-                          "xs": 12,
-                          "sm": 6,
-                          "md": 6,
-                          "lg": 4,
-                          "xl": 4,
-                          "xxl": 4
+                    vatRate: {
+                      label: "VAT rate (%)",
+                      layout: {
+                        cols: {
+                          xs: 12,
+                          sm: 6,
+                          md: 6,
+                          lg: 4,
+                          xl: 4,
+                          xxl: 4,
                         },
-                        "component": "select",
-                        "fillRow": true
+                        component: "select",
+                        fillRow: true,
                       },
-                      "source": {
-                        "items": [
+                      source: {
+                        items: [
                           {
-                            "value": "23",
-                            "title": "23"
+                            value: "23",
+                            title: "23",
                           },
                           {
-                            "value": "22",
-                            "title": "22"
+                            value: "22",
+                            title: "22",
                           },
                           {
-                            "value": "25",
-                            "title": "25"
-                          }
-                        ]
+                            value: "25",
+                            title: "25",
+                          },
+                        ],
                       },
-                      "sectionKey": "groupOfData"
-                    }
+                      sectionKey: "groupOfData",
+                    },
                   },
-                  "required": []
+                  required: [],
                 },
                 "static-content-953": {
-                  "content": "Transport conditions",
-                  "layout": {
-                    "component": "static-content",
-                    "tag": "h3"
+                  content: "Transport conditions",
+                  layout: {
+                    component: "static-content",
+                    tag: "h3",
                   },
-                  "sectionKey": "groupOfData"
+                  sectionKey: "groupOfData",
                 },
-                "transportConditions": {
-                  "properties": {
-                    "incotermsRule": {
-                      "label": "Incoterms® rule",
-                      "layout": {
-                        "cols": {
-                          "xs": 12,
-                          "sm": 6,
-                          "md": 6,
-                          "lg": 4,
-                          "xl": 4,
-                          "xxl": 4
+                transportConditions: {
+                  properties: {
+                    incotermsRule: {
+                      label: "Incoterms® rule",
+                      layout: {
+                        cols: {
+                          xs: 12,
+                          sm: 6,
+                          md: 6,
+                          lg: 4,
+                          xl: 4,
+                          xxl: 4,
                         },
-                        "component": "dictionary"
+                        component: "dictionary",
                       },
-                      "source": {
-                        "url": "/api/dictionaries?feature-id=incoterms-rules&lm=dataId&vm=dataId",
-                        "title": "label",
-                        "value": "id",
-                        "returnObject": true,
-                        "lazy": true,
-                        "singleOptionAutoSelect": true
+                      source: {
+                        url: "/api/dictionaries?feature-id=incoterms-rules&lm=dataId&vm=dataId",
+                        title: "label",
+                        value: "id",
+                        returnObject: true,
+                        lazy: true,
+                        singleOptionAutoSelect: true,
                       },
-                      "sectionKey": "groupOfData",
-                      "onChange": {
-                        "mode": "change-model",
-                        "variables": [
+                      sectionKey: "groupOfData",
+                      onChange: {
+                        mode: "change-model",
+                        variables: [
                           {
-                            "path": "transportConditions.transportRate",
-                            "value": null
-                          }
-                        ]
-                      }
-                    },
-                    "transportRate": {
-                      "label": "Transport rate",
-                      "layout": {
-                        "cols": {
-                          "xs": 12,
-                          "sm": 6,
-                          "md": 6,
-                          "lg": 4,
-                          "xl": 4,
-                          "xxl": 4
-                        },
-                        "component": "text-field"
+                            path: "transportConditions.transportRate",
+                            value: null,
+                          },
+                        ],
                       },
-                      "defaultValue": null,
-                      "sectionKey": "groupOfData"
+                    },
+                    transportRate: {
+                      label: "Transport rate",
+                      layout: {
+                        cols: {
+                          xs: 12,
+                          sm: 6,
+                          md: 6,
+                          lg: 4,
+                          xl: 4,
+                          xxl: 4,
+                        },
+                        component: "text-field",
+                      },
+                      defaultValue: null,
+                      sectionKey: "groupOfData",
                     },
                     "static-content-965": {
-                      "content": "If the Incoterms are changed, the Transport Rate field must be completed.",
-                      "layout": {
-                        "component": "static-content",
-                        "tag": "v-alert",
-                        "cols": {
-                          "xs": 12,
-                          "sm": 12,
-                          "md": 12,
-                          "lg": 8,
-                          "xl": 8,
-                          "xxl": 8
+                      content: "If the Incoterms are changed, the Transport Rate field must be completed.",
+                      layout: {
+                        component: "static-content",
+                        tag: "v-alert",
+                        cols: {
+                          xs: 12,
+                          sm: 12,
+                          md: 12,
+                          lg: 8,
+                          xl: 8,
+                          xxl: 8,
                         },
-                        "props": {
-                          "type": "warning",
-                          "density": "compact",
-                          "variant": "tonal"
-                        }
+                        props: {
+                          type: "warning",
+                          density: "compact",
+                          variant: "tonal",
+                        },
                       },
-                      "sectionKey": "groupOfData"
-                    }
+                      sectionKey: "groupOfData",
+                    },
                   },
-                  "required": []
+                  required: [],
                 },
                 "static-content-413": {
-                  "content": "Calculation rules",
-                  "layout": {
-                    "component": "static-content",
-                    "tag": "h3"
+                  content: "Calculation rules",
+                  layout: {
+                    component: "static-content",
+                    tag: "h3",
                   },
-                  "sectionKey": "groupOfData"
+                  sectionKey: "groupOfData",
                 },
-                "calculationRules": {
-                  "properties": {
-                    "retailPriceFactor": {
-                      "label": "Retail price factor",
-                      "layout": {
-                        "cols": {
-                          "xs": 12,
-                          "sm": 12,
-                          "md": 12,
-                          "lg": 4,
-                          "xl": 4,
-                          "xxl": 4
+                calculationRules: {
+                  properties: {
+                    retailPriceFactor: {
+                      label: "Retail price factor",
+                      layout: {
+                        cols: {
+                          xs: 12,
+                          sm: 12,
+                          md: 12,
+                          lg: 4,
+                          xl: 4,
+                          xxl: 4,
                         },
-                        "fillRow": true,
-                        "component": "number-field"
+                        fillRow: true,
+                        component: "number-field",
                       },
-                      "type": "float",
-                      "precision": "2",
-                      "precisionMin": "2",
-                      "onChange": {
-                        "mode": "emit-event",
-                        "eventSignal": "table-refresh"
+                      type: "float",
+                      precision: "2",
+                      precisionMin: "2",
+                      onChange: {
+                        mode: "emit-event",
+                        eventSignal: "table-refresh",
                       },
-                      "sectionKey": "groupOfData"
+                      sectionKey: "groupOfData",
                     },
-                    "discountPercent": {
-                      "label": "Customer discount (%)",
-                      "layout": {
-                        "cols": {
-                          "xs": 12,
-                          "sm": 6,
-                          "md": 6,
-                          "lg": 4,
-                          "xl": 4,
-                          "xxl": 4
+                    discountPercent: {
+                      label: "Customer discount (%)",
+                      layout: {
+                        cols: {
+                          xs: 12,
+                          sm: 6,
+                          md: 6,
+                          lg: 4,
+                          xl: 4,
+                          xxl: 4,
                         },
-                        "component": "text-field",
-                        "props": {
-                          "hint": "",
-                          "persistent-hint": true
-                        }
+                        component: "text-field",
+                        props: {
+                          hint: "",
+                          "persistent-hint": true,
+                        },
                       },
-                      "defaultValue": null,
-                      "expression": "",
-                      "sectionKey": "groupOfData"
-                    }
+                      defaultValue: null,
+                      expression: "",
+                      sectionKey: "groupOfData",
+                    },
                   },
-                  "required": []
+                  required: [],
                 },
                 "static-content-678": {
-                  "content": "Standard customer discounts retrieved from SAP. Retail price factor must be set to calculate retail price.",
-                  "layout": {
-                    "component": "static-content",
-                    "tag": "v-alert",
-                    "props": {
-                      "variant": "text",
-                      "type": "info",
-                      "density": "compact"
-                    }
+                  content:
+                    "Standard customer discounts retrieved from SAP. Retail price factor must be set to calculate retail price.",
+                  layout: {
+                    component: "static-content",
+                    tag: "v-alert",
+                    props: {
+                      variant: "text",
+                      type: "info",
+                      density: "compact",
+                    },
                   },
-                  "sectionKey": "groupOfData"
+                  sectionKey: "groupOfData",
                 },
                 "static-content-868": {
-                  "content": "<b>Other costs:</b><br/>\n<ul style=\"margin-left:20px\">\n<li><b>Additional label</b>: 0,50 PLN per package</li>\n<li><b>Custom logistic service</b>: 5 PLN per product</li>\n</ul>",
-                  "layout": {
-                    "component": "static-content",
-                    "tag": "p"
+                  content:
+                    '<b>Other costs:</b><br/>\n<ul style="margin-left:20px">\n<li><b>Additional label</b>: 0,50 PLN per package</li>\n<li><b>Custom logistic service</b>: 5 PLN per product</li>\n</ul>',
+                  layout: {
+                    component: "static-content",
+                    tag: "p",
                   },
-                  "sectionKey": "groupOfData"
-                }
+                  sectionKey: "groupOfData",
+                },
               },
-              "required": []
+              required: [],
             },
-            "props": {},
-            "options": {
-              "showDivider": false,
-              "addBtnText": "Add"
+            props: {},
+            options: {
+              showDivider: false,
+              addBtnText: "Add",
             },
-            "if": "nata(showAdditionalData=true)"
-          }
+            if: "nata(showAdditionalData=true)",
+          },
         },
         "divider-212": {
-          "layout": {
-            "component": "divider"
-          }
+          layout: {
+            component: "divider",
+          },
         },
-        "tableHeader": {
-          "content": "Products",
-          "layout": {
-            "component": "static-content",
-            "tag": "h3"
-          }
+        tableHeader: {
+          content: "Products",
+          layout: {
+            component: "static-content",
+            tag: "h3",
+          },
         },
-        "offerCurrencyDescription": {
-          "content": "Selected currency: {offer.currency.id:PLN}",
-          "layout": {
-            "component": "static-content",
-            "tag": "p"
-          }
+        offerCurrencyDescription: {
+          content: "Selected currency: {offer.currency.id:PLN}",
+          layout: {
+            component: "static-content",
+            tag: "p",
+          },
         },
         "divider-707": {
-          "layout": {
-            "component": "divider"
-          }
+          layout: {
+            component: "divider",
+          },
         },
-        "tableOfOfferItems": {
+        tableOfOfferItems: {
           layout: { component: "table-view" },
           source: {
             data: "/api/v1/offers/{offer.id}/offer-items",
@@ -701,7 +704,7 @@ export const Forte: Story = {
               {
                 title: "Image",
                 key: "mainImageUrl",
-                valueMapping: "product.mainImageUrl",
+                valueMapping: "/api/v1/products/{product.id}/files/{product.mainImage.dataId}/content",
                 type: "IMAGE",
                 properties: {
                   minWidth: 64,

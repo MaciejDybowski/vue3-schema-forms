@@ -7,7 +7,7 @@
   </div>
 
   <div v-if="header.type == `ICON`">
-    <v-icon v-if="extractValueByPath(header.valueMapping) !== null">{{ extractValueByPath(header.valueMapping) }}</v-icon>
+    <v-icon v-if="extractValueByPath(header.valueMapping) !== null">{{ extractValueByPath(header.valueMapping) }} </v-icon>
   </div>
 
   <div
@@ -24,11 +24,7 @@
       <!-- 1. option API returns /api/v1/images/1.png and component add current domain -->
       <!-- 2. option API returns https://yourdomain.com/api/v1/images/1.png -->
       <v-img
-        :src="
-          header.properties && header.properties.addDomain == true
-            ? domain + extractValueByPath(header.valueMapping)
-            : extractValueByPath(header.valueMapping)
-        "
+        :src="urlPath"
         cover
       />
     </v-avatar>
@@ -53,8 +49,7 @@ const props = defineProps<{
 const { formattedNumber } = useNumber();
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const htmlContent = ref<string>("");
-
-
+const urlPath = ref("");
 
 const numberContent = computed(() => {
   const properties = props.header.properties;
@@ -64,7 +59,6 @@ const numberContent = computed(() => {
   return formattedNumber(extractValueByPath(props.header.valueMapping), "decimal", minPrecision, maxPrecision);
 });
 
-const domain = window.location.origin;
 const isConnectionWithActions = ref<boolean>(false);
 
 const actionVariable = ref("");
@@ -80,6 +74,32 @@ function callAction() {
 
   actionHandlerEventBus.emit("form-action", payloadObject);
   //console.debug("Action payload", payloadObject);
+}
+
+async function mapImageParams() {
+  let url = props.header.valueMapping;
+  const arrayOfVariables = props.header.valueMapping.match(variableRegexp);
+  console.debug(arrayOfVariables);
+  if (!!arrayOfVariables) {
+    await Promise.all(
+      arrayOfVariables.map(async (wrappedVariable) => {
+        const unwrapped = wrappedVariable.slice(1, -1);
+
+        const split = unwrapped.split(":");
+        let variable = split[0];
+        const defaultValue = split.length === 2 ? split[1] : null;
+        const model = props.item;
+
+        const nata = jsonata(variable);
+        let value = await nata.evaluate(model);
+        if ((value == null && defaultValue !== null) || (value == "" && value != 0) || value == undefined) {
+          value = defaultValue;
+        }
+        url = url.replace(`{${unwrapped}}`, value);
+      }),
+    );
+  }
+  return url;
 }
 
 async function simpleResolveVariable() {
@@ -151,6 +171,8 @@ onMounted(async () => {
         checkConnectionWithActions(props.header.valueMapping);
       }
       break;
+    case "IMAGE":
+      urlPath.value = await mapImageParams();
   }
 });
 
