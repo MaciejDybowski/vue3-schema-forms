@@ -23,6 +23,7 @@ export interface TableHeader {
 }
 
 export interface TableHeaderAction {
+  title: string
   icon: string;
   props?: Record<string, any>;
   mode: "action" | string;

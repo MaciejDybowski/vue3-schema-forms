@@ -769,6 +769,7 @@ export const Forte: Story = {
                 key: "actions",
                 actions: [
                   {
+                    title: "Delete",
                     icon: "mdi-delete-outline",
                     mode: "action",
                     code: "callScript",
@@ -785,7 +786,7 @@ export const Forte: Story = {
                     },
                   },
                   {
-                    condition: "",
+                    title: "Pallet shipping",
                     icon: "mdi-shipping-pallet",
                     mode: "action",
                     code: "callScript",

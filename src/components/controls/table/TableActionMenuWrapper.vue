@@ -14,7 +14,7 @@
         <template #prepend>
           <v-icon v-bind="action.props"> {{ action.icon }}</v-icon>
         </template>
-        <v-list-item-title> #TODO</v-list-item-title>
+        <v-list-item-title> {{ action.title}}</v-list-item-title>
       </v-list-item>
       <v-list-item
         v-else
