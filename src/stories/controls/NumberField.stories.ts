@@ -4,6 +4,7 @@ import { expect, fireEvent, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
+import { waitForMountedAsync } from "./utils";
 
 const meta = {
   title: "Forms/Controls/NumberField",
@@ -39,6 +40,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Integer: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Number (int)");
     await userEvent.type(field, "1", { delay: 300 });
@@ -87,6 +89,7 @@ export const FloatWithTextOtherThanRight: Story = {
 
 export const FloatStandard2DecimalPlaces: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Number (float)");
     await userEvent.type(field, "1.346", { delay: 300 });
@@ -111,6 +114,7 @@ export const FloatStandard2DecimalPlaces: Story = {
 
 export const FloatStandard4DecimalPlaces: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Number (float)");
     await userEvent.type(field, "1.34632", { delay: 300 });
@@ -193,6 +197,7 @@ export const CurrencyModeProps: Story = {
  */
 export const PercentMode: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Percent");
     await userEvent.type(field, "4.34", { delay: 300 });

@@ -26,6 +26,7 @@
       </v-row>
     </template>
 
+    <!-- Poniższy template dotyczy nagłówków tabeli -->
     <template
       v-for="header in headers"
       :key="header.key"
@@ -36,6 +37,7 @@
       </div>
     </template>
 
+    <!-- Każda komórka -->
     <template
       v-for="header in headers"
       :key="header.key"
@@ -63,6 +65,7 @@
       />
     </template>
 
+    <!-- miejsce przygotowane na agregaty -->
     <template v-slot:body.append="{}">
       <tr
         v-for="(aggregateKey, i) in Object.keys(aggregates)"
@@ -135,6 +138,13 @@ const tableButtonDefaultProps = {
   size: "small",
   color: "primary",
 };
+
+function colorRowItem(item, item1, item2) {
+  console.debug(item);
+  /*if (item.item.some_property != undefined && item.item.some_property.includes("Freigegeben")) {
+    return { class: 'some_text' };
+  }*/
+}
 
 //  TODO - czy potrzebne to wgl takie mapowania bo i tak lecimy 1:1
 const headers: ComputedRef<TableHeader[]> = computed(() => {
@@ -294,6 +304,12 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
   }
 }
 
+function getItemClass(item){
+  console.debug(item)
+  //return item.id === this.selectedId ? 'highlight-name' : null
+  return "highlight-name"
+}
+
 async function loadData(params: TableFetchOptions) {
   try {
     console.debug("Loading data for table field with params ", params);
@@ -391,6 +407,11 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .v-data-table__tr-aggregates {
   background-color: lightgrey;
+}
+
+tr.highlight-name > td:nth-child(1){
+  background: purple;
+  color: white;
 }
 </style>
 

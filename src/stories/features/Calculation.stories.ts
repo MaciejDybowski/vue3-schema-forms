@@ -8,6 +8,7 @@ import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
 import { Layout, SchemaTextField } from "../../types/schema/elements";
+import { waitForMountedAsync } from "../controls/utils";
 
 const meta = {
   title: "Forms/Features/Calculations",
@@ -52,6 +53,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const SimpleCalculation: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText("Field 1");
     const field2 = canvas.getByLabelText("Field 2");
@@ -76,6 +78,7 @@ export const SimpleCalculation: Story = {
  */
 export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
   play: async (context) => {
+    await waitForMountedAsync()
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText("Field 1");
     const field2 = canvas.getByLabelText("Field 2");
@@ -199,7 +202,7 @@ export const invoiceItems: Story = {
 
 export const SUM_function: Story = {
   play: async (context) => {
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise(r => setTimeout(r, 100));
     await expect(context.args.modelValue).toEqual({
       data: {
         items: [

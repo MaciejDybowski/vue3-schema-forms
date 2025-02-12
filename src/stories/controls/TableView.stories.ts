@@ -267,6 +267,69 @@ export const Standard: Story = {
   },
 };
 
+export const StandardColorFields: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "Basic display all data as a text values",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Name",
+                key: "name",
+                valueMapping: "name",
+                type: "TEXT",
+                class: "blue lighten-5"
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Height",
+                key: "height",
+                valueMapping: "height",
+                type: "TEXT",
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+              },
+              {
+                title: "Volume",
+                key: "volume",
+                valueMapping: "volume",
+                type: "TEXT",
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    mockData: [REQUEST_PAGE_0_1],
+  },
+};
+
 export const NumberFields: Story = {
   play: async (context) => {},
   args: {
@@ -809,6 +872,7 @@ export const ContextActionsWithCondition: Story = {
                 key: "actions",
                 actions: [
                   {
+                    title: "Delete",
                     icon: "mdi-delete-outline",
                     mode: "action",
                     code: "callScript",
@@ -826,6 +890,7 @@ export const ContextActionsWithCondition: Story = {
                     },
                   },
                   {
+                    title: "Shipping pallet",
                     icon: "mdi-shipping-pallet",
                     mode: "action",
                     code: "callScript",
