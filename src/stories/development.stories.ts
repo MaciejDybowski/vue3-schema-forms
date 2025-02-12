@@ -2,8 +2,11 @@
 import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
+
+
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { Schema } from "../types/schema/Schema";
+
 
 const meta = {
   title: "Development Page",
@@ -704,7 +707,8 @@ export const Forte: Story = {
               {
                 title: "Image",
                 key: "mainImageUrl",
-                valueMapping: "/api/v1/products/{product.id}/files/{product.mainImage.dataId}/content",
+                valueMapping:
+                  "/api/v1/features/products/images/{product.mainImage.id}%3D%3D?Workspace-Id={context.workspaceId}&dataId={product.mainImage.dataId}",
                 type: "IMAGE",
                 properties: {
                   minWidth: 64,

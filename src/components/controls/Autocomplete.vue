@@ -5,7 +5,7 @@
     :class="bindClass(schema) + requiredInputClass"
     :clearable="!fieldProps.readonly"
     :item-title="title"
-    :item-value="value"
+    :item-value="returnObject ? value : title"
     :items="data"
     :label="label"
     :lazy="lazy"
