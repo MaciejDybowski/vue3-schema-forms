@@ -1,7 +1,7 @@
 export { useCalculation } from "./useCalculation";
 export { useClass } from "./useClass";
 export { useConditionalRendering } from "./useConditionalRendering";
-export { useDictionarySource } from "./useDictionarySource";
+export { useDictionary } from "./useDictionary";
 export { useLabel } from "./useLabel";
 export { useLocale } from "./useLocale";
 export { useProps } from "./useProps";

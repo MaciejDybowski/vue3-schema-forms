@@ -3,6 +3,7 @@
     v-model="localModel"
     :auto-select-first="true"
     :class="bindClass(schema) + requiredInputClass"
+    :clearable="!fieldProps.readonly"
     :item-title="title"
     :item-value="value"
     :items="data"
@@ -19,7 +20,6 @@
     @loadMoreRecords="loadMoreRecords"
     @update:search="updateQuery"
     @update:modelValue="onChange(schema, model)"
-    :clearable="!fieldProps.readonly"
   >
     <template #no-data>
       <v-list-item v-if="loading">
@@ -50,20 +50,12 @@
 <script lang="ts" setup>
 import { computed, onMounted, watch } from "vue";
 
+import { useDictionary } from "@/core/composables/useDictionary";
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { EngineDictionaryField } from "@/types/engine/controls";
 
-import {
-  useClass,
-  useDictionarySource,
-  useFormModel,
-  useLabel,
-  useLocale,
-  useProps,
-  useRules
-} from "../../core/composables";
+import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
 import BaseAutocomplete from "./base/BaseAutocomplete.vue";
-import { VTextField } from "vuetify/components";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -99,57 +91,43 @@ const {
   load,
   loadMoreRecords,
   singleOptionAutoSelect,
-} =  useDictionarySource(props.schema);
+  initState,
+  updateQuery,
+} = useDictionary();
+
+function singleOptionAutoSelectFunction() {
+  const selectSingleOptionLogic = () => {
+    if (data.value.length !== 1 || !singleOptionAutoSelect.value) return;
+    const selectedValue = returnObject ? data.value[0] : data.value[0][title.value];
+
+    if (JSON.stringify(localModel.value) !== JSON.stringify(selectedValue)) {
+      localModel.value = selectedValue;
+    }
+  };
+
+  selectSingleOptionLogic();
+  watch(data, selectSingleOptionLogic, { deep: true, immediate: true });
+}
 
 onMounted(async () => {
+  await initState(props.schema);
   await bindLabel(props.schema);
-  await bindRules(props.schema)
+  await bindRules(props.schema);
   await bindProps(props.schema);
 
   if (localModel.value) {
-    updateQuery(localModel.value);
-  }
-
-  if (data.value.length === 1 && singleOptionAutoSelect) {
-    if (returnObject) {
-      localModel.value = data.value[0];
+    if (typeof localModel.value == "object") {
+      updateQuery(localModel.value[title.value]);
     } else {
-      localModel.value = data.value[0][value];
+      updateQuery(localModel.value);
     }
   }
 
-  watch(data, () => {
-    if (data.value.length === 1 && singleOptionAutoSelect) {
-      if (JSON.stringify(localModel.value) !== JSON.stringify(data.value[0])) {
-        if (returnObject) {
-          localModel.value = data.value[0];
-        } else {
-          localModel.value = data.value[0][value];
-        }
-      }
-    }
-  });
+  singleOptionAutoSelectFunction();
 });
 
-function updateQuery(val: any) {
-  if (val === null || val === "") {
-    query.value = "";
-  }
-  if (val && typeof val == "object") {
-    data.value.push(localModel.value);
-    query.value = val[title];
-  }
-  if (val && typeof val == "string") {
-    query.value = val;
-  }
-}
-
 async function fetchDictionaryData() {
-  /*
-    <=1 - próba dla słowników, które mają już wybraną wartość, żeby po kliknięciu nie była ta jedna a jakiś zestaw
-     danych słownikowych, dodatkowo w useDictionarySource dodałem też, że query jest wyzględniane gdy data > 1
-   */
-  if (data.value.length <= 1 && !fieldProps.value.readonly) {
+  if (data.value.length == 0 && !fieldProps.value.readonly) {
     await load("autocomplete");
   }
 }

@@ -18,12 +18,12 @@ import {
   useCalculation,
   useClass,
   useDateFormat,
-  useDictionarySource,
   useFormModel,
   useLabel,
   useLocale,
   useResolveVariables,
 } from "@/core/composables";
+import { useDictionary } from "@/core/composables/useDictionary";
 import { useNumber } from "@/core/composables/useNumber";
 import { EngineDataViewerField, EngineDictionaryField } from "@/types/engine/controls";
 import { useEventBus } from "@vueuse/core";
@@ -118,11 +118,12 @@ async function runCalculationIfExist() {
 
 async function resolveIfDictionary() {
   if ("source" in props.schema && props.schema.source && "url" in props.schema.source) {
-    const { data, load, singleOptionAutoSelect } = await useDictionarySource(props.schema as EngineDictionaryField);
+    const { data, load, singleOptionAutoSelect, initState } = await useDictionary();
 
+    await initState(props.schema as EngineDictionaryField);
     await load("dataViewer");
 
-    if (data.value.length === 1 && singleOptionAutoSelect) {
+    if (data.value.length === 1 && singleOptionAutoSelect.value) {
       localModel.value = data.value[0];
       setValue(localModel.value, props.schema);
     }

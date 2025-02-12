@@ -3,6 +3,7 @@
     v-model="localModel"
     :auto-select-first="true"
     :class="bindClass(schema) + requiredInputClass"
+    :clearable="!fieldProps.readonly"
     :item-title="title"
     :item-value="value"
     :items="data"
@@ -18,7 +19,6 @@
     @focus="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
     @update:search="updateQuery"
-    :clearable="!fieldProps.readonly"
   >
     <template #no-data>
       <v-list-item v-if="loading">
@@ -51,9 +51,10 @@ import { computed, onMounted, watch } from "vue";
 
 import BaseCombobox from "@/components/controls/base/BaseCombobox.vue";
 
+import { useDictionary } from "@/core/composables/useDictionary";
 import { EngineDictionaryField } from "@/types/engine/controls";
 
-import { useClass, useDictionarySource, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
+import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -88,51 +89,42 @@ const {
   load,
   loadMoreRecords,
   singleOptionAutoSelect,
-} = useDictionarySource(props.schema);
+  initState,
+  updateQuery,
+} = useDictionary();
+
+function singleOptionAutoSelectFunction() {
+  const selectSingleOptionLogic = () => {
+    if (data.value.length !== 1 || !singleOptionAutoSelect.value) return;
+    const selectedValue = returnObject ? data.value[0] : data.value[0][title.value];
+
+    if (JSON.stringify(localModel.value) !== JSON.stringify(selectedValue)) {
+      localModel.value = selectedValue;
+    }
+  };
+  selectSingleOptionLogic();
+  watch(data, selectSingleOptionLogic, { deep: true, immediate: true });
+}
 
 onMounted(async () => {
+  await initState(props.schema);
   await bindLabel(props.schema);
   await bindProps(props.schema);
   await bindRules(props.schema);
+
   if (localModel.value) {
-    updateQuery(localModel.value);
-  }
-  if (data.value.length === 1 && singleOptionAutoSelect) {
-    if (returnObject) {
-      localModel.value = data.value[0];
+    if (typeof localModel.value == "object") {
+      updateQuery(localModel.value[title.value]);
     } else {
-      localModel.value = data.value[0][value];
+      updateQuery(localModel.value);
     }
   }
 
-  watch(data, () => {
-    if (data.value.length === 1 && singleOptionAutoSelect) {
-      if (JSON.stringify(localModel.value) !== JSON.stringify(data.value[0])) {
-        if (returnObject) {
-          localModel.value = data.value[0];
-        } else {
-          localModel.value = data.value[0][value];
-        }
-      }
-    }
-  });
+  singleOptionAutoSelectFunction();
 });
 
-function updateQuery(val: any) {
-  if (val === null || val === "") {
-    query.value = "";
-  }
-  if (val && typeof val == "object") {
-    data.value.push(localModel.value);
-    query.value = val[title];
-  }
-  if (val && typeof val == "string") {
-    query.value = val;
-  }
-}
-
 async function fetchDictionaryData() {
-  if (data.value.length <= 1 && !fieldProps.value.readonly) {
+  if (data.value.length == 0 && !fieldProps.value.readonly) {
     await load("combobox");
   }
 }

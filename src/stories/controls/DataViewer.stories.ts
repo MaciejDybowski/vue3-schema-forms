@@ -233,7 +233,7 @@ export const StandardDictionary: Story = {
   parameters: {
     mockData: [
       {
-        url: "/api/dictionaries&query=PLN?&page=0&size=20",
+        url: "/my-api/dictionaries?&page=0&size=20&query=PLN",
         method: "GET",
         status: 200,
         response: {
@@ -290,7 +290,7 @@ export const StandardDictionary: Story = {
             component: "data-viewer",
           },
           source: {
-            url: "/api/dictionaries&query=PLN",
+            url: "/my-api/dictionaries?query=PLN",
             title: "label",
             value: "id",
             returnObject: true,

@@ -4,7 +4,6 @@ import { Meta, StoryObj } from "@storybook/vue3";
 
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { Schema } from "../types/schema/Schema";
-import { DictionarySource } from "../types/shared/Source";
 
 const meta = {
   title: "Development Page",
@@ -27,29 +26,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-export const Dictionary: Story = {
-  args: {
-    model: {},
-    schema: {
-      type: "object",
-      properties: {
-        dictionary: {
-          label: "Dictionary",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
-            url: "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId",
-            title: "label",
-            value: "id",
-          } as DictionarySource,
-        },
-      },
-      required: [],
-    },
-  },
-};
 
 export const ForteStart: Story = {
   args: {
@@ -715,7 +691,7 @@ export const Forte: Story = {
             tag: "p",
           },
         },
-        "divider-707": {
+        "divider-7072": {
           layout: {
             component: "divider",
           },
