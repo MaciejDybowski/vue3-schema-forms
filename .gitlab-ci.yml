@@ -15,14 +15,4 @@ npm-publish:
     - npm run publish:nexus
   only:
     - master
-npm-publish-new:
-  stage: publish
-  image: docker.tecna.pl/node:lts
-  script:
-    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm install
-    - npm run build
-    - npm run publish:nexus
-  only:
-    - forms-based-on-nata
 
