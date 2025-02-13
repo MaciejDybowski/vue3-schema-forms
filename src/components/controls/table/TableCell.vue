@@ -35,6 +35,7 @@
     <v-tooltip
       v-if="item.alerts"
       location="top"
+      max-width="400px"
     >
       <template v-slot:activator="{ props }">
         <v-icon
@@ -53,15 +54,16 @@
           :color="alertColors[type]"
           class="mr-1"
           v-bind="props"
-        >
-          {{ alertIcons[type] }}
-        </v-icon>
-        <p
-          v-for="(message, index) in messages"
-          :key="index"
-        >
-          {{ message }}
-        </p>
+          :icon="alertIcons[type]"
+        />
+        <ul class="mx-4">
+          <li
+            v-for="(message, index) in messages"
+            :key="index"
+          >
+            {{ message }}
+          </li>
+        </ul>
       </div>
     </v-tooltip>
   </div>
