@@ -91,7 +91,7 @@ const alertColors = {
 
 const props = defineProps<{
   header: TableHeader;
-  item: object;
+  item: any;
   actions: Record<string, string>;
 }>();
 const backgroundColor = ref("transparent");
