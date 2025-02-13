@@ -141,7 +141,7 @@ export const ReturnValue: Story = {
     await userEvent.click(items[0], { delay: 200 });
 
     await expect(context.args.modelValue).toEqual({
-      currency: "AFN",
+      currency: "Afgani",
     });
   },
   args: {
