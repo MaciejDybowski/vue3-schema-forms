@@ -52,79 +52,126 @@ const REQUEST_PAGE_0_1 = {
   },
 };
 
+const REQUEST_PAGE_0_1_ALERT = {
+  url: "/mock-data/table-view-mock?page=0&size=20",
+  method: "GET",
+  status: 200,
+  response: (request) => {
+    const { body, searchParams } = request;
+    if (searchParams.page === "0" && searchParams.size === "10") {
+      return {
+        content: [
+          {
+            name: "🍎 Apple",
+            location: "Washington",
+            height: "0.1",
+            base: "0.07",
+            volume: "0.0001",
+            alerts: {
+              warning: ["no package quantity defined for product, using one package for calculations", "other message"],
+            },
+          },
+          {
+            name: "🍎 Apple",
+            location: "Washington",
+            height: "0.1",
+            base: "0.07",
+            volume: "0.0001",
+            alerts: {
+              info: ["information about row text"],
+              error: ["error about text"],
+            },
+          },
+          {
+            name: "🍎 Apple",
+            location: "Washington",
+            height: "0.1",
+            base: "0.07",
+            volume: "0.0001",
+          },
+        ],
+      };
+    }
+    if (searchParams.page === "1" && searchParams.size === "10") {
+      console.error("Brak danych");
+    }
+    return "no data";
+  },
+};
+
 const PAGE_0 = {
   content: [
     {
       name: "🍎 Apple",
       location: "Washington",
       height: "0.1",
-      base: "0.07",
+      base: 70,
       volume: "0.0001",
     },
     {
       name: "🍌 Banana",
       location: "Ecuador",
       height: "0.2",
-      base: "0.05",
+      base: 50,
       volume: "0.0002",
     },
     {
       name: "🍇 Grapes",
       location: "Italy",
       height: "0.02",
-      base: "0.02",
+      base: 20,
       volume: "0.00001",
     },
     {
       name: "🍉 Watermelon",
       location: "China",
       height: "0.4",
-      base: "0.3",
+      base: 300,
       volume: "0.03",
     },
     {
       name: "🍍 Pineapple",
       location: "Thailand",
       height: "0.3",
-      base: "0.2",
+      base: 200,
       volume: "0.005",
     },
     {
       name: "🍒 Cherries",
       location: "Turkey",
       height: "0.02",
-      base: "0.02",
+      base: 20,
       volume: "0.00001",
     },
     {
       name: "🥭 Mango",
       location: "India",
       height: "0.15",
-      base: "0.1",
+      base: 100,
       volume: "0.0005",
     },
     {
       name: "🍓 Strawberry",
       location: "Poland",
       height: "0.03",
-      base: "0.03",
+      base: 30,
       volume: "0.00002",
     },
     {
       name: "🍑 Peach",
       location: "China",
       height: "0.09",
-      base: "0.08",
+      base: 80,
       volume: "0.0004",
     },
     {
       name: "🥝 Kiwi",
       location: "New Zealand",
       height: "0.05",
-      base: "0.05",
+      base: 50,
       volume: "0.0001",
     },
-  ],
+  ]
 };
 
 const PAGE_1 = {
@@ -196,7 +243,7 @@ const PAGE_1 = {
       name: "🍆 Eggplant",
       location: "India",
       height: "0.18",
-      base: "0.07",
+      base: 0.07,
       volume: "0.0008",
     },
   ],
@@ -267,7 +314,70 @@ export const Standard: Story = {
   },
 };
 
-export const StandardColorFields: Story = {
+export const ColorableCells: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "You can create color condition on table cells",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Name",
+                key: "name",
+                valueMapping: "name",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Height",
+                key: "height",
+                valueMapping: "height",
+                type: "TEXT",
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+                color: "base <= 50 ? '#EF5350' : '#81C784'",
+              },
+              {
+                title: "Volume",
+                key: "volume",
+                valueMapping: "volume",
+                type: "TEXT",
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    mockData: [REQUEST_PAGE_0_1],
+  },
+};
+
+export const DynamicAlerts: Story = {
   play: async (context) => {},
   args: {
     modelValue: {},
@@ -289,11 +399,21 @@ export const StandardColorFields: Story = {
             data: "/mock-data/table-view-mock",
             headers: [
               {
+                title: "",
+                key: "alerts",
+                valueMapping: "alerts",
+                type: "ALERT",
+                properties: {
+                  minWidth: 32,
+                  width: 32,
+                },
+              },
+              {
                 title: "Name",
                 key: "name",
                 valueMapping: "name",
                 type: "TEXT",
-                class: "blue lighten-5"
+                class: "blue lighten-5",
               },
               {
                 title: "Location",
@@ -326,7 +446,7 @@ export const StandardColorFields: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    mockData: [REQUEST_PAGE_0_1_ALERT],
   },
 };
 
@@ -378,7 +498,7 @@ export const NumberFields: Story = {
               {
                 title: "Volume",
                 key: "volume",
-                valueMapping:  "volume",
+                valueMapping: "volume",
                 type: "NUMBER",
               },
             ],
@@ -534,13 +654,13 @@ export const EditableField: Story = {
               {
                 title: "Location",
                 key: "location",
-                valueMapping:  "location",
+                valueMapping: "location",
                 type: "TEXT",
               },
               {
                 title: "Height",
                 key: "height",
-                valueMapping:  "height",
+                valueMapping: "height",
                 editable: true,
                 type: "NUMBER",
               },
@@ -588,7 +708,7 @@ export const ActionField: Story = {
               {
                 title: "Location",
                 key: "location",
-                valueMapping:  "location",
+                valueMapping: "location",
                 type: "TEXT",
               },
               {
@@ -641,7 +761,7 @@ export const ActionFieldAdvanced: Story = {
               {
                 title: "Location",
                 key: "location",
-                valueMapping:  "location",
+                valueMapping: "location",
                 type: "TEXT",
               },
               {
@@ -691,7 +811,7 @@ export const TopSlotAndButtons: Story = {
               {
                 title: "Location",
                 key: "location",
-                valueMapping:  "location",
+                valueMapping: "location",
                 type: "TEXT",
               },
               {
@@ -770,7 +890,7 @@ export const ContextActions: Story = {
               {
                 title: "Location",
                 key: "location",
-                valueMapping:  "location",
+                valueMapping: "location",
                 type: "TEXT",
               },
               {
@@ -858,7 +978,7 @@ export const ContextActionsWithCondition: Story = {
               {
                 title: "Location",
                 key: "location",
-                valueMapping:  "location",
+                valueMapping: "location",
                 type: "TEXT",
               },
               {

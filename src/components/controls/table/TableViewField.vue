@@ -7,7 +7,7 @@
     :headers="headers"
     :hover="true"
     :items="items"
-    class="bg-transparent"
+    class="bg-transparent custom-table"
     density="compact"
   >
     <template #top>
@@ -139,13 +139,6 @@ const tableButtonDefaultProps = {
   color: "primary",
 };
 
-function colorRowItem(item, item1, item2) {
-  console.debug(item);
-  /*if (item.item.some_property != undefined && item.item.some_property.includes("Freigegeben")) {
-    return { class: 'some_text' };
-  }*/
-}
-
 //  TODO - czy potrzebne to wgl takie mapowania bo i tak lecimy 1:1
 const headers: ComputedRef<TableHeader[]> = computed(() => {
   return props.schema.source.headers.map((item: TableHeader) => {
@@ -154,6 +147,7 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
       title: item.title,
       type: item.type,
       valueMapping: item.valueMapping,
+      color: item.color,
     };
 
     if (item.properties) {
@@ -304,11 +298,6 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
   }
 }
 
-function getItemClass(item){
-  console.debug(item)
-  //return item.id === this.selectedId ? 'highlight-name' : null
-  return "highlight-name"
-}
 
 async function loadData(params: TableFetchOptions) {
   try {
@@ -409,9 +398,13 @@ onMounted(async () => {
   background-color: lightgrey;
 }
 
-tr.highlight-name > td:nth-child(1){
+tr.highlight-name > td:nth-child(1) {
   background: purple;
   color: white;
+}
+
+.custom-table :deep(.v-data-table__td) {
+  padding: 0 !important;
 }
 </style>
 

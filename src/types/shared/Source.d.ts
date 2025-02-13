@@ -14,22 +14,23 @@ export interface TableSource {
 
 export interface TableHeader {
   key: string;
-  valueMapping: string
+  valueMapping: string;
   title: string;
-  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE" | "ICON";
+  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE" | "ICON" | "ALERT";
   editable?: boolean;
   properties?: Record<string, any>;
   actions?: TableHeaderAction[];
+  color?: string;
 }
 
 export interface TableHeaderAction {
-  title: string
+  title: string;
   icon: string;
   props?: Record<string, any>;
   mode: "action" | string;
   config: Record<string, any>;
-  code?: string
-  condition?: string
+  code?: string;
+  condition?: string;
 }
 
 export interface TableButton {

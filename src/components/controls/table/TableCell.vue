@@ -1,6 +1,9 @@
 <template>
   <div
     v-if="header.type == 'TEXT'"
+    :style="{ backgroundColor: backgroundColor }"
+    class="cell-content"
+    v-bind="attrs"
     @click="isConnectionWithActions ? callAction() : () => {}"
   >
     <span v-html="htmlContent" />
@@ -21,31 +24,79 @@
       :rounded="0"
       :size="'maxWidth' in header ? (header.maxWidth as number) : 32"
     >
-      <!-- 1. option API returns /api/v1/images/1.png and component add current domain -->
-      <!-- 2. option API returns https://yourdomain.com/api/v1/images/1.png -->
       <v-img
         :src="urlPath"
         cover
       />
     </v-avatar>
   </div>
+
+  <div v-if="header.type == 'ALERT'">
+    <v-tooltip
+      v-if="item.alerts"
+      location="top"
+    >
+      <template v-slot:activator="{ props }">
+        <v-icon
+          color="blue"
+          v-bind="props"
+        >
+          mdi-information-outline
+        </v-icon>
+      </template>
+      <div
+        v-for="(messages, type) in item.alerts"
+        :key="type"
+        class="d-flex align-center"
+      >
+        <v-icon
+          :color="alertColors[type]"
+          class="mr-1"
+          v-bind="props"
+        >
+          {{ alertIcons[type] }}
+        </v-icon>
+        <p
+          v-for="(message, index) in messages"
+          :key="index"
+        >
+          {{ message }}
+        </p>
+      </div>
+    </v-tooltip>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import jsonata from "jsonata";
 import get from "lodash/get";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, useAttrs, watchEffect } from "vue";
 
 import { useNumber } from "@/core/composables/useNumber";
 import { variableRegexp } from "@/core/engine/utils";
 import { TableHeader } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
 
+const alertIcons = {
+  warning: "mdi-alert",
+  info: "mdi-information",
+  error: "mdi-alert-circle",
+};
+
+const alertColors = {
+  warning: "orange",
+  info: "blue",
+  error: "red",
+};
+
 const props = defineProps<{
   header: TableHeader;
   item: object;
   actions: Record<string, string>;
 }>();
+const backgroundColor = ref("transparent");
+
+const attrs = useAttrs();
 const { formattedNumber } = useNumber();
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const htmlContent = ref<string>("");
@@ -79,7 +130,6 @@ function callAction() {
 async function mapImageParams() {
   let url = props.header.valueMapping;
   const arrayOfVariables = props.header.valueMapping.match(variableRegexp);
-  console.debug(arrayOfVariables);
   if (!!arrayOfVariables) {
     await Promise.all(
       arrayOfVariables.map(async (wrappedVariable) => {
@@ -162,7 +212,23 @@ function extractValueByPath(path: string) {
   return get(props.item, path, null);
 }
 
+async function getBackgroundColor(header:TableHeader, item) {
+  if (header.color) {
+    const mergedModel = {
+      header: header,
+      ...item,
+    };
+    const nata = jsonata(header.color);
+    const result = await nata.evaluate(mergedModel);
+    if (result) {
+      return result;
+    }
+  }
+  return "transparent";
+}
+
 onMounted(async () => {
+  backgroundColor.value = await getBackgroundColor(props.header, props.item);
   switch (props.header.type) {
     case "TEXT":
       if (props.header.valueMapping.match(variableRegexp)) {
@@ -233,5 +299,15 @@ table .link {
       )
       bottom left / 1px 1px repeat-x;
   }
+}
+
+.cell-content {
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0px 0px;
+  margin: 0px 0px !important;
+  box-sizing: border-box;
 }
 </style>
