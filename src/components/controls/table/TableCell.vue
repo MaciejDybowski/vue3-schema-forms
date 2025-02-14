@@ -50,18 +50,18 @@
         :key="type"
         class="d-flex align-center"
       >
-        <v-icon
-          :color="alertColors[type]"
-          class="mr-1"
-          v-bind="props"
-          :icon="alertIcons[type]"
-        />
-        <ul class="mx-4">
+        <ul style="list-style-type: none">
           <li
             v-for="(message, index) in messages"
             :key="index"
           >
-            {{ message }}
+            <v-icon
+              :color="alertColors[type]"
+              :icon="alertIcons[type]"
+              class="mr-1"
+              v-bind="props"
+            />
+            <span>{{ message }}</span>
           </li>
         </ul>
       </div>
@@ -214,7 +214,7 @@ function extractValueByPath(path: string) {
   return get(props.item, path, null);
 }
 
-async function getBackgroundColor(header:TableHeader, item) {
+async function getBackgroundColor(header: TableHeader, item) {
   if (header.color) {
     const mergedModel = {
       header: header,
