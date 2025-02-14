@@ -9,18 +9,18 @@
         v-if="filteredActions.length > 0"
         density="compact"
         link
-        @click="emit('runTableActionLogic', action, item)"
+        @click="emit('runTableActionLogic', { action: action, item: item })"
       >
-        <template #prepend>
-          <v-icon v-bind="action.props"> {{ action.icon }}</v-icon>
-        </template>
-        <v-list-item-title> {{ action.title}}</v-list-item-title>
+        <v-list-item-title class="d-flex align-center">
+          <v-icon v-bind="action.props" class="mr-2"> {{ action.icon }}</v-icon>
+          <span>{{ action.title }}</span>
+        </v-list-item-title>
       </v-list-item>
       <v-list-item
         v-else
         density="compact"
       >
-        {{t('noActions')}}
+        {{ t("noActions") }}
       </v-list-item>
     </v-list>
   </table-action-menu>
@@ -32,8 +32,8 @@ import { onMounted, ref } from "vue";
 
 import TableActionMenu from "@/components/controls/table/TableActionMenu.vue";
 
-import { TableHeader, TableHeaderAction } from "@/types/shared/Source";
 import { useLocale } from "@/core/composables";
+import { TableHeader, TableHeaderAction } from "@/types/shared/Source";
 
 const props = defineProps<{
   item: object;
@@ -41,10 +41,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "runTableActionLogic", action: TableHeaderAction, item: object): void;
+  (e: "runTableActionLogic", payload: { action: TableHeaderAction; item: object }): void;
 }>();
 
-const {t} = useLocale()
+const { t } = useLocale();
 const filteredActions = ref<TableHeaderAction[]>([]);
 
 async function filteredHeaderActions(header: TableHeader, model: object) {

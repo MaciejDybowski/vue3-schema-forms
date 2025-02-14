@@ -31,6 +31,10 @@ export interface TableHeaderAction {
   config: Record<string, any>;
   code?: string;
   condition?: string;
+
+  // popup mode
+  schema?: any
+  modelReference?: string;
 }
 
 export interface TableButton {

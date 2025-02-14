@@ -47,6 +47,7 @@
         v-if="header.key == 'actions' && header.actions"
         :header="header"
         :item="item"
+        @run-table-action-logic="runTableActionLogic($event, index)"
       />
 
       <table-cell
@@ -90,23 +91,60 @@
       </tr>
     </template>
   </v-data-table>
+
+  <v-dialog
+    v-model="actionPopup.show"
+    max-width="650"
+  >
+    <template v-slot:default="{ isActive }">
+      <v-card :title="actionPopup.action.title">
+        <v-card-text>
+          <vue-schema-forms
+            ref="actionPopupReference"
+            v-model="actionPopup.model"
+            :options="actionPopup.options"
+            :schema="actionPopup.schema"
+          />
+        </v-card-text>
+        <v-card-actions class="mx-4">
+          <v-spacer></v-spacer>
+
+          <v-btn
+            :text="t('close')"
+            v-bind="{ ...tableButtonDefaultProps, color: '', variant: 'elevated' }"
+            @click="isActive.value = false"
+          ></v-btn>
+
+          <v-btn
+            :text="t('save')"
+            v-bind="{ ...tableButtonDefaultProps, variant: 'elevated' }"
+            @click="saveDialogForm(isActive)"
+          />
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
 </template>
 
 <script lang="ts" setup>
 import axios from "axios";
 import { debounce, merge } from "lodash";
 import get from "lodash/get";
-import { ComputedRef, computed, onMounted, ref } from "vue";
+import set from "lodash/set";
+import { ComputedRef, Ref, computed, onMounted, reactive, ref } from "vue";
 
 import TableActionMenuWrapper from "@/components/controls/table/TableActionMenuWrapper.vue";
 import TableCell from "@/components/controls/table/TableCell.vue";
 import TableEditableCell from "@/components/controls/table/TableEditableCell.vue";
+import { TableFetchOptions, TableOptions } from "@/components/controls/table/table-types";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
+import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
 
 import { useLocale, useProps, useResolveVariables } from "@/core/composables";
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTableField } from "@/types/engine/EngineTableField";
+import { Schema } from "@/types/schema/Schema";
 import { TableButton, TableHeader, TableHeaderAction } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
 
@@ -206,27 +244,6 @@ function parseAggregateKey(code: AggregateTypes): string {
 const items = ref<any[]>([]);
 const itemsTotalElements = ref(0);
 
-export type TableOptions = {
-  groupBy?: Array<any>;
-  groupDesc?: Array<any>;
-  itemsPerPage: number;
-  multiSort?: boolean;
-  mustSort?: boolean;
-  page: number;
-  sortBy?: Array<any>;
-  sortDesc?: Array<boolean>;
-};
-
-export type TableFetchOptions = {
-  page: number;
-  size: number;
-  sort?: SortItem[] | null;
-  filter?: TableFilter | null;
-  query?: string | null;
-};
-export type SortItem = { key: string; order?: boolean | "asc" | "desc" };
-export type TableFilter = Map<string, string>;
-
 const tableOptions = ref<TableOptions>({
   page: 1,
   sortBy: [],
@@ -248,18 +265,7 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
     const payload = {};
     payload[headerKey] = value;
 
-    let updateRowURL = props.schema.source.data;
-    updateRowURL = (await resolve(props.schema, props.schema.source.data)).resolvedText;
-    updateRowURL += "/{dataId}";
-    if ((props.schema.source.data + "/{dataId}").match(variableRegexp)) {
-      const matches = (props.schema.source.data + "/{dataId}").match(variableRegexp);
-      if (matches) {
-        matches.forEach((variable) => {
-          const unwrapped = variable.slice(1, -1);
-          updateRowURL = updateRowURL.replaceAll(variable, get(row, unwrapped, null));
-        });
-      }
-    }
+    const updateRowURL = await createUpdateRowURL(row);
     //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
     const response = await axios.post(updateRowURL, payload);
     items.value[index] = response.data;
@@ -297,7 +303,6 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
     vueSchemaFormEventBus.emit("model-changed", "table-aggregates");
   }
 }
-
 
 async function loadData(params: TableFetchOptions) {
   try {
@@ -349,7 +354,8 @@ function runTableBtnLogic(btn: TableButton) {
   }
 }
 
-async function runTableActionLogic(action: TableHeaderAction, item: any) {
+async function runTableActionLogic(payload: { action: TableHeaderAction; item: any }, index: number) {
+  const action = payload.action;
   switch (action.mode) {
     case "action":
       const actionHandlerEventBus = useEventBus<string>("form-action");
@@ -360,7 +366,7 @@ async function runTableActionLogic(action: TableHeaderAction, item: any) {
         params: action.config.params,
       };
 
-      let body = await createBodyObjectFromRow(obj as any, item);
+      let body = await createBodyObjectFromRow(obj as any, payload.item);
       let params = await createParamsObject(obj as any, props.schema);
 
       let payloadObject = {
@@ -373,6 +379,15 @@ async function runTableActionLogic(action: TableHeaderAction, item: any) {
       console.debug("Action payload", payloadObject);
       break;
 
+    case "popup":
+      actionPopup.errorMessages = [];
+      actionPopup.action = action;
+      set(actionPopup.model, action.modelReference, payload.item[action.modelReference as string]);
+      actionPopup.schema = action.schema;
+      actionPopup.item = payload.item;
+      actionPopup.itemIndex = index;
+      actionPopup.show = true;
+      break;
     default:
       console.warn("unknown action mode");
   }
@@ -385,6 +400,63 @@ async function createBodyObjectFromRow(actionObj: any, row: any) {
     body[key] = get(row, unwrapped, null);
   }
   return body;
+}
+
+const actionPopupReference = ref();
+const actionPopup = reactive<{
+  errorMessages: Ref<any[]>;
+  show: boolean;
+  action: TableHeaderAction;
+  model: object;
+  schema: Schema;
+  options: object;
+  item: object;
+  itemIndex: number;
+}>({
+  errorMessages: ref([]),
+  show: false,
+  action: {} as TableHeaderAction,
+  model: {},
+  schema: {} as Schema,
+  options: props.schema.options,
+  item: {},
+  itemIndex: 0,
+});
+
+async function saveDialogForm(isActive: Ref<boolean>) {
+  const { valid, messages } = await actionPopupReference.value.validate("messages");
+  actionPopup.errorMessages = messages;
+  if (valid) {
+    const modelReference = actionPopup.action.modelReference as string;
+    const payload = {
+      [modelReference]: actionPopup.model,
+    };
+    const updateRowURL = await createUpdateRowURL(actionPopup.item);
+    console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
+    const response = await axios.post(updateRowURL, payload);
+    items.value[actionPopup.itemIndex] = response.data;
+
+    // Mock for local
+    //items.value[actionPopup.itemIndex] = { ...actionPopup.item, ...actionPopup.model };
+
+    isActive.value = false;
+  }
+}
+
+async function createUpdateRowURL(item: any) {
+  let updateRowURL = props.schema.source.data;
+  updateRowURL = (await resolve(props.schema, props.schema.source.data)).resolvedText;
+  updateRowURL += "/{dataId}";
+  if ((props.schema.source.data + "/{dataId}").match(variableRegexp)) {
+    const matches = (props.schema.source.data + "/{dataId}").match(variableRegexp);
+    if (matches) {
+      matches.forEach((variable) => {
+        const unwrapped = variable.slice(1, -1);
+        updateRowURL = updateRowURL.replaceAll(variable, get(item, unwrapped, null));
+      });
+    }
+  }
+  return updateRowURL;
 }
 
 onMounted(async () => {
@@ -404,7 +476,8 @@ tr.highlight-name > td:nth-child(1) {
 }
 
 .custom-table :deep(.v-data-table__td) {
-  padding: 0 !important;
+  padding: 0px 4px !important;
+  background-color: inherit;
 }
 </style>
 
@@ -412,11 +485,15 @@ tr.highlight-name > td:nth-child(1) {
 {
   "en": {
     "sum": "Total",
-    "avg": "Average"
+    "avg": "Average",
+    "save": "Save",
+    "close": "Close"
   },
   "pl": {
     "sum": "Suma",
-    "avg": "Średnia"
+    "avg": "Średnia",
+    "save": "Zapisz",
+    "close": "Zamknij"
   }
 }
 </i18n>

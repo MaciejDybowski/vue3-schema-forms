@@ -46,24 +46,17 @@
         </v-icon>
       </template>
       <div
-        v-for="(messages, type) in item.alerts"
-        :key="type"
+        v-for="(alert, index) in item.alerts"
+        :key="index"
         class="d-flex align-center"
       >
-        <ul style="list-style-type: none">
-          <li
-            v-for="(message, index) in messages"
-            :key="index"
-          >
-            <v-icon
-              :color="alertColors[type]"
-              :icon="alertIcons[type]"
-              class="mr-1"
-              v-bind="props"
-            />
-            <span>{{ message }}</span>
-          </li>
-        </ul>
+        <v-icon
+          :color="alertColors[alert.type]"
+          :icon="alertIcons[alert.type]"
+          class="mr-1"
+          v-bind="props"
+        />
+        <span>{{ alert.message }}</span>
       </div>
     </v-tooltip>
   </div>

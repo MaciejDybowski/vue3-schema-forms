@@ -25,7 +25,12 @@ const meta = {
   },
   args: {
     modelValue: {},
-    options: {},
+    options: {
+      fieldProps: {
+        variant: "outlined",
+        density: "compact",
+      },
+    },
   },
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
@@ -67,9 +72,20 @@ const REQUEST_PAGE_0_1_ALERT = {
             height: "0.1",
             base: "0.07",
             volume: "0.0001",
-            alerts: {
-              warning: ["no package quantity defined for product, using one package for calculations", "other message"],
-            },
+            alerts: [
+              {
+                "type": "warning",
+                "message": "no package quantity defined for product, using one package for calculations"
+              },
+              {
+                "type": "warning",
+                "message": "no retail price factor defined, cannot calculate customer margin and retail prices"
+              },
+              {
+                "type": "warning",
+                "message": "unknown product volume, cannot calculate transport cost"
+              }
+            ],
           },
           {
             name: "🍎 Apple",
@@ -77,10 +93,16 @@ const REQUEST_PAGE_0_1_ALERT = {
             height: "0.1",
             base: "0.07",
             volume: "0.0001",
-            alerts: {
-              info: ["information about row text"],
-              error: ["error about text"],
-            },
+            alerts: [
+              {
+                "type": "info",
+                "message": "no package quantity defined for product, using one package for calculations"
+              },
+              {
+                "type": "error",
+                "message": "no retail price factor defined, cannot calculate customer margin and retail prices"
+              }
+            ],
           },
           {
             name: "🍎 Apple",
@@ -171,7 +193,7 @@ const PAGE_0 = {
       base: 50,
       volume: "0.0001",
     },
-  ]
+  ],
 };
 
 const PAGE_1 = {
@@ -361,6 +383,7 @@ export const ColorableCells: Story = {
                 color: "base <= 50 ? '#EF5350' : '#81C784'",
               },
               {
+                color: "base <= 50 ? '#EF5350' : '#81C784'",
                 title: "Volume",
                 key: "volume",
                 valueMapping: "volume",
@@ -1024,6 +1047,83 @@ export const ContextActionsWithCondition: Story = {
                     },
                     props: {
                       color: "primary",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    mockData: [REQUEST_PAGE_0_1],
+  },
+};
+
+export const ContextActionWithSchemaIntegration: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content:
+            "Zdefiniowanie akcji aktualizacji danych wiersza, polega na przygotowaniu wew. formularza, który po zatwierdzeniu uderza do API endpointu pobierania danych + /{id:id} jako POST i oczekuje zwrotu całego wiersza",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Name",
+                key: "name",
+                valueMapping: "name",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Height",
+                key: "height",
+                valueMapping: "height",
+                type: "TEXT",
+              },
+              {
+                title: "Actions",
+                key: "actions",
+                actions: [
+                  {
+                    title: "Update factory cost",
+                    icon: "mdi-cog",
+                    mode: "popup",
+                    modelReference: "name",
+                    schema: {
+                      properties: {
+                        name: {
+                          label: "Input 1",
+                          layout: {
+                            component: "text-field",
+                          },
+                        },
+                      },
+                      required: ["name"],
+                    },
+                    props: {
+                      color: "error",
                     },
                   },
                 ],

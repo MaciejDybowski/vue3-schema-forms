@@ -1,4 +1,4 @@
-import { SortItem } from "@/components/controls/table/TableViewField.vue";
+import { SortItem } from "@/components/controls/table/table-types";
 
 
 export function mapSort(sort: SortItem[]): string[] | null {
