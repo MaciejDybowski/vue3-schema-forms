@@ -360,345 +360,6 @@ export const Forte: Story = {
             },
           },
         },
-        offer: {
-          properties: {
-            createdBy: {
-              label: "Created by",
-              layout: {
-                component: "data-viewer",
-                cols: {
-                  xs: 2,
-                  sm: 2,
-                  md: 2,
-                  lg: 2,
-                  xl: 2,
-                  xxl: 2,
-                },
-              },
-              valueMapping: "{offer.createdBy}",
-            },
-            createdAt: {
-              label: "Created at",
-              layout: {
-                component: "data-viewer",
-                cols: {
-                  xs: 1,
-                  sm: 1,
-                  md: 1,
-                  lg: 2,
-                  xl: 2,
-                  xxl: 2,
-                },
-              },
-              valueMapping: "{offer.createdAt}",
-            },
-          },
-          required: [],
-        },
-        PriceList: {
-          content: "<b>Price list:</b></br> \n{pricelist. label:No data}\n",
-          layout: {
-            component: "static-content",
-            tag: "p",
-          },
-        },
-        showAdditionalData: {
-          label: "Advanced options",
-          layout: {
-            component: "switch",
-          },
-        },
-        groupOfData: {
-          layout: {
-            component: "fields-group",
-            cols: {
-              xs: 12,
-              sm: 12,
-              md: 12,
-              lg: 12,
-              xl: 12,
-              xxl: 12,
-            },
-            schema: {
-              type: "object",
-              properties: {
-                offer: {
-                  properties: {
-                    currency: {
-                      label: "Currency",
-                      layout: {
-                        cols: {
-                          xs: 12,
-                          sm: 6,
-                          md: 6,
-                          lg: 4,
-                          xl: 4,
-                          xxl: 4,
-                        },
-                        component: "dictionary",
-                        props: {
-                          clearable: false,
-                        },
-                      },
-                      source: {
-                        url: "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId",
-                        title: "label",
-                        value: "id",
-                        returnObject: true,
-                      },
-                      sectionKey: "groupOfData",
-                    },
-                    currencyRate: {
-                      label: "Currency rate",
-                      layout: {
-                        cols: {
-                          xs: 12,
-                          sm: 6,
-                          md: 6,
-                          lg: 4,
-                          xl: 4,
-                          xxl: 4,
-                        },
-                        component: "number-field",
-                        props: {
-                          readonly: true,
-                        },
-                      },
-                      type: "float",
-                      sectionKey: "groupOfData",
-                    },
-                    vatRate: {
-                      label: "VAT rate (%)",
-                      layout: {
-                        cols: {
-                          xs: 12,
-                          sm: 6,
-                          md: 6,
-                          lg: 4,
-                          xl: 4,
-                          xxl: 4,
-                        },
-                        component: "select",
-                        fillRow: true,
-                      },
-                      source: {
-                        items: [
-                          {
-                            value: "23",
-                            title: "23",
-                          },
-                          {
-                            value: "22",
-                            title: "22",
-                          },
-                          {
-                            value: "25",
-                            title: "25",
-                          },
-                        ],
-                      },
-                      sectionKey: "groupOfData",
-                    },
-                  },
-                  required: [],
-                },
-                "static-content-953": {
-                  content: "Transport conditions",
-                  layout: {
-                    component: "static-content",
-                    tag: "h3",
-                  },
-                  sectionKey: "groupOfData",
-                },
-                transportConditions: {
-                  properties: {
-                    incotermsRule: {
-                      label: "Incoterms® rule",
-                      layout: {
-                        cols: {
-                          xs: 12,
-                          sm: 6,
-                          md: 6,
-                          lg: 4,
-                          xl: 4,
-                          xxl: 4,
-                        },
-                        component: "dictionary",
-                      },
-                      source: {
-                        url: "/api/dictionaries?feature-id=incoterms-rules&lm=dataId&vm=dataId",
-                        title: "label",
-                        value: "id",
-                        returnObject: true,
-                        lazy: true,
-                        singleOptionAutoSelect: true,
-                      },
-                      sectionKey: "groupOfData",
-                      onChange: {
-                        mode: "change-model",
-                        variables: [
-                          {
-                            path: "transportConditions.transportRate",
-                            value: null,
-                          },
-                        ],
-                      },
-                    },
-                    transportRate: {
-                      label: "Transport rate",
-                      layout: {
-                        cols: {
-                          xs: 12,
-                          sm: 6,
-                          md: 6,
-                          lg: 4,
-                          xl: 4,
-                          xxl: 4,
-                        },
-                        component: "text-field",
-                      },
-                      defaultValue: null,
-                      sectionKey: "groupOfData",
-                    },
-                    "static-content-965": {
-                      content: "If the Incoterms are changed, the Transport Rate field must be completed.",
-                      layout: {
-                        component: "static-content",
-                        tag: "v-alert",
-                        cols: {
-                          xs: 12,
-                          sm: 12,
-                          md: 12,
-                          lg: 8,
-                          xl: 8,
-                          xxl: 8,
-                        },
-                        props: {
-                          type: "warning",
-                          density: "compact",
-                          variant: "tonal",
-                        },
-                      },
-                      sectionKey: "groupOfData",
-                    },
-                  },
-                  required: [],
-                },
-                "static-content-413": {
-                  content: "Calculation rules",
-                  layout: {
-                    component: "static-content",
-                    tag: "h3",
-                  },
-                  sectionKey: "groupOfData",
-                },
-                calculationRules: {
-                  properties: {
-                    retailPriceFactor: {
-                      label: "Retail price factor",
-                      layout: {
-                        cols: {
-                          xs: 12,
-                          sm: 12,
-                          md: 12,
-                          lg: 4,
-                          xl: 4,
-                          xxl: 4,
-                        },
-                        fillRow: true,
-                        component: "number-field",
-                      },
-                      type: "float",
-                      precision: "2",
-                      precisionMin: "2",
-                      onChange: {
-                        mode: "emit-event",
-                        eventSignal: "table-refresh",
-                      },
-                      sectionKey: "groupOfData",
-                    },
-                    discountPercent: {
-                      label: "Customer discount (%)",
-                      layout: {
-                        cols: {
-                          xs: 12,
-                          sm: 6,
-                          md: 6,
-                          lg: 4,
-                          xl: 4,
-                          xxl: 4,
-                        },
-                        component: "text-field",
-                        props: {
-                          hint: "",
-                          "persistent-hint": true,
-                        },
-                      },
-                      defaultValue: null,
-                      expression: "",
-                      sectionKey: "groupOfData",
-                    },
-                  },
-                  required: [],
-                },
-                "static-content-678": {
-                  content:
-                    "Standard customer discounts retrieved from SAP. Retail price factor must be set to calculate retail price.",
-                  layout: {
-                    component: "static-content",
-                    tag: "v-alert",
-                    props: {
-                      variant: "text",
-                      type: "info",
-                      density: "compact",
-                    },
-                  },
-                  sectionKey: "groupOfData",
-                },
-                "static-content-868": {
-                  content:
-                    '<b>Other costs:</b><br/>\n<ul style="margin-left:20px">\n<li><b>Additional label</b>: 0,50 PLN per package</li>\n<li><b>Custom logistic service</b>: 5 PLN per product</li>\n</ul>',
-                  layout: {
-                    component: "static-content",
-                    tag: "p",
-                  },
-                  sectionKey: "groupOfData",
-                },
-              },
-              required: [],
-            },
-            props: {},
-            options: {
-              showDivider: false,
-              addBtnText: "Add",
-            },
-            if: "nata(showAdditionalData=true)",
-          },
-        },
-        "divider-212": {
-          layout: {
-            component: "divider",
-          },
-        },
-        tableHeader: {
-          content: "Products",
-          layout: {
-            component: "static-content",
-            tag: "h3",
-          },
-        },
-        offerCurrencyDescription: {
-          content: "Selected currency: {offer.currency.id:PLN}",
-          layout: {
-            component: "static-content",
-            tag: "p",
-          },
-        },
-        "divider-7072": {
-          layout: {
-            component: "divider",
-          },
-        },
         tableOfOfferItems: {
           layout: { component: "table-view" },
           source: {
@@ -735,7 +396,7 @@ export const Forte: Story = {
                 type: "TEXT",
                 editable: true,
               },
-              { title: "MaT [%]", type: "TEXT", key: "marginPercent", valueMapping: "details.marginPercent" },
+                { title: "MaT [%]", type: "TEXT", key: "marginPercent", valueMapping: "details.marginPercent" },
               {
                 title: "Recommended margin [%]",
                 type: "NUMBER",
@@ -743,30 +404,39 @@ export const Forte: Story = {
                 valueMapping: "details.recommendedMarginPercent",
               },
               {
-                title: "Recommended price",
+                title: "Recommendation",
                 type: "TEXT",
                 key: "recommendedPrice",
                 valueMapping:
-                  "{details.recommendedInvoicePrice} NN\n </br>{details.recommendedNnnPrice} NNN\n </br>{details.recommendedNnnExwPrice} NNN EXW",
+                "<div style=\"display:flex;flex-direction:column\">\n" +
+                  "  <div style=\"display:flex;justify-content:space-between;margin-bottom:8px\"><span>Margin:</span><span><b>{details.marginPercent:0}%</b></span></div>\n" +
+                  "  <div style=\"display:flex;justify-content:space-between\"><span>NN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n" +
+                  "  <div style=\"display:flex;justify-content:space-between\"><span>NNN:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n" +
+                  "  <div style=\"display:flex;justify-content:space-between\"><span>NNN EXW:</span><span><b>{details.recommendedNnnExwPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n" +
+                  "</div>",
               },
               {
-                title: "Retail factor",
-                type: "NUMBER",
-                key: "retailPriceFactor",
-                valueMapping: "retailPriceFactor",
-              },
-              {
-                title: "Retail price",
+                title: "Result",
                 type: "TEXT",
-                key: "retailPrice",
-                valueMapping: "{details.retailPriceNet:No value} net\n</br>\n{details.retailPriceGross: No value} gross",
-              },
-              {
-                title: "Retail target price gross",
-                type: "NUMBER",
-                key: "targetRetailPriceGross",
-                valueMapping: "targetRetailPriceGross",
-                editable: true,
+                key: "result",
+                valueMapping:"" +
+                  "<div style=\"display:flex;flex-direction:column\">\n" +
+                  "  <div style=\"display:flex;justify-content:space-between;margin-bottom:8px\">\n" +
+                  "    <span>MaT [%]:</span>\n" +
+                  "    <span><b>{details.marginPercent:0}%</b></span>\n" +
+                  "  </div>\n" +
+                  "  <div style=\"display:flex;justify-content:space-between\">\n" +
+                  "    <span>Retail price:</span>\n" +
+                  "  </div>\n" +
+                  "  <div style=\"display:flex;justify-content:space-between\">\n" +
+                  "    <span>-net:</span>\n" +
+                  "    <span><b>{details.retailPriceNet:0.00}</b> {details.currencyCode:PLN}</span>\n" +
+                  "  </div>\n" +
+                  "  <div style=\"display:flex;justify-content:space-between\">\n" +
+                  "    <span>-gross:</span>\n" +
+                  "    <span><b>{details.retailPriceGross:0.00}</b> {details.currencyCode:PLN}</span>\n" +
+                  "  </div>\n" +
+                  "</div>"
               },
               {
                 title: "",
