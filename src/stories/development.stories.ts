@@ -2,11 +2,8 @@
 import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
-
-
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { Schema } from "../types/schema/Schema";
-
 
 const meta = {
   title: "Development Page",
@@ -390,53 +387,60 @@ export const Forte: Story = {
                 type: "ICON",
               },
               {
-                title: "Invoice price (NN)",
-                key: "invoicePrice",
-                valueMapping: "invoicePrice",
-                type: "TEXT",
-                editable: true,
-              },
-                { title: "MaT [%]", type: "TEXT", key: "marginPercent", valueMapping: "details.marginPercent" },
-              {
-                title: "Recommended margin [%]",
-                type: "NUMBER",
-                key: "recommendedMargin",
-                valueMapping: "details.recommendedMarginPercent",
+                color: "dataId != null ? '#E0E0E0': ''",
+                title: "Input",
+                key: "inputs",
+                type: "",
+                editable: [
+                  { label: "Invoice price (NN):", valueMapping: "invoicePrice" },
+
+                  {
+                    label: "Retail price factor:",
+                    valueMapping: "details.marginPercent",
+                  },
+
+                  { label: "Retail target price gross:", valueMapping: "details.recommendedMarginPercent", class:'ml-auto' },
+                ],
+                properties: {
+                  maxWidth: 200,
+                  minWidth: 200,
+                },
               },
               {
                 title: "Recommendation",
                 type: "TEXT",
                 key: "recommendedPrice",
                 valueMapping:
-                "<div style=\"display:flex;flex-direction:column\">\n" +
-                  "  <div style=\"display:flex;justify-content:space-between;margin-bottom:8px\"><span>Margin:</span><span><b>{details.marginPercent:0}%</b></span></div>\n" +
-                  "  <div style=\"display:flex;justify-content:space-between\"><span>NN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n" +
-                  "  <div style=\"display:flex;justify-content:space-between\"><span>NNN:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n" +
-                  "  <div style=\"display:flex;justify-content:space-between\"><span>NNN EXW:</span><span><b>{details.recommendedNnnExwPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n" +
+                  '<div style="display:flex;flex-direction:column">\n' +
+                  '  <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Margin:</span><span><b>{details.marginPercent:0}%</b></span></div>\n' +
+                  '  <div style="display:flex;justify-content:space-between"><span>NN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
+                  '  <div style="display:flex;justify-content:space-between"><span>NNN:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
+                  '  <div style="display:flex;justify-content:space-between"><span>NNN EXW:</span><span><b>{details.recommendedNnnExwPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
                   "</div>",
               },
               {
                 title: "Result",
                 type: "TEXT",
                 key: "result",
-                valueMapping:"" +
-                  "<div style=\"display:flex;flex-direction:column\">\n" +
-                  "  <div style=\"display:flex;justify-content:space-between;margin-bottom:8px\">\n" +
+                valueMapping:
+                  "" +
+                  '<div style="display:flex;flex-direction:column">\n' +
+                  '  <div style="display:flex;justify-content:space-between;margin-bottom:8px">\n' +
                   "    <span>MaT [%]:</span>\n" +
                   "    <span><b>{details.marginPercent:0}%</b></span>\n" +
                   "  </div>\n" +
-                  "  <div style=\"display:flex;justify-content:space-between\">\n" +
+                  '  <div style="display:flex;justify-content:space-between">\n' +
                   "    <span>Retail price:</span>\n" +
                   "  </div>\n" +
-                  "  <div style=\"display:flex;justify-content:space-between\">\n" +
+                  '  <div style="display:flex;justify-content:space-between">\n' +
                   "    <span>-net:</span>\n" +
                   "    <span><b>{details.retailPriceNet:0.00}</b> {details.currencyCode:PLN}</span>\n" +
                   "  </div>\n" +
-                  "  <div style=\"display:flex;justify-content:space-between\">\n" +
+                  '  <div style="display:flex;justify-content:space-between">\n' +
                   "    <span>-gross:</span>\n" +
                   "    <span><b>{details.retailPriceGross:0.00}</b> {details.currencyCode:PLN}</span>\n" +
                   "  </div>\n" +
-                  "</div>"
+                  "</div>",
               },
               {
                 title: "",

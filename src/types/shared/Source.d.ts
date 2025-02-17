@@ -17,10 +17,16 @@ export interface TableHeader {
   valueMapping: string;
   title: string;
   type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE" | "ICON" | "ALERT";
-  editable?: boolean;
+  editable?: boolean | Array<HeaderEditableObject>;
   properties?: Record<string, any>;
   actions?: TableHeaderAction[];
   color?: string;
+}
+
+export interface HeaderEditableObject {
+  label: string;
+  valueMapping: string
+  class?: string;
 }
 
 export interface TableHeaderAction {
