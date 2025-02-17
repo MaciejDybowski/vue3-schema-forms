@@ -62,30 +62,17 @@
         v-else-if="header.editable == true"
         v-model="items[index][header.key]"
         v-bind="fieldProps"
-        @update:row="updateRow($event, index, header.key, items[index])"
+        @update:row="updateRow($event, index, header.valueMapping, item)"
       />
 
-      <!-- TODO create dedicate component - remove hardcode color-->
-      <div
+      <table-editable-cell-group
         v-else-if="header.editable.length > 0"
-        class="d-flex flex-wrap px-2"
-        style="gap: 4px; background-color: #f5f5f5"
-      >
-        <div
-          v-for="editableItem in header.editable"
-          :class="`flex-grow-1` + editableItem.class ? ` ${editableItem.class}` : ''"
-          style="flex: 1 1 calc(50% - 2px); min-width: 100px; max-width: calc(50% - 2px)"
-        >
-          <label class="text-caption d-block">{{ editableItem.label }}</label>
-          <input
-            :value="get(item, editableItem.valueMapping, null)"
-            class="w-100 text-body-2 px-2 py-1 border rounded mb-1"
-            style="height: 32px"
-            type="text"
-            @input="(event: any) => updateRow(event.target.value, index, editableItem.valueMapping, item)"
-          />
-        </div>
-      </div>
+        :header="header"
+        :items="header.editable"
+        :row="item"
+        v-bind="fieldProps"
+        @update:field="(event) => updateRow(event.value, index, event.valueMapping, item)"
+      />
     </template>
 
     <!-- miejsce przygotowane na agregaty -->
@@ -158,6 +145,7 @@ import { ComputedRef, Ref, computed, onMounted, reactive, ref } from "vue";
 import TableActionMenuWrapper from "@/components/controls/table/TableActionMenuWrapper.vue";
 import TableCell from "@/components/controls/table/TableCell.vue";
 import TableEditableCell from "@/components/controls/table/TableEditableCell.vue";
+import TableEditableCellGroup from "@/components/controls/table/TableEditableCellGroup.vue";
 import { TableFetchOptions, TableOptions } from "@/components/controls/table/table-types";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
@@ -288,9 +276,10 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
     payload[headerKey] = value;
 
     const updateRowURL = await createUpdateRowURL(row);
-    //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
-    const response = await axios.post(updateRowURL, payload);
-    items.value[index] = response.data;
+    console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
+    //// TODO disable mock
+    //const response = await axios.post(updateRowURL, payload);
+    //items.value[index] = response.data;
   } catch (e) {
     console.error(e);
   }
@@ -339,7 +328,7 @@ async function loadData(params: TableFetchOptions) {
     const query = mapQuery(params.query);
     const filter = params.filter ? params.filter : null;
 
-    const response = await axios.get(`${url}`, {
+    /*const response = await axios.get(`${url}`, {
       params: {
         page: params.page - 1,
         size: params.size,
@@ -347,9 +336,63 @@ async function loadData(params: TableFetchOptions) {
         sort: sort,
         filter: filter,
       },
-    });
+    });*/
 
-    items.value = response.data.content;
+    items.value = [
+      {
+        dataId: "a2a7461a-12d4-4c32-87a8-7ed545e1ba7b",
+        palletQuantity: null,
+        palletQuantityIcon: null,
+        invoicePrice: 123.0,
+        factoryCost: null,
+        retailPriceFactor: 32.1,
+        targetRetailPriceGross: null,
+        product: {
+          id: "2fb0f989-f8f7-4d74-bd82-3675e342672a",
+          number: "KR0140-MET-Y016",
+          name: "Chairs 2 pcs YADGIR",
+          status: "OFFER",
+          programName: "CHAIRS",
+          mainImage: {
+            id: "L19kZWZhdWx0X3VwbG9hZF9idWNrZXQvS1IwMTQwLU1FVC1ZMDE2XzA2LmpwZw==",
+            dataId: "2fb0f989-f8f7-4d74-bd82-3675e342672a",
+            name: "KR0140-MET-Y016_06.jpg",
+            lastModifiedAt: null,
+          },
+        },
+        details: {
+          transportCost: null,
+          otherCost: 0.0,
+          currentPrice: null,
+          nnnPrice: 159.74,
+          nnnExwPrice: null,
+          minimalInvoicePrice: null,
+          minimalMarginPercent: 15.0,
+          minimalNnnPrice: null,
+          minimalNnnExwPrice: null,
+          recommendedInvoicePrice: null,
+          recommendedMarginPercent: 25.0,
+          recommendedNnnPrice: null,
+          recommendedNnnExwPrice: null,
+          retailPriceNet: 3948.3,
+          retailPriceGross: 4343.13,
+          marginPercent: null,
+          customerMarginPercent: 0.96,
+          retailPriceFactor: 32.1,
+          currencyCode: "EUR",
+        },
+        alerts: [
+          {
+            type: "warning",
+            message: "no package quantity defined for product, using one package for calculations",
+          },
+          {
+            type: "warning",
+            message: "no transport cost rate defined, cannot calculate recommended prices and margin",
+          },
+        ],
+      },
+    ];
     itemsTotalElements.value = items.value.length;
   } catch (e) {
     console.error(e);

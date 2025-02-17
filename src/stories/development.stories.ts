@@ -341,22 +341,6 @@ export const Forte: Story = {
     schema: {
       type: "object",
       properties: {
-        customerData: {
-          content:
-            "<b>Customer:</b></br> \n{customer.name:No data}\n<br> {customer.shipCountry:No data}, {customer.salesRegion:No data}",
-          layout: {
-            component: "static-content",
-            tag: "p",
-            cols: {
-              xs: 12,
-              sm: 12,
-              md: 12,
-              lg: 8,
-              xl: 8,
-              xxl: 8,
-            },
-          },
-        },
         tableOfOfferItems: {
           layout: { component: "table-view" },
           source: {
@@ -399,7 +383,11 @@ export const Forte: Story = {
                     valueMapping: "details.marginPercent",
                   },
 
-                  { label: "Retail target price gross:", valueMapping: "details.recommendedMarginPercent", class:'ml-auto' },
+                  {
+                    label: "Retail target price gross:",
+                    valueMapping: "details.recommendedMarginPercent",
+                    class: "ml-auto",
+                  },
                 ],
                 properties: {
                   maxWidth: 200,
@@ -503,7 +491,6 @@ export const Forte: Story = {
           },
           actions: {},
         },
-        "divider-707": { layout: { component: "divider" } },
       },
       required: [],
     },
