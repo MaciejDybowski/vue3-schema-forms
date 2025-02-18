@@ -1,7 +1,7 @@
 <template>
   <base-autocomplete
     v-model="localModel"
-    :auto-select-first="true"
+    :auto-select-first="false"
     :class="bindClass(schema) + requiredInputClass"
     :clearable="!fieldProps.readonly"
     :item-title="title"
@@ -16,7 +16,7 @@
     :rules="rules"
     :search="query"
     v-bind="fieldProps"
-    @focus="fetchDictionaryData"
+    @focusin="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
     @update:search="updateQuery"
     @update:modelValue="onChange(schema, model)"
@@ -117,7 +117,7 @@ onMounted(async () => {
 
   if (localModel.value) {
     if (typeof localModel.value == "object") {
-      updateQuery(localModel.value[title.value]);
+      data.value.push(localModel.value);
     } else {
       updateQuery(localModel.value);
     }
@@ -127,8 +127,9 @@ onMounted(async () => {
 });
 
 async function fetchDictionaryData() {
-  if (data.value.length == 0 && !fieldProps.value.readonly) {
-    await load("autocomplete");
+  updateQuery("", true);
+  if (!fieldProps.value.readonly) {
+    await load("autocomplete", localModel.value ? localModel.value : null);
   }
 }
 </script>

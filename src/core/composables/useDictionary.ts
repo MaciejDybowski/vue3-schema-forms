@@ -31,9 +31,9 @@ export function useDictionary() {
   let isApiContainsDependency: RegExpMatchArray | null = null;
   let loading = ref(false);
   let data: Ref<Array<object>> = ref([]);
-  let firstLoad = ref(true);
   let query = ref("");
   let field: EngineDictionaryField = {} as EngineDictionaryField;
+  let queryBlocker = ref(false);
 
   const debounced = {
     load: debounce(load, 300),
@@ -77,7 +77,7 @@ export function useDictionary() {
     }
   }
 
-  async function load(caller: string) {
+  async function load(caller: string, firstElement = null) {
     endpoint = await resolve(field, source.url, title.value, true);
     if (logger.dictionaryLogger) {
       console.debug(
@@ -101,7 +101,24 @@ export function useDictionary() {
             },
       });
 
-      data.value = get(response.data, responseReference.data, []);
+      // TODO - better code block
+      data.value = [];
+      const newData = get(response.data, responseReference.data, []);
+      if (firstElement) {
+        const isDataInclude = newData.some((it) => it[value.value] == firstElement[value.value]);
+        if (!isDataInclude) {
+          data.value.unshift(firstElement);
+        }
+        const filteredData = newData.filter(
+          (item) => !data.value.some((existingItem) => existingItem[value.value] === item[value.value]), // Adjust comparison logic as needed
+        );
+
+        data.value = data.value.concat(filteredData);
+      } else {
+        data.value = newData;
+      }
+      // TODO - end
+
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
     } else {
@@ -126,7 +143,11 @@ export function useDictionary() {
         },
       });
       paginationOptions.value.nextPage();
-      data.value = data.value.concat(get(response.data, responseReference.data, []));
+      const newData = get(response.data, responseReference.data, []);
+      const filteredData = newData.filter(
+        (item) => !data.value.some((existingItem) => existingItem[value.value] === item[value.value]), // Adjust comparison logic as needed
+      );
+      data.value = data.value.concat(filteredData);
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
     }
@@ -136,18 +157,15 @@ export function useDictionary() {
     let urlParts = endpoint.resolvedText.split("?");
     let urlParams = new URLSearchParams(urlParts[1]);
     if (urlParams.has("query")) {
-      if (firstLoad.value) {
-        query.value = urlParams.get("query") as string;
-        firstLoad.value = false;
-      }
       urlParams.delete("query");
     }
 
     return { url: urlParts[0], params: urlParams.toString() };
   }
 
-  function updateQuery(newValue: any) {
+  function updateQuery(newValue: any, queryBlockerValue = false) {
     query.value = newValue;
+    queryBlocker.value = queryBlockerValue;
   }
 
   watch(query, (currentQuery, previousQuery) => {
@@ -160,10 +178,10 @@ export function useDictionary() {
         }
       }).length > 0;
 
-    if (logger.dictionaryLogger) {
+    if (logger.dictionaryLogger && queryInData) {
       console.debug("Result is in data, block CALL");
     }
-    queryInData ? debounced.load.cancel() : debounced.load("query");
+    !queryInData && !queryBlocker.value ? debounced.load("query") : debounced.load.cancel();
   });
 
   return {
