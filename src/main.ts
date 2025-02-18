@@ -33,6 +33,7 @@ import { StaticContentTag } from "@/types/shared/StaticContentTag";
 import { Translation } from "@/types/shared/Translation";
 
 import * as components from "../src/components/index";
+import { useEventBus } from "@vueuse/core";
 
 export declare type Components = Record<string, Component>;
 export let logger = {
@@ -72,6 +73,7 @@ export type VueSchemaFormsOptions = {
 // jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
 // import * as schemaFormModelStore from './store/formModelStore';
 // export const schemaFormModelStoreInit = schemaFormModelStore;
+ const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
   if (options?.logger) {
@@ -141,4 +143,5 @@ export {
   useResolveVariables,
   useRules,
   useSource,
+  vueSchemaFormEventBus
 };

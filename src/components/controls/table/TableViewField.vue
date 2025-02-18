@@ -162,6 +162,7 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 vueSchemaFormEventBus.on(async (event, payload) => {
+  console.debug(event, payload);
   if (payload == "action-callback" || payload == "table-aggregates" || payload == "table-refresh") {
     debounced.load(fetchDataParams.value);
   }

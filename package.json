@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.1.21-snapshot-2",
+  "version": "0.1.21-snapshot-3",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -41,10 +41,8 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@stoplight/json-ref-resolver": "3.1.6",
-    "@vueuse/core": "^10.11.1",
-    "@vueuse/math": "^11.0.3",
-    "dompurify": "^3.2.3",
-    "expr-eval": "^2.0.2",
+    "@vueuse/core": "^11.3.0",
+    "@vueuse/math": "^11.3.0",
     "flag-icons": "^7.2.3",
     "jsonata": "^2.0.5",
     "leaflet-geosearch": "^4.0.0",
