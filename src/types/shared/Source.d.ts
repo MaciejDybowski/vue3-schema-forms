@@ -16,7 +16,7 @@ export interface TableHeader {
   key: string;
   valueMapping: string;
   title: string;
-  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE" | "ICON" | "ALERT";
+  type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE" | "ICON" | "ALERT" | "COLLECTION";
   editable?: boolean | Array<HeaderEditableObject>;
   properties?: Record<string, any>;
   actions?: TableHeaderAction[];

@@ -370,6 +370,34 @@ export const Forte: Story = {
                 type: "ICON",
               },
               {
+                title: "Collection",
+                key: "collection",
+                type: "COLLECTION",
+                items: [
+                  {
+                    color: "dataId != null ? '#E0E0E0': ''",
+                    title: "Product",
+                    key: "product",
+                    valueMapping:
+                      "<b>{product.name: Product name}</b> </br>{product.number:1}\n<br/>\nProgram: {product.programName}",
+                    type: "TEXT",
+                  },
+                  {
+                    color: "dataId != null ? '#E0E0E0': ''",
+                    title: "Input",
+                    key: "inputs",
+                    type: "",
+                    editable: [
+                      { label: "Invoice price (NN):", valueMapping: "invoicePrice" },
+                    ],
+                  },
+                ],
+                properties: {
+                  maxWidth: 250,
+                  minWidth: 250,
+                },
+              },
+              {
                 color: "dataId != null ? '#E0E0E0': ''",
                 title: "Input",
                 key: "inputs",

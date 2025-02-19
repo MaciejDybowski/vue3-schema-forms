@@ -1,7 +1,7 @@
 <template>
   <div
     :style="{
-      backgroundColor: isDarkTheme ? '#424242' : '#FFFFFF',
+      backgroundColor: isDarkTheme && backgroundColor == 'transparent' ? '#424242' : backgroundColor,
       gap: '4px',
     }"
     class="d-flex flex-wrap px-2"

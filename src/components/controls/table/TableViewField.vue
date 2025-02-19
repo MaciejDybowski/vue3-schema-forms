@@ -43,6 +43,29 @@
       :key="header.key"
       #[`item.${header.key}`]="{ item, index }"
     >
+
+
+      <div v-if="header.type == 'COLLECTION'">
+        <template  v-for="collectionItem in header.items">
+          <table-editable-cell-group
+            v-if="collectionItem.editable && collectionItem.editable.length > 0"
+            :header="collectionItem"
+            :items="collectionItem.editable"
+            :row="item"
+            v-bind="fieldProps"
+            @update:field="(event) => updateRow(event.value, index, event.valueMapping, item)"
+          />
+
+          <table-cell
+            :actions="actions"
+            :header="collectionItem"
+            :item="item"
+          >
+          </table-cell>
+        </template>
+
+      </div>
+
       <table-action-menu-wrapper
         v-if="header.key == 'actions' && header.actions"
         :header="header"
@@ -204,6 +227,10 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
         header[key] = value;
         //console.log(`${key}: ${value}`);
       }
+    }
+
+    if (item.items) {
+      header["items"] = item.items;
     }
 
     if (item.editable) {
