@@ -17,16 +17,16 @@ export interface TableHeader {
   valueMapping: string;
   title: string;
   type: "TEXT" | "NUMBER" | "DATE" | "DATETIME" | "IMAGE" | "ICON" | "ALERT" | "COLLECTION";
-  editable?: boolean | Array<HeaderEditableObject>;
+  editable?: Array<HeaderEditableObject> | boolean;
   properties?: Record<string, any>;
   actions?: TableHeaderAction[];
   color?: string;
-  items?: TableHeader[]
+  items?: TableHeader[];
 }
 
 export interface HeaderEditableObject {
   label: string;
-  valueMapping: string
+  valueMapping: string;
   class?: string;
 }
 
@@ -40,7 +40,7 @@ export interface TableHeaderAction {
   condition?: string;
 
   // popup mode
-  schema?: any
+  schema?: any;
   modelReference?: string;
 }
 
