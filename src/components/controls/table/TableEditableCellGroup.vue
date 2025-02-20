@@ -4,18 +4,15 @@
       backgroundColor: isDarkTheme && backgroundColor == 'transparent' ? '#424242' : backgroundColor,
       gap: '4px',
     }"
-    class="d-flex flex-wrap px-2"
     v-bind="attrs"
   >
     <div
       v-for="editableItem in items"
       :key="editableItem.valueMapping"
-      :class="`flex-grow-1` + (editableItem.class ? ` ${editableItem.class}` : '')"
-      style="flex: 1 1 calc(50% - 2px); min-width: 100px; max-width: calc(50% - 2px)"
+      class="d-flex align-center justify-space-between"
     >
       <label
-        :style="{ color: isDarkTheme ? '#FFFFFF' : '#000000' }"
-        class="text-caption d-block"
+        :style="{ color: isDarkTheme ? '#FFFFFF' : '#000000', minWidth: '100px', marginRight: '8px' }"
       >
         {{ editableItem.label }}
       </label>
@@ -25,9 +22,10 @@
           borderColor: isDarkTheme ? '#616161' : '#C0C0C0',
           backgroundColor: isDarkTheme ? '#616161' : '#FFFFFF',
           color: isDarkTheme ? '#FFFFFF' : '#000000',
+          maxWidth: '170px'
         }"
         :value="get(row, editableItem.valueMapping, null)"
-        class="w-100 text-body-2 px-2 border rounded mb-1"
+        class="flex-grow-1 text-body-2 px-2 border rounded mb-1"
         type="text"
         @input="(event: any) => emit('update:field', { value: event.target.value, valueMapping: editableItem.valueMapping })"
       />

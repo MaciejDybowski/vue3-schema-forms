@@ -300,7 +300,6 @@ table .link {
   align-content: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
   padding: 0px 0px;
   margin: 0px 0px !important;
   box-sizing: border-box;

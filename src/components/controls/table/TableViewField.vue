@@ -44,8 +44,9 @@
       #[`item.${header.key}`]="{ item, index }"
     >
 
-
-      <div v-if="header.type == 'COLLECTION'">
+      <div v-if="header.type == 'COLLECTION'"
+           class="cell-content-collection"
+      >
         <template  v-for="collectionItem in header.items">
           <table-editable-cell-group
             v-if="collectionItem.editable && collectionItem.editable.length > 0"
@@ -571,6 +572,14 @@ tr.highlight-name > td:nth-child(1) {
 .custom-table :deep(.v-data-table__td) {
   padding: 0px 4px !important;
   background-color: inherit;
+}
+
+.cell-content-collection {
+
+  height: 100%;
+  padding: 0px 0px;
+  margin: 0px 0px !important;
+
 }
 </style>
 

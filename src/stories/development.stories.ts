@@ -370,93 +370,82 @@ export const Forte: Story = {
                 type: "ICON",
               },
               {
-                title: "Collection",
+                title: "Offer",
                 key: "collection",
                 type: "COLLECTION",
                 items: [
-                  {
-                    color: "dataId != null ? '#E0E0E0': ''",
-                    title: "Product",
-                    key: "product",
-                    valueMapping:
-                      "<b>{product.name: Product name}</b> </br>{product.number:1}\n<br/>\nProgram: {product.programName}",
-                    type: "TEXT",
-                  },
                   {
                     color: "dataId != null ? '#E0E0E0': ''",
                     title: "Input",
                     key: "inputs",
                     type: "",
                     editable: [
-                      { label: "Invoice price (NN):", valueMapping: "invoicePrice" },
+                      { label: "Invoice price (NN):", key: "invoicePrice", valueMapping: "invoicePrice"},
                     ],
                   },
+                  {
+                    color: "dataId != null ? '#E0E0E0': ''",
+                    type: "TEXT",
+                    key: "recommendedPrice",
+                    valueMapping:
+                      '<div style="display:flex;flex-direction:column">\n' +
+                      '  <div style="display:flex;justify-content:space-between"><span>Price NNN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
+                      '  <div style="display:flex;justify-content:space-between"><span>Price NNN EXW:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
+                      '  <div style="display:flex;justify-content:space-between;margin-top:8px"><span>MaT:</span><span><b>{details.marginPercent:0}%</b></span></div>\n' +
+                      "</div>",
+                  }
                 ],
-                properties: {
-                  maxWidth: 250,
-                  minWidth: 250,
-                },
+
               },
               {
-                color: "dataId != null ? '#E0E0E0': ''",
-                title: "Input",
-                key: "inputs",
-                type: "",
-                editable: [
-                  { label: "Invoice price (NN):", valueMapping: "invoicePrice" },
-
-                  {
-                    label: "Retail price factor:",
-                    valueMapping: "details.marginPercent",
-                  },
-
-                  {
-                    label: "Retail target price gross:",
-                    valueMapping: "details.recommendedMarginPercent",
-                    class: "ml-auto",
-                  },
-                ],
-                properties: {
-                  maxWidth: 200,
-                  minWidth: 200,
-                },
-              },
-              {
-                title: "Recommendation",
+                title: "Recommended",
                 type: "TEXT",
                 key: "recommendedPrice",
                 valueMapping:
                   '<div style="display:flex;flex-direction:column">\n' +
-                  '  <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Margin:</span><span><b>{details.marginPercent:0}%</b></span></div>\n' +
-                  '  <div style="display:flex;justify-content:space-between"><span>NN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
-                  '  <div style="display:flex;justify-content:space-between"><span>NNN:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
-                  '  <div style="display:flex;justify-content:space-between"><span>NNN EXW:</span><span><b>{details.recommendedNnnExwPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
+                  '  <div style="display:flex;justify-content:space-between; margin-bottom:8px"><span>Price NN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
+                  '  <div style="display:flex;justify-content:space-between"><span>Price NNN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
+                  '  <div style="display:flex;justify-content:space-between"><span>Price NNN EXW:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
+                  '  <div style="display:flex;justify-content:space-between;margin-top:8px"><span>MaT:</span><span><b>{details.marginPercent:0}%</b></span></div>\n' +
                   "</div>",
               },
               {
-                title: "Result",
-                type: "TEXT",
-                key: "result",
-                valueMapping:
-                  "" +
-                  '<div style="display:flex;flex-direction:column">\n' +
-                  '  <div style="display:flex;justify-content:space-between;margin-bottom:8px">\n' +
-                  "    <span>MaT [%]:</span>\n" +
-                  "    <span><b>{details.marginPercent:0}%</b></span>\n" +
-                  "  </div>\n" +
-                  '  <div style="display:flex;justify-content:space-between">\n' +
-                  "    <span>Retail price:</span>\n" +
-                  "  </div>\n" +
-                  '  <div style="display:flex;justify-content:space-between">\n' +
-                  "    <span>-net:</span>\n" +
-                  "    <span><b>{details.retailPriceNet:0.00}</b> {details.currencyCode:PLN}</span>\n" +
-                  "  </div>\n" +
-                  '  <div style="display:flex;justify-content:space-between">\n' +
-                  "    <span>-gross:</span>\n" +
-                  "    <span><b>{details.retailPriceGross:0.00}</b> {details.currencyCode:PLN}</span>\n" +
-                  "  </div>\n" +
-                  "</div>",
+                title: "Offer",
+                key: "collection2",
+                type: "COLLECTION",
+                items: [
+                  {
+                    color: "dataId != null ? '#E0E0E0': ''",
+                    title: "Input",
+                    key: "inputs",
+                    type: "",
+                    editable: [
+                      { label: "Target price gross:", key: "targetPriceGross", valueMapping: "targetPriceGross"},
+                      { label: "Price factor:", key: "priceFactor", valueMapping: "priceFactor"},
+                    ],
+                  },
+                  {
+                    color: "dataId != null ? '#E0E0E0': ''",
+                    title: "Result",
+                    type: "TEXT",
+                    key: "result",
+                    valueMapping:
+                      "" +
+                      '<div style="display:flex;flex-direction:column">\n' +
+                      '  <div style="display:flex;justify-content:space-between">\n' +
+                      "    <span>Price net/gross:</span>\n" +
+                      "    <span><b>{details.retailPriceNet:0.00}</b> {details.currencyCode:PLN} / <b>{details.retailPriceGross:0.00}</b> {details.currencyCode:PLN}</span>\n" +
+                      "  </div>\n" +
+                      '  <div style="display:flex;justify-content:space-between;margin-top:8px">\n' +
+                      "    <span>Retailer margin:</span>\n" +
+                      "    <span><b>{details.marginPercent:0}%</b></span>\n" +
+                      "  </div>\n" +
+                      "</div>",
+                  },
+                ],
+
               },
+
               {
                 title: "",
                 key: "actions",

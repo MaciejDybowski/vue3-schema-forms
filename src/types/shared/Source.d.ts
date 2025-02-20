@@ -21,6 +21,7 @@ export interface TableHeader {
   properties?: Record<string, any>;
   actions?: TableHeaderAction[];
   color?: string;
+  items?: TableHeader[]
 }
 
 export interface HeaderEditableObject {
