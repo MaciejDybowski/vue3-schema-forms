@@ -303,5 +303,7 @@ table .link {
   padding: 0px 0px;
   margin: 0px 0px !important;
   box-sizing: border-box;
+  height: 100%;
+  flex-grow: 1;
 }
 </style>

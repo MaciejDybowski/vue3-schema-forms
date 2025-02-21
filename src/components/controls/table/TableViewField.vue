@@ -522,7 +522,11 @@ tr.highlight-name > td:nth-child(1) {
   height: 100%;
   padding: 0px 0px;
   margin: 0px 0px !important;
+  display: flex;
+  flex-direction: column; /* Jeśli dzieci mają być w kolumnie */
 }
+
+
 </style>
 
 <i18n lang="json">

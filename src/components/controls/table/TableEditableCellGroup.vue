@@ -1,73 +1,63 @@
 <template>
   <div
-    :style="{
-      backgroundColor: isDarkTheme && backgroundColor == 'transparent' ? '#424242' : backgroundColor,
-      gap: '4px',
-    }"
+    class="cell-content"
     v-bind="attrs"
+    :style="{ backgroundColor: computedBackgroundColor, gap: '4px' }"
   >
-    <div
-      v-for="editableItem in items"
-      :key="editableItem.valueMapping"
-      class="d-flex align-center justify-space-between"
-    >
-      <label
-        :style="{ color: isDarkTheme ? '#FFFFFF' : '#000000', minWidth: '100px', marginRight: '8px' }"
-      >
-        {{ editableItem.label }}
-      </label>
+    <div v-for="item in items" :key="item.valueMapping" class="d-flex align-center justify-space-between ">
+      <label :style="labelStyle">{{ item.label }}</label>
       <input
-        :style="{
-          height: '32px',
-          borderColor: isDarkTheme ? '#616161' : '#C0C0C0',
-          backgroundColor: isDarkTheme ? '#616161' : '#FFFFFF',
-          color: isDarkTheme ? '#FFFFFF' : '#000000',
-          maxWidth: '170px'
-        }"
-        :value="get(row, editableItem.valueMapping, null)"
-        class="flex-grow-1 text-body-2 px-2 border rounded mb-1"
-        type="text"
-        @input="(event: any) => emit('update:field', { value: event.target.value, valueMapping: editableItem.valueMapping })"
+        v-bind="inputAttrs"
+        :value="get(row, item.valueMapping, '')"
+        @input="(e:any) => emit('update:field', { value: e.target.value, valueMapping: item.valueMapping })"
       />
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import jsonata from "jsonata";
 import get from "lodash/get";
 import { computed, onMounted, ref, useAttrs } from "vue";
 import { useTheme } from "vuetify";
-
-import { HeaderEditableObject, TableHeader } from "@/types/shared/Source";
+import type { HeaderEditableObject, TableHeader } from "@/types/shared/Source";
 
 const { current } = useTheme();
-
 const isDarkTheme = computed(() => current.value.dark);
-
-const props = defineProps<{
-  header: TableHeader;
-  items: Array<HeaderEditableObject>;
-  row: object;
-}>();
-
-const emit = defineEmits<{
-  (e: "update:field", val: any): void;
-}>();
-
+const props = defineProps<{ header: TableHeader; items: HeaderEditableObject[]; row: object }>();
+const emit = defineEmits<{ (e: "update:field", val: any): void }>();
 const attrs = useAttrs();
 const backgroundColor = ref("transparent");
 
-async function getBackgroundColor(header: TableHeader, item) {
+const computedBackgroundColor = computed(() =>
+  isDarkTheme.value && backgroundColor.value === "transparent" ? "#424242" : backgroundColor.value
+);
+
+const labelStyle = computed(() => ({
+  color: isDarkTheme.value ? "#FFFFFF" : "#000000",
+  minWidth: "100px",
+  marginRight: "8px",
+}));
+
+const inputAttrs = computed(() => ({
+  class: "flex-grow-1 text-body-2 px-2 border rounded mb-1",
+  type: "text",
+  style: {
+    height: "32px",
+    borderColor: isDarkTheme.value ? "#616161" : "#C0C0C0",
+    backgroundColor: isDarkTheme.value ? "#616161" : "#FFFFFF",
+    color: isDarkTheme.value ? "#FFFFFF" : "#000000",
+    maxWidth: "170px",
+  },
+}));
+
+async function getBackgroundColor(header: TableHeader, item: object) {
   if (header.color) {
-    const mergedModel = {
-      header: header,
-      ...item,
-    };
-    const nata = jsonata(header.color);
-    const result = await nata.evaluate(mergedModel);
-    if (result) {
-      return result;
+    try {
+      const result = await jsonata(header.color).evaluate({ header, ...item });
+      return result || "transparent";
+    } catch {
+      return "transparent";
     }
   }
   return "transparent";
@@ -78,4 +68,4 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="css" scoped></style>
+<style scoped></style>
