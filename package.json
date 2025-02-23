@@ -39,6 +39,7 @@
   },
   "homepage": "https://maciejdybowski.github.io/vue3-schema-forms/",
   "dependencies": {
+    "@guolao/vue-monaco-editor": "^1.5.4",
     "@mdi/font": "^7.4.47",
     "@stoplight/json-ref-resolver": "3.1.6",
     "@vueuse/core": "^11.3.0",
