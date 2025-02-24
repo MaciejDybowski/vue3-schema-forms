@@ -8,6 +8,12 @@ import { EngineField } from "@/types/engine/EngineField";
 import { variableRegexp } from "../engine/utils";
 import { useDateFormat } from "./useDateFormat";
 
+interface VariableSyntaxProps {
+  defaultValue: any;
+  typeOfValue: any;
+  formatterProps: any;
+}
+
 export function useResolveVariables() {
   const { dateFormat } = useDateFormat();
   const { formattedNumber, roundTo } = useNumber();
@@ -21,7 +27,14 @@ export function useResolveVariables() {
         const unwrapped = match.slice(1, -1);
         const split = unwrapped.split(":");
         let variable = split[0];
-        const defaultValue = split.length === 2 ? split[1] : null;
+        const defaultValue = split.length >= 2 ? split[1] : null;
+        const typeOfValue = split.length >= 3 ? split[2] : null;
+        const formatterProps = split.length == 4 ? split[3] : null;
+        const valueProps: VariableSyntaxProps = {
+          defaultValue: defaultValue,
+          typeOfValue: typeOfValue,
+          formatterProps: formatterProps,
+        };
 
         const formModelStore = useFormModelStore(field.formId);
         const model = formModelStore.getFormModelForResolve;
@@ -32,7 +45,7 @@ export function useResolveVariables() {
         const nata = jsonata(variable);
         let value = await nata.evaluate(model);
 
-        value = doSthWithValue(field, value, defaultValue, title, rawNumber);
+        value = doSthWithValue(field, value, valueProps, title, rawNumber);
         inputString = inputString.replace(match, value + "");
 
         if (!value) {
@@ -44,8 +57,8 @@ export function useResolveVariables() {
     return { resolvedText: inputString, allVariablesResolved };
   }
 
-  function fillPath(fieldPath: string| undefined, fieldIndex: number | undefined, variable: string) {
-    if(!fieldPath && !fieldPath) {
+  function fillPath(fieldPath: string | undefined, fieldIndex: number | undefined, variable: string) {
+    if (!fieldPath && !fieldPath) {
       return variable;
     }
     const splitPath = fieldPath.split(".");
@@ -57,10 +70,10 @@ export function useResolveVariables() {
   }
 
   function dopasujTablice(tablicaA, tablicaB) {
-
     function ekstraktNazwa(pole) {
       return pole.split("[")[0];
     }
+
     return tablicaB.map((elementB) => {
       if (elementB.includes("[]")) {
         const nazwaB = ekstraktNazwa(elementB);
@@ -71,7 +84,7 @@ export function useResolveVariables() {
     });
   }
 
-  function doSthWithValue(field, value: any, defaultValue: any, title, rawNumber = false) {
+  function doSthWithValue(field, value: any, valueProps: VariableSyntaxProps, title, rawNumber = false) {
     if (typeof value === "number" && value !== 0) {
       if (rawNumber) {
         // gdy chcemy używać liczb w adresie URL to nie może być to kropka ani nie może być to formatowane
@@ -85,8 +98,8 @@ export function useResolveVariables() {
         value = formattedNumber(
           value,
           "decimal",
-          field.precisionMin ? Number(field.precisionMin) : 0,
-          field.precision ? Number(field.precision) : 2,
+          valueProps.formatterProps ? valueProps.formatterProps : field.precisionMin ? Number(field.precisionMin) : 0,
+          valueProps.formatterProps ? valueProps.formatterProps : field.precision ? Number(field.precision) : 2,
         );
       }
     }
@@ -102,8 +115,8 @@ export function useResolveVariables() {
       value = value[title];
     }
 
-    if ((value == null && defaultValue !== null) || (value == "" && value != 0) || value == undefined || value == "") {
-      value = defaultValue;
+    if ((value == null && valueProps.defaultValue !== null) || (value == "" && value != 0) || value == undefined || value == "") {
+      value = valueProps.defaultValue;
     }
 
     return value;

@@ -330,364 +330,363 @@ export const ForteStart: Story = {
   },
 };
 
-
 const MOCK_RESPONSE = {
-  "content": [
+  content: [
     {
-      "dataId": "d598bcd7-c98d-4704-bdc6-4320044540e5",
-      "palletQuantity": null,
-      "palletQuantityIcon": null,
-      "invoicePrice": 0.0000,
-      "factoryCost": null,
-      "retailPriceFactor": 1.0000,
-      "targetRetailPriceGross": null,
-      "product": {
-        "id": "b7a10f25-7526-475a-981c-f133543421b8",
-        "number": "KR0139-MET-LY1903",
-        "name": "Chairs 2 pcs TUMKUR",
-        "status": "OFFER",
-        "programName": "CHAIRS",
-        "mainImage": {
-          "id": "L2ltcG9ydGVkL3Byb2R1Y3RzL2tyemVzJUM1JTgyYV8yMDIxLTA5LTAyXzExMzA0MS9LUjAxMzktTUVULUxZMTkwM18wNi5qcGc=",
-          "dataId": "b7a10f25-7526-475a-981c-f133543421b8",
-          "name": "KR0139-MET-LY1903_06.jpg",
-          "lastModifiedAt": null
-        }
+      dataId: "d598bcd7-c98d-4704-bdc6-4320044540e5",
+      palletQuantity: null,
+      palletQuantityIcon: null,
+      invoicePrice: 0.0,
+      factoryCost: null,
+      retailPriceFactor: 1.0,
+      targetRetailPriceGross: null,
+      product: {
+        id: "b7a10f25-7526-475a-981c-f133543421b8",
+        number: "KR0139-MET-LY1903",
+        name: "Chairs 2 pcs TUMKUR",
+        status: "OFFER",
+        programName: "CHAIRS",
+        mainImage: {
+          id: "L2ltcG9ydGVkL3Byb2R1Y3RzL2tyemVzJUM1JTgyYV8yMDIxLTA5LTAyXzExMzA0MS9LUjAxMzktTUVULUxZMTkwM18wNi5qcGc=",
+          dataId: "b7a10f25-7526-475a-981c-f133543421b8",
+          name: "KR0139-MET-LY1903_06.jpg",
+          lastModifiedAt: null,
+        },
       },
-      "details": {
-        "transportCost": 0.770000,
-        "otherCost": 2.000000,
-        "currentPrice": null,
-        "nnnPrice": 0.000000,
-        "nnnExwPrice": -0.770000,
-        "minimalInvoicePrice": null,
-        "minimalMarginPercent": 15.00,
-        "minimalNnnPrice": null,
-        "minimalNnnExwPrice": null,
-        "recommendedInvoicePrice": null,
-        "recommendedMarginPercent": 25.00,
-        "recommendedNnnPrice": null,
-        "recommendedNnnExwPrice": null,
-        "retailPriceNet": 0.000000,
-        "retailPriceGross": 0.000000,
-        "marginPercent": 0.00,
-        "customerMarginPercent": 0.00,
-        "retailPriceFactor": 1.0000,
-        "currencyCode": "EUR"
+      details: {
+        transportCost: 0.77,
+        otherCost: 2.0,
+        currentPrice: null,
+        nnnPrice: 0.0,
+        nnnExwPrice: -0.77,
+        minimalInvoicePrice: null,
+        minimalMarginPercent: 15.0,
+        minimalNnnPrice: null,
+        minimalNnnExwPrice: null,
+        recommendedInvoicePrice: null,
+        recommendedMarginPercent: 25.0,
+        recommendedNnnPrice: null,
+        recommendedNnnExwPrice: null,
+        retailPriceNet: 0.0,
+        retailPriceGross: 0.0,
+        marginPercent: 0.0,
+        customerMarginPercent: 0.0,
+        retailPriceFactor: 1.0,
+        currencyCode: "EUR",
       },
-      "alerts": [
+      alerts: [
         {
-          "type": "warning",
-          "message": "no package quantity defined for product, using one package for calculations"
-        }
-      ]
+          type: "warning",
+          message: "no package quantity defined for product, using one package for calculations",
+        },
+      ],
     },
     {
-      "dataId": "3ba78ebc-4bd7-4f0a-b220-c12a0da91e2c",
-      "palletQuantity": null,
-      "palletQuantityIcon": null,
-      "invoicePrice": 0.0000,
-      "factoryCost": null,
-      "retailPriceFactor": 1.0000,
-      "targetRetailPriceGross": null,
-      "product": {
-        "id": "b673fc28-8981-4df7-97a6-9d16017f0d35",
-        "number": "KR0139-MET-Y676",
-        "name": "Chairs 2 pcs TUMKUR",
-        "status": "OFFER",
-        "programName": "CHAIRS",
-        "mainImage": {
-          "id": "L19kZWZhdWx0X3VwbG9hZF9idWNrZXQvS1IwMTM5LU1FVC1ZNjc2XzA2LmpwZw==",
-          "dataId": "b673fc28-8981-4df7-97a6-9d16017f0d35",
-          "name": "KR0139-MET-Y676_06.jpg",
-          "lastModifiedAt": null
-        }
+      dataId: "3ba78ebc-4bd7-4f0a-b220-c12a0da91e2c",
+      palletQuantity: null,
+      palletQuantityIcon: null,
+      invoicePrice: 0.0,
+      factoryCost: null,
+      retailPriceFactor: 1.0,
+      targetRetailPriceGross: null,
+      product: {
+        id: "b673fc28-8981-4df7-97a6-9d16017f0d35",
+        number: "KR0139-MET-Y676",
+        name: "Chairs 2 pcs TUMKUR",
+        status: "OFFER",
+        programName: "CHAIRS",
+        mainImage: {
+          id: "L19kZWZhdWx0X3VwbG9hZF9idWNrZXQvS1IwMTM5LU1FVC1ZNjc2XzA2LmpwZw==",
+          dataId: "b673fc28-8981-4df7-97a6-9d16017f0d35",
+          name: "KR0139-MET-Y676_06.jpg",
+          lastModifiedAt: null,
+        },
       },
-      "details": {
-        "transportCost": 0.770000,
-        "otherCost": 2.000000,
-        "currentPrice": null,
-        "nnnPrice": 0.000000,
-        "nnnExwPrice": -0.770000,
-        "minimalInvoicePrice": null,
-        "minimalMarginPercent": 15.00,
-        "minimalNnnPrice": null,
-        "minimalNnnExwPrice": null,
-        "recommendedInvoicePrice": null,
-        "recommendedMarginPercent": 25.00,
-        "recommendedNnnPrice": null,
-        "recommendedNnnExwPrice": null,
-        "retailPriceNet": 0.000000,
-        "retailPriceGross": 0.000000,
-        "marginPercent": 0.00,
-        "customerMarginPercent": 0.00,
-        "retailPriceFactor": 1.0000,
-        "currencyCode": "EUR"
+      details: {
+        transportCost: 0.77,
+        otherCost: 2.0,
+        currentPrice: null,
+        nnnPrice: 0.0,
+        nnnExwPrice: -0.77,
+        minimalInvoicePrice: null,
+        minimalMarginPercent: 15.0,
+        minimalNnnPrice: null,
+        minimalNnnExwPrice: null,
+        recommendedInvoicePrice: null,
+        recommendedMarginPercent: 25.0,
+        recommendedNnnPrice: null,
+        recommendedNnnExwPrice: null,
+        retailPriceNet: 0.0,
+        retailPriceGross: 0.0,
+        marginPercent: 0.0,
+        customerMarginPercent: 0.0,
+        retailPriceFactor: 1.0,
+        currencyCode: "EUR",
       },
-      "alerts": [
+      alerts: [
         {
-          "type": "warning",
-          "message": "no package quantity defined for product, using one package for calculations"
-        }
-      ]
+          type: "warning",
+          message: "no package quantity defined for product, using one package for calculations",
+        },
+      ],
     },
     {
-      "dataId": "cc1eaf8c-7e75-483c-be56-e8298f3bd26b",
-      "palletQuantity": null,
-      "palletQuantityIcon": null,
-      "invoicePrice": 0.0000,
-      "factoryCost": null,
-      "retailPriceFactor": 1.0000,
-      "targetRetailPriceGross": null,
-      "product": {
-        "id": "114981bc-4602-43de-a2df-f4071908a96f",
-        "number": "KR0128-B99-ONR91",
-        "name": "Chairs 2 pcs VEGALTA",
-        "status": "OFFER",
-        "programName": "CHAIRS",
-        "mainImage": {
-          "id": "L2ltcG9ydGVkL3Byb2R1Y3RzL2tyemVzJUM1JTgyYV8yMDIxLTA5LTAyXzExMzA0MS9LUjAxMjgtQjk5LU9OUjkxXzA2LmpwZw==",
-          "dataId": "114981bc-4602-43de-a2df-f4071908a96f",
-          "name": "KR0128-B99-ONR91_06.jpg",
-          "lastModifiedAt": null
-        }
+      dataId: "cc1eaf8c-7e75-483c-be56-e8298f3bd26b",
+      palletQuantity: null,
+      palletQuantityIcon: null,
+      invoicePrice: 0.0,
+      factoryCost: null,
+      retailPriceFactor: 1.0,
+      targetRetailPriceGross: null,
+      product: {
+        id: "114981bc-4602-43de-a2df-f4071908a96f",
+        number: "KR0128-B99-ONR91",
+        name: "Chairs 2 pcs VEGALTA",
+        status: "OFFER",
+        programName: "CHAIRS",
+        mainImage: {
+          id: "L2ltcG9ydGVkL3Byb2R1Y3RzL2tyemVzJUM1JTgyYV8yMDIxLTA5LTAyXzExMzA0MS9LUjAxMjgtQjk5LU9OUjkxXzA2LmpwZw==",
+          dataId: "114981bc-4602-43de-a2df-f4071908a96f",
+          name: "KR0128-B99-ONR91_06.jpg",
+          lastModifiedAt: null,
+        },
       },
-      "details": {
-        "transportCost": 0.720000,
-        "otherCost": 2.000000,
-        "currentPrice": null,
-        "nnnPrice": 0.000000,
-        "nnnExwPrice": -0.720000,
-        "minimalInvoicePrice": null,
-        "minimalMarginPercent": 15.00,
-        "minimalNnnPrice": null,
-        "minimalNnnExwPrice": null,
-        "recommendedInvoicePrice": null,
-        "recommendedMarginPercent": 25.00,
-        "recommendedNnnPrice": null,
-        "recommendedNnnExwPrice": null,
-        "retailPriceNet": 0.000000,
-        "retailPriceGross": 0.000000,
-        "marginPercent": 0.00,
-        "customerMarginPercent": 0.00,
-        "retailPriceFactor": 1.0000,
-        "currencyCode": "EUR"
+      details: {
+        transportCost: 0.72,
+        otherCost: 2.0,
+        currentPrice: null,
+        nnnPrice: 0.0,
+        nnnExwPrice: -0.72,
+        minimalInvoicePrice: null,
+        minimalMarginPercent: 15.0,
+        minimalNnnPrice: null,
+        minimalNnnExwPrice: null,
+        recommendedInvoicePrice: null,
+        recommendedMarginPercent: 25.0,
+        recommendedNnnPrice: null,
+        recommendedNnnExwPrice: null,
+        retailPriceNet: 0.0,
+        retailPriceGross: 0.0,
+        marginPercent: 0.0,
+        customerMarginPercent: 0.0,
+        retailPriceFactor: 1.0,
+        currencyCode: "EUR",
       },
-      "alerts": [
+      alerts: [
         {
-          "type": "warning",
-          "message": "no package quantity defined for product, using one package for calculations"
-        }
-      ]
+          type: "warning",
+          message: "no package quantity defined for product, using one package for calculations",
+        },
+      ],
     },
     {
-      "dataId": "018c1bfb-82d4-4522-8adc-bf10b01f379d",
-      "palletQuantity": null,
-      "palletQuantityIcon": null,
-      "invoicePrice": 0.0000,
-      "factoryCost": null,
-      "retailPriceFactor": 1.0000,
-      "targetRetailPriceGross": null,
-      "product": {
-        "id": "2fb0f989-f8f7-4d74-bd82-3675e342672a",
-        "number": "KR0140-MET-Y016",
-        "name": "Chairs 2 pcs YADGIR",
-        "status": "OFFER",
-        "programName": "CHAIRS",
-        "mainImage": {
-          "id": "L19kZWZhdWx0X3VwbG9hZF9idWNrZXQvS1IwMTQwLU1FVC1ZMDE2XzA2LmpwZw==",
-          "dataId": "2fb0f989-f8f7-4d74-bd82-3675e342672a",
-          "name": "KR0140-MET-Y016_06.jpg",
-          "lastModifiedAt": null
-        }
+      dataId: "018c1bfb-82d4-4522-8adc-bf10b01f379d",
+      palletQuantity: null,
+      palletQuantityIcon: null,
+      invoicePrice: 0.0,
+      factoryCost: null,
+      retailPriceFactor: 1.0,
+      targetRetailPriceGross: null,
+      product: {
+        id: "2fb0f989-f8f7-4d74-bd82-3675e342672a",
+        number: "KR0140-MET-Y016",
+        name: "Chairs 2 pcs YADGIR",
+        status: "OFFER",
+        programName: "CHAIRS",
+        mainImage: {
+          id: "L19kZWZhdWx0X3VwbG9hZF9idWNrZXQvS1IwMTQwLU1FVC1ZMDE2XzA2LmpwZw==",
+          dataId: "2fb0f989-f8f7-4d74-bd82-3675e342672a",
+          name: "KR0140-MET-Y016_06.jpg",
+          lastModifiedAt: null,
+        },
       },
-      "details": {
-        "transportCost": 0.660000,
-        "otherCost": 2.000000,
-        "currentPrice": null,
-        "nnnPrice": 0.000000,
-        "nnnExwPrice": -0.660000,
-        "minimalInvoicePrice": null,
-        "minimalMarginPercent": 15.00,
-        "minimalNnnPrice": null,
-        "minimalNnnExwPrice": null,
-        "recommendedInvoicePrice": null,
-        "recommendedMarginPercent": 25.00,
-        "recommendedNnnPrice": null,
-        "recommendedNnnExwPrice": null,
-        "retailPriceNet": 0.000000,
-        "retailPriceGross": 0.000000,
-        "marginPercent": 0.00,
-        "customerMarginPercent": 0.00,
-        "retailPriceFactor": 1.0000,
-        "currencyCode": "EUR"
+      details: {
+        transportCost: 0.66,
+        otherCost: 2.0,
+        currentPrice: null,
+        nnnPrice: 0.0,
+        nnnExwPrice: -0.66,
+        minimalInvoicePrice: null,
+        minimalMarginPercent: 15.0,
+        minimalNnnPrice: null,
+        minimalNnnExwPrice: null,
+        recommendedInvoicePrice: null,
+        recommendedMarginPercent: 25.0,
+        recommendedNnnPrice: null,
+        recommendedNnnExwPrice: null,
+        retailPriceNet: 0.0,
+        retailPriceGross: 0.0,
+        marginPercent: 0.0,
+        customerMarginPercent: 0.0,
+        retailPriceFactor: 1.0,
+        currencyCode: "EUR",
       },
-      "alerts": [
+      alerts: [
         {
-          "type": "warning",
-          "message": "no package quantity defined for product, using one package for calculations"
-        }
-      ]
+          type: "warning",
+          message: "no package quantity defined for product, using one package for calculations",
+        },
+      ],
     },
     {
-      "dataId": "46172056-5813-49e5-83f3-4effd9efb10d",
-      "palletQuantity": null,
-      "palletQuantityIcon": null,
-      "invoicePrice": 0.0000,
-      "factoryCost": null,
-      "retailPriceFactor": 1.0000,
-      "targetRetailPriceGross": null,
-      "product": {
-        "id": "cfb1a8b0-f5e4-485a-82e5-5d8102ad3046",
-        "number": "FSGK233B-M395",
-        "name": "Chest",
-        "status": null,
-        "programName": "FIRST LEAGUE",
-        "mainImage": {
-          "id": "L19kZWZhdWx0X3VwbG9hZF9idWNrZXQvRlNHSzIzM0ItTTM5NV8wNi5qcGc=",
-          "dataId": "cfb1a8b0-f5e4-485a-82e5-5d8102ad3046",
-          "name": "FSGK233B-M395_06.jpg",
-          "lastModifiedAt": null
-        }
+      dataId: "46172056-5813-49e5-83f3-4effd9efb10d",
+      palletQuantity: null,
+      palletQuantityIcon: null,
+      invoicePrice: 0.0,
+      factoryCost: null,
+      retailPriceFactor: 1.0,
+      targetRetailPriceGross: null,
+      product: {
+        id: "cfb1a8b0-f5e4-485a-82e5-5d8102ad3046",
+        number: "FSGK233B-M395",
+        name: "Chest",
+        status: null,
+        programName: "FIRST LEAGUE",
+        mainImage: {
+          id: "L19kZWZhdWx0X3VwbG9hZF9idWNrZXQvRlNHSzIzM0ItTTM5NV8wNi5qcGc=",
+          dataId: "cfb1a8b0-f5e4-485a-82e5-5d8102ad3046",
+          name: "FSGK233B-M395_06.jpg",
+          lastModifiedAt: null,
+        },
       },
-      "details": {
-        "transportCost": null,
-        "otherCost": 2.000000,
-        "currentPrice": null,
-        "nnnPrice": 0.000000,
-        "nnnExwPrice": null,
-        "minimalInvoicePrice": null,
-        "minimalMarginPercent": 15.00,
-        "minimalNnnPrice": null,
-        "minimalNnnExwPrice": null,
-        "recommendedInvoicePrice": null,
-        "recommendedMarginPercent": 25.00,
-        "recommendedNnnPrice": null,
-        "recommendedNnnExwPrice": null,
-        "retailPriceNet": 0.000000,
-        "retailPriceGross": 0.000000,
-        "marginPercent": 0.00,
-        "customerMarginPercent": 0.00,
-        "retailPriceFactor": 1.0000,
-        "currencyCode": "EUR"
+      details: {
+        transportCost: null,
+        otherCost: 2.0,
+        currentPrice: null,
+        nnnPrice: 0.0,
+        nnnExwPrice: null,
+        minimalInvoicePrice: null,
+        minimalMarginPercent: 15.0,
+        minimalNnnPrice: null,
+        minimalNnnExwPrice: null,
+        recommendedInvoicePrice: null,
+        recommendedMarginPercent: 25.0,
+        recommendedNnnPrice: null,
+        recommendedNnnExwPrice: null,
+        retailPriceNet: 0.0,
+        retailPriceGross: 0.0,
+        marginPercent: 0.0,
+        customerMarginPercent: 0.0,
+        retailPriceFactor: 1.0,
+        currencyCode: "EUR",
       },
-      "alerts": [
+      alerts: [
         {
-          "type": "warning",
-          "message": "no package quantity defined for product, using one package for calculations"
+          type: "warning",
+          message: "no package quantity defined for product, using one package for calculations",
         },
         {
-          "type": "warning",
-          "message": "unknown product volume, cannot calculate transport cost"
-        }
-      ]
+          type: "warning",
+          message: "unknown product volume, cannot calculate transport cost",
+        },
+      ],
     },
     {
-      "dataId": "3faacbf3-ac73-4dc7-a6a7-a963c5367f36",
-      "palletQuantity": null,
-      "palletQuantityIcon": null,
-      "invoicePrice": 0.0000,
-      "factoryCost": null,
-      "retailPriceFactor": 1.0000,
-      "targetRetailPriceGross": null,
-      "product": {
-        "id": "a1856746-6171-4a44-8b13-fe3a91cd855b",
-        "number": "KR0096-D47-LAT1",
-        "name": "Set 2 chairs",
-        "status": "OFFER",
-        "programName": "CHAIRS",
-        "mainImage": {
-          "id": "L2ltcG9ydGVkL3Byb2R1Y3RzL2tyemVzJUM1JTgyYV8yMDIxLTA5LTAyXzExMzA0MS9LUjAwOTYtRDQ3LUxBVDFfMDYuanBn",
-          "dataId": "a1856746-6171-4a44-8b13-fe3a91cd855b",
-          "name": "KR0096-D47-LAT1_06.jpg",
-          "lastModifiedAt": null
-        }
+      dataId: "3faacbf3-ac73-4dc7-a6a7-a963c5367f36",
+      palletQuantity: null,
+      palletQuantityIcon: null,
+      invoicePrice: 0.0,
+      factoryCost: null,
+      retailPriceFactor: 1.0,
+      targetRetailPriceGross: null,
+      product: {
+        id: "a1856746-6171-4a44-8b13-fe3a91cd855b",
+        number: "KR0096-D47-LAT1",
+        name: "Set 2 chairs",
+        status: "OFFER",
+        programName: "CHAIRS",
+        mainImage: {
+          id: "L2ltcG9ydGVkL3Byb2R1Y3RzL2tyemVzJUM1JTgyYV8yMDIxLTA5LTAyXzExMzA0MS9LUjAwOTYtRDQ3LUxBVDFfMDYuanBn",
+          dataId: "a1856746-6171-4a44-8b13-fe3a91cd855b",
+          name: "KR0096-D47-LAT1_06.jpg",
+          lastModifiedAt: null,
+        },
       },
-      "details": {
-        "transportCost": 0.900000,
-        "otherCost": 2.000000,
-        "currentPrice": null,
-        "nnnPrice": 0.000000,
-        "nnnExwPrice": -0.900000,
-        "minimalInvoicePrice": null,
-        "minimalMarginPercent": 15.00,
-        "minimalNnnPrice": null,
-        "minimalNnnExwPrice": null,
-        "recommendedInvoicePrice": null,
-        "recommendedMarginPercent": 25.00,
-        "recommendedNnnPrice": null,
-        "recommendedNnnExwPrice": null,
-        "retailPriceNet": 0.000000,
-        "retailPriceGross": 0.000000,
-        "marginPercent": 0.00,
-        "customerMarginPercent": 0.00,
-        "retailPriceFactor": 1.0000,
-        "currencyCode": "EUR"
+      details: {
+        transportCost: 0.9,
+        otherCost: 2.0,
+        currentPrice: null,
+        nnnPrice: 0.0,
+        nnnExwPrice: -0.9,
+        minimalInvoicePrice: null,
+        minimalMarginPercent: 15.0,
+        minimalNnnPrice: null,
+        minimalNnnExwPrice: null,
+        recommendedInvoicePrice: null,
+        recommendedMarginPercent: 25.0,
+        recommendedNnnPrice: null,
+        recommendedNnnExwPrice: null,
+        retailPriceNet: 0.0,
+        retailPriceGross: 0.0,
+        marginPercent: 0.0,
+        customerMarginPercent: 0.0,
+        retailPriceFactor: 1.0,
+        currencyCode: "EUR",
       },
-      "alerts": [
+      alerts: [
         {
-          "type": "warning",
-          "message": "no package quantity defined for product, using one package for calculations"
-        }
-      ]
+          type: "warning",
+          message: "no package quantity defined for product, using one package for calculations",
+        },
+      ],
     },
     {
-      "dataId": "3d4aaec7-cfec-4b82-965f-92d7bf697d29",
-      "palletQuantity": null,
-      "palletQuantityIcon": null,
-      "invoicePrice": 0.0000,
-      "factoryCost": null,
-      "retailPriceFactor": 1.0000,
-      "targetRetailPriceGross": null,
-      "product": {
-        "id": "f61512fa-7c71-4898-86d4-3ff52c966d33",
-        "number": "KR0112-MET-YBS07",
-        "name": "Set.2chairs.metal.chr/dbl.stitching Grey",
-        "status": "OFFER",
-        "programName": "CHAIRS",
-        "mainImage": {
-          "id": "L2ltcG9ydGVkL3Byb2R1Y3RzL2tyemVzJUM1JTgyYV8yMDIxLTA5LTAyXzExMzA0MS9LUjAxMTItTUVULVlCUzA3XzA2LmpwZw==",
-          "dataId": "f61512fa-7c71-4898-86d4-3ff52c966d33",
-          "name": "KR0112-MET-YBS07_06.jpg",
-          "lastModifiedAt": null
-        }
+      dataId: "3d4aaec7-cfec-4b82-965f-92d7bf697d29",
+      palletQuantity: null,
+      palletQuantityIcon: null,
+      invoicePrice: 0.0,
+      factoryCost: null,
+      retailPriceFactor: 1.0,
+      targetRetailPriceGross: null,
+      product: {
+        id: "f61512fa-7c71-4898-86d4-3ff52c966d33",
+        number: "KR0112-MET-YBS07",
+        name: "Set.2chairs.metal.chr/dbl.stitching Grey",
+        status: "OFFER",
+        programName: "CHAIRS",
+        mainImage: {
+          id: "L2ltcG9ydGVkL3Byb2R1Y3RzL2tyemVzJUM1JTgyYV8yMDIxLTA5LTAyXzExMzA0MS9LUjAxMTItTUVULVlCUzA3XzA2LmpwZw==",
+          dataId: "f61512fa-7c71-4898-86d4-3ff52c966d33",
+          name: "KR0112-MET-YBS07_06.jpg",
+          lastModifiedAt: null,
+        },
       },
-      "details": {
-        "transportCost": 0.460000,
-        "otherCost": 2.000000,
-        "currentPrice": null,
-        "nnnPrice": 0.000000,
-        "nnnExwPrice": -0.460000,
-        "minimalInvoicePrice": null,
-        "minimalMarginPercent": 15.00,
-        "minimalNnnPrice": null,
-        "minimalNnnExwPrice": null,
-        "recommendedInvoicePrice": null,
-        "recommendedMarginPercent": 25.00,
-        "recommendedNnnPrice": null,
-        "recommendedNnnExwPrice": null,
-        "retailPriceNet": 0.000000,
-        "retailPriceGross": 0.000000,
-        "marginPercent": 0.00,
-        "customerMarginPercent": 0.00,
-        "retailPriceFactor": 1.0000,
-        "currencyCode": "EUR"
+      details: {
+        transportCost: 0.46,
+        otherCost: 2.0,
+        currentPrice: null,
+        nnnPrice: 0.0,
+        nnnExwPrice: -0.46,
+        minimalInvoicePrice: null,
+        minimalMarginPercent: 15.0,
+        minimalNnnPrice: null,
+        minimalNnnExwPrice: null,
+        recommendedInvoicePrice: null,
+        recommendedMarginPercent: 25.0,
+        recommendedNnnPrice: null,
+        recommendedNnnExwPrice: null,
+        retailPriceNet: 0.0,
+        retailPriceGross: 0.0,
+        marginPercent: 0.0,
+        customerMarginPercent: 0.0,
+        retailPriceFactor: 1.0,
+        currencyCode: "EUR",
       },
-      "alerts": [
+      alerts: [
         {
-          "type": "warning",
-          "message": "no package quantity defined for product, using one package for calculations"
-        }
-      ]
-    }
+          type: "warning",
+          message: "no package quantity defined for product, using one package for calculations",
+        },
+      ],
+    },
   ],
-  "page": {
-    "size": 10,
-    "number": 0,
-    "totalElements": 7,
-    "totalPages": 1
-  }
-}
+  page: {
+    size: 10,
+    number: 0,
+    totalElements: 7,
+    totalPages: 1,
+  },
+};
 
 const OFFER_ITEMS_MOCK = {
   url: "/api/v1/offers/maciek-offer/offer-items?page=0&size=10",
@@ -696,7 +695,7 @@ const OFFER_ITEMS_MOCK = {
   response: (request) => {
     const { body, searchParams } = request;
 
-    return MOCK_RESPONSE
+    return MOCK_RESPONSE;
   },
 };
 
@@ -706,10 +705,18 @@ export const Forte: Story = {
       offer: {
         id: "maciek-offer",
       },
+      liczba: 3.2133232,
     },
     schema: {
       type: "object",
       properties: {
+        span: {
+          content: "Liczba: {liczba:0:NUMBER:4}",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
         tableOfOfferItems: {
           layout: { component: "table-view" },
           source: {
@@ -749,9 +756,7 @@ export const Forte: Story = {
                     title: "Input",
                     key: "inputs",
                     type: "",
-                    editable: [
-                      { label: "Invoice price (NN):", key: "invoicePrice", valueMapping: "invoicePrice"},
-                    ],
+                    editable: [{ label: "Invoice price (NN):", key: "invoicePrice", valueMapping: "invoicePrice" }],
                   },
                   {
                     color: "dataId != null ? '#E0E0E0': ''",
@@ -763,9 +768,8 @@ export const Forte: Story = {
                       '  <div style="display:flex;justify-content:space-between"><span>Price NNN EXW:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
                       '  <div style="display:flex;justify-content:space-between;margin-top:8px"><span>MaT:</span><span><b>{details.marginPercent:0}%</b></span></div>\n' +
                       "</div>",
-                  }
+                  },
                 ],
-
               },
               {
                 title: "Recommended",
@@ -790,8 +794,8 @@ export const Forte: Story = {
                     key: "inputs",
                     type: "",
                     editable: [
-                      { label: "Target price gross:", key: "targetPriceGross", valueMapping: "targetPriceGross"},
-                      { label: "Price factor:", key: "priceFactor", valueMapping: "priceFactor"},
+                      { label: "Target price gross:", key: "targetPriceGross", valueMapping: "targetPriceGross" },
+                      { label: "Price factor:", key: "priceFactor", valueMapping: "priceFactor" },
                     ],
                   },
                   {
@@ -813,7 +817,6 @@ export const Forte: Story = {
                       "</div>",
                   },
                 ],
-
               },
 
               {
