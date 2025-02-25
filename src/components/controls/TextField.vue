@@ -14,8 +14,9 @@
 <script lang="ts" setup>
 import { computed, onMounted } from "vue";
 
-import { useClass, useExpression, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
+import { useClass, useExpression, useFormModel, useLabel, useProps, useResolveVariables, useRules } from "@/core/composables";
 import { useEventHandler } from "@/core/composables/useEventHandler";
+import { variableRegexp } from "@/core/engine/utils";
 import { EngineTextField } from "@/types/engine/controls";
 
 const props = defineProps<{
@@ -23,11 +24,12 @@ const props = defineProps<{
   model: object;
 }>();
 
+const { resolve } = useResolveVariables();
 const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { resolveExpression } = useExpression();
-  const { label, bindLabel } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 
@@ -46,11 +48,20 @@ async function runExpressionIfExist() {
   }
 }
 
-onMounted( async() => {
+onMounted(async () => {
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
   await runExpressionIfExist();
+
+
+  // TODO temp solution
+  if (localModel.value.match(variableRegexp)) {
+    const result = await resolve(props.schema, localModel.value);
+    if (result.allVariablesResolved) {
+      localModel.value = result.resolvedText;
+    }
+  }
 });
 </script>
 

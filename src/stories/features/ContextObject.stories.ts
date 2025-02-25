@@ -59,6 +59,35 @@ export const Standard: Story = {
       context: {
         userInfo: {
           username: "Maciej",
+          firstName: "Maciej",
+        },
+        workspaceId: "test",
+        menuFeatureId: "test"
+      },
+    },
+  },
+};
+
+export const StandardWithDefaultMapping: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {},
+    schema: {
+      properties: {
+        item: {
+          label: "Field with context dependency = {context.userInfo.username}",
+          defaultValue: "{context.userInfo.firstName:defaultText} Super",
+          layout: {
+            component: "text-field",
+          },
+        },
+      },
+    },
+    options: {
+      context: {
+        userInfo: {
+          username: "MaciejDybowski",
+
         },
         workspaceId: "test",
         menuFeatureId: "test"
