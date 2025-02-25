@@ -4,6 +4,7 @@ export interface DuplicatedSectionOptions {
   showDivider: boolean;
   ordinalNumberInModel: boolean
   action?: ActionDefinition
+  showFirstInitRow?: boolean
 }
 
 export interface ActionDefinition {

@@ -150,7 +150,7 @@ vueSchemaFormEventBus.on(async (event, payload) => {
   }
 });
 
-let isEditable: Ref<boolean> = ref("editable" in props.schema ? (props.schema.editable as boolean) : true)
+let isEditable: Ref<boolean> = ref("editable" in props.schema ? (props.schema.editable as boolean) : true);
 const showSectionElements = computed(() => {
   if (isEditable.value) {
     return "showElements" in props.schema ? (props.schema.showElements as boolean) : true;
@@ -163,6 +163,11 @@ const ordinalNumberInModel: boolean =
   duplicatedSectionOptions.value !== undefined && "ordinalNumberInModel" in duplicatedSectionOptions.value
     ? duplicatedSectionOptions.value.ordinalNumberInModel
     : false;
+
+const showFirstInitRow: boolean =
+  duplicatedSectionOptions.value !== undefined && duplicatedSectionOptions.value.showFirstInitRow
+    ? duplicatedSectionOptions.value.showFirstInitRow
+    : true;
 
 const computedOptions = computed(() => {
   const options = JSON.parse(JSON.stringify(props.schema.options));
@@ -404,7 +409,7 @@ function mapPropertiesIfDefault(fieldDefinition: Record<string, SchemaField>, de
 onMounted(async () => {
   init();
   await bindProps(props.schema);
-  isEditable.value = !fieldProps.value.readonly
+  isEditable.value = !fieldProps.value.readonly;
 });
 </script>
 
