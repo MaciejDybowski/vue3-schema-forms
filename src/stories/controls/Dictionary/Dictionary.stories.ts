@@ -2,8 +2,7 @@
 import { VueSchemaForms } from "@/components";
 import { REQUEST_NOT_LAZY, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
-import { expect } from "@storybook/test";
-import { fireEvent, userEvent, within } from "@storybook/test";
+import { expect, fireEvent, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../../types/schema/Schema";
@@ -42,9 +41,66 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+export const ReadOnlyWithValue: Story = {
+  play: async (context) => {
+    /*await waitForMountedAsync()
+
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText("Currency");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    const list = document.getElementsByClassName("v-list");
+    fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
+
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[19], { delay: 200 });
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await userEvent.click(items[21], { delay: 200 });
+
+    await expect(context.args.modelValue).toEqual({
+      currency: {
+        id: "BWP",
+        label: "Pula",
+        digitsAfterDecimal: "2",
+      },
+    });*/
+  },
+  args: {
+    modelValue: {
+      currency: {
+        id: "BWP",
+        label: "Pula",
+        digitsAfterDecimal: "2",
+      },
+    },
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+            props: {
+              readonly: true,
+            },
+          },
+          source: {
+            url: "/api/currencies",
+            title: "label",
+            value: "id",
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+  },
+  parameters: {
+    mockData: [REQUEST_PAGE_0_1],
+  },
+};
+
 export const Standard: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
 
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText("Currency");
@@ -92,7 +148,7 @@ export const Standard: Story = {
 
 export const WithSearch: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -133,7 +189,7 @@ export const WithSearch: Story = {
 
 export const ReturnValue: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -172,7 +228,7 @@ export const ReturnValue: Story = {
 export const Required: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -217,7 +273,7 @@ export const Required: Story = {
 
 export const LazyLoadingDisabled: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
