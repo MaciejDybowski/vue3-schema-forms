@@ -7,7 +7,7 @@
     :country-props='fieldPropsMerged'
     :phone-props='fieldPropsMerged'
     v-bind='fieldPropsMerged'
-    :rules='rules'
+    :rules="!fieldProps.readonly ? rules: []"
     name='phone'
     type='tel'
   >

@@ -7,7 +7,7 @@
     @update:focused='(val) => (isInputFocused = val)'
     :placeholder='dateFormat.toLocaleLowerCase()'
     :clearable='!fieldProps.readonly'
-    :rules='dateRules'
+    :rules="!fieldProps.readonly ? dateRules: []"
     @update:model-value='dateTyping'
     :class='bindClass(schema) + requiredInputClass'
     v-bind='{ ...attrs, ...fieldProps }'

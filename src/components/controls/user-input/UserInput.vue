@@ -11,7 +11,7 @@
     :multiple="multiple"
     :no-data-text="t('noData')"
     :options="pagination"
-    :rules="rules"
+    :rules="!fieldProps.readonly ? rules: []"
     :search="query"
     item-title="firstName"
     item-value="id"

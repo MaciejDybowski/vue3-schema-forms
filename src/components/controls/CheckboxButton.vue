@@ -16,7 +16,7 @@
       <v-checkbox
         v-model='localModel'
         v-bind='fieldProps'
-        :rules='rules'
+        :rules="!fieldProps.readonly ? rules: []"
         :label='option[title]'
         :value='option[value]'
         :hide-details="index == data.length - 1 ? 'auto' : true"

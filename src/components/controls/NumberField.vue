@@ -4,7 +4,7 @@
     v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
     :label="label"
-    :rules="rules"
+    :rules="!fieldProps.readonly ? rules: []"
     v-bind="fieldProps"
     @focusin="focusin"
     @focusout="focusout"

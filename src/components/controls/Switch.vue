@@ -5,7 +5,7 @@
     v-bind='fieldProps'
     :color='primaryWhite'
     :label='label'
-    :rules="rules"
+    :rules="!fieldProps.readonly ? rules: []"
     :ref='(el) => (formSwitch[switchId] = el)'
   />
 </template>

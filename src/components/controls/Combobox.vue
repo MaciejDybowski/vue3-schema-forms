@@ -13,7 +13,7 @@
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
-    :rules="rules"
+    :rules="!fieldProps.readonly ? rules: []"
     :search="query"
     v-bind="fieldProps"
     @focus="fetchDictionaryData"

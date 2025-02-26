@@ -13,12 +13,12 @@
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
-    :rules="rules"
+    :rules="!fieldProps.readonly ? rules: []"
     :search="query"
     v-bind="fieldProps"
     @focusin="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
-    @update:search="(val) => (!fieldProps.readonly ? updateQuery(val, false) : () => {})"
+    @update:search="(val) => (!fieldProps.readonly ? updateQuery(val, false) : updateQuery(val, true))"
     @update:modelValue="onChange(schema, model)"
   >
     <template #no-data>
@@ -141,6 +141,7 @@ onMounted(async () => {
 });
 
 async function fetchDictionaryData() {
+
   if (!fieldProps.value.readonly) {
     updateQuery("", true);
     await load("autocomplete", localModel.value ? localModel.value : null);

@@ -7,7 +7,7 @@
     :no-filter='true'
     item-title='formatted_address'
     :return-object='true'
-    :rules='rules'
+    :rules="!fieldProps.readonly ? rules: []"
     :class='bindClass(schema) + requiredInputClass'
     v-bind='fieldProps'
   >

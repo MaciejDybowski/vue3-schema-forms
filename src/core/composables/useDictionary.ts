@@ -164,6 +164,7 @@ export function useDictionary() {
   }
 
   function updateQuery(newValue: any, queryBlockerValue = false) {
+    console.log("Before updateQuery:", newValue);
     query.value = newValue;
     queryBlocker.value = queryBlockerValue;
   }

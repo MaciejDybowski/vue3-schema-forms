@@ -2,7 +2,7 @@
   <v-textarea
     v-model='localModel'
     :label='label'
-    :rules='rules'
+    :rules="!fieldProps.readonly ? rules: []"
     v-bind='fieldProps'
     :class='bindClass(schema) + requiredInputClass'
   />

@@ -8,7 +8,7 @@
     :focused="isInputFocused || pickerModel"
     :label="label"
     :placeholder="dateFormat.toLocaleLowerCase()"
-    :rules="dateRules"
+    :rules="!fieldProps.readonly ? dateRules: []"
     v-bind="{ ...attrs, ...fieldProps }"
     @update:focused="(val) => (isInputFocused = val)"
     @update:model-value="dateTyping"
@@ -56,6 +56,7 @@ import { EngineDateField } from "@/types/engine/controls";
 
 import { useClass, useDateFormat, useFormModel, useLabel, useLocale, useProps, useRules } from "../../../core/composables";
 import dayjs from "./dayjs";
+import BaseAutocomplete from "@/components/controls/base/BaseAutocomplete.vue";
 
 const { locale, t } = useLocale();
 const props = defineProps<{ schema: EngineDateField; model: object }>();

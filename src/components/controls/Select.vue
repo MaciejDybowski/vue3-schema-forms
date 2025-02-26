@@ -3,7 +3,7 @@
     v-model='localModel'
     :label='label'
     v-bind='fieldProps'
-    :rules='rules'
+    :rules="!fieldProps.readonly ? rules: []"
     :class='bindClass(schema) + requiredInputClass'
     :item-title='title'
     :item-value='value'
