@@ -49,7 +49,7 @@ async function runExpressionIfExist() {
 }
 
 async function resolveIfLocalModelHasDependencies() {
-  if (localModel.value.match(variableRegexp)) {
+  if (localModel.value && localModel.value.match(variableRegexp)) {
     const result = await resolve(props.schema, localModel.value);
     if (result.allVariablesResolved) {
       localModel.value = result.resolvedText;

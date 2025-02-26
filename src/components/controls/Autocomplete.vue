@@ -16,9 +16,9 @@
     :rules="rules"
     :search="query"
     v-bind="fieldProps"
-    @focus="fetchDictionaryData"
+    @focusin="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
-    @update:search="!fieldProps.readonly ? updateQuery: () => {}"
+    @update:search="(val) => (!fieldProps.readonly ? updateQuery(val, false) : () => {})"
     @update:modelValue="onChange(schema, model)"
   >
     <template #no-data>
