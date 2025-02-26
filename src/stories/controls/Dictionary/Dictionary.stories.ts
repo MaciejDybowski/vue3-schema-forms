@@ -6,7 +6,7 @@ import { expect, fireEvent, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../../types/schema/Schema";
-import { DictionarySource, SchemaSourceField } from "../../../types/schema/elements";
+import { DictionarySource } from "../../../types/shared/Source";
 import { waitForMountedAsync } from "../utils";
 
 const meta = {
@@ -310,5 +310,68 @@ export const LazyLoadingDisabled: Story = {
   },
   parameters: {
     mockData: [REQUEST_NOT_LAZY],
+  },
+};
+
+export const DefaultValueAsATextWithDependencies: Story = {
+  play: async (context) => {
+    /*  await waitForMountedAsync();
+
+      const canvas = within(context.canvasElement);
+      const select = await canvas.getByLabelText("Currency");
+      await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+      const list = document.getElementsByClassName("v-list");
+      fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
+
+      const items = document.getElementsByClassName("v-list-item");
+      await userEvent.click(items[19], { delay: 200 });
+      await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+      await userEvent.click(items[21], { delay: 200 });
+
+      await expect(context.args.modelValue).toEqual({
+        currency: {
+          id: "BWP",
+          label: "Pula",
+          digitsAfterDecimal: "2",
+        },
+      });*/
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+
+      properties: {
+        currency: {
+          defaultValue: "Crypto coin as {context.userInfo.username:DefaultValueLogin}",
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+            props: {
+              readonly: true,
+            },
+          },
+          source: {
+            url: "/api/currencies",
+            title: "label",
+            value: "id",
+            returnObject: false,
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+    options: {
+      context: {
+        userInfo: {
+          username: "maciejd",
+          firstName: "Maciej",
+          lastName: "Dybowski",
+        },
+      },
+    },
+    parameters: {
+      mockData: [REQUEST_PAGE_0_1],
+    },
   },
 };

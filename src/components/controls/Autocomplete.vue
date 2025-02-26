@@ -3,6 +3,7 @@
     v-model="localModel"
     :auto-select-first="false"
     :class="bindClass(schema) + requiredInputClass"
+    :clearable="!fieldProps.readonly"
     :item-title="title"
     :item-value="returnObject ? value : title"
     :items="data"
@@ -15,10 +16,9 @@
     :rules="rules"
     :search="query"
     v-bind="fieldProps"
-    :clearable="!fieldProps.readonly"
-    @focusin="fetchDictionaryData"
+    @focus="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
-    @update:search="updateQuery"
+    @update:search="!fieldProps.readonly ? updateQuery: () => {}"
     @update:modelValue="onChange(schema, model)"
   >
     <template #no-data>
@@ -52,9 +52,10 @@ import { computed, onMounted, watch } from "vue";
 
 import { useDictionary } from "@/core/composables/useDictionary";
 import { useEventHandler } from "@/core/composables/useEventHandler";
+import { variableRegexp } from "@/core/engine/utils";
 import { EngineDictionaryField } from "@/types/engine/controls";
 
-import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
+import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "../../core/composables";
 import BaseAutocomplete from "./base/BaseAutocomplete.vue";
 
 const props = defineProps<{
@@ -68,6 +69,7 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
+const { resolve } = useResolveVariables();
 
 const localModel = computed({
   get(): any {
@@ -109,6 +111,15 @@ function singleOptionAutoSelectFunction() {
   watch(data, selectSingleOptionLogic, { deep: true, immediate: true });
 }
 
+async function resolveIfLocalModelHasDependencies() {
+  if (localModel.value.match(variableRegexp)) {
+    const result = await resolve(props.schema, localModel.value);
+    if (result.allVariablesResolved) {
+      localModel.value = result.resolvedText;
+    }
+  }
+}
+
 onMounted(async () => {
   await initState(props.schema);
   await bindLabel(props.schema);
@@ -119,7 +130,10 @@ onMounted(async () => {
     if (typeof localModel.value == "object") {
       data.value.push(localModel.value);
     } else {
-      updateQuery(localModel.value);
+      await resolveIfLocalModelHasDependencies();
+      if (!fieldProps.value.readonly) {
+        updateQuery(localModel.value);
+      }
     }
   }
 

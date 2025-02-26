@@ -48,20 +48,21 @@ async function runExpressionIfExist() {
   }
 }
 
-onMounted(async () => {
-  await bindLabel(props.schema);
-  await bindRules(props.schema);
-  await bindProps(props.schema);
-  await runExpressionIfExist();
-
-
-  // TODO temp solution
+async function resolveIfLocalModelHasDependencies() {
   if (localModel.value.match(variableRegexp)) {
     const result = await resolve(props.schema, localModel.value);
     if (result.allVariablesResolved) {
       localModel.value = result.resolvedText;
     }
   }
+}
+
+onMounted(async () => {
+  await resolveIfLocalModelHasDependencies();
+  await bindLabel(props.schema);
+  await bindRules(props.schema);
+  await bindProps(props.schema);
+  await runExpressionIfExist();
 });
 </script>
 
