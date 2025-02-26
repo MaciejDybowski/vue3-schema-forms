@@ -3,7 +3,6 @@
     v-model="localModel"
     :auto-select-first="false"
     :class="bindClass(schema) + requiredInputClass"
-    :clearable="!fieldProps.readonly"
     :item-title="title"
     :item-value="returnObject ? value : title"
     :items="data"
@@ -13,9 +12,9 @@
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
-    :rules="!fieldProps.readonly ? rules: []"
+    :rules="!fieldProps.readonly ? rules : []"
     :search="query"
-    v-bind="fieldProps"
+    v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
     @focusin="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
     @update:search="(val) => (!fieldProps.readonly ? updateQuery(val, false) : updateQuery(val, true))"
@@ -126,6 +125,8 @@ onMounted(async () => {
   await bindRules(props.schema);
   await bindProps(props.schema);
 
+  console.debug(fieldProps.value);
+
   if (localModel.value) {
     if (typeof localModel.value == "object") {
       data.value.push(localModel.value);
@@ -141,7 +142,6 @@ onMounted(async () => {
 });
 
 async function fetchDictionaryData() {
-
   if (!fieldProps.value.readonly) {
     updateQuery("", true);
     await load("autocomplete", localModel.value ? localModel.value : null);
