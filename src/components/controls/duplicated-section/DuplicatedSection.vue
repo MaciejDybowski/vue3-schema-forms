@@ -165,8 +165,8 @@ const ordinalNumberInModel: boolean =
     : false;
 
 const showFirstInitRow: boolean =
-  duplicatedSectionOptions.value !== undefined && duplicatedSectionOptions.value.showFirstInitRow
-    ? duplicatedSectionOptions.value.showFirstInitRow
+  duplicatedSectionOptions.value && "showFirstInitRow" in duplicatedSectionOptions.value
+    ? (duplicatedSectionOptions.value.showFirstInitRow as boolean)
     : true;
 
 const computedOptions = computed(() => {
@@ -262,6 +262,8 @@ function runDuplicatedSectionButtonLogic(init = false): void {
     actionHandlerEventBus.emit("form-action", payloadObject);
   }
   if (getAddBtnMode.value == "add") {
+    if (init && !showFirstInitRow && localModel.value.length == 0) return;
+
     nodes.value.push(getClearNode.value);
     localModel.value.push({ ...getClearModel.value });
   }

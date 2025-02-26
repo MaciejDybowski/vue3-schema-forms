@@ -307,27 +307,27 @@ export const CopyModeOfButton: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
-    const input1 = await canvas.findByLabelText('Product');
-    await userEvent.type(input1, 'Item 1', { delay: 100 });
+    const input1 = await canvas.findByLabelText("Product");
+    await userEvent.type(input1, "Item 1", { delay: 100 });
 
     await expect(context.args.modelValue).toEqual({
-      invoiceItems: [{ product: 'Item 1' }],
+      invoiceItems: [{ product: "Item 1" }],
     });
 
-    const duplicatedSections = document.getElementsByClassName('duplicated-section-item');
+    const duplicatedSections = document.getElementsByClassName("duplicated-section-item");
     await expect(duplicatedSections[0]).toBeInTheDocument();
 
     const section = within(duplicatedSections[0]);
-    const contextMenu = section.queryAllByRole('button')[0];
+    const contextMenu = section.queryAllByRole("button")[0];
 
     await userEvent.hover(duplicatedSections[0], { delay: 200 });
     await userEvent.click(contextMenu, { delay: 200 });
 
-    const copyBelowAction = document.getElementsByClassName('v-list-item')[1];
+    const copyBelowAction = document.getElementsByClassName("v-list-item")[1];
     await userEvent.click(copyBelowAction, { delay: 200 });
 
     await expect(context.args.modelValue).toEqual({
-      invoiceItems: [{ product: 'Item 1' }, { product: 'Item 1' }],
+      invoiceItems: [{ product: "Item 1" }, { product: "Item 1" }],
     });
   },
   args: {
@@ -523,6 +523,76 @@ export const OrdinalNumber: Story = {
             options: {
               showDivider: true,
               ordinalNumberInModel: true,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const NotDisplayInitRowWhenEmpty: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    await expect(context.args.modelValue).toEqual({});
+    const inputElement = canvas.queryByLabelText("Product");
+    await expect(inputElement).not.toBeInTheDocument();
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        invoiceItems: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                product: {
+                  label: "Product",
+                  layout: { component: "text-field", cols: 12 },
+                },
+              },
+            },
+            options: {
+              showFirstInitRow: false,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const DisplayProperlyWhenModelAndInitRowIsEnabled: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    await expect(context.args.modelValue).toEqual({
+      invoiceItems: [{ product: "Item 1" }],
+    });
+    const inputElement = canvas.queryByLabelText("Product");
+    await expect(inputElement).toBeInTheDocument();
+  },
+  args: {
+    modelValue: {
+      invoiceItems: [{ product: "Item 1" }],
+    },
+    schema: {
+      type: "object",
+      properties: {
+        invoiceItems: {
+          layout: {
+            component: "duplicated-section",
+            schema: {
+              properties: {
+                product: {
+                  label: "Product",
+                  layout: { component: "text-field", cols: 12 },
+                },
+              },
+            },
+            options: {
+              showFirstInitRow: false,
             },
           },
         },
