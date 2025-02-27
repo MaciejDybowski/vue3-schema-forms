@@ -160,7 +160,7 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { debounce, merge } from "lodash";
+import { cloneDeep, debounce, merge } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
 import { ComputedRef, Ref, computed, onMounted, reactive, ref } from "vue";
@@ -185,7 +185,6 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 vueSchemaFormEventBus.on(async (event, payload) => {
-  console.debug(event, payload);
   if (payload == "action-callback" || payload == "table-aggregates" || payload == "table-refresh") {
     debounced.load(fetchDataParams.value);
   }
@@ -344,7 +343,7 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
 
 async function loadData(params: TableFetchOptions) {
   try {
-    console.debug("Loading data for table field with params ", params);
+    //console.debug("Loading data for table field with params ", params);
     loading.value = true;
     items.value = [];
     itemsTotalElements.value = 0;
@@ -377,15 +376,12 @@ async function loadData(params: TableFetchOptions) {
 function runTableBtnLogic(btn: TableButton) {
   switch (btn.mode) {
     case "action":
+      const btnConfigWithoutCode = cloneDeep(btn.config);
+      delete btnConfigWithoutCode.code;
       let payloadObject = {
         code: btn.config.code,
         body: null,
-        params: {
-          featureId: btn.config.featureId,
-          viewId: btn.config.viewId,
-          batchAddAttributePath: btn.config.batchAddAttributePath,
-          scriptName: btn.config.scriptName,
-        },
+        params: { ...btnConfigWithoutCode },
       };
       actionHandlerEventBus.emit("form-action", payloadObject);
       break;
@@ -414,7 +410,7 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
       };
 
       actionHandlerEventBus.emit("form-action", payloadObject);
-      console.debug("Action payload", payloadObject);
+      //console.debug("Action payload", payloadObject);
       break;
 
     case "popup":
@@ -470,7 +466,7 @@ async function saveDialogForm(isActive: Ref<boolean>) {
       [modelReference]: actionPopup.model,
     };
     const updateRowURL = await createUpdateRowURL(actionPopup.item);
-    console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
+    //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
     const response = await axios.post(updateRowURL, payload);
     items.value[actionPopup.itemIndex] = response.data;
 
@@ -525,8 +521,6 @@ tr.highlight-name > td:nth-child(1) {
   display: flex;
   flex-direction: column; /* Jeśli dzieci mają być w kolumnie */
 }
-
-
 </style>
 
 <i18n lang="json">

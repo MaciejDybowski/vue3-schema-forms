@@ -125,8 +125,6 @@ onMounted(async () => {
   await bindRules(props.schema);
   await bindProps(props.schema);
 
-  console.debug(fieldProps.value);
-
   if (localModel.value) {
     if (typeof localModel.value == "object") {
       data.value.push(localModel.value);

@@ -23,7 +23,7 @@ export function useDictionary() {
   let value = ref("value");
   let returnObject = ref(false);
   let lazy = ref(true);
-  let description: null | string = null;
+  let description = ref<any>(null)
   let paginationOptions = ref<any>(null);
   let responseReference: ResponseReference = { data: "content", totalElements: "numberOfElements" };
   let singleOptionAutoSelect = ref(true);
@@ -46,7 +46,7 @@ export function useDictionary() {
     value.value = source.value ? source.value : "value";
     returnObject.value = source.returnObject !== undefined ? source.returnObject : true;
     lazy.value = source.lazy !== undefined ? source.lazy : true;
-    description = source.description ? source.description : null;
+    description.value = source.description ? source.description : null;
     paginationOptions.value = source.itemsPerPage ? new Pagination(source.itemsPerPage) : new Pagination(20);
     responseReference = source.references
       ? source.references
@@ -164,7 +164,6 @@ export function useDictionary() {
   }
 
   function updateQuery(newValue: any, queryBlockerValue = false) {
-    console.log("Before updateQuery:", newValue);
     query.value = newValue;
     queryBlocker.value = queryBlockerValue;
   }

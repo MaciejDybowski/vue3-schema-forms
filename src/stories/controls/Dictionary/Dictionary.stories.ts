@@ -257,6 +257,55 @@ export const Standard: Story = {
   },
 };
 
+export const WithDescription: Story = {
+  play: async (context) => {
+    /*await waitForMountedAsync();
+
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText("Currency");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    const list = document.getElementsByClassName("v-list");
+    fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
+
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[19], { delay: 200 });
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await userEvent.click(items[21], { delay: 200 });
+
+    await expect(context.args.modelValue).toEqual({
+      currency: {
+        id: "BWP",
+        label: "Pula",
+        digitsAfterDecimal: "2",
+      },
+    });*/
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+          },
+          source: {
+            url: "/api/currencies",
+            title: "label",
+            value: "id",
+            description: "label"
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+  },
+  parameters: {
+    mockData: [REQUEST_PAGE_0_1],
+  },
+};
+
 export const WithSearch: Story = {
   play: async (context) => {
     await waitForMountedAsync();

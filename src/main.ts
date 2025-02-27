@@ -31,9 +31,9 @@ import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
 import { Source } from "@/types/shared/Source";
 import { StaticContentTag } from "@/types/shared/StaticContentTag";
 import { Translation } from "@/types/shared/Translation";
+import { useEventBus } from "@vueuse/core";
 
 import * as components from "../src/components/index";
-import { useEventBus } from "@vueuse/core";
 
 export declare type Components = Record<string, Component>;
 export let logger = {
@@ -42,9 +42,10 @@ export let logger = {
   JSONataExpressionListener: false,
   propsValueMappingListener: false,
   conditionalRenderingListener: false,
-  dictionaryLogger: true,
+  dictionaryLogger: false,
   duplicatedSchemaWatchLogger: false,
   eventEmitterListener: false,
+  registerComponentLogger: false,
 };
 
 export let duplicatedSectionBatchAddComponent = { "batch-add-dialog-body": DuplicatedSectionBatchAddDialogBody } as Components;
@@ -57,6 +58,7 @@ export type VueSchemaLoggers = {
   dictionaryLogger?: boolean;
   duplicatedSchemaWatchLogger?: boolean;
   eventEmitterListener?: boolean;
+  registerComponentLogger?: boolean;
 };
 
 export type VueSchemaForms = {
@@ -73,7 +75,7 @@ export type VueSchemaFormsOptions = {
 // jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
 // import * as schemaFormModelStore from './store/formModelStore';
 // export const schemaFormModelStoreInit = schemaFormModelStore;
- const vueSchemaFormEventBus = useEventBus<string>("form-model");
+const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
   if (options?.logger) {
@@ -88,7 +90,9 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
       for (const componentName in components) {
         const component = components[componentName];
         if (!app.component(componentName)) {
-          console.debug(`[vue3-schema-forms] - register component - ${componentName}`);
+          if (logger.registerComponentLogger) {
+            console.debug(`[vue3-schema-forms] - register component - ${componentName}`);
+          }
           app.component(componentName, component);
         }
       }
@@ -96,7 +100,9 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
       if (options?.customComponents) {
         for (const componentName in options.customComponents) {
           const component = options.customComponents[componentName];
-          console.debug(`[vue3-schema-forms] - register custom component = ${componentName}`);
+          if (logger.registerComponentLogger) {
+            console.debug(`[vue3-schema-forms] - register custom component = ${componentName}`);
+          }
           app.component(`node-${componentName}`, component);
         }
       }
@@ -105,7 +111,9 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
         for (const componentName in vueSchemaFromControls) {
           const component = vueSchemaFromControls[componentName];
           if (!app.component(`node-${componentName}`)) {
-            console.debug(`[vue3-schema-forms] - install form control - ${componentName}`);
+            if (logger.registerComponentLogger) {
+              console.debug(`[vue3-schema-forms] - install form control - ${componentName}`);
+            }
             app.component(`node-${componentName}`, component);
           }
         }
@@ -143,5 +151,5 @@ export {
   useResolveVariables,
   useRules,
   useSource,
-  vueSchemaFormEventBus
+  vueSchemaFormEventBus,
 };

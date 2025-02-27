@@ -111,6 +111,7 @@ import { Label } from "@/types/engine/Label";
 import { User } from "@/types/engine/User";
 import { EngineUserField } from "@/types/engine/controls";
 import { useEventBus } from "@vueuse/core";
+import { logger } from "@/main";
 
 const props = defineProps<{
   schema: EngineUserField;
@@ -221,8 +222,8 @@ async function checkIfURLHasDependency() {
 
     if (allVariablesResolved) {
       usersAPIEndpoint.value = resolvedText;
-    } else {
-      console.debug(`API call was blocked, not every variable from endpoint was resolved ${usersAPIEndpoint.value}`);
+    } else if(logger.dictionaryLogger) {
+      console.debug(`[vue-schema-forms] [DictionaryLogger] => API call was blocked, not every variable from endpoint was resolved ${usersAPIEndpoint.value}`);
     }
 
     const vueSchemaFormEventBus = useEventBus<string>("form-model");
