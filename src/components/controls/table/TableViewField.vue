@@ -7,6 +7,7 @@
     :headers="headers"
     :hover="true"
     :items="items"
+    :style="bgColorStyle"
     class="bg-transparent custom-table"
     density="compact"
   >
@@ -493,10 +494,21 @@ async function createUpdateRowURL(item: any) {
   return updateRowURL;
 }
 
+const bgColor = ref("#ffcc00");
+const bgColorStyle = computed(() => {
+  return {
+    "--dynamic-bg-color": bgColor.value,
+  };
+});
+
 onMounted(async () => {
   await bindProps(props.schema);
   debounced.load(fetchDataParams.value);
+
+  bgColor.value = "red";
 });
+
+// Ustaw kolor dynamicznie
 </script>
 
 <style lang="scss" scoped>
@@ -509,9 +521,10 @@ tr.highlight-name > td:nth-child(1) {
   color: white;
 }
 
-.custom-table :deep(.v-data-table__td) {
-  padding: 0px 4px !important;
-  background-color: inherit;
+.custom-table :deep(.v-data-table__td:has(.cell-content-collection)) {
+  background: var(--dynamic-bg-color, #d3d3d3);
+  margin: 0px 4px !important;
+  line-height: 2;
 }
 
 .cell-content-collection {
