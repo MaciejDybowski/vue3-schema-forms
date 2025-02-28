@@ -88,6 +88,34 @@ export const Default: Story = {
   },
 };
 
+export const Colorful: Story = {
+  play: async (context) => {
+    await waitForMountedAsync()
+    const canvas = within(context.canvasElement);
+    const field = canvas.getByLabelText("Change it!");
+    //await userEvent.type(field, "This is standard text area...", { delay: 100 });
+    await expect(context.args.modelValue).toEqual({ switchDefault: true });
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        switchDefault: {
+          defaultValue: true,
+          label: "Change it!",
+          layout: {
+            component: "switch",
+            props: {
+              color: "red"
+            }
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
 export const ChangeValueTest: Story = {
   play: async (context) => {
     await waitForMountedAsync()

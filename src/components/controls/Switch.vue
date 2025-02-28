@@ -1,22 +1,22 @@
 <template>
   <v-switch
-    v-model='localModel'
-    :class='bindClass(schema) + requiredInputClass'
-    v-bind='fieldProps'
-    :color='primaryWhite'
-    :label='label'
-    :rules="!fieldProps.readonly ? rules: []"
-    :ref='(el) => (formSwitch[switchId] = el)'
+    :ref="(el) => (formSwitch[switchId] = el)"
+    v-model="localModel"
+    :class="bindClass(schema) + requiredInputClass"
+    :color="primaryWhite"
+    :label="label"
+    :rules="!fieldProps.readonly ? rules : []"
+    v-bind="fieldProps"
   />
 </template>
 
-<script setup lang='ts'>
-import { computed, onMounted, ref } from 'vue';
-import { useTheme } from 'vuetify';
-import { VSwitch } from 'vuetify/components';
+<script lang="ts" setup>
+import { computed, onMounted, ref } from "vue";
+import { useTheme } from "vuetify";
+import { VSwitch } from "vuetify/components";
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
-import { EngineField } from '@/types/engine/EngineField';
+import { EngineField } from "@/types/engine/EngineField";
 
 const props = defineProps<{
   schema: EngineField;
@@ -31,7 +31,13 @@ const { bindRules, rules, requiredInputClass } = useRules();
 
 const theme = useTheme();
 
-const primaryWhite = computed(() => (theme.current.value.dark ? 'white' : 'primary'));
+const primaryWhite = computed(() => {
+  if (fieldProps.value.color) {
+    return fieldProps.value.color;
+  }
+
+  return theme.current.value.dark ? "white" : "primary";
+});
 
 const formSwitch = ref({});
 const switchId = Math.random().toString().slice(2, 5);
@@ -45,16 +51,15 @@ const localModel = computed({
   },
 });
 
-
 onMounted(async () => {
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
-  if (!('defaultValue' in props.schema)) {
-    let falseValue = fieldProps.value['false-value'] as string | boolean | undefined;
+  if (!("defaultValue" in props.schema)) {
+    let falseValue = fieldProps.value["false-value"] as string | boolean | undefined;
     localModel.value = falseValue === undefined ? false : falseValue;
   }
 });
 </script>
 
-<style scoped lang='css'></style>
+<style lang="css" scoped></style>
