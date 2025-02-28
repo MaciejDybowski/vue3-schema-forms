@@ -47,7 +47,8 @@ const inputAttrs = computed(() => ({
     borderColor: isDarkTheme.value ? "#616161" : "#C0C0C0",
     backgroundColor: isDarkTheme.value ? "#616161" : "#FFFFFF",
     color: isDarkTheme.value ? "#FFFFFF" : "#000000",
-    maxWidth: "170px",
+    maxWidth: "120px",
+    textAlign: "right",
   },
 }));
 

@@ -612,11 +612,11 @@ const MOCK_RESPONSE = {
         minimalMarginPercent: 15.0,
         minimalNnnPrice: null,
         minimalNnnExwPrice: null,
-        recommendedInvoicePrice: null,
+        recommendedInvoicePrice: 123312321,
         recommendedMarginPercent: 25.0,
         recommendedNnnPrice: null,
         recommendedNnnExwPrice: null,
-        retailPriceNet: 0.0,
+        retailPriceNet: 1231323.0,
         retailPriceGross: 0.0,
         marginPercent: 0.0,
         customerMarginPercent: 0.0,
@@ -710,13 +710,6 @@ export const Forte: Story = {
     schema: {
       type: "object",
       properties: {
-        span: {
-          content: "Liczba: {liczba:0:NUMBER:4}",
-          layout: {
-            component: "static-content",
-            tag: "span",
-          },
-        },
         tableOfOfferItems: {
           layout: { component: "table-view" },
           source: {
@@ -750,6 +743,10 @@ export const Forte: Story = {
                 title: "Offer",
                 key: "collection",
                 type: "COLLECTION",
+                properties: {
+                  minWidth: "300px",
+                  maxWidth: "300px",
+                },
                 items: [
                   {
                     color: "dataId != null ? '#E0E0E0': ''",
@@ -766,7 +763,7 @@ export const Forte: Story = {
                       '<div style="display:flex;flex-direction:column">\n' +
                       '  <div style="display:flex;justify-content:space-between"><span>Price NNN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
                       '  <div style="display:flex;justify-content:space-between"><span>Price NNN EXW:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
-                      '  <div style="display:flex;justify-content:space-between;margin-top:8px"><span>MaT:</span><span><b>{details.marginPercent:0}%</b></span></div>\n' +
+                      '  <div style="display:flex;justify-content:space-between;margin-top:8px"><span>MaT:</span><span><b> {details.marginAfterTransportAmount:0} {details.currencyCode:PLN} / {details.marginPercent:0}%</b></span></div>\n' +
                       "</div>",
                   },
                 ],
@@ -775,6 +772,10 @@ export const Forte: Story = {
                 title: "Recommended",
                 type: "TEXT",
                 key: "recommendedPrice",
+                properties: {
+                  minWidth: "250px",
+                  maxWidth: "250px",
+                },
                 valueMapping:
                   '<div style="display:flex;flex-direction:column">\n' +
                   '  <div style="display:flex;justify-content:space-between; margin-bottom:8px"><span>Price NN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
@@ -784,9 +785,13 @@ export const Forte: Story = {
                   "</div>",
               },
               {
-                title: "Offer",
+                title: "Retail",
                 key: "collection2",
                 type: "COLLECTION",
+                properties: {
+                  minWidth: "300px",
+                  maxWidth: "300px",
+                },
                 items: [
                   {
                     color: "dataId != null ? '#E0E0E0': ''",
