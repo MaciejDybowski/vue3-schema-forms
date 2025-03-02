@@ -238,23 +238,22 @@ export const Forte: Story = {
                 title: "Offer",
                 key: "collection",
                 type: "COLLECTION",
+                color: "dataId != null ? 'table-cell-background-grey-lighten-3': ''",
                 items: [
                   {
-                    color: "dataId != null ? '#E0E0E0': ''",
                     title: "Input",
                     key: "inputs",
                     type: "",
                     editable: [{ label: "Invoice price (NN):", key: "invoicePrice", valueMapping: "invoicePrice" }],
                   },
                   {
-                    color: "dataId != null ? '#E0E0E0': ''",
                     type: "TEXT",
                     key: "recommendedPrice",
                     valueMapping:
-                      '<div style="display:flex;flex-direction:column">\n' +
+                      '<div style="display:flex;flex-direction:column;line-height: 2">\n' +
                       '  <div style="display:flex;justify-content:space-between"><span>Price NNN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
                       '  <div style="display:flex;justify-content:space-between"><span>Price NNN EXW:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
-                      '  <div style="display:flex;justify-content:space-between;margin-top:8px"><span>MaT:</span><span><b>{details.marginPercent:0}%</b></span></div>\n' +
+                      '  <div style="display:flex;justify-content:space-between; margin-top: 8px"><span>MaT:</span><span><b> {details.marginAfterTransportAmount:0} {details.currencyCode:PLN} / {details.marginPercent:0}%</b></span></div>\n' +
                       "</div>",
                   },
                 ],
@@ -264,20 +263,32 @@ export const Forte: Story = {
                 type: "TEXT",
                 key: "recommendedPrice",
                 valueMapping:
-                  '<div style="display:flex;flex-direction:column">\n' +
-                  '  <div style="display:flex;justify-content:space-between; margin-bottom:8px"><span>Price NN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
-                  '  <div style="display:flex;justify-content:space-between"><span>Price NNN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
-                  '  <div style="display:flex;justify-content:space-between"><span>Price NNN EXW:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
-                  '  <div style="display:flex;justify-content:space-between;margin-top:8px"><span>MaT:</span><span><b>{details.marginPercent:0}%</b></span></div>\n' +
-                  "</div>",
+                  '<div style="display: flex; flex-direction: column; line-height:2; padding-top: 4px">\n' +
+                  '  <div style="display: flex; justify-content: space-between;padding-bottom: 4px">\n' +
+                  "    <span>Price NN:</span>\n" +
+                  "    <span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span>\n" +
+                  "  </div>\n" +
+                  '  <div style="display: flex; justify-content: space-between;">\n' +
+                  "    <span>Price NNN:</span>\n" +
+                  "    <span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span>\n" +
+                  "  </div>\n" +
+                  '  <div style="display: flex; justify-content: space-between;">\n' +
+                  "    <span>Price NNN EXW:</span>\n" +
+                  "    <span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span>\n" +
+                  "  </div>\n" +
+                  '  <div style="display: flex; justify-content: space-between; margin-top: 8px">\n' +
+                  "    <span>MaT:</span>\n" +
+                  "    <span><b>{details.marginPercent:0}%</b></span>\n" +
+                  "  </div>\n" +
+                  "</div>\n",
               },
               {
                 title: "Offer",
                 key: "collection2",
                 type: "COLLECTION",
+                color: "dataId != null ? 'table-cell-background-grey-lighten-3': ''",
                 items: [
                   {
-                    color: "dataId != null ? '#E0E0E0': ''",
                     title: "Input",
                     key: "inputs",
                     type: "",
@@ -287,18 +298,17 @@ export const Forte: Story = {
                     ],
                   },
                   {
-                    color: "dataId != null ? '#E0E0E0': ''",
                     title: "Result",
                     type: "TEXT",
                     key: "result",
                     valueMapping:
                       "" +
-                      '<div style="display:flex;flex-direction:column">\n' +
+                      '<div style="display:flex;flex-direction:column; line-height: 1.8">\n' +
                       '  <div style="display:flex;justify-content:space-between">\n' +
                       "    <span>Price net/gross:</span>\n" +
                       "    <span><b>{details.retailPriceNet:0.00}</b> {details.currencyCode:PLN} / <b>{details.retailPriceGross:0.00}</b> {details.currencyCode:PLN}</span>\n" +
                       "  </div>\n" +
-                      '  <div style="display:flex;justify-content:space-between;margin-top:8px">\n' +
+                      '  <div style="display:flex;justify-content:space-between;">\n' +
                       "    <span>Retailer margin:</span>\n" +
                       "    <span><b>{details.marginPercent:0}%</b></span>\n" +
                       "  </div>\n" +

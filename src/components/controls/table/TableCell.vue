@@ -1,8 +1,6 @@
 <template>
   <div
     v-if="header.type == 'TEXT'"
-    :style="{ backgroundColor: backgroundColor }"
-    class="cell-content"
     v-bind="attrs"
     @click="isConnectionWithActions ? callAction() : () => {}"
   >
@@ -294,16 +292,5 @@ table .link {
       )
       bottom left / 1px 1px repeat-x;
   }
-}
-
-.cell-content {
-  align-content: center;
-  justify-content: center;
-  width: 100%;
-  padding: 0px 0px;
-  margin: 0px 0px !important;
-  box-sizing: border-box;
-  height: 100%;
-  flex-grow: 1;
 }
 </style>

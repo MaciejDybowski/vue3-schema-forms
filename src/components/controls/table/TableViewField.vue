@@ -7,7 +7,6 @@
     :headers="headers"
     :hover="true"
     :items="items"
-    :style="bgColorStyle"
     class="bg-transparent custom-table"
     density="compact"
   >
@@ -44,58 +43,13 @@
       :key="header.key"
       #[`item.${header.key}`]="{ item, index }"
     >
-      <div
-        v-if="header.type == 'COLLECTION'"
-        class="cell-content-collection"
-      >
-        <template v-for="collectionItem in header.items">
-          <table-editable-cell-group
-            v-if="collectionItem.editable && (collectionItem.editable as any).length > 0"
-            :header="collectionItem"
-            :items="collectionItem.editable as any"
-            :row="item"
-            v-bind="fieldProps"
-            @update:field="(event) => updateRow(event.value, index, event.valueMapping, item)"
-          />
-
-          <table-cell
-            :actions="actions"
-            :header="collectionItem"
-            :item="item"
-          >
-          </table-cell>
-        </template>
-      </div>
-
-      <table-action-menu-wrapper
-        v-if="header.key == 'actions' && header.actions"
-        :header="header"
-        :item="item"
-        @run-table-action-logic="runTableActionLogic($event, index)"
-      />
-
-      <table-cell
-        v-if="!header.editable"
+      <table-cell-wrapper
         :actions="actions"
+        :field-props="fieldProps"
         :header="header"
         :item="item"
-      >
-      </table-cell>
-
-      <table-editable-cell
-        v-else-if="header.editable == true"
-        v-model="items[index][header.key]"
-        v-bind="fieldProps"
-        @update:row="updateRow($event, index, header.valueMapping, item)"
-      />
-
-      <table-editable-cell-group
-        v-else-if="header.editable.length > 0"
-        :header="header"
-        :items="header.editable"
-        :row="item"
-        v-bind="fieldProps"
-        @update:field="(event) => updateRow(event.value, index, event.valueMapping, item)"
+        @update-row="(event) => updateRow(event.value, index, event.path, item)"
+        @run-table-action-logic="(event) => runTableActionLogic(event, index)"
       />
     </template>
 
@@ -161,15 +115,12 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { cloneDeep, debounce, merge } from "lodash";
+import { cloneDeep, debounce } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
 import { ComputedRef, Ref, computed, onMounted, reactive, ref } from "vue";
 
-import TableActionMenuWrapper from "@/components/controls/table/TableActionMenuWrapper.vue";
-import TableCell from "@/components/controls/table/TableCell.vue";
-import TableEditableCell from "@/components/controls/table/TableEditableCell.vue";
-import TableEditableCellGroup from "@/components/controls/table/TableEditableCellGroup.vue";
+import TableCellWrapper from "@/components/controls/table/TableCellWrapper.vue";
 import { TableFetchOptions, TableOptions } from "@/components/controls/table/table-types";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
@@ -297,50 +248,6 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
     query: null, // TODO
   };
 });
-
-async function updateRow(value: any, index: number, headerKey: string, row: any) {
-  try {
-    const payload = {};
-    payload[headerKey] = value;
-
-    const updateRowURL = await createUpdateRowURL(row);
-    //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
-    const response = await axios.post(updateRowURL, payload);
-    items.value[index] = response.data;
-  } catch (e) {
-    console.error(e);
-  }
-
-  if (props.schema.aggregates) {
-    console.debug("Wołam API o agregaty do wyświetlenia");
-    /*
-      powiedzmy że api zwraca obiekt z agregatami
-
-     */
-    const response = {
-      fieldA: 1,
-      fieldB: 100,
-      fieldC: 1000,
-      fieldD: {
-        fieldE: "test",
-      },
-      fieldF: [
-        {
-          fieldG: "test1",
-        },
-        {
-          fieldG: "test2",
-        },
-        {
-          fieldG: "test3",
-        },
-      ],
-    };
-
-    merge(props.model, response);
-    vueSchemaFormEventBus.emit("model-changed", "table-aggregates");
-  }
-}
 
 async function loadData(params: TableFetchOptions) {
   try {
@@ -494,18 +401,53 @@ async function createUpdateRowURL(item: any) {
   return updateRowURL;
 }
 
-const bgColor = ref("#ffcc00");
-const bgColorStyle = computed(() => {
-  return {
-    "--dynamic-bg-color": bgColor.value,
-  };
-});
+async function updateRow(value: any, index: number, headerKey: string, row: any) {
+  try {
+    const payload = {};
+    payload[headerKey] = value;
+
+    const updateRowURL = await createUpdateRowURL(row);
+    //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
+    const response = await axios.post(updateRowURL, payload);
+    items.value[index] = response.data;
+  } catch (e) {
+    console.error(e);
+  }
+
+  if (props.schema.aggregates) {
+    console.debug("Wołam API o agregaty do wyświetlenia");
+    /*
+      powiedzmy że api zwraca obiekt z agregatami
+
+     */
+    const response = {
+      fieldA: 1,
+      fieldB: 100,
+      fieldC: 1000,
+      fieldD: {
+        fieldE: "test",
+      },
+      fieldF: [
+        {
+          fieldG: "test1",
+        },
+        {
+          fieldG: "test2",
+        },
+        {
+          fieldG: "test3",
+        },
+      ],
+    };
+
+    merge(props.model, response);
+    vueSchemaFormEventBus.emit("model-changed", "table-aggregates");
+  }
+}
 
 onMounted(async () => {
   await bindProps(props.schema);
   debounced.load(fetchDataParams.value);
-
-  bgColor.value = "red";
 });
 
 // Ustaw kolor dynamicznie
@@ -521,18 +463,68 @@ tr.highlight-name > td:nth-child(1) {
   color: white;
 }
 
-.custom-table :deep(.v-data-table__td:has(.cell-content-collection)) {
-  background: var(--dynamic-bg-color, #d3d3d3);
-  margin: 0px 4px !important;
-  line-height: 2;
+.table-cell-background-grey-lighten-4 {
+  background-color: #f5f5f5;
 }
 
-.cell-content-collection {
-  height: 100%;
-  padding: 0px 0px;
-  margin: 0px 0px !important;
-  display: flex;
-  flex-direction: column; /* Jeśli dzieci mają być w kolumnie */
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-lighten-4)) {
+  background-color: #f5f5f5;
+}
+
+.table-cell-background-grey-lighten-3 {
+  background-color: #eeeeee;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-lighten-3)) {
+  background-color: #eeeeee;
+}
+
+.table-cell-background-grey-lighten-2 {
+  background-color: #e0e0e0;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-lighten-2)) {
+  background-color: #e0e0e0;
+}
+
+.table-cell-background-grey-lighten-1 {
+  background-color: #bdbdbd;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-lighten-1)) {
+  background-color: #bdbdbd;
+}
+
+.table-cell-background-grey-darken-1 {
+  background-color: #757575;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-darken-1)) {
+  background-color: #757575;
+}
+
+.table-cell-background-grey-darken-2 {
+  background-color: #616161;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-darken-2)) {
+  background-color: #616161;
+}
+
+.table-cell-background-grey-darken-3 {
+  background-color: #424242;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-darken-3)) {
+  background-color: #424242;
+}
+
+.table-cell-background-grey-darken-4 {
+  background-color: #212121;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-darken-4)) {
+  background-color: #212121;
 }
 </style>
 
