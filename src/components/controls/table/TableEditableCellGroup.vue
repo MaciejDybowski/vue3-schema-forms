@@ -8,7 +8,7 @@
       <label :style="labelStyle">{{ item.label }}</label>
       <input
         :value="get(row, item.valueMapping, '')"
-        v-bind="inputAttrs"
+        v-bind="inputAttrs as any"
         @input="(e: any) => emit('update:field', { value: e.target.value, valueMapping: item.valueMapping })"
       />
     </div>

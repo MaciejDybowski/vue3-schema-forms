@@ -36,7 +36,7 @@
         />-->
 
     <table-editable-cell-group
-      v-else-if="isArray(header.editable) && header.editable.length > 0"
+      v-else-if="isArray(header.editable) && (header.editable as any).length > 0"
       :header="header"
       :items="header.editable"
       :row="item"
