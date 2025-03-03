@@ -526,6 +526,8 @@ tr.highlight-name > td:nth-child(1) {
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-darken-4)) {
   background-color: #212121;
 }
+
+
 </style>
 
 <i18n lang="json">

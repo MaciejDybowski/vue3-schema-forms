@@ -1,5 +1,5 @@
 <template>
-  <div :class="refClass">
+  <div :class="[theme.global.current.value.dark ? refClass.replaceAll('lighten', 'darken') : refClass]">
     <div v-if="header.type == 'COLLECTION'">
       <template v-for="(collectionItem, index) in header.items">
         <table-editable-cell-group
@@ -57,6 +57,7 @@
 import jsonata from "jsonata";
 import { isArray } from "lodash";
 import { onMounted, ref } from "vue";
+import { useTheme } from "vuetify";
 
 import TableActionMenuWrapper from "@/components/controls/table/TableActionMenuWrapper.vue";
 import TableCell from "@/components/controls/table/TableCell.vue";
@@ -75,6 +76,8 @@ const emit = defineEmits<{
   (e: "updateRow", payload: { value: string; path: string; item: any }): void;
   (e: "runTableActionLogic", payload: { action: TableHeaderAction; item: object });
 }>();
+
+const theme = useTheme();
 
 const refClass = ref("");
 
@@ -98,5 +101,4 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>
