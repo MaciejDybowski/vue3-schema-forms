@@ -425,7 +425,7 @@ export const DynamicAlerts: Story = {
               {
                 title: "",
                 key: "alerts",
-                color: "volume > 0.03 ? 'bg-light-blue-lighten-5': 'bg-cyan-lighten-5'",
+                color: "volume > 0.03 ? 'table-cell-background-grey-lighten-3': ''",
                 valueMapping: "alerts",
                 type: "ALERT",
                 properties: {

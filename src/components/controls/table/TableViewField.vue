@@ -527,17 +527,32 @@ tr.highlight-name > td:nth-child(1) {
   background-color: #212121;
 }
 
-.custom-table :deep(.v-data-table__td:has(> [class^="bg-"])) {
-  position: relative; /* Umożliwia nakładanie tła */
+
+.table-cell-background-blue {
+  background-color: #2196F3;
 }
 
-.custom-table :deep(.v-data-table__td > [class^="bg-"]) {
-  position: absolute;
-  inset: 0; /* Skrót dla top: 0; left: 0; right: 0; bottom: 0; */
-  width: 100%;
-  height: 100%;
-
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-blue)) {
+  background-color: #2196F3;
 }
+
+.table-cell-background-yellow {
+  background-color: #FFEB3B;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow)) {
+  background-color: #FFEB3B;
+}
+
+.table-cell-background-red {
+  background-color: #F44336;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-red)) {
+  background-color: #F44336;
+}
+
+
 </style>
 
 <i18n lang="json">
