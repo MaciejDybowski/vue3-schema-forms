@@ -708,183 +708,701 @@ export const Forte: Story = {
       liczba: 3.2133232,
     },
     schema: {
-      type: "object",
-      properties: {
-        tableOfOfferItems: {
-          layout: { component: "table-view" },
-          source: {
-            data: "/api/v1/offers/{offer.id}/offer-items",
-            headers: [
-              {
-                title: "Image",
-                key: "mainImageUrl",
-                valueMapping:
-                  "/api/v1/features/products/images/{product.mainImage.id}%3D%3D?Workspace-Id={context.workspaceId}&dataId={product.mainImage.dataId}",
-                type: "IMAGE",
-                properties: {
-                  minWidth: 64,
-                  maxWidth: 64,
-                },
-              },
-              {
-                title: "Product",
-                key: "product",
-                valueMapping:
-                  "<b>{product.name: Product name}</b> </br>{product.number:1}\n<br/>\nProgram: {product.programName}",
-                type: "TEXT",
-              },
-              {
-                title: "",
-                key: "palletQuantityIcon",
-                valueMapping: "palletQuantityIcon",
-                type: "ICON",
-              },
-              {
-                title: "Offer",
-                key: "collection",
-                type: "COLLECTION",
-                color: "dataId != null ? 'table-cell-background-grey-lighten-3': ''",
-                items: [
-                  {
-                    title: "Input",
-                    key: "inputs",
-                    type: "",
-                    editable: [{ label: "Invoice price (NN):", key: "invoicePrice", valueMapping: "invoicePrice" }],
-                  },
-                  {
-                    type: "TEXT",
-                    key: "recommendedPrice",
-                    valueMapping:
-                      '<div style="display:flex;flex-direction:column;line-height: 2">\n' +
-                      '  <div style="display:flex;justify-content:space-between"><span>Price NNN:</span><span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
-                      '  <div style="display:flex;justify-content:space-between"><span>Price NNN EXW:</span><span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n' +
-                      '  <div style="display:flex;justify-content:space-between; margin-top: 8px"><span>MaT:</span><span><b> {details.marginAfterTransportAmount:0} {details.currencyCode:PLN} / {details.marginPercent:0}%</b></span></div>\n' +
-                      "</div>",
-                  },
-                ],
-              },
-              {
-                title: "Recommended",
-                type: "TEXT",
-                key: "recommendedPrice",
-                valueMapping:
-                  '<div style="display: flex; flex-direction: column; line-height:2; padding-top: 4px">\n' +
-                  '  <div style="display: flex; justify-content: space-between;padding-bottom: 4px">\n' +
-                  "    <span>Price NN:</span>\n" +
-                  "    <span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span>\n" +
-                  "  </div>\n" +
-                  '  <div style="display: flex; justify-content: space-between;">\n' +
-                  "    <span>Price NNN:</span>\n" +
-                  "    <span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span>\n" +
-                  "  </div>\n" +
-                  '  <div style="display: flex; justify-content: space-between;">\n' +
-                  "    <span>Price NNN EXW:</span>\n" +
-                  "    <span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span>\n" +
-                  "  </div>\n" +
-                  '  <div style="display: flex; justify-content: space-between; margin-top: 8px">\n' +
-                  "    <span>MaT:</span>\n" +
-                  "    <span><b>{details.marginPercent:0}%</b></span>\n" +
-                  "  </div>\n" +
-                  "</div>\n",
-              },
-              {
-                title: "Offer",
-                key: "collection2",
-                type: "COLLECTION",
-                color: "dataId != null ? 'table-cell-background-grey-lighten-3': ''",
-                items: [
-                  {
-                    title: "Input",
-                    key: "inputs",
-                    type: "",
-                    editable: [
-                      { label: "Target price gross:", key: "targetPriceGross", valueMapping: "targetPriceGross" },
-                      { label: "Price factor:", key: "priceFactor", valueMapping: "priceFactor" },
-                    ],
-                  },
-                  {
-                    title: "Result",
-                    type: "TEXT",
-                    key: "result",
-                    valueMapping:
-                      "" +
-                      '<div style="display:flex;flex-direction:column; line-height: 1.8">\n' +
-                      '  <div style="display:flex;justify-content:space-between">\n' +
-                      "    <span>Price net/gross:</span>\n" +
-                      "    <span><b>{details.retailPriceNet:0.00}</b> {details.currencyCode:PLN} / <b>{details.retailPriceGross:0.00}</b> {details.currencyCode:PLN}</span>\n" +
-                      "  </div>\n" +
-                      '  <div style="display:flex;justify-content:space-between;">\n' +
-                      "    <span>Retailer margin:</span>\n" +
-                      "    <span><b>{details.marginPercent:0}%</b></span>\n" +
-                      "  </div>\n" +
-                      "</div>",
-                  },
-                ],
-              },
-
-              {
-                title: "",
-                key: "actions",
-                actions: [
-                  {
-                    title: "Delete",
-                    icon: "mdi-delete-outline",
-                    mode: "action",
-                    code: "callScript",
-                    config: {
-                      params: {
-                        script: "delete_product_from_offer",
-                      },
-                      body: {
-                        dataId: "{product.id}",
-                      },
-                    },
-                    props: {
-                      color: "error",
-                    },
-                  },
-                  {
-                    title: "Pallet shipping",
-                    icon: "mdi-shipping-pallet",
-                    mode: "action",
-                    code: "callScript",
-                    config: {
-                      params: {
-                        script: "add_pallet_price",
-                      },
-                      body: {
-                        dataId: "{product.id}",
-                      },
-                    },
-                    props: {
-                      color: "primary",
-                    },
-                  },
-                ],
-              },
-            ],
-            buttons: [
-              {
-                label: "Add products",
-                btnProps: {
-                  color: "primary",
-                  rounded: false,
-                },
-                mode: "action",
-                config: {
-                  code: "batchAdd", // na froncie jest sprawdzanie jak batchAdd to i tak woła skrypt bo w obsłudze zadanie jest tylko jedna uniwersalna akcja
-                  featureId: "products",
-                  viewId: "94578-tabela",
-                  batchAddAttributePath: "dataId",
-                  scriptName: "add_products_to_offer",
-                },
-              },
-            ],
-          },
-          actions: {},
+      "type": "object",
+      "properties": {
+        "customerData": {
+          "content": "<b>Customer:</b></br> \n{customer.name:No data}\n<br> {customer.shipCountry:No country}, {customer.salesRegion:No sales region}",
+          "layout": {
+            "component": "static-content",
+            "tag": "p",
+            "cols": {
+              "xs": 12,
+              "sm": 12,
+              "md": 12,
+              "lg": 8,
+              "xl": 8,
+              "xxl": 8
+            }
+          }
         },
+        "offer": {
+          "properties": {
+            "createdAt": {
+              "label": "Created at",
+              "layout": {
+                "component": "data-viewer",
+                "cols": {
+                  "xs": 1,
+                  "sm": 1,
+                  "md": 1,
+                  "lg": 2,
+                  "xl": 2,
+                  "xxl": 2
+                }
+              },
+              "valueMapping": "{offer.createdAt}"
+            },
+            "createdBy": {
+              "label": "Created by",
+              "layout": {
+                "component": "data-viewer",
+                "cols": {
+                  "xs": 2,
+                  "sm": 2,
+                  "md": 2,
+                  "lg": 2,
+                  "xl": 2,
+                  "xxl": 2
+                }
+              },
+              "valueMapping": "{offer.createdBy}"
+            }
+          },
+          "required": []
+        },
+        "priceList": {
+          "content": "<b>Pricelist:</b></br> \n{pricelist. label:No data}\n",
+          "layout": {
+            "component": "static-content",
+            "tag": "p",
+            "cols": {
+              "xs": 12,
+              "sm": 12,
+              "md": 12,
+              "lg": 10,
+              "xl": 10,
+              "xxl": 10
+            }
+          }
+        },
+        "offerOwner": {
+          "label": "Owned by",
+          "layout": {
+            "component": "data-viewer",
+            "cols": {
+              "xs": 2,
+              "sm": 2,
+              "md": 2,
+              "lg": 2,
+              "xl": 2,
+              "xxl": 2
+            }
+          },
+          "valueMapping": "{offer.owner}",
+          "type": null
+        },
+        "showAdditionalData": {
+          "label": "Advanced settings",
+          "layout": {
+            "component": "switch",
+            "props": {
+              "color": "success"
+            }
+          }
+        },
+        "groupOfData": {
+          "layout": {
+            "component": "fields-group",
+            "cols": {
+              "xs": 12,
+              "sm": 12,
+              "md": 12,
+              "lg": 12,
+              "xl": 12,
+              "xxl": 12
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "offer": {
+                  "properties": {
+                    "currency": {
+                      "label": "Currency",
+                      "layout": {
+                        "cols": {
+                          "xs": 12,
+                          "sm": 6,
+                          "md": 6,
+                          "lg": 4,
+                          "xl": 4,
+                          "xxl": 4
+                        },
+                        "component": "dictionary",
+                        "props": {
+                          "clearable": false,
+                          "readonly": true
+                        }
+                      },
+                      "source": {
+                        "url": "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId&dm=%7Bname%7D",
+                        "title": "id",
+                        "value": "id",
+                        "returnObject": true,
+                        "description": "description"
+                      }
+                    },
+                    "currencyRate": {
+                      "label": "Currency rate",
+                      "layout": {
+                        "cols": {
+                          "xs": 12,
+                          "sm": 6,
+                          "md": 6,
+                          "lg": 4,
+                          "xl": 4,
+                          "xxl": 4
+                        },
+                        "component": "number-field",
+                        "props": {
+                          "readonly": true
+                        }
+                      },
+                      "type": "float",
+                      "precision": "4",
+                      "precisionMin": "2"
+                    },
+                    "vatRate": {
+                      "label": "VAT rate (%)",
+                      "layout": {
+                        "cols": {
+                          "xs": 12,
+                          "sm": 6,
+                          "md": 6,
+                          "lg": 4,
+                          "xl": 4,
+                          "xxl": 4
+                        },
+                        "fillRow": true,
+                        "component": "combobox"
+                      },
+                      "source": {
+                        "url": "",
+                        "title": "label",
+                        "value": "id"
+                      }
+                    }
+                  },
+                  "required": []
+                },
+                "static-content-953": {
+                  "content": "Transport conditions",
+                  "layout": {
+                    "component": "static-content",
+                    "tag": "h3"
+                  }
+                },
+                "transportConditions": {
+                  "properties": {
+                    "incotermsRule": {
+                      "label": "Incoterms® Rule",
+                      "layout": {
+                        "cols": {
+                          "xs": 12,
+                          "sm": 6,
+                          "md": 6,
+                          "lg": 4,
+                          "xl": 4,
+                          "xxl": 4
+                        },
+                        "component": "dictionary"
+                      },
+                      "source": {
+                        "url": "/api/dictionaries?feature-id=incoterm-rules&lm=name&vm=dataId&dm=%7Bname%7D",
+                        "title": "id",
+                        "value": "id",
+                        "returnObject": true,
+                        "lazy": true,
+                        "singleOptionAutoSelect": true,
+                        "description": "description"
+                      },
+                      "onChange": {
+                        "mode": "change-model",
+                        "variables": [
+                          {
+                            "path": "transportConditions.transportRate",
+                            "value": null
+                          }
+                        ]
+                      }
+                    },
+                    "transportCostRateEurM3": {
+                      "label": "Transport cost rate EUR/m3",
+                      "layout": {
+                        "cols": {
+                          "xs": 12,
+                          "sm": 6,
+                          "md": 6,
+                          "lg": 4,
+                          "xl": 4,
+                          "xxl": 4
+                        },
+                        "component": "text-field"
+                      },
+                      "defaultValue": null
+                    },
+                    "alert1": {
+                      "content": "If the Incoterms® are changed, the Transport Rate field must be completed.",
+                      "layout": {
+                        "component": "static-content",
+                        "tag": "v-alert",
+                        "cols": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 12,
+                          "lg": 8,
+                          "xl": 8,
+                          "xxl": 8
+                        },
+                        "props": {
+                          "type": "warning",
+                          "density": "default",
+                          "variant": "tonal"
+                        }
+                      }
+                    }
+                  },
+                  "required": []
+                },
+                "static-content-413": {
+                  "content": "Calculation rules",
+                  "layout": {
+                    "component": "static-content",
+                    "tag": "h3"
+                  }
+                },
+                "calculationRules": {
+                  "properties": {
+                    "retailPriceFactor": {
+                      "label": "Retail price factor",
+                      "layout": {
+                        "cols": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 12,
+                          "lg": 4,
+                          "xl": 4,
+                          "xxl": 4
+                        },
+                        "fillRow": true,
+                        "component": "number-field"
+                      },
+                      "type": "float",
+                      "precision": "2",
+                      "precisionMin": "2",
+                      "onChange": {
+                        "mode": "emit-event",
+                        "eventSignal": "table-refresh"
+                      }
+                    },
+                    "discountPercent": {
+                      "label": "Customer discount (%)",
+                      "layout": {
+                        "cols": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 12,
+                          "lg": 4,
+                          "xl": 4,
+                          "xxl": 4
+                        },
+                        "component": "number-field",
+                        "fillRow": true
+                      },
+                      "type": "int"
+                    },
+                    "alert": {
+                      "content": "Standard customer discounts retrieved from SAP. Retail price factor must be set to calculate retail price.",
+                      "layout": {
+                        "component": "static-content",
+                        "tag": "v-alert",
+                        "props": {
+                          "variant": "tonal",
+                          "type": "info",
+                          "density": "default"
+                        },
+                        "cols": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 12,
+                          "lg": 8,
+                          "xl": 8,
+                          "xxl": 8
+                        }
+                      }
+                    }
+                  },
+                  "required": []
+                },
+                "otherCostsHeader": {
+                  "content": "<b>Other costs:</b><br/>",
+                  "layout": {
+                    "component": "static-content",
+                    "tag": "p"
+                  }
+                },
+                "otherCosts": {
+                  "layout": {
+                    "component": "duplicated-section",
+                    "cols": {
+                      "xs": 12,
+                      "sm": 12,
+                      "md": 12,
+                      "lg": 12,
+                      "xl": 12,
+                      "xxl": 12
+                    },
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "costName": {
+                          "label": "Cost name",
+                          "layout": {
+                            "cols": {
+                              "xs": 12,
+                              "sm": 12,
+                              "md": 12,
+                              "lg": 4,
+                              "xl": 4,
+                              "xxl": 4
+                            },
+                            "component": "text-field"
+                          }
+                        },
+                        "unitCostPerProduct": {
+                          "label": "Unit cost per product",
+                          "layout": {
+                            "cols": {
+                              "xs": 12,
+                              "sm": 12,
+                              "md": 12,
+                              "lg": 4,
+                              "xl": 4,
+                              "xxl": 4
+                            },
+                            "component": "number-field"
+                          },
+                          "type": "float",
+                          "precision": "2",
+                          "precisionMin": "2"
+                        },
+                        "unitCostPerPackage": {
+                          "label": "Unit cost per package",
+                          "layout": {
+                            "cols": {
+                              "xs": 12,
+                              "sm": 12,
+                              "md": 12,
+                              "lg": 4,
+                              "xl": 4,
+                              "xxl": 4
+                            },
+                            "component": "number-field"
+                          },
+                          "type": "float",
+                          "precision": "2",
+                          "precisionMin": "2"
+                        }
+                      },
+                      "required": []
+                    },
+                    "options": {
+                      "addBtnText": "Add other costs",
+                      "showDivider": false,
+                      "ordinalNumberInModel": false,
+                      "showFirstInitRow": false
+                    },
+                    "editable": true,
+                    "showElements": true,
+                    "props": {}
+                  },
+                  "editable": true,
+                  "showElements": true,
+                  "sectionKey": "groupOfData"
+                }
+              },
+              "required": []
+            },
+            "props": {},
+            "options": {
+              "showDivider": false,
+              "addBtnText": "Add"
+            },
+            "if": "nata(showAdditionalData=true)"
+          }
+        },
+        "tableHeader": {
+          "content": "Products",
+          "layout": {
+            "component": "static-content",
+            "tag": "h3"
+          }
+        },
+        "offerCurrencyDescription": {
+          "content": "Offer currency: {offer.currency.id:PLN}",
+          "layout": {
+            "component": "static-content",
+            "tag": "v-alert",
+            "cols": {
+              "xs": 12,
+              "sm": 12,
+              "md": 12,
+              "lg": 8,
+              "xl": 8,
+              "xxl": 8
+            },
+            "props": {
+              "variant": "tonal",
+              "type": "info"
+            }
+          }
+        },
+        "tableOfOfferItems": {
+          "layout": {
+            "component": "table-view"
+          },
+          "source": {
+            "data": "/api/v1/offers/{offer.id}/offer-items",
+            "headers": [
+              {
+                "type": "ALERT",
+                "key": "alerts",
+                "title": ""
+              },
+              {
+                "title": "Image",
+                "key": "mainImageUrl",
+                "valueMapping": "/api/v1/features/products/images/{product.mainImage.id}?Workspace-Id=forte&dataId={product.mainImage.dataId}",
+                "type": "IMAGE",
+                "properties": {
+                  "minWidth": 64,
+                  "maxWidth": 64
+                }
+              },
+              {
+                "title": "Product",
+                "key": "product",
+                "valueMapping": "<b>{product.name: Product name}</b> </br>{product.number:1}\n<br/>\nProgram: {product.programName}",
+                "type": "TEXT"
+              },
+              {
+                "title": "",
+                "key": "palletQuantityIcon",
+                "valueMapping": "palletQuantityIcon",
+                "type": "ICON"
+              },
+              {
+                "title": "Offer",
+                "key": "collection",
+                "type": "COLLECTION",
+                "color": "dataId != null ? 'table-cell-background-grey-lighten-3': ''",
+                "items": [
+                  {
+                    "title": "Input",
+                    "key": "inputs",
+                    "type": "",
+                    "editable": [
+                      {
+                        "label": "Invoice (NN):",
+                        "key": "invoicePrice",
+                        "valueMapping": "invoicePrice"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "key": "offerPrice",
+                    "valueMapping": "<div style=\"display:flex;flex-direction:column;line-height: 2\">\n  <div style=\"display:flex;justify-content:space-between\"><span>NNN:</span><span><b>{details.nnnPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n  <div style=\"display:flex;justify-content:space-between\"><span>NNN EXW:</span><span><b>{details.nnnExwPrice:0.00}</b> {details.currencyCode:PLN}</span></div>\n  <div style=\"display:flex;justify-content:space-between; margin-top: 8px\"><span>MaT:</span><span><b> {details.marginAfterTransportAmount:0} {details.currencyCode:PLN} / {details.marginPercent:0}%</b></span></div>\n</div>"
+                  }
+                ],
+                "properties": {
+                  "minWidth": "300px",
+                  "maxWidth": "300px"
+                }
+              },
+              {
+                "title": "Recommended",
+                "type": "TEXT",
+                "key": "recommendedPrice",
+                "valueMapping": "<div style=\"display: flex; flex-direction: column; line-height:2; padding-top: 4px\">\n  <div style=\"display: flex; justify-content: space-between;padding-bottom: 4px\">\n    <span>NN:</span>\n    <span><b>{details.recommendedInvoicePrice:0.00}</b> {details.currencyCode:PLN}</span>\n  </div>\n  <div style=\"display: flex; justify-content: space-between;\">\n    <span>NNN:</span>\n    <span><b>{details.recommendedNnnPrice:0.00}</b> {details.currencyCode:PLN}</span>\n  </div>\n  <div style=\"display: flex; justify-content: space-between;\">\n    <span>NNN EXW:</span>\n    <span><b>{details.recommendedNnnExwPrice:0.00}</b> {details.currencyCode:PLN}</span>\n  </div>\n  <div style=\"display: flex; justify-content: space-between; margin-top: 8px\">\n    <span>MaT:</span>\n    <span><b>{details.recommendedMarginPercent:0}%</b></span>\n  </div>\n</div>\n",
+                "properties": {
+                  "minWidth": "200px",
+                  "maxWidth": "200px"
+                }
+              },
+              {
+                "title": "Retail",
+                "key": "collection2",
+                "type": "COLLECTION",
+                "color": "dataId != null ? 'table-cell-background-grey-lighten-3': ''",
+                "items": [
+                  {
+                    "title": "Input",
+                    "key": "inputs",
+                    "type": "",
+                    "editable": [
+                      {
+                        "label": "Target price gross:",
+                        "key": "targetRetailPriceGross",
+                        "valueMapping": "targetRetailPriceGross"
+                      },
+                      {
+                        "label": "Price factor:",
+                        "key": "retailPriceFactor",
+                        "valueMapping": "retailPriceFactor"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Result",
+                    "type": "TEXT",
+                    "key": "result",
+                    "valueMapping": "<div style=\"display:flex;flex-direction:column; line-height: 1.8\">\n  <div style=\"display:flex;justify-content:space-between\">\n    <span>Price net/gross:</span>\n    <span><b>{details.retailPriceNet:0.00}</b> / <b>{details.retailPriceGross:0.00}</b> {details.currencyCode:PLN}</span>\n  </div>\n  <div style=\"display:flex;justify-content:space-between;\">\n    <span>Retailer margin:</span>\n    <span><b>{details.customerMarginPercent:0}%</b></span>\n  </div>\n</div>"
+                  }
+                ],
+                "properties": {
+                  "minWidth": "300px",
+                  "maxWidth": "300px"
+                }
+              },
+              {
+                "title": "",
+                "key": "actions",
+                "actions": [
+                  {
+                    "title": "Delete",
+                    "icon": "mdi-delete-outline",
+                    "mode": "action",
+                    "code": "callScript",
+                    "config": {
+                      "params": {
+                        "script": "delete_product_from_offer"
+                      },
+                      "body": {
+                        "dataId": "{product.id}"
+                      }
+                    },
+                    "props": {
+                      "color": "error"
+                    }
+                  },
+                  {
+                    "title": "Pallet shipping",
+                    "icon": "mdi-shipping-pallet",
+                    "mode": "action",
+                    "code": "callScript",
+                    "config": {
+                      "params": {
+                        "script": "add_pallet_price"
+                      },
+                      "body": {
+                        "dataId": "{product.id}"
+                      }
+                    },
+                    "props": {
+                      "color": "primary"
+                    }
+                  }
+                ]
+              }
+            ],
+            "buttons": [
+              {
+                "label": "Add products",
+                "btnProps": {
+                  "color": "primary",
+                  "rounded": false
+                },
+                "mode": "action",
+                "config": {
+                  "code": "batchAdd",
+                  "featureId": "products",
+                  "viewId": "94578-tabela",
+                  "batchAddAttributePath": "dataId",
+                  "scriptName": "add_products_to_offer"
+                }
+              }
+            ]
+          },
+          "actions": {}
+        },
+        "Decision": {
+          "properties": {
+            "details": {
+              "content": "Decision details",
+              "layout": {
+                "component": "static-content",
+                "tag": "h3"
+              },
+              "label": "tableHeader171_cloned"
+            }
+          },
+          "required": []
+        },
+        "sales": {
+          "properties": {
+            "director": {
+              "label": "Sales Director",
+              "layout": {
+                "cols": {
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 12,
+                  "lg": 6,
+                  "xl": 6,
+                  "xxl": 6
+                },
+                "fillRow": true,
+                "component": "dictionary",
+                "props": {
+                  "clearable": true,
+                  "readonly": "nata(pricelist.highestUserRole!='SA' and pricelist.highestUserRole!='MD')"
+                }
+              },
+              "source": {
+                "url": "",
+                "title": "label",
+                "value": "id"
+              }
+            }
+          },
+          "required": []
+        },
+        "decision": {
+          "label": "Decision",
+          "layout": {
+            "cols": {
+              "xs": 12,
+              "sm": 12,
+              "md": 12,
+              "lg": 6,
+              "xl": 6,
+              "xxl": 6
+            },
+            "component": "select"
+          },
+          "source": {
+            "items": [
+              {
+                "value": "yes",
+                "title": "Yes"
+              },
+              {
+                "value": "sendForApproval",
+                "title": "Send for approval"
+              },
+              {
+                "value": "no",
+                "title": "No"
+              },
+              {
+                "value": "cancel",
+                "title": "Cancel the offer"
+              }
+            ]
+          }
+        }
       },
-      required: [],
+      "required": []
     },
   },
   parameters: {

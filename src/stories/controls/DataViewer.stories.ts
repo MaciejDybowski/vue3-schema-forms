@@ -152,6 +152,35 @@ export const StandardDate: Story = {
   },
 };
 
+export const StandardDateTime: Story = {
+  name: "Datetime, matching keys",
+  play: async (context) => {
+    await waitForMountedAsync()
+    const canvas = within(context.canvasElement);
+    const field = canvas.getByText("Read value from model [date]");
+    const text = canvas.getByText("01/25/2024 01:00 AM");
+
+    await expect(field).toBeInTheDocument();
+    await expect(text).toBeInTheDocument();
+  },
+  args: {
+    modelValue: {
+      date: "2024-01-25T00:00:00.000Z",
+    },
+    schema: {
+      properties: {
+        date: {
+          label: "Read value from model [date]",
+          type: "date-time",
+          layout: {
+            component: "data-viewer",
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
 export const StandardPhone: Story = {
   name: "Phone, matching keys",
   play: async (context) => {

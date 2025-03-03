@@ -16,5 +16,16 @@ export function useDateFormat() {
     }
   });
 
-  return { dateFormat };
+  const dateTimeFormat = computed(() => {
+    switch (locale.value) {
+      case "pl":
+        return "DD.MM.YYYY HH:mm";
+      case "en":
+        return "MM/DD/YYYY hh:mm A";
+      default:
+        return "MM/DD/YYYY hh:mm A";
+    }
+  });
+
+  return { dateFormat, dateTimeFormat };
 }

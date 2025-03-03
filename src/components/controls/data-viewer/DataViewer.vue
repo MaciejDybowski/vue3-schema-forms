@@ -40,7 +40,7 @@ const { label, bindLabel } = useLabel(props.schema);
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const { formattedNumber } = useNumber();
-const { dateFormat } = useDateFormat();
+const { dateFormat, dateTimeFormat } = useDateFormat();
 const { resolve } = useResolveVariables();
 const { calculationFunc } = useCalculation();
 
@@ -67,6 +67,10 @@ const localModel = computed({
       case "date":
         if (!value || value == "null") break;
         value = dayjs(value).format(dateFormat.value);
+        break;
+      case "date-time":
+        if (!value || value == "null") break;
+        value = dayjs(value).format(dateTimeFormat.value);
         break;
       case "phone":
         if (!value || value == "null") break;
