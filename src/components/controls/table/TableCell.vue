@@ -31,7 +31,7 @@
 
   <div v-if="header.type == 'ALERT'">
     <v-tooltip
-      v-if="item.alerts"
+      v-if="item.alerts && item.alerts.length > 0"
       location="top"
       max-width="400px"
     >

@@ -71,7 +71,7 @@ const REQUEST_PAGE_0_1_ALERT = {
             location: "Washington",
             height: "0.1",
             base: "0.07",
-            volume: "0.0001",
+            volume: 0.0001,
             alerts: [
               {
                 "type": "warning",
@@ -92,7 +92,7 @@ const REQUEST_PAGE_0_1_ALERT = {
             location: "Washington",
             height: "0.1",
             base: "0.07",
-            volume: "0.0001",
+            volume: 0.0001,
             alerts: [
               {
                 "type": "info",
@@ -109,7 +109,8 @@ const REQUEST_PAGE_0_1_ALERT = {
             location: "Washington",
             height: "0.1",
             base: "0.07",
-            volume: "0.0001",
+            volume: 0.3,
+            alerts: []
           },
         ],
       };
@@ -424,6 +425,7 @@ export const DynamicAlerts: Story = {
               {
                 title: "",
                 key: "alerts",
+                color: "volume > 0.03 ? 'bg-light-blue-lighten-5': 'bg-cyan-lighten-5'",
                 valueMapping: "alerts",
                 type: "ALERT",
                 properties: {

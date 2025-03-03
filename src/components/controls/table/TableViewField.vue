@@ -7,7 +7,7 @@
     :headers="headers"
     :hover="true"
     :items="items"
-    class="bg-transparent custom-table"
+    class="custom-table"
     density="compact"
   >
     <template #top>
@@ -527,7 +527,17 @@ tr.highlight-name > td:nth-child(1) {
   background-color: #212121;
 }
 
+.custom-table :deep(.v-data-table__td:has(> [class^="bg-"])) {
+  position: relative; /* Umożliwia nakładanie tła */
+}
 
+.custom-table :deep(.v-data-table__td > [class^="bg-"]) {
+  position: absolute;
+  inset: 0; /* Skrót dla top: 0; left: 0; right: 0; bottom: 0; */
+  width: 100%;
+  height: 100%;
+
+}
 </style>
 
 <i18n lang="json">
