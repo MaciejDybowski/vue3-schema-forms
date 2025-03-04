@@ -30,7 +30,6 @@ const attrs = useAttrs();
 
 const labelStyle = computed(() => ({
   color: isDarkTheme.value ? "#FFFFFF" : "#000000",
-  minWidth: "100px",
   marginRight: "8px",
 }));
 
