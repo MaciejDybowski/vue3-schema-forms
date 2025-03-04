@@ -1,7 +1,8 @@
 <template>
   <div :class="[theme.global.current.value.dark ? refClass.replaceAll('lighten', 'darken') : refClass]">
-    <div v-if="header.type == 'COLLECTION'">
-      <template v-for="(collectionItem, index) in header.items">
+
+      <template v-if="header.type == 'COLLECTION'"
+                v-for="(collectionItem, index) in header.items">
         <table-editable-cell-group
           v-if="collectionItem.editable && (collectionItem.editable as any).length > 0"
           :header="collectionItem"
@@ -18,7 +19,7 @@
         >
         </table-cell>
       </template>
-    </div>
+
 
     <table-cell
       v-if="!header.editable"

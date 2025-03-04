@@ -287,6 +287,9 @@ export const Forte: Story = {
                 key: "collection2",
                 type: "COLLECTION",
                 color: "dataId != null ? 'table-cell-background-grey-lighten-3': ''",
+                properties: {
+                  maxWidth: "180px"
+                },
                 items: [
                   {
                     title: "Input",
@@ -297,23 +300,7 @@ export const Forte: Story = {
                       { label: "Price factor:", key: "priceFactor", valueMapping: "priceFactor" },
                     ],
                   },
-                  {
-                    title: "Result",
-                    type: "TEXT",
-                    key: "result",
-                    valueMapping:
-                      "" +
-                      '<div style="display:flex;flex-direction:column; line-height: 1.8">\n' +
-                      '  <div style="display:flex;justify-content:space-between">\n' +
-                      "    <span>Price net/gross:</span>\n" +
-                      "    <span><b>{details.retailPriceNet:0.00}</b> {details.currencyCode:PLN} / <b>{details.retailPriceGross:0.00}</b> {details.currencyCode:PLN}</span>\n" +
-                      "  </div>\n" +
-                      '  <div style="display:flex;justify-content:space-between;">\n' +
-                      "    <span>Retailer margin:</span>\n" +
-                      "    <span><b>{details.marginPercent:0}%</b></span>\n" +
-                      "  </div>\n" +
-                      "</div>",
-                  },
+
                 ],
               },
 

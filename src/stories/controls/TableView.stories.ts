@@ -128,7 +128,7 @@ const PAGE_0 = {
       name: "🍎 Apple",
       location: "Washington",
       height: "0.1",
-      base: 70,
+
       volume: "0.0001",
     },
     {
@@ -616,7 +616,7 @@ export const JoinValuesWithHtmlAndExtraText: Story = {
               {
                 title: "Name and location",
                 key: "nameAndLocation",
-                valueMapping: "<b>{name}</b>, location: {location}",
+                valueMapping: "<b>{name}</b>, location: {location} and base: {base:No data:NUMBER:4}",
                 type: "TEXT",
               },
               {

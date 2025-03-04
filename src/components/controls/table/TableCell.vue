@@ -40,7 +40,7 @@
     >
       <template v-slot:activator="{ props }">
         <div class="d-flex align-center justify-center">
-          <v-icon v-bind="props"> mdi-information-outline </v-icon>
+          <v-icon v-bind="props"> mdi-information-outline</v-icon>
         </div>
       </template>
       <div
@@ -155,12 +155,25 @@ async function simpleResolveVariable() {
 
         const split = unwrapped.split(":");
         let variable = split[0];
-        const defaultValue = split.length === 2 ? split[1] : null;
+        const defaultValue = split.length >= 2 ? split[1] : null;
+        const typeOfValue = split.length >= 3 ? split[2] : null;
+        const formatterProps = split.length == 4 ? split[3] : (null as any);
 
         const model = props.item;
 
         const nata = jsonata(variable);
         let value = await nata.evaluate(model);
+
+        if (typeOfValue == "NUMBER") {
+          let decimalPlaces = 4;
+          if (isNaN(formatterProps)) {
+            console.debug(formatterProps);
+            decimalPlaces = get(model, formatterProps, 2);
+          } else {
+            decimalPlaces = formatterProps;
+          }
+          value = formattedNumber(value, "decimal", decimalPlaces, decimalPlaces);
+        }
 
         if ((value == null && defaultValue !== null) || (value == "" && value != 0) || value == undefined) {
           value = defaultValue;
