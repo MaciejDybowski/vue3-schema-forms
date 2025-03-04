@@ -552,6 +552,30 @@ tr.highlight-name > td:nth-child(1) {
   background-color: #F44336;
 }
 
+.table-cell-background-blue-lighten-4 {
+  background-color: #BBDEFB;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-blue-lighten-4)) {
+  background-color: #BBDEFB;
+}
+
+.table-cell-background-yellow-lighten-4 {
+  background-color: #FFF9C4;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow-lighten-4)) {
+  background-color: #FFF9C4;
+}
+
+.table-cell-background-red-lighten-4 {
+  background-color: #FFCDD2;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-red-lighten-4)) {
+  background-color: #FFCDD2;
+}
+
 
 </style>
 
