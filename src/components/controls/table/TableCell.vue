@@ -37,7 +37,6 @@
     >
       <template v-slot:activator="{ props }">
         <v-icon
-          color="blue"
           v-bind="props"
         >
           mdi-information-outline
