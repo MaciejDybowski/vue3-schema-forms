@@ -29,18 +29,19 @@
     </v-avatar>
   </div>
 
-  <div v-if="header.type == 'ALERT'">
+  <div
+    v-if="header.type == 'ALERT'"
+    class="table-cell-alert-type"
+  >
     <v-tooltip
       v-if="item.alerts && item.alerts.length > 0"
       location="top"
       max-width="400px"
     >
       <template v-slot:activator="{ props }">
-        <v-icon
-          v-bind="props"
-        >
-          mdi-information-outline
-        </v-icon>
+        <div class="d-flex align-center justify-center">
+          <v-icon v-bind="props"> mdi-information-outline </v-icon>
+        </div>
       </template>
       <div
         v-for="(alert, index) in item.alerts"

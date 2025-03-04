@@ -74,17 +74,17 @@ const REQUEST_PAGE_0_1_ALERT = {
             volume: 0.0001,
             alerts: [
               {
-                "type": "warning",
-                "message": "no package quantity defined for product, using one package for calculations"
+                type: "warning",
+                message: "no package quantity defined for product, using one package for calculations",
               },
               {
-                "type": "warning",
-                "message": "no retail price factor defined, cannot calculate customer margin and retail prices"
+                type: "warning",
+                message: "no retail price factor defined, cannot calculate customer margin and retail prices",
               },
               {
-                "type": "warning",
-                "message": "unknown product volume, cannot calculate transport cost"
-              }
+                type: "warning",
+                message: "unknown product volume, cannot calculate transport cost",
+              },
             ],
           },
           {
@@ -95,13 +95,13 @@ const REQUEST_PAGE_0_1_ALERT = {
             volume: 0.0001,
             alerts: [
               {
-                "type": "info",
-                "message": "no package quantity defined for product, using one package for calculations"
+                type: "info",
+                message: "no package quantity defined for product, using one package for calculations",
               },
               {
-                "type": "error",
-                "message": "no retail price factor defined, cannot calculate customer margin and retail prices"
-              }
+                type: "error",
+                message: "no retail price factor defined, cannot calculate customer margin and retail prices",
+              },
             ],
           },
           {
@@ -110,7 +110,7 @@ const REQUEST_PAGE_0_1_ALERT = {
             height: "0.1",
             base: "0.07",
             volume: 0.3,
-            alerts: []
+            alerts: [],
           },
         ],
       };
@@ -425,12 +425,11 @@ export const DynamicAlerts: Story = {
               {
                 title: "",
                 key: "alerts",
-                color: "volume > 0.03 ? 'table-cell-background-grey-lighten-3': ''",
+                color: "volume > 0.03 ? 'table-cell-background-grey-lighten-3': 'table-cell-background-red-lighten-4'",
                 valueMapping: "alerts",
                 type: "ALERT",
                 properties: {
-                  minWidth: 32,
-                  width: 32,
+                  width: "24px",
                 },
               },
               {

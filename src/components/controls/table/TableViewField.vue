@@ -527,56 +527,60 @@ tr.highlight-name > td:nth-child(1) {
   background-color: #212121;
 }
 
-
 .table-cell-background-blue {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-blue)) {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 .table-cell-background-yellow {
-  background-color: #FFEB3B;
+  background-color: #ffeb3b;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow)) {
-  background-color: #FFEB3B;
+  background-color: #ffeb3b;
 }
 
 .table-cell-background-red {
-  background-color: #F44336;
+  background-color: #f44336;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-red)) {
-  background-color: #F44336;
+  background-color: #f44336;
 }
 
 .table-cell-background-blue-lighten-4 {
-  background-color: #BBDEFB;
+  background-color: #bbdefb;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-blue-lighten-4)) {
-  background-color: #BBDEFB;
+  background-color: #bbdefb;
 }
 
 .table-cell-background-yellow-lighten-4 {
-  background-color: #FFF9C4;
+  background-color: #fff9c4;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow-lighten-4)) {
-  background-color: #FFF9C4;
+  background-color: #fff9c4;
 }
 
 .table-cell-background-red-lighten-4 {
-  background-color: #FFCDD2;
+  background-color: #ffcdd2;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-red-lighten-4)) {
-  background-color: #FFCDD2;
+  background-color: #ffcdd2;
 }
 
-
+.custom-table :deep(.v-data-table__td:has(.table-cell-alert-type)) {
+  background-color: green;
+  padding: 0 0;
+  align-items: center;
+  justify-content: center;
+}
 </style>
 
 <i18n lang="json">
