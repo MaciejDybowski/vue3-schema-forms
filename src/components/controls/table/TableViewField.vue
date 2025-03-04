@@ -576,7 +576,6 @@ tr.highlight-name > td:nth-child(1) {
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-alert-type)) {
-  background-color: green;
   padding: 0 0;
   align-items: center;
   justify-content: center;
