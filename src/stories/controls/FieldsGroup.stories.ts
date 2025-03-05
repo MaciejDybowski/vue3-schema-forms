@@ -7,6 +7,8 @@ import { Meta, StoryObj } from "@storybook/vue3";
 import { Schema } from "../../types/schema/Schema";
 import { SchemaTextField } from "../../types/schema/elements";
 import { StoryTemplateWithValidation } from "../templates/story-template";
+import { DictionarySource } from "../../types/shared/Source";
+import { REQUEST_NOT_LAZY, REQUEST_PAGE_HIDDEN_DICT, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
 
 const meta = {
   title: "Forms/Controls/FieldsGroup",
@@ -97,6 +99,64 @@ export const TwoFieldsGroup = {
         },
       },
     },
+  },
+};
+
+export const GroupWithHiddenDict = {
+  args: {
+    modelValue: {
+      fieldQ:"Test"
+    },
+    schema: {
+      type: "object",
+      properties: {
+        data: {
+          layout: {
+            component: "fields-group",
+            schema: {
+              type: "object",
+              properties: {
+                currency: {
+                  label: "Currency",
+                  layout: {
+                    component: "dictionary",
+                    if:"nata(fieldA='a')"
+                  },
+                  source: {
+                    url: "/api/currencies?query={fieldQ}",
+                    title: "label",
+                    value: "id",
+                    description: "label"
+                  } as DictionarySource,
+                } as SchemaSourceField,
+                fieldA: {
+                  label: "Field A in group A",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+                fieldQ: {
+                  label: "Field Q in group A",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+                field1: {
+                  label: "Field C in group A",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+              },
+            },
+            cols: 6,
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    mockData: [REQUEST_PAGE_HIDDEN_DICT],
   },
 };
 

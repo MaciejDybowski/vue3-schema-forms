@@ -9,7 +9,7 @@ import { EngineField } from "@/types/engine/EngineField";
 import { useEventBus } from "@vueuse/core";
 
 export function useConditionalRendering() {
-  let shouldRender = ref(true);
+  let shouldRender = ref(false);
   let lastValueOfShouldRender = ref(false);
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
   const { fillPath } = useResolveVariables();

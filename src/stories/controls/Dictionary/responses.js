@@ -377,6 +377,23 @@ export const REQUEST_PAGE_0_1 = {
   },
 };
 
+export const REQUEST_PAGE_HIDDEN_DICT = {
+  url: "/api/currencies?page=0&size=20&query=Test",
+  method: "GET",
+  status: 200,
+  response: (request) => {
+    console.debug("REQUEST POSZEDŁ")
+    const { body, searchParams } = request;
+    if (searchParams.page === "0" && searchParams.size === "20") {
+      return PAGE_0;
+    }
+    if (searchParams.page === "1" && searchParams.size === "20") {
+      return PAGE_1;
+    }
+    return "no data";
+  },
+};
+
 export const REQUEST_SEARCH_DOL = {
   url: "/api/currencies?page=0&size=20&query=Dol",
   method: "GET",
