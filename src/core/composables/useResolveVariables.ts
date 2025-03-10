@@ -48,7 +48,7 @@ export function useResolveVariables() {
         value = doSthWithValue(field, value, valueProps, title, rawNumber);
         inputString = inputString.replace(match, value + "");
 
-        if (!value) {
+        if (!value && value != 0) {
           allVariablesResolved = false;
         }
       }
@@ -85,6 +85,9 @@ export function useResolveVariables() {
   }
 
   function doSthWithValue(field, value: any, valueProps: VariableSyntaxProps, title, rawNumber = false) {
+    if (value == 0) {
+      return value;
+    }
     if (typeof value === "number" && value !== 0) {
       if (rawNumber) {
         // gdy chcemy używać liczb w adresie URL to nie może być to kropka ani nie może być to formatowane
