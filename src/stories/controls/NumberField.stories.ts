@@ -40,7 +40,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Integer: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Number (int)");
     await userEvent.type(field, "1", { delay: 300 });
@@ -64,9 +64,7 @@ export const Integer: Story = {
 };
 
 export const FloatWithTextOtherThanRight: Story = {
-  play: async (context) => {
-
-  },
+  play: async (context) => {},
   args: {
     modelValue: {},
     schema: {
@@ -89,7 +87,7 @@ export const FloatWithTextOtherThanRight: Story = {
 
 export const FloatStandard2DecimalPlaces: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Number (float)");
     await userEvent.type(field, "1.346", { delay: 300 });
@@ -114,7 +112,7 @@ export const FloatStandard2DecimalPlaces: Story = {
 
 export const FloatStandard4DecimalPlaces: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Number (float)");
     await userEvent.type(field, "1.34632", { delay: 300 });
@@ -197,7 +195,7 @@ export const CurrencyModeProps: Story = {
  */
 export const PercentMode: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Percent");
     await userEvent.type(field, "4.34", { delay: 300 });
@@ -210,6 +208,36 @@ export const PercentMode: Story = {
       type: "object",
       properties: {
         percent: {
+          label: "Percent",
+          type: "float",
+          formatType: "percent",
+          layout: {
+            component: "number-field",
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const DependenciesInDefaultValue: Story = {
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const field = await canvas.getByLabelText("Percent");
+    await expect(context.args.modelValue).toEqual({ percent: 32, number: 32 });
+    fireEvent.focusOut(field);
+  },
+  args: {
+    modelValue: {
+      number: 32,
+      percent: 32,
+    },
+    schema: {
+      type: "object",
+      properties: {
+        percent: {
+          defaultValue: "{number}",
           label: "Percent",
           type: "float",
           formatType: "percent",

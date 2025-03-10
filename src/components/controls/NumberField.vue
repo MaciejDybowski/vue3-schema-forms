@@ -4,7 +4,7 @@
     v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
     :label="label"
-    :rules="!fieldProps.readonly ? rules: []"
+    :rules="!fieldProps.readonly ? rules : []"
     v-bind="fieldProps"
     @focusin="focusin"
     @focusout="focusout"
@@ -33,9 +33,19 @@ import set from "lodash/set";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { useCalculation, useClass, useExpression, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
+import {
+  useCalculation,
+  useClass,
+  useExpression,
+  useFormModel,
+  useLabel,
+  useProps,
+  useResolveVariables,
+  useRules,
+} from "@/core/composables";
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { NumberFormattingType, RoundOption, useNumber } from "@/core/composables/useNumber";
+import { variableRegexp } from "@/core/engine/utils";
 import { logger } from "@/main";
 import { EngineNumberField } from "@/types/engine/controls";
 
@@ -53,7 +63,7 @@ const { calculationFunc, unsubscribeListener, calculationResultWasModified } = u
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
-
+const { resolve } = useResolveVariables();
 const showFormattedNumber = ref(true);
 
 const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
@@ -87,6 +97,9 @@ function parseDigitWithOnlyZeroFraction(value: number) {
 const localModel = computed({
   get(): string | number | null {
     let value = getValue(props.model, props.schema);
+    if (value && typeof value == "string" && value.match(variableRegexp)) {
+      return value; // defaultValue with dependencies
+    }
     if (typeof value == "string") {
       value = Number(value);
     }
@@ -159,16 +172,28 @@ function runExpressionIfExist() {
   }
 }
 
+async function resolveIfLocalModelHasDependencies() {
+  if (localModel.value && typeof localModel.value == "string" && localModel.value.match(variableRegexp)) {
+    const result = await resolve(props.schema, localModel.value);
+    if (result.allVariablesResolved) {
+      localModel.value = result.resolvedText;
+    }
+  }
+}
+
 const loading = ref(true);
 
 onMounted(async () => {
-  loading.value = true
+  loading.value = true;
   await runCalculationIfExist();
   await bindProps(props.schema);
   await bindRules(props.schema);
   await bindLabel(props.schema);
   runExpressionIfExist();
-  loading.value = false
+
+  await resolveIfLocalModelHasDependencies();
+
+  loading.value = false;
 });
 </script>
 
