@@ -201,7 +201,7 @@ function handleDraggableContextAction(actionId: "delete" | "addBelow" | string, 
           return item;
         });
 
-      localModel.value = localModel.value
+      localModel.value = cloneDeep(localModel.value)
         .filter((item, i) => i !== index)
         .map((item, index) => {
           if (ordinalNumberInModel) {

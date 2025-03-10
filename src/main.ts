@@ -41,7 +41,7 @@ export let logger = {
   calculationListener: false,
   JSONataExpressionListener: false,
   propsValueMappingListener: false,
-  conditionalRenderingListener: true,
+  conditionalRenderingListener: false,
   dictionaryLogger: false,
   duplicatedSchemaWatchLogger: false,
   eventEmitterListener: false,
