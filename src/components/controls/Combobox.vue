@@ -3,7 +3,6 @@
     v-model="localModel"
     :auto-select-first="true"
     :class="bindClass(schema) + requiredInputClass"
-    :clearable="!fieldProps.readonly"
     :item-title="title"
     :item-value="returnObject ? value : title"
     :items="data"
@@ -15,10 +14,11 @@
     :return-object="returnObject as any"
     :rules="!fieldProps.readonly ? rules: []"
     :search="query"
-    v-bind="fieldProps"
+    v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
     @focus="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
-    @update:search="updateQuery"
+    @update:search="(val) => (!fieldProps.readonly ? updateQuery(val, false) : updateQuery(val, true))"
+    @update:modelValue="onChange(schema, model)"
   >
     <template #no-data>
       <v-list-item v-if="loading">
@@ -54,7 +54,18 @@ import BaseCombobox from "@/components/controls/base/BaseCombobox.vue";
 import { useDictionary } from "@/core/composables/useDictionary";
 import { EngineDictionaryField } from "@/types/engine/controls";
 
-import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from "../../core/composables";
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useLocale,
+  useProps,
+  useResolveVariables,
+  useRules
+} from "../../core/composables";
+import { useEventHandler } from "@/core/composables/useEventHandler";
+import BaseAutocomplete from "@/components/controls/base/BaseAutocomplete.vue";
+import { variableRegexp } from "@/core/engine/utils";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -66,6 +77,8 @@ const { fieldProps, bindProps } = useProps();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
+const { onChange } = useEventHandler();
+const { resolve } = useResolveVariables();
 
 const localModel = computed({
   get(): any {
@@ -106,6 +119,15 @@ function singleOptionAutoSelectFunction() {
   watch(data, selectSingleOptionLogic, { deep: true, immediate: true });
 }
 
+async function resolveIfLocalModelHasDependencies() {
+  if (typeof localModel.value == "string" && localModel.value.match(variableRegexp)) {
+    const result = await resolve(props.schema, localModel.value);
+    if (result.allVariablesResolved) {
+      localModel.value = result.resolvedText;
+    }
+  }
+}
+
 onMounted(async () => {
   await initState(props.schema);
   await bindLabel(props.schema);
@@ -114,18 +136,21 @@ onMounted(async () => {
 
   if (localModel.value) {
     if (typeof localModel.value == "object") {
-      updateQuery(localModel.value[title.value]);
+      data.value.push(localModel.value);
     } else {
-      updateQuery(localModel.value);
+      await resolveIfLocalModelHasDependencies();
+      if (!fieldProps.value.readonly) {
+        updateQuery(localModel.value);
+      }
     }
   }
-
   singleOptionAutoSelectFunction();
 });
 
 async function fetchDictionaryData() {
-  if (data.value.length == 0 && !fieldProps.value.readonly) {
-    await load("combobox");
+  if (!fieldProps.value.readonly) {
+    updateQuery("", true);
+    await load("autocomplete", localModel.value ? localModel.value : null);
   }
 }
 </script>
