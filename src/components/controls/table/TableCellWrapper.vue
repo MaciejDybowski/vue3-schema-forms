@@ -1,5 +1,5 @@
 <template>
-  <div :class="[theme.global.current.value.dark ? refClass.replaceAll('lighten', 'darken') : refClass]">
+  <div :class="[theme.global.current.value.dark ? refClass.replaceAll('light', 'dark') : refClass]">
 
       <template v-if="header.type == 'COLLECTION'"
                 v-for="(collectionItem, index) in header.items">

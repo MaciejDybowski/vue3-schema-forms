@@ -17,17 +17,12 @@
   >
     {{ numberContent }}
   </div>
-  <div v-if="header.type == 'IMAGE'">
-    <v-avatar
-      :rounded="0"
-      :size="'maxWidth' in header ? (header.maxWidth as number) : 32"
-    >
-      <v-img
-        :src="urlPath"
-        cover
-      />
-    </v-avatar>
-  </div>
+
+  <v-img
+    v-if="header.type == 'IMAGE'"
+    :src="urlPath"
+    cover
+  />
 
   <div
     v-if="header.type == 'ALERT'"

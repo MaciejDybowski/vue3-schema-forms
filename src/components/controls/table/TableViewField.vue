@@ -463,119 +463,57 @@ tr.highlight-name > td:nth-child(1) {
   color: white;
 }
 
-.table-cell-background-grey-lighten-4 {
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-light)) {
   background-color: #f5f5f5;
 }
 
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-lighten-4)) {
-  background-color: #f5f5f5;
-}
-
-.table-cell-background-grey-lighten-3 {
-  background-color: #eeeeee;
-}
-
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-lighten-3)) {
-  background-color: #eeeeee;
-}
-
-.table-cell-background-grey-lighten-2 {
-  background-color: #e0e0e0;
-}
-
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-lighten-2)) {
-  background-color: #e0e0e0;
-}
-
-.table-cell-background-grey-lighten-1 {
-  background-color: #bdbdbd;
-}
-
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-lighten-1)) {
-  background-color: #bdbdbd;
-}
-
-.table-cell-background-grey-darken-1 {
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-dark)) {
   background-color: #757575;
-}
-
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-darken-1)) {
-  background-color: #757575;
-}
-
-.table-cell-background-grey-darken-2 {
-  background-color: #616161;
-}
-
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-darken-2)) {
-  background-color: #616161;
-}
-
-.table-cell-background-grey-darken-3 {
-  background-color: #424242;
-}
-
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-darken-3)) {
-  background-color: #424242;
-}
-
-.table-cell-background-grey-darken-4 {
-  background-color: #212121;
-}
-
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-darken-4)) {
-  background-color: #212121;
-}
-
-.table-cell-background-blue {
-  background-color: #2196f3;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-blue)) {
   background-color: #2196f3;
 }
 
-.table-cell-background-yellow {
-  background-color: #ffeb3b;
-}
-
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow)) {
   background-color: #ffeb3b;
-}
-
-.table-cell-background-red {
-  background-color: #f44336;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-red)) {
   background-color: #f44336;
 }
 
-.table-cell-background-blue-lighten-4 {
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-blue-light-4)) {
   background-color: #bbdefb;
 }
 
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-blue-lighten-4)) {
-  background-color: #bbdefb;
-}
-
-.table-cell-background-yellow-lighten-4 {
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow-light-4)) {
   background-color: #fff9c4;
 }
 
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow-lighten-4)) {
-  background-color: #fff9c4;
-}
-
-.table-cell-background-red-lighten-4 {
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-red-light-4)) {
   background-color: #ffcdd2;
 }
 
-.custom-table :deep(.v-data-table__td:has(.table-cell-background-red-lighten-4)) {
-  background-color: #ffcdd2;
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-blue-dark-4)) {
+  background-color: #1E88E5;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow-dark-4)) {
+  background-color: #FDD835;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-red-dark-4)) {
+  background-color: #E53935;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-alert-type)) {
+  padding: 0 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-context-actions)) {
   padding: 0 0;
   align-items: center;
   justify-content: center;

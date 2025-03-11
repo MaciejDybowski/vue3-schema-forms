@@ -8,6 +8,7 @@
   >
     <template #activator="{ isActive, props: p }">
       <v-btn
+        class="table-cell-context-actions"
         v-show="show || isActive"
         :icon="icon"
         density="compact"

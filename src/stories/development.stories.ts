@@ -41,7 +41,188 @@ export const Forte: Story = {
         id: "maciek-offer",
       },
     },
-    schema: {},
+    schema: {
+      type: "object",
+      properties: {
+
+        tableOfOfferItems: {
+          layout: { component: "table-view" },
+          source: {
+            data: "/api/v1/offers/{offer.id}/offer-items",
+            headers: [
+              {
+                type: "ALERT",
+                key: "alerts",
+                title: "",
+                color:
+                  "product.status='DESIGNING' ? 'table-cell-background-blue-light-4' : product.status='IN_WITHDRAWN_PROCESS' ? 'table-cell-background-yellow-light-4' : product.status='REMOVED' ? 'table-cell-background-red-light-4' : ''",
+                properties: { width: "24px", sortable: false },
+              },
+              {
+                title: "Product",
+                key: "mainImageUrl",
+                valueMapping:
+                  "/api/v1/features/products/images/{product.mainImage.id}?Workspace-Id=forte&dataId={product.mainImage.dataId}",
+                type: "IMAGE",
+                properties: { minWidth: 80, maxWidth: 80,  cellProps: { style: "padding-left:4px; padding-right:4px;" }, },
+              },
+              {
+                title: "",
+                key: "product",
+                valueMapping:
+                  '<div>\n  <span style="display: block; margin-top: 16px"><b>{product.number:1}</b></span>\n  <span style="display: block;">{product.name: Product name}</span>\n  <span style="display: block; margin-top: 16px">Program: {product.programName:N/A}</span>\n  <span style="display: block; margin-top: 16px;">Cluster: {product.pricingTierName:N/A}</span>\n</div>\n',
+                type: "TEXT",
+                properties: { cellProps: { style: "vertical-align: top;" } },
+              },
+              {
+                title: "",
+                key: "palletQuantityIcon",
+                valueMapping: "palletQuantityIcon",
+                type: "ICON",
+                properties: { sortable: false },
+              },
+              {
+                title: "Offer",
+                key: "collection",
+                type: "COLLECTION",
+                color: "",
+                items: [
+                  {
+                    title: "Input",
+                    key: "inputs",
+                    type: "",
+                    editable: [{ label: "Invoice (NN):", key: "invoicePrice", valueMapping: "invoicePrice" }],
+                  },
+                  {
+                    type: "TEXT",
+                    key: "offerPrice",
+                    valueMapping:
+                      '<div style="display:flex;flex-direction:column;padding-top: 16px">\n  <div style="display:flex;justify-content:space-between"><span>NNN:</span><span><b>{details.nnnPrice:-:NUMBER:details.currencyDecimalPlaces}</b> {details.currencyCode:PLN}</span></div>\n  <div style="display:flex;justify-content:space-between"><span>NNN EXW:</span><span><b>{details.nnnExwPrice:-:NUMBER:details.currencyDecimalPlaces}</b> {details.currencyCode:PLN}</span></div>\n<div style="display:flex;justify-content:space-between;margin-top: 8px"><span>MaT:</span><span><b> {details.marginAfterTransportAmount:-:NUMBER:details.currencyDecimalPlaces}  </b>{details.currencyCode:PLN}</span></div>\n  <div style="display:flex;justify-content:space-between"><span>MaT (%):</span><span><b> {details.marginAfterTransportPercent:0.0:NUMBER:1}%</b></span></div></div>',
+                  },
+                ],
+                properties: {
+                  minWidth: "220px",
+                  maxWidth: "220px",
+                  cellProps: { style: "vertical-align: top; padding-top: 8px" },
+                },
+              },
+              {
+                title: "Recommended",
+                type: "TEXT",
+                key: "recommendedPrice",
+                valueMapping:
+                  '<div style="display: flex; flex-direction: column;">\n  <div style="display: flex; justify-content: space-between;margin-top:16px;margin-bottom:24px;">\n    <span>NN:</span>\n    <span><b>{details.recommendedInvoicePrice:0.00:NUMBER:details.currencyDecimalPlaces}</b> {details.currencyCode:PLN}</span>\n  </div>\n  <div style="display: flex; justify-content: space-between;">\n    <span>NNN:</span>\n    <span><b>{details.recommendedNnnPrice:0.00:NUMBER:details.currencyDecimalPlaces}</b> {details.currencyCode:PLN}</span>\n  </div>\n  <div style="display: flex; justify-content: space-between;">\n    <span>NNN EXW:</span>\n    <span><b>{details.recommendedNnnExwPrice:0.00:NUMBER:details.currencyDecimalPlaces}</b> {details.currencyCode:PLN}</span>\n  </div>\n<div style="display:flex;justify-content:space-between;margin-top: 8px"><span>MaT:</span><span><b> {details.recommendedMarginAfterTransportAmount:-:NUMBER:details.currencyDecimalPlaces} </b>{details.currencyCode:PLN}</span></div>\n  <div style="display: flex; justify-content: space-between">\n    <span>MaT (%):</span>\n    <span><b>{details.recommendedMarginAfterTransportPercent:0.0:NUMBER:1}%</b></span>\n  </div>\n</div>',
+                properties: {
+                  minWidth: "200px",
+                  maxWidth: "200px",
+                  cellProps: { style: "vertical-align: top;" },
+                },
+                color: "dataId != null ? 'table-cell-background-grey-light': ''",
+              },
+              {
+                title: "Retail",
+                type: "COLLECTION",
+                items: [
+                  {
+                    title: "Input",
+                    key: "inputs",
+                    type: "",
+                    editable: [
+                      {
+                        label: "Target:",
+                        key: "targetRetailPriceGross",
+                        valueMapping: "targetRetailPriceGross",
+                      },
+                      { label: "Factor:", key: "retailPriceFactor", valueMapping: "retailPriceFactor" },
+                    ],
+                  },
+                ],
+                key: "retail",
+                valueMapping: "retails",
+                properties: {
+                  minWidth: "170px",
+                  maxWidth: "170px",
+                  cellProps: { style: "vertical-align: top; padding-top: 8px" },
+                },
+              },
+              {
+                title: "",
+                key: "collection2",
+                type: "COLLECTION",
+                color: "dataId != null ? 'table-cell-background-grey-light': ''",
+                items: [
+                  {
+                    title: "Result",
+                    type: "TEXT",
+                    key: "result",
+                    valueMapping:
+                      '<div style="display:flex;flex-direction:column;"><div style="display:flex;justify-content:space-between; margin-top:16px;margin-bottom:24px"><span>Price gross:</span><div><b>{details.retailPriceGross:0.00:NUMBER:details.currencyDecimalPlaces}</b> {details.currencyCode:PLN}</div></div><div style="display:flex;justify-content:space-between"><span>Price net:</span><div><b>{details.retailPriceNet:0.00:NUMBER:details.currencyDecimalPlaces}</b> {details.currencyCode:PLN}</div></div><div style="display:flex;justify-content:space-between;margin-top:28px"><span>Retailer margin:</span><span><b>{details.retailerMarginAmount:0.00:NUMBER:details.currencyDecimalPlaces}</b> {details.currencyCode:PLN}</span></div><div style="display:flex;justify-content:space-between"><span>Retailer margin [%]:</span><span><b>{details.retailerMarginPercent:0.0:NUMBER:1}%</b></span></div></div>',
+                  },
+                ],
+                properties: {
+                  minWidth: "250px",
+                  maxWidth: "250px",
+                  cellProps: { style: "vertical-align: top;" },
+                },
+              },
+              {
+                title: "",
+                key: "actions",
+                actions: [
+                  {
+                    title: "Delete",
+                    icon: "mdi-delete-outline",
+                    mode: "action",
+                    code: "callScript",
+                    config: { params: { script: "delete_product_from_offer" }, body: { dataId: "{product.id}" } },
+                    props: { color: "error" },
+                  },
+                  {
+                    title: "Pallet shipping",
+                    condition: "palletQuantity=null",
+                    icon: "mdi-shipping-pallet",
+                    mode: "action",
+                    code: "callScript",
+                    config: { params: { script: "add_pallet_price" }, body: { dataId: "{product.id}" } },
+                    props: { color: "primary" },
+                  },
+                  {
+                    title: "Disable pallet shipping",
+                    condition: "palletQuantity=true or palletQuantity=false",
+                    icon: "mdi-shipping-pallet",
+                    mode: "action",
+                    code: "callScript",
+                    config: {
+                      params: { script: "disable_offer_item_pallet_quantity" },
+                      body: { dataId: "{product.id}" },
+                    },
+                    props: { color: "error" },
+                  },
+                ],
+                properties: { width: "24px", sortable: false },
+              },
+            ],
+            buttons: [
+              {
+                label: "Add products",
+                btnProps: { color: "primary", rounded: false },
+                mode: "action",
+                config: {
+                  code: "batchAdd",
+                  featureId: "products",
+                  viewId: "94578-tabela",
+                  batchAddAttributePath: "dataId",
+                  scriptName: "add_products_to_offer",
+                },
+              },
+            ],
+          },
+          actions: {},
+        },
+
+      },
+      required: [],
+    },
   },
   parameters: {
     mockData: [OFFER_ITEMS_MOCK],
@@ -104,7 +285,6 @@ export const Table2: Story = {
   args: {
     model: {
       attributes: [
-
         {
           definition: {
             code: "wysokosc",
@@ -150,7 +330,6 @@ export const Table2: Story = {
           },
           numberValue: 3123,
         },
-
       ],
     },
     schema: {
