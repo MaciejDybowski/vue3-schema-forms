@@ -2,6 +2,7 @@
   <table-action-menu
     :show="true"
     icon="mdi-dots-vertical"
+    :disabled="attrs.readonly == true"
   >
     <v-list density="compact">
       <v-list-item
@@ -28,13 +29,13 @@
 
 <script lang="ts" setup>
 import jsonata from "jsonata";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, useAttrs } from "vue";
 
 import TableActionMenu from "@/components/controls/table/TableActionMenu.vue";
 
 import { useLocale } from "@/core/composables";
 import { TableHeader, TableHeaderAction } from "@/types/shared/Source";
-
+const attrs = useAttrs()
 const props = defineProps<{
   item: object;
   header: TableHeader;

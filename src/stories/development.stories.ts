@@ -35,6 +35,7 @@ export const ForteStart: Story = {
 };
 
 export const Forte: Story = {
+
   args: {
     model: {
       offer: {
@@ -44,7 +45,263 @@ export const Forte: Story = {
     schema: {
       type: "object",
       properties: {
-
+        customerData: {
+          content:
+            "<b>Customer:</b></br> \n{customer.name:No data}\n<br> {customer.shipCountry:No country}, {customer.salesRegion:No sales region}",
+          layout: {
+            component: "static-content",
+            tag: "p",
+            cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+          },
+        },
+        offer: {
+          properties: {
+            createdAt: {
+              label: "Created at",
+              layout: {
+                component: "data-viewer",
+                cols: { xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 },
+              },
+              valueMapping: "",
+              type: "date-time",
+            },
+            createdBy: {
+              label: "Created by",
+              layout: {
+                component: "data-viewer",
+                cols: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 },
+              },
+              valueMapping: "{offer.createdBy}",
+            },
+          },
+          required: [],
+        },
+        priceList: {
+          content: "<b>Pricelist:</b></br> \n{pricelist. label:No data}\n",
+          layout: {
+            component: "static-content",
+            tag: "p",
+            cols: { xs: 12, sm: 12, md: 12, lg: 10, xl: 10, xxl: 10 },
+          },
+        },
+        offerOwner: {
+          label: "Owned by",
+          layout: { component: "data-viewer", cols: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2, xxl: 2 } },
+          valueMapping: "{offer.owner[0].firstName:No data} {offer.owner[0].lastName:No data}",
+          type: null,
+        },
+        showAdditionalData: {
+          label: "Advanced settings",
+          layout: { component: "switch", props: { color: "success" } },
+        },
+        groupOfData: {
+          layout: {
+            component: "fields-group",
+            cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+            schema: {
+              type: "object",
+              properties: {
+                offer: {
+                  properties: {
+                    currency: {
+                      label: "Currency",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "dictionary",
+                        props: { clearable: false, readonly: true },
+                      },
+                      source: {
+                        url: "/api/dictionaries?feature-id=currencies&lm=name&vm=dataId&dm=%7Bname%7D",
+                        title: "id",
+                        value: "id",
+                        returnObject: true,
+                        description: "description",
+                      },
+                    },
+                    currencyRate: {
+                      label: "Currency rate",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "number-field",
+                        props: { readonly: true },
+                      },
+                      type: "float",
+                      precision: "4",
+                      precisionMin: "2",
+                    },
+                    vatRate: {
+                      label: "VAT rate (%)",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        fillRow: true,
+                        component: "combobox",
+                      },
+                      source: { url: "", title: "label", value: "id" },
+                    },
+                  },
+                  required: [],
+                },
+                "static-content-953": {
+                  content: "Transport conditions",
+                  layout: { component: "static-content", tag: "h3" },
+                },
+                transportConditions: {
+                  properties: {
+                    incotermsRule: {
+                      label: "Incoterms® Rule",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "dictionary",
+                      },
+                      source: {
+                        url: "/api/dictionaries?feature-id=incoterm-rules&lm=name&vm=dataId&dm=%7Bname%7D",
+                        title: "id",
+                        value: "id",
+                        returnObject: true,
+                        lazy: true,
+                        singleOptionAutoSelect: true,
+                        description: "description",
+                      },
+                      onChange: {
+                        mode: "change-model",
+                        variables: [{ path: "transportConditions.transportRate", value: null }],
+                      },
+                    },
+                    transportCostRateEurM3: {
+                      label: "Transport cost rate EUR/m3",
+                      layout: {
+                        cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                        component: "text-field",
+                      },
+                      defaultValue: null,
+                    },
+                    alert1: {
+                      content: "If the Incoterms® are changed, the Transport Rate field must be completed.",
+                      layout: {
+                        component: "static-content",
+                        tag: "v-alert",
+                        cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+                        props: { type: "warning", density: "default", variant: "tonal" },
+                      },
+                    },
+                  },
+                  required: [],
+                },
+                "static-content-413": {
+                  content: "Calculation rules",
+                  layout: { component: "static-content", tag: "h3" },
+                },
+                calculationRules: {
+                  properties: {
+                    retailPriceFactor: {
+                      label: "Retail price factor",
+                      layout: {
+                        cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                        fillRow: true,
+                        component: "number-field",
+                      },
+                      type: "float",
+                      precision: "2",
+                      precisionMin: "2",
+                      onChange: { mode: "emit-event", eventSignal: "table-refresh" },
+                    },
+                    discountPercent: {
+                      label: "Customer discount (%)",
+                      layout: {
+                        cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                        component: "number-field",
+                        fillRow: true,
+                      },
+                      type: "float",
+                      precision: "2",
+                      precisionMin: "2",
+                    },
+                    alert: {
+                      content:
+                        "Standard customer discounts retrieved from SAP. Retail price factor must be set to calculate retail price.",
+                      layout: {
+                        component: "static-content",
+                        tag: "v-alert",
+                        props: { variant: "tonal", type: "info", density: "default" },
+                        cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+                      },
+                    },
+                  },
+                  required: [],
+                },
+                otherCostsHeader: {
+                  content: "<b>Other costs:</b><br/>",
+                  layout: { component: "static-content", tag: "p" },
+                },
+                otherCosts: {
+                  layout: {
+                    component: "duplicated-section",
+                    cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+                    schema: {
+                      type: "object",
+                      properties: {
+                        costName: {
+                          label: "Cost name",
+                          layout: {
+                            cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                            component: "text-field",
+                          },
+                        },
+                        unitCostPerProduct: {
+                          label: "Unit cost per product",
+                          layout: {
+                            cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                            component: "number-field",
+                          },
+                          type: "float",
+                          precision: "2",
+                          precisionMin: "2",
+                        },
+                        unitCostPerPackage: {
+                          label: "Unit cost per package",
+                          layout: {
+                            cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+                            component: "number-field",
+                          },
+                          type: "float",
+                          precision: "2",
+                          precisionMin: "2",
+                        },
+                      },
+                      required: [],
+                    },
+                    options: {
+                      addBtnText: "Add other costs",
+                      showDivider: false,
+                      ordinalNumberInModel: false,
+                      showFirstInitRow: false,
+                    },
+                    editable: true,
+                    showElements: true,
+                    props: {},
+                  },
+                  editable: true,
+                  showElements: true,
+                  sectionKey: "groupOfData",
+                },
+              },
+              required: [],
+            },
+            props: {},
+            options: { showDivider: false, addBtnText: "Add" },
+            if: "nata(showAdditionalData=true)",
+          },
+        },
+        tableHeader: { content: "Products", layout: { component: "static-content", tag: "h3" } },
+        offerCurrencyDescription: {
+          content: "Offer currency: {offer.currency.id:PLN}",
+          layout: {
+            component: "static-content",
+            tag: "v-alert",
+            cols: { xs: 12, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8 },
+            props: { variant: "tonal", type: "info" },
+          },
+        },
         tableOfOfferItems: {
           layout: { component: "table-view" },
           source: {
@@ -64,7 +321,7 @@ export const Forte: Story = {
                 valueMapping:
                   "/api/v1/features/products/images/{product.mainImage.id}?Workspace-Id=forte&dataId={product.mainImage.dataId}",
                 type: "IMAGE",
-                properties: { minWidth: 80, maxWidth: 80,  cellProps: { style: "padding-left:4px; padding-right:4px;" }, },
+                properties: { minWidth: 80, maxWidth: 80, cellProps: { style: "padding-left:4px; padding-right:4px;" } },
               },
               {
                 title: "",
@@ -91,7 +348,7 @@ export const Forte: Story = {
                     title: "Input",
                     key: "inputs",
                     type: "",
-                    editable: [{ label: "Invoice (NN):", key: "invoicePrice", valueMapping: "invoicePrice" }],
+                    editable: [{ label: "Invoice (NN)", key: "invoicePrice", valueMapping: "invoicePrice:0:NUMBER:details.currencyDecimalPlaces" }],
                   },
                   {
                     type: "TEXT",
@@ -129,11 +386,11 @@ export const Forte: Story = {
                     type: "",
                     editable: [
                       {
-                        label: "Target:",
+                        label: "Target gross",
                         key: "targetRetailPriceGross",
-                        valueMapping: "targetRetailPriceGross",
+                        valueMapping: "targetRetailPriceGross:0:NUMBER:details.",
                       },
-                      { label: "Factor:", key: "retailPriceFactor", valueMapping: "retailPriceFactor" },
+                      { label: "Factor", key: "retailPriceFactor", valueMapping: "retailPriceFactor:0:NUMBER:details.currencyDecimalPlaces" },
                     ],
                   },
                 ],
@@ -219,7 +476,38 @@ export const Forte: Story = {
           },
           actions: {},
         },
-
+        decisionDetails: {
+          content: "Decision details",
+          layout: { component: "static-content", tag: "h3" },
+          label: "tableHeader171_cloned",
+        },
+        salesDirector: {
+          label: "Sales Director",
+          layout: {
+            component: "user-input",
+            if: "nata(pricelist.highestUserRole!='MD' and pricelist.highestUserRole!='SD')",
+            cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
+            fillRow: true,
+            props: { multiple: true, maxSelection: 1 },
+          },
+          source: {
+            url: "/api/dictionaries?feature-id=customer-sales-manager-directors&lm=salesDirectorFullName&vm=salesDirector.id&customAttributes=username%2C%7BsalesDirector.username%7D%2CfirstName%2C%7BsalesDirector.firstName%7D%2ClastName%2C%7BsalesDirector.lastName%7D%2Cemail%2C%7BsalesDirector.emaill%7D&filter=customer.id%3D%3D{customer.customerId}%3Bid.salesManagerUsername%3D%3D%5E{offer.owner.username}",
+          },
+        },
+        prepareOfferDecision: {
+          label: "Decision",
+          layout: { cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 }, component: "select" },
+          source: {
+            items: [
+              { value: "yes", title: "Yes - Send for approval" },
+              {
+                value: "no",
+                title: "No - Cancel the offer",
+              },
+            ],
+            returnObject: false,
+          },
+        },
       },
       required: [],
     },

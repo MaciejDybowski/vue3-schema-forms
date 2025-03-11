@@ -402,6 +402,7 @@ async function createUpdateRowURL(item: any) {
 }
 
 async function updateRow(value: any, index: number, headerKey: string, row: any) {
+  headerKey = headerKey.split(":")[0]
   try {
     const payload = {};
     payload[headerKey] = value;
@@ -468,7 +469,7 @@ tr.highlight-name > td:nth-child(1) {
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-dark)) {
-  background-color: #757575;
+  background-color: #424242;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-blue)) {

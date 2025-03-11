@@ -49,6 +49,7 @@
       v-if="header.key == 'actions' && header.actions"
       :header="header"
       :item="item"
+      v-bind="fieldProps"
       @run-table-action-logic="(event) => emit('runTableActionLogic', { ...event })"
     />
   </div>

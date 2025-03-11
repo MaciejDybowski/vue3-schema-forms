@@ -162,7 +162,6 @@ async function simpleResolveVariable() {
         if (typeOfValue == "NUMBER") {
           let decimalPlaces = 4;
           if (isNaN(formatterProps)) {
-            console.debug(formatterProps);
             decimalPlaces = get(model, formatterProps, 2);
           } else {
             decimalPlaces = formatterProps;
