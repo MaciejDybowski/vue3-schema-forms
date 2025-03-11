@@ -28,6 +28,8 @@ export interface HeaderEditableObject {
   label: string;
   valueMapping: string;
   class?: string;
+  type: "NUMBER" | "TEXT";
+  rules?: any[];
 }
 
 export interface TableHeaderAction {
