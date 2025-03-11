@@ -1,5 +1,5 @@
 <template>
-  <v-data-table
+  <v-data-table-server
     v-model:items-per-page="tableOptions.itemsPerPage"
     v-model:loading="loading"
     v-model:page="tableOptions.page"
@@ -7,8 +7,10 @@
     :headers="headers"
     :hover="true"
     :items="items"
+    :items-length="itemsTotalElements"
     class="custom-table"
     density="compact"
+    @update:options="() => debounced.load(fetchDataParams)"
   >
     <template #top>
       <v-row dense>
@@ -77,40 +79,40 @@
         </td>
       </tr>
     </template>
-  </v-data-table>
+    </v-data-table-server>
 
-  <v-dialog
-    v-model="actionPopup.show"
-    max-width="650"
-  >
-    <template v-slot:default="{ isActive }">
-      <v-card :title="actionPopup.action.title">
-        <v-card-text>
-          <vue-schema-forms
-            ref="actionPopupReference"
-            v-model="actionPopup.model"
-            :options="actionPopup.options"
-            :schema="actionPopup.schema"
-          />
-        </v-card-text>
-        <v-card-actions class="mx-4">
-          <v-spacer></v-spacer>
+    <v-dialog
+      v-model="actionPopup.show"
+      max-width="650"
+    >
+      <template v-slot:default="{ isActive }">
+        <v-card :title="actionPopup.action.title">
+          <v-card-text>
+            <vue-schema-forms
+              ref="actionPopupReference"
+              v-model="actionPopup.model"
+              :options="actionPopup.options"
+              :schema="actionPopup.schema"
+            />
+          </v-card-text>
+          <v-card-actions class="mx-4">
+            <v-spacer></v-spacer>
 
-          <v-btn
-            :text="t('close')"
-            v-bind="{ ...tableButtonDefaultProps, color: '', variant: 'elevated' }"
-            @click="isActive.value = false"
-          ></v-btn>
+            <v-btn
+              :text="t('close')"
+              v-bind="{ ...tableButtonDefaultProps, color: '', variant: 'elevated' }"
+              @click="isActive.value = false"
+            ></v-btn>
 
-          <v-btn
-            :text="t('save')"
-            v-bind="{ ...tableButtonDefaultProps, variant: 'elevated' }"
-            @click="saveDialogForm(isActive)"
-          />
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-dialog>
+            <v-btn
+              :text="t('save')"
+              v-bind="{ ...tableButtonDefaultProps, variant: 'elevated' }"
+              @click="saveDialogForm(isActive)"
+            />
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -118,7 +120,7 @@ import axios from "axios";
 import { cloneDeep, debounce, merge } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
-import { ComputedRef, Ref, computed, onMounted, reactive, ref } from "vue";
+import { computed, ComputedRef, onMounted, reactive, Ref, ref } from "vue";
 
 import TableCellWrapper from "@/components/controls/table/TableCellWrapper.vue";
 import { TableFetchOptions, TableOptions } from "@/components/controls/table/table-types";
@@ -153,13 +155,13 @@ const { createParamsObject, createBodyObject } = useEventHandler();
 
 const loading = ref(true);
 const debounced = {
-  load: debounce(loadData, 200),
+  load: debounce(loadData, 200)
 };
 
 const tableButtonDefaultProps = {
   rounded: true,
   size: "small",
-  color: "primary",
+  color: "primary"
 };
 
 //  TODO - czy potrzebne to wgl takie mapowania bo i tak lecimy 1:1
@@ -170,7 +172,7 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
       title: item.title,
       type: item.type,
       valueMapping: item.valueMapping,
-      color: item.color,
+      color: item.color
     };
 
     if (item.properties) {
@@ -236,25 +238,30 @@ const itemsTotalElements = ref(0);
 const tableOptions = ref<TableOptions>({
   page: 1,
   sortBy: [],
-  itemsPerPage: 10,
+  itemsPerPage: 10
 });
 
 const fetchDataParams = computed<TableFetchOptions>(() => {
   return {
-    page: tableOptions.value ? tableOptions.value.page : 1,
-    size: tableOptions.value ? tableOptions.value.itemsPerPage : 25,
-    sort: tableOptions.value ? tableOptions.value.sortBy : [],
+    page: tableOptions.value.page,
+    size: tableOptions.value.itemsPerPage,
+    sort: tableOptions.value.sortBy,
     filter: null, // TODO
-    query: null, // TODO
+    query: null // TODO
   };
 });
+
+function mapTotalElements(data) {
+  return data.page.totalElements;
+  //return "page.totalElements" in data ? data.page.totalElements : ("totalElements" in data ? data.totalElements : 0);
+}
 
 async function loadData(params: TableFetchOptions) {
   try {
     //console.debug("Loading data for table field with params ", params);
     loading.value = true;
     items.value = [];
-    itemsTotalElements.value = 0;
+    //itemsTotalElements.value = 0;
 
     const url = (await resolve(props.schema, props.schema.source.data)).resolvedText;
 
@@ -268,12 +275,12 @@ async function loadData(params: TableFetchOptions) {
         size: params.size,
         query: query,
         sort: sort,
-        filter: filter,
-      },
+        filter: filter
+      }
     });
 
     items.value = response.data.content;
-    itemsTotalElements.value = items.value.length;
+    itemsTotalElements.value = mapTotalElements(response.data);
   } catch (e) {
     console.error(e);
   } finally {
@@ -289,7 +296,7 @@ function runTableBtnLogic(btn: TableButton) {
       let payloadObject = {
         code: btn.config.code,
         body: null,
-        params: { ...btnConfigWithoutCode },
+        params: { ...btnConfigWithoutCode }
       };
       actionHandlerEventBus.emit("form-action", payloadObject);
       break;
@@ -305,7 +312,7 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
       const obj = {
         mode: "action",
         body: action.config.body,
-        params: action.config.params,
+        params: action.config.params
       };
 
       let body = await createBodyObjectFromRow(obj as any, payload.item);
@@ -314,7 +321,7 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
       let payloadObject = {
         code: action.code,
         body: body,
-        params: params,
+        params: params
       };
 
       actionHandlerEventBus.emit("form-action", payloadObject);
@@ -362,7 +369,7 @@ const actionPopup = reactive<{
   schema: {} as Schema,
   options: props.schema.options,
   item: {},
-  itemIndex: 0,
+  itemIndex: 0
 });
 
 async function saveDialogForm(isActive: Ref<boolean>) {
@@ -371,7 +378,7 @@ async function saveDialogForm(isActive: Ref<boolean>) {
   if (valid) {
     const modelReference = actionPopup.action.modelReference as string;
     const payload = {
-      [modelReference]: actionPopup.model,
+      [modelReference]: actionPopup.model
     };
     const updateRowURL = await createUpdateRowURL(actionPopup.item);
     //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
@@ -402,7 +409,7 @@ async function createUpdateRowURL(item: any) {
 }
 
 async function updateRow(value: any, index: number, headerKey: string, row: any) {
-  headerKey = headerKey.split(":")[0]
+  headerKey = headerKey.split(":")[0];
   try {
     const payload = {};
     payload[headerKey] = value;
@@ -426,19 +433,19 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
       fieldB: 100,
       fieldC: 1000,
       fieldD: {
-        fieldE: "test",
+        fieldE: "test"
       },
       fieldF: [
         {
-          fieldG: "test1",
+          fieldG: "test1"
         },
         {
-          fieldG: "test2",
+          fieldG: "test2"
         },
         {
-          fieldG: "test3",
-        },
-      ],
+          fieldG: "test3"
+        }
+      ]
     };
 
     merge(props.model, response);
@@ -497,15 +504,15 @@ tr.highlight-name > td:nth-child(1) {
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-blue-dark-4)) {
-  background-color: #1E88E5;
+  background-color: #1e88e5;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow-dark-4)) {
-  background-color: #FDD835;
+  background-color: #fdd835;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-red-dark-4)) {
-  background-color: #E53935;
+  background-color: #e53935;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-alert-type)) {
