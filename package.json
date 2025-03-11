@@ -61,7 +61,7 @@
     "vue": "^3.4.27",
     "vue-i18n": "^9.13.1",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.7.6"
+    "vuetify": "^3.7.15"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",
