@@ -1,6 +1,6 @@
 import { Schema } from "@/types/schema/Schema";
+import { jsonSchemaResolver } from "@/core/engine/jsonSchemaResolver";
 
-import jsonSchemaResolver from "./jsonSchemaResolver";
 
 export const variableRegexp: RegExp = new RegExp("{.*?}", "g");
 
