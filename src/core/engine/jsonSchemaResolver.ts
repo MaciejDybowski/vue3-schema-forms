@@ -3,11 +3,8 @@ import URI from "urijs";
 
 import { Resolver } from "@stoplight/json-ref-resolver";
 
-const visitedRefs = new Set(); // Zbiór do śledzenia odwiedzonych referencji
-
 
 export const jsonSchemaResolver = new Resolver({
-  // resolvers can do anything, so long as they define an async read function that resolves to a value
   resolvers: {
     https: {
       async resolve(ref: URI) {

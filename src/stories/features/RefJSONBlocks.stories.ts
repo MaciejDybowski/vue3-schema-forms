@@ -42,7 +42,7 @@ type Story = StoryObj<typeof meta>;
 initialize();
 
 const JSON_SCHEMA_BLOCK = [
-  http.get("https://test/json-mock/forte-table-offer-standard", async (req, res, ctx) => {
+  http.get("/json-mock/forte-table-offer-standard", async (req, res, ctx) => {
     return HttpResponse.json({
       label: "Input fetched from API static.json",
       layout: { component: "text-field" },
@@ -68,7 +68,7 @@ export const SchemaWithReference: Story = {
             component: "text-field",
           },
         },
-        fieldC: { $ref: "https://test/json-mock/forte-table-offer-standard" },
+        fieldC: { $ref: "../json-mock/forte-table-offer-standard" },
       },
     } as Schema,
   },
