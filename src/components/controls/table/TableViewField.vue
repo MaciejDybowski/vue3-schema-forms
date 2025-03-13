@@ -10,7 +10,7 @@
     :items-length="itemsTotalElements"
     class="custom-table"
     density="compact"
-    @update:options="() => debounced.load(fetchDataParams)"
+    @update:options="updateOptions"
   >
     <template #top>
       <v-row dense>
@@ -231,11 +231,13 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
   };
 });
 
+function updateOptions() {
+  loadData(fetchDataParams.value)
+}
+
 async function loadData(params: TableFetchOptions) {
   try {
     loading.value = true;
-    items.value = [];
-    itemsTotalElements.value = 0;
 
     const url = (await resolve(props.schema, props.schema.source.data)).resolvedText;
 
@@ -384,7 +386,7 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
 
 onMounted(async () => {
   await bindProps(props.schema);
-  debounced.load(fetchDataParams.value);
+  //debounced.load(fetchDataParams.value);
 });
 
 // Ustaw kolor dynamicznie
