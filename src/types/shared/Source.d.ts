@@ -22,6 +22,7 @@ export interface TableHeader {
   actions?: TableHeaderAction[];
   color?: string;
   items?: TableHeader[];
+  footerMapping?: string;
 }
 
 export interface HeaderEditableObject {

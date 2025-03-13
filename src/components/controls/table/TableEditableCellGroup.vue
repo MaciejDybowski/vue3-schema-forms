@@ -1,5 +1,6 @@
 <template>
   <v-text-field
+    width="100%"
     v-for="item in items"
     :key="item.valueMapping"
     :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"

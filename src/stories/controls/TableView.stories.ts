@@ -1,8 +1,14 @@
 // @ts-nocheck
+import { mswLoader } from "msw-storybook-addon";
+import {UPDATE_TABLE_ROW, TABLE_PAGE_WITH_AGGREGATES, TABLE_PAGE_WITHOUT_AGGREGATES} from "@/stories/mock-responses"
+
 import { VueSchemaForms } from "@/components";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
+
+import { initialize } from "msw-storybook-addon";
+initialize();
 
 const meta = {
   title: "Forms/Controls/TableView",
@@ -35,27 +41,14 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
+  loaders: [mswLoader],
 } satisfies Meta<typeof VueSchemaForms>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const REQUEST_PAGE_0_1 = {
-  url: "/mock-data/table-view-mock?page=0&size=20",
-  method: "GET",
-  status: 200,
-  response: (request) => {
-    const { body, searchParams } = request;
-    if (searchParams.page === "0" && searchParams.size === "10") {
-      return PAGE_0;
-    }
-    if (searchParams.page === "1" && searchParams.size === "10") {
-      return PAGE_1;
-    }
-    return "no data";
-  },
-};
+
 
 const REQUEST_PAGE_0_1_ALERT = {
   url: "/mock-data/table-view-mock?page=0&size=20",
@@ -84,6 +77,14 @@ const REQUEST_PAGE_0_1_ALERT = {
               {
                 type: "warning",
                 message: "unknown product volume, cannot calculate transport cost",
+              },
+              {
+                type: "info",
+                message: "no package quantity defined for product, using one package for calculations",
+              },
+              {
+                type: "error",
+                message: "no retail price factor defined, cannot calculate customer margin and retail prices",
               },
             ],
           },
@@ -122,155 +123,8 @@ const REQUEST_PAGE_0_1_ALERT = {
   },
 };
 
-const PAGE_0 = {
-  content: [
-    {
-      name: "🍎 Apple",
-      location: "Washington",
-      height: "0.1",
 
-      volume: "0.0001",
-    },
-    {
-      name: "🍌 Banana",
-      location: "Ecuador",
-      height: "0.2",
-      base: 50,
-      volume: "0.0002",
-    },
-    {
-      name: "🍇 Grapes",
-      location: "Italy",
-      height: "0.02",
-      base: 20,
-      volume: "0.00001",
-    },
-    {
-      name: "🍉 Watermelon",
-      location: "China",
-      height: "0.4",
-      base: 300,
-      volume: "0.03",
-    },
-    {
-      name: "🍍 Pineapple",
-      location: "Thailand",
-      height: "0.3",
-      base: 200,
-      volume: "0.005",
-    },
-    {
-      name: "🍒 Cherries",
-      location: "Turkey",
-      height: "0.02",
-      base: 20,
-      volume: "0.00001",
-    },
-    {
-      name: "🥭 Mango",
-      location: "India",
-      height: "0.15",
-      base: 100,
-      volume: "0.0005",
-    },
-    {
-      name: "🍓 Strawberry",
-      location: "Poland",
-      height: "0.03",
-      base: 30,
-      volume: "0.00002",
-    },
-    {
-      name: "🍑 Peach",
-      location: "China",
-      height: "0.09",
-      base: 80,
-      volume: "0.0004",
-    },
-    {
-      name: "🥝 Kiwi",
-      location: "New Zealand",
-      height: "0.05",
-      base: 50,
-      volume: "0.0001",
-    },
-  ],
-};
 
-const PAGE_1 = {
-  content: [
-    {
-      name: "🍊 Orange",
-      location: "Spain",
-      height: "0.12",
-      base: "0.09",
-      volume: "0.0006",
-    },
-    {
-      name: "🍋 Lemon",
-      location: "Mexico",
-      height: "0.1",
-      base: "0.07",
-      volume: "0.0004",
-    },
-    {
-      name: "🍈 Melon",
-      location: "Iran",
-      height: "0.35",
-      base: "0.25",
-      volume: "0.02",
-    },
-    {
-      name: "🍐 Pear",
-      location: "Argentina",
-      height: "0.13",
-      base: "0.1",
-      volume: "0.0005",
-    },
-    {
-      name: "🍏 Green Apple",
-      location: "France",
-      height: "0.1",
-      base: "0.07",
-      volume: "0.0001",
-    },
-    {
-      name: "🍌 Plantain",
-      location: "Colombia",
-      height: "0.22",
-      base: "0.06",
-      volume: "0.00025",
-    },
-    {
-      name: "🫐 Blueberry",
-      location: "Canada",
-      height: "0.015",
-      base: "0.015",
-      volume: "0.000005",
-    },
-    {
-      name: "🥥 Coconut",
-      location: "Indonesia",
-      height: "0.3",
-      base: "0.2",
-      volume: "0.006",
-    },
-    {
-      name: "🍅 Tomato",
-      location: "Italy",
-      height: "0.06",
-      base: "0.05",
-      volume: "0.00015",
-    },
-    {
-      name: "🍆 Eggplant",
-      location: "India",
-      height: "0.18",
-      base: 0.07,
-      volume: "0.0008",
-    },
-  ],
-};
 
 /**
  * Description here
@@ -333,7 +187,9 @@ export const Standard: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -397,7 +253,9 @@ export const ColorableCells: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -470,7 +328,9 @@ export const DynamicAlerts: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1_ALERT],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -532,7 +392,9 @@ export const NumberFields: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -588,7 +450,9 @@ export const JoinValues: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -644,7 +508,9 @@ export const JoinValuesWithHtmlAndExtraText: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -695,7 +561,9 @@ export const EditableField: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -748,7 +616,9 @@ export const ActionField: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -801,7 +671,9 @@ export const ActionFieldAdvanced: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -880,7 +752,9 @@ export const TopSlotAndButtons: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -968,7 +842,9 @@ export const ContextActions: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -1059,7 +935,9 @@ export const ContextActionsWithCondition: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
   },
 };
 
@@ -1136,6 +1014,145 @@ export const ContextActionWithSchemaIntegration: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
+  },
+};
+
+export const SummaryAggregates: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "Basic display all data as a text values",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Name",
+                key: "name",
+                valueMapping: "name",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Height",
+                key: "height",
+                valueMapping: "height",
+                type: "TEXT",
+                footerMapping: "<b>Summary of:</b> {height}",
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+              },
+              {
+                title: "Volume",
+                key: "volume",
+                valueMapping: "volume",
+                type: "TEXT",
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+    },
+  },
+};
+
+export const SummaryAggregatesUpdate: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "Basic display all data as a text values",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Id",
+                key: "id",
+                valueMapping: "dataId",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Editable height",
+                key: "height-collection",
+                type: "COLLECTION",
+                editable: [
+                  {
+                    title: "Height",
+                    key: "height",
+                    valueMapping: "height",
+                  },
+                ],
+                footerMapping: "<b>Summary of:</b> {height}",
+                properties: { minWidth: "200px", maxWidth: "200px", width: "100px" },
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+              },
+              {
+                title: "Volume",
+                key: "volume",
+                valueMapping: "volume",
+                type: "TEXT",
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES]
+    },
   },
 };

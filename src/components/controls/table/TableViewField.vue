@@ -56,73 +56,65 @@
     </template>
 
     <!-- miejsce przygotowane na agregaty -->
-    <template v-slot:body.append="{}">
-      <tr
-        v-for="(aggregateKey, i) in Object.keys(aggregates)"
-        class="v-data-table__tr-aggregates"
-      >
-        <td
-          v-for="(header, headerIndex) in headers"
-          :key="i"
-        >
-          <div v-if="headerIndex == 0">
-            {{ parseAggregateKey(aggregateKey as AggregateTypes) }}
-          </div>
-
-          <div v-if="header.key in aggregates[aggregateKey]">
-            {{ aggregates[aggregateKey][header.key] }}
-          </div>
-
-          <div v-else>
-            <!-- empty table cells for columns that don't need a sum -->
-          </div>
+    <template
+      v-if="!loading && Object.keys(aggregates).length > 0"
+      v-slot:body.append="{}"
+    >
+      <tr class="v-data-table__tr-aggregates">
+        <td v-for="(header, headerIndex) in headers">
+          <table-footer-cell
+            v-if="header.footerMapping"
+            :aggregates="aggregates"
+            :footer-mapping="header.footerMapping"
+          />
         </td>
       </tr>
     </template>
-    </v-data-table-server>
+  </v-data-table-server>
 
-    <v-dialog
-      v-model="actionPopup.show"
-      max-width="650"
-    >
-      <template v-slot:default="{ isActive }">
-        <v-card :title="actionPopup.action.title">
-          <v-card-text>
-            <vue-schema-forms
-              ref="actionPopupReference"
-              v-model="actionPopup.model"
-              :options="actionPopup.options"
-              :schema="actionPopup.schema"
-            />
-          </v-card-text>
-          <v-card-actions class="mx-4">
-            <v-spacer></v-spacer>
+  <v-dialog
+    v-model="actionPopup.show"
+    max-width="650"
+  >
+    <template v-slot:default="{ isActive }">
+      <v-card :title="actionPopup.action.title">
+        <v-card-text>
+          <vue-schema-forms
+            ref="actionPopupReference"
+            v-model="actionPopup.model"
+            :options="actionPopup.options"
+            :schema="actionPopup.schema"
+          />
+        </v-card-text>
+        <v-card-actions class="mx-4">
+          <v-spacer></v-spacer>
 
-            <v-btn
-              :text="t('close')"
-              v-bind="{ ...tableButtonDefaultProps, color: '', variant: 'elevated' }"
-              @click="isActive.value = false"
-            ></v-btn>
+          <v-btn
+            :text="t('close')"
+            v-bind="{ ...tableButtonDefaultProps, color: '', variant: 'elevated' }"
+            @click="isActive.value = false"
+          ></v-btn>
 
-            <v-btn
-              :text="t('save')"
-              v-bind="{ ...tableButtonDefaultProps, variant: 'elevated' }"
-              @click="saveDialogForm(isActive)"
-            />
-          </v-card-actions>
-        </v-card>
-      </template>
-    </v-dialog>
+          <v-btn
+            :text="t('save')"
+            v-bind="{ ...tableButtonDefaultProps, variant: 'elevated' }"
+            @click="saveDialogForm(isActive)"
+          />
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
 </template>
 
 <script lang="ts" setup>
 import axios from "axios";
-import { cloneDeep, debounce, merge } from "lodash";
+import { cloneDeep, debounce } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
-import { computed, ComputedRef, onMounted, reactive, Ref, ref } from "vue";
+import { ComputedRef, Ref, computed, onMounted, reactive, ref } from "vue";
 
 import TableCellWrapper from "@/components/controls/table/TableCellWrapper.vue";
+import TableFooterCell from "@/components/controls/table/TableFooterCell.vue";
 import { TableFetchOptions, TableOptions } from "@/components/controls/table/table-types";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
@@ -139,7 +131,7 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 vueSchemaFormEventBus.on(async (event, payload) => {
-  if (payload == "action-callback" || payload == "table-aggregates" || payload == "table-refresh") {
+  if (payload == "action-callback" || payload == "table-refresh") {
     debounced.load(fetchDataParams.value);
   }
 });
@@ -149,54 +141,71 @@ const props = defineProps<{
   model: object;
 }>();
 
+const { t } = useLocale();
 const { bindProps, fieldProps } = useProps();
 const { resolve } = useResolveVariables();
 const { createParamsObject, createBodyObject } = useEventHandler();
-
+const items = ref<any[]>([]);
+const itemsTotalElements = ref(0);
 const loading = ref(true);
 const debounced = {
-  load: debounce(loadData, 200)
+  load: debounce(loadData, 200),
 };
+
+const aggregates = ref({});
+const actions = props.schema.actions ? props.schema.actions : {};
+
+const actionPopupReference = ref();
+const actionPopup = reactive<{
+  errorMessages: Ref<any[]>;
+  show: boolean;
+  action: TableHeaderAction;
+  model: object;
+  schema: Schema;
+  options: object;
+  item: object;
+  itemIndex: number;
+}>({
+  errorMessages: ref([]),
+  show: false,
+  action: {} as TableHeaderAction,
+  model: {},
+  schema: {} as Schema,
+  options: props.schema.options,
+  item: {},
+  itemIndex: 0,
+});
 
 const tableButtonDefaultProps = {
   rounded: true,
   size: "small",
-  color: "primary"
+  color: "primary",
 };
 
-//  TODO - czy potrzebne to wgl takie mapowania bo i tak lecimy 1:1
 const headers: ComputedRef<TableHeader[]> = computed(() => {
-  return props.schema.source.headers.map((item: TableHeader) => {
-    const header: TableHeader = {
-      key: item.key,
-      title: item.title,
-      type: item.type,
-      valueMapping: item.valueMapping,
-      color: item.color
-    };
-
-    if (item.properties) {
-      for (const [key, value] of Object.entries(item.properties)) {
-        header[key] = value;
-        //console.log(`${key}: ${value}`);
-      }
-    }
-
-    if (item.items) {
-      header["items"] = item.items;
-    }
-
-    if (item.editable) {
-      header["editable"] = item.editable;
-    }
-
-    if (item.key == "actions") {
-      header["actions"] = item.actions;
-    }
-
-    return header;
-  });
+  return props.schema.source.headers.map(buildHeader);
 });
+
+const buildHeader = (item: TableHeader): TableHeader => {
+  const { key, title, type, valueMapping, color, footerMapping, properties, items, editable, actions } = item;
+  const header: TableHeader = {
+    key,
+    title,
+    type,
+    valueMapping,
+    color,
+    footerMapping,
+    editable,
+    items,
+    actions,
+  };
+
+  if (properties) {
+    Object.assign(header, properties);
+  }
+
+  return header;
+};
 
 const buttons: ComputedRef<TableButton[]> = computed(() => {
   if (props.schema.source.buttons) {
@@ -206,39 +215,10 @@ const buttons: ComputedRef<TableButton[]> = computed(() => {
   }
 });
 
-const aggregates = {};
-/*const aggregates = {
-  sum: {
-    height: 400,
-    base: 3,
-  },
-  avg: {
-    height: 200,
-    base: 1.5,
-  },
-};*/
-
-const actions = props.schema.actions ? props.schema.actions : {};
-
-const { t } = useLocale();
-type AggregateTypes = "sum" | "avg";
-
-function parseAggregateKey(code: AggregateTypes): string {
-  switch (code) {
-    case "sum":
-      return t("sum");
-    case "avg":
-      return t("avg");
-  }
-}
-
-const items = ref<any[]>([]);
-const itemsTotalElements = ref(0);
-
 const tableOptions = ref<TableOptions>({
   page: 1,
   sortBy: [],
-  itemsPerPage: 10
+  itemsPerPage: 10,
 });
 
 const fetchDataParams = computed<TableFetchOptions>(() => {
@@ -247,21 +227,15 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
     size: tableOptions.value.itemsPerPage,
     sort: tableOptions.value.sortBy,
     filter: null, // TODO
-    query: null // TODO
+    query: null, // TODO
   };
 });
 
-function mapTotalElements(data) {
-  return data.page.totalElements;
-  //return "page.totalElements" in data ? data.page.totalElements : ("totalElements" in data ? data.totalElements : 0);
-}
-
 async function loadData(params: TableFetchOptions) {
   try {
-    //console.debug("Loading data for table field with params ", params);
     loading.value = true;
     items.value = [];
-    //itemsTotalElements.value = 0;
+    itemsTotalElements.value = 0;
 
     const url = (await resolve(props.schema, props.schema.source.data)).resolvedText;
 
@@ -275,17 +249,22 @@ async function loadData(params: TableFetchOptions) {
         size: params.size,
         query: query,
         sort: sort,
-        filter: filter
-      }
+        filter: filter,
+      },
     });
 
     items.value = response.data.content;
     itemsTotalElements.value = mapTotalElements(response.data);
+    aggregates.value = "aggregates" in response.data ? response.data.aggregates : {};
   } catch (e) {
     console.error(e);
   } finally {
     loading.value = false;
   }
+}
+
+function mapTotalElements(data: any) {
+  return data.page.totalElements;
 }
 
 function runTableBtnLogic(btn: TableButton) {
@@ -296,7 +275,7 @@ function runTableBtnLogic(btn: TableButton) {
       let payloadObject = {
         code: btn.config.code,
         body: null,
-        params: { ...btnConfigWithoutCode }
+        params: { ...btnConfigWithoutCode },
       };
       actionHandlerEventBus.emit("form-action", payloadObject);
       break;
@@ -312,7 +291,7 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
       const obj = {
         mode: "action",
         body: action.config.body,
-        params: action.config.params
+        params: action.config.params,
       };
 
       let body = await createBodyObjectFromRow(obj as any, payload.item);
@@ -321,7 +300,7 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
       let payloadObject = {
         code: action.code,
         body: body,
-        params: params
+        params: params,
       };
 
       actionHandlerEventBus.emit("form-action", payloadObject);
@@ -351,43 +330,17 @@ async function createBodyObjectFromRow(actionObj: any, row: any) {
   return body;
 }
 
-const actionPopupReference = ref();
-const actionPopup = reactive<{
-  errorMessages: Ref<any[]>;
-  show: boolean;
-  action: TableHeaderAction;
-  model: object;
-  schema: Schema;
-  options: object;
-  item: object;
-  itemIndex: number;
-}>({
-  errorMessages: ref([]),
-  show: false,
-  action: {} as TableHeaderAction,
-  model: {},
-  schema: {} as Schema,
-  options: props.schema.options,
-  item: {},
-  itemIndex: 0
-});
-
 async function saveDialogForm(isActive: Ref<boolean>) {
   const { valid, messages } = await actionPopupReference.value.validate("messages");
   actionPopup.errorMessages = messages;
   if (valid) {
     const modelReference = actionPopup.action.modelReference as string;
     const payload = {
-      [modelReference]: actionPopup.model
+      [modelReference]: actionPopup.model,
     };
     const updateRowURL = await createUpdateRowURL(actionPopup.item);
-    //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
     const response = await axios.post(updateRowURL, payload);
-    items.value[actionPopup.itemIndex] = response.data;
-
-    // Mock for local
-    //items.value[actionPopup.itemIndex] = { ...actionPopup.item, ...actionPopup.model };
-
+    items.value[actionPopup.itemIndex] = response.data.content;
     isActive.value = false;
   }
 }
@@ -417,39 +370,15 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
     const updateRowURL = await createUpdateRowURL(row);
     //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
     const response = await axios.post(updateRowURL, payload);
-    items.value[index] = response.data;
+    items.value[index] = response.data.content;
+
+    if (Object.keys(aggregates.value).length > 0) {
+      aggregates.value = response.data.aggregates;
+      await new Promise((r) => setTimeout(r, 1));
+      vueSchemaFormEventBus.emit("model-changed", "table-aggregates");
+    }
   } catch (e) {
     console.error(e);
-  }
-
-  if (props.schema.aggregates) {
-    console.debug("Wołam API o agregaty do wyświetlenia");
-    /*
-      powiedzmy że api zwraca obiekt z agregatami
-
-     */
-    const response = {
-      fieldA: 1,
-      fieldB: 100,
-      fieldC: 1000,
-      fieldD: {
-        fieldE: "test"
-      },
-      fieldF: [
-        {
-          fieldG: "test1"
-        },
-        {
-          fieldG: "test2"
-        },
-        {
-          fieldG: "test3"
-        }
-      ]
-    };
-
-    merge(props.model, response);
-    vueSchemaFormEventBus.emit("model-changed", "table-aggregates");
   }
 }
 
@@ -463,12 +392,7 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .v-data-table__tr-aggregates {
-  background-color: lightgrey;
-}
-
-tr.highlight-name > td:nth-child(1) {
-  background: purple;
-  color: white;
+  background-color: #f5f5f5;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-light)) {
