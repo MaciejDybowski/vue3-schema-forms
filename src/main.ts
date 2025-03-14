@@ -70,7 +70,10 @@ export type VueSchemaFormsOptions = {
   customComponents?: Components;
   installFormControls?: boolean;
   duplicatedSectionBatchAddComponent?: Components;
+  baseUri?: string;
 };
+
+export let baseUri = window.origin;
 
 // jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
 // import * as schemaFormModelStore from './store/formModelStore';
@@ -83,6 +86,9 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
   }
   if (options?.duplicatedSectionBatchAddComponent) {
     duplicatedSectionBatchAddComponent = options?.duplicatedSectionBatchAddComponent;
+  }
+  if (options?.baseUri) {
+    baseUri = options?.baseUri;
   }
 
   return {
