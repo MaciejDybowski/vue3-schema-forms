@@ -1003,7 +1003,7 @@ export const SummaryAggregates: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITH_AGGREGATES
     },
   },
 };

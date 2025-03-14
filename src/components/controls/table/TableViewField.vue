@@ -57,7 +57,7 @@
 
     <!-- miejsce przygotowane na agregaty -->
     <template
-      v-if="!loading && aggregates && Object.keys(aggregates).length > 0"
+      v-if="!loading && aggregates"
       v-slot:body.append="{}"
     >
       <tr class="v-data-table__tr-aggregates">
@@ -152,7 +152,7 @@ const debounced = {
   load: debounce(loadData, 200),
 };
 
-const aggregates = ref({});
+const aggregates = ref(null);
 const actions = props.schema.actions ? props.schema.actions : {};
 
 const actionPopupReference = ref();
@@ -232,7 +232,7 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
 });
 
 function updateOptions() {
-  loadData(fetchDataParams.value)
+  loadData(fetchDataParams.value);
 }
 
 async function loadData(params: TableFetchOptions) {
@@ -257,7 +257,7 @@ async function loadData(params: TableFetchOptions) {
 
     items.value = response.data.content;
     itemsTotalElements.value = mapTotalElements(response.data);
-    aggregates.value = "aggregates" in response.data ? response.data.aggregates : {};
+    aggregates.value = "aggregates" in response.data && response.data.aggregates != null ? response.data.aggregates : {};
   } catch (e) {
     console.error(e);
   } finally {
@@ -374,7 +374,7 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
     const response = await axios.post(updateRowURL, payload);
     items.value[index] = response.data.content;
 
-    if (Object.keys(aggregates.value).length > 0) {
+    if (aggregates.value != null) {
       aggregates.value = response.data.aggregates;
       await new Promise((r) => setTimeout(r, 1));
       vueSchemaFormEventBus.emit("model-changed", "table-aggregates");
