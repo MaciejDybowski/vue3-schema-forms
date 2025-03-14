@@ -57,7 +57,7 @@
 
     <!-- miejsce przygotowane na agregaty -->
     <template
-      v-if="!loading && Object.keys(aggregates).length > 0"
+      v-if="!loading && aggregates && Object.keys(aggregates).length > 0"
       v-slot:body.append="{}"
     >
       <tr class="v-data-table__tr-aggregates">
