@@ -56,6 +56,7 @@
     </template>
 
     <!-- miejsce przygotowane na agregaty -->
+
     <template
       v-if="!loading && aggregates"
       v-slot:body.append="{}"
@@ -257,7 +258,7 @@ async function loadData(params: TableFetchOptions) {
 
     items.value = response.data.content;
     itemsTotalElements.value = mapTotalElements(response.data);
-    aggregates.value = "aggregates" in response.data && response.data.aggregates != null ? response.data.aggregates : {};
+    aggregates.value = "aggregates" in response.data && response.data.aggregates != null ? response.data.aggregates : null;
   } catch (e) {
     console.error(e);
   } finally {
@@ -395,6 +396,7 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .v-data-table__tr-aggregates {
   background-color: #f5f5f5;
+  vertical-align: top;
 }
 
 .custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-light)) {
