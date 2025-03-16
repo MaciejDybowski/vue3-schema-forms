@@ -83,7 +83,6 @@
 import { cloneDeep, isArray } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
-import { v4 as uuidv4 } from "uuid";
 import { Ref, computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
@@ -102,6 +101,15 @@ import FormRoot from "../../engine/FormRoot.vue";
 import DraggableContextMenu from "./DraggableContextMenu.vue";
 import DraggableIcon from "./DraggableIcon.vue";
 import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
+
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;
@@ -233,7 +241,7 @@ function handleDraggableContextAction(actionId: "delete" | "addBelow" | string, 
 
 const getClearNode = computed((): Schema => {
   return {
-    id: uuidv4(),
+    id: generateUUID(),
     type: "object",
     properties: wrapPropertiesWithIndexAndPath(
       JSON.parse(JSON.stringify(props.schema.layout.schema?.properties)),
@@ -347,7 +355,7 @@ function init(): void {
   if (sections.length > 0) {
     sections.forEach((item: any, index: number) => {
       nodes.value.push({
-        id: uuidv4(),
+        id: generateUUID(),
         type: "object",
         properties: isDefaultExist
           ? mapPropertiesIfDefault(props.schema.layout.schema?.properties as Record<any, SchemaField>, sections[index])

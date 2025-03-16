@@ -120,7 +120,7 @@ let address = reactive({
   city: null,
 });
 
-const localModel = computed({
+const localModel = computed<any>({
   get(): object {
     return getValue(props.model, props.schema, address);
   },

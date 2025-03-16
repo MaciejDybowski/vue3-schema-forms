@@ -11,9 +11,10 @@
     "dist/*"
   ],
   "scripts": {
-    "onlyBuild": "vite build",
-    "dev": "echo ' to link lib run  \"npm link vue3-schema-forms\" in your destination project' && npm link && vite build --watch",
-    "build": "vue-tsc && vite build",
+    "clean": "rimraf dist",
+    "build": "npm run clean && vue-tsc && vite build",
+    "dev": "npm run link:local && vite build --watch",
+    "link:local": "npm link && echo 'Lib linked: npm link vue3-schema-forms'",
     "format": "prettier --write src/",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
@@ -49,7 +50,6 @@
     "libphonenumber-js": "^1.11.4",
     "lodash": "^4.17.21",
     "maska": "^3.0.0",
-    "uuid": "^10.0.0",
     "v-phone-input": "^4.3.2",
     "vue-json-pretty": "^2.4.0"
   },
@@ -78,7 +78,6 @@
     "@storybook/vue3": "^8.6.4",
     "@storybook/vue3-vite": "^8.6.4",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/test-utils": "^2.4.6",
     "eslint": "^9.7.0",
@@ -88,8 +87,6 @@
     "msw": "^2.7.3",
     "msw-storybook-addon": "^2.0.4",
     "prettier": "3.3.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "remark-gfm": "^4.0.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "sass": "^1.77.8",
