@@ -55,7 +55,7 @@ for (const [name, comp] of Object.entries(vueSchemaFromControls)) {
 // end register-components
 
 // render tests
-const { result } = usePerformanceAPI();
+const { result, stopMeasure } = usePerformanceAPI();
 
 const props = withDefaults(
   defineProps<{
@@ -150,6 +150,7 @@ onMounted(async () => {
   formModelStore.updateFormModel(props.modelValue);
   formModelStore.updateFormContext(props.options && props.options.context ? props.options.context : {});
   await loadResolvedSchema();
+  stopMeasure()
   debounced.formIsReady(800)();
 });
 

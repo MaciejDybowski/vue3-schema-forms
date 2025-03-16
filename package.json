@@ -41,10 +41,10 @@
     "@guolao/vue-monaco-editor": "^1.5.4",
     "@mdi/font": "^7.4.47",
     "@stoplight/json-ref-resolver": "3.1.6",
-    "@vueuse/core": "^11.3.0",
-    "@vueuse/math": "^11.3.0",
+    "@vueuse/core": "13.0.0",
+    "@vueuse/math": "13.0.0",
     "flag-icons": "^7.2.3",
-    "jsonata": "^2.0.5",
+    "jsonata": "2.0.6",
     "leaflet-geosearch": "^4.0.0",
     "libphonenumber-js": "^1.11.4",
     "lodash": "^4.17.21",
@@ -63,7 +63,6 @@
     "vuetify": "^3.7.15"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^3.2.5",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@intlify/unplugin-vue-i18n": "0.13.0",
     "@storybook/addon-essentials": "^8.6.4",
@@ -82,7 +81,6 @@
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/test-utils": "^2.4.6",
-    "chromatic": "^11.10.2",
     "eslint": "^9.7.0",
     "eslint-plugin-storybook": "^0.11.4",
     "eslint-plugin-vue": "^9.32.0",
@@ -102,7 +100,7 @@
     "vite": "^5.3.4",
     "vite-plugin-dts": "^3.9.1",
     "vite-plugin-vuetify": "^2.0.3",
-    "vitest": "^2.0.3",
+    "vitest": "^3.0.8",
     "vue-tsc": "^2.0.26"
   },
   "bugs": {
