@@ -7,6 +7,7 @@ import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
 import DevelopmentTable from "../../components/app/DevelopmentTable.vue";
+import { DictionarySource } from "../../types/shared/Source";
 
 initialize();
 
@@ -89,3 +90,5 @@ export const Standard: Story = {
     },
   },
 };
+
+

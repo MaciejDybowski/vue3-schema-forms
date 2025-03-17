@@ -8,6 +8,10 @@ import { Meta, StoryObj } from "@storybook/vue3";
 import { Schema } from "../../../types/schema/Schema";
 import { DictionarySource } from "../../../types/shared/Source";
 import { waitForMountedAsync } from "../utils";
+import { http, HttpResponse } from "msw";
+import { initialize, mswLoader } from "msw-storybook-addon";
+
+initialize();
 
 const meta = {
   title: "Forms/Controls/Dictionary [autocomplete]",
@@ -35,6 +39,7 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
+  loaders: [mswLoader],
 } satisfies Meta<typeof VueSchemaForms>;
 
 export default meta;
@@ -535,3 +540,178 @@ export const DefaultValueAsATextWithDependencies: Story = {
     },
   },
 };
+
+
+
+
+
+const MOCK_REQUEST_CURRENCY = [
+  http.get("/mocks/currencies", async ({ request }) => {
+    console.log("Intercepted request:", request.url);
+    const url = new URL(request.url);
+    const valueFilter = url.searchParams.get("value-filter");
+    const page = url.searchParams.get("page");
+    const size = url.searchParams.get("size");
+
+
+    if(valueFilter){
+      return HttpResponse.json({
+        content: [
+          {
+            id: valueFilter || "PLN",
+            label: "Polski Złoty",
+          },
+        ],
+        pagination: {
+          page: Number(page) || 0,
+          size: Number(size) || 20,
+        },
+      });
+    } else {
+      return HttpResponse.json({
+        content: [
+          {
+            id: "AFN",
+            label: "Afgani",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "ALL",
+            label: "Lek",
+            digitsAfterDecimal: "3",
+          },
+          {
+            id: "AMD",
+            label: "Dram",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "ANG",
+            label: "Gulden Antyli Holenderskich",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "AOA",
+            label: "Kwanza",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "ARS",
+            label: "Peso argentyńskie",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "AUD",
+            label: "Dolar australijski",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "AWG",
+            label: "Florin arubański",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "AZN",
+            label: "Manat azerbejdżański",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "BAM",
+            label: "Marka zamienna",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "BBD",
+            label: "Dolar barbadoski",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "BDT",
+            label: "Taka",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "BGN",
+            label: "Lew",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "BHD",
+            label: "Dinar bahrajski",
+            digitsAfterDecimal: "3",
+          },
+          {
+            id: "BIF",
+            label: "Frank burundyjski",
+            digitsAfterDecimal: "0",
+          },
+          {
+            id: "BMD",
+            label: "Dolar bermudzki",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "BND",
+            label: "Dolar brunejski",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "BOB",
+            label: "Boliviano",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "BOV",
+            label: "MVDOL boliwijski",
+            digitsAfterDecimal: "2",
+          },
+          {
+            id: "BRL",
+            label: "Real brazylijski",
+            digitsAfterDecimal: "2",
+          },
+        ],
+        pagination: {
+          page: Number(page) || 0,
+          size: Number(size) || 20,
+        },
+      })
+    }
+
+
+  }),
+];
+
+export const OneTimeValueFilter: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {
+      customer: {
+        defaultCurrencyCode: "PLN",
+      }
+    },
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+          },
+          source: {
+            url: "/mocks/currencies?value-filter={customer.defaultCurrencyCode}",
+            title: "label",
+            value: "id",
+            returnObject: true,
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  }
+};
+

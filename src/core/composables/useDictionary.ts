@@ -17,7 +17,7 @@ import { useEventBus } from "@vueuse/core";
 export function useDictionary() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
   const { resolve } = useResolveVariables();
-
+  let loadCounter = ref(0);
   let source: DictionarySource = {} as DictionarySource;
   let title = ref("title");
   let value = ref("value");
@@ -68,16 +68,9 @@ export function useDictionary() {
       vueSchemaFormEventBus.on(updateEndpoint);
     }
 
-    if (endpoint.resolvedText.includes("query")) {
-      const urlParams = new URLSearchParams(endpoint.resolvedText);
-      const queryParam = urlParams.get("query");
-      if (queryParam) {
-        query.value = queryParam;
-      }
-    }
   }
 
-  async function load(caller: string, firstElement = null) {
+  async function load(caller: string) {
     endpoint = await resolve(field, source.url, title.value, true);
     if (logger.dictionaryLogger) {
       console.debug(
@@ -140,10 +133,14 @@ export function useDictionary() {
   function prepareUrl() {
     let urlParts = endpoint.resolvedText.split("?");
     let urlParams = new URLSearchParams(urlParts[1]);
+    if (loadCounter.value > 0 && urlParams.has("value-filter")) {
+      urlParams.delete("value-filter");
+    }
     if (urlParams.has("query")) {
       urlParams.delete("query");
     }
 
+    loadCounter.value++;
     return { url: urlParts[0], params: urlParams.toString() };
   }
 

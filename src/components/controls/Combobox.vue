@@ -150,7 +150,7 @@ onMounted(async () => {
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
     updateQuery("", true);
-    await load("autocomplete", localModel.value ? localModel.value : null);
+    await load("autocomplete");
   }
 }
 </script>
