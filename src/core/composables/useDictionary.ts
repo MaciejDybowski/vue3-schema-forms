@@ -180,5 +180,6 @@ export function useDictionary() {
     load,
     loadMoreRecords,
     singleOptionAutoSelect,
+    loadCounter
   };
 }

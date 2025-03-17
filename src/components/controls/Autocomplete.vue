@@ -94,11 +94,12 @@ const {
   singleOptionAutoSelect,
   initState,
   updateQuery,
+  loadCounter
 } = useDictionary();
 
 function singleOptionAutoSelectFunction() {
   const selectSingleOptionLogic = () => {
-    if (data.value.length !== 1 || !singleOptionAutoSelect.value) return;
+    if (data.value.length !== 1 || !singleOptionAutoSelect.value || loadCounter.value > 1) return;
     const selectedValue = returnObject.value ? data.value[0] : data.value[0][title.value];
 
     if (JSON.stringify(localModel.value) !== JSON.stringify(selectedValue)) {
