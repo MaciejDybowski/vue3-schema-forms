@@ -23,7 +23,7 @@ export function useDictionary() {
   let value = ref("value");
   let returnObject = ref(false);
   let lazy = ref(true);
-  let description = ref<any>(null)
+  let description = ref<any>(null);
   let paginationOptions = ref<any>(null);
   let responseReference: ResponseReference = { data: "content", totalElements: "numberOfElements" };
   let singleOptionAutoSelect = ref(true);
@@ -101,23 +101,7 @@ export function useDictionary() {
             },
       });
 
-      // TODO - better code block
-      data.value = [];
-      const newData = get(response.data, responseReference.data, []);
-      if (firstElement) {
-        const isDataInclude = newData.some((it) => it[value.value] == firstElement[value.value]);
-        if (!isDataInclude) {
-          data.value.unshift(firstElement);
-        }
-        const filteredData = newData.filter(
-          (item) => !data.value.some((existingItem) => existingItem[value.value] === item[value.value]), // Adjust comparison logic as needed
-        );
-
-        data.value = data.value.concat(filteredData);
-      } else {
-        data.value = newData;
-      }
-      // TODO - end
+      data.value = get(response.data, responseReference.data, []);
 
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
       loading.value = false;
