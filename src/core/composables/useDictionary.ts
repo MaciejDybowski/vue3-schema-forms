@@ -133,7 +133,7 @@ export function useDictionary() {
   function prepareUrl() {
     let urlParts = endpoint.resolvedText.split("?");
     let urlParams = new URLSearchParams(urlParts[1]);
-    if (loadCounter.value > 0 && urlParams.has("value-filter")) {
+    if ((loadCounter.value > 0 && urlParams.has("value-filter")) || data.value.length > 0) {
       urlParams.delete("value-filter");
     }
     if (urlParams.has("query")) {
