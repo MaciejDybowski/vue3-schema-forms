@@ -19,4 +19,5 @@ export type SchemaComponent =
   | "avatar"
   | "switch"
   | "user-input"
+  | "fields-group"
   | "image";

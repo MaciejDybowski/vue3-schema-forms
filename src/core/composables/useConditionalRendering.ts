@@ -3,7 +3,7 @@ import { cloneDeep } from "lodash";
 import set from "lodash/set";
 import { ref } from "vue";
 
-import { logger, useResolveVariables } from "@/main";
+import { Schema, logger, useResolveVariables } from "@/main";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { useEventBus } from "@vueuse/core";
@@ -34,26 +34,44 @@ export function useConditionalRendering() {
       const match = schema.layout.if.match(/^nata\((.*)\)$/);
       if (match) {
         const expression = fillPath(schema.path, schema.index, match[1]);
-        await ifByJsonNata(schema.formId, expression, schema.key, model);
+        await ifByJsonNata(schema, expression, model);
       }
     }
     //}
   }
 
-  async function ifByJsonNata(formId: string, expression: string, key: string, model: any) {
-    const formModelStore = useFormModelStore(formId);
+  async function ifByJsonNata(schema: EngineField, expression: string, model: any) {
+    const formModelStore = useFormModelStore(schema.formId);
     const modelForResolve = formModelStore.getFormModelForResolve;
     const nata = jsonata(expression);
     shouldRender.value = await nata.evaluate(modelForResolve);
-    resetModelValueWhenFalse(model, key);
+    resetModelValueWhenFalse(model, schema);
   }
 
-  function resetModelValueWhenFalse(model: object, key: string) {
+  function resetModelValueWhenFalse(model: object, schema: EngineField) {
     if (lastValueOfShouldRender.value && !shouldRender.value) {
-      set(model, key, null);
+      if (schema.layout.component == "fields-group") {
+        const componentSchema = schema.layout.schema as Schema;
+        resetModelValues(model, componentSchema)
+      } else {
+        set(model, schema.key, null);
+      }
     }
     lastValueOfShouldRender.value = shouldRender.value;
   }
+
+  function resetModelValues(model: object, schema: Schema) {
+    if (!schema.properties) return;
+
+    Object.entries(schema.properties).forEach(([key, field]) => {
+      if (field.type === "object" && field.properties) {
+        resetModelValues(model[key] ?? {}, field as any);
+      } else {
+        set(model, key, null);
+      }
+    });
+  }
+
 
   async function conditionalRenderingListener(event: string, payloadIndex: number, schema: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 50));

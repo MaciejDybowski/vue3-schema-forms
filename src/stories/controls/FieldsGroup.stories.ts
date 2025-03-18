@@ -9,17 +9,18 @@ import { SchemaTextField } from "../../types/schema/elements";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { DictionarySource } from "../../types/shared/Source";
 import { REQUEST_NOT_LAZY, REQUEST_PAGE_HIDDEN_DICT, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
+import DevelopmentTable from "../../components/app/DevelopmentTable.vue";
 
 const meta = {
   title: "Forms/Controls/FieldsGroup",
-  component: VueSchemaForms,
+  component: DevelopmentTable,
   tags: ["autodocs"],
   argTypes: {
     schema: {
       control: "object",
       description: "Schema u" /*table: { disable: true }*/,
     },
-    modelValue: {
+    model: {
       control: "object",
       description: "Model" /*table: { disable: true }*/,
     },
@@ -30,7 +31,7 @@ const meta = {
     "update:modelValue": { table: { disable: true } },
   },
   args: {
-    modelValue: {},
+    model: {},
     options: {
       fieldProps: {
         variant: "outlined",
@@ -157,6 +158,102 @@ export const GroupWithHiddenDict = {
   },
   parameters: {
     mockData: [REQUEST_PAGE_HIDDEN_DICT],
+  },
+};
+
+
+export const Required = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        data: {
+          layout: {
+            component: "fields-group",
+            schema: {
+              type: "object",
+              properties: {
+                fieldA: {
+                  label: "Field A in group A",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+                fieldQ: {
+                  label: "Field Q in group A",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+                field1: {
+                  label: "Field C in group A",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+              },
+              required: ["fieldA"]
+            },
+            cols: 6,
+          },
+        },
+      },
+
+    },
+  },
+};
+
+export const ResetValueWhenHidden = {
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        switch: {
+          label: "Change it!",
+          layout: {
+            component: "switch",
+          },
+        },
+        data: {
+          layout: {
+            component: "fields-group",
+            if: "nata(switch=true)",
+            schema: {
+              type: "object",
+              properties: {
+                temp: {
+                  properties: {
+                    fieldA: {
+                      label: "Nested with properties",
+                      layout: {
+                        component: "text-field",
+                      },
+                    },
+                  }
+                },
+                fieldQ: {
+                  label: "Field Q in group A",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+                field1: {
+                  label: "Field C in group A",
+                  layout: {
+                    component: "text-field",
+                  },
+                },
+              },
+              required: ["fieldA"]
+            },
+            cols: 6,
+          },
+        },
+      },
+
+    },
   },
 };
 
