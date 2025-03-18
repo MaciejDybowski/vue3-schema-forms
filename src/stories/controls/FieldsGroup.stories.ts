@@ -206,7 +206,9 @@ export const Required = {
 
 export const ResetValueWhenHidden = {
   args: {
-    model: {},
+    model: {
+      fieldQ:"Maciej ukryte"
+    },
     schema: {
       type: "object",
       properties: {
@@ -219,7 +221,7 @@ export const ResetValueWhenHidden = {
         data: {
           layout: {
             component: "fields-group",
-            if: "nata(switch=true)",
+            hide: "nata(switch=false)",
             schema: {
               type: "object",
               properties: {

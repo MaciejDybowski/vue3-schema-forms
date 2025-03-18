@@ -1,7 +1,7 @@
 <template>
   <v-col
     v-if="shouldRender"
-    v-show="hideField && shouldRender"
+    v-show="!shouldHide && shouldRender"
     :class="layoutCssClass"
     :cols="cols"
     :style="mr"
@@ -20,6 +20,7 @@ import { computed, onMounted } from "vue";
 import { useConditionalRendering } from "@/core/composables";
 import { useSchemaCols } from "@/core/composables/useSchemaCols";
 import { EngineField } from "@/types/engine/EngineField";
+import { useConditionalHide } from "@/core/composables/useConditionalHide";
 
 const props = defineProps<{
   schema: EngineField;
@@ -27,7 +28,8 @@ const props = defineProps<{
 }>();
 
 const { shouldRender, shouldRenderField } = useConditionalRendering();
-const { cols, completionOfRow, isOffsetExist, offset, fillRow, hideField } = useSchemaCols(props.schema);
+const { shouldHide, shouldHideField } = useConditionalHide()
+const { cols, completionOfRow, isOffsetExist, offset, fillRow,  } = useSchemaCols(props.schema);
 
 const layoutCssClass = computed(() => {
   let cssString = "";
@@ -47,6 +49,8 @@ const mr = computed(() => {
 
 onMounted(async () => {
   await shouldRenderField(props.schema, props.model);
+  await shouldHideField(props.schema, props.model)
+  console.debug(shouldHide.value)
 });
 </script>
 

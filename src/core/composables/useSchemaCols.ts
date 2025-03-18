@@ -9,7 +9,6 @@ export function useSchemaCols(schema: EngineField) {
   const display = useDisplay();
   const isOffsetExist = !!schema.layout.offset;
   const offset = isOffsetExist ? (schema.layout.offset as number) : 0;
-  const hideField = !schema.layout.hide;
 
   const fillRow = computed(() => {
     return !!schema.layout.fillRow && cols.value < 12;
@@ -31,7 +30,7 @@ export function useSchemaCols(schema: EngineField) {
     return isOffsetExist ? cols.value - offset : 12 - cols.value;
   });
 
-  return { cols, completionOfRow, isOffsetExist, offset, fillRow, hideField };
+  return { cols, completionOfRow, isOffsetExist, offset, fillRow };
 }
 
 function getColsByDisplay(displayBreakpoint: DisplayBreakpoint, cols: Cols): number {
