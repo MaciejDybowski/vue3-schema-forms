@@ -337,10 +337,8 @@ async function saveDialogForm(isActive: Ref<boolean>) {
   const { valid, messages } = await actionPopupReference.value.validate("messages");
   actionPopup.errorMessages = messages;
   if (valid) {
-    const modelReference = actionPopup.action.modelReference as string;
-    const payload = {
-      [modelReference]: actionPopup.model,
-    };
+    //const modelReference = actionPopup.action.modelReference as string;
+    const payload = actionPopup.model;
     const updateRowURL = await createUpdateRowURL(actionPopup.item);
     const response = await axios.post(updateRowURL, payload);
     items.value[actionPopup.itemIndex] = response.data.content;
