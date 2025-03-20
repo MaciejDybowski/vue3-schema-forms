@@ -909,23 +909,23 @@ export const ContextActionWithSchemaIntegration: Story = {
                 key: "actions",
                 actions: [
                   {
-                    title: "Update factory cost",
-                    icon: "mdi-cog",
+                    title: "Update details",
+                    icon: "mdi-file-edit-outline",
                     mode: "popup",
                     modelReference: "name",
                     schema: {
                       properties: {
-                        name: {
-                          label: "Input 1",
+                        factoryCost: {
+                          label: "Factory cost",
                           layout: {
-                            component: "text-field",
+                            component: "number-field",
                           },
                         },
                       },
-                      required: ["name"],
+                      required: ["factoryCost"],
                     },
                     props: {
-                      color: "error",
+                      color: "black",
                     },
                   },
                 ],

@@ -50,7 +50,6 @@ const mr = computed(() => {
 onMounted(async () => {
   await shouldRenderField(props.schema, props.model);
   await shouldHideField(props.schema, props.model)
-  console.debug(shouldHide.value)
 });
 </script>
 

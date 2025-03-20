@@ -71,6 +71,20 @@
         </td>
       </tr>
     </template>
+
+    <template #bottom="{ page, itemsPerPage, pageCount }">
+
+      <TablePagination
+        :page="page"
+        :itemsPerPage="itemsPerPage"
+        :pageCount="pageCount"
+        :itemsPerPageOptions="[5, 10, 20]"
+        :total-items="itemsTotalElements"
+        @update:page="(val) => tableOptions.page = val"
+        @update:itemsPerPage="(val) => tableOptions.itemsPerPage = val"
+      />
+    </template>
+
   </v-data-table-server>
 
   <v-dialog
@@ -127,6 +141,7 @@ import { EngineTableField } from "@/types/engine/EngineTableField";
 import { Schema } from "@/types/schema/Schema";
 import { TableButton, TableHeader, TableHeaderAction } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
+import TablePagination from "@/components/controls/table/TablePagination.vue";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
