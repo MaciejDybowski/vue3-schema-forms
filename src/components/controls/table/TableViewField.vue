@@ -306,7 +306,7 @@ function runTableBtnLogic(btn: TableButton) {
         let payloadObject = {
           code: btn.config.code,
           body: actionPopup.model,
-          params: { "scriptName": btn.config.scriptName },
+          params: { "script": btn.config.scriptName },
         };
         actionHandlerEventBus.emit("form-action", payloadObject);
       };
