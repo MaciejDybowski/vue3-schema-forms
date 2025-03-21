@@ -1,5 +1,4 @@
 import { ResponseReference } from "@/types/shared/ResponseReference";
-import { Schema } from "@/types/schema/Schema";
 
 export interface Source {
   title?: string;
@@ -53,11 +52,12 @@ export interface TableButton {
   mode: "action" | "form-and-action" | string;
   btnProps?: Record<string, any>;
   config: Record<string, any> & TableButtonBatchAddConfig & TableDialogFromConfig;
-  schema?: any
+  schema?: any;
 }
 
 export interface TableDialogFromConfig {
-  title: string
+  title: string;
+  acceptText: string;
 }
 
 export interface TableButtonBatchAddConfig {

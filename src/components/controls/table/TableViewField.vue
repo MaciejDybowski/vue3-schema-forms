@@ -109,7 +109,7 @@
           ></v-btn>
 
           <v-btn
-            :text="t('save')"
+            :text="actionPopup.acceptText"
             v-bind="{ ...tableButtonDefaultProps, variant: 'elevated' }"
             @click="saveDialogForm(isActive)"
           />
@@ -180,6 +180,7 @@ const actionPopup = reactive<{
   item: object;
   itemIndex: number;
   acceptFunction: Function;
+  acceptText: string,
 }>({
   errorMessages: ref([]),
   show: false,
@@ -190,6 +191,7 @@ const actionPopup = reactive<{
   item: {},
   itemIndex: 0,
   acceptFunction: () => {},
+  acceptText: t('save')
 });
 
 const tableButtonDefaultProps = {
@@ -310,6 +312,7 @@ function runTableBtnLogic(btn: TableButton) {
         };
         actionHandlerEventBus.emit("form-action", payloadObject);
       };
+      actionPopup.acceptText = btn.config.acceptText ? btn.config.acceptText : t('save');
       actionPopup.show = true;
   }
 }
