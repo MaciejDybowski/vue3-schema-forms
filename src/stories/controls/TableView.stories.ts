@@ -668,6 +668,30 @@ export const TopSlotAndButtons: Story = {
                   scriptName: "dodaj_produkty_do_oferty",
                 },
               },
+              {
+                label: "Import",
+                btnProps: {
+                  color: "primary",
+                  rounded: false,
+                },
+                mode: "form-and-action",
+                config: {
+                  title: "Import products from csv",
+                  code: "callScript",
+                  scriptName: "import_products_from_csv",
+                },
+                schema: {
+                  properties: {
+                    csvBody: {
+                      label: "Paste your csv file content",
+                      layout: {
+                        component: "text-area",
+                      }
+                    }
+                  },
+                  required: ['csvBody']
+                }
+              },
             ],
           },
         },

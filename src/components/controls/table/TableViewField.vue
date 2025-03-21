@@ -73,18 +73,16 @@
     </template>
 
     <template #bottom="{ page, itemsPerPage, pageCount }">
-
       <TablePagination
-        :page="page"
         :itemsPerPage="itemsPerPage"
-        :pageCount="pageCount"
         :itemsPerPageOptions="[5, 10, 20]"
+        :page="page"
+        :pageCount="pageCount"
         :total-items="itemsTotalElements"
-        @update:page="(val) => tableOptions.page = val"
-        @update:itemsPerPage="(val) => tableOptions.itemsPerPage = val"
+        @update:page="(val) => (tableOptions.page = val)"
+        @update:itemsPerPage="(val) => (tableOptions.itemsPerPage = val)"
       />
     </template>
-
   </v-data-table-server>
 
   <v-dialog
@@ -92,7 +90,7 @@
     max-width="650"
   >
     <template v-slot:default="{ isActive }">
-      <v-card :title="actionPopup.action.title">
+      <v-card :title="actionPopup.title">
         <v-card-text>
           <vue-schema-forms
             ref="actionPopupReference"
@@ -130,6 +128,7 @@ import { ComputedRef, Ref, computed, onMounted, reactive, ref } from "vue";
 
 import TableCellWrapper from "@/components/controls/table/TableCellWrapper.vue";
 import TableFooterCell from "@/components/controls/table/TableFooterCell.vue";
+import TablePagination from "@/components/controls/table/TablePagination.vue";
 import { TableFetchOptions, TableOptions } from "@/components/controls/table/table-types";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
@@ -141,7 +140,6 @@ import { EngineTableField } from "@/types/engine/EngineTableField";
 import { Schema } from "@/types/schema/Schema";
 import { TableButton, TableHeader, TableHeaderAction } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
-import TablePagination from "@/components/controls/table/TablePagination.vue";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
@@ -175,21 +173,23 @@ const actionPopupReference = ref();
 const actionPopup = reactive<{
   errorMessages: Ref<any[]>;
   show: boolean;
-  action: TableHeaderAction;
+  title: string;
   model: object;
   schema: Schema;
   options: object;
   item: object;
   itemIndex: number;
+  acceptFunction: Function;
 }>({
   errorMessages: ref([]),
   show: false,
-  action: {} as TableHeaderAction,
+  title: "",
   model: {},
   schema: {} as Schema,
   options: props.schema.options,
   item: {},
   itemIndex: 0,
+  acceptFunction: () => {},
 });
 
 const tableButtonDefaultProps = {
@@ -297,6 +297,20 @@ function runTableBtnLogic(btn: TableButton) {
       };
       actionHandlerEventBus.emit("form-action", payloadObject);
       break;
+    case "form-and-action":
+      actionPopup.errorMessages = [];
+      actionPopup.title = btn.config.title as string;
+      actionPopup.model = {};
+      actionPopup.schema = btn.schema;
+      actionPopup.acceptFunction = () => {
+        let payloadObject = {
+          code: btn.config.code,
+          body: actionPopup.model,
+          params: { "scriptName": btn.config.scriptName },
+        };
+        actionHandlerEventBus.emit("form-action", payloadObject);
+      };
+      actionPopup.show = true;
   }
 }
 
@@ -327,11 +341,17 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
 
     case "popup":
       actionPopup.errorMessages = [];
-      actionPopup.action = action;
+      actionPopup.title = action.title;
       set(actionPopup.model, action.modelReference, payload.item[action.modelReference as string]);
       actionPopup.schema = action.schema;
       actionPopup.item = payload.item;
       actionPopup.itemIndex = index;
+      actionPopup.acceptFunction = async () => {
+        const payload = actionPopup.model;
+        const updateRowURL = await createUpdateRowURL(actionPopup.item);
+        const response = await axios.post(updateRowURL, payload);
+        items.value[actionPopup.itemIndex] = response.data.content;
+      };
       actionPopup.show = true;
       break;
     default:
@@ -352,11 +372,8 @@ async function saveDialogForm(isActive: Ref<boolean>) {
   const { valid, messages } = await actionPopupReference.value.validate("messages");
   actionPopup.errorMessages = messages;
   if (valid) {
+    actionPopup.acceptFunction();
     //const modelReference = actionPopup.action.modelReference as string;
-    const payload = actionPopup.model;
-    const updateRowURL = await createUpdateRowURL(actionPopup.item);
-    const response = await axios.post(updateRowURL, payload);
-    items.value[actionPopup.itemIndex] = response.data.content;
     isActive.value = false;
   }
 }
