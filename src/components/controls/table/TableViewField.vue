@@ -256,6 +256,7 @@ function updateOptions() {
 async function loadData(params: TableFetchOptions) {
   try {
     loading.value = true;
+    items.value = []
 
     const url = (await resolve(props.schema, props.schema.source.data)).resolvedText;
 
