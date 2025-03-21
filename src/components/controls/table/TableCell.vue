@@ -19,7 +19,7 @@
   </div>
 
   <v-img
-    v-if="header.type == 'IMAGE'"
+    v-if="header.type == 'IMAGE' && allVariablesResolved"
     :src="urlPath"
     cover
   />
@@ -89,6 +89,7 @@ const { formattedNumber } = useNumber();
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const htmlContent = ref<string>("");
 const urlPath = ref("");
+const allVariablesResolved = ref(true);
 
 const numberContent = computed(() => {
   const properties = props.header.properties;
@@ -132,6 +133,9 @@ async function mapImageParams() {
         let value = await nata.evaluate(model);
         if ((value == null && defaultValue !== null) || (value == "" && value != 0) || value == undefined) {
           value = defaultValue;
+        }
+        if (value == null) {
+          allVariablesResolved.value = false;
         }
         url = url.replace(`{${unwrapped}}`, value);
       }),
