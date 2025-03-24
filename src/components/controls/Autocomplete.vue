@@ -133,7 +133,7 @@ onMounted(async () => {
     } else {
       await resolveIfLocalModelHasDependencies();
       if (!fieldProps.value.readonly) {
-        updateQuery(localModel.value, false, "mounted");
+        updateQuery(localModel.value, false);
       }
     }
   }
@@ -143,7 +143,7 @@ onMounted(async () => {
 
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
-    updateQuery("", true, "focus");
+    updateQuery("", true);
     if (data.value.length < paginationOptions.value._state.itemsPerPage) {
       await load("autocomplete");
     }
@@ -162,7 +162,7 @@ const menuUpdate = async (val) => {
   if (val) {
     blockQuery.value = val;
     if (data.value.length < paginationOptions.value._state.itemsPerPage) {
-      updateQuery("", val, "menu-blocker");
+      updateQuery("", val);
       await load("autocomplete");
     }
   }
@@ -170,10 +170,10 @@ const menuUpdate = async (val) => {
 
 const queryUpdate = (val) => {
   if (blockQuery.value) {
-    updateQuery(val, true, "query-update-blocker");
+    updateQuery(val, true);
     blockQuery.value = false;
   } else {
-    !fieldProps.value.readonly ? updateQuery(val, false, "update:search") : updateQuery(val, true, "update:search");
+    !fieldProps.value.readonly ? updateQuery(val, false) : updateQuery(val, true);
   }
 };
 
