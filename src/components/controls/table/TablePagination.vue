@@ -1,30 +1,3 @@
-<script setup>
-import { computed, toRefs } from 'vue';
-
-const props = defineProps({
-  page: Number,
-  itemsPerPage: Number,
-  pageCount: Number,
-  itemsPerPageOptions: Array,
-  totalItems: Number,
-});
-const emit = defineEmits(['update:page', 'update:itemsPerPage']);
-
-const { page, itemsPerPage, pageCount, totalItems } = toRefs(props);
-
-const prevDisabled = computed(() => page.value <= 1);
-const nextDisabled = computed(() => page.value >= pageCount.value);
-
-const changePage = (newPage) => {
-  if (newPage >= 1 && newPage <= pageCount.value) {
-    emit('update:page', newPage);
-  }
-};
-
-const startItem = computed(() => (page.value - 1) * itemsPerPage.value + 1);
-const endItem = computed(() => Math.min(page.value * itemsPerPage.value, totalItems.value));
-</script>
-
 <template>
   <div class="footer">
 
@@ -73,6 +46,35 @@ const endItem = computed(() => Math.min(page.value * itemsPerPage.value, totalIt
     <span class="item-info">{{ startItem }} - {{ endItem }} of {{ totalItems }}</span>
   </div>
 </template>
+
+<script setup>
+import { computed, toRefs } from 'vue';
+
+const props = defineProps({
+  page: Number,
+  itemsPerPage: Number,
+  pageCount: Number,
+  itemsPerPageOptions: Array,
+  totalItems: Number,
+});
+const emit = defineEmits(['update:page', 'update:itemsPerPage']);
+
+const { page, itemsPerPage, pageCount, totalItems } = toRefs(props);
+
+const prevDisabled = computed(() => page.value <= 1);
+const nextDisabled = computed(() => page.value >= pageCount.value);
+
+const changePage = (newPage) => {
+  if (newPage >= 1 && newPage <= pageCount.value) {
+    emit('update:page', newPage);
+  }
+};
+
+const startItem = computed(() => (page.value - 1) * itemsPerPage.value + 1);
+const endItem = computed(() => Math.min(page.value * itemsPerPage.value, totalItems.value));
+</script>
+
+
 
 <style scoped>
 .footer {

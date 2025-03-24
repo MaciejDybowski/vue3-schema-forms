@@ -61,7 +61,7 @@
       v-if="!loading && aggregates"
       v-slot:body.append="{}"
     >
-      <tr class="v-data-table__tr-aggregates">
+      <tr :class="[theme.global.current.value.dark ? 'v-data-table__tr-aggregates-dark' : 'v-data-table__tr-aggregates-light']">
         <td v-for="(header, headerIndex) in headers">
           <table-footer-cell
             v-if="header.footerMapping"
@@ -125,6 +125,7 @@ import { cloneDeep, debounce } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
 import { ComputedRef, Ref, computed, onMounted, reactive, ref } from "vue";
+import { useTheme } from "vuetify";
 
 import TableCellWrapper from "@/components/controls/table/TableCellWrapper.vue";
 import TableFooterCell from "@/components/controls/table/TableFooterCell.vue";
@@ -155,6 +156,7 @@ const props = defineProps<{
   model: object;
 }>();
 
+const theme = useTheme();
 const { t } = useLocale();
 const { bindProps, fieldProps } = useProps();
 const { resolve } = useResolveVariables();
@@ -180,7 +182,7 @@ const actionPopup = reactive<{
   item: object;
   itemIndex: number;
   acceptFunction: Function;
-  acceptText: string,
+  acceptText: string;
 }>({
   errorMessages: ref([]),
   show: false,
@@ -191,7 +193,7 @@ const actionPopup = reactive<{
   item: {},
   itemIndex: 0,
   acceptFunction: () => {},
-  acceptText: t('save')
+  acceptText: t("save"),
 });
 
 const tableButtonDefaultProps = {
@@ -256,7 +258,7 @@ function updateOptions() {
 async function loadData(params: TableFetchOptions) {
   try {
     loading.value = true;
-    items.value = []
+    items.value = [];
 
     const url = (await resolve(props.schema, props.schema.source.data)).resolvedText;
 
@@ -309,11 +311,11 @@ function runTableBtnLogic(btn: TableButton) {
         let payloadObject = {
           code: btn.config.code,
           body: actionPopup.model,
-          params: { "script": btn.config.scriptName },
+          params: { script: btn.config.scriptName },
         };
         actionHandlerEventBus.emit("form-action", payloadObject);
       };
-      actionPopup.acceptText = btn.config.acceptText ? btn.config.acceptText : t('save');
+      actionPopup.acceptText = btn.config.acceptText ? btn.config.acceptText : t("save");
       actionPopup.show = true;
   }
 }
@@ -428,8 +430,13 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.v-data-table__tr-aggregates {
+.v-data-table__tr-aggregates-light {
   background-color: #f5f5f5;
+  vertical-align: top;
+}
+
+.v-data-table__tr-aggregates-dark {
+  background-color: #616161;
   vertical-align: top;
 }
 
