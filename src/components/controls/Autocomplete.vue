@@ -1,6 +1,7 @@
 <template>
   <base-autocomplete
     v-model="localModel"
+    v-model:search="query"
     :auto-select-first="false"
     :class="bindClass(schema) + requiredInputClass"
     :item-title="title"
@@ -13,12 +14,11 @@
     :options="paginationOptions"
     :return-object="returnObject as any"
     :rules="!fieldProps.readonly ? rules : []"
-    :search="query"
     v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
     @focusin="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
-    @update:search="(val) => (!fieldProps.readonly ? updateQuery(val, false) : updateQuery(val, true))"
-    @update:modelValue="onChange(schema, model)"
+    @update:search="queryUpdate"
+    @update:modelValue="changeUpdate"
     @update:menu="menuUpdate"
   >
     <template #no-data>
@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import { useDictionary } from "@/core/composables/useDictionary";
 import { useEventHandler } from "@/core/composables/useEventHandler";
@@ -133,7 +133,7 @@ onMounted(async () => {
     } else {
       await resolveIfLocalModelHasDependencies();
       if (!fieldProps.value.readonly) {
-        updateQuery(localModel.value);
+        updateQuery(localModel.value, false, "mounted");
       }
     }
   }
@@ -141,20 +141,43 @@ onMounted(async () => {
   singleOptionAutoSelectFunction();
 });
 
-const menuUpdate = (val) => {
-  if (val) {
-    updateQuery("", true);
-  }
-};
-
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
-    updateQuery("", true);
+    updateQuery("", true, "focus");
     if (data.value.length < paginationOptions.value._state.itemsPerPage) {
       await load("autocomplete");
     }
   }
 }
+
+// Tricky query management......
+// TODO
+function changeUpdate() {
+  blockQuery.value = false;
+  onChange(props.schema, props.model);
+}
+
+const blockQuery = ref(false);
+const menuUpdate = async (val) => {
+  if (val) {
+    blockQuery.value = val;
+    if (data.value.length < paginationOptions.value._state.itemsPerPage) {
+      updateQuery("", val, "menu-blocker");
+      await load("autocomplete");
+    }
+  }
+};
+
+const queryUpdate = (val) => {
+  if (blockQuery.value) {
+    updateQuery(val, true, "query-update-blocker");
+    blockQuery.value = false;
+  } else {
+    !fieldProps.value.readonly ? updateQuery(val, false, "update:search") : updateQuery(val, true, "update:search");
+  }
+};
+
+
 </script>
 
 <style lang="css" scoped></style>

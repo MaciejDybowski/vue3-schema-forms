@@ -87,7 +87,7 @@ export function useDictionary() {
           ? {
               page: paginationOptions.value.getPage(),
               size: paginationOptions.value.getItemsPerPage(),
-              query: query.value ? query.value : null,
+              query: query.value && !queryBlocker.value ? query.value : null,
             }
           : {
               query: query.value ? query.value : null,
