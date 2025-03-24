@@ -19,6 +19,7 @@
     @loadMoreRecords="loadMoreRecords"
     @update:search="(val) => (!fieldProps.readonly ? updateQuery(val, false) : updateQuery(val, true))"
     @update:modelValue="onChange(schema, model)"
+    @update:menu="menuUpdate"
   >
     <template #no-data>
       <v-list-item v-if="loading">
@@ -94,7 +95,7 @@ const {
   singleOptionAutoSelect,
   initState,
   updateQuery,
-  loadCounter
+  loadCounter,
 } = useDictionary();
 
 function singleOptionAutoSelectFunction() {
@@ -140,10 +141,18 @@ onMounted(async () => {
   singleOptionAutoSelectFunction();
 });
 
+const menuUpdate = (val) => {
+  if (val) {
+    updateQuery("", true);
+  }
+};
+
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
     updateQuery("", true);
-    await load("autocomplete");
+    if (data.value.length < paginationOptions.value._state.itemsPerPage) {
+      await load("autocomplete");
+    }
   }
 }
 </script>
