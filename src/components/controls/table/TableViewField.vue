@@ -436,7 +436,7 @@ onMounted(async () => {
 }
 
 .v-data-table__tr-aggregates-dark {
-  background-color: #616161;
+  background-color: #424242;
   vertical-align: top;
 }
 
