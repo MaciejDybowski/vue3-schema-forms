@@ -151,7 +151,11 @@ async function fetchDictionaryData() {
 }
 
 function updateSearch(val: string) {
-  queryBlocker.value = val === localModelCurrent.value;
+  if (returnObject.value) {
+    queryBlocker.value = val === localModelCurrent.value;
+  } else {
+    queryBlocker.value = false;
+  }
 }
 </script>
 
