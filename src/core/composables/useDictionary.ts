@@ -47,7 +47,7 @@ export function useDictionary() {
     returnObject.value = source.returnObject !== undefined ? source.returnObject : true;
     lazy.value = source.lazy !== undefined ? source.lazy : true;
     description.value = source.description ? source.description : null;
-    paginationOptions.value = source.itemsPerPage ? new Pagination(source.itemsPerPage) : new Pagination(20);
+    paginationOptions.value = source.itemsPerPage ? new Pagination(source.itemsPerPage) : new Pagination(50);
     responseReference = source.references
       ? source.references
       : ({ data: "content", totalElements: "numberOfElements" } as ResponseReference);
@@ -70,11 +70,28 @@ export function useDictionary() {
 
   }
 
+  watch(query, (currentQuery, previousQuery) => {
+    //console.debug(`[vue-schema-forms] => query was changed, new value is = ${currentQuery}`)
+    const queryInData =
+      data.value.filter((item: any) => {
+        if (returnObject) {
+          return item[title.value] === currentQuery || Object.values(item).includes(currentQuery);
+        } else {
+          return item[title.value] == currentQuery;
+        }
+      }).length > 0;
+
+    if (logger.dictionaryLogger && queryInData) {
+      console.debug("Result is in data, block CALL");
+    }
+    !queryInData ? debounced.load("query") : debounced.load.cancel();
+  });
+
   async function load(caller: string) {
     endpoint = await resolve(field, source.url, title.value, true);
     if (logger.dictionaryLogger) {
       console.debug(
-        `[vue-schema-forms] => Dictionary load call function = ${caller}, query=${query.value}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
+        `[vue-schema-forms] => Dictionary load call function = ${caller}, queryBlocker=${queryBlocker.value} query=${query.value}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
       );
     }
     if (endpoint.allVariablesResolved) {
@@ -90,7 +107,7 @@ export function useDictionary() {
               query: query.value && !queryBlocker.value ? query.value : null,
             }
           : {
-              query: query.value ? query.value : null,
+              query: query.value && !queryBlocker.value ? query.value : null,
             },
       });
 
@@ -116,7 +133,7 @@ export function useDictionary() {
         params: {
           page: paginationOptions.value.getPage() + 1,
           size: paginationOptions.value.getItemsPerPage(),
-          query: query.value ? query.value : null,
+          query: query.value && !queryBlocker.value ? query.value : null,
         },
       });
       paginationOptions.value.nextPage();
@@ -144,26 +161,8 @@ export function useDictionary() {
     return { url: urlParts[0], params: urlParams.toString() };
   }
 
-  function updateQuery(newValue: any, queryBlockerValue = false) {
-    query.value = newValue;
-    queryBlocker.value = queryBlockerValue;
-  }
 
-  watch(query, (currentQuery, previousQuery) => {
-    const queryInData =
-      data.value.filter((item: any) => {
-        if (returnObject) {
-          return item[title.value] === currentQuery || Object.values(item).includes(currentQuery);
-        } else {
-          return item[title.value] == currentQuery;
-        }
-      }).length > 0;
 
-    if (logger.dictionaryLogger && queryInData) {
-      console.debug("Result is in data, block CALL");
-    }
-    !queryInData && !queryBlocker.value ? debounced.load("query") : debounced.load.cancel();
-  });
 
   return {
     initState,
@@ -176,7 +175,7 @@ export function useDictionary() {
     lazy,
     paginationOptions,
     query,
-    updateQuery,
+    queryBlocker,
     load,
     loadMoreRecords,
     singleOptionAutoSelect,

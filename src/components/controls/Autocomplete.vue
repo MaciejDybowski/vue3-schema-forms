@@ -17,9 +17,8 @@
     v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
     @focusin="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
-    @update:search="queryUpdate"
-    @update:modelValue="changeUpdate"
-    @update:menu="menuUpdate"
+    @update:modelValue="onChange(schema, model)"
+    @update:search="updateSearch"
   >
     <template #no-data>
       <v-list-item v-if="loading">
@@ -48,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, watch } from "vue";
 
 import { useDictionary } from "@/core/composables/useDictionary";
 import { useEventHandler } from "@/core/composables/useEventHandler";
@@ -57,6 +56,8 @@ import { EngineDictionaryField } from "@/types/engine/controls";
 
 import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "../../core/composables";
 import BaseAutocomplete from "./base/BaseAutocomplete.vue";
+
+
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -71,6 +72,9 @@ const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 
+const localModelCurrent = computed(() =>
+  localModel.value ? (returnObject.value ? localModel.value[title.value] : localModel.value) : null,
+);
 const localModel = computed({
   get(): any {
     return getValue(props.model, props.schema);
@@ -81,6 +85,7 @@ const localModel = computed({
 });
 
 const {
+  queryBlocker,
   title,
   value,
   loading,
@@ -94,7 +99,7 @@ const {
   loadMoreRecords,
   singleOptionAutoSelect,
   initState,
-  updateQuery,
+
   loadCounter,
 } = useDictionary();
 
@@ -133,58 +138,25 @@ onMounted(async () => {
     } else {
       await resolveIfLocalModelHasDependencies();
       if (!fieldProps.value.readonly) {
-        updateQuery(localModel.value, false);
+        query.value = localModel.value;
       }
     }
   }
 
   singleOptionAutoSelectFunction();
-
-  console.debug(`[v-mounted] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
+  //console.debug(`[vue-mounted] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
 });
 
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
-    console.debug(`[v-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
-    updateQuery("", true);
-    if (data.value.length < paginationOptions.value._state.itemsPerPage) {
-      await load("autocomplete");
-    }
+    //console.debug(`[vue-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
+    await load("autocomplete");
   }
 }
 
-// Tricky query management......
-// TODO
-function changeUpdate() {
-  console.debug(
-    `[v-updateModelValue] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`,
-  );
-  blockQuery.value = false;
-  onChange(props.schema, props.model);
+function updateSearch(val: string) {
+  queryBlocker.value = val === localModelCurrent.value;
 }
-
-const blockQuery = ref(false);
-const menuUpdate = async (val) => {
-  console.debug(`[v-menuUpdate] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
-  if (val) {
-    blockQuery.value = val;
-    if (data.value.length < paginationOptions.value._state.itemsPerPage) {
-      updateQuery("", val);
-      await load("autocomplete");
-    }
-  }
-};
-
-const queryUpdate = (val) => {
-  console.debug(`[v-queryUpdate] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
-
-  if (blockQuery.value) {
-    updateQuery(val, true);
-    blockQuery.value = false;
-  } else {
-    !fieldProps.value.readonly ? updateQuery(val, false) : updateQuery(val, true);
-  }
-};
 </script>
 
 <style lang="css" scoped></style>

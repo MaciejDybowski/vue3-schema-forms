@@ -1,6 +1,7 @@
 <template>
   <base-combobox
     v-model="localModel"
+    v-model:search="query"
     :auto-select-first="true"
     :class="bindClass(schema) + requiredInputClass"
     :item-title="title"
@@ -13,12 +14,11 @@
     :options="paginationOptions"
     :return-object="returnObject as any"
     :rules="!fieldProps.readonly ? rules: []"
-    :search="query"
     v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
-    @focus="fetchDictionaryData"
+    @focusin="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
-    @update:search="(val) => (!fieldProps.readonly ? updateQuery(val, false) : updateQuery(val, true))"
     @update:modelValue="onChange(schema, model)"
+    @update:search="updateSearch"
   >
     <template #no-data>
       <v-list-item v-if="loading">
@@ -80,6 +80,9 @@ const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 
+const localModelCurrent = computed(() =>
+  localModel.value ? (returnObject.value ? localModel.value[title.value] : localModel.value) : null,
+);
 const localModel = computed({
   get(): any {
     return getValue(props.model, props.schema);
@@ -103,7 +106,7 @@ const {
   loadMoreRecords,
   singleOptionAutoSelect,
   initState,
-  updateQuery,
+  queryBlocker,
   loadCounter
 } = useDictionary();
 
@@ -141,7 +144,7 @@ onMounted(async () => {
     } else {
       await resolveIfLocalModelHasDependencies();
       if (!fieldProps.value.readonly) {
-        updateQuery(localModel.value);
+        query.value = localModel.value;
       }
     }
   }
@@ -150,9 +153,13 @@ onMounted(async () => {
 
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
-    updateQuery("", true);
+    //console.debug(`[vue-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
     await load("autocomplete");
   }
+}
+
+function updateSearch(val: string) {
+  queryBlocker.value = val === localModelCurrent.value;
 }
 </script>
 
