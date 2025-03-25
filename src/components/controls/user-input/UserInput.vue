@@ -158,7 +158,7 @@ const loading = ref(false);
 const items = ref([]);
 
 async function focusIn(event: any) {
-  if (items.value.length == 0 && !fieldProps.value.readonly) {
+  if (!fieldProps.value.readonly) {
     await load();
   }
   if (showMenuItemsOnFocusIn) {
