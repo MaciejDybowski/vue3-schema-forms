@@ -139,10 +139,13 @@ onMounted(async () => {
   }
 
   singleOptionAutoSelectFunction();
+
+  console.debug(`[v-mounted] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
 });
 
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
+    console.debug(`[v-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
     updateQuery("", true);
     if (data.value.length < paginationOptions.value._state.itemsPerPage) {
       await load("autocomplete");
@@ -153,12 +156,16 @@ async function fetchDictionaryData() {
 // Tricky query management......
 // TODO
 function changeUpdate() {
+  console.debug(
+    `[v-updateModelValue] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`,
+  );
   blockQuery.value = false;
   onChange(props.schema, props.model);
 }
 
 const blockQuery = ref(false);
 const menuUpdate = async (val) => {
+  console.debug(`[v-menuUpdate] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
   if (val) {
     blockQuery.value = val;
     if (data.value.length < paginationOptions.value._state.itemsPerPage) {
@@ -169,6 +176,8 @@ const menuUpdate = async (val) => {
 };
 
 const queryUpdate = (val) => {
+  console.debug(`[v-queryUpdate] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
+
   if (blockQuery.value) {
     updateQuery(val, true);
     blockQuery.value = false;
@@ -176,8 +185,6 @@ const queryUpdate = (val) => {
     !fieldProps.value.readonly ? updateQuery(val, false) : updateQuery(val, true);
   }
 };
-
-
 </script>
 
 <style lang="css" scoped></style>
