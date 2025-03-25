@@ -13,7 +13,7 @@
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
-    :rules="!fieldProps.readonly ? rules: []"
+    :rules="!fieldProps.readonly ? rules : []"
     v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
     @focusin="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
@@ -52,20 +52,11 @@ import { computed, onMounted, watch } from "vue";
 import BaseCombobox from "@/components/controls/base/BaseCombobox.vue";
 
 import { useDictionary } from "@/core/composables/useDictionary";
+import { useEventHandler } from "@/core/composables/useEventHandler";
+import { variableRegexp } from "@/core/engine/utils";
 import { EngineDictionaryField } from "@/types/engine/controls";
 
-import {
-  useClass,
-  useFormModel,
-  useLabel,
-  useLocale,
-  useProps,
-  useResolveVariables,
-  useRules
-} from "../../core/composables";
-import { useEventHandler } from "@/core/composables/useEventHandler";
-import BaseAutocomplete from "@/components/controls/base/BaseAutocomplete.vue";
-import { variableRegexp } from "@/core/engine/utils";
+import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "../../core/composables";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -107,7 +98,7 @@ const {
   singleOptionAutoSelect,
   initState,
   queryBlocker,
-  loadCounter
+  loadCounter,
 } = useDictionary();
 
 function singleOptionAutoSelectFunction() {
@@ -145,6 +136,7 @@ onMounted(async () => {
       await resolveIfLocalModelHasDependencies();
       if (!fieldProps.value.readonly) {
         query.value = localModel.value;
+        queryBlocker.value = true;
       }
     }
   }
@@ -153,7 +145,7 @@ onMounted(async () => {
 
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
-    //console.debug(`[vue-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
+    console.debug(`[vue-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
     await load("autocomplete");
   }
 }

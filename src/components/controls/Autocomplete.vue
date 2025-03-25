@@ -139,6 +139,7 @@ onMounted(async () => {
       await resolveIfLocalModelHasDependencies();
       if (!fieldProps.value.readonly) {
         query.value = localModel.value;
+        queryBlocker.value = true;
       }
     }
   }
