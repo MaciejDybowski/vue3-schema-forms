@@ -495,6 +495,14 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
 }
+
+:deep(.text-color-red) {
+  color: #e53935;
+}
+
+:global(.v-theme--dark .text-color-red) {
+  color: #ffcdd2;
+}
 </style>
 
 <i18n lang="json">

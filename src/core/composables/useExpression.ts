@@ -4,19 +4,20 @@ import { ref, watch } from 'vue';
 import { functions } from '../engine/expressionResolver';
 import { useEventBus } from '@vueuse/core';
 import get from 'lodash/get';
+import { useFormModelStore } from "@/store/formModelStore";
 
 export function useExpression() {
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
-  async function resolveExpression(key: string, expression: string, model: object) {
+  async function resolveExpression(key: string, expression: string, model: object, mergedModel: object) {
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let result = ref();
       let f = functions[functionName];
-      result.value = await f(expression, model);
+      result.value = await f(expression, mergedModel);
 
       if (!functionName.includes('_GENERATOR') ) {
-        const unsubscribe = vueSchemaFormEventBus.on(async (event) => await expressionListener(event, key, expression, model));
+        const unsubscribe = vueSchemaFormEventBus.on(async (event) => await expressionListener(event, key, expression, model, mergedModel));
         // Do usunięcia jak się nic nie wykrzaczy po 5.12.2024 :)
         /*watch(model async () => {
           result.value = await f(expression, model);
@@ -42,11 +43,11 @@ export function useExpression() {
     }
   }
 
-  async function expressionListener(event: string, key: string, expression: string, model: object) {
+  async function expressionListener(event: string, key: string, expression: string, model: object, mergedModel: object) {
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let f = functions[functionName];
-      const result = await f(expression, model);
+      const result = await f(expression, mergedModel);
       const currentValue = get(model, key, null);
       if (result !== currentValue) {
         set(model, key, result);

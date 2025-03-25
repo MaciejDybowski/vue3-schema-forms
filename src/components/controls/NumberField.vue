@@ -48,6 +48,7 @@ import { NumberFormattingType, RoundOption, useNumber } from "@/core/composables
 import { variableRegexp } from "@/core/engine/utils";
 import { logger } from "@/main";
 import { EngineNumberField } from "@/types/engine/controls";
+import { useFormModelStore } from "@/store/formModelStore";
 
 const props = defineProps<{
   schema: EngineNumberField;
@@ -65,7 +66,7 @@ const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 const showFormattedNumber = ref(true);
-
+const { fillPath } = useResolveVariables();
 const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
 const precisionMin = props.schema.type == "int" ? 0 : "precisionMin" in props.schema ? props.schema.precision : 0;
 
@@ -168,7 +169,10 @@ async function runCalculationIfExist() {
 
 function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
-    localModel.value = resolveExpression(props.schema.key, props.schema.expression, props.model);
+    const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
+    const formModelStore = useFormModelStore(props.schema.formId);
+    const mergedModel = formModelStore.getFormModelForResolve;
+    localModel.value = resolveExpression(props.schema.key, props.schema.expression, props.model, mergedModel);
   }
 }
 

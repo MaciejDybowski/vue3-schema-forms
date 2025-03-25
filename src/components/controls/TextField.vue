@@ -18,6 +18,7 @@ import { useClass, useExpression, useFormModel, useLabel, useProps, useResolveVa
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTextField } from "@/types/engine/controls";
+import { useFormModelStore } from "@/store/formModelStore";
 
 const props = defineProps<{
   schema: EngineTextField;
@@ -32,6 +33,7 @@ const { resolveExpression } = useExpression();
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
+const { fillPath } = useResolveVariables();
 
 const localModel = computed({
   get(): string | number {
@@ -44,7 +46,10 @@ const localModel = computed({
 
 async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
-    localModel.value = await resolveExpression(props.schema.key, props.schema.expression, props.model);
+    const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
+    const formModelStore = useFormModelStore(props.schema.formId);
+    const mergedModel = formModelStore.getFormModelForResolve;
+    localModel.value = await resolveExpression(props.schema.key, expression, props.model, mergedModel);
   }
 }
 
