@@ -15,7 +15,7 @@
     :return-object="returnObject as any"
     :rules="!fieldProps.readonly ? rules : []"
     v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
-    @focusin="fetchDictionaryData"
+    @click="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
     @update:modelValue="onChange(schema, model)"
     @update:search="updateSearch"
@@ -146,6 +146,11 @@ onMounted(async () => {
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
     console.debug(`[vue-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
+
+    if(!returnObject.value){
+      queryBlocker.value = query.value === localModelCurrent.value;
+    }
+
     await load("autocomplete");
   }
 }
