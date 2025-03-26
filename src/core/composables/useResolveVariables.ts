@@ -15,7 +15,7 @@ interface VariableSyntaxProps {
 }
 
 export function useResolveVariables() {
-  const { dateFormat } = useDateFormat();
+  const { dateFormat, dateTimeFormat } = useDateFormat();
   const { formattedNumber, roundTo } = useNumber();
 
   async function resolve(field: EngineField, inputString: string, title: string = "title", rawNumber = false) {
@@ -85,6 +85,13 @@ export function useResolveVariables() {
   }
 
   function doSthWithValue(field, value: any, valueProps: VariableSyntaxProps, title, rawNumber = false) {
+    if (valueProps.typeOfValue == "DATETIME") {
+      return dayjs(value).format(dateTimeFormat.value);
+    }
+    if (valueProps.typeOfValue == "DATETIME") {
+      return dayjs(value).format(dateFormat.value);
+    }
+
     if (value == 0) {
       return value;
     }

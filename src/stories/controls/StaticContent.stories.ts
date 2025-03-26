@@ -119,6 +119,7 @@ export const TextWithVariablesAndHTML: Story = {
       data: {
         firstName: "Maciej",
         lastName: "Dybowski",
+        datetime: "2025-03-25T12:37:34.12312",
       },
     },
     schema: {
@@ -132,7 +133,7 @@ export const TextWithVariablesAndHTML: Story = {
           } as Layout,
         },
         description: {
-          content: "<b>{data.firstName}</b>, this span was generated as v-html content.",
+          content: "<b>{data.firstName}</b>, this span was generated as v-html content. And datetime = {data.datetime:-:DATETIME}",
           layout: {
             component: "static-content",
             tag: "span",
