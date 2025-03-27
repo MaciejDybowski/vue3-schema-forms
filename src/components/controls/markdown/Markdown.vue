@@ -14,8 +14,9 @@ import { computed, onMounted, ref } from "vue";
 
 import { useFormModel, useProps, useResolveVariables } from "@/core/composables";
 import { useEventBus } from "@vueuse/core";
+import { EngineField } from "@/types/engine/EngineField";
 
-import { EngineField } from "../../../../dist/src/main.js";
+
 
 const props = defineProps<{
   schema: EngineField;
