@@ -58,30 +58,23 @@ export function useResolveVariables() {
   }
 
   function fillPath(fieldPath: string | undefined, fieldIndex: number | undefined, variable: string) {
-    if (!fieldPath && !fieldPath) {
-      return variable;
-    }
+    if (!fieldPath) return variable;
+
     const splitPath = fieldPath.split(".");
     const splitVariable = variable.split(".");
-    splitVariable.forEach((item, index) => {});
-    let temp = dopasujTablice(splitPath, splitVariable);
-    variable = temp.join(".");
-    return variable.replaceAll("[]", `[${fieldIndex}]`);
+    const updatedVariable = matchArrays(splitPath, splitVariable).join(".");
+    return updatedVariable.replaceAll("[]", `[${fieldIndex}]`);
   }
 
-  function dopasujTablice(tablicaA, tablicaB) {
-    function ekstraktNazwa(pole) {
-      return pole.split("[")[0];
-    }
+  function matchArrays(arrayA: string[], arrayB: string[]): string[] {
+    const extractName = (field: string) => field.split("[")[0];
+    const nameSetA = new Set(arrayA.map(extractName));
 
-    return tablicaB.map((elementB) => {
-      if (elementB.includes("[]")) {
-        const nazwaB = ekstraktNazwa(elementB);
-        const dopasowany = tablicaA.find((a) => ekstraktNazwa(a) === nazwaB);
-        return dopasowany || elementB;
-      }
-      return elementB;
-    });
+    return arrayB.map((itemB) =>
+      itemB.includes("[]") && nameSetA.has(extractName(itemB))
+        ? arrayA.find((a) => extractName(a) === extractName(itemB))!
+        : itemB
+    );
   }
 
   function doSthWithValue(field, value: any, valueProps: VariableSyntaxProps, title, rawNumber = false) {
