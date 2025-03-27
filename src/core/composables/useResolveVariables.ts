@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from "../../components/controls/date/dayjs";
 import jsonata from "jsonata";
 
 import { useNumber } from "@/core/composables/useNumber";
