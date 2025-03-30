@@ -6,7 +6,7 @@
     :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"
     :label="item.label"
     :model-value="getValue(item.valueMapping)"
-    type="number"
+
     v-bind="{ ...attrs, density: 'compact' }"
     @input="(e: any) => emit('update:field', { value: e.target.value, valueMapping: item.valueMapping })"
   />
@@ -43,6 +43,7 @@ function getValue(valueMapping: string) {
     }
     value = formattedNumber(value, "decimal", decimalPlaces, decimalPlaces);
   }
+  console.debug(value)
 
   return value;
 }
