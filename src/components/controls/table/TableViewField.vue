@@ -50,7 +50,7 @@
         :field-props="fieldProps"
         :header="header"
         :item="item"
-        @update-row="(event) => updateRow(event.value, index, event.path, item)"
+        @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
         @run-table-action-logic="(event) => runTableActionLogic(event, index)"
       />
     </template>
@@ -166,6 +166,7 @@ const itemsTotalElements = ref(0);
 const loading = ref(true);
 const debounced = {
   load: debounce(loadData, 200),
+  updateRow: debounce(updateRow, 300)
 };
 
 const aggregates = ref(null);
