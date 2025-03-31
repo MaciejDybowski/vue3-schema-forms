@@ -1,20 +1,22 @@
 <template>
   <v-text-field
-    width="100%"
     v-for="item in items"
     :key="item.valueMapping"
     :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"
     :label="item.label"
     :model-value="getValue(item.valueMapping)"
-
+    type="number"
     v-bind="{ ...attrs, density: 'compact' }"
+    width="100%"
+    @focusin="showFormattedNumber = false"
+    @focusout="showFormattedNumber = true"
     @input="(e: any) => emit('update:field', { value: e.target.value, valueMapping: item.valueMapping })"
   />
 </template>
 
 <script lang="ts" setup>
 import get from "lodash/get";
-import { useAttrs } from "vue";
+import { ref, useAttrs } from "vue";
 
 import { useNumber } from "@/core/composables/useNumber";
 import type { HeaderEditableObject, TableHeader } from "@/types/shared/Source";
@@ -34,7 +36,7 @@ function getValue(valueMapping: string) {
 
   let value = get(props.row, variable, null);
 
-  if (typeOfValue == "NUMBER") {
+  if (typeOfValue == "NUMBER" && showFormattedNumber.value) {
     let decimalPlaces = 4;
     if (isNaN(formatterProps)) {
       decimalPlaces = get(props.row, formatterProps, 2);
@@ -42,11 +44,12 @@ function getValue(valueMapping: string) {
       decimalPlaces = formatterProps;
     }
     value = formattedNumber(value, "decimal", decimalPlaces, decimalPlaces);
+    return value
   }
-  console.debug(value)
-
   return value;
 }
+
+const showFormattedNumber = ref(false);
 </script>
 
 <style scoped>
