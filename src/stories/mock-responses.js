@@ -16,6 +16,7 @@ export const  generatePageData = (page, size) => {
     volume: Math.random() * (0.01 - 0.00001) + 0.00001, // 0.00001 - 0.01
     dataId: index + 1,
     alerts: generateAlerts(),
+    decimalPlaces:2
   }));
 
   return data.slice(startIndex, endIndex);

@@ -206,10 +206,8 @@ export const ReturnObjectFalse: Story = {
 export const ModelNaStart: Story = {
   args: {
     model: {
-      dictionary: {
-        id: "2",
-        label: "Paris 2",
-      },
+      dictionary: "Paris 2"
+
     },
     schema: {
       type: "object",
@@ -225,14 +223,14 @@ export const ModelNaStart: Story = {
         dictionary: {
           label: "Słownik autocomplete - wartość tylko z możliwych",
           layout: {
-            component: "dictionary",
+            component: "combobox",
             cols: 12,
           },
           source: {
             url: "/mock-dictionaries",
             title: "label",
             value: "id",
-            returnObject: true,
+            returnObject: false,
             lazy: true,
             singleOptionAutoSelect: true,
           },

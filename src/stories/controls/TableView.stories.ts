@@ -89,7 +89,7 @@ export const Standard: Story = {
                 title: "Height",
                 key: "height",
                 valueMapping: "height",
-                type: "TEXT",
+                type: "NUMBER",
               },
               {
                 title: "Base",
@@ -153,7 +153,7 @@ export const ColorableCells: Story = {
                 title: "Height",
                 key: "height",
                 valueMapping: "height",
-                type: "TEXT",
+                type: "NUMBER",
               },
               {
                 title: "Base",
@@ -230,7 +230,7 @@ export const DynamicAlerts: Story = {
                 title: "Height",
                 key: "height",
                 valueMapping: "height",
-                type: "TEXT",
+                type: "NUMBER",
               },
               {
                 title: "Base",
@@ -294,7 +294,7 @@ export const NumberFields: Story = {
                 title: "Height",
                 key: "height",
                 valueMapping: "height",
-                type: "TEXT",
+                type: "NUMBER",
               },
               {
                 title: "Base",
@@ -352,7 +352,7 @@ export const JoinValues: Story = {
                 title: "Height",
                 key: "height",
                 valueMapping: "height",
-                type: "TEXT",
+                type: "NUMBER",
               },
               {
                 title: "Base",
@@ -410,7 +410,7 @@ export const JoinValuesWithHtmlAndExtraText: Story = {
                 title: "Height",
                 key: "height",
                 valueMapping: "height",
-                type: "TEXT",
+                type: "NUMBER",
               },
               {
                 title: "Base",
@@ -637,7 +637,7 @@ export const TopSlotAndButtons: Story = {
                 title: "Height",
                 key: "height",
                 valueMapping: "height",
-                type: "TEXT",
+                type: "NUMBER",
               },
               {
                 title: "Base",
@@ -742,7 +742,7 @@ export const ContextActions: Story = {
                 title: "Height",
                 key: "height",
                 valueMapping: "height",
-                type: "TEXT",
+                type: "NUMBER",
               },
               {
                 title: "Actions",
@@ -832,7 +832,7 @@ export const ContextActionsWithCondition: Story = {
                 title: "Height",
                 key: "height",
                 valueMapping: "height",
-                type: "TEXT",
+                type: "NUMBER",
               },
               {
                 title: "Actions",
@@ -1073,7 +1073,7 @@ export const SummaryAggregatesUpdate: Story = {
                   {
                     title: "Height",
                     key: "height",
-                    valueMapping: "height",
+                    valueMapping: "height:0:NUMBER:decimalPlaces",
                   },
                 ],
                 footerMapping: "<b>Summary of:</b> {height}",
