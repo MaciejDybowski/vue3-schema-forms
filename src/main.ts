@@ -74,10 +74,6 @@ export type VueSchemaFormsOptions = {
 };
 
 export let baseUri = window.origin;
-
-// jeżeli nie sprawi problemów w najbliższym czasie to do usunięcia
-// import * as schemaFormModelStore from './store/formModelStore';
-// export const schemaFormModelStoreInit = schemaFormModelStore;
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {

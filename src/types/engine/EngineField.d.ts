@@ -1,7 +1,7 @@
 import { EngineOptions } from "@/types/engine/EngineOptions";
+import { EventHandlerDefinition } from "@/types/shared/EventHandlerDefinition";
 import { Layout } from "@/types/shared/Layout";
 import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
-import { EventHandlerDefinition } from "@/types/shared/EventHandlerDefinition";
 
 export interface EngineField {
   formId: string;
@@ -13,7 +13,7 @@ export interface EngineField {
   required: boolean;
 
   // moze do dziedziczenia z SchemaField.d.ts
-  label: string;
+  label: string | any
   defaultValue?: number | string | boolean | object | Array<any> | undefined | null;
   type?: SchemaFieldType;
   layout: Layout;
@@ -29,8 +29,8 @@ export interface EngineField {
   calculation?: string;
 
   // table
-  aggregates?: object
+  aggregates?: object;
 
   //events
-  onChange?: EventHandlerDefinition
+  onChange?: EventHandlerDefinition;
 }
