@@ -10,6 +10,7 @@
     @focusin="showFormattedNumber[index] = false"
     @focusout="showFormattedNumber[index] = true"
     @input="(e: any) => emit('update:field', { value: e.target.value.replaceAll(',', '.'), valueMapping: item.valueMapping })"
+    @keyup.enter="(e) => e.target.blur()"
   />
 </template>
 
@@ -69,3 +70,5 @@ watchEffect(() => {
   text-align: left;
 }
 </style>
+<script setup lang="ts">
+</script>
