@@ -36,7 +36,7 @@ export interface EngineField {
   onChange?: EventHandlerDefinition;
 
   // btn
-  mode: string
-  config: object & Record<string, any>;
-  schema: Schema
+  mode?: string
+  config?: object & Record<string, any>;
+  schema?: Schema
 }
