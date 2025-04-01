@@ -57,7 +57,7 @@ import { Ref, computed, onMounted, reactive, ref } from "vue";
 import { useTheme } from "vuetify";
 
 import { useClass, useLabel, useLocale, useProps } from "@/core/composables";
-import { EngineField } from "@/types/engine/EngineField";
+import { EngineButtonField } from "@/types/engine/EngineButtonField";
 import { Schema } from "@/types/schema/Schema";
 import { useEventBus } from "@vueuse/core";
 
@@ -66,7 +66,7 @@ import VueSchemaForms from "../engine/VueSchemaForms.vue";
 const actionHandlerEventBus = useEventBus<string>("form-action");
 
 const { schema, model } = defineProps<{
-  schema: EngineField;
+  schema: EngineButtonField;
   model: object;
 }>();
 
@@ -125,7 +125,7 @@ function runBtnLogic() {
       if (schema.config.modelReference) {
         popup.model = get(model, schema.config.modelReference, {});
       }
-      popup.schema = schema.schema;
+      popup.schema = schema.schema as any;
       popup.acceptFunction = async () => {
         let payloadObject = {
           code: schema.config.code,
@@ -151,9 +151,7 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="css" scoped>
-
-</style>
+<style lang="css" scoped></style>
 
 <i18n lang="json">
 {

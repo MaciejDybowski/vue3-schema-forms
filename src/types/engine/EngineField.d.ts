@@ -34,9 +34,4 @@ export interface EngineField {
 
   //events
   onChange?: EventHandlerDefinition;
-
-  // btn
-  mode?: string
-  config?: object & Record<string, any>;
-  schema?: Schema
 }
