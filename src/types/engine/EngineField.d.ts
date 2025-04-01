@@ -2,6 +2,7 @@ import { EngineOptions } from "@/types/engine/EngineOptions";
 import { EventHandlerDefinition } from "@/types/shared/EventHandlerDefinition";
 import { Layout } from "@/types/shared/Layout";
 import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
+import { Schema } from "@/types/schema/Schema";
 
 export interface EngineField {
   formId: string;
@@ -33,4 +34,9 @@ export interface EngineField {
 
   //events
   onChange?: EventHandlerDefinition;
+
+  // btn
+  mode: string
+  config: object & Record<string, any>;
+  schema: Schema
 }
