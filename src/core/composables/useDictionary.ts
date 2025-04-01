@@ -34,6 +34,7 @@ export function useDictionary() {
   let query = ref("");
   let field: EngineDictionaryField = {} as EngineDictionaryField;
   let queryBlocker = ref(false);
+  let dependencyWasChanged = ref(false);
 
   const debounced = {
     load: debounce(load, 300),
@@ -59,8 +60,12 @@ export function useDictionary() {
       const updateEndpoint = async () => {
         const temp = await resolve(field, source.url, title.value, true);
         if (temp.resolvedText !== endpoint.resolvedText) {
+          dependencyWasChanged.value = true;
+          loadCounter.value = 0
           endpoint = temp;
           debounced.load("watcher");
+        } else {
+          dependencyWasChanged.value = false;
         }
       };
 
@@ -179,6 +184,7 @@ export function useDictionary() {
     load,
     loadMoreRecords,
     singleOptionAutoSelect,
-    loadCounter
+    loadCounter,
+    dependencyWasChanged
   };
 }

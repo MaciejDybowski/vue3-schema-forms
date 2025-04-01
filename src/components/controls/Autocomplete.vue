@@ -99,8 +99,8 @@ const {
   loadMoreRecords,
   singleOptionAutoSelect,
   initState,
-
   loadCounter,
+  dependencyWasChanged
 } = useDictionary();
 
 function singleOptionAutoSelectFunction() {
@@ -125,6 +125,12 @@ async function resolveIfLocalModelHasDependencies() {
     }
   }
 }
+
+watch(dependencyWasChanged, () => {
+  if(dependencyWasChanged.value){
+    localModel.value = null
+  }
+})
 
 onMounted(async () => {
   await initState(props.schema);
