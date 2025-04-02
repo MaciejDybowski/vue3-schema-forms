@@ -39,6 +39,7 @@ export function useRules() {
         if (ruleDefinition.name === "conditional-required") {
           conditionalRequired(schema, ruleDefinition, rules);
           // listener for visualization "live" required input with red *, validation works properly without it !!
+          ruleListener("null", 1, schema, ruleDefinition)
           vueSchemaFormEventBus.on((event, payloadIndex) => ruleListener(event, payloadIndex, schema, ruleDefinition));
         } else if (ruleDefinition.rule) {
           resolveValidationFunctionWithJSONataRule(ruleDefinition, schema);
@@ -99,6 +100,7 @@ export function useRules() {
   }
 
   async function ruleListener(event: string, payloadIndex: number, schema: EngineField, ruleDefinition: SchemaSimpleValidation) {
+    console.debug("in-rule-listener")
     const formModelStore = useFormModelStore(schema.formId);
     const model = formModelStore.getFormModelForResolve;
     const nata = jsonata(ruleDefinition.rule as string);
