@@ -160,4 +160,8 @@ onMounted(async () => {
 :deep(.v-field-label--floating) {
   visibility: visible !important;
 }
+
+:deep(.v-field__input) {
+  display: block;
+}
 </style>
