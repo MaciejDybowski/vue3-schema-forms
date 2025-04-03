@@ -100,7 +100,6 @@ export function useRules() {
   }
 
   async function ruleListener(event: string, payloadIndex: number, schema: EngineField, ruleDefinition: SchemaSimpleValidation) {
-    console.debug("in-rule-listener")
     const formModelStore = useFormModelStore(schema.formId);
     const model = formModelStore.getFormModelForResolve;
     const nata = jsonata(ruleDefinition.rule as string);

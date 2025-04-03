@@ -3,6 +3,7 @@ import { VueSchemaForms } from "@/components";
 import { offsetSchema } from "@/stories/schemas";
 import { Meta, StoryObj } from "@storybook/vue3";
 
+
 const meta = {
   title: "Forms/Features/Layouts",
   component: VueSchemaForms,
@@ -46,5 +47,59 @@ type Story = StoryObj<typeof meta>;
 export const FillRowAndOffsets: Story = {
   args: {
     schema: offsetSchema,
+  },
+};
+
+export const FillRow: Story = {
+  args: {
+    schema: {
+      type: "object",
+      properties: {
+        item1: {
+          label:"Item 1",
+          layout: {
+            component: "text-field",
+            cols: 3
+          }
+        },
+        item4: {
+          label:"Item 4",
+          layout: {
+            component: "text-field",
+            cols: 12
+          }
+        },
+        item5: {
+          label:"Item 5",
+          layout: {
+            component: "text-field",
+            cols: 3
+          }
+        },
+        item6: {
+          label:"Item 6",
+          layout: {
+            component: "text-field",
+            cols: 3,
+            fillRow: true
+          }
+        },
+        item2: {
+          label:"Item 2",
+          layout: {
+            component: "text-field",
+            cols: 3,
+
+          }
+        },
+        item3: {
+          label:"Item 3",
+          layout: {
+            component: "text-field",
+            cols: 1
+          }
+        },
+      }
+    },
   },
 };
