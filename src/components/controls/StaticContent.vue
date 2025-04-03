@@ -31,8 +31,15 @@ const { bindClass } = useClass();
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 onMounted(async () => {
-  await bindProps(props.schema);
+  const isContentRef = typeof props.schema.content === "object" && "$ref" in props.schema.content;
+  if (isContentRef) {
+    // @ts-ignore
+    resolvedContent.value.resolvedText = props.schema.content.$ref;
+    resolvedContent.value.allVariablesResolved = true;
+    return;
+  }
 
+  await bindProps(props.schema);
   resolvedContent.value = await resolve(props.schema, props.schema.content);
   const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) => {
     resolvedContent.value = await resolve(props.schema, props.schema.content);
