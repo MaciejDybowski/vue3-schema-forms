@@ -303,6 +303,19 @@ export const ConditionalFilter: Story = {
     schema: {
       type: "object",
       properties: {
+        radioButton: {
+          initValue: false,
+          label: "Choose option",
+          layout: {
+            component: "radio-button",
+          },
+          source: {
+            items: [
+              { value: 1, title: "Filtr" },
+              { value: 2, title: "Bez" },
+            ],
+          },
+        },
         dictionary: {
           label: "Słownik",
           layout: {
@@ -310,7 +323,7 @@ export const ConditionalFilter: Story = {
             cols: 12,
           },
           source: {
-            url: "/mock-dictionaries?filter=id=={deps.item.id}&enable-filter=testInput='test'",
+            url: "/mock-dictionaries?filter=id=={deps.item.id}&enable-filter=radioButton=1",
             title: "label",
             value: "id",
             returnObject: true,

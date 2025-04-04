@@ -15,7 +15,6 @@ import { EngineDictionaryField } from "@/types/engine/controls";
 import { ResponseReference } from "@/types/shared/ResponseReference";
 import { DictionarySource } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
-import contextObjectStories from "@/stories/features/ContextObject.stories";
 
 export function useDictionary() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
@@ -32,7 +31,6 @@ export function useDictionary() {
   let singleOptionAutoSelect = ref(true);
   let endpoint = { resolvedText: "", allVariablesResolved: false };
   let isUrlHasDependency: RegExpMatchArray | null = null;
-  let isUrlHasConditionalFilterParameter = ref(false);
   let loading = ref(false);
   let data: Ref<Array<object>> = ref([]);
   let query = ref("");
@@ -45,29 +43,45 @@ export function useDictionary() {
   };
 
   async function checkConditionalFilters() {
-    isUrlHasConditionalFilterParameter.value = new URLSearchParams(source.url).has("enable-filter");
+    const params = new URLSearchParams(source.url);
+    const hasConditionalFilter = params.has("enable-filter");
 
-    if(isUrlHasConditionalFilterParameter.value){
-      const expression = new URLSearchParams(source.url).get("enable-filter") + "";
-      const nata = jsonata(expression);
-      const formModelStore = useFormModelStore(field.formId);
-      const mergedModel = formModelStore.getFormModelForResolve;
-      const newValue = await nata.evaluate(mergedModel);
+    if (!hasConditionalFilter) return;
 
+    const expression = params.get("enable-filter") ?? "";
+    const nata = jsonata(expression);
+    const formModelStore = useFormModelStore(field.formId);
+    const mergedModel = formModelStore.getFormModelForResolve;
+    const newValue = await nata.evaluate(mergedModel);
 
-      if (!newValue) {
-        const url = source.url;
-        const updatedUrl = removeParams(url, ["filter", "enable-filter"]);
-        endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
-        isUrlHasDependency = endpoint.resolvedText.match(variableRegexp);
-      } else {
-        endpoint = await resolve(field, source.url, title.value, true);
-        const url = endpoint.resolvedText;
-        const updatedUrl = removeParams(url, ["enable-filter"]);
-        endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
-        isUrlHasDependency = endpoint.resolvedText.match(variableRegexp);
+    if (!newValue) {
+      const updatedUrl = removeParams(source.url, ["filter", "enable-filter"]);
+      endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
+    } else {
+      const resolved = await resolve(field, source.url, title.value, true);
+      const updatedUrl = removeParams(resolved.resolvedText, ["enable-filter"]);
+      endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
+    }
 
-      }
+    isUrlHasDependency = endpoint.resolvedText.match(variableRegexp);
+  }
+
+  async function checkUrlDependencies() {
+    if (isUrlHasDependency !== null) {
+      const updateEndpoint = async () => {
+        const temp = await resolve(field, source.url, title.value, true);
+        if (loadCounter.value == 0 || temp.resolvedText !== endpoint.resolvedText) {
+          dependencyWasChanged.value = true;
+          loadCounter.value = 0;
+          endpoint = temp;
+          debounced.load("watcher");
+        } else {
+          dependencyWasChanged.value = false;
+        }
+      };
+
+      await updateEndpoint();
+      vueSchemaFormEventBus.on(updateEndpoint);
     }
   }
 
@@ -85,30 +99,12 @@ export function useDictionary() {
       : ({ data: "content", totalElements: "numberOfElements" } as ResponseReference);
     singleOptionAutoSelect.value = source.singleOptionAutoSelect ? source.singleOptionAutoSelect : true;
 
-
     //endpoint = { resolvedText: source.url, allVariablesResolved: true };
     endpoint = await resolve(field, source.url, title.value, true);
 
     isUrlHasDependency = source.url.match(variableRegexp);
-    await checkConditionalFilters()
-
-
-    if (isUrlHasDependency !== null) {
-      const updateEndpoint = async () => {
-        const temp = await resolve(field, source.url, title.value, true);
-        if (loadCounter.value == 0 || temp.resolvedText !== endpoint.resolvedText) {
-          dependencyWasChanged.value = true;
-          loadCounter.value = 0;
-          endpoint = temp;
-          debounced.load("watcher");
-        } else {
-          dependencyWasChanged.value = false;
-        }
-      };
-
-      await updateEndpoint();
-      vueSchemaFormEventBus.on(updateEndpoint);
-    }
+    await checkConditionalFilters();
+    await checkUrlDependencies();
   }
 
   watch(query, (currentQuery, previousQuery) => {
@@ -129,14 +125,12 @@ export function useDictionary() {
   });
 
   async function load(caller: string) {
-
     if (logger.dictionaryLogger) {
       console.debug(
         `[vue-schema-forms] => Dictionary load call function = ${caller}, queryBlocker=${queryBlocker.value} query=${query.value}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
       );
     }
-    await checkConditionalFilters()
-
+    await checkConditionalFilters();
 
     if (endpoint.allVariablesResolved) {
       loading.value = true;
@@ -169,7 +163,7 @@ export function useDictionary() {
   }
 
   async function loadMoreRecords() {
-    endpoint = await resolve(field, source.url, title.value, true);
+    await checkConditionalFilters();
     if (endpoint.allVariablesResolved) {
       loading.value = true;
       const { url, params } = prepareUrl();
