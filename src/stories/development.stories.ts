@@ -248,23 +248,11 @@ export const Table: Story = {
     schema: {
       type: "object",
       properties: {
-        "text-field-776": {
-          label: "Item-text-field-776",
-          layout: { cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 }, component: "text-field" },
-        },
-        "text-field-882": {
-          label: "Item-text-field-882",
+        orderedMultiSelect: {
+          label: "Test",
           layout: {
-            component: "text-field",
-            cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
-            fillRow: true,
-          },
-        },
-        "text-field-812": {
-          label: "Item-text-field-882",
-          layout: {
-            component: "text-field",
-            cols: { xs: 12, sm: 12, md: 12, lg: 2, xl: 2, xxl: 2 },
+            cols: 12,
+            component: "ordered-multi-select",
           },
         },
       },
