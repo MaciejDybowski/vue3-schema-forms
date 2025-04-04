@@ -31,8 +31,8 @@ export function useDictionary() {
   let responseReference: ResponseReference = { data: "content", totalElements: "numberOfElements" };
   let singleOptionAutoSelect = ref(true);
   let endpoint = { resolvedText: "", allVariablesResolved: false };
-  let isApiContainsDependency: RegExpMatchArray | null = null;
-  let isUrlHasConditionalFilter = ref(false);
+  let isUrlHasDependency: RegExpMatchArray | null = null;
+  let isUrlHasConditionalFilterParameter = ref(false);
   let loading = ref(false);
   let data: Ref<Array<object>> = ref([]);
   let query = ref("");
@@ -43,6 +43,33 @@ export function useDictionary() {
   const debounced = {
     load: debounce(load, 300),
   };
+
+  async function checkConditionalFilters() {
+    isUrlHasConditionalFilterParameter.value = new URLSearchParams(source.url).has("enable-filter");
+
+    if(isUrlHasConditionalFilterParameter.value){
+      const expression = new URLSearchParams(source.url).get("enable-filter") + "";
+      const nata = jsonata(expression);
+      const formModelStore = useFormModelStore(field.formId);
+      const mergedModel = formModelStore.getFormModelForResolve;
+      const newValue = await nata.evaluate(mergedModel);
+
+
+      if (!newValue) {
+        const url = source.url;
+        const updatedUrl = removeParams(url, ["filter", "enable-filter"]);
+        endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
+        isUrlHasDependency = endpoint.resolvedText.match(variableRegexp);
+      } else {
+        endpoint = await resolve(field, source.url, title.value, true);
+        const url = endpoint.resolvedText;
+        const updatedUrl = removeParams(url, ["enable-filter"]);
+        endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
+        isUrlHasDependency = endpoint.resolvedText.match(variableRegexp);
+
+      }
+    }
+  }
 
   async function initState(fieldReference: EngineDictionaryField) {
     field = fieldReference;
@@ -62,30 +89,14 @@ export function useDictionary() {
     //endpoint = { resolvedText: source.url, allVariablesResolved: true };
     endpoint = await resolve(field, source.url, title.value, true);
 
-    isApiContainsDependency = source.url.match(variableRegexp);
+    isUrlHasDependency = source.url.match(variableRegexp);
+    await checkConditionalFilters()
 
-    isUrlHasConditionalFilter.value = new URLSearchParams(source.url).has("enable-filter");
-    console.debug(`Czy mamy filtr warunkowy = ${isUrlHasConditionalFilter.value}`);
-    const expression = new URLSearchParams(source.url).get("enable-filter") + "";
-    console.debug(`Expression = ${expression}`);
-    const nata = jsonata(expression);
-    const formModelStore = useFormModelStore(field.formId);
-    const mergedModel = formModelStore.getFormModelForResolve;
-    const newValue = await nata.evaluate(mergedModel);
-    console.debug(`Expression result = ${newValue}`);
-    if (!newValue) {
-      const url = endpoint.resolvedText;
-      const updatedUrl = removeParams(url, ["filter", "enable-filter"]);
-      endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
-      isApiContainsDependency = endpoint.resolvedText.match(variableRegexp);
-      console.debug("isApiContainsDependency = " + isApiContainsDependency);
-      console.debug(endpoint)
-    }
 
-    if (isApiContainsDependency !== null) {
+    if (isUrlHasDependency !== null) {
       const updateEndpoint = async () => {
         const temp = await resolve(field, source.url, title.value, true);
-        if (temp.resolvedText !== endpoint.resolvedText) {
+        if (loadCounter.value == 0 || temp.resolvedText !== endpoint.resolvedText) {
           dependencyWasChanged.value = true;
           loadCounter.value = 0;
           endpoint = temp;
@@ -118,12 +129,15 @@ export function useDictionary() {
   });
 
   async function load(caller: string) {
-    // endpoint = await resolve(field, source.url, title.value, true);
+
     if (logger.dictionaryLogger) {
       console.debug(
         `[vue-schema-forms] => Dictionary load call function = ${caller}, queryBlocker=${queryBlocker.value} query=${query.value}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
       );
     }
+    await checkConditionalFilters()
+
+
     if (endpoint.allVariablesResolved) {
       loading.value = true;
       paginationOptions.value.resetPage();
