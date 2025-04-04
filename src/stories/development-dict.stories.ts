@@ -202,12 +202,10 @@ export const ReturnObjectFalse: Story = {
   },
 };
 
-
 export const ModelNaStart: Story = {
   args: {
     model: {
-      dictionary: "Paris 2"
-
+      dictionary: "Paris 2",
     },
     schema: {
       type: "object",
@@ -246,7 +244,6 @@ export const ModelNaStart: Story = {
   },
 };
 
-
 export const ValueFilter: Story = {
   args: {
     model: {
@@ -275,6 +272,45 @@ export const ValueFilter: Story = {
           },
           source: {
             url: "/mock-dictionaries?value-filter={deps.item.id}",
+            title: "label",
+            value: "id",
+            returnObject: true,
+            lazy: true,
+            singleOptionAutoSelect: true,
+          },
+        },
+      },
+      required: [],
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: RESPONSE,
+    },
+  },
+};
+
+export const ConditionalFilter: Story = {
+  args: {
+    model: {
+      testInput: "test",
+      deps: {
+        item: {
+          id: "9",
+        },
+      },
+    },
+    schema: {
+      type: "object",
+      properties: {
+        dictionary: {
+          label: "Słownik",
+          layout: {
+            component: "dictionary",
+            cols: 12,
+          },
+          source: {
+            url: "/mock-dictionaries?filter=id=={deps.item.id}&enable-filter=testInput='test'",
             title: "label",
             value: "id",
             returnObject: true,

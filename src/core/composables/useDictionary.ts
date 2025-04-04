@@ -1,4 +1,5 @@
 import axios from "axios";
+import jsonata from "jsonata";
 import { debounce } from "lodash";
 import get from "lodash/get";
 import { Ref, ref, watch } from "vue";
@@ -9,10 +10,12 @@ import { mapSliceTotalElements } from "@/components/controls/base/SliceResponse"
 import { useResolveVariables } from "@/core/composables/useResolveVariables";
 import { variableRegexp } from "@/core/engine/utils";
 import { logger } from "@/main";
+import { useFormModelStore } from "@/store/formModelStore";
 import { EngineDictionaryField } from "@/types/engine/controls";
 import { ResponseReference } from "@/types/shared/ResponseReference";
 import { DictionarySource } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
+import contextObjectStories from "@/stories/features/ContextObject.stories";
 
 export function useDictionary() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
@@ -29,6 +32,7 @@ export function useDictionary() {
   let singleOptionAutoSelect = ref(true);
   let endpoint = { resolvedText: "", allVariablesResolved: false };
   let isApiContainsDependency: RegExpMatchArray | null = null;
+  let isUrlHasConditionalFilter = ref(false);
   let loading = ref(false);
   let data: Ref<Array<object>> = ref([]);
   let query = ref("");
@@ -53,15 +57,37 @@ export function useDictionary() {
       ? source.references
       : ({ data: "content", totalElements: "numberOfElements" } as ResponseReference);
     singleOptionAutoSelect.value = source.singleOptionAutoSelect ? source.singleOptionAutoSelect : true;
-    endpoint = { resolvedText: source.url, allVariablesResolved: true };
+
+
+    //endpoint = { resolvedText: source.url, allVariablesResolved: true };
+    endpoint = await resolve(field, source.url, title.value, true);
+
     isApiContainsDependency = source.url.match(variableRegexp);
+
+    isUrlHasConditionalFilter.value = new URLSearchParams(source.url).has("enable-filter");
+    console.debug(`Czy mamy filtr warunkowy = ${isUrlHasConditionalFilter.value}`);
+    const expression = new URLSearchParams(source.url).get("enable-filter") + "";
+    console.debug(`Expression = ${expression}`);
+    const nata = jsonata(expression);
+    const formModelStore = useFormModelStore(field.formId);
+    const mergedModel = formModelStore.getFormModelForResolve;
+    const newValue = await nata.evaluate(mergedModel);
+    console.debug(`Expression result = ${newValue}`);
+    if (!newValue) {
+      const url = endpoint.resolvedText;
+      const updatedUrl = removeParams(url, ["filter", "enable-filter"]);
+      endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
+      isApiContainsDependency = endpoint.resolvedText.match(variableRegexp);
+      console.debug("isApiContainsDependency = " + isApiContainsDependency);
+      console.debug(endpoint)
+    }
 
     if (isApiContainsDependency !== null) {
       const updateEndpoint = async () => {
         const temp = await resolve(field, source.url, title.value, true);
         if (temp.resolvedText !== endpoint.resolvedText) {
           dependencyWasChanged.value = true;
-          loadCounter.value = 0
+          loadCounter.value = 0;
           endpoint = temp;
           debounced.load("watcher");
         } else {
@@ -72,7 +98,6 @@ export function useDictionary() {
       await updateEndpoint();
       vueSchemaFormEventBus.on(updateEndpoint);
     }
-
   }
 
   watch(query, (currentQuery, previousQuery) => {
@@ -93,7 +118,7 @@ export function useDictionary() {
   });
 
   async function load(caller: string) {
-    endpoint = await resolve(field, source.url, title.value, true);
+    // endpoint = await resolve(field, source.url, title.value, true);
     if (logger.dictionaryLogger) {
       console.debug(
         `[vue-schema-forms] => Dictionary load call function = ${caller}, queryBlocker=${queryBlocker.value} query=${query.value}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
@@ -166,8 +191,17 @@ export function useDictionary() {
     return { url: urlParts[0], params: urlParams.toString() };
   }
 
+  function removeParams(url, paramsToRemove) {
+    const [path, queryString] = url.split("?");
+    if (!queryString) return url;
 
+    const filteredParams = queryString.split("&").filter((param) => {
+      const [key] = param.split("=");
+      return !paramsToRemove.includes(key);
+    });
 
+    return filteredParams.length ? `${path}?${filteredParams.join("&")}` : path;
+  }
 
   return {
     initState,
@@ -185,6 +219,6 @@ export function useDictionary() {
     loadMoreRecords,
     singleOptionAutoSelect,
     loadCounter,
-    dependencyWasChanged
+    dependencyWasChanged,
   };
 }
