@@ -7,6 +7,7 @@ import { Meta, StoryObj } from "@storybook/vue3";
 
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 
+
 const meta = {
   title: "Development Page",
   component: DevelopmentTable,
@@ -247,48 +248,28 @@ export const Table: Story = {
     schema: {
       type: "object",
       properties: {
-        button: {
-          label: "Click it!",
+        "text-field-776": {
+          label: "Item-text-field-776",
+          layout: { cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 }, component: "text-field" },
+        },
+        "text-field-882": {
+          label: "Item-text-field-882",
           layout: {
-            component: "button",
+            component: "text-field",
+            cols: { xs: 12, sm: 12, md: 12, lg: 4, xl: 4, xxl: 4 },
+            fillRow: true,
           },
-          mode: "form-and-action",
-          config: {
-            code: "update_csv",
-            modelReference: "popupModel",
-            title: "string",
-          },
-          schema: {
-            properties: {
-              button: {
-                label: "Copy CSV",
-                layout: {
-                  component: "button",
-                  props: {
-                    "append-icon": "mdi-content-copy"
-                  }
-                },
-                mode: "copy",
-                config: {
-                  modelReference: "csvBody",
-                },
-              },
-              csvBody: {
-                label: "CsvBody",
-                layout: {
-                  component: "text-field",
-                },
-              },
-              input: {
-                label: "Input",
-                layout: {
-                  component: "text-field",
-                },
-              },
-            },
+        },
+        "text-field-812": {
+          label: "Item-text-field-882",
+          layout: {
+            component: "text-field",
+            cols: { xs: 12, sm: 12, md: 12, lg: 2, xl: 2, xxl: 2 },
           },
         },
       },
+      required: [],
+      i18n: {},
     },
   },
 };
