@@ -42,12 +42,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Examples: Story = {
   args: {
-    modelValue: {},
+    modelValue: {
+      temp1: "debil",
+    },
     schema: {
       type: "object",
       properties: {
         h1: {
-          content: "h1 - Static form text content",
+          content: "h1 - Static form text content {temp1:Default:DATETIME}",
           layout: {
             component: "static-content",
             tag: "h1",

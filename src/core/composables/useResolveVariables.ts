@@ -1,10 +1,10 @@
-import dayjs from "../../components/controls/date/dayjs";
 import jsonata from "jsonata";
 
 import { useNumber } from "@/core/composables/useNumber";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 
+import dayjs from "../../components/controls/date/dayjs";
 import { variableRegexp } from "../engine/utils";
 import { useDateFormat } from "./useDateFormat";
 
@@ -73,15 +73,21 @@ export function useResolveVariables() {
     return arrayB.map((itemB) =>
       itemB.includes("[]") && nameSetA.has(extractName(itemB))
         ? arrayA.find((a) => extractName(a) === extractName(itemB))!
-        : itemB
+        : itemB,
     );
   }
 
   function doSthWithValue(field, value: any, valueProps: VariableSyntaxProps, title, rawNumber = false) {
-    if (valueProps.typeOfValue == "DATETIME") {
+    if (valueProps.typeOfValue == "DATETIME" && value) {
+      if (!dayjs(value).isValid()) return value;
+      if (valueProps.defaultValue == value) return value;
       return dayjs(value).format(dateTimeFormat.value);
     }
-    if (valueProps.typeOfValue == "DATETIME") {
+
+
+
+    if (valueProps.typeOfValue == "DATE" && value) {
+      if (valueProps.defaultValue == value) return;
       return dayjs(value).format(dateFormat.value);
     }
 

@@ -11,7 +11,7 @@
     :multiple="multiple"
     :no-data-text="t('noData')"
     :options="pagination"
-    :rules="!fieldProps.readonly ? rules: []"
+    :rules="!fieldProps.readonly ? rules : []"
     :search="query"
     item-title="firstName"
     item-value="id"
@@ -107,11 +107,11 @@ import UserInputLabel from "@/components/controls/user-input/UserInputLabel.vue"
 
 import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "@/core/composables";
 import { variableRegexp } from "@/core/engine/utils";
+import { logger } from "@/main";
 import { Label } from "@/types/engine/Label";
 import { User } from "@/types/engine/User";
 import { EngineUserField } from "@/types/engine/controls";
 import { useEventBus } from "@vueuse/core";
-import { logger } from "@/main";
 
 const props = defineProps<{
   schema: EngineUserField;
@@ -222,8 +222,10 @@ async function checkIfURLHasDependency() {
 
     if (allVariablesResolved) {
       usersAPIEndpoint.value = resolvedText;
-    } else if(logger.dictionaryLogger) {
-      console.debug(`[vue-schema-forms] [DictionaryLogger] => API call was blocked, not every variable from endpoint was resolved ${usersAPIEndpoint.value}`);
+    } else if (logger.dictionaryLogger) {
+      console.debug(
+        `[vue-schema-forms] [DictionaryLogger] => API call was blocked, not every variable from endpoint was resolved ${usersAPIEndpoint.value}`,
+      );
     }
 
     const vueSchemaFormEventBus = useEventBus<string>("form-model");
@@ -241,7 +243,8 @@ async function checkIfURLHasDependency() {
 
 function removeValue(item: User) {
   if (multiple) {
-    localModel.value = (localModel.value as User[]).filter((val) => val != item);
+    const tempArray = (localModel.value as User[]).filter((val) => val != item);
+    localModel.value = tempArray.length > 0 ? tempArray : null;
   } else {
     localModel.value = null;
   }
