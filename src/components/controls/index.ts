@@ -26,7 +26,7 @@ import DatePicker from "./date/DatePicker.vue";
 import DateTimePicker from "./date/DateTimePicker.vue";
 import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
 import Markdown from "./markdown/Markdown.vue";
-import OrderedMultiSelect from "./OrderedMultiSelect.vue";
+import OrderedMultiSelect from "./ordered-multi-select/OrderedMultiSelect.vue";
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,

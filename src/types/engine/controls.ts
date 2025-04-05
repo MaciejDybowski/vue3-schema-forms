@@ -8,11 +8,11 @@ export interface EngineTextField extends EngineField {
 }
 
 export interface EngineImageField extends EngineField {
-  src: string
+  src: string;
 }
 
 export interface EngineAvatarField extends EngineField {
-  source: AvatarSource
+  source: AvatarSource;
 }
 
 export interface EngineDividerField extends EngineField {
@@ -61,6 +61,11 @@ export interface EnginePhoneField extends EngineField {
 }
 
 export interface EngineDictionaryField extends EngineField {
+  source: DictionarySource;
+}
+
+export interface EngineOrderedMultiSelect extends EngineDictionaryField {
+  variant: "list" | "combobox";
   source: DictionarySource;
 }
 

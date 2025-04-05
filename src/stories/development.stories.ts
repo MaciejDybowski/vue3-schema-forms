@@ -236,28 +236,111 @@ const SCHEMAS = [
       },
     });
   }),
+
+  http.get("/mock/dictionaries/items-to-excel", async (req, res, ctx) => {
+    const columnNames = [
+      "Nazwa produktu",
+      "Kod produktu",
+      "Materiał",
+      "Kolor",
+      "Wymiary",
+      "Waga",
+      "Cena netto",
+      "Cena brutto",
+      "Stawka VAT",
+      "Producent",
+      "Kraj pochodzenia",
+      "Gwarancja",
+      "Czas realizacji",
+      "Termin dostawy",
+      "Ilość sztuk",
+      "Minimalne zamówienie",
+      "Opis produktu",
+      "Dostępność",
+      "Typ produktu",
+      "Kategoria",
+      "Podkategoria",
+      "Numer katalogowy",
+      "EAN",
+      "Model",
+      "Seria",
+      "Styl",
+      "Kolor dominujący",
+      "Wykończenie powierzchni",
+      "Montaż wymagany",
+      "Instrukcja montażu",
+      "Pakowanie",
+      "Wymiary opakowania",
+      "Waga brutto",
+      "Cechy dodatkowe",
+      "Certyfikaty",
+      "Przeznaczenie",
+      "Rodzaj materiału",
+      "Rodzaj drewna",
+      "Kod dostawcy",
+      "Uwagi",
+    ];
+
+    const items = columnNames.map((name, index) => ({
+      id: index + 1,
+      label: name,
+    }));
+
+    return HttpResponse.json({
+      content: items,
+    });
+  }),
 ];
 
 export const Table: Story = {
   args: {
     model: {
-      popupModel: {
-        csvBody: "1.2.3.4.5.6.7",
-      },
+      orderedMultiSelect: [
+        { id: 3, label: "Materiał" },
+        { id: 1, label: "Nazwa produktu" },
+        {
+          id: 5,
+          label: "Wymiary",
+        },
+      ],
     },
     schema: {
       type: "object",
       properties: {
         orderedMultiSelect: {
-          label: "Test",
+          label: "Wybierz elementy do generowania exclea",
+          variant: "list",
           layout: {
-            cols: 12,
+            cols: 6,
             component: "ordered-multi-select",
+          },
+          source: {
+            url: "/mock/dictionaries/items-to-excel",
+            title: "label",
+            value: "id",
+          },
+        },
+        orderedMultiSelect2: {
+          label: "Wybierz elementy do generowania exclea",
+          variant: "combobox",
+          layout: {
+            cols: 6,
+            component: "ordered-multi-select",
+          },
+          source: {
+            url: "/mock/dictionaries/items-to-excel",
+            title: "label",
+            value: "id",
           },
         },
       },
       required: [],
       i18n: {},
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: SCHEMAS,
     },
   },
 };
