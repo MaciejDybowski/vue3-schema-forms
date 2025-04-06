@@ -21,8 +21,7 @@
               :hide-details="true"
               :model-value="isSelected(item)"
               density="compact"
-              @click.stop
-              @update:modelValue="() => toggleItem(item)"
+              @click.stop="toggleItem(item)"
             />
           </template>
           <v-list-item-title>{{ item[title] }}</v-list-item-title>
@@ -74,7 +73,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits } from "vue";
+import { defineEmits, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
 
@@ -84,6 +83,15 @@ const { items, selectedItems, title, value } = defineProps<{
   title: string;
   value: string;
 }>();
+
+const internalSelectedItems = ref([...selectedItems]);
+
+watch(
+  () => selectedItems,
+  (newVal) => {
+    internalSelectedItems.value = [...newVal];
+  },
+);
 
 const { t } = useI18n();
 
@@ -108,7 +116,7 @@ const toggleItem = (item: (typeof items)[number]) => {
 };
 
 const isSelected = (item: (typeof items)[number]) => {
-  return selectedItems.some((i) => i[value] === item[value]);
+  return internalSelectedItems.value?.some((i) => i[value] === item[value]);
 };
 </script>
 

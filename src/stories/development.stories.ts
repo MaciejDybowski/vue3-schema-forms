@@ -295,14 +295,7 @@ const SCHEMAS = [
 export const Table: Story = {
   args: {
     model: {
-      orderedMultiSelect: [
-        { id: 3, label: "Materiał" },
-        { id: 1, label: "Nazwa produktu" },
-        {
-          id: 5,
-          label: "Wymiary",
-        },
-      ],
+      orderedMultiSelect: null,
     },
     schema: {
       type: "object",
@@ -320,7 +313,7 @@ export const Table: Story = {
             value: "id",
           },
         },
-        orderedMultiSelect2: {
+     /*   orderedMultiSelect2: {
           label: "Wybierz elementy do generowania exclea",
           variant: "combobox",
           layout: {
@@ -332,9 +325,9 @@ export const Table: Story = {
             title: "label",
             value: "id",
           },
-        },
+        },*/
       },
-      required: [],
+      required: ["orderedMultiSelect"],
       i18n: {},
     },
   },

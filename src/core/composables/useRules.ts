@@ -20,9 +20,11 @@ export function useRules() {
   async function bindRules(schema: EngineField) {
     if (schema.required) {
       requiredInputClass.value = " required-input";
-      rules.value.push((value: any) => {
-        if ((value || value == false) && value !== "") return true;
-        return t("required");
+      rules.value.push((val: any) => {
+        const isValidArray = Array.isArray(val) && val.length > 0;
+        const isValidPrimitive = val !== "" && val !== null && val !== undefined;
+        if(!isValidArray) return t("required")
+        return isValidPrimitive || val === false ? true : t("required");
       });
     }
 
@@ -39,7 +41,7 @@ export function useRules() {
         if (ruleDefinition.name === "conditional-required") {
           conditionalRequired(schema, ruleDefinition, rules);
           // listener for visualization "live" required input with red *, validation works properly without it !!
-          ruleListener("null", 1, schema, ruleDefinition)
+          ruleListener("null", 1, schema, ruleDefinition);
           vueSchemaFormEventBus.on((event, payloadIndex) => ruleListener(event, payloadIndex, schema, ruleDefinition));
         } else if (ruleDefinition.rule) {
           resolveValidationFunctionWithJSONataRule(ruleDefinition, schema);
