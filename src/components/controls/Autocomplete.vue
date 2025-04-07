@@ -155,6 +155,8 @@ onMounted(async () => {
 
   singleOptionAutoSelectFunction();
   internalStateIsSet.value = true;
+
+  console.debug(queryBlocker.value)
   //console.debug(`[vue-mounted] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
 });
 
@@ -162,6 +164,7 @@ async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
     //console.debug(`[vue-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
     if(!returnObject.value){
+      console.debug(query.value === localModelCurrent.value)
       queryBlocker.value = query.value === localModelCurrent.value;
     }
     await load("autocomplete");
@@ -170,7 +173,7 @@ async function fetchDictionaryData() {
 
 function updateSearch(val: string) {
   if (returnObject.value) {
-    queryBlocker.value = val === localModelCurrent.value;
+    queryBlocker.value = val === localModelCurrent.value+"";
   } else {
     queryBlocker.value = false;
   }
