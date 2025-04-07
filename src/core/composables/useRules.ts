@@ -21,9 +21,9 @@ export function useRules() {
     if (schema.required) {
       requiredInputClass.value = " required-input";
       rules.value.push((val: any) => {
-        // const isValidArray = Array.isArray(val) && val.length > 0;
+         const isValidArray = Array.isArray(val) && val.length > 0;
         const isValidPrimitive = val !== "" && val !== null && val !== undefined;
-        // if(!isValidArray) return t("required")
+         if(!isValidArray && Array.isArray(val)) return t("required")
         return isValidPrimitive || val === false ? true : t("required");
       });
     }
