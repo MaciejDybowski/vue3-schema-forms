@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import { useDictionary } from "@/core/composables/useDictionary";
 import { useEventHandler } from "@/core/composables/useEventHandler";
@@ -127,12 +127,15 @@ async function resolveIfLocalModelHasDependencies() {
 }
 
 watch(dependencyWasChanged, () => {
-  if(dependencyWasChanged.value){
+  if(dependencyWasChanged.value && internalStateIsSet.value){
     localModel.value = null
   }
 })
 
+const internalStateIsSet = ref(false)
+
 onMounted(async () => {
+  internalStateIsSet.value = false;
   await initState(props.schema);
   await bindLabel(props.schema);
   await bindRules(props.schema);
@@ -151,6 +154,7 @@ onMounted(async () => {
   }
 
   singleOptionAutoSelectFunction();
+  internalStateIsSet.value = true;
   //console.debug(`[vue-mounted] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
 });
 

@@ -2,11 +2,16 @@
 import { HttpResponse, http } from "msw";
 import { initialize, mswLoader } from "msw-storybook-addon";
 
+
+
 import { ArgTypes } from "@storybook/types";
 import { Meta, StoryObj } from "@storybook/vue3";
 
+
+
 import DevelopmentTable from "../components/app/DevelopmentTable.vue";
 import { Layout } from "../types/shared/Layout";
+
 
 initialize();
 
@@ -205,30 +210,32 @@ export const ReturnObjectFalse: Story = {
 export const ModelNaStart: Story = {
   args: {
     model: {
-      dictionary: "Paris 2",
+      dictionary: {
+        id: "15",
+        label: 15,
+      },
+      temp: "Paris"
     },
     schema: {
       type: "object",
       properties: {
-        span: {
-          content:
-            "<strong>Autocomplete:</strong> wybór tylko z wartości słownika<br><strong>Model na start</strong><br><strong>Zwracaj obiekt:</strong> tak<br><strong>Opcja autowybierania 1 wartości:</strong> tak",
+        temp: {
+          "label":"temp",
           layout: {
-            component: "static-content",
-            tag: "span",
-          } as Layout,
+            component: "text-field"
+          }
         },
         dictionary: {
           label: "Słownik autocomplete - wartość tylko z możliwych",
           layout: {
-            component: "combobox",
+            component: "dictionary",
             cols: 12,
           },
           source: {
-            url: "/mock-dictionaries",
+            url: "/mock-dictionaries?filter=label%3D%3D{temp}",
             title: "label",
             value: "id",
-            returnObject: false,
+            returnObject: true,
             lazy: true,
             singleOptionAutoSelect: true,
           },

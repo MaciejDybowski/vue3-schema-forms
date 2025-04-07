@@ -16,9 +16,9 @@
 
 ## 📂 Projekt, istotne logi i/lub zrzuty ekranu (link do zadania)
 
-- [ ] Link do elementu systemu, w którym występuje błąd: <!-- Wklej link -->
-- [ ] Logi z konsoli (zakładka Network, Console): <!-- Wklej logi lub opisz -->
-- [ ] Zrzuty ekranu (jeśli pomocne): <!-- Wstaw zrzuty ekranu lub usuń, jeśli niepotrzebne -->
+- Link do elementu systemu, w którym występuje błąd: <!-- Wklej link -->
+- Logi z konsoli (zakładka Network, Console): <!-- Wklej logi lub opisz -->
+- Zrzuty ekranu (jeśli pomocne): <!-- Wstaw zrzuty ekranu lub usuń, jeśli niepotrzebne -->
 
 ---
 
