@@ -131,6 +131,7 @@ export const DialogWithInjectedForm: Story = {
             code: "update_csv",
             modelReference: "popupModel",
             title: "Title of the dialog - static text without deps",
+            acceptText: "Import",
           },
           schema: {
             properties: {

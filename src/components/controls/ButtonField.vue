@@ -32,10 +32,11 @@
           ></v-btn>
 
           <v-btn
-            :text="popup.acceptText"
-            v-bind="{ ...fieldProps, variant: 'elevated' }"
+            v-bind="{ ...fieldProps, color: 'primary', variant: 'elevated' }"
             @click="saveDialogForm(isActive)"
-          />
+          >
+            {{popup.acceptText}}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -62,6 +63,7 @@ import { Schema } from "@/types/schema/Schema";
 import { useEventBus } from "@vueuse/core";
 
 import VueSchemaForms from "../engine/VueSchemaForms.vue";
+import { fi } from "vuetify/locale";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 
@@ -124,6 +126,9 @@ function runBtnLogic() {
       popup.title = schema.config.title;
       if (schema.config.modelReference) {
         popup.model = get(model, schema.config.modelReference, {});
+      }
+      if(schema.config.acceptText){
+        popup.acceptText = schema.config.acceptText;
       }
       popup.schema = schema.schema as any;
       popup.acceptFunction = async () => {
