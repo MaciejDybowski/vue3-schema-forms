@@ -1,52 +1,53 @@
-## Vue3 Json Schema Form powered by Vuetify 🚀
+# Vue3 Schema Forms 🚀
 
-Create dynamic and user-friendly forms effortlessly with the Vue3 and Vuetify.
-This library is designed to simplify form creation by leveraging the JSON Schema format.
+> **Dynamic JSON Schema-powered forms for Vue 3 + Vuetify.**
 
-Inspired by https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/
+Easily build dynamic, user-friendly, and customizable forms using JSON Schema, powered by [Vue 3](https://vuejs.org/) and [Vuetify 3](https://next.vuetifyjs.com/).
 
-## Documentation
+Inspired by [vuetify-jsonschema-form](https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/).
 
-The documentation and some of the testing was based on the Storybook
-application 👉 [live](https://maciejdybowski.github.io/vue3-schema-forms/)
+---
 
-Check the changelog here 👉 [@latest](https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs)
+## 📚 Documentation
 
-Sample app with schema forms configuration 👉 [here](https://github.com/MaciejDybowski/vue3-schema-forms-demo-app)
+- **Storybook (live preview):** [View Demo](https://maciejdybowski.github.io/vue3-schema-forms/)
+- **Changelog:** [See latest changes](https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs)
+- **Example App:** [GitHub Repo](https://github.com/MaciejDybowski/vue3-schema-forms-demo-app)
 
-## Requirements
+---
 
-To relieve the library of dependencies as ```peerDependencies``` library takes:
-
-* ```vue@3.4.3```
-* ```vuetify@3.4.9```
-* ```axios@1.6.2``` - in order to maintain the configuration from the host (e.g. token interceptor)
-* ```dayjs@1.11.10``` - management and formatting of dates including time zones,
-* ```pinia@2.1.7``` - managing the status of each form, reference values
-* ```vue-i18n@9.6.4``` - handling translations in the library
-* ```vuedraggable@4.1.0``` - support for drag&drop interaction
-
-For manage SFC i18n translation ```devDependencies```:
-
-* ```intlify/unplugin-vue-i18n@0.13.0```
-
-```bash
-npm i vue@3.4.14 vuetify@3.5.1 axios@1.6.5 dayjs@1.11.10 pinia@2.1.7 vue-i18n@9 vuedraggable@next
-```
-
-```bash
-npm install -dev @intlify/unplugin-vue-i18n@0.13.0
-```
-
-## Installation
-
-You can install `vue3-schema-forms` using [npm](https://www.npmjs.com/package/vue3-schema-forms):
+## ⚙️ Installation
 
 ```bash
 npm install vue3-schema-forms
 ```
 
-## Usage
+> **Peer dependencies required:**
+
+```bash
+npm install vue@3.4.14 vuetify@3.5.1 axios@1.6.5 dayjs@1.11.10 pinia@2.1.7 vue-i18n@9 vuedraggable@next
+```
+
+> **Optional for SFC i18n support:**
+
+```bash
+npm install -D @intlify/unplugin-vue-i18n@0.13.0
+```
+
+---
+
+## ✨ Features
+
+- 🚀 Dynamic form generation based on JSON Schema
+- 🎨 Full Vuetify 3 integration
+- 🌍 Built-in i18n support
+- 🧩 Drag & Drop (with `vuedraggable`)
+- 🔥 Form sections duplication
+- 🛠️ Customizable validation and error display
+
+---
+
+## 📐 Quick Usage
 
 ```typescript
 import { createVueSchemaForms } from 'vue3-schema-forms';
@@ -58,102 +59,147 @@ createApp(App)
   .mount('#app');
 ```
 
-After importing the plugin, we can invoke the form-generating component and pass the appropriate props.
-
 ```vue
-
 <template>
   <vue-schema-forms
-    v-model='model'
-    :schema='schema'
-    :options='formOptions'
-    :default-form-actions='true'
-    :validation-behaviour="'messages'"
-  >
-  </vue-schema-forms>
+    v-model="model"
+    :schema="schema"
+    :options="formOptions"
+    :default-form-actions="true"
+    validation-behaviour="messages"
+  />
 </template>
 
-<script>
-  const formOptions = ref({});
-  const model = ref({});
-  const schema = ref({
-    type: 'object',
-    properties: {
-      field1: {
-        label: 'Field 1',
-        layout: {
-          component: 'text-field',
-        },
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const model = ref({});
+const formOptions = ref({});
+const schema = ref({
+  type: 'object',
+  properties: {
+    field1: {
+      label: 'Field 1',
+      layout: {
+        component: 'text-field',
       },
     },
-  });
+  },
+});
 </script>
 ```
 
-#### Props description
+---
 
-| Name                | Default  | Type                | Description                                                                                                                                          |
-|---------------------|----------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| model               | -        | object              | json object in which the values collected by the form will be stored                                                                                 |
-| schema              | -        | Schema              | JSON object conforming to the defined Schema interface, is responsible for the appearance, layout and type of fields generated by the form component |
-| options             | -        | object              | JSON object in which the user can define options common to multiple form fields                                                                      |
-| defaultFormActions  | false    | boolean             | flag, which is responsible for the visibility of the default form buttons in the #formActions slot                                                   |
-| validationBehaviour | "scroll" | ValidationBehaviour | A flag that defines the validation behavior after a failed attempt to validate the form. Available options "scroll" / "messages"                     |
+## 📋 Props
 
-#### Options
+| Name                | Type                | Default  | Description                                                                                                                                         |
+|---------------------|---------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `model`             | `object`             | —        | Two-way binding for form values.                                                                                                                    |
+| `schema`            | `Schema`             | —        | JSON Schema object defining fields, types, and layouts.                                                                                             |
+| `options`           | `object`             | —        | Global options applied to all fields.                                                                                                               |
+| `defaultFormActions`| `boolean`            | `false`  | Toggles default form buttons (Submit / Reset).                                                                                                      |
+| `validationBehaviour` | `"scroll" \| "messages"` | `"scroll"` | Defines validation behavior after error (auto-scroll to first invalid field or show messages).                                                      |
 
-In options, there are priorities in setting props for form fields:
+---
 
-1. Defaults (!)
-2. FieldProps (!!)
-3. InputType Props (!!!)
-4. Specific props defined in layout (!!!!)
+## ⚙️ Options
 
-Example: If when defining a layout you specify props as they are in the default they will be overwritten
+Field props priorities:
 
-The following table shows the default values for each field
+> Defaults → Field Props → Input Type Props → Layout-specific Props
 
-| Name               | Default                                                                 | Type   | Description                                               |
-|--------------------|-------------------------------------------------------------------------|--------|-----------------------------------------------------------|
-| digitsAfterDecimal | 2                                                                       | number | Number of decimal places in the representation of numbers |
-| fieldProps         | -                                                                       | object | Option to set props for each type of field                |
-| textFieldProps     | ```{'hide-details': 'auto',}```                                         | object | Option to set props for text fields                       |
-| textAreaProps      | ```{"rows": 3, "hide-details": "auto", "auto-grow": true}```            | object | Option to set props for text-area fields                  |
-| radioButtonProps   | ```{"density": "compact", "hide-details": "auto"}```                    | object | Option to set props for radio fields                      |
-| buttonProps        | -                                                                       | object | Option to set props for button (duplicated section)       |
-| checkboxProps      | ```{"density": "compact", "hide-details": "auto", "multiple": true }``` | object | Option to set props for checkbox fields                   |
-| selectProps        | ```{"hide-details": "auto"}```                                          | object | Option to set props for autocomplete/select fields        |
+Default values:
 
-#### Component slots
+| Name               | Type   | Default                                                                 |
+|--------------------|--------|-------------------------------------------------------------------------|
+| `digitsAfterDecimal` | number | `2`                                                                     |
+| `fieldProps`         | object | `-`                                                                     |
+| `textFieldProps`     | object | `{ hide-details: 'auto' }`                                               |
+| `textAreaProps`      | object | `{ rows: 3, hide-details: 'auto', auto-grow: true }`                    |
+| `radioButtonProps`   | object | `{ density: 'compact', hide-details: 'auto' }`                          |
+| `checkboxProps`      | object | `{ density: 'compact', hide-details: 'auto', multiple: true }`           |
+| `selectProps`        | object | `{ hide-details: 'auto' }`                                               |
+| `buttonProps`        | object | `-`                                                                     |
 
-| Name        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| formActions | The slot contains predefined default actions for the form: validation, reset validation and reset form. The user is free to override this slot and write his own buttons using exposed functions from the component. Just give "ref" and enjoy a ready-made validation function that takes 3 options: no parameter / scroll / messages [example](https://maciejdybowski.github.io/vue3-schema-forms/?path=/story/forms-features-validations--add-custom-submit-with-built-in-validation) |
+---
 
-## Integrated fields
+## 🎯 Slots
 
-| Name          | Default settings                                                                                                                                                                                   | Component | Description                                        | Link                                                                       |
-|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|----------------------------------------------------|----------------------------------------------------------------------------|
-| v-phone-input | <pre>{<br>  'country-icon-mode': 'svg',<br>  'countryLabel': t('countryLabel'),<br>  'guess-country': true, <br>  'include-countries': ['pl', 'gb', 'ru', 'de', 'us', 'es', 'fr', 'it']<br>}</pre> | phone     | International phone field for Vuetify 3 and Vue 3. | [source](https://github.com/paul-thebaud/v-phone-input?tab=readme-ov-file) |
+| Name         | Description                                                                                                                                                                              |
+|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `formActions` | Customize form actions (submit, reset, validate). Default implementation provided. You can override it and use exposed validation functions. [Example](https://maciejdybowski.github.io/vue3-schema-forms/?path=/story/forms-features-validations--add-custom-submit-with-built-in-validation) |
 
-## Plugin options
+---
 
-| Name             | Default | Type       | Description                                                                                                                                                                |
-|------------------|---------|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| formUpdateLogger | false   | boolean    | enabling this option allows the console to preview the form model update event                                                                                             |
-| customComponents | -       | Components | This option allows you to install your custom form fields. You need to specify the name and the component. The integration is on your side using the composables provided. |
+## 📦 Components Structure
 
-```typescript
-// example of adding options
-const customs = {
-  'user-input': UserInput,
-};
+> *(Rendered using Mermaid diagrams)*
 
-const vueSchemaForms = createVueSchemaForms({
-  customComponents: customs,
-  formUpdateLogger: true
-});
+```mermaid
+flowchart TB
+  classDef blue fill:#66deff,stroke:#000,color:#000
+  classDef green fill:#6ad98b,stroke:#000,color:#000
+
+  VueSchemaForms ---> VRoot:::blue ---> VNode
+  VNode ---> TextField:::green
+  VNode ---> TextArea:::green
+  VNode ---> Select:::green
+  VNode ---> DuplicatedSection:::green ---> VRoot ---> VNode
+  VNode ---> FieldsGroup:::green ---> VRoot ---> VNode
 ```
+
+---
+
+## 📑 JSON Schema Flattening
+
+Flattened key notation for nested fields:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "someField": {
+      "label": "Some field",
+      "layout": {
+        "component": "text-field"
+      }
+    },
+    "nestedData": {
+      "properties": {
+        "field": {
+          "label": "Nested field",
+          "layout": {
+            "component": "text-field"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Visualized:
+
+```mermaid
+flowchart TB
+  classDef blue fill:#66deff,stroke:#000,color:#000
+  classDef green fill:#6ad98b,stroke:#000,color:#000
+
+  VueSchemaForms ---> VRoot:::blue ---> VNode
+  VNode ---> someField:::green
+  VNode ---> nestedData.field:::green
+```
+
+---
+
+## 📞 Integrated Fields
+
+| Component         | Default Configuration                                                                                                                                                                          | Description                              | Link                                  |
+|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------|---------------------------------------|
+| `v-phone-input`    | `{ 'country-icon-mode': 'svg', 'countryLabel': t('countryLabel'), 'guess-country': true, 'include-countries': ['pl', 'gb', 'ru', 'de', 'us', 'es', 'fr', 'it'] }` | International phone input for Vue 3 + Vuetify | [Source](https...) |
+
+---
 
 ## Tests
 
@@ -170,3 +216,8 @@ const vueSchemaForms = createVueSchemaForms({
 3. Commit your changes: ```git commit -am 'Add some feature'```
 4. Push to the branch: ```git push origin my-new-feature```
 5. Submit a pull request
+
+
+## 🛡️ License
+
+[MIT](LICENSE)
