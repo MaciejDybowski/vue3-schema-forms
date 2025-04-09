@@ -313,22 +313,88 @@ export const Table: Story = {
             value: "id",
           },
         },
-     /*   orderedMultiSelect2: {
-          label: "Wybierz elementy do generowania exclea",
-          variant: "combobox",
-          layout: {
-            cols: 6,
-            component: "ordered-multi-select",
-          },
-          source: {
-            url: "/mock/dictionaries/items-to-excel",
-            title: "label",
-            value: "id",
-          },
-        },*/
+        /*   orderedMultiSelect2: {
+             label: "Wybierz elementy do generowania exclea",
+             variant: "combobox",
+             layout: {
+               cols: 6,
+               component: "ordered-multi-select",
+             },
+             source: {
+               url: "/mock/dictionaries/items-to-excel",
+               title: "label",
+               value: "id",
+             },
+           },*/
       },
       required: ["orderedMultiSelect"],
       i18n: {},
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: SCHEMAS,
+    },
+  },
+};
+
+export const FillRow: Story = {
+  args: {
+    model: {
+      orderedMultiSelect: null,
+    },
+    schema: {
+      type: "object",
+      properties: {
+
+        group: {
+          layout: {
+            component: "fields-group",
+            cols: 6,
+            schema: {
+              type: "object",
+              properties: {
+                item1: {
+                  label: "Item1",
+                  layout: {
+                    component: "text-field",
+                    cols: 6,
+                  },
+                },
+                item2: {
+                  label: "Item2",
+                  layout: {
+                    component: "text-field",
+                    cols: 6,
+                  },
+                },
+                item3: {
+                  label: "Item3",
+                  layout: {
+                    component: "text-field",
+                    cols: 4,
+                  },
+                },
+                item4: {
+                  label: "Item4",
+                  layout: {
+                    component: "text-field",
+                    cols: 2,
+                  },
+                },
+                item5: {
+                  label: "Item4",
+                  layout: {
+                    component: "text-field",
+                    cols: 6,
+                  },
+                },
+              },
+
+            },
+          }
+        }
+      },
     },
   },
   parameters: {

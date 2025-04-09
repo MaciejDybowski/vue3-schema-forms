@@ -1,13 +1,12 @@
 import jsonata from "jsonata";
 import { Ref, ref } from "vue";
 
+import { useLocale } from "@/core/composables/useLocale";
 import { useResolveVariables } from "@/core/composables/useResolveVariables";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { SchemaSimpleValidation } from "@/types/shared/SchemaSimpleValidation";
 import { useEventBus } from "@vueuse/core";
-
-import { useLocale } from "../../core/composables/useLocale";
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
 export function useRules() {
@@ -21,9 +20,9 @@ export function useRules() {
     if (schema.required) {
       requiredInputClass.value = " required-input";
       rules.value.push((val: any) => {
-         const isValidArray = Array.isArray(val) && val.length > 0;
+        const isValidArray = Array.isArray(val) && val.length > 0;
         const isValidPrimitive = val !== "" && val !== null && val !== undefined;
-         if(!isValidArray && Array.isArray(val)) return t("required")
+        if (!isValidArray && Array.isArray(val)) return t("required");
         return isValidPrimitive || val === false ? true : t("required");
       });
     }
