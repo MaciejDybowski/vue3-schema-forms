@@ -1,122 +1,124 @@
 <template>
-  <v-data-table-server
-    v-model:items-per-page="tableOptions.itemsPerPage"
-    v-model:loading="loading"
-    v-model:page="tableOptions.page"
-    v-model:sort-by="tableOptions.sortBy"
-    :headers="headers"
-    :hover="true"
-    :items="items"
-    :items-length="itemsTotalElements"
-    class="custom-table"
-    density="compact"
-    @update:options="updateOptions"
-  >
-    <template #top>
-      <v-row dense>
-        <v-col
-          v-for="button in buttons"
-          cols="auto"
-        >
-          <v-btn
-            v-bind="{ ...tableButtonDefaultProps, ...button.btnProps }"
-            @click="runTableBtnLogic(button)"
+  <div>
+    <v-data-table-server
+      v-model:items-per-page="tableOptions.itemsPerPage"
+      v-model:loading="loading"
+      v-model:page="tableOptions.page"
+      v-model:sort-by="tableOptions.sortBy"
+      :headers="headers"
+      :hover="true"
+      :items="items"
+      :items-length="itemsTotalElements"
+      class="custom-table"
+      density="compact"
+      @update:options="updateOptions"
+    >
+      <template #top>
+        <v-row dense>
+          <v-col
+            v-for="button in buttons"
+            cols="auto"
           >
-            {{ button.label }}
-          </v-btn>
-        </v-col>
-      </v-row>
-    </template>
+            <v-btn
+              v-bind="{ ...tableButtonDefaultProps, ...button.btnProps }"
+              @click="runTableBtnLogic(button)"
+            >
+              {{ button.label }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
 
-    <!-- Poniższy template dotyczy nagłówków tabeli -->
-    <template
-      v-for="header in headers"
-      :key="header.key"
-      #[`header.${header.key}`]
+      <!-- Poniższy template dotyczy nagłówków tabeli -->
+      <template
+        v-for="header in headers"
+        :key="header.key"
+        #[`header.${header.key}`]
+      >
+        <div :class="header.type === 'NUMBER' ? 'text-right' : ''">
+          {{ header.title }}
+        </div>
+      </template>
+
+      <!-- Każda komórka -->
+      <template
+        v-for="header in headers"
+        :key="header.key"
+        #[`item.${header.key}`]="{ item, index }"
+      >
+        <table-cell-wrapper
+          :actions="actions"
+          :field-props="fieldProps"
+          :header="header"
+          :item="item"
+          @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
+          @run-table-action-logic="(event) => runTableActionLogic(event, index)"
+        />
+      </template>
+
+      <!-- miejsce przygotowane na agregaty -->
+
+      <template
+        v-if="!loading && aggregates"
+        v-slot:body.append="{}"
+      >
+        <tr :class="[theme.global.current.value.dark ? 'v-data-table__tr-aggregates-dark' : 'v-data-table__tr-aggregates-light']">
+          <td v-for="(header, headerIndex) in headers">
+            <table-footer-cell
+              v-if="header.footerMapping"
+              :aggregates="aggregates"
+              :footer-mapping="header.footerMapping"
+            />
+          </td>
+        </tr>
+      </template>
+
+      <template #bottom="{ page, itemsPerPage, pageCount }">
+        <TablePagination
+          :itemsPerPage="itemsPerPage"
+          :itemsPerPageOptions="[5, 10, 20]"
+          :page="page"
+          :pageCount="pageCount"
+          :total-items="itemsTotalElements"
+          @update:page="(val) => (tableOptions.page = val)"
+          @update:itemsPerPage="(val) => (tableOptions.itemsPerPage = val)"
+        />
+      </template>
+    </v-data-table-server>
+
+    <v-dialog
+      v-model="actionPopup.show"
+      max-width="650"
     >
-      <div :class="header.type === 'NUMBER' ? 'text-right' : ''">
-        {{ header.title }}
-      </div>
-    </template>
+      <template v-slot:default="{ isActive }">
+        <v-card :title="actionPopup.title">
+          <v-card-text>
+            <vue-schema-forms
+              ref="actionPopupReference"
+              v-model="actionPopup.model"
+              :options="actionPopup.options"
+              :schema="actionPopup.schema"
+            />
+          </v-card-text>
+          <v-card-actions class="mx-4">
+            <v-spacer></v-spacer>
 
-    <!-- Każda komórka -->
-    <template
-      v-for="header in headers"
-      :key="header.key"
-      #[`item.${header.key}`]="{ item, index }"
-    >
-      <table-cell-wrapper
-        :actions="actions"
-        :field-props="fieldProps"
-        :header="header"
-        :item="item"
-        @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
-        @run-table-action-logic="(event) => runTableActionLogic(event, index)"
-      />
-    </template>
+            <v-btn
+              :text="t('close')"
+              v-bind="{ ...tableButtonDefaultProps, color: '', variant: 'elevated' }"
+              @click="isActive.value = false"
+            ></v-btn>
 
-    <!-- miejsce przygotowane na agregaty -->
-
-    <template
-      v-if="!loading && aggregates"
-      v-slot:body.append="{}"
-    >
-      <tr :class="[theme.global.current.value.dark ? 'v-data-table__tr-aggregates-dark' : 'v-data-table__tr-aggregates-light']">
-        <td v-for="(header, headerIndex) in headers">
-          <table-footer-cell
-            v-if="header.footerMapping"
-            :aggregates="aggregates"
-            :footer-mapping="header.footerMapping"
-          />
-        </td>
-      </tr>
-    </template>
-
-    <template #bottom="{ page, itemsPerPage, pageCount }">
-      <TablePagination
-        :itemsPerPage="itemsPerPage"
-        :itemsPerPageOptions="[5, 10, 20]"
-        :page="page"
-        :pageCount="pageCount"
-        :total-items="itemsTotalElements"
-        @update:page="(val) => (tableOptions.page = val)"
-        @update:itemsPerPage="(val) => (tableOptions.itemsPerPage = val)"
-      />
-    </template>
-  </v-data-table-server>
-
-  <v-dialog
-    v-model="actionPopup.show"
-    max-width="650"
-  >
-    <template v-slot:default="{ isActive }">
-      <v-card :title="actionPopup.title">
-        <v-card-text>
-          <vue-schema-forms
-            ref="actionPopupReference"
-            v-model="actionPopup.model"
-            :options="actionPopup.options"
-            :schema="actionPopup.schema"
-          />
-        </v-card-text>
-        <v-card-actions class="mx-4">
-          <v-spacer></v-spacer>
-
-          <v-btn
-            :text="t('close')"
-            v-bind="{ ...tableButtonDefaultProps, color: '', variant: 'elevated' }"
-            @click="isActive.value = false"
-          ></v-btn>
-
-          <v-btn
-            :text="actionPopup.acceptText"
-            v-bind="{ ...tableButtonDefaultProps, variant: 'elevated' }"
-            @click="saveDialogForm(isActive)"
-          />
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-dialog>
+            <v-btn
+              :text="actionPopup.acceptText"
+              v-bind="{ ...tableButtonDefaultProps, variant: 'elevated' }"
+              @click="saveDialogForm(isActive)"
+            />
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -209,9 +211,11 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
 
 const buildHeader = (item: TableHeader): TableHeader => {
   const { key, title, type, valueMapping, color, footerMapping, properties, items, editable, actions } = item;
+  //@ts-ignore - builder purpose
+  const titleRef = typeof title == "string" ? title : title.$ref;
   const header: TableHeader = {
     key,
-    title,
+    title:titleRef,
     type,
     valueMapping,
     color,
