@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 
 import { useConditionalRendering } from "@/core/composables";
 import { useSchemaCols } from "@/core/composables/useSchemaCols";
@@ -47,14 +47,10 @@ const mr = computed(() => {
   }
 });
 
-
 onMounted(async () => {
   await shouldRenderField(props.schema, props.model);
   await shouldHideField(props.schema, props.model)
 });
-
-
-
 </script>
 
 <style lang="css" scoped></style>
