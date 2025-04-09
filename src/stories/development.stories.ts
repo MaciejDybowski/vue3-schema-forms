@@ -346,54 +346,44 @@ export const FillRow: Story = {
     schema: {
       type: "object",
       properties: {
-
-        group: {
+        item1: {
+          label: "Item1",
           layout: {
-            component: "fields-group",
-            cols: 6,
-            schema: {
-              type: "object",
-              properties: {
-                item1: {
-                  label: "Item1",
-                  layout: {
-                    component: "text-field",
-                    cols: 6,
-                  },
-                },
-                item2: {
-                  label: "Item2",
-                  layout: {
-                    component: "text-field",
-                    cols: 6,
-                  },
-                },
-                item3: {
-                  label: "Item3",
-                  layout: {
-                    component: "text-field",
-                    cols: 4,
-                  },
-                },
-                item4: {
-                  label: "Item4",
-                  layout: {
-                    component: "text-field",
-                    cols: 2,
-                  },
-                },
-                item5: {
-                  label: "Item4",
-                  layout: {
-                    component: "text-field",
-                    cols: 6,
-                  },
-                },
-              },
+            component: "text-field",
+            cols: 4,
+          },
+        },
+        item2: {
+          label: "Item2",
+          layout: {
+            component: "text-field",
+            cols: 4,
+            fillRow: true,
+          },
+        },
+        item3: {
+          label: "Item3",
+          layout: {
+            component: "text-field",
+            cols: 2,
 
-            },
-          }
-        }
+          },
+        },
+        item4: {
+          label: "Item4",
+          layout: {
+            component: "text-field",
+            cols: 2,
+            fillRow: true,
+          },
+        },
+        item5: {
+          label: "Item4",
+          layout: {
+            component: "text-field",
+            cols: 6,
+          },
+        },
       },
     },
   },
