@@ -1,12 +1,14 @@
 // @ts-nocheck
 import { VueSchemaForms } from "@/components";
-import { REQUEST_PAGE_0_1 } from "@/stories/controls/Dictionary/responses";
+import { CURRENCIES_REQUEST } from "@/stories/mock-responses";
 import { expect, fireEvent, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import { DictionarySource } from "../../types/shared/Source";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "../controls/utils";
+import { initialize, mswLoader } from "msw-storybook-addon";
+initialize();
 
 const meta = {
   title: "Forms/Features/On change events",
@@ -39,6 +41,7 @@ const meta = {
   parameters: {
     controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
   },
+  loaders: [mswLoader],
 } satisfies Meta<typeof VueSchemaForms>;
 
 export default meta;
@@ -210,9 +213,8 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
       section: [
         {
           currency: {
-            id: "AFN",
-            label: "Afgani",
-            digitsAfterDecimal: "2",
+            id: "USD",
+            label: "US Dollar"
           },
           fieldB: null,
         },
@@ -241,7 +243,7 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
                     component: "dictionary",
                   },
                   source: {
-                    url: "/api/currencies",
+                    url: "/mock-data/currencies",
                     title: "label",
                     value: "id",
                   } as DictionarySource,
@@ -270,6 +272,8 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
     },
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: [CURRENCIES_REQUEST]
+    },
   },
 };

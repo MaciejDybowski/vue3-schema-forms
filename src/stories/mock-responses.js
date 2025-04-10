@@ -120,3 +120,60 @@ export const TABLE_PAGE_WITHOUT_AGGREGATES = [
     });
   }),
 ];
+
+
+
+const allCurrencies = [
+  { id: "USD", label: "US Dollar" },
+  { id: "EUR", label: "Euro" },
+  { id: "GBP", label: "British Pound" },
+  { id: "JPY", label: "Japanese Yen" },
+  { id: "CHF", label: "Swiss Franc" },
+  { id: "AUD", label: "Australian Dollar" },
+  { id: "CAD", label: "Canadian Dollar" },
+  { id: "NZD", label: "New Zealand Dollar" },
+  { id: "SEK", label: "Swedish Krona" },
+  { id: "NOK", label: "Norwegian Krone" },
+  { id: "DKK", label: "Danish Krone" },
+  { id: "PLN", label: "Polish Zloty" },
+  { id: "CZK", label: "Czech Koruna" },
+  { id: "HUF", label: "Hungarian Forint" },
+  { id: "RUB", label: "Russian Ruble" },
+  { id: "CNY", label: "Chinese Yuan" },
+  { id: "INR", label: "Indian Rupee" },
+  { id: "BRL", label: "Brazilian Real" },
+  { id: "ZAR", label: "South African Rand" },
+  { id: "MXN", label: "Mexican Peso" },
+];
+
+
+// Funkcja do paginacji walut
+const generateCurrenciesPage = (page, size) => {
+  const startIndex = page * size;
+  const endIndex = startIndex + size;
+  return allCurrencies.slice(startIndex, endIndex);
+};
+
+export const CURRENCIES_REQUEST = http.get("/mock-data/currencies", async (req, res, ctx) => {
+  const url = req.request.url;
+  const urlParams = new URLSearchParams(url.split("?")[1]);
+
+  const page = parseInt(urlParams.get("page") ?? "0");
+  const size = parseInt(urlParams.get("size") ?? "50");
+
+  const currencies = generateCurrenciesPage(page, size);
+
+  if (currencies.length === 0) {
+    return HttpResponse.text("No currencies available for the requested page", { status: 404 });
+  }
+
+  return HttpResponse.json({
+    content: currencies,
+    page: {
+      totalElements: allCurrencies.length,
+      page,
+      itemsPerPage: size,
+    },
+  });
+});
+

@@ -46,6 +46,77 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+const MOCK_REQUEST_CURRENCY = [
+  http.get("/mocks/currencies", async ({ request }) => {
+    console.log("Intercepted request:", request.url);
+    const url = new URL(request.url);
+    const valueFilter = url.searchParams.get("value-filter");
+    const query = url.searchParams.get("query");
+    const page = Number(url.searchParams.get("page")) || 0;
+    const size = Number(url.searchParams.get("size")) || 20;
+
+    const allCurrencies = [
+      { id: "AFN", label: "Afgani", digitsAfterDecimal: "2" },
+      { id: "ALL", label: "Lek", digitsAfterDecimal: "3" },
+      { id: "AMD", label: "Dram", digitsAfterDecimal: "2" },
+      { id: "ANG", label: "Gulden Antyli Holenderskich", digitsAfterDecimal: "2" },
+      { id: "AOA", label: "Kwanza", digitsAfterDecimal: "2" },
+      { id: "ARS", label: "Peso argentyńskie", digitsAfterDecimal: "2" },
+      { id: "AUD", label: "Dolar australijski", digitsAfterDecimal: "2" },
+      { id: "AWG", label: "Florin arubański", digitsAfterDecimal: "2" },
+      { id: "AZN", label: "Manat azerbejdżański", digitsAfterDecimal: "2" },
+      { id: "BAM", label: "Marka zamienna", digitsAfterDecimal: "2" },
+      { id: "BBD", label: "Dolar barbadoski", digitsAfterDecimal: "2" },
+      { id: "BDT", label: "Taka", digitsAfterDecimal: "2" },
+      { id: "BGN", label: "Lew", digitsAfterDecimal: "2" },
+      { id: "BHD", label: "Dinar bahrajski", digitsAfterDecimal: "3" },
+      { id: "BIF", label: "Frank burundyjski", digitsAfterDecimal: "0" },
+      { id: "BMD", label: "Dolar bermudzki", digitsAfterDecimal: "2" },
+      { id: "BND", label: "Dolar brunejski", digitsAfterDecimal: "2" },
+      { id: "BOB", label: "Boliviano", digitsAfterDecimal: "2" },
+      { id: "BOV", label: "MVDOL boliwijski", digitsAfterDecimal: "2" },
+      { id: "BRL", label: "Real brazylijski", digitsAfterDecimal: "2" },
+    ];
+
+    if (valueFilter) {
+      // Jeśli value-filter jest ustawiony, zwracamy tylko jedną walutę
+      return HttpResponse.json({
+        content: [
+          {
+            id: valueFilter,
+            label: "Polski Złoty", // Tutaj możesz dodać lookup po ID jeśli chcesz dynamicznie
+          },
+        ],
+        pagination: { page, size },
+      });
+    }
+
+    let filteredCurrencies = allCurrencies;
+
+    if (query) {
+      const lowerQuery = query.toLowerCase();
+      filteredCurrencies = allCurrencies.filter(
+        (currency) =>
+          currency.id.toLowerCase().includes(lowerQuery) ||
+          currency.label.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    // Paginacja
+    const start = page * size;
+    const end = start + size;
+    const paginatedCurrencies = filteredCurrencies.slice(start, end);
+
+    return HttpResponse.json({
+      content: paginatedCurrencies,
+      pagination: {
+        page,
+        size,
+      },
+    });
+  }),
+];
+
 export const ReadOnlyWithValue: Story = {
   play: async (context) => {
     /*await waitForMountedAsync()
@@ -319,7 +390,7 @@ export const WithSearch: Story = {
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
     await userEvent.type(select, "Dol", { delay: 200 });
     const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[0], { delay: 200 });
+    await userEvent.click(items[0], { delay: 400 });
     await expect(context.args.modelValue).toEqual({
       currency: {
         id: "AUD",
@@ -339,7 +410,7 @@ export const WithSearch: Story = {
             component: "dictionary",
           },
           source: {
-            url: "/api/currencies",
+            url: "/mocks/currencies",
             title: "label",
             value: "id",
           } as DictionarySource,
@@ -348,8 +419,10 @@ export const WithSearch: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL],
-  },
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  }
 };
 
 export const ReturnValue: Story = {
@@ -376,7 +449,7 @@ export const ReturnValue: Story = {
             component: "dictionary",
           },
           source: {
-            url: "/api/currencies",
+            url: "/mocks/currencies",
             title: "label",
             value: "id",
             returnObject: false,
@@ -386,8 +459,10 @@ export const ReturnValue: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
-  },
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  }
 };
 
 export const Required: Story = {
@@ -545,142 +620,6 @@ export const DefaultValueAsATextWithDependencies: Story = {
 
 
 
-const MOCK_REQUEST_CURRENCY = [
-  http.get("/mocks/currencies", async ({ request }) => {
-    console.log("Intercepted request:", request.url);
-    const url = new URL(request.url);
-    const valueFilter = url.searchParams.get("value-filter");
-    const page = url.searchParams.get("page");
-    const size = url.searchParams.get("size");
-
-
-    if(valueFilter){
-      return HttpResponse.json({
-        content: [
-          {
-            id: valueFilter || "PLN",
-            label: "Polski Złoty",
-          },
-        ],
-        pagination: {
-          page: Number(page) || 0,
-          size: Number(size) || 20,
-        },
-      });
-    } else {
-      return HttpResponse.json({
-        content: [
-          {
-            id: "AFN",
-            label: "Afgani",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "ALL",
-            label: "Lek",
-            digitsAfterDecimal: "3",
-          },
-          {
-            id: "AMD",
-            label: "Dram",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "ANG",
-            label: "Gulden Antyli Holenderskich",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "AOA",
-            label: "Kwanza",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "ARS",
-            label: "Peso argentyńskie",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "AUD",
-            label: "Dolar australijski",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "AWG",
-            label: "Florin arubański",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "AZN",
-            label: "Manat azerbejdżański",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "BAM",
-            label: "Marka zamienna",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "BBD",
-            label: "Dolar barbadoski",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "BDT",
-            label: "Taka",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "BGN",
-            label: "Lew",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "BHD",
-            label: "Dinar bahrajski",
-            digitsAfterDecimal: "3",
-          },
-          {
-            id: "BIF",
-            label: "Frank burundyjski",
-            digitsAfterDecimal: "0",
-          },
-          {
-            id: "BMD",
-            label: "Dolar bermudzki",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "BND",
-            label: "Dolar brunejski",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "BOB",
-            label: "Boliviano",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "BOV",
-            label: "MVDOL boliwijski",
-            digitsAfterDecimal: "2",
-          },
-          {
-            id: "BRL",
-            label: "Real brazylijski",
-            digitsAfterDecimal: "2",
-          },
-        ],
-        pagination: {
-          page: Number(page) || 0,
-          size: Number(size) || 20,
-        },
-      })
-    }
-
-
-  }),
-];
 
 export const OneTimeValueFilter: Story = {
   play: async (context) => {},

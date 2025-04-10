@@ -1,6 +1,5 @@
 import jsonata from "jsonata";
 import get from "lodash/get";
-import set from "lodash/set";
 import { ref } from "vue";
 
 import { useEventHandler } from "@/core/composables/useEventHandler";
@@ -12,7 +11,7 @@ import { Fn, useEventBus } from "@vueuse/core";
 
 export function useCalculation() {
   const { roundTo } = useNumber();
-  const {onChange} = useEventHandler();
+  const { onChange } = useEventHandler();
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
   const unsubscribeListener = ref<Fn>(() => {});
   const calculationResultWasModified = ref(false);
@@ -75,10 +74,7 @@ export function useCalculation() {
       if (`${field.key}ManuallyChanged` in mergedModel && mergedModel[`${field.key}ManuallyChanged`] == true) {
         return;
       }
-      // TODO - do testów na 30.01 jak działa to super
-      //set(model, field.key, roundTo(result, precision));
       setValue(roundTo(result, precision), field);
-
       await onChange(field, model);
     }
   }

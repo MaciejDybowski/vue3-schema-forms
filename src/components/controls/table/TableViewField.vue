@@ -251,8 +251,8 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
     page: tableOptions.value.page,
     size: tableOptions.value.itemsPerPage,
     sort: tableOptions.value.sortBy,
-    filter: null, // TODO
-    query: null, // TODO
+    filter: null,
+    query: null,
   };
 });
 

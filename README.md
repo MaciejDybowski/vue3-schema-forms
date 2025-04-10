@@ -13,7 +13,6 @@ Inspired by [vuetify-jsonschema-form](https://koumoul-dev.github.io/vuetify-json
 - **Storybook (live preview):** [View Demo](https://maciejdybowski.github.io/vue3-schema-forms/)
 - **Changelog:** [See latest changes](https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs)
 - **Example App:** [GitHub Repo](https://github.com/MaciejDybowski/vue3-schema-forms-demo-app)
-
 ---
 
 ## ⚙️ Installation
@@ -180,6 +179,7 @@ Flattened key notation for nested fields:
 ```
 
 Visualized:
+> *(Rendered using Mermaid diagrams)*
 
 ```mermaid
 flowchart TB
@@ -217,6 +217,13 @@ flowchart TB
 4. Push to the branch: ```git push origin my-new-feature```
 5. Submit a pull request
 
+
+## Internal communication
+Internal communication is based on a shared event bus. 
+This is what functionality such as visibility, dependencies, calculations, expressions and much more are based on.
+1. calculation 5ms
+2. props 10ms
+3. hide/if 50ms
 
 ## 🛡️ License
 

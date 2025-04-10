@@ -1,13 +1,13 @@
-import set from 'lodash/set';
-import { ref, watch } from 'vue';
+import get from "lodash/get";
+import set from "lodash/set";
+import { ref } from "vue";
 
-import { functions } from '../engine/expressionResolver';
-import { useEventBus } from '@vueuse/core';
-import get from 'lodash/get';
-import { useFormModelStore } from "@/store/formModelStore";
+import { useEventBus } from "@vueuse/core";
+
+import { functions } from "../engine/expressionResolver";
 
 export function useExpression() {
-  const vueSchemaFormEventBus = useEventBus<string>('form-model');
+  const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
   async function resolveExpression(key: string, expression: string, model: object, mergedModel: object) {
     let functionName = extractFunctionName(expression);
@@ -16,15 +16,11 @@ export function useExpression() {
       let f = functions[functionName];
       result.value = await f(expression, mergedModel);
 
-      if (!functionName.includes('_GENERATOR') ) {
-        const unsubscribe = vueSchemaFormEventBus.on(async (event) => await expressionListener(event, key, expression, model, mergedModel));
-        // Do usunięcia jak się nic nie wykrzaczy po 5.12.2024 :)
-        /*watch(model async () => {
-          result.value = await f(expression, model);
-          set(model, key, result.value);
-        });*/
+      if (!functionName.includes("_GENERATOR")) {
+        const unsubscribe = vueSchemaFormEventBus.on(
+          async (event) => await expressionListener(event, key, expression, model, mergedModel),
+        );
       }
-
       return result.value;
     }
   }
@@ -38,7 +34,7 @@ export function useExpression() {
         return null; // Return null if no match is found
       }
     } catch (error) {
-      console.error('Error extracting function name:', error);
+      console.error("Error extracting function name:", error);
       return null; // Return null in case of an error
     }
   }
@@ -55,8 +51,5 @@ export function useExpression() {
     }
   }
 
-
   return { resolveExpression };
 }
-
-
