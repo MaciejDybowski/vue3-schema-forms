@@ -38,10 +38,10 @@ import {
   useClass,
   useExpression,
   useFormModel,
-  useLabel,
+  useLabel, useLocale,
   useProps,
   useResolveVariables,
-  useRules,
+  useRules
 } from "@/core/composables";
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { NumberFormattingType, RoundOption, useNumber } from "@/core/composables/useNumber";
@@ -55,7 +55,7 @@ const props = defineProps<{
   model: object;
 }>();
 
-const { t } = useI18n();
+const { t } = useLocale()
 const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { fieldProps, bindProps } = useProps();
@@ -167,12 +167,12 @@ async function runCalculationIfExist() {
   }
 }
 
-function runExpressionIfExist() {
+async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
     const formModelStore = useFormModelStore(props.schema.formId);
     const mergedModel = formModelStore.getFormModelForResolve;
-    localModel.value = resolveExpression(props.schema.key, props.schema.expression, props.model, mergedModel);
+    localModel.value = await resolveExpression(props.schema.key, props.schema.expression, props.model, mergedModel);
   }
 }
 
@@ -190,10 +190,10 @@ const loading = ref(true);
 onMounted(async () => {
   loading.value = true;
   await runCalculationIfExist();
-  await bindProps(props.schema);
-  await bindRules(props.schema);
   await bindLabel(props.schema);
-  runExpressionIfExist();
+  await bindRules(props.schema);
+  await bindProps(props.schema);
+  await runExpressionIfExist();
 
   await resolveIfLocalModelHasDependencies();
 

@@ -63,6 +63,26 @@ export const Integer: Story = {
   },
 };
 
+export const Required: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        numberInt: {
+          label: "Number (int) required",
+          type: "int",
+          layout: {
+            component: "number-field",
+          },
+        },
+      },
+      required: ['numberInt']
+    } as Schema,
+  },
+};
+
 export const FloatWithTextOtherThanRight: Story = {
   play: async (context) => {},
   args: {

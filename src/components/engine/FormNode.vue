@@ -4,7 +4,6 @@
     v-show="!shouldHide && shouldRender"
     :class="layoutCssClass"
     :cols="cols"
-    :style="mr"
   >
     <component
       :is="`node-${schema.layout.component}`"
@@ -12,15 +11,19 @@
       :schema="schema"
     />
   </v-col>
+  <div
+    v-if="fillRow"
+    class="fill-row"
+  />
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted } from "vue";
 
 import { useConditionalRendering } from "@/core/composables";
+import { useConditionalHide } from "@/core/composables/useConditionalHide";
 import { useSchemaCols } from "@/core/composables/useSchemaCols";
 import { EngineField } from "@/types/engine/EngineField";
-import { useConditionalHide } from "@/core/composables/useConditionalHide";
 
 const props = defineProps<{
   schema: EngineField;
@@ -28,32 +31,29 @@ const props = defineProps<{
 }>();
 
 const { shouldRender, shouldRenderField } = useConditionalRendering();
-const { shouldHide, shouldHideField } = useConditionalHide()
-const { cols, completionOfRow, isOffsetExist, offset, fillRow,  } = useSchemaCols(props.schema);
+const { shouldHide, shouldHideField } = useConditionalHide();
+const { cols, completionOfRow, isOffsetExist, offset, fillRow } = useSchemaCols(props.schema);
 
 const layoutCssClass = computed(() => {
   let cssString = "";
-
   if (isOffsetExist) {
     cssString += `offset-${offset}`;
   }
-
   return cssString;
-});
-
-const mr = computed(() => {
-  if (fillRow.value) {
-    return `margin-right: ${((12 - (offset + cols.value)) / 12) * 100}%!important`;
-  }
 });
 
 onMounted(async () => {
   await shouldRenderField(props.schema, props.model);
-  await shouldHideField(props.schema, props.model)
+  await shouldHideField(props.schema, props.model);
 });
 </script>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+.fill-row {
+  flex-basis: 100%;
+  height: 0;
+}
+</style>
 
 <i18n lang="json">
 {

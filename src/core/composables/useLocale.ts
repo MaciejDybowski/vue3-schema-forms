@@ -46,6 +46,7 @@ export function useLocale() {
         },
       },
     },
+    fallbackLocale: "en"
   });
 
   return { t, locale };
