@@ -23,7 +23,7 @@
               v-bind="{ ...tableButtonDefaultProps, ...button.btnProps }"
               @click="runTableBtnLogic(button)"
             >
-              {{ button.label }}
+              {{ typeof button.label == "string" ? button.label : "#" + button.label.$ref.split("/").pop() }}
             </v-btn>
           </v-col>
         </v-row>
@@ -168,7 +168,7 @@ const itemsTotalElements = ref(0);
 const loading = ref(true);
 const debounced = {
   load: debounce(loadData, 200),
-  updateRow: debounce(updateRow, 300)
+  updateRow: debounce(updateRow, 300),
 };
 
 const aggregates = ref(null);
@@ -212,10 +212,10 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
 const buildHeader = (item: TableHeader): TableHeader => {
   const { key, title, type, valueMapping, color, footerMapping, properties, items, editable, actions } = item;
   //@ts-ignore - builder purpose
-  const titleRef = typeof title == "string" ? title : title.$ref;
+  const titleRef = typeof title == "string" ? title : "#" + title.$ref.split("/").pop();
   const header: TableHeader = {
     key,
-    title:titleRef,
+    title: titleRef,
     type,
     valueMapping,
     color,

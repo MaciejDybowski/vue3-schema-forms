@@ -34,7 +34,7 @@ onMounted(async () => {
   const isContentRef = typeof props.schema.content === "object" && "$ref" in props.schema.content;
   if (isContentRef) {
     // @ts-ignore
-    resolvedContent.value.resolvedText = props.schema.content.$ref;
+    resolvedContent.value.resolvedText = '#'+props.schema.content.$ref.split("/").pop();
     resolvedContent.value.allVariablesResolved = true;
     return;
   }

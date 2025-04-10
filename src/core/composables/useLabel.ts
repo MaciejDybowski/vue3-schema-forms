@@ -11,7 +11,7 @@ export function useLabel(schema: EngineField) {
   const { resolve } = useResolveVariables();
   const isLabelRef = typeof schema.label === "object" && "$ref" in schema.label;
 
-  const label = ref(isLabelRef ? schema.label.$ref : (schema.label as string));
+  const label = ref(isLabelRef ? '#'+schema.label.$ref.split("/").pop() : (schema.label as string));
   const labelWithFallbackMessage = label.value;
 
   /*if (typeof schema.label === 'string' && schema?.label?.match(variableRegexp)) {
