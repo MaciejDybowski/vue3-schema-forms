@@ -1,50 +1,15 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { REQUEST_PAGE_HIDDEN_DICT } from "@/stories/controls/Dictionary/responses";
 
-import { Schema } from "../../types/schema/Schema";
-import { SchemaTextField } from "../../types/schema/elements";
-import { StoryTemplateWithValidation } from "../templates/story-template";
-import { DictionarySource } from "../../types/shared/Source";
-import { REQUEST_NOT_LAZY, REQUEST_PAGE_HIDDEN_DICT, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
 import DevelopmentTable from "../../components/app/DevelopmentTable.vue";
+import { DictionarySource } from "../../types/shared/Source";
+import { commonMetadata } from "../templates/shared-blocks";
 
-const meta = {
+export default {
   title: "Forms/Controls/FieldsGroup",
+  ...commonMetadata,
   component: DevelopmentTable,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    model: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    model: {},
-    options: {
-      fieldProps: {
-        variant: "outlined",
-        density: "comfortable",
-      },
-    },
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
+};
 
 export const TwoFieldsGroup = {
   args: {
@@ -106,7 +71,7 @@ export const TwoFieldsGroup = {
 export const GroupWithHiddenDict = {
   args: {
     modelValue: {
-      fieldQ:"Test"
+      fieldQ: "Test",
     },
     schema: {
       type: "object",
@@ -121,13 +86,13 @@ export const GroupWithHiddenDict = {
                   label: "Currency",
                   layout: {
                     component: "dictionary",
-                    if:"nata(fieldA='a')"
+                    if: "nata(fieldA='a')",
                   },
                   source: {
                     url: "/api/currencies?query={fieldQ}",
                     title: "label",
                     value: "id",
-                    description: "label"
+                    description: "label",
                   } as DictionarySource,
                 } as SchemaSourceField,
                 fieldA: {
@@ -161,7 +126,6 @@ export const GroupWithHiddenDict = {
   },
 };
 
-
 export const Required = {
   args: {
     model: {},
@@ -193,13 +157,12 @@ export const Required = {
                   },
                 },
               },
-              required: ["fieldA"]
+              required: ["fieldA"],
             },
             cols: 6,
           },
         },
       },
-
     },
   },
 };
@@ -207,7 +170,7 @@ export const Required = {
 export const ResetValueWhenHidden = {
   args: {
     model: {
-      fieldQ:"Maciej ukryte"
+      fieldQ: "Maciej ukryte",
     },
     schema: {
       type: "object",
@@ -233,7 +196,7 @@ export const ResetValueWhenHidden = {
                         component: "text-field",
                       },
                     },
-                  }
+                  },
                 },
                 fieldQ: {
                   label: "Field Q in group A",
@@ -248,14 +211,12 @@ export const ResetValueWhenHidden = {
                   },
                 },
               },
-              required: ["fieldA"]
+              required: ["fieldA"],
             },
             cols: 6,
           },
         },
       },
-
     },
   },
 };
-

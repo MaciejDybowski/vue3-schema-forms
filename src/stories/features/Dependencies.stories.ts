@@ -5,13 +5,15 @@ import { StoryTemplateWithValidation } from "@/stories/templates/story-template"
 import { expect, userEvent, within } from "@storybook/test";
 import { Meta, StoryObj } from "@storybook/vue3";
 
-
+import {MOCK_REQUEST_CURRENCY} from "../mock-responses"
 
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema, SchemaOptions } from "../../types/schema/Schema";
 import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "../../types/schema/elements";
 import { waitForMountedAsync } from "../controls/utils";
+import { initialize, mswLoader } from "msw-storybook-addon";
 
+initialize();
 
 const meta = {
   title: "Forms/Features/Dependencies",
@@ -38,7 +40,8 @@ const meta = {
   },
   parameters: {
     controls: { hideNoControlsWarning: true } //https://github.com/storybookjs/storybook/issues/24422
-  }
+  },
+  loaders: [mswLoader],
 } satisfies Meta<typeof VueSchemaForms>;
 
 export default meta;
@@ -520,7 +523,7 @@ export const UseFormVariablesInFieldProps: Story = {
             cols: 3
           },
           source: {
-            url: "/api/currencies",
+            url: "/mocks/currencies",
             title: "label",
             value: "id"
           } as DictionarySource
@@ -587,8 +590,10 @@ export const UseFormVariablesInFieldProps: Story = {
     } as SchemaOptions
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1, REQUEST_SEARCH_DOLAR_AUSTRALIJSKI]
-  }
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
 };
 
 

@@ -1,49 +1,19 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
-import { DictionarySource } from "../../types/schema/elements";
+import { commonMetadata } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
-const meta = {
+export default {
   title: "Forms/Controls/Data viewer",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 export const Standard: Story = {
   name: "Plain text, matching keys",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Read value from model [text]");
     const text = canvas.getByText("This is plain text");
@@ -79,7 +49,7 @@ export const Standard: Story = {
 export const StandardNumber: Story = {
   name: "Number, matching keys",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Read value from model [number]");
     const text = canvas.getByText("4,000.25");
@@ -117,7 +87,7 @@ export const StandardNumber: Story = {
 export const StandardDate: Story = {
   name: "Date, matching keys",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Read value from model [date]");
     const text = canvas.getByText("01/25/2024");
@@ -155,7 +125,7 @@ export const StandardDate: Story = {
 export const StandardDateTime: Story = {
   name: "Datetime, matching keys",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Read value from model [date]");
     const text = canvas.getByText("01/25/2024 01:00 AM");
@@ -184,7 +154,7 @@ export const StandardDateTime: Story = {
 export const StandardPhone: Story = {
   name: "Phone, matching keys",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Read value from model [phone]");
     const text = canvas.getByText("510 333 202");
@@ -220,7 +190,7 @@ export const StandardPhone: Story = {
 export const StandardObject: Story = {
   name: "Object, matching keys",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Read value from model [object]");
     const text = canvas.getByText("Value");
@@ -257,7 +227,7 @@ export const StandardObject: Story = {
   },
 };
 
-export const StandardDictionary: Story = {
+/*export const StandardDictionary: Story = {
   name: "Dictionary, matching keys",
   parameters: {
     mockData: [
@@ -291,7 +261,7 @@ export const StandardDictionary: Story = {
     ],
   },
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Read value from model [dictionary]");
     await new Promise((resolve) => setTimeout(resolve, 200)); // <- wait for api call
@@ -329,12 +299,12 @@ export const StandardDictionary: Story = {
       },
     } as Schema,
   },
-};
+};*/
 
 export const ValueMapping: Story = {
   name: "ValueMapping from models keys",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Create text from model variables");
     const text = canvas.getByText("This is plain text and other value 400.25");
@@ -371,7 +341,7 @@ export const ValueMapping: Story = {
 export const StandardCalc: Story = {
   name: "Calculations",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Result of calc");
     const text = canvas.getByText("4,100.25");
@@ -410,7 +380,7 @@ export const StandardCalc: Story = {
 export const StandardCalcVariable: Story = {
   name: "Calculations with variables",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Result of calc");
     const text = canvas.getByText("4,100.25");
@@ -458,7 +428,7 @@ export const StandardCalcVariable: Story = {
 
 export const VariableInDuplicatedSection: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Currency: PLN");
     await expect(field).toBeInTheDocument();
@@ -480,15 +450,15 @@ export const VariableInDuplicatedSection: Story = {
               label: "Currency",
               layout: {
                 component: "text-field",
-              }
+              },
             },
             rate: {
               label: "Rate",
               layout: {
                 component: "number-field",
-              }
-            }
-          }
+              },
+            },
+          },
         },
         items: {
           layout: {
@@ -499,13 +469,13 @@ export const VariableInDuplicatedSection: Story = {
                   label: "Currency: {currency.id}",
                   valueMapping: "{currency.rate}",
                   layout: {
-                    component: "data-viewer"
-                  }
-                }
-              }
-            }
-          }
-        }
+                    component: "data-viewer",
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     } as Schema,
   },

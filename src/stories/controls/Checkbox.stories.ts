@@ -1,46 +1,17 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, userEvent, within } from "@storybook/test";
 
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
-import { SimpleSource, Source } from "../../types/schema/elements";
+import { SimpleSource } from "../../types/schema/elements";
+import { commonMetadata } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
 
-const meta = {
+export default {
   title: "Forms/Controls/Checkbox",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 export const Standard: Story = {
   play: async (context) => {
@@ -78,7 +49,7 @@ export const Standard: Story = {
 export const WithDefault: Story = {
   name: "With default (value)",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     await expect(context.args.modelValue).toEqual({ checkboxWithDefault: [3] });
     const option2 = canvas.getByLabelText("Option 2");
@@ -112,7 +83,7 @@ export const WithDefault: Story = {
 export const CustomMapping: Story = {
   name: "Custom mapping",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText("Option 2");
     await expect(option2).toBeInTheDocument();
@@ -145,7 +116,7 @@ export const CustomMapping: Story = {
 export const CustomMappingReturnObject: Story = {
   name: "Custom mapper + return obj",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText("Option 2");
     await userEvent.click(option2, { delay: 200 });
@@ -180,7 +151,7 @@ export const CustomMappingReturnObject: Story = {
 export const CustomMappingReturnObjectDefault: Story = {
   name: "Custom mapper + obj + default",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const option3 = canvas.getByLabelText("Option 3");
     await userEvent.click(option3, { delay: 200 });
@@ -238,7 +209,7 @@ export const GetOptionsFromAPI: Story = {
     ],
   },
   play: async ({ canvasElement }) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(canvasElement);
     await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for api call
     await expect(canvas.getByText("Option 4")).toBeInTheDocument();
@@ -275,7 +246,7 @@ export const SimpleValidation: Story = {
   name: "Checkbox with required annotation",
   render: StoryTemplateWithValidation,
   play: async ({ canvasElement }) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(canvasElement);
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 600 });

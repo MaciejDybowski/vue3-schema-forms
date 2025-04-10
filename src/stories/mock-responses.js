@@ -177,3 +177,73 @@ export const CURRENCIES_REQUEST = http.get("/mock-data/currencies", async (req, 
   });
 });
 
+
+export const MOCK_REQUEST_CURRENCY = [
+  http.get("/mocks/currencies", async ({ request }) => {
+    console.log("Intercepted request:", request.url);
+    const url = new URL(request.url);
+    const valueFilter = url.searchParams.get("value-filter");
+    const query = url.searchParams.get("query");
+    const page = Number(url.searchParams.get("page")) || 0;
+    const size = Number(url.searchParams.get("size")) || 20;
+
+    const allCurrencies = [
+      { id: "AFN", label: "Afgani", digitsAfterDecimal: "2" },
+      { id: "ALL", label: "Lek", digitsAfterDecimal: "3" },
+      { id: "AMD", label: "Dram", digitsAfterDecimal: "2" },
+      { id: "ANG", label: "Gulden Antyli Holenderskich", digitsAfterDecimal: "2" },
+      { id: "AOA", label: "Kwanza", digitsAfterDecimal: "2" },
+      { id: "ARS", label: "Peso argentyńskie", digitsAfterDecimal: "2" },
+      { id: "AUD", label: "Dolar australijski", digitsAfterDecimal: "2" },
+      { id: "AWG", label: "Florin arubański", digitsAfterDecimal: "2" },
+      { id: "AZN", label: "Manat azerbejdżański", digitsAfterDecimal: "2" },
+      { id: "BAM", label: "Marka zamienna", digitsAfterDecimal: "2" },
+      { id: "BBD", label: "Dolar barbadoski", digitsAfterDecimal: "2" },
+      { id: "BDT", label: "Taka", digitsAfterDecimal: "2" },
+      { id: "BGN", label: "Lew", digitsAfterDecimal: "2" },
+      { id: "BHD", label: "Dinar bahrajski", digitsAfterDecimal: "3" },
+      { id: "BIF", label: "Frank burundyjski", digitsAfterDecimal: "0" },
+      { id: "BMD", label: "Dolar bermudzki", digitsAfterDecimal: "2" },
+      { id: "BND", label: "Dolar brunejski", digitsAfterDecimal: "2" },
+      { id: "BOB", label: "Boliviano", digitsAfterDecimal: "2" },
+      { id: "BOV", label: "MVDOL boliwijski", digitsAfterDecimal: "2" },
+      { id: "BRL", label: "Real brazylijski", digitsAfterDecimal: "2" },
+    ];
+
+    if (valueFilter) {
+      // Jeśli value-filter jest ustawiony, zwracamy tylko jedną walutę
+      return HttpResponse.json({
+        content: [
+          {
+            id: valueFilter,
+            label: "Polski Złoty", // Tutaj możesz dodać lookup po ID jeśli chcesz dynamicznie
+          },
+        ],
+        pagination: { page, size },
+      });
+    }
+
+    let filteredCurrencies = allCurrencies;
+
+    if (query) {
+      const lowerQuery = query.toLowerCase();
+      filteredCurrencies = allCurrencies.filter(
+        (currency) => currency.id.toLowerCase().includes(lowerQuery) || currency.label.toLowerCase().includes(lowerQuery),
+      );
+    }
+
+    // Paginacja
+    const start = page * size;
+    const end = start + size;
+    const paginatedCurrencies = filteredCurrencies.slice(start, end);
+
+    return HttpResponse.json({
+      content: paginatedCurrencies,
+      pagination: {
+        page,
+        size,
+      },
+    });
+  }),
+];
+

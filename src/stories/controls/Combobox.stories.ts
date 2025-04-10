@@ -1,38 +1,16 @@
 // @ts-nocheck
 import { HttpResponse, http } from "msw";
-import { initialize, mswLoader } from "msw-storybook-addon";
-
-import { VueSchemaForms } from "@/components";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { initialize } from "msw-storybook-addon";
 
 import { Schema } from "../../types/schema/Schema";
-import DevelopmentTable from "../../components/app/DevelopmentTable.vue";
-import { DictionarySource } from "../../types/shared/Source";
+import { commonMetadata } from "../templates/shared-blocks";
 
 initialize();
 
-const meta = {
+export default {
   title: "Forms/Controls/Dictionary [combobox]",
-  component: DevelopmentTable,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: { control: "object", description: "Schema u" },
-    model: { control: "object", description: "Model" },
-    options: { control: "object", description: "Opcje" },
-  },
-  args: {
-    model: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-  loaders: [mswLoader],
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 const MOCK_REQUEST = [
   http.get("/api/combo-mock", async (req, res, ctx) => {
@@ -90,5 +68,3 @@ export const Standard: Story = {
     },
   },
 };
-
-

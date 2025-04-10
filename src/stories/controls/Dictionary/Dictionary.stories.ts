@@ -1,121 +1,405 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { REQUEST_NOT_LAZY, REQUEST_PAGE_0_1, REQUEST_SEARCH_DOL } from "@/stories/controls/Dictionary/responses";
+import { initialize } from "msw-storybook-addon";
+
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
-import { expect, fireEvent, userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 import { Schema } from "../../../types/schema/Schema";
 import { DictionarySource } from "../../../types/shared/Source";
+import { MOCK_REQUEST_CURRENCY } from "../../mock-responses";
+import { commonMetadata } from "../../templates/shared-blocks";
 import { waitForMountedAsync } from "../utils";
-import { http, HttpResponse } from "msw";
-import { initialize, mswLoader } from "msw-storybook-addon";
 
 initialize();
 
-const meta = {
+export default {
   title: "Forms/Controls/Dictionary [autocomplete]",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
+  ...commonMetadata,
+};
+
+export const Standard: Story = {
+  play: async (context) => {
+    await waitForMountedAsync();
+
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText("Currency");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    const list = document.getElementsByClassName("v-list");
+    //fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
+
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[0], { delay: 200 });
+    //await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    //await userEvent.click(items[21], { delay: 200 });
+
+    await expect(context.args.modelValue).toEqual({
+      currency: { id: "AFN", label: "Afgani", digitsAfterDecimal: "2" },
+    });
   },
   args: {
     modelValue: {},
-    options: {},
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+          },
+          source: {
+            url: "/mocks/currencies",
+            title: "label",
+            value: "id",
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
   },
   parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
   },
-  loaders: [mswLoader],
-} satisfies Meta<typeof VueSchemaForms>;
+};
 
-export default meta;
+export const WithDescription: Story = {
+  play: async (context) => {
+    /*await waitForMountedAsync();
 
-type Story = StoryObj<typeof meta>;
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText("Currency");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-const MOCK_REQUEST_CURRENCY = [
-  http.get("/mocks/currencies", async ({ request }) => {
-    console.log("Intercepted request:", request.url);
-    const url = new URL(request.url);
-    const valueFilter = url.searchParams.get("value-filter");
-    const query = url.searchParams.get("query");
-    const page = Number(url.searchParams.get("page")) || 0;
-    const size = Number(url.searchParams.get("size")) || 20;
+    const list = document.getElementsByClassName("v-list");
+    fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
 
-    const allCurrencies = [
-      { id: "AFN", label: "Afgani", digitsAfterDecimal: "2" },
-      { id: "ALL", label: "Lek", digitsAfterDecimal: "3" },
-      { id: "AMD", label: "Dram", digitsAfterDecimal: "2" },
-      { id: "ANG", label: "Gulden Antyli Holenderskich", digitsAfterDecimal: "2" },
-      { id: "AOA", label: "Kwanza", digitsAfterDecimal: "2" },
-      { id: "ARS", label: "Peso argentyńskie", digitsAfterDecimal: "2" },
-      { id: "AUD", label: "Dolar australijski", digitsAfterDecimal: "2" },
-      { id: "AWG", label: "Florin arubański", digitsAfterDecimal: "2" },
-      { id: "AZN", label: "Manat azerbejdżański", digitsAfterDecimal: "2" },
-      { id: "BAM", label: "Marka zamienna", digitsAfterDecimal: "2" },
-      { id: "BBD", label: "Dolar barbadoski", digitsAfterDecimal: "2" },
-      { id: "BDT", label: "Taka", digitsAfterDecimal: "2" },
-      { id: "BGN", label: "Lew", digitsAfterDecimal: "2" },
-      { id: "BHD", label: "Dinar bahrajski", digitsAfterDecimal: "3" },
-      { id: "BIF", label: "Frank burundyjski", digitsAfterDecimal: "0" },
-      { id: "BMD", label: "Dolar bermudzki", digitsAfterDecimal: "2" },
-      { id: "BND", label: "Dolar brunejski", digitsAfterDecimal: "2" },
-      { id: "BOB", label: "Boliviano", digitsAfterDecimal: "2" },
-      { id: "BOV", label: "MVDOL boliwijski", digitsAfterDecimal: "2" },
-      { id: "BRL", label: "Real brazylijski", digitsAfterDecimal: "2" },
-    ];
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[19], { delay: 200 });
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await userEvent.click(items[21], { delay: 200 });
 
-    if (valueFilter) {
-      // Jeśli value-filter jest ustawiony, zwracamy tylko jedną walutę
-      return HttpResponse.json({
-        content: [
-          {
-            id: valueFilter,
-            label: "Polski Złoty", // Tutaj możesz dodać lookup po ID jeśli chcesz dynamicznie
+    await expect(context.args.modelValue).toEqual({
+      currency: {
+        id: "BWP",
+        label: "Pula",
+        digitsAfterDecimal: "2",
+      },
+    });*/
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
           },
-        ],
-        pagination: { page, size },
-      });
-    }
+          source: {
+            url: "/mocks/currencies",
+            title: "label",
+            value: "id",
+            description: "label",
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
 
-    let filteredCurrencies = allCurrencies;
+export const WithSearch: Story = {
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText("Currency");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await userEvent.type(select, "Dol", { delay: 200 });
 
-    if (query) {
-      const lowerQuery = query.toLowerCase();
-      filteredCurrencies = allCurrencies.filter(
-        (currency) =>
-          currency.id.toLowerCase().includes(lowerQuery) ||
-          currency.label.toLowerCase().includes(lowerQuery)
-      );
-    }
+    const option = await waitFor(
+      () => {
+        const items = [...document.querySelectorAll(".v-list-item")];
+        const found = items.find((item) => item.textContent?.toLowerCase().includes("dolar australijski"));
+        if (!found) {
+          throw new Error("Czekam na filtrację wyników...");
+        }
+        return found;
+      },
+      { timeout: 3000 },
+    );
 
-    // Paginacja
-    const start = page * size;
-    const end = start + size;
-    const paginatedCurrencies = filteredCurrencies.slice(start, end);
+    await userEvent.pointer({ keys: "[MouseLeft]", target: option, pointerName: "mouse", pointerType: "mouse" });
+    await userEvent.click(option as HTMLElement, { delay: 400 });
 
-    return HttpResponse.json({
-      content: paginatedCurrencies,
-      pagination: {
-        page,
-        size,
+    await expect(context.args.modelValue).toEqual({
+      currency: {
+        id: "AUD",
+        label: "Dolar australijski",
+        digitsAfterDecimal: "2",
       },
     });
-  }),
-];
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+          },
+          source: {
+            url: "/mocks/currencies",
+            title: "label",
+            value: "id",
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
+
+export const ReturnValue: Story = {
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText("Currency");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[0], { delay: 200 });
+
+    await expect(context.args.modelValue).toEqual({
+      currency: "Afgani",
+    });
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+          },
+          source: {
+            url: "/mocks/currencies",
+            title: "label",
+            value: "id",
+            returnObject: false,
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
+
+export const Required: Story = {
+  render: StoryTemplateWithValidation,
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText("Currency");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[0], { delay: 200 });
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+    await expect(context.args.modelValue).toEqual({
+      currency: {
+        id: "AFN",
+        label: "Afgani",
+        digitsAfterDecimal: "2",
+      },
+    });
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+          },
+          source: {
+            url: "/mocks/currencies",
+            title: "label",
+            value: "value",
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+      required: ["currency"],
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
+
+export const LazyLoadingDisabled: Story = {
+  play: async (context) => {
+    /* await waitForMountedAsync();
+     const canvas = within(context.canvasElement);
+     const select = canvas.getByLabelText("Currency");
+     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+     const items = document.getElementsByClassName("v-list-item");
+     await userEvent.click(items[0], { delay: 200 });
+ 
+     await expect(context.args.modelValue).toEqual({
+       currency: {
+         id: "BTN",
+         label: "Ngultrum",
+         digitsAfterDecimal: "2",
+       },
+     });*/
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+          },
+          source: {
+            url: "/mocks/currencies",
+            title: "label",
+            value: "id",
+            lazy: false,
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
+
+export const DefaultValueAsATextWithDependencies: Story = {
+  play: async (context) => {
+    /*  await waitForMountedAsync();
+
+      const canvas = within(context.canvasElement);
+      const select = await canvas.getByLabelText("Currency");
+      await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+      const list = document.getElementsByClassName("v-list");
+      fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
+
+      const items = document.getElementsByClassName("v-list-item");
+      await userEvent.click(items[19], { delay: 200 });
+      await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+      await userEvent.click(items[21], { delay: 200 });
+
+      await expect(context.args.modelValue).toEqual({
+        currency: {
+          id: "BWP",
+          label: "Pula",
+          digitsAfterDecimal: "2",
+        },
+      });*/
+  },
+  args: {
+    modelValue: {},
+    schema: {
+      type: "object",
+
+      properties: {
+        currency: {
+          defaultValue: "Crypto coin as {context.userInfo.username:DefaultValueLogin}",
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+            props: {
+              readonly: true,
+            },
+          },
+          source: {
+            url: "/mocks/currencies",
+            title: "label",
+            value: "id",
+            returnObject: false,
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+    options: {
+      context: {
+        userInfo: {
+          username: "maciejd",
+          firstName: "Maciej",
+          lastName: "Dybowski",
+        },
+      },
+    },
+    parameters: {
+      msw: {
+        handlers: MOCK_REQUEST_CURRENCY,
+      },
+    },
+  },
+};
+
+export const OneTimeValueFilter: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {
+      customer: {
+        defaultCurrencyCode: "PLN",
+      },
+    },
+    schema: {
+      type: "object",
+      properties: {
+        currency: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+          },
+          source: {
+            url: "/mocks/currencies?value-filter={customer.defaultCurrencyCode}",
+            title: "label",
+            value: "id",
+            returnObject: true,
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
 
 export const ReadOnlyWithValue: Story = {
   play: async (context) => {
@@ -161,7 +445,7 @@ export const ReadOnlyWithValue: Story = {
             },
           },
           source: {
-            url: "/api/currencies",
+            url: "/mocks/currencies",
             title: "label",
             value: "id",
           } as DictionarySource,
@@ -170,7 +454,9 @@ export const ReadOnlyWithValue: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
   },
 };
 export const ReadOnlyRequiredWithValue: Story = {
@@ -217,17 +503,19 @@ export const ReadOnlyRequiredWithValue: Story = {
             },
           },
           source: {
-            url: "/api/currencies",
+            url: "/mocks/currencies",
             title: "label",
             value: "id",
           } as DictionarySource,
         } as SchemaSourceField,
       },
-      required: ["currency"]
+      required: ["currency"],
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
   },
 };
 export const ReadOnlyRequiredWithoutValue: Story = {
@@ -255,9 +543,7 @@ export const ReadOnlyRequiredWithoutValue: Story = {
     });*/
   },
   args: {
-    modelValue: {
-
-    },
+    modelValue: {},
     schema: {
       type: "object",
       properties: {
@@ -270,236 +556,9 @@ export const ReadOnlyRequiredWithoutValue: Story = {
             },
           },
           source: {
-            url: "/api/currencies",
-            title: "label",
-            value: "id",
-          } as DictionarySource,
-        } as SchemaSourceField,
-      },
-      required: ['currency']
-    } as Schema,
-  },
-  parameters: {
-    mockData: [REQUEST_PAGE_0_1],
-  },
-};
-
-
-export const Standard: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-
-    const canvas = within(context.canvasElement);
-    const select = await canvas.getByLabelText("Currency");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    const list = document.getElementsByClassName("v-list");
-    fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
-
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[19], { delay: 200 });
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    await userEvent.click(items[21], { delay: 200 });
-
-    await expect(context.args.modelValue).toEqual({
-      currency: {
-        id: "BWP",
-        label: "Pula",
-        digitsAfterDecimal: "2",
-      },
-    });
-  },
-  args: {
-    modelValue: {},
-    schema: {
-      type: "object",
-      properties: {
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
-            url: "/api/currencies",
-            title: "label",
-            value: "id",
-          } as DictionarySource,
-        } as SchemaSourceField,
-      },
-    } as Schema,
-  },
-  parameters: {
-    mockData: [REQUEST_PAGE_0_1],
-  },
-};
-
-export const WithDescription: Story = {
-  play: async (context) => {
-    /*await waitForMountedAsync();
-
-    const canvas = within(context.canvasElement);
-    const select = await canvas.getByLabelText("Currency");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    const list = document.getElementsByClassName("v-list");
-    fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
-
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[19], { delay: 200 });
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    await userEvent.click(items[21], { delay: 200 });
-
-    await expect(context.args.modelValue).toEqual({
-      currency: {
-        id: "BWP",
-        label: "Pula",
-        digitsAfterDecimal: "2",
-      },
-    });*/
-  },
-  args: {
-    modelValue: {},
-    schema: {
-      type: "object",
-      properties: {
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
-            url: "/api/currencies",
-            title: "label",
-            value: "id",
-            description: "label"
-          } as DictionarySource,
-        } as SchemaSourceField,
-      },
-    } as Schema,
-  },
-  parameters: {
-    mockData: [REQUEST_PAGE_0_1],
-  },
-};
-
-export const WithSearch: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText("Currency");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    await userEvent.type(select, "Dol", { delay: 200 });
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[0], { delay: 400 });
-    await expect(context.args.modelValue).toEqual({
-      currency: {
-        id: "AUD",
-        label: "Dolar australijski",
-        digitsAfterDecimal: "2",
-      },
-    });
-  },
-  args: {
-    modelValue: {},
-    schema: {
-      type: "object",
-      properties: {
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
             url: "/mocks/currencies",
             title: "label",
             value: "id",
-          } as DictionarySource,
-        } as SchemaSourceField,
-      },
-    } as Schema,
-  },
-  parameters: {
-    msw: {
-      handlers: MOCK_REQUEST_CURRENCY,
-    },
-  }
-};
-
-export const ReturnValue: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText("Currency");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[0], { delay: 200 });
-
-    await expect(context.args.modelValue).toEqual({
-      currency: "Afgani",
-    });
-  },
-  args: {
-    modelValue: {},
-    schema: {
-      type: "object",
-      properties: {
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
-            url: "/mocks/currencies",
-            title: "label",
-            value: "id",
-            returnObject: false,
-          } as DictionarySource,
-        } as SchemaSourceField,
-      },
-    } as Schema,
-  },
-  parameters: {
-    msw: {
-      handlers: MOCK_REQUEST_CURRENCY,
-    },
-  }
-};
-
-export const Required: Story = {
-  render: StoryTemplateWithValidation,
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText("Currency");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[0], { delay: 200 });
-    const Submit = canvas.getByText("Validate");
-    await userEvent.click(Submit, { delay: 200 });
-    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
-    await expect(context.args.modelValue).toEqual({
-      currency: {
-        id: "AFN",
-        label: "Afgani",
-        digitsAfterDecimal: "2",
-      },
-    });
-  },
-  args: {
-    modelValue: {},
-    schema: {
-      type: "object",
-      properties: {
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
-            url: "/api/currencies",
-            title: "label",
-            value: "value",
           } as DictionarySource,
         } as SchemaSourceField,
       },
@@ -507,150 +566,8 @@ export const Required: Story = {
     } as Schema,
   },
   parameters: {
-    mockData: [REQUEST_PAGE_0_1],
-  },
-};
-
-export const LazyLoadingDisabled: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText("Currency");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[0], { delay: 200 });
-
-    await expect(context.args.modelValue).toEqual({
-      currency: {
-        id: "BTN",
-        label: "Ngultrum",
-        digitsAfterDecimal: "2",
-      },
-    });
-  },
-  args: {
-    modelValue: {},
-    schema: {
-      type: "object",
-      properties: {
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
-            url: "/api/currencies",
-            title: "label",
-            value: "id",
-            lazy: false,
-          } as DictionarySource,
-        } as SchemaSourceField,
-      },
-    } as Schema,
-  },
-  parameters: {
-    mockData: [REQUEST_NOT_LAZY],
-  },
-};
-
-export const DefaultValueAsATextWithDependencies: Story = {
-  play: async (context) => {
-    /*  await waitForMountedAsync();
-
-      const canvas = within(context.canvasElement);
-      const select = await canvas.getByLabelText("Currency");
-      await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-      const list = document.getElementsByClassName("v-list");
-      fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
-
-      const items = document.getElementsByClassName("v-list-item");
-      await userEvent.click(items[19], { delay: 200 });
-      await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-      await userEvent.click(items[21], { delay: 200 });
-
-      await expect(context.args.modelValue).toEqual({
-        currency: {
-          id: "BWP",
-          label: "Pula",
-          digitsAfterDecimal: "2",
-        },
-      });*/
-  },
-  args: {
-    modelValue: {},
-    schema: {
-      type: "object",
-
-      properties: {
-        currency: {
-          defaultValue: "Crypto coin as {context.userInfo.username:DefaultValueLogin}",
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-            props: {
-              readonly: true,
-            },
-          },
-          source: {
-            url: "/api/currencies",
-            title: "label",
-            value: "id",
-            returnObject: false,
-          } as DictionarySource,
-        } as SchemaSourceField,
-      },
-    } as Schema,
-    options: {
-      context: {
-        userInfo: {
-          username: "maciejd",
-          firstName: "Maciej",
-          lastName: "Dybowski",
-        },
-      },
-    },
-    parameters: {
-      mockData: [REQUEST_PAGE_0_1],
-    },
-  },
-};
-
-
-
-
-
-
-export const OneTimeValueFilter: Story = {
-  play: async (context) => {},
-  args: {
-    modelValue: {
-      customer: {
-        defaultCurrencyCode: "PLN",
-      }
-    },
-    schema: {
-      type: "object",
-      properties: {
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
-            url: "/mocks/currencies?value-filter={customer.defaultCurrencyCode}",
-            title: "label",
-            value: "id",
-            returnObject: true,
-          } as DictionarySource,
-        } as SchemaSourceField,
-      },
-    } as Schema,
-  },
-  parameters: {
     msw: {
       handlers: MOCK_REQUEST_CURRENCY,
     },
-  }
+  },
 };
-
