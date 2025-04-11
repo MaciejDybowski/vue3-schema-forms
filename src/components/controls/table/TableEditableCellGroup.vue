@@ -13,7 +13,7 @@
     v-bind="{ ...attrs, density: 'compact' }"
     width="100%"
     @keyup.enter="(e) => e.target.blur()"
-    @input="(e: any) => emit('update:field', { value: e.target.value, valueMapping: item.valueMapping })"
+    @update:model-value="(e: any) => emitData(e, item)"
   >
   </v-number-input>
 </template>
@@ -47,6 +47,10 @@ function getValue(valueMapping: string, index: number) {
   const split = valueMapping.split(":");
   let variable = split[0];
   return get(props.row, variable, null);
+}
+
+function emitData(e: any, item) {
+  emit("update:field", { value: e, valueMapping: item.valueMapping });
 }
 </script>
 
