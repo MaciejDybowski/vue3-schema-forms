@@ -38,7 +38,8 @@
 <script lang="ts" setup>
 import { debounce } from "lodash";
 import { ref, useAttrs } from "vue";
-import { VTextField } from "vuetify/lib/components/index.mjs";
+
+
 
 const model = defineModel();
 const emit = defineEmits<{
@@ -46,7 +47,7 @@ const emit = defineEmits<{
 }>();
 const attrs = useAttrs();
 const showInput = ref(false);
-const editableCellRef = ref<InstanceType<typeof VTextField>>();
+const editableCellRef = ref<any>();
 const debounced = {
   save: debounce(saveValue, 100),
 };

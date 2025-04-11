@@ -50,7 +50,6 @@
 import { MaskOptions } from "maska";
 import { vMaska } from "maska/vue";
 import { computed, onMounted, ref, useAttrs, watch } from "vue";
-import { VTextField } from "vuetify/lib/components/index.mjs";
 
 import { EngineDateField } from "@/types/engine/controls";
 
@@ -86,7 +85,7 @@ onMounted(async () => {
 const currentDate = new Date();
 currentDate.setHours(0, 0, 0, 0);
 
-const inputFieldRef = ref<VTextField>();
+const inputFieldRef = ref<any>();
 const pickerModel = ref(false);
 const inputValue = ref("");
 const pickerValue = ref<Date>();
