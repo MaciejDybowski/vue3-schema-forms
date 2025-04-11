@@ -1,14 +1,14 @@
 // @ts-nocheck
 import { initialize } from "msw-storybook-addon";
 
-import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
-import { Schema } from "../../../types/schema/Schema";
-import { DictionarySource } from "../../../types/shared/Source";
-import { MOCK_REQUEST_CURRENCY } from "../../mock-responses";
-import { commonMetadata } from "../../templates/shared-blocks";
-import { waitForMountedAsync } from "../utils";
+import { Schema } from "../../types/schema/Schema";
+import { DictionarySource } from "../../types/shared/Source";
+import { MOCK_REQUEST_CURRENCY, RESPONSE_DICTIONARY } from "../mock-responses";
+import { commonMetadata } from "../templates/shared-blocks";
+import { StoryTemplateWithValidation } from "../templates/story-template";
+import { waitForMountedAsync } from "./utils";
 
 initialize();
 
@@ -401,30 +401,60 @@ export const OneTimeValueFilter: Story = {
   },
 };
 
-export const ReadOnlyWithValue: Story = {
-  play: async (context) => {
-    /*await waitForMountedAsync()
-
-    const canvas = within(context.canvasElement);
-    const select = await canvas.getByLabelText("Currency");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    const list = document.getElementsByClassName("v-list");
-    fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
-
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[19], { delay: 200 });
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    await userEvent.click(items[21], { delay: 200 });
-
-    await expect(context.args.modelValue).toEqual({
-      currency: {
-        id: "BWP",
-        label: "Pula",
-        digitsAfterDecimal: "2",
+export const ConditionalFilter: Story = {
+  args: {
+    modelValue: {
+      testInput: "test",
+      deps: {
+        item: {
+          id: "9",
+        },
       },
-    });*/
+    },
+    schema: {
+      type: "object",
+      properties: {
+        radioButton: {
+          initValue: false,
+          label: "Choose option",
+          layout: {
+            component: "radio-button",
+          },
+          source: {
+            items: [
+              { value: 1, title: "Filtr" },
+              { value: 2, title: "Bez" },
+            ],
+          },
+        },
+        dictionary: {
+          label: "Słownik",
+          layout: {
+            component: "dictionary",
+            cols: 12,
+          },
+          source: {
+            url: "/mock-dictionaries?filter=id=={deps.item.id}&enable-filter=radioButton=1",
+            title: "label",
+            value: "id",
+            returnObject: true,
+            lazy: true,
+            singleOptionAutoSelect: true,
+          },
+        },
+      },
+      required: [],
+    },
   },
+  parameters: {
+    msw: {
+      handlers: RESPONSE_DICTIONARY,
+    },
+  },
+};
+
+export const ReadOnlyWithValue: Story = {
+  play: async (context) => {},
   args: {
     modelValue: {
       currency: {
@@ -460,29 +490,7 @@ export const ReadOnlyWithValue: Story = {
   },
 };
 export const ReadOnlyRequiredWithValue: Story = {
-  play: async (context) => {
-    /*await waitForMountedAsync()
-
-    const canvas = within(context.canvasElement);
-    const select = await canvas.getByLabelText("Currency");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    const list = document.getElementsByClassName("v-list");
-    fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
-
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[19], { delay: 200 });
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    await userEvent.click(items[21], { delay: 200 });
-
-    await expect(context.args.modelValue).toEqual({
-      currency: {
-        id: "BWP",
-        label: "Pula",
-        digitsAfterDecimal: "2",
-      },
-    });*/
-  },
+  play: async (context) => {},
   args: {
     modelValue: {
       currency: {
@@ -519,29 +527,7 @@ export const ReadOnlyRequiredWithValue: Story = {
   },
 };
 export const ReadOnlyRequiredWithoutValue: Story = {
-  play: async (context) => {
-    /*await waitForMountedAsync()
-
-    const canvas = within(context.canvasElement);
-    const select = await canvas.getByLabelText("Currency");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    const list = document.getElementsByClassName("v-list");
-    fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
-
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[19], { delay: 200 });
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    await userEvent.click(items[21], { delay: 200 });
-
-    await expect(context.args.modelValue).toEqual({
-      currency: {
-        id: "BWP",
-        label: "Pula",
-        digitsAfterDecimal: "2",
-      },
-    });*/
-  },
+  play: async (context) => {},
   args: {
     modelValue: {},
     schema: {

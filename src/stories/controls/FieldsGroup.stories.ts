@@ -1,19 +1,21 @@
 // @ts-nocheck
-import { REQUEST_PAGE_HIDDEN_DICT } from "@/stories/controls/Dictionary/responses";
+import { initialize } from "msw-storybook-addon";
 
-import DevelopmentTable from "../../components/app/DevelopmentTable.vue";
 import { DictionarySource } from "../../types/shared/Source";
+import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
 import { commonMetadata } from "../templates/shared-blocks";
+
+initialize();
+
 
 export default {
   title: "Forms/Controls/FieldsGroup",
   ...commonMetadata,
-  component: DevelopmentTable,
 };
 
 export const TwoFieldsGroup = {
   args: {
-    model: {},
+    modelValue: {},
     schema: {
       type: "object",
       properties: {
@@ -89,7 +91,7 @@ export const GroupWithHiddenDict = {
                     if: "nata(fieldA='a')",
                   },
                   source: {
-                    url: "/api/currencies?query={fieldQ}",
+                    url: "/mocks/currencies?query={fieldQ}",
                     title: "label",
                     value: "id",
                     description: "label",
@@ -122,13 +124,15 @@ export const GroupWithHiddenDict = {
     },
   },
   parameters: {
-    mockData: [REQUEST_PAGE_HIDDEN_DICT],
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
   },
 };
 
 export const Required = {
   args: {
-    model: {},
+    modelValue: {},
     schema: {
       type: "object",
       properties: {
@@ -169,7 +173,7 @@ export const Required = {
 
 export const ResetValueWhenHidden = {
   args: {
-    model: {
+    modelValue: {
       fieldQ: "Maciej ukryte",
     },
     schema: {

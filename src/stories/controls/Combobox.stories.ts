@@ -7,6 +7,7 @@ import { commonMetadata } from "../templates/shared-blocks";
 
 initialize();
 
+
 export default {
   title: "Forms/Controls/Dictionary [combobox]",
   ...commonMetadata,

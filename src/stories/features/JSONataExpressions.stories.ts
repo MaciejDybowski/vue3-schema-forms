@@ -1,43 +1,17 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { waitForMountedAsync } from "../controls/utils";
+import { commonMetadata } from "../templates/shared-blocks";
 
-const meta = {
+import { initialize } from "msw-storybook-addon";
+initialize();
+
+export default {
   title: "Forms/Features/JSONata expressions",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 /*// nagle przestało wykrywać textArea w tescie
 export const OnComponentSimpleField: Story = {
@@ -139,7 +113,7 @@ export const OnComponentIfInDuplicatedSection: Story = {
 
 export const OnPropsSimpleField: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     let hint = document.getElementsByClassName("v-messages");
     await expect(hint.length).toEqual(0);
@@ -185,7 +159,7 @@ export const OnPropsSimpleField: Story = {
 
 export const OnPropsIfInDuplicatedSection: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     let hint = document.getElementsByClassName("v-messages");
     await expect(hint.length).toEqual(0);
@@ -239,19 +213,19 @@ export const OnPropsIfInDuplicatedSection: Story = {
 };
 
 export const UseJSONataFunctions: Story = {
-  name:"JSONata function in action",
+  name: "JSONata function in action",
   args: {
     modelValue: {
-      "pozycjeDokumentu": [
+      pozycjeDokumentu: [
         {
-          "rodzajKosztu": {"id": "213"},
-          "kwotaBrutto": 23.321
+          rodzajKosztu: { id: "213" },
+          kwotaBrutto: 23.321,
         },
         {
-          "rodzajKosztu": {"id": "212133"},
-          "kwotaBrutto": 100.321
-        }
-      ]
+          rodzajKosztu: { id: "212133" },
+          kwotaBrutto: 100.321,
+        },
+      ],
     },
     schema: {
       properties: {
@@ -262,7 +236,7 @@ export const UseJSONataFunctions: Story = {
               properties: {
                 rodzajKosztu: {
                   label: "Rodzaj kosztu",
-                  type:"object",
+                  type: "object",
                   valueMapping: "{pozycjeDokumentu[].rodzajKosztu.id}",
                   layout: {
                     component: "data-viewer",
@@ -283,21 +257,22 @@ export const UseJSONataFunctions: Story = {
           },
         },
         sklejenieRodzaj: {
-          expression:"JSONATA(pozycjeDokumentu.rodzajKosztu.id ~> $join(\",\"))",
+          expression: 'JSONATA(pozycjeDokumentu.rodzajKosztu.id ~> $join(","))',
           label: "Próba sklejenie rodzaj expresion jsonNata",
           layout: {
             component: "text-field",
-            cols:6
-          }
+            cols: 6,
+          },
         },
         sklejenieKwoty: {
-          expression:"JSONATA(pozycjeDokumentu.kwotaBrutto ~> $map(function($v) { $replace(\"limitKosztowPln>\" & $string($v), \".\", \",\")}) ~> $join(\";\"))",
+          expression:
+            'JSONATA(pozycjeDokumentu.kwotaBrutto ~> $map(function($v) { $replace("limitKosztowPln>" & $string($v), ".", ",")}) ~> $join(";"))',
           label: "Próba sklejenie kwoty expresion jsonNata",
           layout: {
             component: "text-field",
-            cols:6
-          }
-        }
+            cols: 6,
+          },
+        },
       },
     },
   },

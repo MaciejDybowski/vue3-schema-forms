@@ -1,59 +1,34 @@
 // @ts-nocheck
-import { VueSchemaForms } from '@/components';
-import { expect, userEvent, within } from '@storybook/test';
-import { Meta, StoryObj } from '@storybook/vue3';
+import { expect, userEvent, within } from "@storybook/test";
 
-import { Schema } from '../../types/schema/Schema';
-import { SchemaTextField } from '../../types/schema/elements';
-import { StoryTemplateWithValidation } from '../templates/story-template';
+import { Schema } from "../../types/schema/Schema";
+import { SchemaTextField } from "../../types/schema/elements";
+import { commonMetadata } from "../templates/shared-blocks";
+import { StoryTemplateWithValidation } from "../templates/story-template";
 
-const meta = {
-  title: 'Forms/Controls/Phone',
-  component: VueSchemaForms,
-  tags: ['autodocs'],
-  argTypes: {
-    schema: {
-      control: 'object',
-      description: 'Schema u' /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: 'object',
-      description: 'Model' /*table: { disable: true }*/,
-    },
-    options: {
-      control: 'object',
-      description: 'Opcje' /*table: { disable: true }*/,
-    },
-    'update:modelValue': { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
+import { initialize } from "msw-storybook-addon";
+initialize();
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+export default {
+  title: "Forms/Controls/Phone",
+  ...commonMetadata,
+};
 
 export const Standard: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText('Phone Input');
+    const field = canvas.getByLabelText("Phone Input");
     await expect(field).toBeInTheDocument();
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         phoneInput: {
-          label: 'Phone Input',
+          label: "Phone Input",
           layout: {
-            component: 'phone',
+            component: "phone",
           },
         },
       },
@@ -65,18 +40,18 @@ export const Standard: Story = {
  */
 export const WithDefault: Story = {
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({ phoneInput: '+48510333202' });
+    await expect(context.args.modelValue).toEqual({ phoneInput: "+48510333202" });
   },
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         phoneInput: {
-          label: 'Phone Input',
-          defaultValue: '+48510333202',
+          label: "Phone Input",
+          defaultValue: "+48510333202",
           layout: {
-            component: 'phone',
+            component: "phone",
           },
         },
       },
@@ -87,18 +62,18 @@ export const WithDefault: Story = {
  * You can personalize the form controls according to the options available in vuetify
  */
 export const WithVuetifyProps: Story = {
-  name: 'PhoneInput with Vuetify Props',
+  name: "PhoneInput with Vuetify Props",
   args: {
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         phoneInput: {
-          label: 'Phone Input',
+          label: "Phone Input",
           layout: {
-            component: 'phone',
+            component: "phone",
             props: {
-              variant: 'outlined',
-              density: 'compact',
+              variant: "outlined",
+              density: "compact",
             },
           },
         } as SchemaTextField,
@@ -110,36 +85,36 @@ export const WithVuetifyProps: Story = {
 export const WithPhoneInputPropsProps: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText('Phone Input');
+    const field = canvas.getByLabelText("Phone Input");
     await userEvent.click(field);
 
-    await expect(canvas.getByText('Only valid phone numbers...')).toBeInTheDocument();
+    await expect(canvas.getByText("Only valid phone numbers...")).toBeInTheDocument();
   },
-  name: 'PhoneInput with VPhoneInputProps',
+  name: "PhoneInput with VPhoneInputProps",
   args: {
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         description: {
           layout: {
-            component: 'static-content',
-            tag: 'span',
+            component: "static-content",
+            tag: "span",
           },
           content:
-            'To modify the settings for the v-phone-input itself, you need to pass your own settings to the phoneInputProps object in schema definition',
+            "To modify the settings for the v-phone-input itself, you need to pass your own settings to the phoneInputProps object in schema definition",
         },
         phoneInput: {
-          label: 'Phone Input',
+          label: "Phone Input",
           layout: {
-            component: 'phone',
+            component: "phone",
             props: {
-              variant: 'outlined',
-              density: 'compact',
+              variant: "outlined",
+              density: "compact",
             },
           },
           phoneInputProps: {
-            hint: 'Only valid phone numbers...',
-            placeholder: 'Type your number',
+            hint: "Only valid phone numbers...",
+            placeholder: "Type your number",
           },
         } as SchemaTextField,
       },
@@ -151,13 +126,13 @@ export const WithPhoneInputPropsProps: Story = {
  * Example shows how to define a "required" field on a form
  */
 export const SimpleValidation: Story = {
-  name: 'PhoneInput with required annotation',
+  name: "PhoneInput with required annotation",
   render: StoryTemplateWithValidation,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const exampleElement = canvas.getByLabelText('Phone input');
-    await userEvent.type(exampleElement, '510333', {
+    const exampleElement = canvas.getByLabelText("Phone input");
+    await userEvent.type(exampleElement, "510333", {
       delay: 100,
     });
 
@@ -165,8 +140,8 @@ export const SimpleValidation: Story = {
     // TODO na localhost jest okej a na github/chromatic juz nie
     // await expect(canvas.getByText("The number provided is incorrect. (Ex: 12 345 67 89)")).toBeInTheDocument();
 
-    await userEvent.type(exampleElement, '202');
-    const Submit = canvas.getByText('Validate');
+    await userEvent.type(exampleElement, "202");
+    const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit);
 
     // TODO na localhost jest okej a na github/chromatic juz nie
@@ -176,16 +151,16 @@ export const SimpleValidation: Story = {
   args: {
     modelValue: {},
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         phoneInput: {
-          label: 'Phone input',
+          label: "Phone input",
           layout: {
-            component: 'phone',
+            component: "phone",
           },
         },
       },
-      required: ['phoneInput'],
+      required: ["phoneInput"],
     } as Schema,
   },
 };

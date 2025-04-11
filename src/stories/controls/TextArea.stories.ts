@@ -1,46 +1,18 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { f } from "@storybook/theming/dist/create-3ae9aa71";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaTextField } from "../../types/schema/elements";
+import { commonMetadata } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
-const meta = {
+import { initialize } from "msw-storybook-addon";
+initialize();
+
+export default {
   title: "Forms/Controls/TextArea",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
+  ...commonMetadata,
+};
 /**
  * The default settings for the text area are such that the ```auto-grow = enabled``` , and the field starts with a setting of ```rows = 3```.
  */

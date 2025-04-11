@@ -1,43 +1,18 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
 import { conditionSchema } from "@/stories/schemas";
 import { expect, userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaField, SchemaTextField } from "../../types/schema/elements";
+import { commonMetadata } from "../templates/shared-blocks";
 
-const meta = {
+import { initialize } from "msw-storybook-addon";
+initialize();
+
+export default {
   title: "Forms/Features/ConditionalRendering",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 /**
  * #### Conditional Rendering
@@ -70,13 +45,11 @@ export const ConditionStory: Story = {
 
 export const ConditionWithCalcStory: Story = {
   name: "if with calcs",
-  play: async ({ canvasElement }) => {
-
-  },
+  play: async ({ canvasElement }) => {},
   args: {
     modelValue: {
-      a:10,
-      b:99
+      a: 10,
+      b: 99,
     },
     schema: {
       type: "object",

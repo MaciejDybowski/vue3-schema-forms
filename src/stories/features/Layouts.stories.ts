@@ -1,40 +1,15 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
 import { offsetSchema } from "@/stories/schemas";
-import { Meta, StoryObj } from "@storybook/vue3";
 
+import { commonMetadata } from "../templates/shared-blocks";
 
-const meta = {
+import { initialize } from "msw-storybook-addon";
+initialize();
+
+export default {
   title: "Forms/Features/Layouts",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 /**
  * #### Arranging form fields using the "fill to end" function and offsets
@@ -56,50 +31,49 @@ export const FillRow: Story = {
       type: "object",
       properties: {
         item1: {
-          label:"Item 1",
+          label: "Item 1",
           layout: {
             component: "text-field",
-            cols: 3
-          }
+            cols: 3,
+          },
         },
         item4: {
-          label:"Item 4",
+          label: "Item 4",
           layout: {
             component: "text-field",
-            cols: 12
-          }
+            cols: 12,
+          },
         },
         item5: {
-          label:"Item 5",
+          label: "Item 5",
           layout: {
             component: "text-field",
-            cols: 3
-          }
+            cols: 3,
+          },
         },
         item6: {
-          label:"Item 6",
+          label: "Item 6",
           layout: {
             component: "text-field",
             cols: 3,
-            fillRow: true
-          }
+            fillRow: true,
+          },
         },
         item2: {
-          label:"Item 2",
+          label: "Item 2",
           layout: {
             component: "text-field",
             cols: 3,
-
-          }
+          },
         },
         item3: {
-          label:"Item 3",
+          label: "Item 3",
           layout: {
             component: "text-field",
-            cols: 1
-          }
+            cols: 1,
+          },
         },
-      }
+      },
     },
   },
 };

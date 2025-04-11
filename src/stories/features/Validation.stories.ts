@@ -1,50 +1,23 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaField } from "../../types/schema/elements";
-import { StoryTemplateWithCustomValidation, StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "../controls/utils";
+import { commonMetadata } from "../templates/shared-blocks";
+import { StoryTemplateWithCustomValidation, StoryTemplateWithValidation } from "../templates/story-template";
 
-const meta = {
+import { initialize } from "msw-storybook-addon";
+initialize();
+
+export default {
   title: "Forms/Features/Validations",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 export const RegexpWithDependencies: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
-
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 100 });
@@ -53,7 +26,6 @@ export const RegexpWithDependencies: Story = {
     await userEvent.type(field, "3.2123", { delay: 100 });
 
     await expect(canvas.getByText("Zbyt dużo znaków po przecinku")).toBeInTheDocument();
-
   },
   args: {
     modelValue: {
@@ -65,8 +37,8 @@ export const RegexpWithDependencies: Story = {
           label: "FieldA",
           type: "int",
           layout: {
-            component: "number-field"
-          }
+            component: "number-field",
+          },
         },
         fieldWithValidation: {
           label: "Field with validation",
@@ -77,26 +49,26 @@ export const RegexpWithDependencies: Story = {
           },
           validations: [
             {
-              "name": "regexpForDigitsLimitation",
-              "message": "Akceptowalna jest tylko liczba dodatnia",
-              "regexp": "^[0-9]\\d*(\\.\\d+)?$"
+              name: "regexpForDigitsLimitation",
+              message: "Akceptowalna jest tylko liczba dodatnia",
+              regexp: "^[0-9]\\d*(\\.\\d+)?$",
             },
             {
-              "name": "regexpForDigitsLimitation",
-              "message": "Zbyt dużo znaków po przecinku",
-              "regexp": "^\\d+(\\.\\d{0,{fieldA}})?$",
-            }
-          ]
-        }
-      }
-    }
-  }
-}
+              name: "regexpForDigitsLimitation",
+              message: "Zbyt dużo znaków po przecinku",
+              regexp: "^\\d+(\\.\\d{0,{fieldA}})?$",
+            },
+          ],
+        },
+      },
+    },
+  },
+};
 
 export const CustomRegexpValidations: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 100 });
@@ -208,29 +180,28 @@ export const ExposedValidationAndScrollWithRules: Story = {
     schema: {
       properties: {
         fieldA: {
-          label:"Field A",
+          label: "Field A",
           layout: {
-            component: "text-field"
+            component: "text-field",
           },
           validations: [
             {
               name: "valid-sth",
               rule: "fieldA != fieldB",
-              message: "Custom message"
+              message: "Custom message",
             },
           ],
         },
         fieldB: {
           label: "Field B",
           layout: {
-            component: "text-field"
-          }
-        }
-      }
+            component: "text-field",
+          },
+        },
+      },
     },
   },
 };
-
 
 export const ExposedValidationAndMessages: Story = {
   args: {
@@ -254,7 +225,7 @@ export const AddCustomSubmitWithBuiltInValidation: Story = {
  */
 export const ConditionalRequired: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText("Validate");
@@ -306,7 +277,7 @@ export const ConditionalRequired: Story = {
 
 export const ConditionalRequiredWithDefault: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText("Validate");
@@ -329,23 +300,24 @@ export const ConditionalRequiredWithDefault: Story = {
       type: "object",
       properties: {
         description: {
-          content: "When field could be not defined on start you should add option 'or $not($exists(your_field))' for default value of required",
+          content:
+            "When field could be not defined on start you should add option 'or $not($exists(your_field))' for default value of required",
           layout: {
             component: "static-content",
-            tag: "span"
-          }
+            tag: "span",
+          },
         },
         fieldC: {
           label: "Select with condition",
           layout: {
-            component: "select"
+            component: "select",
           },
           source: {
             items: [
               { value: "yes", title: "Field is required" },
               { value: "no", title: "Field is not required" },
             ],
-            returnObject: true
+            returnObject: true,
           },
         },
         fieldD: {
@@ -365,13 +337,12 @@ export const ConditionalRequiredWithDefault: Story = {
   },
 };
 
-
 /**
  * #### Można definiować funkcje walidacyjne oparte o budowanie warunków JSONata
  */
 export const ValidationFunctionWithJSONNataAndContext: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText("Validate");
@@ -409,7 +380,7 @@ export const ValidationFunctionWithJSONNataAndContext: Story = {
             {
               name: "valid-sth",
               rule: "username!=context.currentUser.username or $not($exists(username))",
-              message: "Custom message"
+              message: "Custom message",
             },
           ],
         },
@@ -418,16 +389,16 @@ export const ValidationFunctionWithJSONNataAndContext: Story = {
     options: {
       context: {
         currentUser: {
-          username: "Maciej"
-        }
-      }
-    }
+          username: "Maciej",
+        },
+      },
+    },
   },
 };
 
 export const ValidationFunctionInSections: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 200 });
@@ -436,10 +407,7 @@ export const ValidationFunctionInSections: Story = {
   render: StoryTemplateWithValidation,
   args: {
     modelValue: {
-      "pozycjeDokumentu": [
-        {"fieldA":"Karol"},
-        {"fieldA":"Maciej"}
-      ]
+      pozycjeDokumentu: [{ fieldA: "Karol" }, { fieldA: "Maciej" }],
     },
     schema: {
       type: "object",
@@ -453,35 +421,35 @@ export const ValidationFunctionInSections: Story = {
                   label: "FieldA",
                   layout: {
                     component: "text-field",
-                    cols: 6
+                    cols: 6,
                   },
                   validations: [
                     {
                       name: "valid-sth",
                       rule: "pozycjeDokumentu[].fieldA!=context.currentUser.username",
-                      message: "Value=Maciej is not allowed."
+                      message: "Value=Maciej is not allowed.",
                     },
-                  ]
-                }
-              }
-            }
-          }
-        }
+                  ],
+                },
+              },
+            },
+          },
+        },
       },
     },
     options: {
       context: {
         currentUser: {
-          username: "Maciej"
-        }
-      }
-    }
+          username: "Maciej",
+        },
+      },
+    },
   },
-}
+};
 
 export const AlertErrorConnectionWithValidation: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 200 });
@@ -492,7 +460,6 @@ export const AlertErrorConnectionWithValidation: Story = {
     modelValue: {},
     schema: {
       properties: {
-
         alert: {
           content: "Error message!",
           layout: {

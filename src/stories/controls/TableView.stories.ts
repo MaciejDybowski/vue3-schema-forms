@@ -1,53 +1,16 @@
 // @ts-nocheck
-import { mswLoader } from "msw-storybook-addon";
-import {UPDATE_TABLE_ROW, TABLE_PAGE_WITH_AGGREGATES, TABLE_PAGE_WITHOUT_AGGREGATES} from "@/stories/mock-responses"
-
-import { VueSchemaForms } from "@/components";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { initialize } from "msw-storybook-addon";
 
 import { Schema } from "../../types/schema/Schema";
+import { TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW } from "../mock-responses";
+import { commonMetadata } from "../templates/shared-blocks";
 
-import { initialize } from "msw-storybook-addon";
 initialize();
 
-const meta = {
+export default {
   title: "Forms/Controls/TableView",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {
-      fieldProps: {
-        variant: "outlined",
-        density: "compact",
-      },
-    },
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-  loaders: [mswLoader],
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
+  ...commonMetadata,
+};
 
 /**
  * Description here
@@ -111,7 +74,7 @@ export const Standard: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -177,7 +140,7 @@ export const ColorableCells: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -252,7 +215,7 @@ export const DynamicAlerts: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -316,7 +279,7 @@ export const NumberFields: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -374,7 +337,7 @@ export const JoinValues: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -432,7 +395,7 @@ export const JoinValuesWithHtmlAndExtraText: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -485,7 +448,7 @@ export const EditableField: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -540,7 +503,7 @@ export const ActionField: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -595,7 +558,7 @@ export const ActionFieldAdvanced: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -686,11 +649,11 @@ export const TopSlotAndButtons: Story = {
                       label: "Paste your csv file content",
                       layout: {
                         component: "text-area",
-                      }
-                    }
+                      },
+                    },
                   },
-                  required: ['csvBody']
-                }
+                  required: ["csvBody"],
+                },
               },
             ],
           },
@@ -700,7 +663,7 @@ export const TopSlotAndButtons: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -790,7 +753,7 @@ export const ContextActions: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -883,7 +846,7 @@ export const ContextActionsWithCondition: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -962,7 +925,7 @@ export const ContextActionWithSchemaIntegration: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };
@@ -1027,7 +990,7 @@ export const SummaryAggregates: Story = {
   },
   parameters: {
     msw: {
-      handlers: TABLE_PAGE_WITH_AGGREGATES
+      handlers: TABLE_PAGE_WITH_AGGREGATES,
     },
   },
 };
@@ -1099,7 +1062,7 @@ export const SummaryAggregatesUpdate: Story = {
   },
   parameters: {
     msw: {
-      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES]
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
     },
   },
 };

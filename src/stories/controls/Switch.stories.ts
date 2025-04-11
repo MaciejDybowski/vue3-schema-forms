@@ -1,47 +1,21 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
+import { commonMetadata } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
-const meta = {
+import { initialize } from "msw-storybook-addon";
+initialize();
+
+export default {
   title: "Forms/Controls/Switch",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 export const Standard: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     //await userEvent.type(field, "This is standard text area...", { delay: 100 });
@@ -65,7 +39,7 @@ export const Standard: Story = {
 
 export const Default: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     //await userEvent.type(field, "This is standard text area...", { delay: 100 });
@@ -90,7 +64,7 @@ export const Default: Story = {
 
 export const Colorful: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     //await userEvent.type(field, "This is standard text area...", { delay: 100 });
@@ -107,8 +81,8 @@ export const Colorful: Story = {
           layout: {
             component: "switch",
             props: {
-              color: "red"
-            }
+              color: "red",
+            },
           },
         },
       },
@@ -118,7 +92,7 @@ export const Colorful: Story = {
 
 export const ChangeValueTest: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     await userEvent.click(field, { delay: 200 });
@@ -142,7 +116,7 @@ export const ChangeValueTest: Story = {
 
 export const CustomMappingValues: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
 
@@ -170,7 +144,7 @@ export const CustomMappingValues: Story = {
 
 export const CustomMappingValuesChangeTest: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     await userEvent.click(field, { delay: 200 });
@@ -198,7 +172,7 @@ export const CustomMappingValuesChangeTest: Story = {
 
 export const MultipleConfiguration: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it! - custom");
     await userEvent.click(field, { delay: 200 });

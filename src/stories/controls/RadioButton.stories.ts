@@ -1,50 +1,24 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, userEvent, within } from "@storybook/test";
 
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { Source } from "../../types/schema/elements";
+import { commonMetadata } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
 
-const meta = {
+import { initialize } from "msw-storybook-addon";
+initialize();
+
+export default {
   title: "Forms/Controls/RadioButton",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 export const Standard: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     await expect(context.args.modelValue).toEqual({ radioButton: 1 });
     const option2 = canvas.getByLabelText("Option 2");
@@ -76,7 +50,7 @@ export const Standard: Story = {
 
 export const NoInitValue: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     await expect(context.args.modelValue).toEqual({});
     const option2 = canvas.getByLabelText("Option 2");
@@ -141,7 +115,7 @@ export const WithDefault: Story = {
 export const CustomMapping: Story = {
   name: "Custom mapping",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     await expect(context.args.modelValue).toEqual({ radioButtonCustomMapping: 1 });
   },
   args: {
@@ -172,7 +146,7 @@ export const CustomMapping: Story = {
 export const CustomMappingReturnObject: Story = {
   name: "Custom mapper + return obj",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     await expect(context.args.modelValue).toEqual({ radioButtonCustomMappingObject: { id: 1, text: "Option 1" } });
   },
   args: {
@@ -204,7 +178,7 @@ export const CustomMappingReturnObject: Story = {
 export const CustomMappingReturnObjectDefault: Story = {
   name: "Custom mapper + obj + default",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     await expect(context.args.modelValue).toEqual({
       radioButtonCustomMappingObjectDefault: {
         id: 2,

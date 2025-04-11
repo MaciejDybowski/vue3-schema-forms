@@ -1,46 +1,20 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
 import { calculationSchemaInDuplicatedSection, simpleCalculationSchema } from "@/stories/schemas";
 import { invoicePositionsSchema } from "@/tests/test-schemas";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { Layout, SchemaTextField } from "../../types/schema/elements";
 import { waitForMountedAsync } from "../controls/utils";
+import { commonMetadata } from "../templates/shared-blocks";
 
-const meta = {
+import { initialize } from "msw-storybook-addon";
+initialize();
+
+export default {
   title: "Forms/Features/Calculations",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 /**
  * #### Performing calculations based on form fields
@@ -53,7 +27,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const SimpleCalculation: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText("Field 1");
     const field2 = canvas.getByLabelText("Field 2");
@@ -78,7 +52,7 @@ export const SimpleCalculation: Story = {
  */
 export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText("Field 1");
     const field2 = canvas.getByLabelText("Field 2");
@@ -202,7 +176,7 @@ export const invoiceItems: Story = {
 
 export const SUM_function: Story = {
   play: async (context) => {
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     await expect(context.args.modelValue).toEqual({
       data: {
         items: [

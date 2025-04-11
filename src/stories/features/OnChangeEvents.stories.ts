@@ -1,52 +1,20 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { CURRENCIES_REQUEST } from "@/stories/mock-responses";
+import { initialize } from "msw-storybook-addon";
+
 import { expect, fireEvent, userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
 
 import { DictionarySource } from "../../types/shared/Source";
-import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "../controls/utils";
-import { initialize, mswLoader } from "msw-storybook-addon";
+import { CURRENCIES_REQUEST } from "../mock-responses";
+import { commonMetadata } from "../templates/shared-blocks";
+import { StoryTemplateWithValidation } from "../templates/story-template";
+
 initialize();
 
-const meta = {
+export default {
   title: "Forms/Features/On change events",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema u" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {
-      fieldProps: {
-        variant: "outlined",
-        density: "comfortable",
-      },
-    },
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-  loaders: [mswLoader],
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 export const CallActionWithParametersAndRequestBody: Story = {
   render: StoryTemplateWithValidation,
@@ -89,7 +57,7 @@ export const CallActionWithParametersAndRequestBody: Story = {
 export const ResetValueOnChange: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
 
     let textField = canvas.getByLabelText("Field A");
@@ -136,7 +104,7 @@ export const ResetValueOnChange: Story = {
 export const ResetValueOnChangeInDuplicatedSection: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
 
     let textField = canvas.getByLabelText("Field A");
@@ -198,7 +166,7 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
 export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
   render: StoryTemplateWithValidation,
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -214,7 +182,7 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
         {
           currency: {
             id: "USD",
-            label: "US Dollar"
+            label: "US Dollar",
           },
           fieldB: null,
         },
@@ -273,7 +241,7 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
   },
   parameters: {
     msw: {
-      handlers: [CURRENCIES_REQUEST]
+      handlers: [CURRENCIES_REQUEST],
     },
   },
 };

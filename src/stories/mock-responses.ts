@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { HttpResponse, http } from "msw";
 
 export const names = ["🥝 Kiwi", "🍏 Green Apple", "🍉 Watermelon", "🍌 Banana", "🍇 Grape"];
@@ -243,6 +244,95 @@ export const MOCK_REQUEST_CURRENCY = [
         page,
         size,
       },
+    });
+  }),
+];
+
+export const RESPONSE_DICTIONARY = [
+  http.get("/mock-dictionaries", async ({ request }) => {
+    const europeanCitiesBase = [
+      "London",
+      "Paris",
+      "Berlin",
+      "Madrid",
+      "Rome",
+      "Warsaw",
+      "Vienna",
+      "Amsterdam",
+      "Lisbon",
+      "Prague",
+      "Athens",
+      "Budapest",
+      "Brussels",
+      "Stockholm",
+      "Copenhagen",
+      "Dublin",
+      "Helsinki",
+      "Oslo",
+      "Zagreb",
+      "Belgrade",
+      "Sofia",
+      "Vilnius",
+      "Riga",
+      "Tallinn",
+      "Luxembourg",
+      "Ljubljana",
+      "Bratislava",
+      "Valletta",
+      "Reykjavik",
+      "Andorra la Vella",
+    ];
+
+    const europeanCities = Array.from({ length: 100 }, (_, index) => {
+      const baseCity = europeanCitiesBase[index % europeanCitiesBase.length]; // Cykl po bazowych miastach
+      return {
+        id: `${index + 1}`,
+        label: `${baseCity} ${index + 1}`, // Zapewnienie unikalności
+      };
+    });
+
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get("page") || "0", 10);
+    const size = parseInt(url.searchParams.get("size") || "20", 10);
+    const query = url.searchParams.get("query")?.toLowerCase() || "";
+    const valueFilter = url.searchParams.get("value-filter");
+
+    let filteredData;
+
+    if (valueFilter) {
+      // Jeśli podano `value-filter`, szukamy tylko tego ID
+      const ids = valueFilter.split(",").map((id) => id.trim());
+      filteredData = europeanCities.filter((item) => ids.includes(item.id));
+    } else {
+      // Standardowe filtrowanie po nazwie miasta
+      filteredData = europeanCities.filter((item) => item.label.toLowerCase().includes(query));
+    }
+
+    // Obsługa paginacji
+    const totalElements = filteredData.length;
+    const offset = page * size;
+    const paginatedData = filteredData.slice(offset, offset + size);
+
+    return HttpResponse.json({
+      content: paginatedData,
+      page: {
+        totalElements,
+        page,
+        itemsPerPage: size,
+      },
+      empty: paginatedData.length === 0,
+      first: page === 0,
+      last: offset + size >= totalElements,
+      number: page,
+      numberOfElements: paginatedData.length,
+      pageable: {
+        offset,
+        pageNumber: page,
+        pageSize: size,
+        paged: true,
+        unpaged: false,
+      },
+      size,
     });
   }),
 ];

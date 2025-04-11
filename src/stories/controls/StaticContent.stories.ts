@@ -1,55 +1,26 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { expect, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { Layout } from "../../types/schema/elements";
+import { commonMetadata } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
-const meta = {
+import { initialize } from "msw-storybook-addon";
+initialize();
+
+export default {
   title: "Forms/Static content",
-  component: VueSchemaForms,
-  tags: ["autodocs"],
-  argTypes: {
-    schema: {
-      control: "object",
-      description: "Schema" /*table: { disable: true }*/,
-    },
-    modelValue: {
-      control: "object",
-      description: "Model" /*table: { disable: true }*/,
-    },
-    options: {
-      control: "object",
-      description: "Opcje" /*table: { disable: true }*/,
-    },
-    "update:modelValue": { table: { disable: true } },
-  },
-  args: {
-    modelValue: {},
-    options: {},
-  },
-  parameters: {
-    controls: { hideNoControlsWarning: true }, //https://github.com/storybookjs/storybook/issues/24422
-  },
-} satisfies Meta<typeof VueSchemaForms>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+  ...commonMetadata,
+};
 
 export const Examples: Story = {
   args: {
-    modelValue: {
-      temp1: "debil",
-    },
     schema: {
       type: "object",
       properties: {
         h1: {
-          content: "h1 - Static form text content {temp1:Default:DATETIME}",
+          content: "h1 - Static form text content",
           layout: {
             component: "static-content",
             tag: "h1",
@@ -112,7 +83,7 @@ export const Examples: Story = {
 
 export const TextWithVariablesAndHTML: Story = {
   play: async ({ canvasElement }) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(canvasElement);
     await expect(canvas.getByText("Hello Maciej Dybowski!")).toBeInTheDocument();
   },
@@ -135,7 +106,8 @@ export const TextWithVariablesAndHTML: Story = {
           } as Layout,
         },
         description: {
-          content: "<b>{data.firstName}</b>, this span was generated as v-html content. And datetime = {data.datetime:-:DATETIME}",
+          content:
+            "<b>{data.firstName}</b>, this span was generated as v-html content. And datetime = {data.datetime:-:DATETIME}",
           layout: {
             component: "static-content",
             tag: "span",
@@ -148,14 +120,14 @@ export const TextWithVariablesAndHTML: Story = {
 
 export const GenerateVuetifyStaticComponent: Story = {
   play: async ({ canvasElement }) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(canvasElement);
     await expect(canvas.getByText("Is difference between Value A = 123 and Value B = 321")).toBeInTheDocument();
   },
   args: {
     modelValue: {
       valueA: "123",
-      valueB: "321"
+      valueB: "321",
     },
     schema: {
       type: "object",
@@ -166,11 +138,11 @@ export const GenerateVuetifyStaticComponent: Story = {
             component: "static-content",
             tag: "v-alert",
             props: {
-              type:"warning",
-              variant: "outlined"
-            }
-          }
-        }
+              type: "warning",
+              variant: "outlined",
+            },
+          },
+        },
       } as any,
     },
   },
@@ -186,7 +158,7 @@ export const DividerDefault: Story = {
         divider: {
           layout: {
             component: "divider",
-          }
+          },
         },
       },
     } as Schema,
@@ -202,10 +174,9 @@ export const DividerThickness: Story = {
       properties: {
         divider: {
           layout: {
-            component: "divider"
+            component: "divider",
           },
           thickness: 20,
-
         },
       },
     } as Schema,
@@ -225,13 +196,12 @@ export const DividerColor: Story = {
           },
           thickness: 5,
           color: "#B80D1AAD",
-          opacity:'100'
+          opacity: "100",
         },
       },
     } as Schema,
   },
 };
-
 
 export const DividerOpacity: Story = {
   play: async () => {},
@@ -244,7 +214,7 @@ export const DividerOpacity: Story = {
           layout: {
             component: "divider",
           },
-          opacity:'25',
+          opacity: "25",
         },
       },
     } as Schema,
