@@ -13,6 +13,7 @@
     v-bind="{ ...attrs, density: 'compact' }"
     width="100%"
     @keyup.enter="(e) => e.target.blur()"
+    @input="(e: any) => emit('update:field', { value: e.target.value, valueMapping: item.valueMapping })"
   >
   </v-number-input>
 </template>
