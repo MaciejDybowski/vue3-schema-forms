@@ -338,51 +338,49 @@ export const Table: Story = {
   },
 };
 
-export const FillRow: Story = {
+export const NumberInputV2: Story = {
   args: {
-    model: {
-      orderedMultiSelect: null,
-    },
+    model: {},
     schema: {
       type: "object",
       properties: {
-        item1: {
-          label: "Item1",
+        a: {
+          label: "A",
           layout: {
-            component: "text-field",
-            cols: 4,
+            component: "number-field-v2",
+            cols:3,
           },
         },
-        item2: {
-          label: "Item2",
+        b: {
+          label: "B",
           layout: {
-            component: "text-field",
-            cols: 4,
-            fillRow: true,
+            component: "number-field-v2",
+            cols:3,
           },
         },
-        item3: {
-          label: "Item3",
+        result: {
+          label: "Result",
           layout: {
-            component: "text-field",
-            cols: 2,
-
+            component: "number-field-v2",
+            cols:3,
           },
+          calculation: "a+b"
         },
-        item4: {
-          label: "Item4",
+        result3: {
+          label: "Expression",
           layout: {
-            component: "text-field",
-            cols: 2,
-            fillRow: true,
+            component: "number-field",
+            cols:3,
           },
+          expression: "JSONATA(a+b)"
         },
-        item5: {
-          label: "Item4",
+        result2: {
+          label: "Expression",
           layout: {
-            component: "text-field",
-            cols: 6,
+            component: "number-field-v2",
+            cols:3,
           },
+          expression: "JSONATA(a+b)"
         },
       },
     },

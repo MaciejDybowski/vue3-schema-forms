@@ -8,7 +8,7 @@ export function useClass() {
       classString += schema.layout.class;
     }
 
-    if (schema.layout.component === "number-field") {
+    if (schema.layout.component.includes("number-field")) {
       classString += " content-right";
     }
     return classString;

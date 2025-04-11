@@ -1,5 +1,5 @@
-import get from "lodash/get";
 import jsonata from "jsonata";
+import get from "lodash/get";
 
 export const functions = {
   FIND_OLDEST_DATE: FIND_OLDEST_DATE,
@@ -13,15 +13,14 @@ export const functions = {
   JSONATA: JSONATA,
 };
 
-export async function JSONATA(expression: string, model: object){
+export async function JSONATA(expression: string, model: object) {
   let regex = /JSONATA\((.*?)\)/;
   let match = regex.exec(expression);
-  if(match) {
+  if (match) {
     let nataExpression = expression.slice(8).slice(0, -1);
     const nata = jsonata(nataExpression);
     return await nata.evaluate(model);
   }
-
 }
 
 export function FIND_OLDEST_DATE(expression: string, model: object) {

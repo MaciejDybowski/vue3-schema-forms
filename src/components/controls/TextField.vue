@@ -47,9 +47,7 @@ const localModel = computed({
 async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
-    const formModelStore = useFormModelStore(props.schema.formId);
-    const mergedModel = formModelStore.getFormModelForResolve;
-    localModel.value = await resolveExpression(props.schema.key, expression, props.model, mergedModel);
+    localModel.value = await resolveExpression(props.schema.key, expression, props.model, props.schema.formId);
   }
 }
 

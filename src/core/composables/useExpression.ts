@@ -2,6 +2,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { ref } from "vue";
 
+import { useFormModelStore } from "@/store/formModelStore";
 import { useEventBus } from "@vueuse/core";
 
 import { functions } from "../engine/expressionResolver";
@@ -9,16 +10,18 @@ import { functions } from "../engine/expressionResolver";
 export function useExpression() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
-  async function resolveExpression(key: string, expression: string, model: object, mergedModel: object) {
+  async function resolveExpression(key: string, expression: string, model: object, formId: string) {
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let result = ref();
       let f = functions[functionName];
+      const formModelStore = useFormModelStore(formId);
+      const mergedModel = formModelStore.getFormModelForResolve;
       result.value = await f(expression, mergedModel);
 
       if (!functionName.includes("_GENERATOR")) {
         const unsubscribe = vueSchemaFormEventBus.on(
-          async (event) => await expressionListener(event, key, expression, model, mergedModel),
+          async (event) => await expressionListener(event, key, expression, model, formId),
         );
       }
       return result.value;
@@ -39,10 +42,12 @@ export function useExpression() {
     }
   }
 
-  async function expressionListener(event: string, key: string, expression: string, model: object, mergedModel: object) {
+  async function expressionListener(event: string, key: string, expression: string, model: object, formId: string) {
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let f = functions[functionName];
+      const formModelStore = useFormModelStore(formId);
+      const mergedModel = formModelStore.getFormModelForResolve;
       const result = await f(expression, mergedModel);
       const currentValue = get(model, key, null);
       if (result !== currentValue) {

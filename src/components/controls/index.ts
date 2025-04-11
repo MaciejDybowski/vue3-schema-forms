@@ -27,6 +27,7 @@ import DateTimePicker from "./date/DateTimePicker.vue";
 import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
 import Markdown from "./markdown/Markdown.vue";
 import OrderedMultiSelect from "./ordered-multi-select/OrderedMultiSelect.vue";
+import NumberFieldv2 from "@/components/controls/NumberFieldv2.vue";
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,
@@ -47,6 +48,7 @@ export const vueSchemaFromControls: Components = {
   button: ButtonField,
   switch: Switch,
   "number-field": NumberField,
+  "number-field-v2": NumberFieldv2,
   divider: Divider,
   /*  "image-preview": ImagePreview,*/
   image: Image,

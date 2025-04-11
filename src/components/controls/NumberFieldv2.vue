@@ -1,19 +1,22 @@
 <template>
-  <v-text-field
+  <v-number-input
     v-if="!loading"
     v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
+    :hideInput="false"
+    :inset="false"
     :label="label"
+    :precision="precision"
+    :reverse="false"
     :rules="!fieldProps.readonly ? rules : []"
+    controlVariant="stacked"
     v-bind="fieldProps"
-    @focusin="focusin"
-    @focusout="focusout"
     @update:model-value="userTyping"
   >
-    <template v-slot:append-inner>
+    <template v-slot:prepend-inner>
       <v-tooltip
         :text="t('resultWasModified')"
-        location="start"
+        location="end"
       >
         <template v-slot:activator="{ props }">
           <v-icon
@@ -25,37 +28,36 @@
         </template>
       </v-tooltip>
     </template>
-  </v-text-field>
+  </v-number-input>
 </template>
 
 <script lang="ts" setup>
 import set from "lodash/set";
 import { computed, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
 
 import {
   useCalculation,
   useClass,
   useExpression,
   useFormModel,
-  useLabel, useLocale,
+  useLabel,
+  useLocale,
   useProps,
   useResolveVariables,
-  useRules
+  useRules,
 } from "@/core/composables";
 import { useEventHandler } from "@/core/composables/useEventHandler";
-import { NumberFormattingType, RoundOption, useNumber } from "@/core/composables/useNumber";
 import { variableRegexp } from "@/core/engine/utils";
 import { logger } from "@/main";
-import { EngineNumberField } from "@/types/engine/controls";
 import { useFormModelStore } from "@/store/formModelStore";
+import { EngineNumberField } from "@/types/engine/controls";
 
 const props = defineProps<{
   schema: EngineNumberField;
   model: object;
 }>();
 
-const { t } = useLocale()
+const { t } = useLocale();
 const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { fieldProps, bindProps } = useProps();
@@ -65,58 +67,18 @@ const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
-const showFormattedNumber = ref(true);
+
 const { fillPath } = useResolveVariables();
 const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
-const precisionMin = props.schema.type == "int" ? 0 : "precisionMin" in props.schema ? props.schema.precision : 0;
-
-const formatType = ("formatType" in props.schema ? props.schema.formatType : "decimal") as NumberFormattingType;
-
-const currency = ("currency" in props.schema ? props.schema.currency : "PLN") as string;
-
-const roundOption: RoundOption = "roundOption" in props.schema ? (props.schema.roundOption as RoundOption) : "round";
-
-const { roundTo, formattedNumber } = useNumber();
 
 const lastValue = ref<any>(null);
 
-function isOnlyZeros(str) {
-  return /^0+$/.test(str);
-}
-
-function parseDigitWithOnlyZeroFraction(value: number) {
-  let lastFraction = lastValue.value?.toString().split(".")[1];
-  lastFraction = lastFraction?.slice(0, lastFraction.length - 1);
-  let current = value ? value.toString().split(".")[1] : null;
-
-  if (isOnlyZeros(lastFraction) && current == undefined) {
-    return value + `.${lastFraction}`;
-  }
-  return value;
-}
-
 const localModel = computed({
-  get(): string | number | null {
-    let value = getValue(props.model, props.schema);
-    if (value && typeof value == "string" && value.match(variableRegexp)) {
-      return value; // defaultValue with dependencies
-    }
-    if (typeof value == "string") {
-      value = Number(value);
-    }
-    if (value && showFormattedNumber.value) {
-      return formattedNumber(value, formatType, precisionMin, precision);
-    }
-    if (value === 0) {
-      return value;
-    }
-
-    value = parseDigitWithOnlyZeroFraction(value);
-    return value;
+  get(): any {
+    return getValue(props.model, props.schema);
   },
   set(val: any) {
     lastValue.value = localModel.value;
-    val = roundTo(val, precision, roundOption);
     setValue(val, props.schema);
   },
 });
@@ -147,14 +109,6 @@ function userTyping(val: any) {
     calculationResultWasModified.value = true;
   }
   onChange(props.schema, props.model);
-}
-
-function focusout() {
-  showFormattedNumber.value = true;
-}
-
-function focusin() {
-  showFormattedNumber.value = false;
 }
 
 async function runCalculationIfExist() {
