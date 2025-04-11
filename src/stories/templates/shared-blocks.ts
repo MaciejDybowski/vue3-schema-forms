@@ -6,7 +6,12 @@ export const commonMetadata = {
   tags: ["autodocs"],
   args: {
     modelValue: {},
-    options: {},
+    options: {
+      fieldProps: {
+        variant: "outlined",
+        density: "comfortable",
+      },
+    },
   },
   loaders: [mswLoader],
 };
