@@ -69,13 +69,13 @@ const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 
 const { fillPath } = useResolveVariables();
-const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
+const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? Number(props.schema.precision) : 2;
 
 const lastValue = ref<any>(null);
 
 const localModel = computed({
   get(): any {
-    return getValue(props.model, props.schema);
+    return Number(getValue(props.model, props.schema))
   },
   set(val: any) {
     lastValue.value = localModel.value;
