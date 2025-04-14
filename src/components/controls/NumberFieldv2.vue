@@ -49,7 +49,6 @@ import {
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { variableRegexp } from "@/core/engine/utils";
 import { logger } from "@/main";
-import { useFormModelStore } from "@/store/formModelStore";
 import { EngineNumberField } from "@/types/engine/controls";
 
 const props = defineProps<{
@@ -75,7 +74,11 @@ const lastValue = ref<any>(null);
 
 const localModel = computed({
   get(): any {
-    return Number(getValue(props.model, props.schema))
+    const value = getValue(props.model, props.schema);
+    if (value && typeof value == "string" && value.match(variableRegexp)) {
+      return value; // defaultValue with dependencies
+    }
+    return Number(value);
   },
   set(val: any) {
     lastValue.value = localModel.value;
@@ -132,7 +135,7 @@ async function resolveIfLocalModelHasDependencies() {
   if (localModel.value && typeof localModel.value == "string" && localModel.value.match(variableRegexp)) {
     const result = await resolve(props.schema, localModel.value);
     if (result.allVariablesResolved) {
-      localModel.value = result.resolvedText;
+      localModel.value = Number(result.resolvedText);
     }
   }
 }

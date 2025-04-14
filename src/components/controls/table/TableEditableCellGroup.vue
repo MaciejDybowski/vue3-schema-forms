@@ -9,7 +9,7 @@
     :model-value="getValue(item.valueMapping, index)"
     :precision="getPrecision(item.valueMapping, index)"
     :reverse="false"
-    controlVariant="stacked"
+    control-variant="hidden"
     v-bind="{ ...attrs, density: 'compact' }"
     width="100%"
     @keyup.enter="(e) => e.target.blur()"
@@ -49,6 +49,7 @@ function getValue(valueMapping: string, index: number) {
   return get(props.row, variable, null);
 }
 
+// TODO - przytrzymywanie tutaj strzałek nie działa bo jest aktualizacja całego wiersza i robi się jakiś breakdown/lag
 function emitData(e: any, item) {
   emit("update:field", { value: e, valueMapping: item.valueMapping });
 }

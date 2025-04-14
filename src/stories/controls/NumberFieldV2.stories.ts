@@ -51,3 +51,28 @@ export const Required: Story = {
     } as Schema,
   },
 };
+
+
+
+export const ModelDependencyDefaultValue: Story = {
+  play: async (context) => {},
+  args: {
+    modelValue: {
+      temp: 3
+    },
+    schema: {
+      type: "object",
+      properties: {
+        numberInt: {
+          label: "Number (int) required",
+          defaultValue: "{temp}",
+          type: "int",
+          layout: {
+            component: "number-field-v2",
+          },
+        },
+      },
+      required: ["numberInt"],
+    } as Schema,
+  },
+};
