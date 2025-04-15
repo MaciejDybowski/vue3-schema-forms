@@ -39,5 +39,5 @@ export interface EngineField {
   mode?: string
 
   // key-value-list
-  config: any
+  config?: any
 }
