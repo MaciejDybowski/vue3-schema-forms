@@ -6,14 +6,14 @@ import { expect, userEvent, within } from "@storybook/test";
 import { Schema } from "../../types/schema/Schema";
 import { Layout, SchemaTextField } from "../../types/schema/elements";
 import { waitForMountedAsync } from "../controls/utils";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Features/Calculations",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 /**
@@ -34,7 +34,7 @@ export const SimpleCalculation: Story = {
     await userEvent.type(field1, "2", { delay: 200 });
     await userEvent.type(field2, "13.25", { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       field1: 2,
       field2: 13.25,
       field3: 15.25,
@@ -42,7 +42,7 @@ export const SimpleCalculation: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: simpleCalculationSchema,
   },
 };
@@ -59,7 +59,7 @@ export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
     await userEvent.type(field1, "2");
     await userEvent.type(field2, "13.25");
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       field1: 2,
       field2: 13.25,
       field3: 15.25,
@@ -67,7 +67,7 @@ export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: simpleCalculationSchema,
     options: {
       digitsAfterDecimal: 3,
@@ -92,7 +92,7 @@ export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
     expect(resultSquare).toHaveValue('0.1406');
   },
   args: {
-    modelValue: {
+    formModel: {
       currency: {
         digitsAfterDecimal: 3,
       },
@@ -143,10 +143,10 @@ export const calculationInDuplicatedSchema: Story = {
         },
       ],
     };
-    await expect(context.args.modelValue).toEqual(expectedModel);
+    await expect(context.args.formModel).toEqual(expectedModel);
   },
   args: {
-    modelValue: {
+    formModel: {
       items: [
         {
           field1: 0.1254,
@@ -163,7 +163,7 @@ export const calculationInDuplicatedSchema: Story = {
  */
 export const invoiceItems: Story = {
   args: {
-    modelValue: {
+    formModel: {
       invoiceItems: [
         { product: "Item 1", quantity: 2, netPrice: 90.5, tax: 0.18 },
         { product: "Item 2", quantity: 5, netPrice: 88.3, tax: 0.07 },
@@ -177,7 +177,7 @@ export const invoiceItems: Story = {
 export const SUM_function: Story = {
   play: async (context) => {
     await new Promise((r) => setTimeout(r, 100));
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       data: {
         items: [
           {
@@ -200,7 +200,7 @@ export const SUM_function: Story = {
     });
   },
   args: {
-    modelValue: {
+    formModel: {
       data: {
         items: [
           {

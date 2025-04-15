@@ -4,14 +4,14 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaField } from "../../types/schema/elements";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Features/Reset Form",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const DefaultVariablesWhenReset: Story = {
@@ -23,14 +23,14 @@ export const DefaultVariablesWhenReset: Story = {
     const Reset = canvas.getByText("Reset Form");
     await userEvent.click(Reset, { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       fieldA: null,
       fieldB: null,
     });
   },
-  render: StoryTemplateWithValidation,
+  
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         fieldA: {

@@ -9,21 +9,21 @@ import { Schema, SchemaOptions } from "../../types/schema/Schema";
 import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "../../types/schema/elements";
 import { waitForMountedAsync } from "../controls/utils";
 import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 initialize();
 
 
 export default {
   title: "Forms/Features/Dependencies",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const step1: Story = {
   name: "Step1. Simple, no nested",
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         fieldA: {
@@ -48,7 +48,7 @@ export const step2: Story = {
   name: "Step2. Simple, nested object",
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         fieldA: {
@@ -131,7 +131,7 @@ export const step3: Story = {
   name: "Step3. In duplicated section",
   play: async (context) => {},
   args: {
-    modelValue: {
+    formModel: {
       fieldB: "Root level",
       products: [
         {
@@ -196,7 +196,7 @@ export const step4: Story = {
   name: "Step4. In duplicated section with nested duplicated",
   play: async (context) => {},
   args: {
-    modelValue: {
+    formModel: {
       fieldB: "Root level",
       testObject: {
         testField: "Test value",
@@ -318,7 +318,7 @@ export const step5: Story = {
   name: "Step5. In group",
   play: async (context) => {},
   args: {
-    modelValue: {
+    formModel: {
       fieldA: "value in field group",
     },
     schema: {
@@ -376,7 +376,7 @@ export const UseDependenciesInLabel: Story = {
     });
   },
   args: {
-    modelValue: {
+    formModel: {
       data: {
         items: [
           {
@@ -470,9 +470,9 @@ export const UseFormVariablesInFieldProps: Story = {
       await expect(queryHint.length).toEqual(2);
     });
   },
-  render: StoryTemplateWithValidation,
+  
   args: {
-    modelValue: {
+    formModel: {
       amount: 32,
       items: [{ item: "Item 1", quantity: 3, price: 32.21 }],
     },
@@ -580,7 +580,7 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -617,7 +617,7 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
 
 export const ComplexExample: Story = {
   args: {
-    modelValue: {
+    formModel: {
       dataId: "#01",
       name: "Main name",
       products: [

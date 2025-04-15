@@ -3,14 +3,14 @@ import { HttpResponse, http } from "msw";
 import { initialize } from "msw-storybook-addon";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 initialize();
 
 
 export default {
   title: "Forms/Controls/Dictionary [combobox]",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 const MOCK_REQUEST = [
@@ -31,7 +31,7 @@ export const Standard: Story = {
     // const canvas = within(context.canvasElement);
     // const field = canvas.getByLabelText("Text area");
     // await userEvent.type(field, "This is standard text area...", { delay: 100 });
-    // await expect(context.args.modelValue).toEqual({ textArea: "This is standard text area..." });
+    // await expect(context.args.formModel).toEqual({ textArea: "This is standard text area..." });
   },
   args: {
     model: {

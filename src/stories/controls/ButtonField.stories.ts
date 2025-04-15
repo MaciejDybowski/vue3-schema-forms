@@ -1,13 +1,13 @@
 // @ts-nocheck
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Controls/Button",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -49,7 +49,7 @@ export const WithProps: Story = {
 
 export const CopyToClipboard: Story = {
   args: {
-    modelValue: {
+    formModel: {
       input: "Lorem ipsum...",
     },
     schema: {
@@ -81,7 +81,7 @@ export const CopyToClipboard: Story = {
 
 export const DialogWithInjectedForm: Story = {
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

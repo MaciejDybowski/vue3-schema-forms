@@ -3,14 +3,14 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { waitForMountedAsync } from "../controls/utils";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Features/JSONata expressions",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 /*// nagle przestało wykrywać textArea w tescie
@@ -30,7 +30,7 @@ export const OnComponentSimpleField: Story = {
     await expect(textArea.length).toEqual(0);
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -74,7 +74,7 @@ export const OnComponentIfInDuplicatedSection: Story = {
     await expect(textArea.length).toEqual(0);
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -124,7 +124,7 @@ export const OnPropsSimpleField: Story = {
     await expect(hint.length).toEqual(1);
   },
   args: {
-    modelValue: { waluta: { value: "PLN", title: "Polski złoty" } },
+    formModel: { waluta: { value: "PLN", title: "Polski złoty" } },
     schema: {
       type: "object",
       properties: {
@@ -170,7 +170,7 @@ export const OnPropsIfInDuplicatedSection: Story = {
     await expect(hint.length).toEqual(1);
   },
   args: {
-    modelValue: { waluta: { value: "PLN", title: "Polski złoty" } },
+    formModel: { waluta: { value: "PLN", title: "Polski złoty" } },
     schema: {
       type: "object",
       properties: {
@@ -215,7 +215,7 @@ export const OnPropsIfInDuplicatedSection: Story = {
 export const UseJSONataFunctions: Story = {
   name: "JSONata function in action",
   args: {
-    modelValue: {
+    formModel: {
       pozycjeDokumentu: [
         {
           rodzajKosztu: { id: "213" },

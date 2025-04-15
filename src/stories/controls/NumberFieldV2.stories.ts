@@ -2,7 +2,7 @@
 import { expect, fireEvent, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 import { initialize } from "msw-storybook-addon";
@@ -10,13 +10,13 @@ initialize();
 
 export default {
   title: "Forms/Controls/NumberFieldV2",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Integer: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -35,7 +35,7 @@ export const Integer: Story = {
 export const Required: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -57,7 +57,7 @@ export const Required: Story = {
 export const ModelDependencyDefaultValue: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {
+    formModel: {
       temp: 3
     },
     schema: {

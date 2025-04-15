@@ -5,13 +5,13 @@ import { initialize } from "msw-storybook-addon";
 import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 initialize();
 
 export default {
   title: "Forms/Features/Ref JSON Blocks",
-  ...commonMetadata
+  ...formStoryWrapperTemplate
 };
 
 
@@ -25,9 +25,9 @@ const JSON_SCHEMA_BLOCK = [
 ];
 
 export const SchemaWithReference: Story = {
-  render: StoryTemplateWithValidation,
+  
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         fieldA: {

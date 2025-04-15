@@ -4,14 +4,14 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaField, SchemaTextField } from "../../types/schema/elements";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Features/ConditionalRendering",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 /**
@@ -38,7 +38,7 @@ export const ConditionStory: Story = {
     await expect(rendered).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: conditionSchema,
   },
 };
@@ -47,7 +47,7 @@ export const ConditionWithCalcStory: Story = {
   name: "if with calcs",
   play: async ({ canvasElement }) => {},
   args: {
-    modelValue: {
+    formModel: {
       a: 10,
       b: 99,
     },
@@ -98,7 +98,7 @@ export const ConditionalWithDuplicatedSection: Story = {
     const ifField = await canvas.getByLabelText("Some field with if");
     await userEvent.type(ifField, "Test", { delay: 100 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       data: {
         test: "root",
       },
@@ -108,7 +108,7 @@ export const ConditionalWithDuplicatedSection: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         data: {
@@ -165,7 +165,7 @@ export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
     const ifField = canvas.getByLabelText("Item");
     await userEvent.type(ifField, "root", { delay: 100 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       data: {
         test: "root",
       },
@@ -175,7 +175,7 @@ export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

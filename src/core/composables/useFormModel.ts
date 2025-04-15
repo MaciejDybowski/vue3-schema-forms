@@ -20,11 +20,12 @@ export function useFormModel() {
     return value;
   }
 
-  function setValue(val: any, schema: EngineField, index?: number) {
+  function setValue(val: any, schema: EngineField, index?: number, emitBlocker?: boolean) {
     const event: NodeUpdateEvent = {
       key: schema.key,
       value: (val !== undefined || val === 0) && val !== '' ? val : null,
       index: index,
+      emitBlocker: emitBlocker
     };
     schema.on.input(event);
   }

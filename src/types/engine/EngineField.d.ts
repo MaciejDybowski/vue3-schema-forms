@@ -34,4 +34,7 @@ export interface EngineField {
 
   //events
   onChange?: EventHandlerDefinition;
+
+  //switch
+  mode?: string
 }

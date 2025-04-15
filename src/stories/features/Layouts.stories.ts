@@ -1,14 +1,14 @@
 // @ts-nocheck
 import { offsetSchema } from "@/stories/schemas";
 
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Features/Layouts",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 /**

@@ -1,18 +1,18 @@
 // @ts-nocheck
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Controls/Markdown",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const MarkdownTable: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {
+    formModel: {
       dataId: "0195d1b7-8c56-75cf-836f-0da2c18ecd4c",
       name: "zadbano.pl dla konsumenta",
       baseFuelPrice: null,

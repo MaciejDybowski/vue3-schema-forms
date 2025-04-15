@@ -3,19 +3,19 @@ import { initialize } from "msw-storybook-addon";
 
 import { DictionarySource } from "../../types/shared/Source";
 import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 initialize();
 
 
 export default {
   title: "Forms/Controls/FieldsGroup",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const TwoFieldsGroup = {
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -72,7 +72,7 @@ export const TwoFieldsGroup = {
 
 export const GroupWithHiddenDict = {
   args: {
-    modelValue: {
+    formModel: {
       fieldQ: "Test",
     },
     schema: {
@@ -132,7 +132,7 @@ export const GroupWithHiddenDict = {
 
 export const Required = {
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -173,7 +173,7 @@ export const Required = {
 
 export const ResetValueWhenHidden = {
   args: {
-    modelValue: {
+    formModel: {
       fieldQ: "Maciej ukryte",
     },
     schema: {

@@ -1,18 +1,18 @@
 // @ts-nocheck
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Features/Context object",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         description: {
@@ -47,7 +47,7 @@ export const Standard: Story = {
 export const StandardWithDefaultMapping: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         item: {

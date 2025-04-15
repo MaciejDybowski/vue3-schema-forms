@@ -3,14 +3,14 @@ import { StoryTemplateWithValidation } from "@/stories/templates/story-template"
 import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Controls/DuplicatedSection",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -41,7 +41,7 @@ export const Standard: Story = {
  * Duplicated section with required fields
  */
 export const StandardWithRequired: Story = {
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
@@ -56,7 +56,7 @@ export const StandardWithRequired: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -182,7 +182,7 @@ export const AddAction: Story = {
     const input1 = await canvas.findByLabelText("Product");
     await userEvent.type(input1, "Item 1", { delay: 100 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }],
     });
 
@@ -195,12 +195,12 @@ export const AddAction: Story = {
     const input2 = await within(duplicatedSections[1]).findByLabelText("Product");
     await userEvent.type(input2, "Item 2", { delay: 100 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }, { product: "Item 2" }],
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -232,7 +232,7 @@ export const CopyBelowAction: Story = {
     const input1 = await canvas.findByLabelText("Product");
     await userEvent.type(input1, "Item 1", { delay: 100 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }],
     });
 
@@ -248,12 +248,12 @@ export const CopyBelowAction: Story = {
     const copyBelowAction = document.getElementsByClassName("v-list-item")[1];
     await userEvent.click(copyBelowAction, { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }, { product: "Item 1" }],
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -285,7 +285,7 @@ export const CopyModeOfButton: Story = {
     const input1 = await canvas.findByLabelText("Product");
     await userEvent.type(input1, "Item 1", { delay: 100 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }],
     });
 
@@ -301,12 +301,12 @@ export const CopyModeOfButton: Story = {
     const copyBelowAction = document.getElementsByClassName("v-list-item")[1];
     await userEvent.click(copyBelowAction, { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }, { product: "Item 1" }],
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -335,7 +335,7 @@ export const CopyModeOfButton: Story = {
 
 export const DeleteAction: Story = {
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }, { product: "Item 2" }],
     });
 
@@ -351,12 +351,12 @@ export const DeleteAction: Story = {
     const deleteAction = document.getElementsByClassName("v-list-item")[0];
     await userEvent.click(deleteAction, { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }],
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -384,7 +384,7 @@ export const DeleteAction: Story = {
 
 export const AddBelowAction: Story = {
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }, { product: "Item 2" }],
     });
 
@@ -405,12 +405,12 @@ export const AddBelowAction: Story = {
     const input2 = await section.findByLabelText("Product");
     await userEvent.type(input2, "new item", { delay: 100 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }, { product: "new item" }, { product: "Item 2" }],
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -438,7 +438,7 @@ export const AddBelowAction: Story = {
 
 export const ReadOnlyMode: Story = {
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -509,12 +509,12 @@ export const OrdinalNumber: Story = {
 export const NotDisplayInitRowWhenEmpty: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    await expect(context.args.modelValue).toEqual({});
+    await expect(context.args.formModel).toEqual({});
     const inputElement = canvas.queryByLabelText("Product");
     await expect(inputElement).not.toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -542,14 +542,14 @@ export const NotDisplayInitRowWhenEmpty: Story = {
 export const DisplayProperlyWhenModelAndInitRowIsEnabled: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: "Item 1" }],
     });
     const inputElement = canvas.queryByLabelText("Product");
     await expect(inputElement).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       invoiceItems: [{ product: "Item 1" }],
     },
     schema: {

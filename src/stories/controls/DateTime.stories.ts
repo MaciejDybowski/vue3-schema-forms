@@ -1,19 +1,19 @@
 // @ts-nocheck
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Controls/DateTime",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

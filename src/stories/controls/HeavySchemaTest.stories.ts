@@ -1,17 +1,17 @@
 // @ts-nocheck
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/HeavySchema",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const HeavyExampleOfPropsCalculationsEtc: Story = {
   args: {
-    modelValue: {
+    formModel: {
       faktura: { kurs: 3.2321, waluta: { id: "USD", label: "USD" } },
       pozycjeDokumentu: [
         {

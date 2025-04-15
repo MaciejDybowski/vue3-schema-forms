@@ -3,7 +3,7 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaTextField } from "../../types/schema/elements";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 import { initialize } from "msw-storybook-addon";
@@ -11,7 +11,7 @@ initialize();
 
 export default {
   title: "Forms/Controls/TextArea",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 /**
  * The default settings for the text area are such that the ```auto-grow = enabled``` , and the field starts with a setting of ```rows = 3```.
@@ -21,7 +21,7 @@ export const Standard: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Text area");
     await userEvent.type(field, "This is standard text area...", { delay: 100 });
-    await expect(context.args.modelValue).toEqual({ textArea: "This is standard text area..." });
+    await expect(context.args.formModel).toEqual({ textArea: "This is standard text area..." });
   },
   args: {
     schema: {
@@ -42,10 +42,10 @@ export const Standard: Story = {
  */
 export const WithDefault: Story = {
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({ textAreaWithDefault: "Lorem ipsum..." });
+    await expect(context.args.formModel).toEqual({ textAreaWithDefault: "Lorem ipsum..." });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -66,7 +66,7 @@ export const WithDefault: Story = {
 export const WithVuetifyProps: Story = {
   name: "TextArea with Vuetify Props",
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -90,7 +90,7 @@ export const WithVuetifyProps: Story = {
  */
 export const SimpleValidation: Story = {
   name: "TextArea with required annotation",
-  render: StoryTemplateWithValidation,
+  
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const exampleElement = canvas.getByLabelText("Text area");
@@ -104,7 +104,7 @@ export const SimpleValidation: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -125,7 +125,7 @@ export const SimpleValidation: Story = {
  */
 export const RequiredAncCounter: Story = {
   name: "TextArea with required and counter",
-  render: StoryTemplateWithValidation,
+  
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const exampleElement = canvas.getByLabelText("Text area");
@@ -144,7 +144,7 @@ export const RequiredAncCounter: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

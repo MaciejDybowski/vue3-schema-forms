@@ -23,6 +23,8 @@ const props = defineProps<{
   model: object;
 }>();
 
+const mode = props.schema.mode ? props.schema.mode : "none";
+
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(props.schema);
@@ -47,7 +49,7 @@ const localModel = computed({
     return getValue(props.model, props.schema);
   },
   set(val: any) {
-    setValue(val, props.schema);
+    setValue(val, props.schema, undefined, mode == "visibility");
   },
 });
 
@@ -55,6 +57,11 @@ onMounted(async () => {
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
+
+  if (mode == "visibility") {
+    fieldProps.value.readonly = false;
+  }
+
   if (!("defaultValue" in props.schema)) {
     let falseValue = fieldProps.value["false-value"] as string | boolean | undefined;
     localModel.value = falseValue === undefined ? false : falseValue;

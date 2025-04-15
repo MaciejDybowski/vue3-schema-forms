@@ -2,7 +2,7 @@
 import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 import { initialize } from "msw-storybook-addon";
@@ -10,7 +10,7 @@ initialize();
 
 export default {
   title: "Forms/Controls/Address",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -18,7 +18,7 @@ export const Standard: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Country");
     await userEvent.type(field, "Poland", { delay: 100 });
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       address: {
         country: "Poland",
         region: null,
@@ -29,7 +29,7 @@ export const Standard: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -57,7 +57,7 @@ export const Override: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Country");
     await userEvent.type(field, "Poland", { delay: 100 });
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       address: {
         country: "Poland",
         region: null,
@@ -68,7 +68,7 @@ export const Override: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -123,7 +123,7 @@ export const Override: Story = {
 
 export const StandardValidation: Story = {
   name: "Address with default validation",
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const country = canvas.getByLabelText("Country");
@@ -138,7 +138,7 @@ export const StandardValidation: Story = {
     const city = canvas.getByLabelText("City");
     await userEvent.type(city, "Kraków", { delay: 100 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       address: {
         country: "Poland",
         region: null,
@@ -155,7 +155,7 @@ export const StandardValidation: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -171,14 +171,14 @@ export const StandardValidation: Story = {
 };
 
 export const OverrideValidation: Story = {
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
     const addressLine = canvas.getByLabelText("Street and number");
     await userEvent.type(addressLine, "Opolska", { delay: 100 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       address: {
         country: null,
         region: null,
@@ -195,7 +195,7 @@ export const OverrideValidation: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

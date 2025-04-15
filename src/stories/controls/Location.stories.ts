@@ -3,7 +3,7 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaLocationField } from "../../types/schema/elements";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
 
@@ -12,12 +12,12 @@ initialize();
 
 export default {
   title: "Forms/Controls/Location",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -53,10 +53,10 @@ export const WithLangAndCountryLimits: Story = {
     const items = document.getElementsByClassName("v-list-item");
 
     await userEvent.click(items[0], { delay: 200 });
-    await expect(typeof context.args.modelValue.location).toEqual("object");
+    await expect(typeof context.args.formModel.location).toEqual("object");
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -77,7 +77,7 @@ export const WithLangAndCountryLimits: Story = {
 
 export const WithValue: Story = {
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       location: {
         country: "Polska",
         country_code: "pl",
@@ -95,7 +95,7 @@ export const WithValue: Story = {
     });
   },
   args: {
-    modelValue: {
+    formModel: {
       location: {
         country: "Polska",
         country_code: "pl",
@@ -131,7 +131,7 @@ export const WithValue: Story = {
 
 export const WithVuetifyProps: Story = {
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -155,7 +155,7 @@ export const WithVuetifyProps: Story = {
 };
 
 export const Required: Story = {
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Location field");
@@ -174,7 +174,7 @@ export const Required: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

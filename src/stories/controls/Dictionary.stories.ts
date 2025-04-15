@@ -6,7 +6,7 @@ import { expect, userEvent, waitFor, within } from "@storybook/test";
 import { Schema } from "../../types/schema/Schema";
 import { DictionarySource } from "../../types/shared/Source";
 import { MOCK_REQUEST_CURRENCY, RESPONSE_DICTIONARY } from "../mock-responses";
-import { commonMetadata } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
 
@@ -14,7 +14,7 @@ initialize();
 
 export default {
   title: "Forms/Controls/Dictionary [autocomplete]",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -33,12 +33,12 @@ export const Standard: Story = {
     //await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
     //await userEvent.click(items[21], { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       currency: { id: "AFN", label: "Afgani", digitsAfterDecimal: "2" },
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -79,7 +79,7 @@ export const WithDescription: Story = {
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
     await userEvent.click(items[21], { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       currency: {
         id: "BWP",
         label: "Pula",
@@ -88,7 +88,7 @@ export const WithDescription: Story = {
     });*/
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -137,7 +137,7 @@ export const WithSearch: Story = {
     await userEvent.pointer({ keys: "[MouseLeft]", target: option, pointerName: "mouse", pointerType: "mouse" });
     await userEvent.click(option as HTMLElement, { delay: 400 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       currency: {
         id: "AUD",
         label: "Dolar australijski",
@@ -146,7 +146,7 @@ export const WithSearch: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -180,12 +180,12 @@ export const ReturnValue: Story = {
     const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       currency: "Afgani",
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -212,7 +212,6 @@ export const ReturnValue: Story = {
 };
 
 export const Required: Story = {
-  render: StoryTemplateWithValidation,
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -224,7 +223,7 @@ export const Required: Story = {
     const Submit = canvas.getByText("Validate");
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       currency: {
         id: "AFN",
         label: "Afgani",
@@ -233,7 +232,7 @@ export const Required: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -268,7 +267,7 @@ export const LazyLoadingDisabled: Story = {
      const items = document.getElementsByClassName("v-list-item");
      await userEvent.click(items[0], { delay: 200 });
  
-     await expect(context.args.modelValue).toEqual({
+     await expect(context.args.formModel).toEqual({
        currency: {
          id: "BTN",
          label: "Ngultrum",
@@ -277,7 +276,7 @@ export const LazyLoadingDisabled: Story = {
      });*/
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -319,7 +318,7 @@ export const DefaultValueAsATextWithDependencies: Story = {
       await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
       await userEvent.click(items[21], { delay: 200 });
 
-      await expect(context.args.modelValue).toEqual({
+      await expect(context.args.formModel).toEqual({
         currency: {
           id: "BWP",
           label: "Pula",
@@ -328,7 +327,7 @@ export const DefaultValueAsATextWithDependencies: Story = {
       });*/
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
 
@@ -371,7 +370,7 @@ export const DefaultValueAsATextWithDependencies: Story = {
 export const OneTimeValueFilter: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {
+    formModel: {
       customer: {
         defaultCurrencyCode: "PLN",
       },
@@ -403,7 +402,7 @@ export const OneTimeValueFilter: Story = {
 
 export const ConditionalFilter: Story = {
   args: {
-    modelValue: {
+    formModel: {
       testInput: "test",
       deps: {
         item: {
@@ -456,7 +455,7 @@ export const ConditionalFilter: Story = {
 export const ReadOnlyWithValue: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {
+    formModel: {
       currency: {
         id: "BWP",
         label: "Pula",
@@ -492,7 +491,7 @@ export const ReadOnlyWithValue: Story = {
 export const ReadOnlyRequiredWithValue: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {
+    formModel: {
       currency: {
         id: "BWP",
         label: "Pula",
@@ -529,7 +528,7 @@ export const ReadOnlyRequiredWithValue: Story = {
 export const ReadOnlyRequiredWithoutValue: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

@@ -2,7 +2,7 @@
 import { expect, fireEvent, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 import { initialize } from "msw-storybook-addon";
@@ -10,7 +10,7 @@ initialize();
 
 export default {
   title: "Forms/Controls/NumberField",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Integer: Story = {
@@ -19,10 +19,10 @@ export const Integer: Story = {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Number (int)");
     await userEvent.type(field, "1", { delay: 300 });
-    await expect(context.args.modelValue).toEqual({ numberInt: 1 });
+    await expect(context.args.formModel).toEqual({ numberInt: 1 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -41,7 +41,7 @@ export const Integer: Story = {
 export const Required: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -61,7 +61,7 @@ export const Required: Story = {
 export const FloatWithTextOtherThanRight: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -86,10 +86,10 @@ export const FloatStandard2DecimalPlaces: Story = {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Number (float)");
     await userEvent.type(field, "1.346", { delay: 300 });
-    await expect(context.args.modelValue).toEqual({ numberFloat2: 1.35 });
+    await expect(context.args.formModel).toEqual({ numberFloat2: 1.34 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -111,10 +111,10 @@ export const FloatStandard4DecimalPlaces: Story = {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Number (float)");
     await userEvent.type(field, "1.34632", { delay: 300 });
-    await expect(context.args.modelValue).toEqual({ numberFloat4: 1.3463 });
+    await expect(context.args.formModel).toEqual({ numberFloat4: 1.3463 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -137,11 +137,11 @@ export const CurrencyMode: Story = {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Currency default");
     await userEvent.type(field, "1.34632", { delay: 300 });
-    await expect(context.args.modelValue).toEqual({ currencyLocale: 1.3463 });
+    await expect(context.args.formModel).toEqual({ currencyLocale: 1.3463 });
     fireEvent.focusOut(field);
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -165,11 +165,11 @@ export const CurrencyModeProps: Story = {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Currency props");
     await userEvent.type(field, "1.34632", { delay: 300 });
-    await expect(context.args.modelValue).toEqual({ currencyProps: 1.346 });
+    await expect(context.args.formModel).toEqual({ currencyProps: 1.346 });
     fireEvent.focusOut(field);
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -194,11 +194,11 @@ export const PercentMode: Story = {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Percent");
     await userEvent.type(field, "4.34", { delay: 300 });
-    await expect(context.args.modelValue).toEqual({ percent: 4.34 });
+    await expect(context.args.formModel).toEqual({ percent: 4.34 });
     fireEvent.focusOut(field);
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -220,11 +220,11 @@ export const DependenciesInDefaultValue: Story = {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText("Percent");
-    await expect(context.args.modelValue).toEqual({ percent: 32, number: 32 });
+    await expect(context.args.formModel).toEqual({ percent: 32, number: 32 });
     fireEvent.focusOut(field);
   },
   args: {
-    modelValue: {
+    formModel: {
       number: 32,
       percent: 32,
     },

@@ -405,7 +405,7 @@ const MOCK_OFFER_ITEMS_RESPONSE ={
 
 
 export const OFFER_ITEMS_MOCK = [
-  http.get("/api/v1/offers/802d5b51-655b-413e-a19e-fd0f46863863/offer-items?page=0&size=10", async (req, res, ctx) => {
+  http.get("/api/v1/offers/802d5b51-655b-413e-a19e-fd0f46863863/offer-items?page=0&size=10", async () => {
     return HttpResponse.json(MOCK_OFFER_ITEMS_RESPONSE);
   }),
 ]

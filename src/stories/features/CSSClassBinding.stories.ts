@@ -1,14 +1,14 @@
 // @ts-nocheck
 import { expect } from "@storybook/test";
 
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Features/CSS Class binding",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Story1: Story = {

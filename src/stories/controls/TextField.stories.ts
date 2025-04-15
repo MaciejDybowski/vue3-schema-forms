@@ -3,7 +3,7 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaTextField } from "../../types/schema/elements";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 import { initialize } from "msw-storybook-addon";
@@ -11,7 +11,7 @@ initialize();
 
 export default {
   title: "Forms/Controls/TextField",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -19,10 +19,10 @@ export const Standard: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Text field");
     await userEvent.type(field, "This is standard text field...", { delay: 100 });
-    await expect(context.args.modelValue).toEqual({ textField: "This is standard text field..." });
+    await expect(context.args.formModel).toEqual({ textField: "This is standard text field..." });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -41,10 +41,10 @@ export const Standard: Story = {
  */
 export const WithDefault: Story = {
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({ textFieldWithDefault: "Item 1" });
+    await expect(context.args.formModel).toEqual({ textFieldWithDefault: "Item 1" });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -88,7 +88,7 @@ export const WithVuetifyProps: Story = {
  */
 export const SimpleValidation: Story = {
   name: "TextField with required annotation",
-  render: StoryTemplateWithValidation,
+  
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const exampleElement = canvas.getByLabelText("Text field");
@@ -102,7 +102,7 @@ export const SimpleValidation: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

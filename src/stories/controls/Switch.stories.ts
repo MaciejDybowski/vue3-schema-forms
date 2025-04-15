@@ -1,16 +1,17 @@
 // @ts-nocheck
+import { initialize } from "msw-storybook-addon";
+
 import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
-import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Controls/Switch",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -19,10 +20,10 @@ export const Standard: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     //await userEvent.type(field, "This is standard text area...", { delay: 100 });
-    await expect(context.args.modelValue).toEqual({ switch: false });
+    await expect(context.args.formModel).toEqual({ switch: false });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -43,10 +44,10 @@ export const Default: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     //await userEvent.type(field, "This is standard text area...", { delay: 100 });
-    await expect(context.args.modelValue).toEqual({ switchDefault: true });
+    await expect(context.args.formModel).toEqual({ switchDefault: true });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -68,10 +69,10 @@ export const Colorful: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     //await userEvent.type(field, "This is standard text area...", { delay: 100 });
-    await expect(context.args.modelValue).toEqual({ switchDefault: true });
+    await expect(context.args.formModel).toEqual({ switchDefault: true });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -96,10 +97,10 @@ export const ChangeValueTest: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     await userEvent.click(field, { delay: 200 });
-    await expect(context.args.modelValue).toEqual({ switchValueTest: true });
+    await expect(context.args.formModel).toEqual({ switchValueTest: true });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -120,10 +121,10 @@ export const CustomMappingValues: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
 
-    await expect(context.args.modelValue).toEqual({ customSwitchDefault: "No" });
+    await expect(context.args.formModel).toEqual({ customSwitchDefault: "No" });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -148,10 +149,10 @@ export const CustomMappingValuesChangeTest: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
     await userEvent.click(field, { delay: 200 });
-    await expect(context.args.modelValue).toEqual({ customSwitchTest: "Yes" });
+    await expect(context.args.formModel).toEqual({ customSwitchTest: "Yes" });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -176,10 +177,10 @@ export const MultipleConfiguration: Story = {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it! - custom");
     await userEvent.click(field, { delay: 200 });
-    await expect(context.args.modelValue).toEqual({ switch1: false, switch2: "Yes" });
+    await expect(context.args.formModel).toEqual({ switch1: false, switch2: "Yes" });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -201,5 +202,53 @@ export const MultipleConfiguration: Story = {
         },
       },
     } as Schema,
+  },
+};
+
+export const SwitcherMode: Story = {
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const field = canvas.getByLabelText("Change it!");
+    await userEvent.click(field, { delay: 200 });
+
+    const fieldDependent = canvas.getByLabelText("Textfield (readonly)");
+    await expect(context.args.formModel).toEqual({});
+    await expect(fieldDependent).toBeInTheDocument();
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content:
+            "Switch with mode='visibility' does not emit an event outside the form. It only works internally and allows in readonly mode for show/hide interactions",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        switchDefault: {
+          mode: "visibility",
+          label: "Change it!",
+          layout: {
+            component: "switch",
+          },
+        },
+        textField: {
+          label: "Textfield (readonly)",
+          layout: {
+            component: "text-field",
+            if: "nata(switchDefault)",
+          },
+        },
+      },
+    } as Schema,
+    options: {
+      fieldProps: {
+        readonly: true,
+      },
+    },
   },
 };

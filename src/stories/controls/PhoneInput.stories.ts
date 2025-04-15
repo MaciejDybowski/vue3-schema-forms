@@ -3,7 +3,7 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaTextField } from "../../types/schema/elements";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 import { initialize } from "msw-storybook-addon";
@@ -11,7 +11,7 @@ initialize();
 
 export default {
   title: "Forms/Controls/Phone",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -21,7 +21,7 @@ export const Standard: Story = {
     await expect(field).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -40,10 +40,10 @@ export const Standard: Story = {
  */
 export const WithDefault: Story = {
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({ phoneInput: "+48510333202" });
+    await expect(context.args.formModel).toEqual({ phoneInput: "+48510333202" });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -127,7 +127,7 @@ export const WithPhoneInputPropsProps: Story = {
  */
 export const SimpleValidation: Story = {
   name: "PhoneInput with required annotation",
-  render: StoryTemplateWithValidation,
+  
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -149,7 +149,7 @@ export const SimpleValidation: Story = {
     // await expect(el[0].outerText).toEqual('Form is valid');
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

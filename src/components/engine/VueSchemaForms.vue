@@ -3,7 +3,7 @@
     <form-root
       v-if="!loading"
       :form-id="formId"
-      :model="modelValue"
+      :model="localModel"
       :options="options"
       :schema="resolvedSchema"
       @update:model="updateModel"
@@ -57,10 +57,13 @@ for (const [name, comp] of Object.entries(vueSchemaFromControls)) {
 // render tests
 const { result, stopMeasure } = usePerformanceAPI();
 
+const localModel = ref({})
+
+const model = defineModel<object>()
+
 const props = withDefaults(
   defineProps<{
-    schema: Schema;
-    modelValue: object;
+    schema: Schema,
     options?: SchemaOptions;
     defaultFormActions?: boolean;
     validationBehaviour?: ValidationFromBehaviour;
@@ -93,7 +96,7 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
-  formModelStore.updateFormModel(props.modelValue);
+  formModelStore.updateFormModel(localModel.value);
   vueSchemaFormEventBus.emit("model-changed", "action-callback");
 }
 
@@ -119,12 +122,18 @@ function formIsReady() {
 
 function updateModel(event: NodeUpdateEvent) {
   debounced.formIsReady().cancel();
-  set(props.modelValue, event.key, event.value);
-  formModelStore.updateFormModel(props.modelValue);
-  emit("update:modelValue", props.modelValue);
+  set(localModel.value, event.key, event.value);
+  formModelStore.updateFormModel(localModel.value);
+
+  if (event.emitBlocker) {
+    vueSchemaFormEventBus.emit("model-changed", event.index);
+    return;
+  }
+
+  emit("update:modelValue", localModel.value);
 
   if (logger.formUpdateLogger) {
-    console.debug(`[vue-schema-forms] [${event.key}] =>`, props.modelValue);
+    console.debug(`[vue-schema-forms] [${event.key}] =>`, localModel.value);
   }
 
   vueSchemaFormEventBus.emit("model-changed", event.index);
@@ -147,10 +156,12 @@ watch(
 );
 
 onMounted(async () => {
-  formModelStore.updateFormModel(props.modelValue);
+  localModel.value = {...model.value}
+
+  formModelStore.updateFormModel(localModel.value);
   formModelStore.updateFormContext(props.options && props.options.context ? props.options.context : {});
   await loadResolvedSchema();
-  stopMeasure()
+  stopMeasure();
   debounced.formIsReady(800)();
 });
 
@@ -246,6 +257,7 @@ defineExpose({
   validate,
   reset,
   resetValidation,
+  getModel: () => localModel.value
 });
 </script>
 

@@ -3,7 +3,7 @@ import { expect, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { Layout } from "../../types/schema/elements";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 import { initialize } from "msw-storybook-addon";
@@ -11,7 +11,7 @@ initialize();
 
 export default {
   title: "Forms/Static content",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Examples: Story = {
@@ -88,7 +88,7 @@ export const TextWithVariablesAndHTML: Story = {
     await expect(canvas.getByText("Hello Maciej Dybowski!")).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       data: {
         firstName: "Maciej",
         lastName: "Dybowski",
@@ -125,7 +125,7 @@ export const GenerateVuetifyStaticComponent: Story = {
     await expect(canvas.getByText("Is difference between Value A = 123 and Value B = 321")).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       valueA: "123",
       valueB: "321",
     },
@@ -151,7 +151,7 @@ export const GenerateVuetifyStaticComponent: Story = {
 export const DividerDefault: Story = {
   play: async () => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -168,7 +168,7 @@ export const DividerDefault: Story = {
 export const DividerThickness: Story = {
   play: async () => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -186,7 +186,7 @@ export const DividerThickness: Story = {
 export const DividerColor: Story = {
   play: async () => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -206,7 +206,7 @@ export const DividerColor: Story = {
 export const DividerOpacity: Story = {
   play: async () => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

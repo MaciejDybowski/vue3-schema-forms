@@ -3,13 +3,13 @@ import { initialize } from "msw-storybook-addon";
 
 import { Schema } from "../../types/schema/Schema";
 import { TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW } from "../mock-responses";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 initialize();
 
 export default {
   title: "Forms/Controls/TableView",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 /**
@@ -18,7 +18,7 @@ export default {
 export const Standard: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -82,7 +82,7 @@ export const Standard: Story = {
 export const ColorableCells: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -148,7 +148,7 @@ export const ColorableCells: Story = {
 export const DynamicAlerts: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -223,7 +223,7 @@ export const DynamicAlerts: Story = {
 export const NumberFields: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -287,7 +287,7 @@ export const NumberFields: Story = {
 export const JoinValues: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -345,7 +345,7 @@ export const JoinValues: Story = {
 export const JoinValuesWithHtmlAndExtraText: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -403,7 +403,7 @@ export const JoinValuesWithHtmlAndExtraText: Story = {
 export const EditableField: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -456,7 +456,7 @@ export const EditableField: Story = {
 export const ActionField: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -511,7 +511,7 @@ export const ActionField: Story = {
 export const ActionFieldAdvanced: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -566,7 +566,7 @@ export const ActionFieldAdvanced: Story = {
 export const TopSlotAndButtons: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -671,7 +671,7 @@ export const TopSlotAndButtons: Story = {
 export const ContextActions: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -761,7 +761,7 @@ export const ContextActions: Story = {
 export const ContextActionsWithCondition: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -854,7 +854,7 @@ export const ContextActionsWithCondition: Story = {
 export const ContextActionWithSchemaIntegration: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -933,7 +933,7 @@ export const ContextActionWithSchemaIntegration: Story = {
 export const SummaryAggregates: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -998,7 +998,7 @@ export const SummaryAggregates: Story = {
 export const SummaryAggregatesUpdate: Story = {
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

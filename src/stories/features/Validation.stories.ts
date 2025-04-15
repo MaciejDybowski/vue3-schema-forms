@@ -4,7 +4,7 @@ import { expect, userEvent, within } from "@storybook/test";
 import { Schema } from "../../types/schema/Schema";
 import { SchemaField } from "../../types/schema/elements";
 import { waitForMountedAsync } from "../controls/utils";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithCustomValidation, StoryTemplateWithValidation } from "../templates/story-template";
 
 import { initialize } from "msw-storybook-addon";
@@ -12,11 +12,11 @@ initialize();
 
 export default {
   title: "Forms/Features/Validations",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const RegexpWithDependencies: Story = {
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
@@ -28,7 +28,7 @@ export const RegexpWithDependencies: Story = {
     await expect(canvas.getByText("Zbyt dużo znaków po przecinku")).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       fieldA: 3,
     },
     schema: {
@@ -66,7 +66,7 @@ export const RegexpWithDependencies: Story = {
 };
 
 export const CustomRegexpValidations: Story = {
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -82,7 +82,7 @@ export const CustomRegexpValidations: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -116,7 +116,7 @@ export const CustomRegexpValidations: Story = {
  */
 export const RequiredWithNested: Story = {
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -167,7 +167,7 @@ export const ExposedValidationAndScroll: Story = {
   args: {
     defaultFormActions: true,
     validationBehaviour: "scroll",
-    modelValue: {},
+    formModel: {},
     schema: validationExample,
   },
 };
@@ -176,7 +176,7 @@ export const ExposedValidationAndScrollWithRules: Story = {
   args: {
     defaultFormActions: true,
     validationBehaviour: "scroll",
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         fieldA: {
@@ -207,7 +207,7 @@ export const ExposedValidationAndMessages: Story = {
   args: {
     defaultFormActions: true,
     validationBehaviour: "messages",
-    modelValue: {},
+    formModel: {},
     schema: validationExample,
   },
 };
@@ -215,7 +215,7 @@ export const ExposedValidationAndMessages: Story = {
 export const AddCustomSubmitWithBuiltInValidation: Story = {
   render: StoryTemplateWithCustomValidation,
   args: {
-    modelValue: {},
+    formModel: {},
     schema: validationExample,
   },
 };
@@ -246,7 +246,7 @@ export const ConditionalRequired: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
-  render: StoryTemplateWithValidation,
+  
   args: {
     model: {},
     schema: {
@@ -293,7 +293,7 @@ export const ConditionalRequiredWithDefault: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
-  render: StoryTemplateWithValidation,
+  
   args: {
     model: {},
     schema: {
@@ -365,7 +365,7 @@ export const ValidationFunctionWithJSONNataAndContext: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
-  render: StoryTemplateWithValidation,
+  
   args: {
     model: {},
     schema: {
@@ -404,9 +404,9 @@ export const ValidationFunctionInSections: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Value=Maciej is not allowed.")).toBeInTheDocument();
   },
-  render: StoryTemplateWithValidation,
+  
   args: {
-    modelValue: {
+    formModel: {
       pozycjeDokumentu: [{ fieldA: "Karol" }, { fieldA: "Maciej" }],
     },
     schema: {
@@ -455,9 +455,9 @@ export const AlertErrorConnectionWithValidation: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Error message!")).toBeInTheDocument();
   },
-  render: StoryTemplateWithValidation,
+  
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         alert: {

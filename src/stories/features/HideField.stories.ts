@@ -4,14 +4,14 @@ import { expect, userEvent, within } from "@storybook/test";
 import { Schema } from "../../types/schema/Schema";
 import { SchemaTextField } from "../../types/schema/elements";
 import { waitForMountedAsync } from "../controls/utils";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Features/Hide fields",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const HideFields: Story = {
@@ -26,14 +26,14 @@ export const HideFields: Story = {
     await userEvent.type(field2, "3", { delay: 300 });
 
     await expect(hideField.checkVisibility()).toEqual(false);
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       field1: 3,
       field2: 3,
       field3: 6,
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         field1: {

@@ -6,21 +6,21 @@ import { expect, fireEvent, userEvent, within } from "@storybook/test";
 import { DictionarySource } from "../../types/shared/Source";
 import { waitForMountedAsync } from "../controls/utils";
 import { CURRENCIES_REQUEST } from "../mock-responses";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 initialize();
 
 export default {
   title: "Forms/Features/On change events",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const CallActionWithParametersAndRequestBody: Story = {
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {},
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -55,7 +55,7 @@ export const CallActionWithParametersAndRequestBody: Story = {
 };
 
 export const ResetValueOnChange: Story = {
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -65,10 +65,10 @@ export const ResetValueOnChange: Story = {
       delay: 100,
     });
     await new Promise((r) => setTimeout(r, 1000));
-    await expect(context.args.modelValue).toEqual({ fieldA: "Changed", fieldB: null });
+    await expect(context.args.formModel).toEqual({ fieldA: "Changed", fieldB: null });
   },
   args: {
-    modelValue: {
+    formModel: {
       fieldB: "Maciej",
     },
     schema: {
@@ -102,7 +102,7 @@ export const ResetValueOnChange: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSection: Story = {
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -112,12 +112,12 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
       delay: 100,
     });
     await new Promise((r) => setTimeout(r, 1000));
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       section: [{ fieldA: "Changed", fieldB: null }],
     });
   },
   args: {
-    modelValue: {
+    formModel: {
       section: [
         {
           fieldB: "Maciej",
@@ -164,7 +164,7 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -177,7 +177,7 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
     await userEvent.click(items[0], { delay: 200 });
 
     await new Promise((r) => setTimeout(r, 1000));
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       section: [
         {
           currency: {
@@ -190,7 +190,7 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
     });
   },
   args: {
-    modelValue: {
+    formModel: {
       section: [
         {
           fieldB: "Maciej",

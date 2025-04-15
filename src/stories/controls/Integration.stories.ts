@@ -1,12 +1,12 @@
 // @ts-nocheck
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Integrations",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Dialog_Table_Integration: Story = {

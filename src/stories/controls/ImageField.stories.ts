@@ -1,17 +1,17 @@
 // @ts-nocheck
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Controls/Image",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Image = {
   args: {
-    modelValue: {
+    formModel: {
       image: {
         id: "main",
         dataId: "1273-00",

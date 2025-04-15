@@ -2,7 +2,7 @@
 import { expect, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 import { initialize } from "msw-storybook-addon";
@@ -10,7 +10,7 @@ initialize();
 
 export default {
   title: "Forms/Controls/Data viewer",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -25,7 +25,7 @@ export const Standard: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       plainText: "This is plain text",
     },
     schema: {
@@ -61,7 +61,7 @@ export const StandardNumber: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       number: 4000.25,
     },
     schema: {
@@ -99,7 +99,7 @@ export const StandardDate: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       date: "2024-01-25T00:00:00.000Z",
     },
     schema: {
@@ -137,7 +137,7 @@ export const StandardDateTime: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       date: "2024-01-25T00:00:00.000Z",
     },
     schema: {
@@ -166,7 +166,7 @@ export const StandardPhone: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       phone: "+48510333202",
     },
     schema: {
@@ -202,7 +202,7 @@ export const StandardObject: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       obj: {
         text: "Value",
       },
@@ -274,7 +274,7 @@ export const StandardObject: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       properties: {
         description: {
@@ -316,7 +316,7 @@ export const ValueMapping: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       plainText: "This is plain text",
       number: 400.25,
     },
@@ -353,7 +353,7 @@ export const StandardCalc: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       a: 4000.25,
       b: 100,
     },
@@ -392,7 +392,7 @@ export const StandardCalcVariable: Story = {
     await expect(text).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       a: 4000.25,
       b: 100,
       currency: {
@@ -437,7 +437,7 @@ export const VariableInDuplicatedSection: Story = {
     await expect(field).toBeInTheDocument();
   },
   args: {
-    modelValue: {
+    formModel: {
       a: 4000.25,
       b: 100,
       currency: {

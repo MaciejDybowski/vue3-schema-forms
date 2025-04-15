@@ -9,14 +9,14 @@ import { Schema } from "../../types/schema/Schema";
 import { SimpleSource } from "../../types/schema/elements";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
   title: "Forms/Controls/Select",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -27,10 +27,10 @@ export const Standard: Story = {
 
     const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
-    await expect(context.args.modelValue).toEqual({ select: 1 });
+    await expect(context.args.formModel).toEqual({ select: 1 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -57,10 +57,10 @@ export const Standard: Story = {
 export const WithDefault: Story = {
   name: "With default (value)",
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({ selectWithDefault: 3 });
+    await expect(context.args.formModel).toEqual({ selectWithDefault: 3 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -92,10 +92,10 @@ export const CustomMapping: Story = {
 
     const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
-    await expect(context.args.modelValue).toEqual({ selectCustomMapping: 1 });
+    await expect(context.args.formModel).toEqual({ selectCustomMapping: 1 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -128,10 +128,10 @@ export const CustomMappingReturnObject: Story = {
 
     const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
-    await expect(context.args.modelValue).toEqual({ selectCustomMappingObject: { id: 1, text: "Option 1" } });
+    await expect(context.args.formModel).toEqual({ selectCustomMappingObject: { id: 1, text: "Option 1" } });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -160,7 +160,7 @@ export const CustomMappingReturnObjectDefault: Story = {
   name: "Custom mapper + obj + default",
   play: async (context) => {
     await waitForMountedAsync()
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       selectCustomMappingObjectDefault: {
         id: 2,
         text: "Option 2",
@@ -168,7 +168,7 @@ export const CustomMappingReturnObjectDefault: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -203,7 +203,7 @@ export const GetOptionsFromAPI: Story = {
     const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
 
-    await expect(context.args.modelValue).toEqual({ selectOptionsFromAPI: { id: 1, label: "Option 1" } });
+    await expect(context.args.formModel).toEqual({ selectOptionsFromAPI: { id: 1, label: "Option 1" } });
   },
   parameters: {
     mockData: [
@@ -221,7 +221,7 @@ export const GetOptionsFromAPI: Story = {
     ],
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -250,7 +250,7 @@ export const GetOptionsFromAPI: Story = {
  */
 export const SimpleValidation: Story = {
   name: "Select with required annotation",
-  render: StoryTemplateWithValidation,
+  
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Simple select");
@@ -263,7 +263,7 @@ export const SimpleValidation: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {

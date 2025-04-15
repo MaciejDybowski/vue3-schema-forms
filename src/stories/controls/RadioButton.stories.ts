@@ -4,7 +4,7 @@ import { expect, userEvent, within } from "@storybook/test";
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { Source } from "../../types/schema/elements";
-import { commonMetadata } from "../templates/shared-blocks";
+import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
 
@@ -13,20 +13,20 @@ initialize();
 
 export default {
   title: "Forms/Controls/RadioButton",
-  ...commonMetadata,
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    await expect(context.args.modelValue).toEqual({ radioButton: 1 });
+    await expect(context.args.formModel).toEqual({ radioButton: 1 });
     const option2 = canvas.getByLabelText("Option 2");
     await userEvent.click(option2, { delay: 200 });
-    await expect(context.args.modelValue).toEqual({ radioButton: 2 });
+    await expect(context.args.formModel).toEqual({ radioButton: 2 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -52,13 +52,13 @@ export const NoInitValue: Story = {
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    await expect(context.args.modelValue).toEqual({});
+    await expect(context.args.formModel).toEqual({});
     const option2 = canvas.getByLabelText("Option 2");
     await userEvent.click(option2, { delay: 200 });
-    await expect(context.args.modelValue).toEqual({ radioButton: 2 });
+    await expect(context.args.formModel).toEqual({ radioButton: 2 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -86,10 +86,10 @@ export const NoInitValue: Story = {
 export const WithDefault: Story = {
   name: "With default (value)",
   play: async (context) => {
-    await expect(context.args.modelValue).toEqual({ radioButtonWithDefault: 3 });
+    await expect(context.args.formModel).toEqual({ radioButtonWithDefault: 3 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -116,10 +116,10 @@ export const CustomMapping: Story = {
   name: "Custom mapping",
   play: async (context) => {
     await waitForMountedAsync();
-    await expect(context.args.modelValue).toEqual({ radioButtonCustomMapping: 1 });
+    await expect(context.args.formModel).toEqual({ radioButtonCustomMapping: 1 });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -147,10 +147,10 @@ export const CustomMappingReturnObject: Story = {
   name: "Custom mapper + return obj",
   play: async (context) => {
     await waitForMountedAsync();
-    await expect(context.args.modelValue).toEqual({ radioButtonCustomMappingObject: { id: 1, text: "Option 1" } });
+    await expect(context.args.formModel).toEqual({ radioButtonCustomMappingObject: { id: 1, text: "Option 1" } });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -179,7 +179,7 @@ export const CustomMappingReturnObjectDefault: Story = {
   name: "Custom mapper + obj + default",
   play: async (context) => {
     await waitForMountedAsync();
-    await expect(context.args.modelValue).toEqual({
+    await expect(context.args.formModel).toEqual({
       radioButtonCustomMappingObjectDefault: {
         id: 2,
         text: "Option 2",
@@ -187,7 +187,7 @@ export const CustomMappingReturnObjectDefault: Story = {
     });
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -216,7 +216,7 @@ export const CustomMappingReturnObjectDefault: Story = {
 export const GetOptionsFromAPI: Story = {
   play: async (context) => {
     await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for api call
-    await expect(context.args.modelValue).toEqual({ radioButtonOptionsFromAPI: { id: 1, label: "Option 1" } });
+    await expect(context.args.formModel).toEqual({ radioButtonOptionsFromAPI: { id: 1, label: "Option 1" } });
   },
   parameters: {
     mockData: [
@@ -234,7 +234,7 @@ export const GetOptionsFromAPI: Story = {
     ],
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -263,7 +263,7 @@ export const GetOptionsFromAPI: Story = {
  */
 export const SimpleValidation: Story = {
   name: "RadioButton with required annotation",
-  render: StoryTemplateWithValidation,
+  
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const exampleElement = canvas.getByLabelText("Option 3");
@@ -276,7 +276,7 @@ export const SimpleValidation: Story = {
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
   args: {
-    modelValue: {},
+    formModel: {},
     schema: {
       type: "object",
       properties: {
