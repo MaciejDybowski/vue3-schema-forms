@@ -28,6 +28,7 @@ import DuplicatedSection from "./duplicated-section/DuplicatedSection.vue";
 import Markdown from "./markdown/Markdown.vue";
 import OrderedMultiSelect from "./ordered-multi-select/OrderedMultiSelect.vue";
 import NumberFieldv2 from "@/components/controls/NumberFieldv2.vue";
+import KeyValueLIst from "@/components/controls/KeyValueLIst.vue";
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,
@@ -57,4 +58,5 @@ export const vueSchemaFromControls: Components = {
   "user-input": UserInput,
   "markdown": Markdown,
   "ordered-multi-select": OrderedMultiSelect,
+  "key-value-list": KeyValueLIst
 };

@@ -35,9 +35,10 @@ export const Story1: Story = {
       type: "object",
       properties: {
         textField: {
-          label: "Input-1",
+          label: "test",
           layout: {
-            component: "text-field",
+            component: "key-value-list",
+            cols: 6
           },
         },
       },
