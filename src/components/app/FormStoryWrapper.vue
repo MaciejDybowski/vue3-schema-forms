@@ -3,6 +3,7 @@
     <v-col cols="12">
       <v-card>
         <v-card-title>Form Visualisation</v-card-title>
+        <v-divider class="mb-4"/>
         <v-card-text>
           <vue-schema-forms
             v-if="!loading"

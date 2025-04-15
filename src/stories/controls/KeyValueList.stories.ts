@@ -1,32 +1,13 @@
-// @ts-nocheck
-import { initialize, mswLoader } from "msw-storybook-addon";
-
-import { Meta, StoryObj } from "@storybook/vue3";
-
-import FormStoryWrapper from "../components/app/FormStoryWrapper.vue";
-import meta from "./development-old.stories";
-
-initialize();
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { initialize } from "msw-storybook-addon";
 
 export default {
-  title: "Development Stories",
-  component: FormStoryWrapper,
-  args: {
-    formModel: {},
-    schema: {},
-    options: {
-      fieldProps: {
-        variant: "outlined",
-        density: "comfortable",
-      },
-    },
-  },
-  loaders: [mswLoader],
-} satisfies Meta<typeof FormStoryWrapper>;
+  title: "Forms/Static content",
+  ...formStoryWrapperTemplate,
+};
+initialize();
 
-type Story = StoryObj<typeof meta>;
-
-export const Story1: Story = {
+export const KeyValueList = {
   args: {
     formModel: {
       keyValueList: [
@@ -46,8 +27,7 @@ export const Story1: Story = {
           label: "Pole do pokazania listy klucz wartosc",
           config: [
             { title: "Pole", valueMapping: "label" },
-            { title: "Wartość", valueMapping: "value" },
-            { title: "Test", valueMapping: "temp" },
+            { title: "Wartość", valueMapping: "value" }
           ],
           layout: {
             component: "key-value-list",
