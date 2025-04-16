@@ -29,7 +29,7 @@ export interface HeaderEditableObject {
   label: string;
   valueMapping: string;
   class?: string;
-  type: "NUMBER" | "TEXT";
+  type: "NUMBER" | "TEXT" | "SELECT";
   rules?: any[];
 }
 

@@ -1,17 +1,14 @@
 // @ts-nocheck
-import { VueSchemaForms } from "@/components";
-import { expect } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { Meta, StoryObj } from "@storybook/vue3";
+import { initialize } from "msw-storybook-addon";
+
+import { expect, userEvent, within } from "@storybook/test";
 
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { SimpleSource } from "../../types/schema/elements";
-import { StoryTemplateWithValidation } from "../templates/story-template";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
 
-import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
@@ -55,7 +52,7 @@ export const Standard: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefault: Story = {
-  name: "With default (value)",
+  name: "Default value",
   play: async (context) => {
     await expect(context.args.formModel).toEqual({ selectWithDefault: 3 });
   },
@@ -65,7 +62,7 @@ export const WithDefault: Story = {
       type: "object",
       properties: {
         selectWithDefault: {
-          label: "Simple select",
+          label: "Select",
           layout: {
             component: "select",
           },
@@ -83,8 +80,49 @@ export const WithDefault: Story = {
   },
 };
 
+
+/**
+ * Example shows how to define a "required" field on a form
+ */
+export const SimpleValidation: Story = {
+  name: "Required",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText("Simple select");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[0], { delay: 200 });
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        radioButtonRequired: {
+          label: "Simple select",
+          layout: {
+            component: "select",
+          },
+          source: {
+            items: [
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" },
+            ],
+          },
+        } as EngineSourceField,
+      },
+      required: ["radioButtonRequired"],
+    } as Schema,
+  },
+};
+
 export const CustomMapping: Story = {
-  name: "Custom mapping",
+  name: "Mapper: title/value",
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Simple select");
@@ -120,7 +158,7 @@ export const CustomMapping: Story = {
 };
 
 export const CustomMappingReturnObject: Story = {
-  name: "Custom mapper + return obj",
+  name: "Mapper: title/value/returnObject",
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Simple select");
@@ -157,9 +195,9 @@ export const CustomMappingReturnObject: Story = {
 };
 
 export const CustomMappingReturnObjectDefault: Story = {
-  name: "Custom mapper + obj + default",
+  name: "Mapper: title/value/returnObject/default",
   play: async (context) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     await expect(context.args.formModel).toEqual({
       selectCustomMappingObjectDefault: {
         id: 2,
@@ -195,6 +233,7 @@ export const CustomMappingReturnObjectDefault: Story = {
 };
 
 export const GetOptionsFromAPI: Story = {
+  name: "Case: Items from API",
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Simple select");
@@ -245,43 +284,3 @@ export const GetOptionsFromAPI: Story = {
   },
 };
 
-/**
- * Example shows how to define a "required" field on a form
- */
-export const SimpleValidation: Story = {
-  name: "Select with required annotation",
-  
-  play: async (context) => {
-    const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText("Simple select");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[0], { delay: 200 });
-    const Submit = canvas.getByText("Validate");
-    await userEvent.click(Submit, { delay: 200 });
-    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
-  },
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        radioButtonRequired: {
-          label: "Simple select",
-          layout: {
-            component: "select",
-          },
-          source: {
-            items: [
-              { value: 1, title: "Option 1" },
-              { value: 2, title: "Option 2" },
-              { value: 3, title: "Option 3" },
-            ],
-          },
-        } as EngineSourceField,
-      },
-      required: ["radioButtonRequired"],
-    } as Schema,
-  },
-};

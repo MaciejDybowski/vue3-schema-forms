@@ -4,7 +4,7 @@ import { initialize } from "msw-storybook-addon";
 import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 initialize();
@@ -21,6 +21,9 @@ export const Standard: Story = {
     const field = canvas.getByLabelText("Change it!");
     //await userEvent.type(field, "This is standard text area...", { delay: 100 });
     await expect(context.args.formModel).toEqual({ switch: false });
+
+    await userEvent.click(field, { delay: 200 });
+    await expect(context.args.formModel).toEqual({ switchValueTest: true });
   },
   args: {
     formModel: {},
@@ -39,6 +42,7 @@ export const Standard: Story = {
 };
 
 export const Default: Story = {
+  name: "Default Value",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -64,6 +68,7 @@ export const Default: Story = {
 };
 
 export const Colorful: Story = {
+  name: "Props: color",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -91,37 +96,16 @@ export const Colorful: Story = {
   },
 };
 
-export const ChangeValueTest: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText("Change it!");
-    await userEvent.click(field, { delay: 200 });
-    await expect(context.args.formModel).toEqual({ switchValueTest: true });
-  },
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        switchValueTest: {
-          label: "Change it!",
-          layout: {
-            component: "switch",
-          },
-        },
-      },
-    } as Schema,
-  },
-};
-
 export const CustomMappingValues: Story = {
+  name: "Mapper: custom values",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
 
     await expect(context.args.formModel).toEqual({ customSwitchDefault: "No" });
+    await userEvent.click(field, { delay: 200 });
+    await expect(context.args.formModel).toEqual({ customSwitchDefault: "Yes" });
   },
   args: {
     formModel: {},
@@ -143,35 +127,8 @@ export const CustomMappingValues: Story = {
   },
 };
 
-export const CustomMappingValuesChangeTest: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText("Change it!");
-    await userEvent.click(field, { delay: 200 });
-    await expect(context.args.formModel).toEqual({ customSwitchTest: "Yes" });
-  },
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        customSwitchTest: {
-          label: "Change it!",
-          layout: {
-            component: "switch",
-            props: {
-              "false-value": "No",
-              "true-value": "Yes",
-            },
-          },
-        },
-      },
-    } as Schema,
-  },
-};
-
 export const MultipleConfiguration: Story = {
+  name: "Case: multiple configuration",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -205,7 +162,8 @@ export const MultipleConfiguration: Story = {
   },
 };
 
-export const SwitcherMode: Story = {
+export const VisibilityMode: Story = {
+  name: "Mode: visibility",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -247,6 +205,7 @@ export const SwitcherMode: Story = {
     } as Schema,
     options: {
       fieldProps: {
+        variant: "outlined",
         readonly: true,
       },
     },

@@ -1,25 +1,25 @@
 <template>
   <div :class="[theme.global.current.value.dark ? refClass.replaceAll('light', 'dark') : refClass]">
+    <template
+      v-for="(collectionItem, index) in header.items"
+      v-if="header.type == 'COLLECTION'"
+    >
+      <table-editable-cell-group
+        v-if="collectionItem.editable && (collectionItem.editable as any).length > 0"
+        :header="collectionItem"
+        :items="collectionItem.editable as any"
+        :row="item"
+        v-bind="fieldProps"
+        @update:field="(event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })"
+      />
 
-      <template v-if="header.type == 'COLLECTION'"
-                v-for="(collectionItem, index) in header.items">
-        <table-editable-cell-group
-          v-if="collectionItem.editable && (collectionItem.editable as any).length > 0"
-          :header="collectionItem"
-          :items="collectionItem.editable as any"
-          :row="item"
-          v-bind="fieldProps"
-          @update:field="(event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })"
-        />
-
-        <table-cell
-          :actions="actions"
-          :header="collectionItem"
-          :item="item"
-        >
-        </table-cell>
-      </template>
-
+      <table-cell
+        :actions="actions"
+        :header="collectionItem"
+        :item="item"
+      >
+      </table-cell>
+    </template>
 
     <table-cell
       v-if="!header.editable"
@@ -28,13 +28,6 @@
       :item="item"
     >
     </table-cell>
-
-    <!--    <table-editable-cell
-          v-else-if="header.editable == true"
-          v-model="items[index][header.key]"
-          v-bind="fieldProps"
-          @update:row="updateRow($event, index, header.valueMapping, item)"
-        />-->
 
     <table-editable-cell-group
       v-else-if="isArray(header.editable) && (header.editable as any).length > 0"

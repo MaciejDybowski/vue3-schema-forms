@@ -1,21 +1,37 @@
 <template>
-  <v-number-input
+  <template
     v-for="(item, index) in items"
     :key="item.valueMapping"
-    :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"
-    :hideInput="false"
-    :inset="false"
-    :label="item.label"
-    :model-value="getValue(item.valueMapping, index)"
-    :precision="getPrecision(item.valueMapping, index)"
-    :reverse="false"
-    control-variant="hidden"
-    v-bind="{ ...attrs, density: 'compact' }"
-    width="100%"
-    @keyup.enter="(e) => e.target.blur()"
-    @update:model-value="(e: any) => emitData(e, item)"
   >
-  </v-number-input>
+    <v-number-input
+      v-if="item.type == 'NUMBER'"
+      :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"
+      :hideInput="false"
+      :inset="false"
+      :label="item.label"
+      :model-value="getValue(item.valueMapping, index)"
+      :precision="getPrecision(item.valueMapping, index)"
+      :reverse="false"
+      control-variant="hidden"
+      v-bind="{ ...attrs, density: 'compact' }"
+      width="100%"
+      @keyup.enter="(e) => e.target.blur()"
+      @update:model-value="(e: any) => emitData(e, item)"
+    >
+    </v-number-input>
+
+    <v-select
+      v-if="item.type == 'SELECT'"
+      :item-title="getItemTitle(item.valueMapping)"
+      :item-value="getItemValue(item.valueMapping)"
+      :items="getItemsForSelect(item.valueMapping, row)"
+      :model-value="getValue(item.valueMapping, index)"
+      v-bind="{ ...attrs, density: 'compact' }"
+      width="100%"
+      @keyup.enter="(e) => e.target.blur()"
+      @update:model-value="(e: any) => emitData(e, item)"
+    />
+  </template>
 </template>
 
 <script lang="ts" setup>
@@ -49,9 +65,25 @@ function getValue(valueMapping: string, index: number) {
   return get(props.row, variable, null);
 }
 
+function getItemTitle(valueMapping: string) {
+  const split = valueMapping.split(":");
+  return split.length >= 3 ? split[2] : "title";
+}
+
+function getItemValue(valueMapping: string) {
+  const split = valueMapping.split(":");
+  return split.length >= 4 ? split[3] : "value";
+}
+
 // TODO - przytrzymywanie tutaj strzałek nie działa bo jest aktualizacja całego wiersza i robi się jakiś breakdown/lag
 function emitData(e: any, item) {
   emit("update:field", { value: e, valueMapping: item.valueMapping });
+}
+
+function getItemsForSelect(valueMapping, row) {
+  const split = valueMapping.split(":");
+  let path = split[1];
+  return get(row, path, []);
 }
 </script>
 

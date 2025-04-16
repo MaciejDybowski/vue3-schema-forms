@@ -3,7 +3,7 @@ import { initialize } from "msw-storybook-addon";
 
 import { Schema } from "../../types/schema/Schema";
 import { TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW } from "../mock-responses";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 initialize();
 
@@ -123,7 +123,7 @@ export const ColorableCells: Story = {
                 key: "base",
                 valueMapping: "base",
                 type: "TEXT",
-                color: "base <= 50 ? '#EF5350' : '#81C784'",
+                color: "base <= 50 ? 'table-cell-background-grey-light': ''",
               },
               {
                 color: "base <= 50 ? '#EF5350' : '#81C784'",
@@ -285,6 +285,7 @@ export const NumberFields: Story = {
 };
 
 export const JoinValues: Story = {
+  name: "Merge variables in column",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -343,6 +344,7 @@ export const JoinValues: Story = {
 };
 
 export const JoinValuesWithHtmlAndExtraText: Story = {
+  name: "Merge variables with HTML",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -400,60 +402,8 @@ export const JoinValuesWithHtmlAndExtraText: Story = {
   },
 };
 
-export const EditableField: Story = {
-  play: async (context) => {},
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        span: {
-          content: "Basic display all data as a text values",
-          layout: {
-            component: "static-content",
-            tag: "span",
-          },
-        },
-        tableOfProducts: {
-          layout: {
-            component: "table-view",
-          },
-          source: {
-            data: "/mock-data/table-view-mock",
-            headers: [
-              {
-                title: "Name",
-                key: "name",
-                valueMapping: "name",
-                type: "TEXT",
-              },
-              {
-                title: "Location",
-                key: "location",
-                valueMapping: "location",
-                type: "TEXT",
-              },
-              {
-                title: "Height",
-                key: "height",
-                valueMapping: "height",
-                editable: true,
-                type: "NUMBER",
-              },
-            ],
-          },
-        },
-      },
-    } as Schema,
-  },
-  parameters: {
-    msw: {
-      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
-    },
-  },
-};
-
 export const ActionField: Story = {
+  name: "Action mapping for field",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -489,12 +439,6 @@ export const ActionField: Story = {
                 valueMapping: "location",
                 type: "TEXT",
               },
-              {
-                title: "Height",
-                editable: true,
-                valueMapping: "height",
-                type: "NUMBER",
-              },
             ],
           },
         },
@@ -509,6 +453,7 @@ export const ActionField: Story = {
 };
 
 export const ActionFieldAdvanced: Story = {
+  name: "Action mapping with extra HTML",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -546,7 +491,6 @@ export const ActionFieldAdvanced: Story = {
               },
               {
                 title: "Height",
-                editable: true,
                 valueMapping: "height",
                 type: "NUMBER",
               },
@@ -564,6 +508,7 @@ export const ActionFieldAdvanced: Story = {
 };
 
 export const TopSlotAndButtons: Story = {
+  name: "Slot: Top",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -669,6 +614,7 @@ export const TopSlotAndButtons: Story = {
 };
 
 export const ContextActions: Story = {
+  name: "Slot: Context Actions",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -712,6 +658,7 @@ export const ContextActions: Story = {
                 key: "actions",
                 actions: [
                   {
+                    title: "Delete",
                     icon: "mdi-delete-outline",
                     mode: "action",
                     code: "callScript",
@@ -728,6 +675,7 @@ export const ContextActions: Story = {
                     },
                   },
                   {
+                    title: "Pallet shipping",
                     icon: "mdi-shipping-pallet",
                     mode: "action",
                     code: "callScript",
@@ -759,6 +707,7 @@ export const ContextActions: Story = {
 };
 
 export const ContextActionsWithCondition: Story = {
+  name: "Slot: Context Actions + condition",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -852,6 +801,7 @@ export const ContextActionsWithCondition: Story = {
 };
 
 export const ContextActionWithSchemaIntegration: Story = {
+  name: "Slot: Context Actions + schema",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -931,6 +881,7 @@ export const ContextActionWithSchemaIntegration: Story = {
 };
 
 export const SummaryAggregates: Story = {
+  name: "Slot: Aggregates",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -996,6 +947,7 @@ export const SummaryAggregates: Story = {
 };
 
 export const SummaryAggregatesUpdate: Story = {
+  name: "Slot: Aggregates + update",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -1034,6 +986,7 @@ export const SummaryAggregatesUpdate: Story = {
                 type: "COLLECTION",
                 editable: [
                   {
+                    type: "NUMBER",
                     title: "Height",
                     key: "height",
                     valueMapping: "height:0:NUMBER:decimalPlaces",
@@ -1066,3 +1019,138 @@ export const SummaryAggregatesUpdate: Story = {
     },
   },
 };
+
+export const NumberEditableField: Story = {
+  name: "Editable field: Number",
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Id",
+                key: "id",
+                valueMapping: "dataId",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Editable height",
+                key: "height-collection",
+                type: "COLLECTION",
+                editable: [
+                  {
+                    type: "NUMBER",
+                    title: "Height",
+                    key: "height",
+                    valueMapping: "height:0:NUMBER:decimalPlaces",
+                  },
+                ],
+                properties: { minWidth: "200px", maxWidth: "200px", width: "100px" },
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
+    },
+  },
+};
+
+export const NumberEditableSelect: Story = {
+  name: "Editable field: Select",
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Id",
+                key: "id",
+                valueMapping: "dataId",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Editable height",
+                key: "height-collection",
+                type: "COLLECTION",
+                editable: [
+                  {
+                    type: "SELECT",
+                    title: "Height",
+                    key: "height",
+                    valueMapping: "height:heightOptions:title:value",
+                  },
+                ],
+                properties: { minWidth: "200px", maxWidth: "200px", width: "100px" },
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
+    },
+  },
+};
+

@@ -4,7 +4,7 @@ import { HttpResponse, http } from "msw";
 export const names = ["🥝 Kiwi", "🍏 Green Apple", "🍉 Watermelon", "🍌 Banana", "🍇 Grape"];
 export const locations = ["New Zealand", "Brazil", "USA", "Italy", "South Africa"];
 export const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-export const  generatePageData = (page, size) => {
+export const generatePageData = (page, size) => {
   const totalItems = 100; // Możemy łatwo dostosować liczbę elementów
   const startIndex = page * size;
   const endIndex = startIndex + size;
@@ -17,7 +17,12 @@ export const  generatePageData = (page, size) => {
     volume: Math.random() * (0.01 - 0.00001) + 0.00001, // 0.00001 - 0.01
     dataId: index + 1,
     alerts: generateAlerts(),
-    decimalPlaces:2
+    decimalPlaces: 2,
+    heightOptions: [
+      { title: "Height:10", value: 10 },
+      { title: "Height:20", value: 20 },
+      { title: "Height:30", value: 30 },
+    ],
   }));
 
   return data.slice(startIndex, endIndex);
@@ -61,6 +66,11 @@ export const UPDATE_TABLE_ROW = [
         base: Math.floor(Math.random() * 100) + 10, // 10 - 100
         volume: (Math.random() * 0.01).toFixed(5), // 0.00001 - 0.01
         dataId: Number(id),
+        heightOptions: [
+          { title: "Height:10", value: 10 },
+          { title: "Height:20", value: 20 },
+          { title: "Height:30", value: 30 },
+        ],
       },
       aggregates: {
         height: Math.floor(Math.random() * 9999),
@@ -122,8 +132,6 @@ export const TABLE_PAGE_WITHOUT_AGGREGATES = [
   }),
 ];
 
-
-
 const allCurrencies = [
   { id: "USD", label: "US Dollar" },
   { id: "EUR", label: "Euro" },
@@ -146,7 +154,6 @@ const allCurrencies = [
   { id: "ZAR", label: "South African Rand" },
   { id: "MXN", label: "Mexican Peso" },
 ];
-
 
 // Funkcja do paginacji walut
 const generateCurrenciesPage = (page, size) => {
@@ -177,7 +184,6 @@ export const CURRENCIES_REQUEST = http.get("/mock-data/currencies", async (req, 
     },
   });
 });
-
 
 export const MOCK_REQUEST_CURRENCY = [
   http.get("/mocks/currencies", async ({ request }) => {
@@ -336,4 +342,3 @@ export const RESPONSE_DICTIONARY = [
     });
   }),
 ];
-
