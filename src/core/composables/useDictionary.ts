@@ -55,7 +55,7 @@ export function useDictionary() {
     const newValue = await nata.evaluate(mergedModel);
 
     if (!newValue) {
-      const updatedUrl = removeParams(source.url, ["filter", "enable-filter"]);
+      const updatedUrl = removeParams(source.url, ["value-filter","filter", "enable-filter"]);
       endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
     } else {
       const resolved = await resolve(field, source.url, title.value, true);

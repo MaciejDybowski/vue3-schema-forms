@@ -452,6 +452,58 @@ export const ConditionalFilter: Story = {
   },
 };
 
+export const ConditionalValueFilter: Story = {
+  args: {
+    formModel: {
+      testInput: "test",
+      deps: {
+        item: {
+          id: "9",
+        },
+      },
+    },
+    schema: {
+      type: "object",
+      properties: {
+        radioButton: {
+          initValue: false,
+          label: "Choose option",
+          layout: {
+            component: "radio-button",
+          },
+          source: {
+            items: [
+              { value: 1, title: "Filtr" },
+              { value: 2, title: "Bez" },
+            ],
+          },
+        },
+        dictionary: {
+          label: "Słownik",
+          layout: {
+            component: "dictionary",
+            cols: 12,
+          },
+          source: {
+            url: "/mock-dictionaries?value-filter={deps.item.id}&enable-filter=radioButton=1",
+            title: "label",
+            value: "id",
+            returnObject: true,
+            lazy: true,
+            singleOptionAutoSelect: true,
+          },
+        },
+      },
+      required: [],
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: RESPONSE_DICTIONARY,
+    },
+  },
+};
+
 export const ReadOnlyWithValue: Story = {
   play: async (context) => {},
   args: {
