@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="12">
+    <v-col cols="7">
       <v-card>
         <v-card-title>Form Visualisation</v-card-title>
         <v-divider class="mb-4"/>
@@ -18,9 +18,10 @@
         </v-card-text>
       </v-card>
     </v-col>
-    <v-col cols="12">
+    <v-col cols="5">
       <v-card>
         <v-card-title>Form Model</v-card-title>
+        <v-divider class="mb-4"/>
         <v-card-text>
           <vue-json-pretty :data="model" />
         </v-card-text>

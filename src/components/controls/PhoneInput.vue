@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang='ts'>
-import 'flag-icons/css/flag-icons.min.css';
+import 'world-flags-sprite/stylesheets/flags32.css';
 import { VPhoneInput } from 'v-phone-input';
 import 'v-phone-input/dist/v-phone-input.css';
 import { computed, onMounted, ref } from 'vue';
@@ -37,7 +37,7 @@ const { t } = useLocale();
 const { getValue, setValue } = useFormModel();
 
 const phoneInputProps = {
-  'country-icon-mode': 'svg',
+  'country-icon-mode': 'sprite',
   countryLabel: t('address.country'),
   'guess-country': true,
   'include-countries': [
