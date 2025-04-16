@@ -32,6 +32,7 @@
 </template>
 
 <script lang="ts" setup>
+import get from "lodash/get";
 import set from "lodash/set";
 import { computed, onMounted, ref } from "vue";
 
@@ -68,7 +69,7 @@ const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 
 const { fillPath } = useResolveVariables();
-const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? Number(props.schema.precision) : 2;
+let precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? Number(props.schema.precision) : 2;
 
 const lastValue = ref<any>(null);
 
@@ -78,6 +79,7 @@ const localModel = computed({
     if (value && typeof value == "string" && value.match(variableRegexp)) {
       return value; // defaultValue with dependencies
     }
+    if (value == null) return undefined;
     return Number(value);
   },
   set(val: any) {
@@ -144,6 +146,11 @@ const loading = ref(true);
 
 onMounted(async () => {
   loading.value = true;
+
+  // TODO - not reactive and probably model is wrong
+  if (isNaN(precision)) {
+    precision = get(props.model, props.schema.precision, 2);
+  }
   await runCalculationIfExist();
   await bindLabel(props.schema);
   await bindRules(props.schema);

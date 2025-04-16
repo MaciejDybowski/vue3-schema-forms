@@ -4,7 +4,7 @@ import { expect, userEvent, within } from "@storybook/test";
 import dayjs from "../../components/controls/date/dayjs";
 import { Schema } from "../../types/schema/Schema";
 import { SchemaDateField, SchemaTextField } from "../../types/schema/elements";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 import { initialize } from "msw-storybook-addon";

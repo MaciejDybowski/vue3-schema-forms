@@ -1,8 +1,9 @@
 // @ts-nocheck
-import { Schema } from "../../types/schema/Schema";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
-
 import { initialize } from "msw-storybook-addon";
+
+import { Schema } from "../../types/schema/Schema";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+
 initialize();
 
 export default {

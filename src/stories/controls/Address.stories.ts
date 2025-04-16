@@ -1,11 +1,11 @@
 // @ts-nocheck
+import { initialize } from "msw-storybook-addon";
+
 import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { StoryTemplateWithValidation } from "../templates/story-template";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
-import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
@@ -123,7 +123,7 @@ export const Override: Story = {
 
 export const StandardValidation: Story = {
   name: "Address with default validation",
-  
+
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const country = canvas.getByLabelText("Country");
@@ -171,7 +171,6 @@ export const StandardValidation: Story = {
 };
 
 export const OverrideValidation: Story = {
-  
   play: async (context) => {
     const canvas = within(context.canvasElement);
 

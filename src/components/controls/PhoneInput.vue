@@ -1,6 +1,6 @@
 <template>
   <v-phone-input
-    :class='bindClass(schema) + requiredInputClass'
+    :class="bindClass(schema) + requiredInputClass"
     :label='label'
     v-model='localModel'
     :invalid-message="(options: any) => t('phoneInvalid', { example: options.example })"
@@ -66,6 +66,7 @@ const localModel = computed({
 
 onMounted(async () => {
   await bindLabel(props.schema);
+  await bindRules(props.schema);
   await bindProps(props.schema);
 });
 </script>

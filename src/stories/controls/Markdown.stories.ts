@@ -1,11 +1,11 @@
 // @ts-nocheck
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
-  title: "Forms/Controls/Markdown",
+  title: "Forms/Static content",
   ...formStoryWrapperTemplate,
 };
 

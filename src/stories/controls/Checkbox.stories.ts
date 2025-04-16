@@ -1,14 +1,14 @@
 // @ts-nocheck
+import { initialize } from "msw-storybook-addon";
+
 import { expect, userEvent, within } from "@storybook/test";
 
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { SimpleSource } from "../../types/schema/elements";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { StoryTemplateWithValidation } from "../templates/story-template";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
-import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
@@ -247,7 +247,7 @@ export const GetOptionsFromAPI: Story = {
  */
 export const SimpleValidation: Story = {
   name: "Checkbox with required annotation",
-  
+
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);

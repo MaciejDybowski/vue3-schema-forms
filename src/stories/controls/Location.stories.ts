@@ -1,13 +1,13 @@
 // @ts-nocheck
+import { initialize } from "msw-storybook-addon";
+
 import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaLocationField } from "../../types/schema/elements";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { StoryTemplateWithValidation } from "../templates/story-template";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
-import { initialize } from "msw-storybook-addon";
 initialize();
 
 export default {
@@ -40,42 +40,8 @@ export const Standard: Story = {
   },
 };
 
-export const WithLangAndCountryLimits: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText("Location field");
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    await userEvent.type(select, "Opolska, Kraków");
-
-    await new Promise((resolve) => setTimeout(resolve, 1500)); // <- wait for api call
-    const items = document.getElementsByClassName("v-list-item");
-
-    await userEvent.click(items[0], { delay: 200 });
-    await expect(typeof context.args.formModel.location).toEqual("object");
-  },
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        location: {
-          label: "Location field",
-          layout: {
-            component: "location",
-          },
-          results: {
-            lang: "pl",
-            countryLimit: "pl",
-          },
-        } as SchemaLocationField,
-      },
-    } as Schema,
-  },
-};
-
 export const WithValue: Story = {
+  name: "Default value",
   play: async (context) => {
     await expect(context.args.formModel).toEqual({
       location: {
@@ -129,33 +95,7 @@ export const WithValue: Story = {
   },
 };
 
-export const WithVuetifyProps: Story = {
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        location: {
-          label: "Location field",
-          layout: {
-            component: "location",
-            props: {
-              variant: "outlined",
-              density: "compact",
-            },
-          },
-          results: {
-            lang: "pl",
-            countryLimit: "pl",
-          },
-        } as SchemaLocationField,
-      },
-    } as Schema,
-  },
-};
-
 export const Required: Story = {
-  
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Location field");
@@ -197,3 +137,41 @@ export const Required: Story = {
     } as Schema,
   },
 };
+
+export const WithLangAndCountryLimits: Story = {
+  name: "Case: Lang and Country limitations",
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText("Location field");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    await userEvent.type(select, "Opolska, Kraków");
+
+    await new Promise((resolve) => setTimeout(resolve, 1500)); // <- wait for api call
+    const items = document.getElementsByClassName("v-list-item");
+
+    await userEvent.click(items[0], { delay: 200 });
+    await expect(typeof context.args.formModel.location).toEqual("object");
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        location: {
+          label: "Location field",
+          layout: {
+            component: "location",
+          },
+          results: {
+            lang: "pl",
+            countryLimit: "pl",
+          },
+        } as SchemaLocationField,
+      },
+    } as Schema,
+  },
+};
+
+

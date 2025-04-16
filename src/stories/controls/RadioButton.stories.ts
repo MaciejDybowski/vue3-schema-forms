@@ -4,7 +4,7 @@ import { expect, userEvent, within } from "@storybook/test";
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { Source } from "../../types/schema/elements";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
 
@@ -48,43 +48,11 @@ export const Standard: Story = {
   },
 };
 
-export const NoInitValue: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    await expect(context.args.formModel).toEqual({});
-    const option2 = canvas.getByLabelText("Option 2");
-    await userEvent.click(option2, { delay: 200 });
-    await expect(context.args.formModel).toEqual({ radioButton: 2 });
-  },
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        radioButton: {
-          initValue: false,
-          label: "Choose option",
-          layout: {
-            component: "radio-button",
-          },
-          source: {
-            items: [
-              { value: 1, title: "Option 1" },
-              { value: 2, title: "Option 2" },
-              { value: 3, title: "Option 3" },
-            ],
-          },
-        } as EngineSourceField,
-      },
-    } as Schema,
-  },
-};
 /**
  * You can set the default value of field from schema
  */
-export const WithDefault: Story = {
-  name: "With default (value)",
+export const DefaultValue: Story = {
+  name: "Default value",
   play: async (context) => {
     await expect(context.args.formModel).toEqual({ radioButtonWithDefault: 3 });
   },
@@ -112,8 +80,50 @@ export const WithDefault: Story = {
   },
 };
 
+/**
+ * Example shows how to define a "required" field on a form
+ */
+export const Required: Story = {
+  name: "Required",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const exampleElement = canvas.getByLabelText("Option 3");
+    await userEvent.click(exampleElement, "Required field", {
+      delay: 500,
+    });
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit);
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        radioButtonRequired: {
+          label: "Choose option",
+          layout: {
+            component: "radio-button",
+          },
+          source: {
+            items: [
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" },
+            ],
+          },
+        } as EngineSourceField,
+      },
+      required: ["radioButtonRequired"],
+    } as Schema,
+  },
+};
+
+
+
+
 export const CustomMapping: Story = {
-  name: "Custom mapping",
+  name: "Mapper: title/value",
   play: async (context) => {
     await waitForMountedAsync();
     await expect(context.args.formModel).toEqual({ radioButtonCustomMapping: 1 });
@@ -144,7 +154,7 @@ export const CustomMapping: Story = {
 };
 
 export const CustomMappingReturnObject: Story = {
-  name: "Custom mapper + return obj",
+  name: "Mapper: title/value/returnObject",
   play: async (context) => {
     await waitForMountedAsync();
     await expect(context.args.formModel).toEqual({ radioButtonCustomMappingObject: { id: 1, text: "Option 1" } });
@@ -176,7 +186,7 @@ export const CustomMappingReturnObject: Story = {
 };
 
 export const CustomMappingReturnObjectDefault: Story = {
-  name: "Custom mapper + obj + default",
+  name: "Mapper: title/value/returnObject/default",
   play: async (context) => {
     await waitForMountedAsync();
     await expect(context.args.formModel).toEqual({
@@ -213,7 +223,43 @@ export const CustomMappingReturnObjectDefault: Story = {
   },
 };
 
+export const NoInitValue: Story = {
+  name: "Case: No value on init",
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    await expect(context.args.formModel).toEqual({});
+    const option2 = canvas.getByLabelText("Option 2");
+    await userEvent.click(option2, { delay: 200 });
+    await expect(context.args.formModel).toEqual({ radioButton: 2 });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        radioButton: {
+          initValue: false,
+          label: "Choose option",
+          layout: {
+            component: "radio-button",
+          },
+          source: {
+            items: [
+              { value: 1, title: "Option 1" },
+              { value: 2, title: "Option 2" },
+              { value: 3, title: "Option 3" },
+            ],
+          },
+        } as EngineSourceField,
+      },
+    } as Schema,
+  },
+};
+
+
 export const GetOptionsFromAPI: Story = {
+  name: "Case: Items from API",
   play: async (context) => {
     await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for api call
     await expect(context.args.formModel).toEqual({ radioButtonOptionsFromAPI: { id: 1, label: "Option 1" } });
@@ -258,43 +304,3 @@ export const GetOptionsFromAPI: Story = {
   },
 };
 
-/**
- * Example shows how to define a "required" field on a form
- */
-export const SimpleValidation: Story = {
-  name: "RadioButton with required annotation",
-  
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const exampleElement = canvas.getByLabelText("Option 3");
-    await userEvent.click(exampleElement, "Required field", {
-      delay: 500,
-    });
-    const Submit = canvas.getByText("Validate");
-    await userEvent.click(Submit);
-    // 👇 Assert DOM structure
-    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
-  },
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        radioButtonRequired: {
-          label: "Choose option",
-          layout: {
-            component: "radio-button",
-          },
-          source: {
-            items: [
-              { value: 1, title: "Option 1" },
-              { value: 2, title: "Option 2" },
-              { value: 3, title: "Option 3" },
-            ],
-          },
-        } as EngineSourceField,
-      },
-      required: ["radioButtonRequired"],
-    } as Schema,
-  },
-};

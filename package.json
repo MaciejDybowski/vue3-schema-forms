@@ -62,7 +62,7 @@
     "markdown-it-toc-done-right": "^4.2.0",
     "marked": "^15.0.7",
     "maska": "^3.0.0",
-    "v-phone-input": "^4.3.2",
+    "v-phone-input": "4.4.2",
     "vue-json-pretty": "^2.4.0",
     "vue3-markdown-it": "^1.0.10",
     "world-flags-sprite": "^0.0.2"

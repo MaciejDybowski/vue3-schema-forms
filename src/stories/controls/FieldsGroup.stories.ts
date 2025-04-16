@@ -3,14 +3,14 @@ import { initialize } from "msw-storybook-addon";
 
 import { DictionarySource } from "../../types/shared/Source";
 import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 
 initialize();
 
 
 export default {
   title: "Forms/Controls/FieldsGroup",
-  ...formStoryWrapperTemplate,
+  ...formStoryWrapperTemplateWithMSW,
 };
 
 export const TwoFieldsGroup = {

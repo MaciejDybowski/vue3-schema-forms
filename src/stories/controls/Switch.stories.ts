@@ -23,7 +23,7 @@ export const Standard: Story = {
     await expect(context.args.formModel).toEqual({ switch: false });
 
     await userEvent.click(field, { delay: 200 });
-    await expect(context.args.formModel).toEqual({ switchValueTest: true });
+    await expect(context.args.formModel).toEqual({ switch: true });
   },
   args: {
     formModel: {},

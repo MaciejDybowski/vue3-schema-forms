@@ -3,14 +3,13 @@ import { HttpResponse, http } from "msw";
 import { initialize } from "msw-storybook-addon";
 
 import { Schema } from "../../types/schema/Schema";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 
 initialize();
 
-
 export default {
   title: "Forms/Controls/Dictionary [combobox]",
-  ...formStoryWrapperTemplate,
+  ...formStoryWrapperTemplateWithMSW,
 };
 
 const MOCK_REQUEST = [

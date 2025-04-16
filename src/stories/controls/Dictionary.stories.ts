@@ -6,7 +6,7 @@ import { expect, userEvent, waitFor, within } from "@storybook/test";
 import { Schema } from "../../types/schema/Schema";
 import { DictionarySource } from "../../types/shared/Source";
 import { MOCK_REQUEST_CURRENCY, RESPONSE_DICTIONARY } from "../mock-responses";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
 
@@ -14,7 +14,7 @@ initialize();
 
 export default {
   title: "Forms/Controls/Dictionary [autocomplete]",
-  ...formStoryWrapperTemplate,
+  ...formStoryWrapperTemplateWithMSW,
 };
 
 export const Standard: Story = {

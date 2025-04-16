@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { offsetSchema } from "@/stories/schemas";
 
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 initialize();

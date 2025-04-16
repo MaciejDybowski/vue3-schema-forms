@@ -9,14 +9,14 @@ import { Schema, SchemaOptions } from "../../types/schema/Schema";
 import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "../../types/schema/elements";
 import { waitForMountedAsync } from "../controls/utils";
 import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 
 initialize();
 
 
 export default {
   title: "Forms/Features/Dependencies",
-  ...formStoryWrapperTemplate,
+  ...formStoryWrapperTemplateWithMSW,
 };
 
 export const step1: Story = {

@@ -3,13 +3,13 @@ import { initialize } from "msw-storybook-addon";
 
 import { Schema } from "../../types/schema/Schema";
 import { TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW } from "../mock-responses";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 
 initialize();
 
 export default {
   title: "Forms/Controls/TableView",
-  ...formStoryWrapperTemplate,
+  ...formStoryWrapperTemplateWithMSW,
 };
 
 /**
@@ -1153,4 +1153,3 @@ export const NumberEditableSelect: Story = {
     },
   },
 };
-

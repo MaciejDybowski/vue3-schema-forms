@@ -3,7 +3,7 @@ import { expect, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { Layout } from "../../types/schema/elements";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 import { initialize } from "msw-storybook-addon";

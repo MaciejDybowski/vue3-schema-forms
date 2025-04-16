@@ -6,14 +6,14 @@ import { expect, fireEvent, userEvent, within } from "@storybook/test";
 import { DictionarySource } from "../../types/shared/Source";
 import { waitForMountedAsync } from "../controls/utils";
 import { CURRENCIES_REQUEST } from "../mock-responses";
-import { commonMetadata, formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 initialize();
 
 export default {
   title: "Forms/Features/On change events",
-  ...formStoryWrapperTemplate,
+  ...formStoryWrapperTemplateWithMSW,
 };
 
 export const CallActionWithParametersAndRequestBody: Story = {
