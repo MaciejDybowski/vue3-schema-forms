@@ -2,8 +2,17 @@
   <v-row>
     <v-col cols="7">
       <v-card>
-        <v-card-title>Form Visualisation</v-card-title>
-        <v-divider class="mb-4"/>
+        <v-card-title>
+          <span>Form Visualisation</span>
+          <v-btn
+            class="mx-2"
+            density="compact"
+            icon="mdi-content-copy"
+            variant="text"
+            @click="contextCopy"
+          />
+        </v-card-title>
+        <v-divider class="mb-4" />
         <v-card-text>
           <vue-schema-forms
             v-if="!loading"
@@ -21,12 +30,19 @@
     <v-col cols="5">
       <v-card>
         <v-card-title>Form Model</v-card-title>
-        <v-divider class="mb-4"/>
+        <v-divider class="mb-4" />
         <v-card-text>
           <vue-json-pretty :data="model" />
         </v-card-text>
       </v-card>
     </v-col>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="1000"
+      color="success"
+      variant="tonal"
+      >Copied!
+    </v-snackbar>
   </v-row>
 </template>
 
@@ -39,6 +55,7 @@ import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
 
 import { Schema } from "@/types/schema/Schema";
 
+const snackbar = ref(false);
 const { schema, options, formModel } = defineProps<{
   formModel: object;
   schema: Schema;
@@ -56,7 +73,7 @@ function handleAction(properties) {
   console.debug(properties);
 }
 
-const loading = ref(true)
+const loading = ref(true);
 watch(
   () => model.value,
   () => {
@@ -64,6 +81,11 @@ watch(
   },
   { deep: true },
 );
+
+function contextCopy() {
+  navigator.clipboard.writeText(JSON.stringify(schema));
+  snackbar.value = true;
+}
 
 onMounted(() => {
   model.value = formModel;
