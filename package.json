@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.1.47-snapshot-1",
+  "version": "0.1.47-snapshot-2",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -45,7 +45,6 @@
     "@stoplight/json-ref-resolver": "3.1.6",
     "@vueuse/core": "13.0.0",
     "@vueuse/math": "13.0.0",
-
     "github-markdown-css": "^5.8.1",
     "jsonata": "2.0.6",
     "leaflet-geosearch": "^4.0.0",

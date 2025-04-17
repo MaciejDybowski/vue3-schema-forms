@@ -10,41 +10,31 @@
 </template>
 
 <script lang="ts" setup>
-import { EngineTextField } from "@/types/engine/controls";
-import FormRoot from "@/components/engine/FormRoot.vue";
 import { onMounted, ref } from "vue";
-import set from "lodash/set";
+
+import FormRoot from "@/components/engine/FormRoot.vue";
+
 import { useFormModel } from "@/core/composables";
-import { useEventBus } from "@vueuse/core";
+import { EngineTextField } from "@/types/engine/controls";
 
 const props = defineProps<{
   schema: EngineTextField;
   model: object;
 }>();
 
-const vueSchemaFormEventBus = useEventBus<string>("form-model");
-const { getValue, setValue } = useFormModel();
+const { setValue } = useFormModel();
 
-const jsonSchemaOfGroup = ref<any>(null)
+const jsonSchemaOfGroup = ref<any>(null);
 
-function updateModel(payload: any){
-  set(props.model, payload.key, payload.value);
-  vueSchemaFormEventBus.emit("model-changed", null);
-
-  // TODO jak zaktualizować pole wyżej skoro to tylko grupa wizualna, chyba trzeba to przerobic w properties ;)
-  //setValue(payload.value, props.schema)
+function updateModel(payload: any) {
+  setValue(payload.value, { key: payload.key, on: props.schema.on } as any);
 }
 
 onMounted(() => {
   jsonSchemaOfGroup.value = props.schema.layout.schema;
-})
-
+});
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped></style>
 
-</style>
-
-<i18n lang="json">
-
-</i18n>
+<i18n lang="json"></i18n>

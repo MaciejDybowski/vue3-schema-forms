@@ -1,5 +1,7 @@
 // @ts-nocheck
-import { HttpResponse, http } from "msw";
+import { http, HttpResponse } from "msw";
+import sampleImage from "./path/to/sample-image.png"; // If you're bundling it
+import sampleImage from "./path/to/sample-image.png";
 
 export const names = ["🥝 Kiwi", "🍏 Green Apple", "🍉 Watermelon", "🍌 Banana", "🍇 Grape"];
 export const locations = ["New Zealand", "Brazil", "USA", "Italy", "South Africa"];
@@ -342,3 +344,9 @@ export const RESPONSE_DICTIONARY = [
     });
   }),
 ];
+
+
+export const IMAGE_REQUEST = http.get("/mocks/products/images", async (req, res, ctx) => {
+  // TODO - try return sample image
+  return null
+});

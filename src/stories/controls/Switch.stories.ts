@@ -1,13 +1,9 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
-
 import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
-
-initialize();
 
 export default {
   title: "Forms/Controls/Switch",
@@ -19,9 +15,7 @@ export const Standard: Story = {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Change it!");
-    //await userEvent.type(field, "This is standard text area...", { delay: 100 });
     await expect(context.args.formModel).toEqual({ switch: false });
-
     await userEvent.click(field, { delay: 200 });
     await expect(context.args.formModel).toEqual({ switch: true });
   },
@@ -45,9 +39,6 @@ export const Default: Story = {
   name: "Default Value",
   play: async (context) => {
     await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText("Change it!");
-    //await userEvent.type(field, "This is standard text area...", { delay: 100 });
     await expect(context.args.formModel).toEqual({ switchDefault: true });
   },
   args: {
@@ -71,9 +62,6 @@ export const Colorful: Story = {
   name: "Props: color",
   play: async (context) => {
     await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText("Change it!");
-    //await userEvent.type(field, "This is standard text area...", { delay: 100 });
     await expect(context.args.formModel).toEqual({ switchDefault: true });
   },
   args: {

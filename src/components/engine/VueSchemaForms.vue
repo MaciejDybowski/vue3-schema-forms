@@ -256,8 +256,7 @@ function resetValidation() {
 defineExpose({
   validate,
   reset,
-  resetValidation,
-  getModel: () => localModel.value
+  resetValidation
 });
 </script>
 
