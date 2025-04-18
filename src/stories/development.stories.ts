@@ -1,6 +1,4 @@
 // @ts-nocheck
-import { mswLoader } from "msw-storybook-addon";
-
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import FormStoryWrapper from "../components/app/FormStoryWrapper.vue";
@@ -26,15 +24,27 @@ type Story = StoryObj<typeof meta>;
 export const TranslationTesting: Story = {
   args: {
     formModel: {
-      variable: "dependency from model",
+      variable: "Test",
+      element: "Masakra",
     },
     schema: {
       type: "object",
       properties: {
+        span: {
+          content: {
+            $ref: "#/i18n/~$locale~/longSpan",
+            0: "{variable}",
+          },
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
         field: {
           label: {
-            $ref: "customMade:#/i18n/~$locale~/item",
+            $ref: "#/i18n/~$locale~/home/test/item",
             0: "{variable}",
+            1: "{element}",
           },
           layout: {
             component: "text-field",
@@ -43,10 +53,22 @@ export const TranslationTesting: Story = {
       },
       i18n: {
         pl: {
-          item: "Item PL {0}",
+          home: {
+            item: {
+              test: "Item PL {0} and {1}",
+            },
+          },
+          longSpan:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting {0}. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         },
         en: {
-          item: "Item EN {0}",
+          home: {
+            test: {
+              item: "Item EN {0} and {1}",
+            },
+          },
+          longSpan:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting {0}. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         },
       },
     },
