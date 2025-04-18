@@ -26,6 +26,35 @@ export default {
 
 type Story = StoryObj<typeof meta>;
 
+export const TranslationTesting: Story = {
+  args: {
+    formModel: {
+      variable: "dependency from model",
+    },
+    schema: {
+      type: "object",
+      properties: {
+        field: {
+          label: {
+            $ref: "i18n://#/i18n/~$locale~/item"
+          },
+          layout: {
+            component: "text-field",
+          },
+        },
+      },
+      i18n: {
+        pl: {
+          item: "Item PL {0}",
+        },
+        en: {
+          item: "Item EN {0}",
+        },
+      },
+    },
+  },
+};
+
 export const Story1: Story = {
   args: {
     formModel: {

@@ -48,8 +48,8 @@ export const vueSchemaFromControls: Components = {
   address: Address,
   button: ButtonField,
   switch: Switch,
-  "number-field": NumberFieldv2,
-  "number-field-old": NumberField,
+  "number-field": NumberField,
+  "number-field-v2": NumberFieldv2,
   divider: Divider,
   /*  "image-preview": ImagePreview,*/
   image: Image,

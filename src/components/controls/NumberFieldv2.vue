@@ -79,7 +79,6 @@ const localModel = computed({
     if (value && typeof value == "string" && value.match(variableRegexp)) {
       return value; // defaultValue with dependencies
     }
-    if (value == null) return undefined;
     return Number(value);
   },
   set(val: any) {
