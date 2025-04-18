@@ -3,22 +3,34 @@
     v-for="(item, index) in items"
     :key="item.valueMapping"
   >
-    <v-number-input
+    <v-text-field
       v-if="item.type == 'NUMBER'"
       :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"
-      :hideInput="false"
-      :inset="false"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
-      :precision="getPrecision(item.valueMapping, index)"
-      :reverse="false"
-      control-variant="hidden"
       v-bind="{ ...attrs, density: 'compact' }"
       width="100%"
+      @focusin="showFormattedNumber[index] = false"
+      @focusout="showFormattedNumber[index] = true"
+      @input="(e: any) => emit('update:field', { value: e.target.value.replaceAll(',', '.'), valueMapping: item.valueMapping })"
       @keyup.enter="(e) => e.target.blur()"
-      @update:model-value="(e: any) => emitData(e, item)"
-    >
-    </v-number-input>
+    />
+    <!--    <v-number-input
+          v-if="item.type == 'NUMBER'"
+          :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"
+          :hideInput="false"
+          :inset="false"
+          :label="item.label"
+          :model-value="getValue(item.valueMapping, index)"
+          :precision="getPrecision(item.valueMapping, index)"
+          :reverse="false"
+          control-variant="hidden"
+          v-bind="{ ...attrs, density: 'compact' }"
+          width="100%"
+          @keyup.enter="(e) => e.target.blur()"
+          @update:model-value="(e: any) => emitData(e, item)"
+        >
+        </v-number-input>-->
 
     <v-select
       v-if="item.type == 'SELECT'"
@@ -36,13 +48,15 @@
 
 <script lang="ts" setup>
 import get from "lodash/get";
-import { useAttrs } from "vue";
+import { ref, useAttrs, watchEffect } from "vue";
 
+import { useNumber } from "@/core/composables/useNumber";
 import type { HeaderEditableObject, TableHeader } from "@/types/shared/Source";
 
 const props = defineProps<{ header: TableHeader; items: HeaderEditableObject[]; row: object }>();
 const emit = defineEmits<{ (e: "update:field", val: any): void }>();
 const attrs = useAttrs();
+const { formattedNumber } = useNumber();
 
 function getPrecision(valueMapping: string, index: number) {
   // invoicePrice:0:NUMBER:2
@@ -58,12 +72,41 @@ function getPrecision(valueMapping: string, index: number) {
   return decimalPlaces;
 }
 
-function getValue(valueMapping: string, index: number) {
+/*function getValue(valueMapping: string, index: number) {
   // invoicePrice:0:NUMBER:2
   const split = valueMapping.split(":");
   let variable = split[0];
   return get(props.row, variable, null);
+}*/
+
+function getValue(valueMapping: string, index: number) {
+  // invoicePrice:0:NUMBER:2
+  const split = valueMapping.split(":");
+  let variable = split[0];
+  const defaultValue = split.length >= 2 ? split[1] : null;
+  const typeOfValue = split.length >= 3 ? split[2] : null;
+  const formatterProps = split.length == 4 ? split[3] : (null as any);
+
+  let value = get(props.row, variable, null);
+
+  if (typeOfValue == "NUMBER" && showFormattedNumber.value[index]) {
+    let decimalPlaces = 4;
+    if (isNaN(formatterProps)) {
+      decimalPlaces = get(props.row, formatterProps, 2);
+    } else {
+      decimalPlaces = formatterProps;
+    }
+    value = formattedNumber(value, "decimal", decimalPlaces, decimalPlaces);
+    return value;
+  }
+
+  return value;
 }
+
+const showFormattedNumber = ref<Array<boolean>>([]);
+watchEffect(() => {
+  showFormattedNumber.value = new Array(props.items.length).fill(true);
+});
 
 function getItemTitle(valueMapping: string) {
   const split = valueMapping.split(":");
