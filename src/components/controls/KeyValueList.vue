@@ -33,11 +33,11 @@
         no-gutters
       >
         <v-col
-          v-for="element in item"
+          v-for="(x, k) in headers"
           :cols="12 / headers.length"
           class="pa-0 ma-0"
         >
-          {{ element }}
+          {{ get(item, headers[k].valueMapping) }}
         </v-col>
       </v-row>
       <v-divider />
@@ -46,6 +46,7 @@
 </template>
 
 <script lang="ts" setup>
+import get from "lodash/get";
 import { computed, onMounted } from "vue";
 
 import { useFormModel, useLabel } from "@/core/composables";

@@ -1,5 +1,6 @@
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { initialize } from "msw-storybook-addon";
+
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 export default {
   title: "Forms/Static content",
@@ -17,7 +18,7 @@ export const KeyValueList = {
         { label: "Funkcja", value: "Sleeping" },
         { label: "Typ mebla", value: "Bedframes" },
         { label: "Oznaczenie", value: "2SK" },
-        { label: "Oświetlenie", value: "0 [lm]" },
+        { label: "Oświetlenie", value: "0 [lm]", test: { item: "qwerty" } },
       ],
     },
     schema: {
@@ -27,7 +28,7 @@ export const KeyValueList = {
           label: "Pole do pokazania listy klucz wartosc",
           config: [
             { title: "Pole", valueMapping: "label" },
-            { title: "Wartość", valueMapping: "value" }
+            { title: "Wartość", valueMapping: "test.item" },
           ],
           layout: {
             component: "key-value-list",
