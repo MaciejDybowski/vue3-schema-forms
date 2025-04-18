@@ -6,7 +6,7 @@ import { expect } from "@storybook/test";
 import { waitForMountedAsync } from "../controls/utils";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
-initialize();
+
 
 export default {
   title: "Forms/Features/Passing css classes",

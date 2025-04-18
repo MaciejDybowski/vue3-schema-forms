@@ -4,7 +4,7 @@ import { initialize } from "msw-storybook-addon";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { IMAGE_REQUEST } from "../mock-responses";
 
-initialize();
+
 
 export default {
   title: "Forms/Controls/Image",

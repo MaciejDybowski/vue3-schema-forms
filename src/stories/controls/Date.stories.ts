@@ -8,7 +8,7 @@ import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
 import { initialize } from "msw-storybook-addon";
-initialize();
+
 
 export default {
   title: "Forms/Controls/Date",

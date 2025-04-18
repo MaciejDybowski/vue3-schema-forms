@@ -7,7 +7,7 @@ import { Schema } from "../../types/schema/Schema";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
-initialize();
+
 
 export default {
   title: "Forms/Controls/NumberField",

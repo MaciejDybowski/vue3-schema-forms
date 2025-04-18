@@ -6,7 +6,7 @@ import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 import { initialize } from "msw-storybook-addon";
-initialize();
+
 
 export default {
   title: "Forms/Controls/Data viewer",

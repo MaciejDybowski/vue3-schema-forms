@@ -10,7 +10,7 @@ import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../te
 import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
 
-initialize();
+
 
 export default {
   title: "Forms/Controls/Dictionary [autocomplete]",

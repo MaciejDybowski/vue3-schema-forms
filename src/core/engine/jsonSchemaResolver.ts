@@ -3,7 +3,6 @@ import URI from "urijs";
 
 import { Resolver } from "@stoplight/json-ref-resolver";
 
-
 export const jsonSchemaResolver = new Resolver({
   resolvers: {
     https: {
@@ -28,6 +27,12 @@ export const jsonSchemaResolver = new Resolver({
           console.error(`Error resolving ref ${refString}:`, error);
           throw error;
         }
+      },
+    },
+    customMade: {
+      async resolve(ref: URI, ctx) {
+        console.debug(ref);
+        console.debug(ctx);
       },
     },
   },

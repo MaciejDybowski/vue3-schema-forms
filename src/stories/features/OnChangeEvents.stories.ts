@@ -9,7 +9,7 @@ import { CURRENCIES_REQUEST } from "../mock-responses";
 import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 import { StoryTemplateWithValidation } from "../templates/story-template";
 
-initialize();
+
 
 export default {
   title: "Forms/Features/On change events",

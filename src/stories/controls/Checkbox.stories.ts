@@ -9,7 +9,7 @@ import { SimpleSource } from "../../types/schema/elements";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
-initialize();
+
 
 export default {
   title: "Forms/Controls/Checkbox",

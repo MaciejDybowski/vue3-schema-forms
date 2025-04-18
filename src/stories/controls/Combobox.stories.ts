@@ -5,7 +5,7 @@ import { initialize } from "msw-storybook-addon";
 import { Schema } from "../../types/schema/Schema";
 import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 
-initialize();
+
 
 export default {
   title: "Forms/Controls/Dictionary [combobox]",

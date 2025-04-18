@@ -6,7 +6,7 @@ import { waitForMountedAsync } from "../controls/utils";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
-initialize();
+
 
 export default {
   title: "Forms/Features/JSONata expressions",

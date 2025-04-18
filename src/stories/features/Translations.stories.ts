@@ -4,7 +4,7 @@ import { schemaWithTranslation } from "@/stories/schemas";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
-initialize();
+
 
 export default {
   title: "Forms/Features/Translations",

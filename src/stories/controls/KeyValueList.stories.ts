@@ -6,7 +6,7 @@ export default {
   title: "Forms/Static content",
   ...formStoryWrapperTemplate,
 };
-initialize();
+
 
 export const KeyValueList = {
   args: {

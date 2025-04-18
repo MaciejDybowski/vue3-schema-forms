@@ -9,7 +9,7 @@ import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
 
 import { initialize } from "msw-storybook-addon";
-initialize();
+
 
 export default {
   title: "Forms/Controls/RadioButton",

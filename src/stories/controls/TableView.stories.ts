@@ -5,7 +5,7 @@ import { Schema } from "../../types/schema/Schema";
 import { TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW } from "../mock-responses";
 import { formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 
-initialize();
+
 
 export default {
   title: "Forms/Controls/TableView",

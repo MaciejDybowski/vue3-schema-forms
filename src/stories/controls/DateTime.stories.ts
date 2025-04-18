@@ -3,7 +3,7 @@ import { Schema } from "../../types/schema/Schema";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
-initialize();
+
 
 export default {
   title: "Forms/Controls/DateTime",

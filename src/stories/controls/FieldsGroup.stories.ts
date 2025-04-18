@@ -8,7 +8,7 @@ import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
 import { formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
-initialize();
+
 
 export default {
   title: "Forms/Controls/FieldsGroup",

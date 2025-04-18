@@ -7,7 +7,7 @@ import { StoryTemplateWithValidation } from "@/stories/templates/story-template"
 import { Schema } from "../../types/schema/Schema";
 import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 
-initialize();
+
 
 export default {
   title: "Forms/Features/Ref JSON Blocks",

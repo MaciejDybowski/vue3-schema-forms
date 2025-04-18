@@ -1,3 +1,4 @@
+import { initialize, mswLoader } from "msw-storybook-addon";
 import { createPinia } from "pinia";
 
 import { install as VueMonacoEditorPlugin } from "@guolao/vue-monaco-editor";
@@ -32,6 +33,11 @@ setup((app) => {
   app.use(VueMonacoEditorPlugin);
 });
 
+initialize({
+  onUnhandledRequest: "bypass", // 👈 suppresses the warning
+});
+
+export const loaders = [mswLoader];
 export const decorators = [withVuetifyTheme];
 
 export const globalTypes = {

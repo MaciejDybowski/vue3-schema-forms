@@ -1,12 +1,10 @@
 // @ts-nocheck
-import { initialize, mswLoader } from "msw-storybook-addon";
+import { mswLoader } from "msw-storybook-addon";
 
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import FormStoryWrapper from "../components/app/FormStoryWrapper.vue";
 import meta from "./development-old.stories";
-
-initialize();
 
 export default {
   title: "Development Stories",
@@ -21,7 +19,6 @@ export default {
       },
     },
   },
-  loaders: [mswLoader],
 } satisfies Meta<typeof FormStoryWrapper>;
 
 type Story = StoryObj<typeof meta>;
@@ -36,7 +33,8 @@ export const TranslationTesting: Story = {
       properties: {
         field: {
           label: {
-            $ref: "i18n://#/i18n/~$locale~/item"
+            $ref: "customMade:#/i18n/~$locale~/item",
+            0: "{variable}",
           },
           layout: {
             component: "text-field",

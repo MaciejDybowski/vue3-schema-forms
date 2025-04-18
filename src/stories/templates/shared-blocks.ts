@@ -28,6 +28,5 @@ export const formStoryWrapperTemplateWithMSW = {
         density: "comfortable",
       },
     },
-  },
-  loaders: [mswLoader],
+  }
 };

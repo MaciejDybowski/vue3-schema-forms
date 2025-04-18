@@ -11,7 +11,7 @@ import { waitForMountedAsync } from "../controls/utils";
 import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
 import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 
-initialize();
+
 
 
 export default {

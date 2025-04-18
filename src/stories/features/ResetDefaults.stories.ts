@@ -7,7 +7,7 @@ import { SchemaField } from "../../types/schema/elements";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
-initialize();
+
 
 export default {
   title: "Forms/Features/Reset Form",

@@ -25,13 +25,12 @@ const meta = {
     },
     model: {},
   },
-  loaders: [mswLoader],
 } satisfies Meta<typeof DevelopmentTable>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-initialize();
+
 
 const SCHEMAS = [
   http.get("/static/forms/offer-standard-table-v1.0.0.json", async (req, res, ctx) => {
