@@ -35,7 +35,7 @@
             v-bind="{ ...fieldProps, color: 'primary', variant: 'elevated' }"
             @click="saveDialogForm(isActive)"
           >
-            {{popup.acceptText}}
+            {{ popup.acceptText }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -63,7 +63,6 @@ import { Schema } from "@/types/schema/Schema";
 import { useEventBus } from "@vueuse/core";
 
 import VueSchemaForms from "../engine/VueSchemaForms.vue";
-import { fi } from "vuetify/locale";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 
@@ -127,7 +126,7 @@ function runBtnLogic() {
       if (schema.config.modelReference) {
         popup.model = get(model, schema.config.modelReference, {});
       }
-      if(schema.config.acceptText){
+      if (schema.config.acceptText) {
         popup.acceptText = schema.config.acceptText;
       }
       popup.schema = schema.schema as any;
@@ -135,7 +134,9 @@ function runBtnLogic() {
         let payloadObject = {
           code: schema.config.code,
           body: popup.model,
-          params: {},
+          params: {
+            ...schema.config.params,
+          },
         };
         console.debug(`Popup model is ready to save, event [form-action] was emitted`, payloadObject);
         actionHandlerEventBus.emit("form-action", payloadObject);

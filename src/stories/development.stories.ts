@@ -89,3 +89,36 @@ export const Story1: Story = {
   },
   parameters: {},
 };
+
+export const Story2: Story = {
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        "text-field-438": {
+          label: { $ref: "#/i18n/~$locale~/textField438" },
+          layout: { component: "text-field" },
+        },
+        "fields-group-078": {
+          layout: {
+            component: "fields-group",
+            cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+            schema: {
+              type: "object",
+              properties: {
+                "text-field-168": {
+                  label: { $ref: "../i18n/~$locale~/textField168" },
+                  layout: { component: "text-field" },
+                },
+              },
+              i18n: { pl: { textField168: "123" }, en: { textField168: "123" }, de: { textField168: "" } },
+            },
+          },
+        },
+      },
+      i18n: { pl: { textField438: "qwe" }, en: { textField438: "qwe" }, de: { textField438: "qwe" } },
+    },
+  },
+  parameters: {},
+};

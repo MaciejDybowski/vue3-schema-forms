@@ -36,6 +36,8 @@
       v-if="description !== null"
       #item="{ item, props }"
     >
+      <!-- etykiety -->
+      <!-- kolorwanie pól może tutaj na podstawie warunku w ramach item -->
       <v-list-item
         :subtitle="item.raw[description]"
         :title="item.title"
@@ -56,8 +58,6 @@ import { EngineDictionaryField } from "@/types/engine/controls";
 
 import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "../../core/composables";
 import BaseAutocomplete from "./base/BaseAutocomplete.vue";
-
-
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -100,7 +100,7 @@ const {
   singleOptionAutoSelect,
   initState,
   loadCounter,
-  dependencyWasChanged
+  dependencyWasChanged,
 } = useDictionary();
 
 function singleOptionAutoSelectFunction() {
@@ -127,12 +127,12 @@ async function resolveIfLocalModelHasDependencies() {
 }
 
 watch(dependencyWasChanged, () => {
-  if(dependencyWasChanged.value && internalStateIsSet.value){
-    localModel.value = null
+  if (dependencyWasChanged.value && internalStateIsSet.value) {
+    localModel.value = null;
   }
-})
+});
 
-const internalStateIsSet = ref(false)
+const internalStateIsSet = ref(false);
 
 onMounted(async () => {
   internalStateIsSet.value = false;
@@ -161,7 +161,7 @@ onMounted(async () => {
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
     //console.debug(`[vue-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
-    if(!returnObject.value){
+    if (!returnObject.value) {
       queryBlocker.value = query.value === localModelCurrent.value;
     }
     await load("autocomplete");
@@ -170,7 +170,7 @@ async function fetchDictionaryData() {
 
 function updateSearch(val: string) {
   if (returnObject.value) {
-    queryBlocker.value = val === localModelCurrent.value+"";
+    queryBlocker.value = val === localModelCurrent.value + "";
   } else {
     queryBlocker.value = false;
   }
