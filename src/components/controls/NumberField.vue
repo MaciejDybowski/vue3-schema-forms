@@ -49,6 +49,7 @@ import { variableRegexp } from "@/core/engine/utils";
 import { logger } from "@/main";
 import { EngineNumberField } from "@/types/engine/controls";
 import { useFormModelStore } from "@/store/formModelStore";
+import get from "lodash/get";
 
 const props = defineProps<{
   schema: EngineNumberField;
@@ -67,7 +68,7 @@ const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 const showFormattedNumber = ref(true);
 const { fillPath } = useResolveVariables();
-const precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
+let precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
 const precisionMin = props.schema.type == "int" ? 0 : "precisionMin" in props.schema ? props.schema.precision : 0;
 
 const formatType = ("formatType" in props.schema ? props.schema.formatType : "decimal") as NumberFormattingType;
@@ -187,6 +188,10 @@ const loading = ref(true);
 
 onMounted(async () => {
   loading.value = true;
+  // TODO - not reactive and probably model is wrong
+  if (isNaN(precision)) {
+    precision = get(props.model, props.schema.precision, 2);
+  }
   await runCalculationIfExist();
   await bindLabel(props.schema);
   await bindRules(props.schema);

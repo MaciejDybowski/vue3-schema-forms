@@ -33,7 +33,7 @@ export const TranslationTesting: Story = {
         span: {
           content: {
             $ref: "#/i18n/~$locale~/longSpan",
-            0: "{variable}",
+            "0": "{variable}",
           },
           layout: {
             component: "static-content",
@@ -43,8 +43,8 @@ export const TranslationTesting: Story = {
         field: {
           label: {
             $ref: "#/i18n/~$locale~/home/test/item",
-            0: "{variable}",
-            1: "{element}",
+            "0": "{variable}",
+            "1": "{element}",
           },
           layout: {
             component: "text-field",

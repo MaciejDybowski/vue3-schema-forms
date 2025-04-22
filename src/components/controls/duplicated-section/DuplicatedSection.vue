@@ -419,7 +419,9 @@ function mapPropertiesIfDefault(fieldDefinition: Record<string, SchemaField>, de
 onMounted(async () => {
   init();
   await bindProps(props.schema);
-  isEditable.value = !fieldProps.value.readonly;
+  if(isEditable.value){
+    isEditable.value = !fieldProps.value.readonly;
+  }
 });
 </script>
 
