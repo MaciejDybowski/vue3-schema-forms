@@ -46,6 +46,7 @@
       @keyup.enter="(e) => e.target.blur()"
       @update:model-value="(e: any) => emitData(e, item)"
       :class="`${item.class}`"
+      :clearable="true"
     />
   </div>
 </template>
