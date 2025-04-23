@@ -96,6 +96,7 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
+  localModel.value = model.value as any
   formModelStore.updateFormModel(localModel.value);
   vueSchemaFormEventBus.emit("model-changed", "action-callback");
 }
