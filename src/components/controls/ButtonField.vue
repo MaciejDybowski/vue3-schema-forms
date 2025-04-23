@@ -153,13 +153,17 @@ async function runBtnLogic() {
       break;
     case "api-call":
       const { resolvedText, allVariablesResolved } = await resolve(schema, schema.config.source, "title", true);
-      const body = await createBodyObject()
+      const body = await createBodyObject();
       if (allVariablesResolved) {
         const response = axios({
           method: schema.config.method || "POST",
           url: resolvedText,
           data: body,
         });
+
+        // TODO - dalsza implementacja - co ma się dziać z response, jakie warianty
+      } else {
+        //console.debug(resolvedText, allVariablesResolved);
       }
       break;
   }
