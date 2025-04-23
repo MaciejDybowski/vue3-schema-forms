@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="header.type == 'TEXT'"
+    v-if="header.type == 'TEXT' && shouldRender"
     v-bind="attrs"
     @click="isConnectionWithActions ? callAction() : () => {}"
   >
@@ -231,15 +231,25 @@ async function getBackgroundColor(header: TableHeader, item) {
   return "transparent";
 }
 
+const shouldRender = ref(true);
+
 onMounted(async () => {
   backgroundColor.value = await getBackgroundColor(props.header, props.item);
   switch (props.header.type) {
     case "TEXT":
       if (props.header.valueMapping.match(variableRegexp)) {
         await simpleResolveVariable();
-      } else {
+      } else if (Object.keys(props.actions).length > 0) {
         checkConnectionWithActions(props.header.valueMapping);
+      } else {
+        htmlContent.value = props.header.valueMapping;
       }
+
+      if (props.header.condition) {
+        const nata = jsonata(props.header.condition);
+        shouldRender.value = await nata.evaluate(props.item);
+      }
+
       break;
     case "IMAGE":
       urlPath.value = await mapImageParams();

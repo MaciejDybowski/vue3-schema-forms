@@ -1,11 +1,12 @@
 <template>
-  <template
+  <div
     v-for="(item, index) in items"
     :key="item.valueMapping"
+    v-bind="attrs"
   >
     <v-text-field
       v-if="item.type == 'NUMBER'"
-      :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"
+      :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? `content-right ${item.class}` : `pb-4 content-right ${item.class}`]"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
       v-bind="{ ...attrs, density: 'compact' }"
@@ -37,13 +38,16 @@
       :item-title="getItemTitle(item.valueMapping)"
       :item-value="getItemValue(item.valueMapping)"
       :items="getItemsForSelect(item.valueMapping, row)"
+      :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
+      :return-object="false"
       v-bind="{ ...attrs, density: 'compact' }"
       width="100%"
       @keyup.enter="(e) => e.target.blur()"
       @update:model-value="(e: any) => emitData(e, item)"
+      :class="`${item.class}`"
     />
-  </template>
+  </div>
 </template>
 
 <script lang="ts" setup>
