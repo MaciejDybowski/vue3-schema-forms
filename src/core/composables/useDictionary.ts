@@ -55,15 +55,14 @@ export function useDictionary() {
     const newValue = await nata.evaluate(mergedModel);
 
     if (!newValue) {
-      const updatedUrl = removeParams(source.url, ["value-filter","filter", "enable-filter"]);
+      const updatedUrl = removeParams(source.url, ["value-filter", "filter", "enable-filter"]);
       endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
     } else {
+      isUrlHasDependency = source.url.match(variableRegexp);
       const resolved = await resolve(field, source.url, title.value, true);
       const updatedUrl = removeParams(resolved.resolvedText, ["enable-filter"]);
       endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
     }
-
-    isUrlHasDependency = endpoint.resolvedText.match(variableRegexp);
   }
 
   async function checkUrlDependencies() {

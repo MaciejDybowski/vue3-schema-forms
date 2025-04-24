@@ -23,6 +23,7 @@ export interface TableHeader {
   color?: string;
   items?: TableHeader[];
   footerMapping?: string;
+  condition?: string
 }
 
 export interface HeaderEditableObject {
@@ -31,6 +32,7 @@ export interface HeaderEditableObject {
   class?: string;
   type: "NUMBER" | "TEXT" | "SELECT";
   rules?: any[];
+  condition?:string
 }
 
 export interface TableHeaderAction {

@@ -35,7 +35,7 @@
             v-bind="{ ...fieldProps, color: 'primary', variant: 'elevated' }"
             @click="saveDialogForm(isActive)"
           >
-            {{popup.acceptText}}
+            {{ popup.acceptText }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -53,17 +53,18 @@
 </template>
 
 <script lang="ts" setup>
+import axios from "axios";
 import get from "lodash/get";
 import { Ref, computed, onMounted, reactive, ref } from "vue";
 import { useTheme } from "vuetify";
 
-import { useClass, useLabel, useLocale, useProps } from "@/core/composables";
+import { useClass, useLabel, useLocale, useProps, useResolveVariables } from "@/core/composables";
+import { variableRegexp } from "@/core/engine/utils";
 import { EngineButtonField } from "@/types/engine/EngineButtonField";
 import { Schema } from "@/types/schema/Schema";
 import { useEventBus } from "@vueuse/core";
 
 import VueSchemaForms from "../engine/VueSchemaForms.vue";
-import { fi } from "vuetify/locale";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 
@@ -75,6 +76,7 @@ const { schema, model } = defineProps<{
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
+const { resolve } = useResolveVariables();
 
 const { t } = useLocale();
 const theme = useTheme();
@@ -119,7 +121,7 @@ async function saveDialogForm(isActive: Ref<boolean>) {
   }
 }
 
-function runBtnLogic() {
+async function runBtnLogic() {
   switch (schema.mode) {
     case "form-and-action":
       popup.errorMessages = [];
@@ -127,7 +129,7 @@ function runBtnLogic() {
       if (schema.config.modelReference) {
         popup.model = get(model, schema.config.modelReference, {});
       }
-      if(schema.config.acceptText){
+      if (schema.config.acceptText) {
         popup.acceptText = schema.config.acceptText;
       }
       popup.schema = schema.schema as any;
@@ -135,7 +137,9 @@ function runBtnLogic() {
         let payloadObject = {
           code: schema.config.code,
           body: popup.model,
-          params: {},
+          params: {
+            ...schema.config.params,
+          },
         };
         console.debug(`Popup model is ready to save, event [form-action] was emitted`, payloadObject);
         actionHandlerEventBus.emit("form-action", payloadObject);
@@ -147,7 +151,43 @@ function runBtnLogic() {
       const value = get(model, schema.config.modelReference, null);
       navigator.clipboard.writeText(value);
       break;
+    case "api-call":
+      const { resolvedText, allVariablesResolved } = await resolve(schema, schema.config.source, "title", true);
+      const body = await createBodyObject();
+      if (allVariablesResolved) {
+        const response = axios({
+          method: schema.config.method || "POST",
+          url: resolvedText,
+          data: body,
+        });
+
+        // TODO - dalsza implementacja - co ma się dziać z response, jakie warianty
+      } else {
+        //console.debug(resolvedText, allVariablesResolved);
+      }
+      break;
   }
+}
+
+async function createBodyObject() {
+  let body = {};
+  const entries = Object.entries(schema.config.body);
+  const resolvedEntries = await Promise.all(
+    entries.map(async ([key, value]) => {
+      if (typeof value === "string" && variableRegexp.test(value)) {
+        const { resolvedText, allVariablesResolved } = await resolve(schema, value as string);
+        return [key, allVariablesResolved ? resolvedText : null];
+      } else {
+        return [key, value];
+      }
+    }),
+  );
+
+  resolvedEntries.forEach(([key, value]) => {
+    body[key as string] = value;
+  });
+
+  return body;
 }
 
 onMounted(async () => {

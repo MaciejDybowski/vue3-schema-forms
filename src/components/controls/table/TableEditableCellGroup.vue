@@ -1,11 +1,12 @@
 <template>
-  <template
+  <div
     v-for="(item, index) in items"
     :key="item.valueMapping"
+    v-bind="attrs"
   >
     <v-text-field
       v-if="item.type == 'NUMBER'"
-      :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"
+      :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? `content-right ${item.class}` : `pb-4 content-right ${item.class}`]"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
       v-bind="{ ...attrs, density: 'compact' }"
@@ -33,22 +34,27 @@
         </v-number-input>-->
 
     <v-select
-      v-if="item.type == 'SELECT'"
+      v-if="item.type == 'SELECT' && shouldRenderMap[item.valueMapping]"
       :item-title="getItemTitle(item.valueMapping)"
       :item-value="getItemValue(item.valueMapping)"
       :items="getItemsForSelect(item.valueMapping, row)"
+      :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
+      :return-object="false"
       v-bind="{ ...attrs, density: 'compact' }"
       width="100%"
       @keyup.enter="(e) => e.target.blur()"
       @update:model-value="(e: any) => emitData(e, item)"
+      :class="`${item.class}`"
+      :clearable="true"
     />
-  </template>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import jsonata from "jsonata";
 import get from "lodash/get";
-import { ref, useAttrs, watchEffect } from "vue";
+import { computed, onMounted, ref, useAttrs, watch, watchEffect } from "vue";
 
 import { useNumber } from "@/core/composables/useNumber";
 import type { HeaderEditableObject, TableHeader } from "@/types/shared/Source";
@@ -128,6 +134,38 @@ function getItemsForSelect(valueMapping, row) {
   let path = split[1];
   return get(row, path, []);
 }
+
+/* Dla wyrażen jsonata bo z racji ze to generuje w petli to nie podepne funckji asynchronicznej w template */
+const shouldRenderMap = ref<Record<string, boolean>>({});
+
+async function computeShouldRender(items: HeaderEditableObject[]) {
+  const newMap: Record<string, boolean> = {};
+
+  for (const item of items) {
+    if (item.condition) {
+      const nata = jsonata(item.condition);
+      newMap[item.valueMapping] = await nata.evaluate(props.row);
+    } else {
+      newMap[item.valueMapping] = true;
+    }
+  }
+  shouldRenderMap.value = newMap;
+}
+
+const hasCondition = computed(() => {
+  return props.items.some((item) => !!item.condition);
+});
+
+onMounted(async () => {
+  if (hasCondition.value) {
+    await computeShouldRender(props.items); // or whatever your array is called
+    watch(
+      () => props.row,
+      async () => await computeShouldRender(props.items),
+      { deep: true },
+    );
+  }
+});
 </script>
 
 <style scoped>
