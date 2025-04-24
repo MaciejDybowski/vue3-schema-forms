@@ -57,13 +57,13 @@ for (const [name, comp] of Object.entries(vueSchemaFromControls)) {
 // render tests
 const { result, stopMeasure } = usePerformanceAPI();
 
-const localModel = ref({})
+const localModel = ref({});
 
-const model = defineModel<object>()
+const model = defineModel<object>();
 
 const props = withDefaults(
   defineProps<{
-    schema: Schema,
+    schema: Schema;
     options?: SchemaOptions;
     defaultFormActions?: boolean;
     validationBehaviour?: ValidationFromBehaviour;
@@ -96,7 +96,7 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
-  localModel.value = model.value as any
+  localModel.value = { ...localModel.value, ...model.value } as any;
   formModelStore.updateFormModel(localModel.value);
   vueSchemaFormEventBus.emit("model-changed", "action-callback");
 }
@@ -157,7 +157,7 @@ watch(
 );
 
 onMounted(async () => {
-  localModel.value = {...model.value}
+  localModel.value = { ...model.value };
 
   formModelStore.updateFormModel(localModel.value);
   formModelStore.updateFormContext(props.options && props.options.context ? props.options.context : {});
@@ -257,7 +257,7 @@ function resetValidation() {
 defineExpose({
   validate,
   reset,
-  resetValidation
+  resetValidation,
 });
 </script>
 
