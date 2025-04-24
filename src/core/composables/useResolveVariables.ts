@@ -24,32 +24,52 @@ export function useResolveVariables() {
     const arrayOfVariables = inputString.match(variableRegexp);
     if (!!arrayOfVariables) {
       for await (const match of arrayOfVariables) {
-        const unwrapped = match.slice(1, -1);
-        const split = unwrapped.split(":");
-        let variable = split[0];
-        const defaultValue = split.length >= 2 ? split[1] : null;
-        const typeOfValue = split.length >= 3 ? split[2] : null;
-        const formatterProps = split.length == 4 ? split[3] : null;
-        const valueProps: VariableSyntaxProps = {
-          defaultValue: defaultValue,
-          typeOfValue: typeOfValue,
-          formatterProps: formatterProps,
-        };
 
-        const formModelStore = useFormModelStore(field.formId);
-        const model = formModelStore.getFormModelForResolve;
-        if (variable.includes("[]") && field.path) {
-          variable = fillPath(field.path, field.index as number, variable);
-        }
+        // obsluga jsonata funkcji w { } do umieszczenia w tekście
+        if (match.includes("nata")) {
+          const unwrapped = match.slice(1, -1);
+          let jsonataExpression = unwrapped.slice(5);
+          jsonataExpression = jsonataExpression.substring(0, jsonataExpression.length - 1);
+          const formModelStore = useFormModelStore(field.formId);
+          const model = formModelStore.getFormModelForResolve;
+          const nata = jsonata(jsonataExpression);
+          let value = await nata.evaluate(model);
+          if (!value && value != 0) {
+            allVariablesResolved = false;
+          } else {
+            inputString = inputString.replace(match, value + "");
+          }
 
-        const nata = jsonata(variable);
-        let value = await nata.evaluate(model);
 
-        value = doSthWithValue(field, value, valueProps, title, rawNumber);
-        inputString = inputString.replace(match, value + "");
+        } else {
+          // obsluga zmiennych standardowo jak bylo
+          const unwrapped = match.slice(1, -1);
+          const split = unwrapped.split(":");
+          let variable = split[0];
+          const defaultValue = split.length >= 2 ? split[1] : null;
+          const typeOfValue = split.length >= 3 ? split[2] : null;
+          const formatterProps = split.length == 4 ? split[3] : null;
+          const valueProps: VariableSyntaxProps = {
+            defaultValue: defaultValue,
+            typeOfValue: typeOfValue,
+            formatterProps: formatterProps,
+          };
 
-        if (!value && value != 0) {
-          allVariablesResolved = false;
+          const formModelStore = useFormModelStore(field.formId);
+          const model = formModelStore.getFormModelForResolve;
+          if (variable.includes("[]") && field.path) {
+            variable = fillPath(field.path, field.index as number, variable);
+          }
+
+          const nata = jsonata(variable);
+          let value = await nata.evaluate(model);
+
+          value = doSthWithValue(field, value, valueProps, title, rawNumber);
+          inputString = inputString.replace(match, value + "");
+
+          if (!value && value != 0) {
+            allVariablesResolved = false;
+          }
         }
       }
     }
@@ -83,8 +103,6 @@ export function useResolveVariables() {
       if (valueProps.defaultValue == value) return value;
       return dayjs(value).format(dateTimeFormat.value);
     }
-
-
 
     if (valueProps.typeOfValue == "DATE" && value) {
       if (valueProps.defaultValue == value) return;
