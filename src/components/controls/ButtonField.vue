@@ -161,6 +161,10 @@ async function runBtnLogic() {
           data: body,
         });
 
+        if (schema.config.emit) {
+          actionHandlerEventBus.emit("form-action", schema.config.emit);
+        }
+
         // TODO - dalsza implementacja - co ma się dziać z response, jakie warianty
       } else {
         //console.debug(resolvedText, allVariablesResolved);

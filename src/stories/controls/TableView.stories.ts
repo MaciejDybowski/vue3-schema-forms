@@ -1221,3 +1221,67 @@ export const EditableSelectWithCondition: Story = {
     },
   },
 };
+
+
+export const DefineModelVariablesForRefresh: Story = {
+  name: "Case: Define model variable for refresh table",
+  play: async (context) => {},
+  args: {
+    formModel: {
+      numberInput: 1
+    },
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "Define field variable for refresh table",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        numberInput: {
+          label: "Number",
+          layout: {
+            component: "number-field-v2",
+            cols: 4
+          }
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            triggers: ["numberInput"],
+            headers: [
+              {
+                title: "Id",
+                key: "id",
+                valueMapping: "dataId",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITHOUT_AGGREGATES],
+    },
+  },
+};

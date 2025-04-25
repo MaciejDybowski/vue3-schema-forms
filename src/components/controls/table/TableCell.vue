@@ -242,7 +242,7 @@ onMounted(async () => {
       } else if (Object.keys(props.actions).length > 0) {
         checkConnectionWithActions(props.header.valueMapping);
       } else {
-        htmlContent.value = props.header.valueMapping;
+        htmlContent.value = get(props.item, props.header.valueMapping, props.header.valueMapping);
       }
 
       if (props.header.condition) {
