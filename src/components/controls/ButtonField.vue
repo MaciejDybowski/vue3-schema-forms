@@ -2,10 +2,10 @@
   <v-btn
     :class="bindClass(schema)"
     :color="primaryWhite"
-    v-bind="fieldProps"
-    @click="runBtnLogic"
     :disabled="loading"
     :loading="loading"
+    v-bind="fieldProps"
+    @click="runBtnLogic"
   >
     {{ label }}
   </v-btn>
@@ -154,11 +154,11 @@ async function runBtnLogic() {
       navigator.clipboard.writeText(value);
       break;
     case "api-call":
-      loading.value = true
+      loading.value = true;
       const { resolvedText, allVariablesResolved } = await resolve(schema, schema.config.source, "title", true);
       const body = await createBodyObject();
       if (allVariablesResolved) {
-        const response = axios({
+        const response = await axios({
           method: schema.config.method || "POST",
           url: resolvedText,
           data: body,
@@ -172,7 +172,7 @@ async function runBtnLogic() {
       } else {
         //console.debug(resolvedText, allVariablesResolved);
       }
-      setTimeout(() => (loading.value = false), 1000)
+      setTimeout(() => (loading.value = false), 1000);
       break;
   }
 }
