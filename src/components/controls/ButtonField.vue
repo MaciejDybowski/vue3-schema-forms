@@ -4,6 +4,8 @@
     :color="primaryWhite"
     v-bind="fieldProps"
     @click="runBtnLogic"
+    :disabled="loading"
+    :loading="loading"
   >
     {{ label }}
   </v-btn>
@@ -67,7 +69,7 @@ import { useEventBus } from "@vueuse/core";
 import VueSchemaForms from "../engine/VueSchemaForms.vue";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
-
+const loading = ref(false);
 const { schema, model } = defineProps<{
   schema: EngineButtonField;
   model: object;
@@ -152,6 +154,7 @@ async function runBtnLogic() {
       navigator.clipboard.writeText(value);
       break;
     case "api-call":
+      loading.value = true
       const { resolvedText, allVariablesResolved } = await resolve(schema, schema.config.source, "title", true);
       const body = await createBodyObject();
       if (allVariablesResolved) {
@@ -169,6 +172,7 @@ async function runBtnLogic() {
       } else {
         //console.debug(resolvedText, allVariablesResolved);
       }
+      setTimeout(() => (loading.value = false), 1000)
       break;
   }
 }
