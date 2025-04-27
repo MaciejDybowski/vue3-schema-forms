@@ -93,6 +93,7 @@ const formReadySignalSent = ref(false);
 
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const actionHandlerEventBus = useEventBus<string>("form-action");
+const temporaryFormEventBus = useEventBus<string>("form-temporary"); // TODO zmienic aby form-model nie przekazywal tylko indexu tylko caly event
 
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
@@ -103,6 +104,10 @@ async function actionCallback() {
 
 actionHandlerEventBus.on(async (event, payload) => {
   if (formReadySignalSent.value) {
+    if (payload.callback) {
+      emit("callAction", { ...payload });
+      return;
+    }
     emit("callAction", { ...payload, callback: actionCallback });
   }
 });
@@ -125,6 +130,8 @@ function updateModel(event: NodeUpdateEvent) {
   debounced.formIsReady().cancel();
   set(localModel.value, event.key, event.value);
   formModelStore.updateFormModel(localModel.value);
+
+  temporaryFormEventBus.emit("model-changed", event);
 
   if (event.emitBlocker) {
     vueSchemaFormEventBus.emit("model-changed", event.index);

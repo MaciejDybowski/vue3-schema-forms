@@ -5,4 +5,5 @@ export interface EngineTableField extends EngineField {
   aggregates?: object;
   source: TableSource;
   actions?: Record<string, string>;
+  triggers?: string[]
 }

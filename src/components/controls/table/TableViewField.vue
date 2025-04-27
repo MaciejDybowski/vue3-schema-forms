@@ -146,10 +146,23 @@ import { useEventBus } from "@vueuse/core";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
+const temporaryFormEventBus = useEventBus<string>("form-temporary");
 
-vueSchemaFormEventBus.on(async (event, payload) => {
+/*te.on(async (event, payload) => {
   if (payload == "action-callback" || payload == "table-refresh") {
     debounced.load(fetchDataParams.value);
+  }
+});*/
+
+function refreshTable() {
+  debounced.load(fetchDataParams.value);
+}
+
+temporaryFormEventBus.on(async (event, payload) => {
+  console.debug(event, payload, triggers);
+  if (triggers.includes(payload.key)) {
+    console.debug("Should emit action to handle");
+    actionHandlerEventBus.emit("form-action", { code: "refresh-table", callback: refreshTable });
   }
 });
 
@@ -173,6 +186,8 @@ const debounced = {
 
 const aggregates = ref(null);
 const actions = props.schema.actions ? props.schema.actions : {};
+
+const triggers: string[] = props.schema.triggers ? props.schema.triggers : [];
 
 const actionPopupReference = ref();
 const actionPopup = reactive<{

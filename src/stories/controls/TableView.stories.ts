@@ -1240,20 +1240,24 @@ export const DefineModelVariablesForRefresh: Story = {
             tag: "span",
           },
         },
-        numberInput: {
-          label: "Number",
-          layout: {
-            component: "number-field-v2",
-            cols: 4
+        temp: {
+          properties: {
+            numberInput: {
+              label: "Number",
+              layout: {
+                component: "number-field-v2",
+                cols: 4
+              }
+            },
           }
         },
         tableOfProducts: {
           layout: {
             component: "table-view",
           },
+          triggers: ["temp.numberInput"],
           source: {
             data: "/mock-data/table-view-mock",
-            triggers: ["numberInput"],
             headers: [
               {
                 title: "Id",
