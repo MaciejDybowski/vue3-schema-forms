@@ -148,20 +148,18 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const temporaryFormEventBus = useEventBus<string>("form-temporary");
 
-/*te.on(async (event, payload) => {
+vueSchemaFormEventBus.on(async (event, payload) => {
   if (payload == "action-callback" || payload == "table-refresh") {
     debounced.load(fetchDataParams.value);
   }
-});*/
+});
 
 function refreshTable() {
   debounced.load(fetchDataParams.value);
 }
 
 temporaryFormEventBus.on(async (event, payload) => {
-  console.debug(event, payload, triggers);
   if (triggers.includes(payload.key)) {
-    console.debug("Should emit action to handle");
     actionHandlerEventBus.emit("form-action", { code: "refresh-table", callback: refreshTable });
   }
 });
