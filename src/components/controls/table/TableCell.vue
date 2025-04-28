@@ -262,9 +262,17 @@ watchEffect(async () => {
     case "TEXT":
       if (props.header.valueMapping.match(variableRegexp)) {
         await simpleResolveVariable();
-      } else {
+      } else if (Object.keys(props.actions).length > 0) {
         checkConnectionWithActions(props.header.valueMapping);
+      } else {
+        htmlContent.value = get(props.item, props.header.valueMapping, props.header.valueMapping);
       }
+
+      if (props.header.condition) {
+        const nata = jsonata(props.header.condition);
+        shouldRender.value = await nata.evaluate(props.item);
+      }
+
       break;
   }
 });

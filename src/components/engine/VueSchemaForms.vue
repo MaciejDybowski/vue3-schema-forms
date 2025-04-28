@@ -91,6 +91,8 @@ const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
 const formModelStore = useFormModelStore(formId);
 const formReadySignalSent = ref(false);
 
+const internalValues = ref<Set<string>>(new Set<string>());
+
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const temporaryFormEventBus = useEventBus<string>("form-temporary"); // TODO zmienic aby form-model nie przekazywal tylko indexu tylko caly event
@@ -135,10 +137,16 @@ function updateModel(event: NodeUpdateEvent) {
 
   if (event.emitBlocker) {
     vueSchemaFormEventBus.emit("model-changed", event.index);
+    internalValues.value.add(event.key);
     return;
   }
 
-  emit("update:modelValue", localModel.value);
+  const formModel = {...localModel.value};
+  internalValues.value.forEach((value: string) => {
+    delete formModel[value];
+  });
+
+  emit("update:modelValue", formModel);
 
   if (logger.formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, localModel.value);

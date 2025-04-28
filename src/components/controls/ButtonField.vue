@@ -2,7 +2,7 @@
   <v-btn
     :class="bindClass(schema)"
     :color="primaryWhite"
-    :disabled="loading"
+    :disabled="loading || fieldProps.readonly"
     :loading="loading"
     v-bind="fieldProps"
     @click="runBtnLogic"

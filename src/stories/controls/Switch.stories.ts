@@ -175,6 +175,12 @@ export const VisibilityMode: Story = {
             tag: "span",
           },
         },
+        textFieldAbove: {
+          label: "Textfield (above)",
+          layout: {
+            component: "text-field",
+          },
+        },
         switchDefault: {
           mode: "visibility",
           label: "Change it!",
@@ -194,7 +200,6 @@ export const VisibilityMode: Story = {
     options: {
       fieldProps: {
         variant: "outlined",
-        readonly: true,
       },
     },
   },

@@ -160,3 +160,41 @@ export const APICall: Story = {
     },
   },
 };
+
+
+export const Disabled: Story = {
+  args: {
+    formModel: {
+      itemId: "item-1",
+      example1: "Example",
+      item: {
+        example2: "Example 2",
+      }
+    },
+    schema: {
+      type: "object",
+      properties: {
+        button: {
+          label: "Disabled button",
+          layout: {
+            component: "button",
+          },
+          mode: "api-call",
+          config: {
+            source: "/mocks/files/{itemId}",
+            method: "PUT",
+            body: {
+              example1: "{example1}",
+              example2: "{item.example2}",
+            },
+          },
+        },
+      },
+    },
+    options: {
+      buttonProps: {
+        readonly: true
+      }
+    }
+  },
+};
