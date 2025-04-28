@@ -67,6 +67,7 @@ import { Schema } from "@/types/schema/Schema";
 import { useEventBus } from "@vueuse/core";
 
 import VueSchemaForms from "../engine/VueSchemaForms.vue";
+import comboboxStories from "@/stories/controls/Combobox.stories";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const loading = ref(false);
@@ -83,6 +84,21 @@ const { resolve } = useResolveVariables();
 const { t } = useLocale();
 const theme = useTheme();
 const primaryWhite = computed(() => (theme.current.value.dark ? "white" : "primary"));
+
+const shouldWaitForSaveState = schema.config.waitForSaveState ? schema.config.waitForSaveState : false;
+console.debug("shouldWaitForSaveState", shouldWaitForSaveState)
+const caller = ref<Function>(() => {});
+
+if (shouldWaitForSaveState) {
+  const formExternalStateEventBus = useEventBus<string>("form-state");
+  formExternalStateEventBus.on((event, payload) => {
+    console.debug(event, payload);
+    if(payload == true){
+      caller.value();
+      caller.value = () => {};
+    }
+  });
+}
 
 const popupReference = ref();
 const popup = reactive<{
@@ -155,26 +171,36 @@ async function runBtnLogic() {
       break;
     case "api-call":
       loading.value = true;
-      const { resolvedText, allVariablesResolved } = await resolve(schema, schema.config.source, "title", true);
-      const body = await createBodyObject();
-      if (allVariablesResolved) {
-        const response = await axios({
-          method: schema.config.method || "POST",
-          url: resolvedText,
-          data: body,
-        });
 
-        if (schema.config.emit) {
-          actionHandlerEventBus.emit("form-action", schema.config.emit);
-        }
-
-        // TODO - dalsza implementacja - co ma się dziać z response, jakie warianty
-      } else {
-        //console.debug(resolvedText, allVariablesResolved);
+      if (shouldWaitForSaveState) {
+        caller.value = apiCallMode;
+        return;
       }
-      setTimeout(() => (loading.value = false), 1000);
+      await apiCallMode();
+
       break;
   }
+}
+
+async function apiCallMode() {
+  const { resolvedText, allVariablesResolved } = await resolve(schema, schema.config.source, "title", true);
+  const body = await createBodyObject();
+  if (allVariablesResolved) {
+    const response = await axios({
+      method: schema.config.method || "POST",
+      url: resolvedText,
+      data: body,
+    });
+
+    if (schema.config.emit) {
+      actionHandlerEventBus.emit("form-action", schema.config.emit);
+    }
+
+    // TODO - dalsza implementacja - co ma się dziać z response, jakie warianty
+  } else {
+    //console.debug(resolvedText, allVariablesResolved);
+  }
+  setTimeout(() => (loading.value = false), 1000);
 }
 
 async function createBodyObject() {

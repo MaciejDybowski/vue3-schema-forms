@@ -141,7 +141,7 @@ function updateModel(event: NodeUpdateEvent) {
     return;
   }
 
-  const formModel = {...localModel.value};
+  const formModel = { ...localModel.value };
   internalValues.value.forEach((value: string) => {
     delete formModel[value];
   });
@@ -269,10 +269,18 @@ function resetValidation() {
   errorMessages.value = [];
 }
 
+const formExternalStateEventBus = useEventBus<string>("form-state");
+const formDataWasSaved = ref(false);
+watch(formDataWasSaved, (newValue) => {
+  console.debug("Form data was saved");
+  formExternalStateEventBus.emit("form-data-saved", formDataWasSaved.value);
+});
+
 defineExpose({
   validate,
   reset,
   resetValidation,
+  formDataWasSaved,
 });
 </script>
 
