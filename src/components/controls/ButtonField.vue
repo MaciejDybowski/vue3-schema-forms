@@ -67,7 +67,6 @@ import { Schema } from "@/types/schema/Schema";
 import { useEventBus } from "@vueuse/core";
 
 import VueSchemaForms from "../engine/VueSchemaForms.vue";
-import comboboxStories from "@/stories/controls/Combobox.stories";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const loading = ref(false);
@@ -86,14 +85,13 @@ const theme = useTheme();
 const primaryWhite = computed(() => (theme.current.value.dark ? "white" : "primary"));
 
 const shouldWaitForSaveState = schema.config.waitForSaveState ? schema.config.waitForSaveState : false;
-console.debug("shouldWaitForSaveState", shouldWaitForSaveState)
 const caller = ref<Function>(() => {});
-
+const formCurrentSaveState = ref(true);
 if (shouldWaitForSaveState) {
   const formExternalStateEventBus = useEventBus<string>("form-state");
   formExternalStateEventBus.on((event, payload) => {
-    console.debug(event, payload);
-    if(payload == true){
+    formCurrentSaveState.value = payload;
+    if (payload == true) {
       caller.value();
       caller.value = () => {};
     }
@@ -171,8 +169,7 @@ async function runBtnLogic() {
       break;
     case "api-call":
       loading.value = true;
-
-      if (shouldWaitForSaveState) {
+      if (shouldWaitForSaveState && !formCurrentSaveState.value) {
         caller.value = apiCallMode;
         return;
       }

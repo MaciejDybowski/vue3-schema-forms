@@ -270,9 +270,8 @@ function resetValidation() {
 }
 
 const formExternalStateEventBus = useEventBus<string>("form-state");
-const formDataWasSaved = ref(false);
+const formDataWasSaved = ref(true);
 watch(formDataWasSaved, (newValue) => {
-  console.debug("Form data was saved");
   formExternalStateEventBus.emit("form-data-saved", formDataWasSaved.value);
 });
 
