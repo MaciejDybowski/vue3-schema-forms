@@ -261,9 +261,7 @@ async function filteredButtonsFunction() {
       if (button.disabled) {
         const condition = button.disabled as string;
         const nata = jsonata(condition);
-        const q = [...items.value]
-        button.disabled = await nata.evaluate(q);
-        console.debug(button.disabled, condition, q)
+        button.disabled = await nata.evaluate(items.value);
         return button;
       } else {
         return button;
