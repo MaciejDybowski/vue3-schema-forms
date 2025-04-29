@@ -1,11 +1,7 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
-
 import { Schema } from "../../types/schema/Schema";
 import { TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW } from "../mock-responses";
 import { formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
-
-
 
 export default {
   title: "Forms/Controls/TableView",
@@ -613,6 +609,113 @@ export const TopSlotAndButtons: Story = {
   },
 };
 
+export const TopSlotAndButtonsDisabled: Story = {
+  name: "Slot: Top (disabled)",
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "Basic display all data as a text values",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Name",
+                key: "name",
+                valueMapping: "name",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Height",
+                key: "height",
+                valueMapping: "height",
+                type: "NUMBER",
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+              },
+              {
+                title: "Volume",
+                key: "volume",
+                valueMapping: "volume",
+                type: "TEXT",
+              },
+            ],
+            buttons: [
+              {
+                "disabled": "10 > 2",
+                label: "Add products",
+                btnProps: {
+                  color: "primary",
+                  rounded: false,
+                },
+                mode: "action",
+                config: {
+                  code: "batchAdd", // na froncie jest sprawdzanie jak batchAdd to i tak woła skrypt bo w obsłudze zadanie jest tylko jedna uniwersalna akcja
+                  featureId: "products",
+                  viewId: "68304-tabela",
+                  batchAddAttributePath: "dataId",
+                  scriptName: "dodaj_produkty_do_oferty",
+                },
+              },
+              {
+                label: "Import",
+                btnProps: {
+                  color: "primary",
+                  rounded: false,
+                },
+                mode: "form-and-action",
+                config: {
+                  title: "Import products from csv",
+                  code: "callScript",
+                  scriptName: "import_products_from_csv",
+                },
+                schema: {
+                  properties: {
+                    csvBody: {
+                      label: "Paste your csv file content",
+                      layout: {
+                        component: "text-area",
+                      },
+                    },
+                  },
+                  required: ["csvBody"],
+                },
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
+    },
+  },
+};
+
 export const ContextActions: Story = {
   name: "Slot: Context Actions",
   play: async (context) => {},
@@ -799,6 +902,101 @@ export const ContextActionsWithCondition: Story = {
     },
   },
 };
+
+export const ContextActionsWithConditionDisabled: Story = {
+  name: "Slot: Context Actions + condition on disabled",
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "Use JSON nata expression to make condition on table context action",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Name",
+                key: "name",
+                valueMapping: "name",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Height",
+                key: "height",
+                valueMapping: "height",
+                type: "NUMBER",
+              },
+              {
+                title: "Actions",
+                key: "actions",
+                actions: [
+                  {
+                    title: "Delete",
+                    icon: "mdi-delete-outline",
+                    mode: "action",
+                    code: "callScript",
+                    disabled: "height > 2",
+                    config: {
+                      params: {
+                        scriptName: "delete_product_from_offer",
+                      },
+                      body: {
+                        name: "{name}",
+                      },
+                    },
+                    props: {
+                      color: "error",
+                    },
+                  },
+                  {
+                    title: "Shipping pallet",
+                    icon: "mdi-shipping-pallet",
+                    mode: "action",
+                    code: "callScript",
+                    config: {
+                      params: {
+                        scriptName: "add_pallet_price",
+                      },
+                      body: {
+                        name: "{name}",
+                      },
+                    },
+                    props: {
+                      color: "primary",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
+    },
+  },
+};
+
 
 export const ContextActionWithSchemaIntegration: Story = {
   name: "Slot: Context Actions + schema",
@@ -1222,13 +1420,12 @@ export const EditableSelectWithCondition: Story = {
   },
 };
 
-
 export const DefineModelVariablesForRefresh: Story = {
   name: "Case: Define model variable for refresh table",
   play: async (context) => {},
   args: {
     formModel: {
-      numberInput: 1
+      numberInput: 1,
     },
     schema: {
       type: "object",
@@ -1246,10 +1443,10 @@ export const DefineModelVariablesForRefresh: Story = {
               label: "Number",
               layout: {
                 component: "number-field-v2",
-                cols: 4
-              }
+                cols: 4,
+              },
             },
-          }
+          },
         },
         tableOfProducts: {
           layout: {
@@ -1286,6 +1483,75 @@ export const DefineModelVariablesForRefresh: Story = {
   parameters: {
     msw: {
       handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITHOUT_AGGREGATES],
+    },
+  },
+};
+
+export const EditableSelectReadonlyWithCondition: Story = {
+  name: "Case: Condition (readonly) on editable field",
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        span: {
+          content: "",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Id",
+                key: "id",
+                valueMapping: "dataId",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Editable height",
+                key: "height-collection",
+                type: "COLLECTION",
+                editable: [
+                  {
+                    type: "SELECT",
+                    title: "Height",
+                    key: "height",
+                    valueMapping: "height:heightOptions:title:value",
+                    //condition: "base > 40",
+                    readonly: "base > 40",
+                  },
+                ],
+                properties: { minWidth: "200px", maxWidth: "200px", width: "100px" },
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
     },
   },
 };

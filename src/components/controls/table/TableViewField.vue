@@ -16,11 +16,12 @@
       <template #top>
         <v-row dense>
           <v-col
-            v-for="button in buttons"
+            v-for="button in filteredButtons"
             cols="auto"
           >
             <v-btn
               v-bind="{ ...tableButtonDefaultProps, ...button.btnProps }"
+              :disabled="button.disabled as boolean"
               @click="runTableBtnLogic(button)"
             >
               {{ typeof button.label == "string" ? button.label : "#" + button.label.$ref.split("/").pop() }}
@@ -123,6 +124,7 @@
 
 <script lang="ts" setup>
 import axios from "axios";
+import jsonata from "jsonata";
 import { cloneDeep, debounce } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -252,6 +254,23 @@ const buttons: ComputedRef<TableButton[]> = computed(() => {
     return [] as TableButton[];
   }
 });
+const filteredButtons = ref<TableButton[]>([]);
+
+async function filteredButtonsFunction() {
+  const tempActions = await Promise.all(
+    buttons.value?.map(async (button: TableButton) => {
+      if (button.disabled) {
+        const condition = button.disabled as string;
+        const nata = jsonata(condition);
+        button.disabled = await nata.evaluate(items.value);
+        return button;
+      } else {
+        return button;
+      }
+    }) ?? [],
+  );
+  return tempActions.filter((item) => item != null);
+}
 
 const tableOptions = ref<TableOptions>({
   page: 1,
@@ -269,8 +288,8 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
   };
 });
 
-function updateOptions() {
-  loadData(fetchDataParams.value);
+async function updateOptions() {
+  await loadData(fetchDataParams.value);
 }
 
 async function loadData(params: TableFetchOptions) {
@@ -297,6 +316,7 @@ async function loadData(params: TableFetchOptions) {
     items.value = response.data.content;
     itemsTotalElements.value = mapTotalElements(response.data);
     aggregates.value = "aggregates" in response.data && response.data.aggregates != null ? response.data.aggregates : null;
+    filteredButtons.value = await filteredButtonsFunction();
   } catch (e) {
     console.error(e);
   } finally {

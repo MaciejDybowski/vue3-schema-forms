@@ -6,47 +6,35 @@
   >
     <v-text-field
       v-if="item.type == 'NUMBER'"
-      :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? `content-right ${item.class}` : `pb-4 content-right ${item.class}`]"
+      :class="[
+        (item.rules && item.rules.length > 0) || items.length <= 1
+          ? `content-right ${item.class}`
+          : `pb-4 content-right ${item.class}`,
+      ]"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
-      v-bind="{ ...attrs, density: 'compact' }"
+      v-bind="{ ...attrs, density: 'compact', readonly: shouldReadonlyMap[item.valueMapping] }"
       width="100%"
       @focusin="showFormattedNumber[index] = false"
       @focusout="showFormattedNumber[index] = true"
       @input="(e: any) => emit('update:field', { value: e.target.value.replaceAll(',', '.'), valueMapping: item.valueMapping })"
       @keyup.enter="(e) => e.target.blur()"
     />
-    <!--    <v-number-input
-          v-if="item.type == 'NUMBER'"
-          :class="[(item.rules && item.rules.length > 0) || items.length <= 1 ? 'content-right' : 'pb-4 content-right']"
-          :hideInput="false"
-          :inset="false"
-          :label="item.label"
-          :model-value="getValue(item.valueMapping, index)"
-          :precision="getPrecision(item.valueMapping, index)"
-          :reverse="false"
-          control-variant="hidden"
-          v-bind="{ ...attrs, density: 'compact' }"
-          width="100%"
-          @keyup.enter="(e) => e.target.blur()"
-          @update:model-value="(e: any) => emitData(e, item)"
-        >
-        </v-number-input>-->
 
     <v-select
       v-if="item.type == 'SELECT' && shouldRenderMap[item.valueMapping]"
+      :class="`${item.class}`"
+      :clearable="!shouldReadonlyMap[item.valueMapping]"
       :item-title="getItemTitle(item.valueMapping)"
       :item-value="getItemValue(item.valueMapping)"
       :items="getItemsForSelect(item.valueMapping, row)"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
       :return-object="false"
-      v-bind="{ ...attrs, density: 'compact' }"
+      v-bind="{ ...attrs, density: 'compact', readonly: shouldReadonlyMap[item.valueMapping] }"
       width="100%"
       @keyup.enter="(e) => e.target.blur()"
       @update:model-value="(e: any) => emitData(e, item)"
-      :class="`${item.class}`"
-      :clearable="true"
     />
   </div>
 </template>
@@ -137,6 +125,7 @@ function getItemsForSelect(valueMapping, row) {
 
 /* Dla wyrażen jsonata bo z racji ze to generuje w petli to nie podepne funckji asynchronicznej w template */
 const shouldRenderMap = ref<Record<string, boolean>>({});
+const shouldReadonlyMap = ref<Record<string, boolean>>({});
 
 async function computeShouldRender(items: HeaderEditableObject[]) {
   const newMap: Record<string, boolean> = {};
@@ -152,16 +141,38 @@ async function computeShouldRender(items: HeaderEditableObject[]) {
   shouldRenderMap.value = newMap;
 }
 
-const hasCondition = computed(() => {
+async function computeShouldReadonly(items: HeaderEditableObject[]) {
+  const newMap: Record<string, boolean> = {};
+
+  for (const item of items) {
+    if (item.readonly) {
+      const nata = jsonata(item.readonly);
+      newMap[item.valueMapping] = await nata.evaluate(props.row);
+    } else {
+      newMap[item.valueMapping] = false;
+    }
+  }
+  shouldReadonlyMap.value = newMap;
+}
+
+const hasConditionVisibility = computed(() => {
   return props.items.some((item) => !!item.condition);
 });
 
+const hasConditionReadonly = computed(() => {
+  return props.items.some((item) => !!item.readonly);
+});
+
 onMounted(async () => {
-  if (hasCondition.value) {
-    await computeShouldRender(props.items); // or whatever your array is called
+  if (hasConditionVisibility.value || hasConditionReadonly.value) {
+    await computeShouldReadonly(props.items);
+    await computeShouldRender(props.items);
     watch(
       () => props.row,
-      async () => await computeShouldRender(props.items),
+      async () => {
+        await computeShouldReadonly(props.items);
+        await computeShouldRender(props.items);
+      },
       { deep: true },
     );
   }

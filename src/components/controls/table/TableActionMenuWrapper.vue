@@ -1,19 +1,25 @@
 <template>
   <table-action-menu
+    :disabled="attrs.readonly == true"
     :show="true"
     icon="mdi-dots-vertical"
-    :disabled="attrs.readonly == true"
   >
     <v-list density="compact">
       <v-list-item
         v-for="action in filteredActions"
         v-if="filteredActions.length > 0"
+        :disabled="action.disabled as boolean"
         density="compact"
         link
         @click="emit('runTableActionLogic', { action: action, item: item })"
       >
         <v-list-item-title class="d-flex align-center">
-          <v-icon v-bind="action.props" class="mr-2"> {{ action.icon }}</v-icon>
+          <v-icon
+            class="mr-2"
+            v-bind="action.props"
+          >
+            {{ action.icon }}
+          </v-icon>
           <span>{{ action.title }}</span>
         </v-list-item-title>
       </v-list-item>
@@ -35,7 +41,8 @@ import TableActionMenu from "@/components/controls/table/TableActionMenu.vue";
 
 import { useLocale } from "@/core/composables";
 import { TableHeader, TableHeaderAction } from "@/types/shared/Source";
-const attrs = useAttrs()
+
+const attrs = useAttrs();
 const props = defineProps<{
   item: object;
   header: TableHeader;
@@ -51,17 +58,27 @@ const filteredActions = ref<TableHeaderAction[]>([]);
 async function filteredHeaderActions(header: TableHeader, model: object) {
   const tempActions = await Promise.all(
     header.actions?.map(async (action: TableHeaderAction) => {
+      let include = true;
+
       if (action.condition) {
-        const condition = "$boolean(" + action.condition + ")";
-        const nata = jsonata(condition);
-        const result = await nata.evaluate(model);
-        return result == true ? action : null;
-      } else {
+        const conditionExpr = jsonata(`$boolean(${action.condition})`);
+        const conditionResult = await conditionExpr.evaluate(model);
+        include = conditionResult === true;
+      }
+
+      if (include) {
+        if (action.disabled) {
+          const disabledExpr = jsonata(`$boolean(${action.disabled})`);
+          const disabledResult = await disabledExpr.evaluate(model);
+          action.disabled = disabledResult;
+        }
         return action;
       }
+      return null;
     }) ?? [],
   );
-  return tempActions.filter((item) => item != null);
+
+  return tempActions.filter((item) => item !== null);
 }
 
 onMounted(async () => {

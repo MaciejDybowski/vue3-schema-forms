@@ -33,6 +33,7 @@ export interface HeaderEditableObject {
   type: "NUMBER" | "TEXT" | "SELECT";
   rules?: any[];
   condition?:string
+  readonly:? string
 }
 
 export interface TableHeaderAction {
@@ -43,6 +44,7 @@ export interface TableHeaderAction {
   config: Record<string, any>;
   code?: string;
   condition?: string;
+  disabled?: string | boolean
 
   // popup mode
   schema?: any;
@@ -55,6 +57,7 @@ export interface TableButton {
   btnProps?: Record<string, any>;
   config: Record<string, any> & TableButtonBatchAddConfig & TableDialogFromConfig;
   schema?: any;
+  disabled?: boolean | string;
 }
 
 export interface TableDialogFromConfig {
