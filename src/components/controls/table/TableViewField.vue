@@ -149,7 +149,7 @@ const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const temporaryFormEventBus = useEventBus<string>("form-temporary");
 
 vueSchemaFormEventBus.on(async (event, payload) => {
-  if (payload == "action-callback" || payload == "table-refresh") {
+  if (payload == "action-callback") {
     debounced.load(fetchDataParams.value);
   }
 });
