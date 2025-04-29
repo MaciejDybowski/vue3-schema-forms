@@ -20,8 +20,7 @@
             cols="auto"
           >
             <v-btn
-              v-bind="{ ...tableButtonDefaultProps, ...button.btnProps }"
-              :disabled="button.disabled as boolean"
+              v-bind="{ ...tableButtonDefaultProps, ...button.btnProps, disabled: button.disabled as boolean }"
               @click="runTableBtnLogic(button)"
             >
               {{ typeof button.label == "string" ? button.label : "#" + button.label.$ref.split("/").pop() }}
@@ -262,7 +261,9 @@ async function filteredButtonsFunction() {
       if (button.disabled) {
         const condition = button.disabled as string;
         const nata = jsonata(condition);
-        button.disabled = await nata.evaluate(items.value);
+        const q = [...items.value]
+        button.disabled = await nata.evaluate(q);
+        console.debug(button.disabled, condition, q)
         return button;
       } else {
         return button;

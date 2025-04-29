@@ -266,8 +266,8 @@ function makeInitials(item: any) {
 function labels(item: User): Label[] {
   if ("labels" in item) {
     const providedLabels: Label[] =
-      props.schema.options.userInputProps && props.schema.options.userInputProps.labels
-        ? props.schema.options.userInputProps.labels
+      props.schema.options.dictionaryProps && props.schema.options.dictionaryProps.labels
+        ? props.schema.options.dictionaryProps.labels
         : [];
 
     // array ['labelId', 'labelId2']

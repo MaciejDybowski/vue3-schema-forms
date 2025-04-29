@@ -13,4 +13,7 @@ export interface EngineOptions {
   userInputProps?: Record<string, any> & {
     labels?: Label[];
   }
+  dictionaryProps?:  Record<string, any> & {
+    labels?: Label[];
+  }
 }
