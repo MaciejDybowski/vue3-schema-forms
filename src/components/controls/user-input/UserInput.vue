@@ -218,10 +218,15 @@ async function loadMoreRecords() {
 async function checkIfURLHasDependency() {
   const isApiContainsDependency = !(usersAPIEndpoint.value.match(variableRegexp) == null);
   if (isApiContainsDependency) {
-    const { resolvedText, allVariablesResolved } = await resolve(props.schema, usersAPIEndpoint.value, "title", true);
+    let endpoint = await resolve(props.schema, usersAPIEndpoint.value, "title", true);
 
-    if (allVariablesResolved) {
-      usersAPIEndpoint.value = resolvedText;
+    if (endpoint.resolvedText.match(variableRegexp)) {
+      endpoint = await resolve(props.schema, endpoint.resolvedText, "title", true);
+    }
+
+
+    if (endpoint.allVariablesResolved) {
+      usersAPIEndpoint.value = endpoint.resolvedText;
     } else if (logger.dictionaryLogger) {
       console.debug(
         `[vue-schema-forms] [DictionaryLogger] => API call was blocked, not every variable from endpoint was resolved ${usersAPIEndpoint.value}`,

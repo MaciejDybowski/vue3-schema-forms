@@ -68,7 +68,13 @@ export function useDictionary() {
   async function checkUrlDependencies() {
     if (isUrlHasDependency !== null) {
       const updateEndpoint = async () => {
-        const temp = await resolve(field, source.url, title.value, true);
+        let temp = await resolve(field, source.url, title.value, true);
+
+
+        if (temp.resolvedText.match(variableRegexp)) {
+          temp = await resolve(field, temp.resolvedText, title.value, true);
+        }
+
         if (loadCounter.value == 0 || temp.resolvedText !== endpoint.resolvedText) {
           dependencyWasChanged.value = true;
           loadCounter.value = 0;
