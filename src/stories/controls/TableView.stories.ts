@@ -904,7 +904,7 @@ export const ContextActionsWithCondition: Story = {
 };
 
 export const ContextActionsWithConditionDisabled: Story = {
-  name: "Slot: Context Actions + condition on disabled",
+  name: "Slot: Context Actions + condition (disabled)",
   play: async (context) => {},
   args: {
     formModel: {},

@@ -46,7 +46,8 @@ export function useEventHandler() {
 
   function changeMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
     eventDefinition.variables?.forEach((variable) => {
-      set(model, variable.path, variable.value);
+      set(model, variable.path, variable.value); // TODO - nie dziala
+      console.debug(model, variable)
     });
   }
 
@@ -132,5 +133,5 @@ export function useEventHandler() {
     return params;
   }
 
-  return { onChange,  createParamsObject, createBodyObject};
+  return { onChange, createParamsObject, createBodyObject };
 }
