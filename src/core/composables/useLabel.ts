@@ -14,7 +14,7 @@ export function useLabel(schema: EngineField) {
   const labelWithFallbackMessage = label.value;
 
   if (label.value.match(variableRegexp)) {
-    vueSchemaFormEventBus.on((event, payloadIndex) => labelResolverListener(event, payloadIndex));
+    vueSchemaFormEventBus.on(() => labelResolverListener());
   }
 
   async function bindLabel(schema: EngineField) {
@@ -24,7 +24,7 @@ export function useLabel(schema: EngineField) {
     allVariablesResolved ? (label.value = resolvedText) : (label.value = labelWithFallbackMessage);
   }
 
-  async function labelResolverListener(event: string, payloadIndex: number) {
+  async function labelResolverListener() {
     const { resolvedText, allVariablesResolved } = await resolve(schema, schema.label, "title");
     allVariablesResolved ? (label.value = resolvedText) : (label.value = labelWithFallbackMessage);
   }

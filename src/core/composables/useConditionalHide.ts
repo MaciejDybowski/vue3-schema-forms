@@ -21,8 +21,8 @@ export function useConditionalHide(){
     const originalHideExpression = ref(!shouldHide.value ? cloneDeep(schema.layout.hide) : "");
 
     if (schema.layout.hide !== undefined && schema.layout.hide && registerListener) {
-      const unsubscribe = vueSchemaFormEventBus.on((event, payloadIndex) =>
-        conditionalHidingListener(event, payloadIndex, schema, model),
+      const unsubscribe = vueSchemaFormEventBus.on(() =>
+        conditionalHidingListener(schema, model),
       );
     }
 
@@ -43,7 +43,7 @@ export function useConditionalHide(){
     shouldHide.value = await nata.evaluate(modelForResolve);
   }
 
-  async function conditionalHidingListener(event: string, payloadIndex: number, schema: EngineField, model: any) {
+  async function conditionalHidingListener(schema: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 50));
     //if (schema.index == undefined || schema.index == payloadIndex) {
     await shouldHideField(schema, model, false);

@@ -141,29 +141,26 @@ import { useLocale, useProps, useResolveVariables } from "@/core/composables";
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTableField } from "@/types/engine/EngineTableField";
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 import { Schema } from "@/types/schema/Schema";
 import { TableButton, TableHeader, TableHeaderAction } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
-const temporaryFormEventBus = useEventBus<string>("form-temporary");
 
-vueSchemaFormEventBus.on(async (event, payload) => {
+vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
   if (payload == "action-callback") {
     debounced.load(fetchDataParams.value);
+  }
+  if (typeof payload == "object" && triggers.includes(payload.key)) {
+    actionHandlerEventBus.emit("form-action", { code: "refresh-table", callback: refreshTable });
   }
 });
 
 function refreshTable() {
   debounced.load(fetchDataParams.value);
 }
-
-temporaryFormEventBus.on(async (event, payload) => {
-  if (triggers.includes(payload.key)) {
-    actionHandlerEventBus.emit("form-action", { code: "refresh-table", callback: refreshTable });
-  }
-});
 
 const props = defineProps<{
   schema: EngineTableField;

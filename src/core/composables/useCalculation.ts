@@ -27,9 +27,7 @@ export function useCalculation() {
     let result = ref(0);
     let calculation = field.calculation as string;
 
-    unsubscribeListener.value = vueSchemaFormEventBus.on(
-      async (event, payloadIndex) => await calculationListener(event, payloadIndex, field, model),
-    );
+    unsubscribeListener.value = vueSchemaFormEventBus.on(async () => await calculationListener(field, model));
 
     try {
       calculation = fillPath(field.path as string, field.index as number, calculation);
@@ -42,7 +40,7 @@ export function useCalculation() {
     return roundTo(result.value, precision);
   }
 
-  async function calculationListener(event: string, payloadIndex: number, field: EngineField, model: any) {
+  async function calculationListener(field: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 5));
     if (field.index == undefined) {
       // sumy poza sekcja powielana mialy hazard

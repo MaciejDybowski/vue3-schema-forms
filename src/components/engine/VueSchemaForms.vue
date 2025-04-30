@@ -95,7 +95,6 @@ const internalValues = ref<Set<string>>(new Set<string>());
 
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 const actionHandlerEventBus = useEventBus<string>("form-action");
-const temporaryFormEventBus = useEventBus<string>("form-temporary"); // TODO zmienic aby form-model nie przekazywal tylko indexu tylko caly event
 
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
@@ -133,10 +132,8 @@ function updateModel(event: NodeUpdateEvent) {
   set(localModel.value, event.key, event.value);
   formModelStore.updateFormModel(localModel.value);
 
-  temporaryFormEventBus.emit("model-changed", event);
-
   if (event.emitBlocker) {
-    vueSchemaFormEventBus.emit("model-changed", event.index);
+    vueSchemaFormEventBus.emit("model-changed", event);
     internalValues.value.add(event.key);
     return;
   }
@@ -152,7 +149,7 @@ function updateModel(event: NodeUpdateEvent) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, localModel.value);
   }
 
-  vueSchemaFormEventBus.emit("model-changed", event.index);
+  vueSchemaFormEventBus.emit("model-changed", event);
   debounced.formIsReady()();
 }
 

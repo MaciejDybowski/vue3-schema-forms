@@ -1,27 +1,26 @@
-import { useJSONataExpression } from '@/core/composables/useJSONataExpression';
-import { EngineField } from '@/types/engine/EngineField';
-import { EngineTextField } from '@/types/engine/controls';
+import { cloneDeep } from "lodash";
+import { ref } from "vue";
 
+import { useJSONataExpression } from "@/core/composables/useJSONataExpression";
 import { variableRegexp } from "@/core/engine/utils";
-import { useResolveVariables } from './useResolveVariables';
-import { ref } from 'vue';
-import { useEventBus } from '@vueuse/core';
-import { cloneDeep } from 'lodash';
-import { logger } from '@/main';
+import { logger } from "@/main";
+import { EngineField } from "@/types/engine/EngineField";
+import { EngineTextField } from "@/types/engine/controls";
+import { useEventBus } from "@vueuse/core";
+
+import { useResolveVariables } from "./useResolveVariables";
 
 export function useProps() {
   const { resolve } = useResolveVariables();
   const { resolveJSONataExpression } = useJSONataExpression();
-  const vueSchemaFormEventBus = useEventBus<string>('form-model');
+  const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
   let props = ref<Record<string, string | number | boolean | any>>({});
   let propsClone = ref<Record<string, string | number | boolean>>({});
 
-
   async function bindProps(schema: EngineField) {
-
     switch (schema.layout.component) {
-      case 'text-field':
+      case "text-field":
         props.value = {
           ...defaultTextFieldProperties,
           ...schema.options?.fieldProps,
@@ -32,7 +31,7 @@ export function useProps() {
           props.value.readonly = true;
         }
         break;
-      case 'radio-button':
+      case "radio-button":
         props.value = {
           ...defaultRadioProps,
           ...schema.options?.fieldProps,
@@ -40,7 +39,7 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
-      case 'checkbox':
+      case "checkbox":
         props.value = {
           ...defaultCheckboxProperties,
           ...schema.options?.fieldProps,
@@ -48,7 +47,7 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
-      case 'text-area':
+      case "text-area":
         props.value = {
           ...defaultTextAreaProps,
           ...schema.options?.fieldProps,
@@ -56,7 +55,7 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
-      case 'select':
+      case "select":
         props.value = {
           ...defaultSelectProps,
           ...schema.options?.fieldProps,
@@ -64,7 +63,7 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
-      case 'button':
+      case "button":
         props.value = {
           ...schema.options?.buttonProps,
           ...schema.layout?.props,
@@ -73,30 +72,30 @@ export function useProps() {
       case "static-content": {
         props.value = {
           ...schema.layout?.props,
-        }
-        break
+        };
+        break;
       }
       case "avatar": {
         props.value = {
           ...schema.layout?.props,
-        }
-        break
+        };
+        break;
       }
       case "image":
         props.value = {
           ...schema.layout?.props,
-        }
+        };
         break;
       case "user-input":
         props.value = {
-          'hide-details': 'auto',
+          "hide-details": "auto",
           ...schema.options?.fieldProps,
           ...schema.layout?.props,
-        }
+        };
         break;
       default:
         props.value = {
-          'hide-details': 'auto',
+          "hide-details": "auto",
           ...schema.options?.fieldProps,
           ...schema.layout?.props,
         };
@@ -106,15 +105,15 @@ export function useProps() {
     propsClone.value = cloneDeep(props.value);
 
     for (let [key, value] of Object.entries(props.value)) {
-      if (typeof value === 'string' && value.includes('nata(')) {
+      if (typeof value === "string" && value.includes("nata(")) {
         await resolveJSONataExpression(key, props.value, schema);
       }
 
-      if (typeof value === 'string' && variableRegexp.test(value)) {
+      if (typeof value === "string" && variableRegexp.test(value)) {
         const obj = await resolve(schema, value);
         props.value[key] = obj.resolvedText;
 
-        vueSchemaFormEventBus.on((event, payloadIndex) => propsValueMappingListener(event, payloadIndex, key, schema));
+        vueSchemaFormEventBus.on(() => propsValueMappingListener(key, schema));
       }
     }
 
@@ -122,42 +121,40 @@ export function useProps() {
     return props;
   }
 
-  async function propsValueMappingListener(event: string, payloadIndex: number, keyToResolve: string, schema: EngineField) {
-    //if (schema.index == undefined || schema.index == payloadIndex) {
-      await new Promise(r => setTimeout(r, 10));
-      const inputString = propsClone.value[keyToResolve];
-      const obj = await resolve(schema, inputString as string);
-      props.value[keyToResolve] = obj.resolvedText;
+  async function propsValueMappingListener(keyToResolve: string, schema: EngineField) {
+    await new Promise((r) => setTimeout(r, 10));
+    const inputString = propsClone.value[keyToResolve];
+    const obj = await resolve(schema, inputString as string);
+    props.value[keyToResolve] = obj.resolvedText;
 
-      if (logger.propsValueMappingListener) console.debug(`[vue-schema-forms] [PropsValueMappingListener] => key=[${keyToResolve}], value=[${obj.resolvedText}], index=[${payloadIndex}]`);
-    //}
-
+    if (logger.propsValueMappingListener)
+      console.debug(`[vue-schema-forms] [PropsValueMappingListener] => key=[${keyToResolve}], value=[${obj.resolvedText}]`);
   }
 
   return { bindProps: bindProps, fieldProps: props };
 }
 
 const defaultTextFieldProperties = {
-  'hide-details': 'auto',
+  "hide-details": "auto",
 };
 
 const defaultCheckboxProperties = {
-  density: 'compact',
-  'hide-details': 'auto',
+  density: "compact",
+  "hide-details": "auto",
   multiple: true,
 };
 
 const defaultRadioProps = {
-  density: 'compact',
-  'hide-details': 'auto',
+  density: "compact",
+  "hide-details": "auto",
 };
 
 const defaultTextAreaProps = {
   rows: 3,
-  'auto-grow': true,
-  'hide-details': 'auto',
+  "auto-grow": true,
+  "hide-details": "auto",
 };
 
 const defaultSelectProps = {
-  'hide-details': 'auto',
+  "hide-details": "auto",
 };

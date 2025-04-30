@@ -20,9 +20,7 @@ export function useExpression() {
       result.value = await f(expression, mergedModel);
 
       if (!functionName.includes("_GENERATOR")) {
-        const unsubscribe = vueSchemaFormEventBus.on(
-          async (event) => await expressionListener(event, key, expression, model, formId),
-        );
+        const unsubscribe = vueSchemaFormEventBus.on(async () => await expressionListener(key, expression, model, formId));
       }
       return result.value;
     }
@@ -42,7 +40,7 @@ export function useExpression() {
     }
   }
 
-  async function expressionListener(event: string, key: string, expression: string, model: object, formId: string) {
+  async function expressionListener(key: string, expression: string, model: object, formId: string) {
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let f = functions[functionName];

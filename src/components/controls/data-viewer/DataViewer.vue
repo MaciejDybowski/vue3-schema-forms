@@ -135,7 +135,7 @@ async function resolveIfDictionary() {
 }
 
 if (isValueMapping) {
-  const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) => {
+  const unsubscribe = vueSchemaFormEventBus.on(async () => {
     const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
     if (localModel.value !== resolvedText) {
       const result = formatter(resolvedText);

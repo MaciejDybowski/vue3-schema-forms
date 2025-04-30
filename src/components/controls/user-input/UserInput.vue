@@ -234,9 +234,9 @@ async function checkIfURLHasDependency() {
     }
 
     const vueSchemaFormEventBus = useEventBus<string>("form-model");
-    const unsubscribe = vueSchemaFormEventBus.on(async (event) => await listener(event, props.schema.key));
+    const unsubscribe = vueSchemaFormEventBus.on(async () => await listener());
 
-    const listener = async (event: string, key: string) => {
+    const listener = async () => {
       await new Promise((r) => setTimeout(r, 50));
       const temp = await resolve(props.schema, props.schema.source.url as string, "title", true);
       if (temp.resolvedText !== usersAPIEndpoint.value) {

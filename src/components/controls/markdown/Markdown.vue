@@ -38,7 +38,7 @@ onMounted(async () => {
   await bindProps(props.schema);
 
   resolvedContent.value = await resolve(props.schema, localModel.value);
-  const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) => {
+  const unsubscribe = vueSchemaFormEventBus.on(async () => {
     resolvedContent.value = await resolve(props.schema, localModel.value);
   });
 });

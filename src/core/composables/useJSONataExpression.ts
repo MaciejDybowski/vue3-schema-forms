@@ -7,6 +7,7 @@ import { logger } from "@/main";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { useEventBus } from "@vueuse/core";
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 
 export function useJSONataExpression() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
@@ -17,9 +18,7 @@ export function useJSONataExpression() {
     //console.debug(keyToResolve, object, object[keyToResolve].includes("nata("));
 
     if (object[keyToResolve].includes("nata(") || `${keyToResolve}Expression` in object) {
-      const unsubscribe = vueSchemaFormEventBus.on(async (event, payloadIndex) =>
-        expressionResolverListener(event, payloadIndex, keyToResolve, object, schema),
-      );
+      const unsubscribe = vueSchemaFormEventBus.on(async () => expressionResolverListener(keyToResolve, object, schema));
       object[`${keyToResolve}Expression`] = cloneDeep(object[keyToResolve]);
       delete object[keyToResolve];
 
@@ -43,8 +42,6 @@ export function useJSONataExpression() {
   }
 
   async function expressionResolverListener(
-    event: string,
-    payloadIndex: number,
     keyToResolve: string,
     object: any,
     schema: EngineField,

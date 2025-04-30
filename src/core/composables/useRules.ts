@@ -7,6 +7,7 @@ import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { SchemaSimpleValidation } from "@/types/shared/SchemaSimpleValidation";
 import { useEventBus } from "@vueuse/core";
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
 export function useRules() {
@@ -40,8 +41,8 @@ export function useRules() {
         if (ruleDefinition.name === "conditional-required") {
           conditionalRequired(schema, ruleDefinition, rules);
           // listener for visualization "live" required input with red *, validation works properly without it !!
-          ruleListener("null", 1, schema, ruleDefinition);
-          vueSchemaFormEventBus.on((event, payloadIndex) => ruleListener(event, payloadIndex, schema, ruleDefinition));
+          ruleListener(schema, ruleDefinition);
+          vueSchemaFormEventBus.on(() => ruleListener(schema, ruleDefinition));
         } else if (ruleDefinition.rule) {
           resolveValidationFunctionWithJSONataRule(ruleDefinition, schema);
         } else if (ruleDefinition.regexp) {
@@ -100,7 +101,7 @@ export function useRules() {
     });
   }
 
-  async function ruleListener(event: string, payloadIndex: number, schema: EngineField, ruleDefinition: SchemaSimpleValidation) {
+  async function ruleListener(schema: EngineField, ruleDefinition: SchemaSimpleValidation) {
     const formModelStore = useFormModelStore(schema.formId);
     const model = formModelStore.getFormModelForResolve;
     const nata = jsonata(ruleDefinition.rule as string);

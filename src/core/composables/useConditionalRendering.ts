@@ -23,9 +23,7 @@ export function useConditionalRendering() {
     const originalIf = ref(!shouldRender.value ? cloneDeep(schema.layout.if) : "");
 
     if (schema.layout.if !== undefined && schema.layout.if && registerListener) {
-      const unsubscribe = vueSchemaFormEventBus.on((event, payloadIndex) =>
-        conditionalRenderingListener(event, payloadIndex, schema, model),
-      );
+      const unsubscribe = vueSchemaFormEventBus.on(() => conditionalRenderingListener(schema, model));
     }
 
     //if (!shouldRender.value) {
@@ -52,7 +50,7 @@ export function useConditionalRendering() {
     if (lastValueOfShouldRender.value && !shouldRender.value) {
       if (schema.layout.component == "fields-group") {
         const componentSchema = schema.layout.schema as Schema;
-        resetModelValues(model, componentSchema)
+        resetModelValues(model, componentSchema);
       } else {
         set(model, schema.key, null);
       }
@@ -72,8 +70,7 @@ export function useConditionalRendering() {
     });
   }
 
-
-  async function conditionalRenderingListener(event: string, payloadIndex: number, schema: EngineField, model: any) {
+  async function conditionalRenderingListener(schema: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 50));
     //if (schema.index == undefined || schema.index == payloadIndex) {
     await shouldRenderField(schema, model, false);
