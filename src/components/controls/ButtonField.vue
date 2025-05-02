@@ -84,7 +84,7 @@ const { t } = useLocale();
 const theme = useTheme();
 const primaryWhite = computed(() => (theme.current.value.dark ? "white" : "primary"));
 
-const shouldWaitForSaveState = schema.config.waitForSaveState ? schema.config.waitForSaveState : false;
+const shouldWaitForSaveState = schema.config && schema.config.waitForSaveState ? schema.config.waitForSaveState : false;
 const caller = ref<Function>(() => {});
 const formCurrentSaveState = ref(true);
 if (shouldWaitForSaveState) {

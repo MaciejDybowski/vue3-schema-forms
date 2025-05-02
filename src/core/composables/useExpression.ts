@@ -49,7 +49,7 @@ export function useExpression() {
       const result = await f(expression, mergedModel);
       const currentValue = get(model, key, null);
       if (result !== currentValue) {
-        set(model, key, result);
+        set(model, key, result); // TODO sprawdzić czy na pewno działa w każdym przypadku, jeśli nie to trzeba zmienić na field.on.input()
       }
     }
   }

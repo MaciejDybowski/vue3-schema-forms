@@ -1,11 +1,11 @@
 import jsonata from "jsonata";
 import { cloneDeep } from "lodash";
-import set from "lodash/set";
 import { ref } from "vue";
 
 import { Schema, logger, useResolveVariables } from "@/main";
 import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 import { useEventBus } from "@vueuse/core";
 
 export function useConditionalRendering() {
@@ -49,23 +49,31 @@ export function useConditionalRendering() {
   function resetModelValueWhenFalse(model: object, schema: EngineField) {
     if (lastValueOfShouldRender.value && !shouldRender.value) {
       if (schema.layout.component == "fields-group") {
-        const componentSchema = schema.layout.schema as Schema;
-        resetModelValues(model, componentSchema);
+        const internalSchema = schema.layout.schema as Schema;
+        resetModelValues(internalSchema, schema);
       } else {
-        set(model, schema.key, null);
+        const event: NodeUpdateEvent = {
+          key: schema.key,
+          value: null,
+        };
+        schema.on.input(event);
       }
     }
     lastValueOfShouldRender.value = shouldRender.value;
   }
 
-  function resetModelValues(model: object, schema: Schema) {
+  function resetModelValues(schema: Schema, formField: EngineField) {
     if (!schema.properties) return;
 
     Object.entries(schema.properties).forEach(([key, field]) => {
       if (field.type === "object" && field.properties) {
-        resetModelValues(model[key] ?? {}, field as any);
+        resetModelValues(field as any, formField);
       } else {
-        set(model, key, null);
+        const event: NodeUpdateEvent = {
+          key: key,
+          value: null,
+        };
+        formField.on.input(event);
       }
     });
   }

@@ -6,6 +6,7 @@ import { variableRegexp } from "@/core/engine/utils";
 import { EngineField } from "@/types/engine/EngineField";
 import { EventHandlerDefinition } from "@/types/shared/EventHandlerDefinition";
 import { useEventBus } from "@vueuse/core";
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 
 export function useEventHandler() {
   const { resolve } = useResolveVariables();
@@ -46,8 +47,12 @@ export function useEventHandler() {
 
   function changeMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
     eventDefinition.variables?.forEach((variable) => {
-      set(model, variable.path, variable.value); // TODO - nie dziala
-      console.debug(model, variable)
+
+      const event: NodeUpdateEvent = {
+        key: variable.path,
+        value: variable.value
+      }
+      field.on.input(event)
     });
   }
 
