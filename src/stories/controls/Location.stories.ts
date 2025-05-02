@@ -7,6 +7,7 @@ import { Schema } from "../../types/schema/Schema";
 import { SchemaLocationField } from "../../types/schema/elements";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
+import { LOCATION_MOCK_REQUEST } from "../mock-responses";
 
 
 
@@ -38,6 +39,9 @@ export const Standard: Story = {
       },
     } as Schema,
   },
+  parameters: {
+    msw: [LOCATION_MOCK_REQUEST]
+  }
 };
 
 export const WithValue: Story = {
@@ -93,6 +97,9 @@ export const WithValue: Story = {
       },
     } as Schema,
   },
+  parameters: {
+    msw: [LOCATION_MOCK_REQUEST]
+  }
 };
 
 export const Required: Story = {
@@ -104,8 +111,8 @@ export const Required: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Field is required.")).toBeInTheDocument();
 
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    await userEvent.type(select, "Opolska Kraków", { delay: 200 });
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 150 });
+    await userEvent.type(select, "Opolska Kraków", { delay: 150 });
     await new Promise((resolve) => setTimeout(resolve, 1500)); // <- wait for api call
     const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
@@ -136,6 +143,9 @@ export const Required: Story = {
       required: ["location"],
     } as Schema,
   },
+  parameters: {
+    msw: [LOCATION_MOCK_REQUEST]
+  }
 };
 
 export const WithLangAndCountryLimits: Story = {
@@ -172,6 +182,9 @@ export const WithLangAndCountryLimits: Story = {
       },
     } as Schema,
   },
+  parameters: {
+    msw: [LOCATION_MOCK_REQUEST]
+  }
 };
 
 

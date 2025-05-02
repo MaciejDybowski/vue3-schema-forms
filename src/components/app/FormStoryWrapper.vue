@@ -60,7 +60,7 @@ const { schema, options, formModel, emittedObject } = defineProps<{
   formModel: object;
   schema: Schema;
   options: object;
-  emittedObject: object
+  emittedObject?: object
 }>();
 
 const model = ref<any>(null);
@@ -71,8 +71,9 @@ function catchSignalFormIsReady() {
 
 function handleAction(properties) {
   console.debug(`[vue-schema-forms] - catch action with properties`);
-  console.debug(properties);
-  Object.assign(toRaw(properties), emittedObject) // TODO
+  // @ts-ignore
+  Object.assign(toRaw(emittedObject), properties)
+  console.debug(emittedObject)
 }
 
 const loading = ref(true);

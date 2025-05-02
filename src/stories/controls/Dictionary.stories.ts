@@ -1,16 +1,11 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
-
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { DictionarySource } from "../../types/shared/Source";
 import { MOCK_REQUEST_CURRENCY, RESPONSE_DICTIONARY } from "../mock-responses";
-import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
-import { StoryTemplateWithValidation } from "../templates/story-template";
+import { formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
-
-
 
 export default {
   title: "Forms/Controls/Dictionary [autocomplete]",

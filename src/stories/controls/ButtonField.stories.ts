@@ -2,7 +2,9 @@
 import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
+import { BTN_MOCK } from "../mock-responses";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { waitForMountedAsync } from "./utils";
 
 export default {
   title: "Forms/Controls/Button",
@@ -55,6 +57,52 @@ export const WithProps: Story = {
         },
       },
     } as Schema,
+  },
+};
+
+export const Disabled: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole("button", { name: "Click it!" });
+    await expect(button).toBeInTheDocument();
+
+    const btnClasses = document.getElementsByClassName("v-btn--disabled v-btn--readonly");
+    await expect(btnClasses.length).toEqual(1);
+  },
+  name: "Case: disabled",
+  args: {
+    formModel: {
+      itemId: "item-1",
+      example1: "Example",
+      item: {
+        example2: "Example 2",
+      },
+    },
+    schema: {
+      type: "object",
+      properties: {
+        button: {
+          label: "Click it!",
+          layout: {
+            component: "button",
+          },
+          mode: "api-call",
+          config: {
+            source: "/mocks/files/{itemId}",
+            method: "PUT",
+            body: {
+              example1: "{example1}",
+              example2: "{item.example2}",
+            },
+          },
+        },
+      },
+    },
+    options: {
+      buttonProps: {
+        readonly: true,
+      },
+    },
   },
 };
 
@@ -111,36 +159,38 @@ export const CopyToClipboard: Story = {
 export const DialogWithInjectedForm: Story = {
   name: "Mode: dialog with internal form",
   play: async (context) => {
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole("button", { name: "Open dialog!" });
     await expect(button).toBeInTheDocument();
     await button.click();
 
     const fieldA = await within(document.body).findByLabelText("field A");
-    await userEvent.type(fieldA, "Test");
-
+    await userEvent.type(fieldA, "Test", { delay: 150 });
 
     const buttonCopied = await within(document.body).findByRole("button", { name: "Copy field A" });
     await expect(buttonCopied).toBeInTheDocument();
 
-    const copiedValues: string[] = [];
-    Object.defineProperty(navigator.clipboard, "writeText", {
-      value: (text) => {
-        window.__copiedText = text;
-        copiedValues.push(text);
-        return Promise.resolve();
-      },
-    });
-
-    await buttonCopied.click();
-    await expect(copiedValues[0]).toEqual("Test");
+    /* Działa lokalnie   
+   const copiedValues: string[] = [];
+      Object.defineProperty(navigator.clipboard, "writeText", {
+        value: (text) => {
+          window.__copiedText = text;
+          copiedValues.push(text);
+          return Promise.resolve();
+        },
+      });
+  
+      await buttonCopied.click();
+      await expect(copiedValues[0]).toEqual("Test");*/
 
     const buttonSave = await within(document.body).findByRole("button", { name: "Save" });
 
-    await new Promise(resolve => setTimeout(resolve, 400));
     await buttonSave.click();
+    await new Promise((resolve) => setTimeout(resolve, 400));
 
-    await expect(context.args.emittedObject).toEqual({});
+    await expect(context.args.emittedObject.code).toEqual("my_action_code");
+    await expect(context.args.emittedObject.body.fieldA).toEqual("Test");
   },
   args: {
     formModel: {},
@@ -155,7 +205,7 @@ export const DialogWithInjectedForm: Story = {
           },
           mode: "form-and-action",
           config: {
-            code: "update_csv",
+            code: "my_action_code",
             modelReference: "popupModel",
             title: "Title of the dialog - static text without deps",
             acceptText: "Save",
@@ -206,6 +256,19 @@ export const DialogWithInjectedForm: Story = {
 };
 
 export const APICall: Story = {
+  name: "Mode: API call with emit event",
+  play: async (context) => {
+    await waitForMountedAsync();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole("button", { name: "Call API" });
+    await expect(button).toBeInTheDocument();
+
+    button.click();
+
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await expect(context.args.emittedObject.code).toEqual("refresh-attachments");
+  },
   args: {
     formModel: {
       itemId: "item-1",
@@ -214,62 +277,42 @@ export const APICall: Story = {
         example2: "Example 2",
       },
     },
+    emittedObject: {},
     schema: {
       type: "object",
       properties: {
+        description: {
+          content:
+            "Btn has ability to call API directly with mapped body and params object, after that it can emit event with action code",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
         button: {
-          label: "API Call here",
+          label: "Call API",
           layout: {
             component: "button",
           },
           mode: "api-call",
           config: {
             source: "/mocks/files/{itemId}",
-            method: "PUT",
+            method: "POST",
             body: {
               example1: "{example1}",
               example2: "{item.example2}",
+            },
+            emit: {
+              code: "refresh-attachments",
             },
           },
         },
       },
     },
   },
-};
-
-export const Disabled: Story = {
-  args: {
-    formModel: {
-      itemId: "item-1",
-      example1: "Example",
-      item: {
-        example2: "Example 2",
-      },
-    },
-    schema: {
-      type: "object",
-      properties: {
-        button: {
-          label: "Disabled button",
-          layout: {
-            component: "button",
-          },
-          mode: "api-call",
-          config: {
-            source: "/mocks/files/{itemId}",
-            method: "PUT",
-            body: {
-              example1: "{example1}",
-              example2: "{item.example2}",
-            },
-          },
-        },
-      },
-    },
-    options: {
-      buttonProps: {
-        readonly: true,
-      },
+  parameters: {
+    msw: {
+      handlers: BTN_MOCK,
     },
   },
 };

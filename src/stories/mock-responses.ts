@@ -1,7 +1,5 @@
 // @ts-nocheck
-import { http, HttpResponse } from "msw";
-import sampleImage from "./path/to/sample-image.png"; // If you're bundling it
-import sampleImage from "./path/to/sample-image.png";
+import { HttpResponse, http } from "msw";
 
 export const names = ["🥝 Kiwi", "🍏 Green Apple", "🍉 Watermelon", "🍌 Banana", "🍇 Grape"];
 export const locations = ["New Zealand", "Brazil", "USA", "Italy", "South Africa"];
@@ -345,8 +343,107 @@ export const RESPONSE_DICTIONARY = [
   }),
 ];
 
-
 export const IMAGE_REQUEST = http.get("/mocks/products/images", async (req, res, ctx) => {
   // TODO - try return sample image
-  return null
+  return null;
+});
+
+export const BTN_MOCK = [
+  http.post("/mocks/files/item-1", async (req, res, ctx) => {
+    return HttpResponse.json({});
+  }),
+];
+
+export const LOCATION_MOCK_REQUEST = http.get("https://nominatim.openstreetmap.org/search", async (req, res, ctx) => {
+  const url = req.request.url;
+  const searchParams = new URLSearchParams(url.split("?")[1]);
+
+  const query = searchParams.get("q");
+  const lang = searchParams.get("accept-language");
+
+  return HttpResponse.json([
+    {
+      place_id: 170375139,
+      licence: "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      osm_type: "way",
+      osm_id: 218415904,
+      lat: "50.0894450",
+      lon: "19.9146950",
+      class: "highway",
+      type: "primary",
+      place_rank: 26,
+      importance: 0.05341270084687568,
+      addresstype: "road",
+      name: "Opolska",
+      display_name: "Opolska, Azory, Prądnik Biały, Kraków, województwo małopolskie, 31-326, Polska",
+      address: {
+        road: "Opolska",
+        quarter: "Azory",
+        suburb: "Prądnik Biały",
+        city_district: "Prądnik Biały",
+        city: "Kraków",
+        state: "województwo małopolskie",
+        "ISO3166-2-lvl4": "PL-12",
+        postcode: "31-326",
+        country: "Polska",
+        country_code: "pl",
+      },
+      boundingbox: ["50.0893243", "50.0898204", "19.9131718", "19.9164197"],
+    },
+    {
+      place_id: 170544697,
+      licence: "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      osm_type: "way",
+      osm_id: 153148688,
+      lat: "50.0916243",
+      lon: "19.9382794",
+      class: "highway",
+      type: "primary",
+      place_rank: 26,
+      importance: 0.05341270084687568,
+      addresstype: "road",
+      name: "Opolska",
+      display_name: "Opolska, Prądnik Biały, Kraków, województwo małopolskie, 31-221, Polska",
+      address: {
+        road: "Opolska",
+        quarter: "Prądnik Biały",
+        suburb: "Prądnik Biały",
+        city_district: "Prądnik Biały",
+        city: "Kraków",
+        state: "województwo małopolskie",
+        "ISO3166-2-lvl4": "PL-12",
+        postcode: "31-221",
+        country: "Polska",
+        country_code: "pl",
+      },
+      boundingbox: ["50.0914939", "50.0917505", "19.9369995", "19.9395589"],
+    },
+    {
+      place_id: 170401589,
+      licence: "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      osm_type: "way",
+      osm_id: 27090960,
+      lat: "50.0870228",
+      lon: "19.9510053",
+      class: "highway",
+      type: "primary",
+      place_rank: 26,
+      importance: 0.05341270084687568,
+      addresstype: "road",
+      name: "Opolska",
+      display_name: "Opolska, Prądnik Biały, Kraków, województwo małopolskie, 31-217, Polska",
+      address: {
+        road: "Opolska",
+        quarter: "Prądnik Biały",
+        city_district: "Prądnik Biały",
+        city: "Kraków",
+        state: "województwo małopolskie",
+        "ISO3166-2-lvl4": "PL-12",
+        postcode: "31-217",
+        country: "Polska",
+        country_code: "pl",
+      },
+      boundingbox: ["50.0870228", "50.0874406", "19.9495202", "19.9510053"],
+    },
+  ]);
 });
