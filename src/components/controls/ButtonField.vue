@@ -94,6 +94,7 @@ if (shouldWaitForSaveState) {
     if (payload == true) {
       caller.value();
       caller.value = () => {};
+      console.debug("HERERERERER")
     }
   });
 }

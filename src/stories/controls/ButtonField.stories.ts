@@ -171,19 +171,6 @@ export const DialogWithInjectedForm: Story = {
     const buttonCopied = await within(document.body).findByRole("button", { name: "Copy field A" });
     await expect(buttonCopied).toBeInTheDocument();
 
-    /* Działa lokalnie   
-   const copiedValues: string[] = [];
-      Object.defineProperty(navigator.clipboard, "writeText", {
-        value: (text) => {
-          window.__copiedText = text;
-          copiedValues.push(text);
-          return Promise.resolve();
-        },
-      });
-  
-      await buttonCopied.click();
-      await expect(copiedValues[0]).toEqual("Test");*/
-
     const buttonSave = await within(document.body).findByRole("button", { name: "Save" });
 
     await buttonSave.click();
@@ -318,6 +305,23 @@ export const APICall: Story = {
 };
 
 export const APICallWaitForSave: Story = {
+  name: "Mode: API call with emit event and wait for saved state",
+  play: async (context) => {
+    await waitForMountedAsync();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole("button", { name: "Call API" });
+    await expect(button).toBeInTheDocument();
+
+    const fieldA = await canvas.findByLabelText("Field A")
+    await userEvent.type(fieldA, "Should wait for this", {
+      delay: 100,
+    });
+    button.click();
+
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await expect(context.args.emittedObject.code).toEqual("refresh-attachments");
+  },
   args: {
     formModel: {
       itemId: "item-1",
@@ -326,26 +330,49 @@ export const APICallWaitForSave: Story = {
         example2: "Example 2",
       },
     },
+    emittedObject: {},
     schema: {
       type: "object",
       properties: {
+        description: {
+          content:
+            "VueSchemaForms component expose variable formDataWasSaved for manage state of form. If some fields on form has impact for API Call we should add `waitForSaveState:true` and button will wait for next 'saved' state. For start/default form state is saved (true)",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
+        fieldA: {
+          label: "Field A",
+          layout: {
+            component: "text-field",
+          },
+        },
         button: {
-          label: "API Call here",
+          label: "Call API",
           layout: {
             component: "button",
           },
           mode: "api-call",
           config: {
             source: "/mocks/files/{itemId}",
-            method: "PUT",
+            method: "POST",
             body: {
               example1: "{example1}",
               example2: "{item.example2}",
             },
             waitForSaveState: true,
+            emit: {
+              code: "refresh-attachments",
+            },
           },
         },
       },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: BTN_MOCK,
     },
   },
 };

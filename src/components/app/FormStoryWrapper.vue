@@ -16,6 +16,7 @@
         <v-card-text>
           <vue-schema-forms
             v-if="!loading"
+            ref="mySchemaForm"
             v-model="model"
             :default-form-actions="true"
             :options="options"
@@ -54,16 +55,19 @@ import "vue-json-pretty/lib/styles.css";
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
 
 import { Schema } from "@/types/schema/Schema";
+import { debounce } from "lodash";
 
 const snackbar = ref(false);
 const { schema, options, formModel, emittedObject } = defineProps<{
   formModel: object;
   schema: Schema;
   options: object;
-  emittedObject?: object
+  emittedObject?: object;
 }>();
 
 const model = ref<any>(null);
+
+const mySchemaForm = ref();
 
 function catchSignalFormIsReady() {
   console.debug(`[vue-schema-forms] - signal about ready was sent.`);
@@ -72,15 +76,28 @@ function catchSignalFormIsReady() {
 function handleAction(properties) {
   console.debug(`[vue-schema-forms] - catch action with properties`);
   // @ts-ignore
-  Object.assign(toRaw(emittedObject), properties)
-  console.debug(emittedObject)
+  Object.assign(toRaw(emittedObject), properties);
+  console.debug(emittedObject);
+}
+
+const debounced = {
+  saveState: debounce(simulateSavedState, 300)
+}
+function simulateSavedState(){
+  if (mySchemaForm.value) {
+    mySchemaForm.value.formDataWasSaved = true;
+  }
 }
 
 const loading = ref(true);
 watch(
   () => model.value,
-  () => {
+  async () => {
+    if (mySchemaForm.value) {
+      mySchemaForm.value.formDataWasSaved = false;
+    }
     Object.assign(toRaw(formModel), model.value);
+    debounced.saveState()
   },
   { deep: true },
 );
