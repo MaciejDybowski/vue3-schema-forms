@@ -56,10 +56,11 @@ import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
 import { Schema } from "@/types/schema/Schema";
 
 const snackbar = ref(false);
-const { schema, options, formModel } = defineProps<{
+const { schema, options, formModel, emittedObject } = defineProps<{
   formModel: object;
   schema: Schema;
   options: object;
+  emittedObject: object
 }>();
 
 const model = ref<any>(null);
@@ -71,6 +72,7 @@ function catchSignalFormIsReady() {
 function handleAction(properties) {
   console.debug(`[vue-schema-forms] - catch action with properties`);
   console.debug(properties);
+  Object.assign(toRaw(properties), emittedObject) // TODO
 }
 
 const loading = ref(true);

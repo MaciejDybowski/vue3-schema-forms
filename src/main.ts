@@ -37,7 +37,7 @@ import * as components from "../src/components/index";
 
 export declare type Components = Record<string, Component>;
 export let logger = {
-  formUpdateLogger: true,
+  formUpdateLogger: false,
   calculationListener: false,
   JSONataExpressionListener: false,
   propsValueMappingListener: false,

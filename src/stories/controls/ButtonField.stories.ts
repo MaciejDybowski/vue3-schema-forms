@@ -1,10 +1,8 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
+import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-
-
 
 export default {
   title: "Forms/Controls/Button",
@@ -12,7 +10,11 @@ export default {
 };
 
 export const Standard: Story = {
-  play: async (context) => {},
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole("button", { name: "Click it!" });
+    await expect(button).toBeInTheDocument();
+  },
   args: {
     schema: {
       type: "object",
@@ -29,7 +31,15 @@ export const Standard: Story = {
 };
 
 export const WithProps: Story = {
-  play: async (context) => {},
+  name: "Case: customization",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole("button", { name: "Click it!" });
+    await expect(button).toBeInTheDocument();
+
+    const btnClasses = document.getElementsByClassName("mdi-plus mdi v-icon");
+    await expect(btnClasses.length).toEqual(1);
+  },
   args: {
     schema: {
       type: "object",
@@ -49,6 +59,24 @@ export const WithProps: Story = {
 };
 
 export const CopyToClipboard: Story = {
+  name: "Mode: copy value to clipboard  ",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole("button", { name: "Copy above" });
+    await expect(button).toBeInTheDocument();
+
+    const copiedValues: string[] = [];
+    Object.defineProperty(navigator.clipboard, "writeText", {
+      value: (text) => {
+        window.__copiedText = text;
+        copiedValues.push(text);
+        return Promise.resolve();
+      },
+    });
+
+    await button.click();
+    await expect(copiedValues[0]).toEqual("Lorem ipsum...");
+  },
   args: {
     formModel: {
       input: "Lorem ipsum...",
@@ -81,8 +109,42 @@ export const CopyToClipboard: Story = {
 };
 
 export const DialogWithInjectedForm: Story = {
+  name: "Mode: dialog with internal form",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole("button", { name: "Open dialog!" });
+    await expect(button).toBeInTheDocument();
+    await button.click();
+
+    const fieldA = await within(document.body).findByLabelText("field A");
+    await userEvent.type(fieldA, "Test");
+
+
+    const buttonCopied = await within(document.body).findByRole("button", { name: "Copy field A" });
+    await expect(buttonCopied).toBeInTheDocument();
+
+    const copiedValues: string[] = [];
+    Object.defineProperty(navigator.clipboard, "writeText", {
+      value: (text) => {
+        window.__copiedText = text;
+        copiedValues.push(text);
+        return Promise.resolve();
+      },
+    });
+
+    await buttonCopied.click();
+    await expect(copiedValues[0]).toEqual("Test");
+
+    const buttonSave = await within(document.body).findByRole("button", { name: "Save" });
+
+    await new Promise(resolve => setTimeout(resolve, 400));
+    await buttonSave.click();
+
+    await expect(context.args.emittedObject).toEqual({});
+  },
   args: {
     formModel: {},
+    emittedObject: {},
     schema: {
       type: "object",
       properties: {
@@ -96,29 +158,43 @@ export const DialogWithInjectedForm: Story = {
             code: "update_csv",
             modelReference: "popupModel",
             title: "Title of the dialog - static text without deps",
-            acceptText: "Import",
+            acceptText: "Save",
           },
           schema: {
             properties: {
-              csvBody: {
-                label: "CsvBody",
+              fieldA: {
+                label: "field A",
                 layout: {
                   component: "text-field",
-                  cols: 9,
+                  cols: 4,
+                },
+              },
+              fieldB: {
+                label: "field B",
+                layout: {
+                  component: "text-field",
+                  cols: 4,
+                },
+              },
+              fieldC: {
+                label: "field C",
+                layout: {
+                  component: "text-field",
+                  cols: 4,
                 },
               },
               button: {
-                label: "Copy CSV",
+                label: "Copy field A",
                 layout: {
                   component: "button",
                   props: {
                     "append-icon": "mdi-content-copy",
                   },
-                  cols: 3,
+                  cols: 6,
                 },
                 mode: "copy",
                 config: {
-                  modelReference: "csvBody",
+                  modelReference: "fieldA",
                 },
               },
             },
@@ -136,7 +212,7 @@ export const APICall: Story = {
       example1: "Example",
       item: {
         example2: "Example 2",
-      }
+      },
     },
     schema: {
       type: "object",
@@ -161,7 +237,6 @@ export const APICall: Story = {
   },
 };
 
-
 export const Disabled: Story = {
   args: {
     formModel: {
@@ -169,7 +244,7 @@ export const Disabled: Story = {
       example1: "Example",
       item: {
         example2: "Example 2",
-      }
+      },
     },
     schema: {
       type: "object",
@@ -193,12 +268,11 @@ export const Disabled: Story = {
     },
     options: {
       buttonProps: {
-        readonly: true
-      }
-    }
+        readonly: true,
+      },
+    },
   },
 };
-
 
 export const APICallWaitForSave: Story = {
   args: {
@@ -207,7 +281,7 @@ export const APICallWaitForSave: Story = {
       example1: "Example",
       item: {
         example2: "Example 2",
-      }
+      },
     },
     schema: {
       type: "object",

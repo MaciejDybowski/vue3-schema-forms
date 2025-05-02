@@ -143,7 +143,6 @@ function updateModel(event: NodeUpdateEvent) {
     delete formModel[value];
   });
 
-  console.debug(formModel)
   emit("update:modelValue", formModel);
 
   if (logger.formUpdateLogger) {

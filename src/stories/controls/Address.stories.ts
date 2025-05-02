@@ -53,6 +53,7 @@ export const Standard: Story = {
 };
 
 export const Override: Story = {
+  name: "Case: fields customization",
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Country");
@@ -122,7 +123,7 @@ export const Override: Story = {
 };
 
 export const StandardValidation: Story = {
-  name: "Address with default validation",
+  name: "Case: standard validation",
 
   play: async (context) => {
     const canvas = within(context.canvasElement);
@@ -171,6 +172,7 @@ export const StandardValidation: Story = {
 };
 
 export const OverrideValidation: Story = {
+  name: "Case: custom validation",
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
