@@ -52,9 +52,9 @@ import { onMounted, ref, toRaw, watch } from "vue";
 import VueJsonPretty from "vue-json-pretty";
 import "vue-json-pretty/lib/styles.css";
 
-import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
+import VueSchemaForms from "../../src/components/engine/VueSchemaForms.vue";
 
-import { Schema } from "@/types/schema/Schema";
+import { Schema } from "@/types/schema/Schema.d";
 import { debounce } from "lodash";
 
 const snackbar = ref(false);

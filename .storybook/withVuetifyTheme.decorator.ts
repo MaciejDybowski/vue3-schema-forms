@@ -1,6 +1,6 @@
 import { h, ref } from "vue"
 // @ts-ignore
-import StoryWrapper from "./StoryWrapper.vue"
+import StoryWrapper from "./components/StoryWrapper.vue"
 import { Decorator, StoryContext } from "@storybook/vue3"
 import { i18nConfig } from "./plugins/i18n"
 

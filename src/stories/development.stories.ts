@@ -1,8 +1,7 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
 
-import FormStoryWrapper from "../components/app/FormStoryWrapper.vue";
-import meta from "./development-old.stories";
+import FormStoryWrapper from "../../.storybook/components/FormStoryWrapper.vue";
 
 export default {
   title: "Development Stories",
@@ -19,7 +18,7 @@ export default {
   },
 } satisfies Meta<typeof FormStoryWrapper>;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof FormStoryWrapper>;
 
 export const TranslationTesting: Story = {
   args: {
