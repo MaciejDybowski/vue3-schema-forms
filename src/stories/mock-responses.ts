@@ -447,3 +447,38 @@ export const LOCATION_MOCK_REQUEST = http.get("https://nominatim.openstreetmap.o
     },
   ]);
 });
+
+
+export const MULTI_ORDERED_SELECT_MOCK = [
+  http.get("/mocks/multi-ordered-items", () => {
+    return HttpResponse.json({
+      content: [
+        { id: 1, label: "Poland" },
+        { id: 2, label: "Germany" },
+        { id: 3, label: "France" },
+        { id: 4, label: "Italy" },
+        { id: 5, label: "Spain" },
+        { id: 6, label: "Portugal" },
+        { id: 7, label: "Netherlands" },
+        { id: 8, label: "Belgium" },
+        { id: 9, label: "Sweden" },
+        { id: 10, label: "Norway" },
+        { id: 11, label: "Finland" },
+        { id: 12, label: "Denmark" },
+        { id: 13, label: "Austria" },
+        { id: 14, label: "Switzerland" },
+        { id: 15, label: "Czech Republic" },
+        { id: 16, label: "Slovakia" },
+        { id: 17, label: "Hungary" },
+        { id: 18, label: "Romania" },
+        { id: 19, label: "Bulgaria" },
+        { id: 20, label: "Greece" },
+        { id: 21, label: "Ireland" },
+        { id: 22, label: "United Kingdom" },
+        { id: 23, label: "Ukraine" },
+        { id: 24, label: "Turkey" },
+        { id: 25, label: "Lithuania" }
+      ]
+    });
+  })
+];

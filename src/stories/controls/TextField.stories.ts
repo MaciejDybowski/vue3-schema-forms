@@ -92,3 +92,41 @@ export const SimpleValidation: Story = {
     } as Schema,
   },
 };
+
+
+export const TextFieldCounter: Story = {
+  name: "Case: counter validation",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const exampleElement = canvas.getByLabelText("Text field");
+    await userEvent.type(exampleElement, "Required field with counter", { delay: 100 });
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit, { delay: 400 });
+
+    await expect(canvas.getAllByText(/Max/)[0]).toBeInTheDocument();
+
+    await expect(canvas.getByText("Max 20 characters.")).toBeInTheDocument();
+
+    await userEvent.clear(exampleElement, { delay: 400 });
+    await userEvent.type(exampleElement, "Counter pass", { delay: 100 });
+    await userEvent.click(Submit);
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        textField: {
+          label: "Text field",
+          layout: {
+            component: "text-field",
+            props: {
+              counter: 20
+            }
+          },
+        },
+      },
+    } as Schema,
+  },
+};
