@@ -8,7 +8,6 @@
     :label="label"
     :lazy="true"
     :loading="loading"
-    :multiple="multiple"
     :no-data-text="t('noData')"
     :options="pagination"
     :rules="!fieldProps.readonly ? rules : []"
@@ -18,7 +17,7 @@
     no-filter
     return-object
     v-bind="fieldProps"
-    @focus="focusIn($event)"
+    @click="fetchData($event)"
     @loadMoreRecords="loadMoreRecords"
     @update:search="updateQuery"
   >
@@ -97,7 +96,7 @@
 import axios from "axios";
 import { debounce } from "lodash";
 import get from "lodash/get";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import BaseAutocomplete from "@/components/controls/base/BaseAutocomplete.vue";
 import { Pagination } from "@/components/controls/base/Pagination";
@@ -151,13 +150,12 @@ const pagination = props.schema.source.itemsPerPage
   ? ref(new Pagination(props.schema.source.itemsPerPage))
   : ref(new Pagination(10));
 const menu = ref(false);
-const multiple = props.schema.source.multiple ? props.schema.source.multiple : true;
 const showMenuItemsOnFocusIn = props.schema.source.showMenuItemsOnFocusIn ? props.schema.source.showMenuItemsOnFocusIn : false;
 const loading = ref(false);
 
 const items = ref([]);
 
-async function focusIn(event: any) {
+async function fetchData(event: any) {
   if (!fieldProps.value.readonly) {
     await load();
   }
@@ -184,6 +182,7 @@ async function load() {
 
     items.value = get(response.data, "content", []);
     pagination.value.setTotalElements(mapSliceTotalElements(response.data));
+    loadCounter.value++;
   } catch (e) {
     console.error(e);
   } finally {
@@ -215,7 +214,7 @@ async function loadMoreRecords() {
   }
 }
 
-async function checkIfURLHasDependency() {
+async function checkIfURLHasDependency(createListener = false) {
   const isApiContainsDependency = !(usersAPIEndpoint.value.match(variableRegexp) == null);
   if (isApiContainsDependency) {
     let endpoint = await resolve(props.schema, usersAPIEndpoint.value, "title", true);
@@ -224,30 +223,33 @@ async function checkIfURLHasDependency() {
       endpoint = await resolve(props.schema, endpoint.resolvedText, "title", true);
     }
 
-
     if (endpoint.allVariablesResolved) {
       usersAPIEndpoint.value = endpoint.resolvedText;
+      await load();
     } else if (logger.dictionaryLogger) {
       console.debug(
         `[vue-schema-forms] [DictionaryLogger] => API call was blocked, not every variable from endpoint was resolved ${usersAPIEndpoint.value}`,
       );
     }
 
-    const vueSchemaFormEventBus = useEventBus<string>("form-model");
-    const unsubscribe = vueSchemaFormEventBus.on(async () => await listener());
+    if (createListener) {
+      const vueSchemaFormEventBus = useEventBus<string>("form-model");
+      const unsubscribe = vueSchemaFormEventBus.on(async () => await listener());
 
-    const listener = async () => {
-      await new Promise((r) => setTimeout(r, 50));
-      const temp = await resolve(props.schema, props.schema.source.url as string, "title", true);
-      if (temp.resolvedText !== usersAPIEndpoint.value) {
-        usersAPIEndpoint.value = temp.resolvedText;
-      }
-    };
+      const listener = async () => {
+        await new Promise((r) => setTimeout(r, 50));
+        const temp = await resolve(props.schema, props.schema.source.url as string, "title", true);
+        if (temp.resolvedText !== usersAPIEndpoint.value) {
+          usersAPIEndpoint.value = temp.resolvedText;
+          await load();
+        }
+      };
+    }
   }
 }
 
 function removeValue(item: User) {
-  if (multiple) {
+  if (fieldProps.multiple) {
     const tempArray = (localModel.value as User[]).filter((val) => val != item);
     localModel.value = tempArray.length > 0 ? tempArray : null;
   } else {
@@ -326,7 +328,29 @@ function updateQuery(val: any) {
   debounced.load();
 }
 
+const singleOptionAutoSelect = ref(false);
+const loadCounter = ref(0);
+
+function singleOptionAutoSelectFunction() {
+  const selectSingleOptionLogic = () => {
+    if (items.value.length !== 1 || !singleOptionAutoSelect.value || loadCounter.value > 1) return;
+    console.debug("HERE");
+    const selectedValue = items.value[0];
+
+    if (JSON.stringify(localModel.value) !== JSON.stringify(selectedValue)) {
+      localModel.value = [selectedValue];
+    }
+  };
+
+  selectSingleOptionLogic();
+  watch(items, selectSingleOptionLogic, { deep: true });
+}
+
 onMounted(async () => {
+  singleOptionAutoSelect.value =
+    "singleOptionAutoSelect" in props.schema.source && props.schema.source.singleOptionAutoSelect
+      ? props.schema.source.singleOptionAutoSelect
+      : false;
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
@@ -334,7 +358,8 @@ onMounted(async () => {
   if (props.schema.source.url) {
     usersAPIEndpoint.value = props.schema.source.url;
   }
-  await checkIfURLHasDependency();
+  await checkIfURLHasDependency(true);
+  singleOptionAutoSelectFunction();
 });
 </script>
 

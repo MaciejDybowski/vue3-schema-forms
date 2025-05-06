@@ -2,6 +2,7 @@
 import { Meta, StoryObj } from "@storybook/vue3";
 
 import FormStoryWrapper from "../../.storybook/components/FormStoryWrapper.vue";
+import { MULTI_ORDERED_SELECT_MOCK } from "./mock-responses";
 
 export default {
   title: "Development Stories",
@@ -140,4 +141,51 @@ export const Story2: Story = {
     },
   },
   parameters: {},
+};
+
+export const Table: Story = {
+  name: "ordered-multi-select",
+  args: {
+    model: {
+      orderedMultiSelect: null,
+    },
+    schema: {
+      type: "object",
+      properties: {
+        orderedMultiSelect: {
+          label: "Wybierz elementy do generowania exclea",
+          variant: "list",
+          layout: {
+            cols: 12,
+            component: "ordered-multi-select",
+          },
+          source: {
+            url: "/mocks/multi-ordered-items",
+            title: "label",
+            value: "id",
+          },
+        },
+        /*   orderedMultiSelect2: {
+             label: "Wybierz elementy do generowania exclea",
+             variant: "combobox",
+             layout: {
+               cols: 6,
+               component: "ordered-multi-select",
+             },
+             source: {
+               url: "/mock/dictionaries/items-to-excel",
+               title: "label",
+               value: "id",
+             },
+           },*/
+      },
+      required: ["orderedMultiSelect"],
+      i18n: {},
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: MULTI_ORDERED_SELECT_MOCK,
+    },
+  },
 };

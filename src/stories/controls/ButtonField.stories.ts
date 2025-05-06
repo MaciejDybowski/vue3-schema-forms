@@ -242,6 +242,43 @@ export const DialogWithInjectedForm: Story = {
   },
 };
 
+export const EmitActionObject: Story = {
+  name: "Mode: emit action object",
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole("button", { name: "Emit action object!" });
+    await expect(button).toBeInTheDocument();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await button.click();
+
+    await expect(context.args.emittedObject.code).toEqual("my_action_code");
+    await expect(context.args.emittedObject.params.script).toEqual("temp");
+  },
+  args: {
+    formModel: {},
+    emittedObject: {},
+    schema: {
+      type: "object",
+      properties: {
+        button: {
+          label: "Emit action object!",
+          layout: {
+            component: "button",
+          },
+          mode: "action",
+          config: {
+            code: "my_action_code",
+            params: {
+              script: "temp",
+            }
+          },
+        },
+      },
+    },
+  },
+};
+
 export const APICall: Story = {
   name: "Mode: API call with emit event",
   play: async (context) => {
@@ -313,7 +350,7 @@ export const APICallWaitForSave: Story = {
     const button = await canvas.findByRole("button", { name: "Call API" });
     await expect(button).toBeInTheDocument();
 
-    const fieldA = await canvas.findByLabelText("Field A")
+    const fieldA = await canvas.findByLabelText("Field A");
     await userEvent.type(fieldA, "Should wait for this", {
       delay: 100,
     });

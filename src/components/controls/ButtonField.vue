@@ -94,7 +94,6 @@ if (shouldWaitForSaveState) {
     if (payload == true) {
       caller.value();
       caller.value = () => {};
-      console.debug("HERERERERER")
     }
   });
 }
@@ -140,6 +139,17 @@ async function saveDialogForm(isActive: Ref<boolean>) {
 
 async function runBtnLogic() {
   switch (schema.mode) {
+    case "action":
+      const body = await createBodyObject();
+      let payloadObject = {
+        code: schema.config.code,
+        body: body,
+        params: {
+          ...schema.config.params,
+        },
+      };
+      actionHandlerEventBus.emit("form-action", payloadObject);
+      break;
     case "form-and-action":
       popup.errorMessages = [];
       popup.title = schema.config.title;
@@ -203,6 +213,7 @@ async function apiCallMode() {
 
 async function createBodyObject() {
   let body = {};
+  if (schema.config.body == undefined) return body;
   const entries = Object.entries(schema.config.body);
   const resolvedEntries = await Promise.all(
     entries.map(async ([key, value]) => {

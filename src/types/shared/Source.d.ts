@@ -99,4 +99,5 @@ export interface UserInputSource {
   multiple?: boolean;
   maxSelection?: number;
   showMenuItemsOnFocusIn?: boolean;
+  singleOptionAutoSelect?: boolean;
 }
