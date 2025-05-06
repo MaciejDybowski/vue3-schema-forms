@@ -249,7 +249,7 @@ async function checkIfURLHasDependency(createListener = false) {
 }
 
 function removeValue(item: User) {
-  if (fieldProps.multiple) {
+  if (fieldProps.value.multiple) {
     const tempArray = (localModel.value as User[]).filter((val) => val != item);
     localModel.value = tempArray.length > 0 ? tempArray : null;
   } else {
