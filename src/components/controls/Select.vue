@@ -10,6 +10,7 @@
     :items='data'
     :loading='loading'
     :return-object='returnObject as any'
+    @change="onChange(schema, model);"
   ></v-select>
 </template>
 
@@ -19,6 +20,7 @@ import { computed, onMounted } from 'vue';
 import { EngineSourceField } from '@/types/engine/controls';
 
 import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
+import { useEventHandler } from "@/core/composables/useEventHandler";
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -30,6 +32,7 @@ const { bindProps, fieldProps } = useProps();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
+const { onChange } = useEventHandler();
 
 
 const localModel = computed({
