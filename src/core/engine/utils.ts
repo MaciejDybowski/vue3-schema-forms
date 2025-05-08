@@ -1,13 +1,19 @@
 import { jsonSchemaResolver } from "@/core/engine/jsonSchemaResolver";
-import { baseUri } from "@/main";
+import { SchemaOptions, baseUri } from "@/main";
 import { Schema } from "@/types/schema/Schema";
 
 export const variableRegexp: RegExp = new RegExp("{.*?}", "g");
 
-export async function resolveSchemaWithLocale(schema: Schema, locale: string): Promise<Schema> {
+export async function resolveSchemaWithLocale(schema: Schema, locale: string, options?: SchemaOptions): Promise<Schema> {
+  if (options) {
+    const resolvedTranslations = await jsonSchemaResolver.resolve(options.i18n, { baseUri });
+    schema.i18n = { ...schema.i18n, ...resolvedTranslations.result };
+  }
   resolveRefsAndReplace(schema);
+  
   const temp = JSON.parse(JSON.stringify(schema).replaceAll("~$locale~", locale));
   const resolved = await jsonSchemaResolver.resolve(temp, { baseUri });
+
   return resolved.result as Schema;
 }
 

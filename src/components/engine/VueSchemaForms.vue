@@ -155,7 +155,7 @@ function updateModel(event: NodeUpdateEvent) {
 
 async function loadResolvedSchema() {
   loading.value = true;
-  resolvedSchema.value = await resolveSchemaWithLocale(props.schema, locale.value);
+  resolvedSchema.value = await resolveSchemaWithLocale(props.schema, locale.value, props.options);
   loading.value = false;
 }
 

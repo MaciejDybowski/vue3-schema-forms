@@ -54,8 +54,8 @@ export const TranslationTesting: Story = {
       i18n: {
         pl: {
           home: {
-            item: {
-              test: "Item PL {0} and {1}",
+            test: {
+              item: "Item PL {0} and {1}",
             },
           },
           longSpan:
