@@ -1,6 +1,7 @@
 import { jsonSchemaResolver } from "@/core/engine/jsonSchemaResolver";
 import { SchemaOptions, baseUri } from "@/main";
 import { Schema } from "@/types/schema/Schema";
+import { cloneDeep } from "lodash";
 
 export const variableRegexp: RegExp = new RegExp("{.*?}", "g");
 
@@ -31,13 +32,16 @@ function resolveRefsAndReplace(schema: any) {
     if (lastKey) target[lastKey] = value;
   }
 
-  function walk(obj: any, i18n: any) {
+  // Tworzymy kopię i18n, żeby uniknąć modyfikacji zamrożonych obiektów
+  const i18nCopy = cloneDeep(schema.i18n);
+
+  function walk(obj: any) {
     if (Array.isArray(obj)) {
-      obj.forEach((item) => walk(item, i18n));
+      obj.forEach((item) => walk(item));
     } else if (typeof obj === "object" && obj !== null) {
       for (const key in obj) {
         if (typeof obj[key] === "object") {
-          walk(obj[key], i18n);
+          walk(obj[key]);
         }
       }
 
@@ -54,14 +58,14 @@ function resolveRefsAndReplace(schema: any) {
           });
 
         if (Object.keys(replacements).length > 0) {
-          for (const locale in i18n) {
-            let translation = getDeepValue(i18n[locale], pathParts);
+          for (const locale in i18nCopy) {
+            let translation = getDeepValue(i18nCopy[locale], pathParts);
             if (typeof translation === "string") {
               for (const index in replacements) {
                 const variable = replacements[Number(index)];
                 translation = translation.replace(`{${index}}`, variable);
               }
-              setDeepValue(i18n[locale], [...pathParts], translation);
+              setDeepValue(i18nCopy[locale], [...pathParts], translation);
             }
           }
 
@@ -74,5 +78,8 @@ function resolveRefsAndReplace(schema: any) {
     }
   }
 
-  walk(schema.properties, schema.i18n);
+  walk(schema.properties);
+
+  // Nadpisujemy schema.i18n zaktualizowaną wersją
+  schema.i18n = i18nCopy;
 }
