@@ -127,30 +127,34 @@ export function CALC_DATE_DIFF_RETURN_MINUTES(expression: string, model: object)
   }
 }
 
-function calculateDateDifference(date1, date2) {
-  // Convert dates to Date objects
-  const d1 = new Date(date1);
-  const d2 = new Date(date2);
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-  // Calculate the difference in milliseconds
-  // @ts-ignore
-  const diffInMs = Math.abs(d2 - d1);
+dayjs.extend(duration);
+dayjs.extend(customParseFormat);
 
-  // Convert the difference to days, hours, and minutes
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-  const remainingMsAfterDays = diffInMs % (1000 * 60 * 60 * 24);
+function calculateDateDifference(date1: string | number | Date, date2: string | number | Date) {
+  if(date1 == 0 || date2 == 0) return { days: 0, hours: 0, minutes: 0 };
 
-  const diffInHours = Math.floor(remainingMsAfterDays / (1000 * 60 * 60));
-  const remainingMsAfterHours = remainingMsAfterDays % (1000 * 60 * 60);
+  const d1 = dayjs(date1);
+  const d2 = dayjs(date2);
 
-  const diffInMinutes = Math.floor(remainingMsAfterHours / (1000 * 60));
+  if (!d1.isValid() || !d2.isValid()) {
+    return { days: 0, hours: 0, minutes: 0 };
+  }
+
+  const diffInMs = Math.abs(d2.diff(d1));
+  const diffDuration = dayjs.duration(diffInMs);
 
   return {
-    days: diffInDays,
-    hours: diffInHours,
-    minutes: diffInMinutes,
+    days: Math.floor(diffDuration.asDays()),
+    hours: diffDuration.hours(),
+    minutes: diffDuration.minutes(),
   };
 }
+
+
 
 export function DELEGATION_DIET_CALC(expression: string, model: object) {
   let regex = /DELEGATION_DIET_CALC\((.*?)\)/;

@@ -41,6 +41,7 @@ export function useExpression() {
   }
 
   async function expressionListener(key: string, expression: string, model: object, formId: string) {
+    await new Promise((r) => setTimeout(r, 30));
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let f = functions[functionName];
