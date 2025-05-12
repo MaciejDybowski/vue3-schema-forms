@@ -167,25 +167,29 @@ export function DELEGATION_DIET_CALC(expression: string, model: object) {
     let sniadania = get(model, parameterArray[2], 0);
     let obiady = get(model, parameterArray[3], 0);
     let kolacje = get(model, parameterArray[4], 0);
+    let wysokoscDiety = get(model, parameterArray[5], 0);
+    let odliczeniaSniadania = get(model, parameterArray[6], 0);
+    let odliczeniaObiad = get(model, parameterArray[7], 0);
+    let odliczeniaKolacja = get(model, parameterArray[8], 0);
 
-    let dietaNalezna = 45 * dni;
+    let dietaNalezna = wysokoscDiety * dni;
     if (godziny <= 8 && godziny > 0) {
-      dietaNalezna += 45 / 2;
+      dietaNalezna += wysokoscDiety / 2;
     }
     if (godziny > 8) {
-      dietaNalezna += 45;
+      dietaNalezna += wysokoscDiety;
     }
 
     if (sniadania > 0) {
-      dietaNalezna = dietaNalezna - 45 * 0.25 * sniadania;
+      dietaNalezna = dietaNalezna - sniadania *odliczeniaSniadania;
     }
 
     if (obiady > 0) {
-      dietaNalezna = dietaNalezna - 45 * 0.5 * obiady;
+      dietaNalezna = dietaNalezna - obiady * odliczeniaObiad;
     }
 
     if (kolacje > 0) {
-      dietaNalezna = dietaNalezna - 45 * 0.25 * kolacje;
+      dietaNalezna = dietaNalezna - kolacje * odliczeniaKolacja;
     }
 
     return dietaNalezna;
