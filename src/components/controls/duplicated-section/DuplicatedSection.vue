@@ -103,13 +103,12 @@ import DraggableIcon from "./DraggableIcon.vue";
 import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
 
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
-
 
 const props = defineProps<{
   schema: EngineDuplicatedSection;
@@ -319,6 +318,13 @@ function changePosition(drag: VueDragable<Schema>) {
 }
 
 const getAddBtnText = computed(() => {
+  const isRef =
+    typeof duplicatedSectionOptions.value.addBtnText === "object" && "$ref" in duplicatedSectionOptions.value.addBtnText;
+  if (isRef) {
+    //@ts-ignore
+    return "#" + duplicatedSectionOptions.value.addBtnText.$ref.split("/").pop();
+  }
+
   if (duplicatedSectionOptions.value?.addBtnText) {
     return duplicatedSectionOptions.value.addBtnText;
   } else {
@@ -419,7 +425,7 @@ function mapPropertiesIfDefault(fieldDefinition: Record<string, SchemaField>, de
 onMounted(async () => {
   init();
   await bindProps(props.schema);
-  if(isEditable.value){
+  if (isEditable.value) {
     isEditable.value = !fieldProps.value.readonly;
   }
 });
