@@ -19,6 +19,7 @@
         <v-card-text>
           <vue-schema-forms
             ref="popupReference"
+            :key="popupReferenceReload"
             v-model="popup.model"
             :options="popup.options"
             :schema="popup.schema"
@@ -67,6 +68,20 @@ import { Schema } from "@/types/schema/Schema";
 import { useEventBus } from "@vueuse/core";
 
 import VueSchemaForms from "../engine/VueSchemaForms.vue";
+import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
+
+const vueSchemaFormEventBus = useEventBus<string>("form-model");
+
+const popupReferenceReload= ref(0)
+vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
+  if (payload == "action-callback" && schema.mode == 'form-and-action') {
+    const newModel = get(model, schema.config.modelReference, {})
+    if (schema.config.modelReference) {
+      popup.model = newModel
+      popupReferenceReload.value++
+    }
+  }
+});
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const loading = ref(false);
