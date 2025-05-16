@@ -1,19 +1,28 @@
+import { cloneDeep } from "lodash";
+
 import { jsonSchemaResolver } from "@/core/engine/jsonSchemaResolver";
 import { SchemaOptions, baseUri } from "@/main";
 import { Schema } from "@/types/schema/Schema";
-import { cloneDeep } from "lodash";
 
 export const variableRegexp: RegExp = new RegExp("{.*?}", "g");
 
-export async function resolveSchemaWithLocale(schema: Schema, locale: string, options?: SchemaOptions): Promise<Schema> {
+export async function resolveSchemaWithLocale(originalSchema: Schema, locale: string, options?: SchemaOptions): Promise<Schema> {
+  const schema = cloneDeep(originalSchema);
+
   if (options) {
     const resolvedTranslations = await jsonSchemaResolver.resolve(options.i18n, { baseUri });
     schema.i18n = { ...schema.i18n, ...resolvedTranslations.result };
   }
+
   resolveRefsAndReplace(schema);
-  
+
   const temp = JSON.parse(JSON.stringify(schema).replaceAll("~$locale~", locale));
-  const resolved = await jsonSchemaResolver.resolve(temp, { baseUri });
+  let resolved: any = await jsonSchemaResolver.resolve(temp, { baseUri });
+
+  const stillHasRef = JSON.stringify(resolved.result).includes("/~$locale~/");
+  if (stillHasRef) {
+    return resolveSchemaWithLocale(resolved.result as Schema, locale);
+  }
 
   return resolved.result as Schema;
 }
@@ -32,7 +41,7 @@ function resolveRefsAndReplace(schema: any) {
     if (lastKey) target[lastKey] = value;
   }
 
-  // Tworzymy kopię i18n, żeby uniknąć modyfikacji zamrożonych obiektów
+  // Głęboka kopia, żeby nie modyfikować zamrożonego obiektu
   const i18nCopy = cloneDeep(schema.i18n);
 
   function walk(obj: any) {
@@ -46,10 +55,9 @@ function resolveRefsAndReplace(schema: any) {
       }
 
       if (obj.$ref && obj.$ref.includes("/~$locale~/")) {
-        const refPath = obj.$ref.split("/~$locale~/")[1]; // np. "home/item" albo "longSpan"
-        const pathParts = refPath.split("/"); // ['home', 'item'] lub ['longSpan']
+        const refPath = obj.$ref.split("/~$locale~/")[1];
+        const pathParts = refPath.split("/");
 
-        // Zbieramy wszystkie zamienniki {0}, {1}, {2}, ...
         const replacements: Record<number, string> = {};
         Object.keys(obj)
           .filter((k) => !isNaN(Number(k)))
@@ -62,14 +70,12 @@ function resolveRefsAndReplace(schema: any) {
             let translation = getDeepValue(i18nCopy[locale], pathParts);
             if (typeof translation === "string") {
               for (const index in replacements) {
-                const variable = replacements[Number(index)];
-                translation = translation.replace(`{${index}}`, variable);
+                translation = translation.replace(`{${index}}`, replacements[Number(index)]);
               }
               setDeepValue(i18nCopy[locale], [...pathParts], translation);
             }
           }
 
-          // Po podmianie usuwamy klucze 0,1,2,...
           for (const index in replacements) {
             delete obj[index];
           }
@@ -79,7 +85,5 @@ function resolveRefsAndReplace(schema: any) {
   }
 
   walk(schema.properties);
-
-  // Nadpisujemy schema.i18n zaktualizowaną wersją
   schema.i18n = i18nCopy;
 }
