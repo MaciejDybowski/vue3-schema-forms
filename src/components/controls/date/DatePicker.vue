@@ -18,6 +18,7 @@
         :readonly="fieldProps.readonly as boolean"
         icon="mdi-calendar"
         variant="plain"
+        size="small"
         @click="pickerModel = !pickerModel"
       />
     </template>
