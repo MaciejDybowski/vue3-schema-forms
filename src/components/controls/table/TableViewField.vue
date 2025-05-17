@@ -255,6 +255,13 @@ const filteredButtons = ref<TableButton[]>([]);
 async function filteredButtonsFunction() {
   const tempActions = await Promise.all(
     buttons.value?.map(async (button: TableButton) => {
+
+      // For readonly mode when whole form is in this state
+      if (fieldProps.value.readonly == true) {
+        button.disabled = true;
+        return button;
+      }
+
       if (button.disabled) {
         const condition = button.disabled as string;
         const nata = jsonata(condition);

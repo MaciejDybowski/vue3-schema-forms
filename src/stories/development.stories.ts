@@ -13,7 +13,7 @@ export default {
     options: {
       fieldProps: {
         variant: "outlined",
-        density: "comfortable",
+        density: "compact",
       },
     },
   },
@@ -69,6 +69,64 @@ export const TranslationTesting: Story = {
           },
           longSpan:
             "Lorem Ipsum is simply dummy text of the printing and typesetting {0}. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+        },
+      },
+    },
+  },
+};
+
+export const TranslationTesting2: Story = {
+  args: {
+    formModel: {
+      isCustomerExist: false,
+      customer: {
+        name: "Text",
+        shipCountry: {
+          label: "Country",
+        },
+        salesRegion: {
+          label: "Region",
+        },
+      },
+    },
+    schema: {
+      type: "object",
+      properties: {
+        customerData: {
+          content: {
+            $ref: "#/i18n/~$locale~/form/prepareOffer/customerData",
+            "0": "{customer.name:No data}",
+            "1": "{nata(isCustomerExist ? customer.shipCountry : customer.shipCountry.label)}",
+            "2": "{nata(isCustomerExist ? customer.salesRegion : customer.salesRegion.label)}",
+          },
+          layout: {
+            component: "static-content",
+            tag: "p",
+            cols: {
+              xs: 12,
+              sm: 12,
+              md: 12,
+              lg: 8,
+              xl: 8,
+              xxl: 8,
+            },
+          },
+        },
+      },
+      i18n: {
+        pl: {
+          form: {
+            prepareOffer: {
+              customerData: "test {0} item {1} oraz {2}",
+            },
+          },
+        },
+        en: {
+          form: {
+            prepareOffer: {
+              customerData: "test {0} item {1} oraz {2}",
+            },
+          },
         },
       },
     },
@@ -143,6 +201,56 @@ export const Story2: Story = {
   parameters: {},
 };
 
+export const Story3: Story = {
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        typelistColumns: {
+          label: "",
+          variant: "list",
+          layout: {
+            cols: {
+              xs: 12,
+              sm: 12,
+              md: 12,
+              lg: 12,
+              xl: 12,
+              xxl: 12,
+            },
+            component: "ordered-multi-select",
+          },
+          source: {
+            url: "/mocks/multi-ordered-items",
+            title: "label",
+            value: "id",
+            returnObject: true,
+          },
+        },
+        resetButton: {
+          label: "Reset to default",
+          layout: {
+            component: "button",
+          },
+          mode: "action",
+          config: {
+            code: "callScript",
+            params: {
+              script: "reset_typelist_settings",
+            },
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: MULTI_ORDERED_SELECT_MOCK,
+    },
+  },
+};
+
 export const Table: Story = {
   name: "ordered-multi-select",
   args: {
@@ -186,6 +294,47 @@ export const Table: Story = {
   parameters: {
     msw: {
       handlers: MULTI_ORDERED_SELECT_MOCK,
+    },
+  },
+};
+
+export const Table4: Story = {
+  args: {
+    formModel: {
+      fieldA: "2025-05-09",
+    },
+    schema: {
+      type: "object",
+      properties: {
+        fieldA: {
+          label: "Date",
+          layout: {
+            component: "date-picker",
+            cols: 4,
+            props: {
+              readonly: true,
+            },
+          },
+        },
+        fieldB: {
+          label: "Text",
+          layout: {
+            component: "text-field",
+            cols: 4,
+            props: {
+              hint: "Test",
+              "persistent-hint": true,
+            },
+          },
+        },
+        fieldC: {
+          label: "Date&Time",
+          layout: {
+            component: "date-time-picker",
+            cols: 4,
+          },
+        },
+      },
     },
   },
 };

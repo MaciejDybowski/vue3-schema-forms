@@ -664,7 +664,7 @@ export const TopSlotAndButtonsDisabled: Story = {
             ],
             buttons: [
               {
-                "disabled": "10 > 2",
+                disabled: "10 > 2",
                 label: "Add products",
                 btnProps: {
                   color: "primary",
@@ -996,7 +996,6 @@ export const ContextActionsWithConditionDisabled: Story = {
     },
   },
 };
-
 
 export const ContextActionWithSchemaIntegration: Story = {
   name: "Slot: Context Actions + schema",
@@ -1552,6 +1551,160 @@ export const EditableSelectReadonlyWithCondition: Story = {
   parameters: {
     msw: {
       handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
+    },
+  },
+};
+
+export const ReadonlyMode: Story = {
+  name: "Mode: readonly",
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        tableOfProducts: {
+          layout: {
+            component: "table-view",
+          },
+          source: {
+            data: "/mock-data/table-view-mock",
+            headers: [
+              {
+                title: "Name",
+                key: "name",
+                valueMapping: "name",
+                type: "TEXT",
+              },
+              {
+                title: "Location",
+                key: "location",
+                valueMapping: "location",
+                type: "TEXT",
+              },
+              {
+                title: "Editable height",
+                key: "height-collection",
+                type: "COLLECTION",
+                editable: [
+                  {
+                    type: "NUMBER",
+                    title: "Height",
+                    key: "height",
+                    valueMapping: "height:heightOptions:title:value",
+                  },
+                ],
+                properties: { minWidth: "200px", maxWidth: "200px", width: "100px" },
+              },
+              {
+                title: "Base",
+                key: "base",
+                valueMapping: "base",
+                type: "TEXT",
+              },
+              {
+                title: "Volume",
+                key: "volume",
+                valueMapping: "volume",
+                type: "TEXT",
+              },
+              {
+                title: "Actions",
+                key: "actions",
+                actions: [
+                  {
+                    title: "Delete",
+                    icon: "mdi-delete-outline",
+                    mode: "action",
+                    code: "callScript",
+                    config: {
+                      params: {
+                        scriptName: "delete_product_from_offer",
+                      },
+                      body: {
+                        name: "{name}",
+                      },
+                    },
+                    props: {
+                      color: "error",
+                    },
+                  },
+                  {
+                    title: "Pallet shipping",
+                    icon: "mdi-shipping-pallet",
+                    mode: "action",
+                    code: "callScript",
+                    config: {
+                      params: {
+                        scriptName: "add_pallet_price",
+                      },
+                      body: {
+                        name: "{name}",
+                      },
+                    },
+                    props: {
+                      color: "primary",
+                    },
+                  },
+                ],
+              },
+            ],
+            buttons: [
+              {
+                label: "Add products",
+                btnProps: {
+                  color: "primary",
+                  rounded: false,
+                },
+                mode: "action",
+                config: {
+                  code: "batchAdd", // na froncie jest sprawdzanie jak batchAdd to i tak woła skrypt bo w obsłudze zadanie jest tylko jedna uniwersalna akcja
+                  featureId: "products",
+                  viewId: "68304-tabela",
+                  batchAddAttributePath: "dataId",
+                  scriptName: "dodaj_produkty_do_oferty",
+                },
+              },
+              {
+                label: "Import",
+                btnProps: {
+                  color: "primary",
+                  rounded: false,
+                },
+                mode: "form-and-action",
+                config: {
+                  title: "Import products from csv",
+                  code: "callScript",
+                  scriptName: "import_products_from_csv",
+                },
+                schema: {
+                  properties: {
+                    csvBody: {
+                      label: "Paste your csv file content",
+                      layout: {
+                        component: "text-area",
+                      },
+                    },
+                  },
+                  required: ["csvBody"],
+                },
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+    options: {
+      fieldProps: {
+        variant: "outlined",
+        density: "comfortable",
+        readonly: true,
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
 };

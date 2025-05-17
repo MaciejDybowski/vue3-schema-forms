@@ -1,15 +1,12 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
-
 import { expect, userEvent, within } from "@storybook/test";
 
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { SimpleSource } from "../../types/schema/elements";
+import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
-
-
 
 export default {
   title: "Forms/Controls/Checkbox",
@@ -50,7 +47,7 @@ export const Standard: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefault: Story = {
-  name: "With default (value)",
+  name: "Default value",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -84,7 +81,7 @@ export const WithDefault: Story = {
 };
 
 export const CustomMapping: Story = {
-  name: "Custom mapping",
+  name: "Case: response/option mapping",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -117,7 +114,7 @@ export const CustomMapping: Story = {
 };
 
 export const CustomMappingReturnObject: Story = {
-  name: "Custom mapper + return obj",
+  name: "Case: return object/option mapping",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -152,7 +149,7 @@ export const CustomMappingReturnObject: Story = {
 };
 
 export const CustomMappingReturnObjectDefault: Story = {
-  name: "Custom mapper + obj + default",
+  name: "Case: return object/option mapping/default",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -196,26 +193,12 @@ export const CustomMappingReturnObjectDefault: Story = {
 };
 
 export const GetOptionsFromAPI: Story = {
-  parameters: {
-    mockData: [
-      {
-        url: "/api/v1/options",
-        method: "GET",
-        status: 200,
-        response: [
-          { id: 1, label: "Option 1" },
-          { id: 2, label: "Option 2" },
-          { id: 3, label: "Option 3" },
-          { id: 4, label: "Option 4" },
-        ],
-      },
-    ],
-  },
+  name: "Case: options from API",
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);
     await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for api call
-    await expect(canvas.getByText("Option 4")).toBeInTheDocument();
+    await expect(canvas.getByText("Dram")).toBeInTheDocument();
   },
   args: {
     formModel: {},
@@ -226,12 +209,9 @@ export const GetOptionsFromAPI: Story = {
           label: "Options",
           layout: {
             component: "checkbox",
-            props: {
-              inline: true,
-            },
           },
           source: {
-            url: "/api/v1/options",
+            url: "/mocks/currencies",
             title: "label",
             value: "id",
             returnObject: true,
@@ -240,13 +220,18 @@ export const GetOptionsFromAPI: Story = {
       },
     } as Schema,
   },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
 };
 
 /**
  * Example shows how to define a "required" field on a form
  */
 export const SimpleValidation: Story = {
-  name: "Checkbox with required annotation",
+  name: "Required",
 
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();

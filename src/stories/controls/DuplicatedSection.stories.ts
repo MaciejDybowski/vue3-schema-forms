@@ -37,6 +37,9 @@ export const Standard: Story = {
                 },
               },
             },
+            options: {
+              addBtnText: "Add",
+            },
             cols: 6,
           },
         },
@@ -80,6 +83,9 @@ export const StandardWithRequired: Story = {
               },
               required: ["product"],
             },
+            options: {
+              addBtnText: "Add",
+            },
             cols: 6,
           },
         },
@@ -110,6 +116,9 @@ export const WithDefaults: Story = {
                 },
               },
             },
+            options: {
+              addBtnText: "Add",
+            }
           },
           cols: 6,
         },
@@ -147,6 +156,7 @@ export const WithDivider: Story = {
               },
             },
             options: {
+              addBtnText: "Add",
               showDivider: true,
             },
           },

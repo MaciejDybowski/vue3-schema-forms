@@ -13,7 +13,7 @@
       ]"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
-      v-bind="{ ...attrs, density: 'compact', readonly: shouldReadonlyMap[item.valueMapping] }"
+      v-bind="{ ...attrs, density: 'compact', readonly: shouldReadonlyMap[item.valueMapping] || attrs.readonly === true }"
       width="100%"
       @focusin="showFormattedNumber[index] = false"
       @focusout="showFormattedNumber[index] = true"
@@ -31,7 +31,7 @@
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
       :return-object="false"
-      v-bind="{ ...attrs, density: 'compact', readonly: shouldReadonlyMap[item.valueMapping] }"
+      v-bind="{ ...attrs, density: 'compact', readonly: shouldReadonlyMap[item.valueMapping] || attrs.readonly === true }"
       width="100%"
       @keyup.enter="(e) => e.target.blur()"
       @update:model-value="(e: any) => emitData(e, item)"
@@ -138,6 +138,7 @@ async function computeShouldRender(items: HeaderEditableObject[]) {
       newMap[item.valueMapping] = true;
     }
   }
+
   shouldRenderMap.value = newMap;
 }
 
@@ -164,9 +165,9 @@ const hasConditionReadonly = computed(() => {
 });
 
 onMounted(async () => {
+  await computeShouldReadonly(props.items);
+  await computeShouldRender(props.items);
   if (hasConditionVisibility.value || hasConditionReadonly.value) {
-    await computeShouldReadonly(props.items);
-    await computeShouldRender(props.items);
     watch(
       () => props.row,
       async () => {

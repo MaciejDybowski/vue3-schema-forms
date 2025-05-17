@@ -18,7 +18,7 @@ export function useSource(source: SimpleSource) {
     }
     if (source.url) {
       const response = await axios.get(source.url as string);
-      data.value = response.data;
+      data.value = response.data.content;
     }
 
     loading.value = false;
