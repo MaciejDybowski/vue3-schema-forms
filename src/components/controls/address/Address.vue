@@ -1,7 +1,6 @@
 <template>
   <form-root
     :schema="addressSchema"
-    :form-id="schema.formId"
     :model="localModel"
     :options="schema.options"
     @update:model="updateModel"

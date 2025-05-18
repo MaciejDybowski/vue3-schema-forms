@@ -3,16 +3,17 @@ import { cloneDeep } from "lodash";
 import { ref } from "vue";
 
 import { Schema, logger, useResolveVariables } from "@/main";
-import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 import { useEventBus } from "@vueuse/core";
+import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
 
 export function useConditionalRendering() {
   let shouldRender = ref(false);
   let lastValueOfShouldRender = ref(false);
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
   const { fillPath } = useResolveVariables();
+  const form = useInjectedFormModel();
 
   async function shouldRenderField(schema: EngineField, model: any, registerListener: boolean = true) {
     // first use of function, set variable from schema only once
@@ -39,8 +40,8 @@ export function useConditionalRendering() {
   }
 
   async function ifByJsonNata(schema: EngineField, expression: string, model: any) {
-    const formModelStore = useFormModelStore(schema.formId);
-    const modelForResolve = formModelStore.getFormModelForResolve;
+
+    const modelForResolve = form.getFormModelForResolve.value;
     const nata = jsonata(expression);
     shouldRender.value = await nata.evaluate(modelForResolve);
     resetModelValueWhenFalse(model, schema);

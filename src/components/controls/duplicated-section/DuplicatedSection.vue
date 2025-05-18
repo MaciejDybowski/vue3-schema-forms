@@ -19,7 +19,6 @@
                 :show="isHovering ? isHovering : false"
               />
               <form-root
-                :form-id="schema.formId"
                 :model="localModel[index]"
                 :options="computedOptions"
                 :schema="element as Schema"

@@ -3,11 +3,10 @@ import { Ref, ref } from "vue";
 
 import { useLocale } from "@/core/composables/useLocale";
 import { useResolveVariables } from "@/core/composables/useResolveVariables";
-import { useFormModelStore } from "@/store/formModelStore";
+import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
 import { EngineField } from "@/types/engine/EngineField";
 import { SchemaSimpleValidation } from "@/types/shared/SchemaSimpleValidation";
 import { useEventBus } from "@vueuse/core";
-import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
 export function useRules() {
@@ -16,6 +15,7 @@ export function useRules() {
   let rules: Ref<any[]> = ref([]);
   let requiredInputClass = ref("");
   const { fillPath } = useResolveVariables();
+  const form = useInjectedFormModel();
 
   async function bindRules(schema: EngineField) {
     if (schema.required) {
@@ -69,7 +69,7 @@ export function useRules() {
               ruleDefinition.rule = ruleDefinition.rule?.replaceAll(schema.path + "[]", `${schema.path}[${schema.index}]`);
             }
 
-            let model = useFormModelStore(schema.formId).getFormModelForResolve;
+            let model = form.getFormModelForResolve.value;
             const nata = jsonata(variablePathWithoutBrackets);
             const result = await nata.evaluate(model);
 
@@ -92,7 +92,7 @@ export function useRules() {
         ruleDefinition.rule = fillPath(schema.path, schema.index as number, ruleDefinition.rule as string);
       }
 
-      let model = useFormModelStore(schema.formId).getFormModelForResolve;
+      let model = form.getFormModelForResolve.value;
       const nata = jsonata(ruleDefinition.rule as string);
 
       const conditionResult = await nata.evaluate(model);
@@ -102,8 +102,7 @@ export function useRules() {
   }
 
   async function ruleListener(schema: EngineField, ruleDefinition: SchemaSimpleValidation) {
-    const formModelStore = useFormModelStore(schema.formId);
-    const model = formModelStore.getFormModelForResolve;
+    const model = form.getFormModelForResolve.value;
     const nata = jsonata(ruleDefinition.rule as string);
     const conditionResult = await nata.evaluate(model);
     if (conditionResult) {
@@ -115,8 +114,7 @@ export function useRules() {
 
   function conditionalRequired(schema: EngineField, ruleDefinition: SchemaSimpleValidation, rules: Ref<any[]>) {
     rules.value.push(async (currentValue: any) => {
-      const formModelStore = useFormModelStore(schema.formId);
-      const model = formModelStore.getFormModelForResolve;
+      const model = form.getFormModelForResolve.value;
       const nata = jsonata(ruleDefinition.rule as string);
       const conditionResult = await nata.evaluate(model);
 

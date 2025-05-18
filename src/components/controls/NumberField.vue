@@ -48,7 +48,7 @@ import { NumberFormattingType, RoundOption, useNumber } from "@/core/composables
 import { variableRegexp } from "@/core/engine/utils";
 import { logger } from "@/main";
 import { EngineNumberField } from "@/types/engine/controls";
-import { useFormModelStore } from "@/store/formModelStore";
+
 import get from "lodash/get";
 
 const props = defineProps<{
@@ -171,7 +171,7 @@ async function runCalculationIfExist() {
 async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
-    localModel.value = await resolveExpression(props.schema.key, expression, props.model, props.schema.formId);
+    localModel.value = await resolveExpression(props.schema.key, expression, props.model);
   }
 }
 

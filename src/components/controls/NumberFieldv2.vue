@@ -128,7 +128,7 @@ async function runCalculationIfExist() {
 async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
-    localModel.value = await resolveExpression(props.schema.key, expression, props.model, props.schema.formId);
+    localModel.value = await resolveExpression(props.schema.key, expression, props.model);
   }
 }
 

@@ -4,13 +4,13 @@ import get from "lodash/get";
 import set from "lodash/set";
 
 import { logger } from "@/main";
-import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 import { useEventBus } from "@vueuse/core";
-import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
+import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
 
 export function useJSONataExpression() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
+  const form = useInjectedFormModel();
 
   // persistent-hint, props: {'persistent-hint': 'nata(fieldA=PLN?true:false'}
   // schema - to remove after remove usePreparedModelForExpression
@@ -22,8 +22,7 @@ export function useJSONataExpression() {
       object[`${keyToResolve}Expression`] = cloneDeep(object[keyToResolve]);
       delete object[keyToResolve];
 
-      const formModelStore = useFormModelStore(schema.formId);
-      const model = formModelStore.getFormModelForResolve;
+      const model = form.getFormModelForResolve.value;
       await tryResolveExpression(keyToResolve, object, model);
     }
   }
@@ -49,8 +48,8 @@ export function useJSONataExpression() {
     //if (schema.index == undefined || schema.index == payloadIndex) {
     if (logger.JSONataExpressionListener)
       console.debug(`[vue-schema-forms] [JSONataExpressionListener] => key=[${keyToResolve}], index=[${schema.index}]`);
-    const formModelStore = useFormModelStore(schema.formId);
-    const model = formModelStore.getFormModelForResolve;
+
+    const model = form.getFormModelForResolve.value;
     await tryResolveExpression(keyToResolve, object, model);
     //}
   }

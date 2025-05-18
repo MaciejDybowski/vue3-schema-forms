@@ -2,25 +2,25 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { ref } from "vue";
 
-import { useFormModelStore } from "@/store/formModelStore";
+import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
 import { useEventBus } from "@vueuse/core";
 
 import { functions } from "../engine/expressionResolver";
 
 export function useExpression() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
+  const form = useInjectedFormModel();
 
-  async function resolveExpression(key: string, expression: string, model: object, formId: string) {
+  async function resolveExpression(key: string, expression: string, model: object) {
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let result = ref();
       let f = functions[functionName];
-      const formModelStore = useFormModelStore(formId);
-      const mergedModel = formModelStore.getFormModelForResolve;
+      const mergedModel = form.getFormModelForResolve.value;
       result.value = await f(expression, mergedModel);
 
       if (!functionName.includes("_GENERATOR")) {
-        const unsubscribe = vueSchemaFormEventBus.on(async () => await expressionListener(key, expression, model, formId));
+        const unsubscribe = vueSchemaFormEventBus.on(async () => await expressionListener(key, expression, model));
       }
       return result.value;
     }
@@ -40,13 +40,12 @@ export function useExpression() {
     }
   }
 
-  async function expressionListener(key: string, expression: string, model: object, formId: string) {
+  async function expressionListener(key: string, expression: string, model: object) {
     await new Promise((r) => setTimeout(r, 30));
     let functionName = extractFunctionName(expression);
     if (functionName) {
       let f = functions[functionName];
-      const formModelStore = useFormModelStore(formId);
-      const mergedModel = formModelStore.getFormModelForResolve;
+      const mergedModel = form.getFormModelForResolve.value;
       const result = await f(expression, mergedModel);
       const currentValue = get(model, key, null);
       if (result !== currentValue) {

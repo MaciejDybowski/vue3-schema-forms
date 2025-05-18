@@ -18,7 +18,7 @@ import { useClass, useExpression, useFormModel, useLabel, useProps, useResolveVa
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { variableRegexp } from "@/core/engine/utils";
 import { EngineTextField } from "@/types/engine/controls";
-import { useFormModelStore } from "@/store/formModelStore";
+
 
 const props = defineProps<{
   schema: EngineTextField;
@@ -47,7 +47,7 @@ const localModel = computed({
 async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== "") {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
-    localModel.value = await resolveExpression(props.schema.key, expression, props.model, props.schema.formId);
+    localModel.value = await resolveExpression(props.schema.key, expression, props.model);
   }
 }
 

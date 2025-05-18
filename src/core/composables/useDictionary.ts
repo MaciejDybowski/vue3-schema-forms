@@ -10,15 +10,18 @@ import { mapSliceTotalElements } from "@/components/controls/base/SliceResponse"
 import { useResolveVariables } from "@/core/composables/useResolveVariables";
 import { variableRegexp } from "@/core/engine/utils";
 import { logger } from "@/main";
-import { useFormModelStore } from "@/store/formModelStore";
+
 import { EngineDictionaryField } from "@/types/engine/controls";
 import { ResponseReference } from "@/types/shared/ResponseReference";
 import { DictionarySource } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
+import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
 
 export function useDictionary() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
   const { resolve } = useResolveVariables();
+  const form = useInjectedFormModel();
+
   let loadCounter = ref(0);
   let source: DictionarySource = {} as DictionarySource;
   let title = ref("title");
@@ -50,8 +53,7 @@ export function useDictionary() {
 
     const expression = params.get("enable-filter") ?? "";
     const nata = jsonata(expression);
-    const formModelStore = useFormModelStore(field.formId);
-    const mergedModel = formModelStore.getFormModelForResolve;
+    const mergedModel = form.getFormModelForResolve.value;
     const newValue = await nata.evaluate(mergedModel);
 
     if (!newValue) {

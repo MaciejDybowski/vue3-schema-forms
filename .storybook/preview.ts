@@ -1,5 +1,4 @@
 import { initialize, mswLoader } from "msw-storybook-addon";
-import { createPinia } from "pinia";
 
 import { install as VueMonacoEditorPlugin } from "@guolao/vue-monaco-editor";
 import type { Preview } from "@storybook/vue3";
@@ -24,12 +23,10 @@ const preview: Preview = {
   tags: ["autodocs"],
 };
 
-const pinia = createPinia();
 setup((app) => {
   // Registers your app's plugins into Storybook
   app.use(vuetify);
   app.use(i18n);
-  app.use(pinia);
   app.use(VueMonacoEditorPlugin);
 });
 

@@ -5,7 +5,7 @@ import { ref } from "vue";
 import { useEventHandler } from "@/core/composables/useEventHandler";
 import { useNumber } from "@/core/composables/useNumber";
 import { logger, useFormModel, useResolveVariables } from "@/main";
-import { useFormModelStore } from "@/store/formModelStore";
+import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
 import { EngineField } from "@/types/engine/EngineField";
 import { Fn, useEventBus } from "@vueuse/core";
 
@@ -17,10 +17,10 @@ export function useCalculation() {
   const calculationResultWasModified = ref(false);
   const { fillPath } = useResolveVariables();
   const { getValue, setValue } = useFormModel();
+  const form = useInjectedFormModel();
 
   async function calculationFunc(field: EngineField, model: any): Promise<number | null> {
-    const formModelStore = useFormModelStore(field.formId);
-    const mergedModel = formModelStore.getFormModelForResolve;
+    const mergedModel = form.getFormModelForResolve.value;
 
     const precision = field.precision ? Number(field.precision) : 2;
 
@@ -49,8 +49,7 @@ export function useCalculation() {
     let calculation = field.calculation as string;
     const precision = field.precision ? Number(field.precision) : 2;
 
-    const formModelStore = useFormModelStore(field.formId);
-    const mergedModel = formModelStore.getFormModelForResolve;
+    const mergedModel = form.getFormModelForResolve.value;
     let result = 0;
     try {
       calculation = fillPath(field.path as string, field.index as number, calculation);

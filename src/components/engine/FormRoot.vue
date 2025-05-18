@@ -29,7 +29,6 @@ const props = defineProps<{
   schema: Schema;
   model: object;
   options?: SchemaOptions;
-  formId: string;
 }>();
 
 const emit = defineEmits<{
@@ -47,7 +46,6 @@ function objectToArray(obj: Schema, prefix = ''): Array<EngineField> {
       result.push(...nestedProperties);
     } else {
       result.push({
-        formId: props.formId,
         key: newKey,
         ...property,
         on: {

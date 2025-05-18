@@ -5,7 +5,6 @@ import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
 import { Schema } from "@/types/schema/Schema";
 
 export interface EngineField {
-  formId: string;
   key: string;
   options: EngineOptions;
   on: {

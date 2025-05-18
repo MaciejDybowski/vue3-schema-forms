@@ -2,7 +2,6 @@
   <v-form :ref="(el) => (formRef[formId] = el)">
     <form-root
       v-if="!loading"
-      :form-id="formId"
       :model="localModel"
       :options="options"
       :schema="resolvedSchema"
@@ -30,6 +29,7 @@ import { useI18n } from "vue-i18n";
 
 import { vueSchemaFromControls } from "@/components/controls";
 
+import { provideFormModel } from "@/core/state/useFormModelProvider";
 import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 import { ValidationFromBehaviour } from "@/types/engine/ValidationFromBehaviour";
 import { ValidationFromError } from "@/types/engine/ValidationFromError";
@@ -41,7 +41,6 @@ import { useEventBus } from "@vueuse/core";
 import usePerformanceAPI from "../../core/composables/usePerformanceAPI";
 import { resolveSchemaWithLocale } from "../../core/engine/utils";
 import { logger } from "../../main";
-import { useFormModelStore } from "../../store/formModelStore";
 import FormRoot from "./FormRoot.vue";
 import FormDefaultActions from "./validation/FormDefaultActions.vue";
 
@@ -57,6 +56,7 @@ for (const [name, comp] of Object.entries(vueSchemaFromControls)) {
 // render tests
 const { result, stopMeasure } = usePerformanceAPI();
 
+const form = provideFormModel();
 const localModel = ref({});
 
 const model = defineModel<object>();
@@ -88,7 +88,7 @@ const formId = Math.random().toString().slice(2, 5);
 const formRef = ref({});
 const formValid = ref(false);
 const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
-const formModelStore = useFormModelStore(formId);
+
 const formReadySignalSent = ref(false);
 
 const internalValues = ref<Set<string>>(new Set<string>());
@@ -99,7 +99,7 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
   localModel.value = { ...localModel.value, ...model.value } as any;
-  formModelStore.updateFormModel(localModel.value);
+  form.updateFormModel(localModel.value);
   vueSchemaFormEventBus.emit("model-changed", "action-callback");
 }
 
@@ -130,7 +130,7 @@ function formIsReady() {
 function updateModel(event: NodeUpdateEvent) {
   debounced.formIsReady().cancel();
   set(localModel.value, event.key, event.value);
-  formModelStore.updateFormModel(localModel.value);
+  form.updateFormModel(localModel.value);
 
   if (event.emitBlocker) {
     vueSchemaFormEventBus.emit("model-changed", event);
@@ -171,8 +171,9 @@ watch(
 onMounted(async () => {
   localModel.value = { ...model.value };
 
-  formModelStore.updateFormModel(localModel.value);
-  formModelStore.updateFormContext(props.options && props.options.context ? props.options.context : {});
+  form.updateFormModel(localModel.value);
+  form.updateFormContext(props.options && props.options.context ? props.options.context : {});
+
   await loadResolvedSchema();
   stopMeasure();
   debounced.formIsReady(800)();

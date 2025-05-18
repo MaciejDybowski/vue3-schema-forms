@@ -1,12 +1,12 @@
 import jsonata from "jsonata";
 
 import { useNumber } from "@/core/composables/useNumber";
-import { useFormModelStore } from "@/store/formModelStore";
 import { EngineField } from "@/types/engine/EngineField";
 
 import dayjs from "../../components/controls/date/dayjs";
 import { variableRegexp } from "../engine/utils";
 import { useDateFormat } from "./useDateFormat";
+import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
 
 interface VariableSyntaxProps {
   defaultValue: any;
@@ -17,6 +17,7 @@ interface VariableSyntaxProps {
 export function useResolveVariables() {
   const { dateFormat, dateTimeFormat } = useDateFormat();
   const { formattedNumber, roundTo } = useNumber();
+  const form = useInjectedFormModel();
 
   async function resolve(field: EngineField, inputString: string, title: string = "title", rawNumber = false) {
     let allVariablesResolved = true;
@@ -30,8 +31,7 @@ export function useResolveVariables() {
           const unwrapped = match.slice(1, -1);
           let jsonataExpression = unwrapped.slice(5);
           jsonataExpression = jsonataExpression.substring(0, jsonataExpression.length - 1);
-          const formModelStore = useFormModelStore(field.formId);
-          const model = formModelStore.getFormModelForResolve;
+          const model = form.getFormModelForResolve.value;
           const nata = jsonata(jsonataExpression);
           let value = await nata.evaluate(model);
           if (!value && value != 0) {
@@ -55,8 +55,8 @@ export function useResolveVariables() {
             formatterProps: formatterProps,
           };
 
-          const formModelStore = useFormModelStore(field.formId);
-          const model = formModelStore.getFormModelForResolve;
+          
+          const model = form.getFormModelForResolve.value;
           if (variable.includes("[]") && field.path) {
             variable = fillPath(field.path, field.index as number, variable);
           }

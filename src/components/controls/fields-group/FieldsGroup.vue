@@ -1,7 +1,6 @@
 <template>
   <form-root
     v-if="jsonSchemaOfGroup"
-    :form-id="schema.formId"
     :model="model"
     :options="schema.options"
     :schema="jsonSchemaOfGroup"

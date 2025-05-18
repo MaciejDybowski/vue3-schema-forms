@@ -14,7 +14,6 @@
       :model="model"
       :options="schema.options"
       @update:model="updateModel"
-      :form-id="schema.formId"
     />
   </div>
 </template>

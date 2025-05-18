@@ -1,19 +1,20 @@
-import { EngineField } from "@/types/engine/EngineField";
-import { ref } from "vue";
-import { useEventBus } from "@vueuse/core";
-import { useResolveVariables } from "@/core/composables/useResolveVariables";
-import { cloneDeep } from "lodash";
-import { logger } from "@/main";
-import { useFormModelStore } from "@/store/formModelStore";
 import jsonata from "jsonata";
+import { cloneDeep } from "lodash";
+import { ref } from "vue";
 
-export function useConditionalHide(){
+import { useResolveVariables } from "@/core/composables/useResolveVariables";
+import { logger } from "@/main";
+import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
+import { EngineField } from "@/types/engine/EngineField";
+import { useEventBus } from "@vueuse/core";
+
+export function useConditionalHide() {
   let shouldHide = ref(false);
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
   const { fillPath } = useResolveVariables();
+  const form = useInjectedFormModel();
 
   async function shouldHideField(schema: EngineField, model: any, registerListener: boolean = true) {
-
     if (registerListener) {
       shouldHide.value = !!schema.layout.hide;
     }
@@ -21,13 +22,11 @@ export function useConditionalHide(){
     const originalHideExpression = ref(!shouldHide.value ? cloneDeep(schema.layout.hide) : "");
 
     if (schema.layout.hide !== undefined && schema.layout.hide && registerListener) {
-      const unsubscribe = vueSchemaFormEventBus.on(() =>
-        conditionalHidingListener(schema, model),
-      );
+      const unsubscribe = vueSchemaFormEventBus.on(() => conditionalHidingListener(schema, model));
     }
 
     originalHideExpression.value = cloneDeep(schema.layout.hide);
-    if (schema.layout.hide !== undefined && typeof schema.layout.hide == 'string'&& schema.layout.hide?.includes("nata(")) {
+    if (schema.layout.hide !== undefined && typeof schema.layout.hide == "string" && schema.layout.hide?.includes("nata(")) {
       const match = schema.layout.hide.match(/^nata\((.*)\)$/);
       if (match) {
         const expression = fillPath(schema.path, schema.index, match[1]);
@@ -37,8 +36,7 @@ export function useConditionalHide(){
   }
 
   async function hideByJsonNata(schema: EngineField, expression: string, model: any) {
-    const formModelStore = useFormModelStore(schema.formId);
-    const modelForResolve = formModelStore.getFormModelForResolve;
+    const modelForResolve = form.getFormModelForResolve.value;
     const nata = jsonata(expression);
     shouldHide.value = await nata.evaluate(modelForResolve);
   }
@@ -48,11 +46,9 @@ export function useConditionalHide(){
     //if (schema.index == undefined || schema.index == payloadIndex) {
     await shouldHideField(schema, model, false);
     if (logger.conditionalRenderingListener)
-      console.debug(
-        `[vue-schema-forms] [ConditionalHidingListener] => key=[${schema.key}] shouldRender=[${shouldHide.value}]`,
-      );
+      console.debug(`[vue-schema-forms] [ConditionalHidingListener] => key=[${schema.key}] shouldRender=[${shouldHide.value}]`);
     //}
   }
 
-  return {shouldHide, shouldHideField}
+  return { shouldHide, shouldHideField };
 }
