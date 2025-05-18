@@ -5,10 +5,7 @@ import { Schema } from "../../types/schema/Schema";
 import { SchemaField } from "../../types/schema/elements";
 import { waitForMountedAsync } from "../controls/utils";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { StoryTemplateWithCustomValidation, StoryTemplateWithValidation } from "../templates/story-template";
-
-import { initialize } from "msw-storybook-addon";
-
+import { StoryTemplateWithCustomValidation } from "../templates/story-template";
 
 export default {
   title: "Forms/Features/Validations",
@@ -16,7 +13,6 @@ export default {
 };
 
 export const RegexpWithDependencies: Story = {
-  
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
@@ -66,7 +62,6 @@ export const RegexpWithDependencies: Story = {
 };
 
 export const CustomRegexpValidations: Story = {
-  
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -246,7 +241,7 @@ export const ConditionalRequired: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
-  
+
   args: {
     model: {},
     schema: {
@@ -293,7 +288,7 @@ export const ConditionalRequiredWithDefault: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
-  
+
   args: {
     model: {},
     schema: {
@@ -365,7 +360,7 @@ export const ValidationFunctionWithJSONNataAndContext: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
-  
+
   args: {
     model: {},
     schema: {
@@ -404,7 +399,7 @@ export const ValidationFunctionInSections: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Value=Maciej is not allowed.")).toBeInTheDocument();
   },
-  
+
   args: {
     formModel: {
       pozycjeDokumentu: [{ fieldA: "Karol" }, { fieldA: "Maciej" }],
@@ -455,7 +450,7 @@ export const AlertErrorConnectionWithValidation: Story = {
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText("Error message!")).toBeInTheDocument();
   },
-  
+
   args: {
     formModel: {},
     schema: {
@@ -481,3 +476,86 @@ export const AlertErrorConnectionWithValidation: Story = {
     },
   },
 };
+
+export const JsonataDateCompare: Story = {
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    const validFrom = canvas.getByLabelText("Valid From");
+    const validTo = canvas.getByLabelText("Valid To");
+    const submit = canvas.getByText("Validate");
+
+    const clearField = async (field: HTMLElement) => {
+      await userEvent.clear(field);
+    };
+
+    const cases = [
+      [null, null, true],
+      [null, "", true],
+      ["", null, true],
+      ["01/01/2025", null, true],
+      [null, "01/01/2025", true],
+      ["01/01/2025", "01/02/2025", true],
+      ["01/02/2025", "01/01/2025", false],
+      ["01/29/2024", "01/29/2024", false],
+    ];
+
+    for (const [fromVal, toVal, expectedValid] of cases) {
+      await clearField(validFrom);
+      await clearField(validTo);
+
+      if (fromVal !== null && fromVal !== "") {
+        await userEvent.type(validFrom, fromVal);
+      }
+      if (toVal !== null && toVal !== "") {
+        await userEvent.type(validTo, toVal);
+      }
+
+      await userEvent.click(submit, { delay: 200 });
+
+      // delay 300ms na walidację UI
+      await new Promise((r) => setTimeout(r, 300));
+
+      if (expectedValid) {
+        await expect(
+          canvas.queryByText("The end date of the offer cannot be earlier than the start date.")
+        ).not.toBeInTheDocument();
+      } else {
+        await expect(
+          canvas.getByText("The end date of the offer cannot be earlier than the start date.")
+        ).toBeInTheDocument();
+      }
+    }
+  },
+
+  args: {
+    model: {},
+    schema: {
+      type: "object",
+      properties: {
+        validFrom: {
+          label: "Valid From",
+          layout: {
+            component: "date-picker",
+          },
+        },
+        validTo: {
+          label: "Valid To",
+          layout: {
+            component: "date-picker",
+          },
+          validations: [
+            {
+              name: "valid-sth",
+              rule:
+                '($isValidRange := function($from, $to) { ($exists($from) and $from != null and $exists($to) and $to != null) ? $toMillis($from) < $toMillis($to) : true }; $isValidRange(validFrom, validTo))',
+              message: "The end date of the offer cannot be earlier than the start date.",
+            },
+          ],
+        },
+      },
+    },
+  },
+};
+
