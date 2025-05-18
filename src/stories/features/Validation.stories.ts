@@ -428,6 +428,9 @@ export const ValidationFunctionInSections: Story = {
                 },
               },
             },
+            options: {
+              addBtnText: "Add"
+            }
           },
         },
       },

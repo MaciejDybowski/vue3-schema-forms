@@ -4,12 +4,9 @@ import { expect, userEvent, within } from "@storybook/test";
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { Source } from "../../types/schema/elements";
+import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { StoryTemplateWithValidation } from "../templates/story-template";
 import { waitForMountedAsync } from "./utils";
-
-import { initialize } from "msw-storybook-addon";
-
 
 export default {
   title: "Forms/Controls/RadioButton",
@@ -118,9 +115,6 @@ export const Required: Story = {
     } as Schema,
   },
 };
-
-
-
 
 export const CustomMapping: Story = {
   name: "Mapper: title/value",
@@ -257,27 +251,17 @@ export const NoInitValue: Story = {
   },
 };
 
-
 export const GetOptionsFromAPI: Story = {
   name: "Case: Items from API",
   play: async (context) => {
     await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for api call
-    await expect(context.args.formModel).toEqual({ radioButtonOptionsFromAPI: { id: 1, label: "Option 1" } });
-  },
-  parameters: {
-    mockData: [
-      {
-        url: "/api/v1/options",
-        method: "GET",
-        status: 200,
-        response: [
-          { id: 1, label: "Option 1" },
-          { id: 2, label: "Option 2" },
-          { id: 3, label: "Option 3" },
-          { id: 4, label: "Option 4" },
-        ],
+    await expect(context.args.formModel).toEqual({
+      radioButtonOptionsFromAPI: {
+        id: "AFN",
+        label: "Afgani",
+        digitsAfterDecimal: "2",
       },
-    ],
+    });
   },
   args: {
     formModel: {},
@@ -293,7 +277,7 @@ export const GetOptionsFromAPI: Story = {
             },
           },
           source: {
-            url: "/api/v1/options",
+            url: "/mocks/currencies",
             title: "label",
             value: "id",
             returnObject: true,
@@ -302,5 +286,9 @@ export const GetOptionsFromAPI: Story = {
       },
     } as Schema,
   },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
 };
-

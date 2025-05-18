@@ -319,7 +319,7 @@ function changePosition(drag: VueDragable<Schema>) {
 
 const getAddBtnText = computed(() => {
   const isRef =
-    typeof duplicatedSectionOptions.value.addBtnText === "object" && "$ref" in duplicatedSectionOptions.value.addBtnText;
+    duplicatedSectionOptions.value && typeof duplicatedSectionOptions.value.addBtnText === "object" && "$ref" in duplicatedSectionOptions.value.addBtnText;
   if (isRef) {
     //@ts-ignore
     return "#" + duplicatedSectionOptions.value.addBtnText.$ref.split("/").pop();

@@ -1,15 +1,12 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
-
 import { expect, userEvent, within } from "@storybook/test";
 
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema } from "../../types/schema/Schema";
 import { SimpleSource } from "../../types/schema/elements";
+import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
-
-
 
 export default {
   title: "Forms/Controls/Select",
@@ -79,7 +76,6 @@ export const WithDefault: Story = {
     } as Schema,
   },
 };
-
 
 /**
  * Example shows how to define a "required" field on a form
@@ -242,23 +238,15 @@ export const GetOptionsFromAPI: Story = {
     const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
 
-    await expect(context.args.formModel).toEqual({ selectOptionsFromAPI: { id: 1, label: "Option 1" } });
-  },
-  parameters: {
-    mockData: [
-      {
-        url: "/api/v1/options",
-        method: "GET",
-        status: 200,
-        response: [
-          { id: 1, label: "Option 1" },
-          { id: 2, label: "Option 2" },
-          { id: 3, label: "Option 3" },
-          { id: 4, label: "Option 4" },
-        ],
+    await expect(context.args.formModel).toEqual({
+      selectOptionsFromAPI: {
+        id: "AFN",
+        label: "Afgani",
+        digitsAfterDecimal: "2",
       },
-    ],
+    });
   },
+
   args: {
     formModel: {},
     schema: {
@@ -273,7 +261,7 @@ export const GetOptionsFromAPI: Story = {
             },
           },
           source: {
-            url: "/api/v1/options",
+            url: "/mocks/currencies",
             title: "label",
             value: "id",
             returnObject: true,
@@ -282,5 +270,9 @@ export const GetOptionsFromAPI: Story = {
       },
     } as Schema,
   },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
 };
-
