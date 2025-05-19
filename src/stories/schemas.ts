@@ -787,17 +787,17 @@ export const simpleCalculationSchema: Schema = {
   properties: {
     field1: {
       label: "Field 1",
-      layout: { component: "number-field", cols: 2 },
+      layout: { component: "number-field", cols: 3 },
     },
     field2: {
       label: "Field 2",
-      layout: { component: "number-field", cols: 2 },
+      layout: { component: "number-field", cols: 3 },
     },
     field3: {
       label: "Result +",
       layout: {
         component: "number-field",
-        cols: 2,
+        cols: 3,
       },
       calculation: "field1 + field2",
     },
@@ -805,7 +805,7 @@ export const simpleCalculationSchema: Schema = {
       label: "Result ^2",
       layout: {
         component: "number-field",
-        cols: 2,
+        cols: 3,
       },
       calculation: "field3 * field3",
     },

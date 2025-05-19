@@ -1,16 +1,22 @@
 // @ts-nocheck
+import { expect, within } from "@storybook/test";
+
+import { waitForMountedAsync } from "../editable-fields/utils";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
-import { initialize } from "msw-storybook-addon";
-
-
 export default {
-  title: "Features/Context object",
+  title: "Features/Context Object",
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: async (context) => {},
+  name: "Case: current user mapping",
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const field1 = canvas.getByLabelText("Field with context dependency = Maciej");
+    await expect(field1).toBeInTheDocument();
+  },
   args: {
     formModel: {},
     schema: {
@@ -45,7 +51,15 @@ export const Standard: Story = {
 };
 
 export const StandardWithDefaultMapping: Story = {
-  play: async (context) => {},
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const field1 = canvas.getByLabelText("Field with context dependency = dkowalski");
+    await expect(field1).toBeInTheDocument();
+    await expect(context.args.formModel).toEqual({
+      item: "defaultText Super",
+    });
+  },
   args: {
     formModel: {},
     schema: {
@@ -62,7 +76,7 @@ export const StandardWithDefaultMapping: Story = {
     options: {
       context: {
         userInfo: {
-          username: "MaciejDybowski",
+          username: "dkowalski",
         },
         workspaceId: "test",
         menuFeatureId: "test",

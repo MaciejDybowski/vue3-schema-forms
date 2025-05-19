@@ -16,16 +16,9 @@ export default {
   ...formStoryWrapperTemplate,
 };
 
-/**
- * #### Performing calculations based on form fields
- * `calculation: string` - an expression based on form fields, utilizing the expression parser from the library https://www.npmjs.com/package/expr-eval
- *
- * ##### We know that rounding is an important aspect when working with numbers :)
- * The form allows adjusting the number of decimal places using the parameter `digitsAfterDecimal`, which can be set in two ways:
- *  * statically, using the form option `options.digitsAfterDecimal: number`
- *  * dynamically, by providing the path to the value stored in the model `{currency.digitsAfterDecimal}` (e.g., a currency, which is an object and has the number of decimal places as a parameter). This will be demonstrated in the following examples.
- */
+
 export const SimpleCalculation: Story = {
+  name:"Case: simple math",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -51,6 +44,7 @@ export const SimpleCalculation: Story = {
  *
  */
 export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
+  name:"Case: float decimal places is 2 by default",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -69,47 +63,12 @@ export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
   args: {
     formModel: {},
     schema: simpleCalculationSchema,
-    options: {
-      digitsAfterDecimal: 3,
-    },
   },
 };
 
-/**
- *  ```options.digitsAfterDecimal: {currency.digitsAfterDecimal} ``` Value set dynamically based on another value in the model.
- */
-/*export const WithDynamicDigitsOptions: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const digitsAfterDecimal = canvas.getByLabelText('Digits after decimal');
-    const resultSquare = canvas.getByLabelText('Result ^2');
 
-    await userEvent.clear(digitsAfterDecimal, { delay: 300 });
-    await userEvent.type(digitsAfterDecimal, '2', { delay: 300 });
-    expect(resultSquare).toHaveValue('0.14');
-    await userEvent.clear(digitsAfterDecimal, { delay: 300 });
-    await userEvent.type(digitsAfterDecimal, '4', { delay: 300 });
-    expect(resultSquare).toHaveValue('0.1406');
-  },
-  args: {
-    formModel: {
-      currency: {
-        digitsAfterDecimal: 3,
-      },
-      field1: 0.25,
-      field2: 0.125,
-    },
-    schema: simpleCalculationWithDynamicDigits,
-    options: {
-      digitsAfterDecimal: '{currency.digitsAfterDecimal}',
-    },
-  },
-};*/
-
-/**
- * Heavy calculations
- */
 export const calculationInDuplicatedSchema: Story = {
+  name:"Case: heavy calculations in duplicated section",
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const addButton = await canvas.findByRole("button", { name: "Add" });
@@ -158,23 +117,8 @@ export const calculationInDuplicatedSchema: Story = {
   },
 };
 
-/**
- * Calculations have been designed with the intention of being used in duplicated sections, such as invoice items.
- */
-export const invoiceItems: Story = {
-  args: {
-    formModel: {
-      invoiceItems: [
-        { product: "Item 1", quantity: 2, netPrice: 90.5, tax: 0.18 },
-        { product: "Item 2", quantity: 5, netPrice: 88.3, tax: 0.07 },
-        { product: "Item 3", quantity: 6, netPrice: 113.55, tax: 0.23 },
-      ],
-    },
-    schema: invoicePositionsSchema,
-  },
-};
-
 export const SUM_function: Story = {
+  name: "Case: $sum(path.to.values)",
   play: async (context) => {
     await new Promise((r) => setTimeout(r, 100));
     await expect(context.args.formModel).toEqual({
@@ -219,14 +163,6 @@ export const SUM_function: Story = {
     schema: {
       type: "object",
       properties: {
-        description: {
-          layout: {
-            component: "static-content",
-            tag: "span",
-          },
-          content:
-            'In order for there to be a summation option along with the operation of other calculation functions, "precalculations" were added when preparing the final expression. <br> The function accepts two parameters: <br> 1. Path to the variable to be summed <br>  2. Path to the variable, which is an array of data',
-        },
         data: {
           properties: {
             items: {

@@ -7,21 +7,17 @@ import { SchemaField, SchemaTextField } from "../../types/schema/elements";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
+import { waitForMountedAsync } from "../editable-fields/utils";
 
 
 export default {
-  title: "Features/ConditionalRendering",
+  title: "Features/Conditional Rendering/If",
   ...formStoryWrapperTemplate,
 };
 
-/**
- * #### Conditional Rendering
- * The library is capable of resolving dependencies between fields based on the library https://www.npmjs.com/package/expr-eval
- *
- * `if: string` - a value defined in the `Layout` object
- */
+
 export const ConditionStory: Story = {
-  name: "if",
+  name: "Case: simple usage",
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -44,11 +40,17 @@ export const ConditionStory: Story = {
 };
 
 export const ConditionWithCalcStory: Story = {
-  name: "if with calcs",
-  play: async ({ canvasElement }) => {},
+  name: "Case: based on calculation result",
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync()
+    const canvas = within(canvasElement);
+    const a = canvas.getByLabelText("A");
+    await userEvent.type(a, "10", { delay: 100 });
+    const renderedField = canvas.getByLabelText("Secret code");
+    await expect(renderedField).toBeInTheDocument()
+  },
   args: {
     formModel: {
-      a: 10,
       b: 99,
     },
     schema: {
@@ -74,7 +76,7 @@ export const ConditionWithCalcStory: Story = {
           calculation: "a + b",
         },
         secretCode: {
-          label: "Result",
+          label: "Secret code",
           layout: {
             component: "text-field",
             if: "nata(c>100)",
@@ -86,6 +88,7 @@ export const ConditionWithCalcStory: Story = {
 };
 
 export const ConditionalWithDuplicatedSection: Story = {
+  name: "Case: usage in duplicated section",
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
@@ -148,11 +151,9 @@ export const ConditionalWithDuplicatedSection: Story = {
   },
 };
 
-/**
- * #### With duplicated section and internal condition
- * The model of a given duplicate section is merged with the model of the entire form, so if a conflict of keys arises in the model, the mechanism may not work properly
- */
+
 export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
+  name:"Case: usage in duplicated section with internal condition",
   play: async (context) => {
     const canvas = within(context.canvasElement);
 

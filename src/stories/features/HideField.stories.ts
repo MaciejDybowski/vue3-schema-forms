@@ -10,11 +10,11 @@ import { initialize } from "msw-storybook-addon";
 
 
 export default {
-  title: "Features/Hide fields",
+  title: "Features/Conditional Rendering/Hidden fields",
   ...formStoryWrapperTemplate,
 };
 
-export const HideFields: Story = {
+export const Default: Story = {
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -36,6 +36,13 @@ export const HideFields: Story = {
     formModel: {},
     schema: {
       properties: {
+        span: {
+          content: "A hidden field is invisible but rendered, this means that dependencies / functions / calculations will be executed",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
         field1: {
           label: "Visible field",
           layout: { component: "number-field", cols: 3 },
