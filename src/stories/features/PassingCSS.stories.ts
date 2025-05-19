@@ -3,13 +3,13 @@ import { initialize } from "msw-storybook-addon";
 
 import { expect } from "@storybook/test";
 
-import { waitForMountedAsync } from "../controls/utils";
+import { waitForMountedAsync } from "../editable-fields/utils";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 
 
 export default {
-  title: "Forms/Features/Passing css classes",
+  title: "Features/Passing css classes",
   ...formStoryWrapperTemplate,
 };
 

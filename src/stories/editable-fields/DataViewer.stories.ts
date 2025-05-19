@@ -2,19 +2,18 @@
 import { expect, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
+import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
-
-import { initialize } from "msw-storybook-addon";
-
+import { DictionarySource } from "../../types/shared/Source";
 
 export default {
-  title: "Forms/Controls/Data viewer",
+  title: "Elements/Editable/Data viewer",
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  name: "Plain text, matching keys",
+  name: "Case: matching model key (text)",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -50,7 +49,7 @@ export const Standard: Story = {
 };
 
 export const StandardNumber: Story = {
-  name: "Number, matching keys",
+  name: "Case: matching model key (number)",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -88,7 +87,7 @@ export const StandardNumber: Story = {
 };
 
 export const StandardDate: Story = {
-  name: "Date, matching keys",
+  name: "Case: matching model key (date)",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -126,7 +125,7 @@ export const StandardDate: Story = {
 };
 
 export const StandardDateTime: Story = {
-  name: "Datetime, matching keys",
+  name: "Case: matching model key (datetime)",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -155,7 +154,7 @@ export const StandardDateTime: Story = {
 };
 
 export const StandardPhone: Story = {
-  name: "Phone, matching keys",
+  name: "Case: matching model key (phone)",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -191,7 +190,7 @@ export const StandardPhone: Story = {
 };
 
 export const StandardObject: Story = {
-  name: "Object, matching keys",
+  name: "Case: matching model key (object)",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -230,51 +229,27 @@ export const StandardObject: Story = {
   },
 };
 
-/*export const StandardDictionary: Story = {
-  name: "Dictionary, matching keys",
-  parameters: {
-    mockData: [
-      {
-        url: "/my-api/dictionaries?&page=0&size=20&query=PLN",
-        method: "GET",
-        status: 200,
-        response: {
-          content: [
-            {
-              id: "PLN",
-              label: "Polski złoty",
-              digitsAfterDecimal: "2",
-            },
-          ],
-          empty: false,
-          first: true,
-          last: true,
-          number: 0,
-          numberOfElements: 1,
-          pageable: {
-            offset: 0,
-            pageNumber: 0,
-            pageSize: 20,
-            paged: true,
-            unpaged: false,
-          },
-          size: 20,
-        },
-      },
-    ],
-  },
+export const StandardDictionary: Story = {
+  name: "Case: matching model key (dictionary)",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText("Read value from model [dictionary]");
     await new Promise((resolve) => setTimeout(resolve, 200)); // <- wait for api call
-    const text = canvas.getByText("Polski złoty");
+    const text = canvas.getByText("Afgani");
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
   },
   args: {
-    formModel: {},
+    formModel: {
+      dictionary: {
+        id: "AFN",
+        label: "Afgani",
+        digitsAfterDecimal: "2",
+        labels: "the-best"
+      },
+    },
     schema: {
       properties: {
         description: {
@@ -292,7 +267,7 @@ export const StandardObject: Story = {
             component: "data-viewer",
           },
           source: {
-            url: "/my-api/dictionaries?query=PLN",
+            url: "/mocks/currencies",
             title: "label",
             value: "id",
             returnObject: true,
@@ -302,10 +277,15 @@ export const StandardObject: Story = {
       },
     } as Schema,
   },
-};*/
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
 
 export const ValueMapping: Story = {
-  name: "ValueMapping from models keys",
+  name: "Case: mapping other key from model",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -342,7 +322,7 @@ export const ValueMapping: Story = {
 };
 
 export const StandardCalc: Story = {
-  name: "Calculations",
+  name: "Case: calculation",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -381,7 +361,7 @@ export const StandardCalc: Story = {
 };
 
 export const StandardCalcVariable: Story = {
-  name: "Calculations with variables",
+  name: "Case: combine calculation result with other variables",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -430,6 +410,7 @@ export const StandardCalcVariable: Story = {
 };
 
 export const VariableInDuplicatedSection: Story = {
+  name: "Case: variable inside duplicated section",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);

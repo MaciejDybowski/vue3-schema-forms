@@ -1,23 +1,17 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
-
 import { expect, fireEvent, userEvent, within } from "@storybook/test";
 
 import { DictionarySource } from "../../types/shared/Source";
-import { waitForMountedAsync } from "../controls/utils";
+import { waitForMountedAsync } from "../editable-fields/utils";
 import { CURRENCIES_REQUEST } from "../mock-responses";
-import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
-import { StoryTemplateWithValidation } from "../templates/story-template";
-
-
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 export default {
-  title: "Forms/Features/On change events",
-  ...formStoryWrapperTemplateWithMSW,
+  title: "Features/On change events",
+  ...formStoryWrapperTemplate,
 };
 
 export const CallActionWithParametersAndRequestBody: Story = {
-  
   play: async (context) => {},
   args: {
     formModel: {},
@@ -55,7 +49,6 @@ export const CallActionWithParametersAndRequestBody: Story = {
 };
 
 export const ResetValueOnChange: Story = {
-  
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -102,7 +95,6 @@ export const ResetValueOnChange: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSection: Story = {
-  
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -164,7 +156,6 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
-  
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);

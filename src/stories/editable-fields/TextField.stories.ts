@@ -9,7 +9,7 @@ import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 
 export default {
-  title: "Forms/Controls/TextField",
+  title: "Elements/Editable/TextField",
   ...formStoryWrapperTemplate,
 };
 

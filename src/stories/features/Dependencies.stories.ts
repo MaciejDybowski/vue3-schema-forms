@@ -1,22 +1,16 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
-
-import { StoryTemplateWithValidation } from "@/stories/templates/story-template";
 import { expect, userEvent, within } from "@storybook/test";
 
 import { EngineSourceField } from "../../types/engine/controls";
 import { Schema, SchemaOptions } from "../../types/schema/Schema";
 import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "../../types/schema/elements";
-import { waitForMountedAsync } from "../controls/utils";
+import { waitForMountedAsync } from "../editable-fields/utils";
 import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
-
-
-
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 export default {
-  title: "Forms/Features/Dependencies",
-  ...formStoryWrapperTemplateWithMSW,
+  title: "Features/Dependencies",
+  ...formStoryWrapperTemplate,
 };
 
 export const step1: Story = {
@@ -470,7 +464,7 @@ export const UseFormVariablesInFieldProps: Story = {
       await expect(queryHint.length).toEqual(2);
     });
   },
-  
+
   args: {
     formModel: {
       amount: 32,

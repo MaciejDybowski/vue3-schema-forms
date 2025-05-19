@@ -15,18 +15,3 @@ export const formStoryWrapperTemplate = {
     },
   }
 };
-
-
-export const formStoryWrapperTemplateWithMSW = {
-  component: FormStoryWrapper,
-  args: {
-    formModel: {},
-    schema: {},
-    options: {
-      fieldProps: {
-        variant: "outlined",
-        density: "comfortable",
-      },
-    },
-  }
-};

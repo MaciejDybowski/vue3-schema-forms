@@ -187,7 +187,6 @@ export const CURRENCIES_REQUEST = http.get("/mock-data/currencies", async (req, 
 
 export const MOCK_REQUEST_CURRENCY = [
   http.get("/mocks/currencies", async ({ request }) => {
-    console.log("Intercepted request:", request.url);
     const url = new URL(request.url);
     const valueFilter = url.searchParams.get("value-filter");
     const query = url.searchParams.get("query");
@@ -195,8 +194,8 @@ export const MOCK_REQUEST_CURRENCY = [
     const size = Number(url.searchParams.get("size")) || 20;
 
     const allCurrencies = [
-      { id: "AFN", label: "Afgani", digitsAfterDecimal: "2" },
-      { id: "ALL", label: "Lek", digitsAfterDecimal: "3" },
+      { id: "AFN", label: "Afgani", digitsAfterDecimal: "2", labels: "the-best" },
+      { id: "ALL", label: "Lek", digitsAfterDecimal: "3", labels: "the-least" },
       { id: "AMD", label: "Dram", digitsAfterDecimal: "2" },
       { id: "ANG", label: "Gulden Antyli Holenderskich", digitsAfterDecimal: "2" },
       { id: "AOA", label: "Kwanza", digitsAfterDecimal: "2" },

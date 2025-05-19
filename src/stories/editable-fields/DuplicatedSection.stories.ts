@@ -4,12 +4,12 @@ import { expect, userEvent, within } from "@storybook/test";
 import { Schema } from "../../types/schema/Schema";
 import { DictionarySource } from "../../types/shared/Source";
 import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 export default {
-  title: "Forms/Controls/DuplicatedSection",
-  ...formStoryWrapperTemplateWithMSW,
+  title: "Elements/Editable/DuplicatedSection",
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
@@ -118,7 +118,7 @@ export const WithDefaults: Story = {
             },
             options: {
               addBtnText: "Add",
-            }
+            },
           },
           cols: 6,
         },

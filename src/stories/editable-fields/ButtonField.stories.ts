@@ -7,7 +7,7 @@ import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 export default {
-  title: "Forms/Controls/Button",
+  title: "Elements/Editable/Button",
   ...formStoryWrapperTemplate,
 };
 

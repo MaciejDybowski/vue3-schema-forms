@@ -12,7 +12,7 @@ import { LOCATION_MOCK_REQUEST } from "../mock-responses";
 
 
 export default {
-  title: "Forms/Controls/Location",
+  title: "Elements/Editable/Location",
   ...formStoryWrapperTemplate,
 };
 

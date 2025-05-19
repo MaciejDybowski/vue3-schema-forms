@@ -9,7 +9,7 @@ import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 export default {
-  title: "Forms/Controls/RadioButton",
+  title: "Elements/Editable/RadioButton",
   ...formStoryWrapperTemplate,
 };
 
@@ -260,6 +260,7 @@ export const GetOptionsFromAPI: Story = {
         id: "AFN",
         label: "Afgani",
         digitsAfterDecimal: "2",
+        labels: "the-best"
       },
     });
   },

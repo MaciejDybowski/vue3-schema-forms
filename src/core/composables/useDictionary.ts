@@ -9,13 +9,12 @@ import { mapSliceTotalElements } from "@/components/controls/base/SliceResponse"
 
 import { useResolveVariables } from "@/core/composables/useResolveVariables";
 import { variableRegexp } from "@/core/engine/utils";
+import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
 import { logger } from "@/main";
-
 import { EngineDictionaryField } from "@/types/engine/controls";
 import { ResponseReference } from "@/types/shared/ResponseReference";
 import { DictionarySource } from "@/types/shared/Source";
 import { useEventBus } from "@vueuse/core";
-import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
 
 export function useDictionary() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
@@ -71,7 +70,6 @@ export function useDictionary() {
     if (isUrlHasDependency !== null) {
       const updateEndpoint = async () => {
         let temp = await resolve(field, source.url, title.value, true);
-
 
         if (temp.resolvedText.match(variableRegexp)) {
           temp = await resolve(field, temp.resolvedText, title.value, true);
@@ -143,8 +141,8 @@ export function useDictionary() {
       loading.value = true;
       paginationOptions.value.resetPage();
       const { url, params } = prepareUrl();
-
-      const response = await axios.get(`${url}?${params}`, {
+      const combinedUrl = params != "" ? `${url}?${params}` : url;
+      const response = await axios.get(combinedUrl, {
         params: lazy.value
           ? {
               page: paginationOptions.value.getPage(),
@@ -174,7 +172,8 @@ export function useDictionary() {
     if (endpoint.allVariablesResolved) {
       loading.value = true;
       const { url, params } = prepareUrl();
-      const response = await axios.get(`${url}?${params}`, {
+      const combinedUrl = params != "" ? `${url}?${params}` : url;
+      const response = await axios.get(combinedUrl, {
         params: {
           page: paginationOptions.value.getPage() + 1,
           size: paginationOptions.value.getItemsPerPage(),

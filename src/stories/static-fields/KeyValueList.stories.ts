@@ -3,12 +3,12 @@ import { initialize } from "msw-storybook-addon";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 export default {
-  title: "Forms/Static content",
+  title: "Elements/Static/Key-Value List",
   ...formStoryWrapperTemplate,
 };
 
 
-export const KeyValueList = {
+export const Standard = {
   args: {
     formModel: {
       keyValueList: [

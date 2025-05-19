@@ -10,7 +10,7 @@ import { initialize } from "msw-storybook-addon";
 
 
 export default {
-  title: "Forms/Features/Reset Form",
+  title: "Features/Reset Form",
   ...formStoryWrapperTemplate,
 };
 

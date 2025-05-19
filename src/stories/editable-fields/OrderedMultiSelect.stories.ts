@@ -3,7 +3,7 @@ import { MULTI_ORDERED_SELECT_MOCK } from "../mock-responses";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 export default {
-  title: "Forms/Controls/OrderedMultiSelect",
+  title: "Elements/Editable/OrderedMultiSelect",
   ...formStoryWrapperTemplate,
 };
 

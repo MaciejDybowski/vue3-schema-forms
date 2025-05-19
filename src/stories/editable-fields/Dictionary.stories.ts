@@ -3,33 +3,25 @@ import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { DictionarySource } from "../../types/shared/Source";
-import { MOCK_REQUEST_CURRENCY, RESPONSE_DICTIONARY } from "../mock-responses";
-import { formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
+import { CURRENCIES_REQUEST, MOCK_REQUEST_CURRENCY, RESPONSE_DICTIONARY } from "../mock-responses";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 export default {
-  title: "Forms/Controls/Dictionary [autocomplete]",
-  ...formStoryWrapperTemplateWithMSW,
+  title: "Elements/Editable/Dictionary [autocomplete]",
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
   play: async (context) => {
     await waitForMountedAsync();
-
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    const list = document.getElementsByClassName("v-list");
-    //fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
-
     const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
-    //await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    //await userEvent.click(items[21], { delay: 200 });
-
     await expect(context.args.formModel).toEqual({
-      currency: { id: "AFN", label: "Afgani", digitsAfterDecimal: "2" },
+      currency: { id: "AFN", label: "Afgani", digitsAfterDecimal: "2", labels: "the-best" },
     });
   },
   args: {
@@ -59,28 +51,19 @@ export const Standard: Story = {
 };
 
 export const WithDescription: Story = {
+  name: "Case: add description to list item",
   play: async (context) => {
-    /*await waitForMountedAsync();
-
+    await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-    const list = document.getElementsByClassName("v-list");
-    fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
-
     const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[19], { delay: 200 });
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-    await userEvent.click(items[21], { delay: 200 });
-
+    const first = items[0];
+    await expect(first.textContent).toEqual("AfganiAfganithe-best");
+    await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({
-      currency: {
-        id: "BWP",
-        label: "Pula",
-        digitsAfterDecimal: "2",
-      },
-    });*/
+      currency: { id: "AFN", label: "Afgani", digitsAfterDecimal: "2", labels: "the-best" },
+    });
   },
   args: {
     formModel: {},
@@ -110,6 +93,7 @@ export const WithDescription: Story = {
 };
 
 export const WithSearch: Story = {
+  name: "Case: searching by query parameter",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -167,6 +151,7 @@ export const WithSearch: Story = {
 };
 
 export const ReturnValue: Story = {
+  name: "Case: return object = false",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -174,7 +159,6 @@ export const ReturnValue: Story = {
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
     const items = document.getElementsByClassName("v-list-item");
     await userEvent.click(items[0], { delay: 200 });
-
     await expect(context.args.formModel).toEqual({
       currency: "Afgani",
     });
@@ -206,25 +190,18 @@ export const ReturnValue: Story = {
   },
 };
 
-export const Required: Story = {
+export const Label: Story = {
+  name: "Case: extra label content",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText("Currency");
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-    const items = document.getElementsByClassName("v-list-item");
-    await userEvent.click(items[0], { delay: 200 });
-    const Submit = canvas.getByText("Validate");
-    await userEvent.click(Submit, { delay: 200 });
-    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
-    await expect(context.args.formModel).toEqual({
-      currency: {
-        id: "AFN",
-        label: "Afgani",
-        digitsAfterDecimal: "2",
-      },
-    });
+    const chips = document.getElementsByClassName("v-chip__content");
+    await expect(chips.length).toEqual(2);
+    await expect(chips[0].textContent).toEqual("The best");
+    await expect(chips[1].textContent).toEqual("The least");
   },
   args: {
     formModel: {},
@@ -245,50 +222,28 @@ export const Required: Story = {
       },
       required: ["currency"],
     } as Schema,
-  },
-  parameters: {
-    msw: {
-      handlers: MOCK_REQUEST_CURRENCY,
-    },
-  },
-};
-
-export const LazyLoadingDisabled: Story = {
-  play: async (context) => {
-    /* await waitForMountedAsync();
-     const canvas = within(context.canvasElement);
-     const select = canvas.getByLabelText("Currency");
-     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-     const items = document.getElementsByClassName("v-list-item");
-     await userEvent.click(items[0], { delay: 200 });
- 
-     await expect(context.args.formModel).toEqual({
-       currency: {
-         id: "BTN",
-         label: "Ngultrum",
-         digitsAfterDecimal: "2",
-       },
-     });*/
-  },
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        currency: {
-          label: "Currency",
-          layout: {
-            component: "dictionary",
-          },
-          source: {
-            url: "/mocks/currencies",
-            title: "label",
-            value: "id",
-            lazy: false,
-          } as DictionarySource,
-        } as SchemaSourceField,
+    options: {
+      fieldProps: {
+        variant: "outlined",
+        density: "comfortable",
       },
-    } as Schema,
+      dictionaryProps: {
+        labels: [
+          {
+            id: "the-best",
+            title: { en: "The best", pl: "Najlepsza" },
+            backgroundColor: "green",
+            textColor: "white",
+          },
+          {
+            id: "the-least",
+            title: { en: "The least", pl: "Słabe" },
+            backgroundColor: "blue",
+            textColor: "white",
+          },
+        ],
+      },
+    },
   },
   parameters: {
     msw: {
@@ -298,43 +253,23 @@ export const LazyLoadingDisabled: Story = {
 };
 
 export const DefaultValueAsATextWithDependencies: Story = {
+  name: "Case: pass a default value with variable (only returnObject=false mode)",
   play: async (context) => {
-    /*  await waitForMountedAsync();
-
-      const canvas = within(context.canvasElement);
-      const select = await canvas.getByLabelText("Currency");
-      await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-
-      const list = document.getElementsByClassName("v-list");
-      fireEvent.scroll(list[0], { target: { scrollTop: 900 } });
-
-      const items = document.getElementsByClassName("v-list-item");
-      await userEvent.click(items[19], { delay: 200 });
-      await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
-      await userEvent.click(items[21], { delay: 200 });
-
-      await expect(context.args.formModel).toEqual({
-        currency: {
-          id: "BWP",
-          label: "Pula",
-          digitsAfterDecimal: "2",
-        },
-      });*/
+    await waitForMountedAsync();
+    await expect(context.args.formModel).toEqual({
+      currency: "Crypto coin as karold",
+    });
   },
   args: {
     formModel: {},
     schema: {
       type: "object",
-
       properties: {
         currency: {
           defaultValue: "Crypto coin as {context.userInfo.username:DefaultValueLogin}",
           label: "Currency",
           layout: {
             component: "dictionary",
-            props: {
-              readonly: true,
-            },
           },
           source: {
             url: "/mocks/currencies",
@@ -348,22 +283,41 @@ export const DefaultValueAsATextWithDependencies: Story = {
     options: {
       context: {
         userInfo: {
-          username: "maciejd",
-          firstName: "Maciej",
-          lastName: "Dybowski",
+          username: "karold",
+          firstName: "Karol",
+          lastName: "Kowalski",
         },
       },
     },
-    parameters: {
-      msw: {
-        handlers: MOCK_REQUEST_CURRENCY,
-      },
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
     },
   },
 };
 
 export const OneTimeValueFilter: Story = {
-  play: async (context) => {},
+  name: "Case: value filter (disappear after first call)",
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText("Currency");
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    const items = document.getElementsByClassName("v-list-item");
+    await userEvent.click(items[0], { delay: 200 });
+    await expect(context.args.formModel).toEqual({
+      customer: {
+        defaultCurrencyCode: "PLN",
+      },
+      currency: {
+        id: "AFN",
+        label: "Afgani",
+        digitsAfterDecimal: "2",
+        labels: "the-best",
+      },
+    });
+  },
   args: {
     formModel: {
       customer: {
@@ -373,6 +327,13 @@ export const OneTimeValueFilter: Story = {
     schema: {
       type: "object",
       properties: {
+        span: {
+          content: "Used for filter specific one data / object from API",
+          layout: {
+            component: "static-content",
+            tag: "span",
+          },
+        },
         currency: {
           label: "Currency",
           layout: {
@@ -396,6 +357,8 @@ export const OneTimeValueFilter: Story = {
 };
 
 export const ConditionalFilter: Story = {
+  name: "Case: conditional RSQL filter",
+  play: async (context) => {},
   args: {
     formModel: {
       testInput: "test",
@@ -448,6 +411,7 @@ export const ConditionalFilter: Story = {
 };
 
 export const ConditionalValueFilter: Story = {
+  name: "Case: conditional value filter",
   args: {
     formModel: {
       testInput: "test",
@@ -499,11 +463,68 @@ export const ConditionalValueFilter: Story = {
   },
 };
 
+export const RequiredDict: Story = {
+  name: "Validation: required - XD ",
+  play: async (context) => {
+    /*  await waitForMountedAsync();
+      await waitForMountedAsync();
+      const canvas = within(context.canvasElement);
+      const select = canvas.getByLabelText("Currency");
+      await userEvent.click(select, { pointerEventsCheck: 0, delay: 100 });
+  
+      const items = document.getElementsByClassName("v-list-item");
+      await userEvent.click(items[0], { delay: 100 });
+      const Submit = canvas.getByText("Validate");
+      await userEvent.click(Submit, { delay: 100 });
+      await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+      await expect(context.args.formModel).toEqual({
+        currencyLabel: {
+          id: "USD",
+          label: "US Dollar",
+        },
+      });*/
+    // TODO w GUI przechodzi w autoskrypcie - nie
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        currencyLabel: {
+          label: "Currency",
+          layout: {
+            component: "dictionary",
+          },
+          source: {
+            url: "/mock-data/currencies",
+            title: "label",
+            value: "value",
+          },
+        },
+      },
+      required: ["currency"],
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [CURRENCIES_REQUEST],
+    },
+  },
+};
+
 export const ReadOnlyWithValue: Story = {
-  play: async (context) => {},
+  name: "Case: readonly with value",
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit);
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+  },
   args: {
     formModel: {
-      currency: {
+      currencyReadonly: {
         id: "BWP",
         label: "Pula",
         digitsAfterDecimal: "2",
@@ -512,7 +533,7 @@ export const ReadOnlyWithValue: Story = {
     schema: {
       type: "object",
       properties: {
-        currency: {
+        currencyReadonly: {
           label: "Currency",
           layout: {
             component: "dictionary",
@@ -529,14 +550,17 @@ export const ReadOnlyWithValue: Story = {
       },
     } as Schema,
   },
-  parameters: {
-    msw: {
-      handlers: MOCK_REQUEST_CURRENCY,
-    },
-  },
 };
 export const ReadOnlyRequiredWithValue: Story = {
-  play: async (context) => {},
+  name: "Case: readonly with value and required",
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit);
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+  },
   args: {
     formModel: {
       currency: {
@@ -566,14 +590,17 @@ export const ReadOnlyRequiredWithValue: Story = {
       required: ["currency"],
     } as Schema,
   },
-  parameters: {
-    msw: {
-      handlers: MOCK_REQUEST_CURRENCY,
-    },
-  },
 };
 export const ReadOnlyRequiredWithoutValue: Story = {
-  play: async (context) => {},
+  name: "Case: readonly without value and required",
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    const Submit = canvas.getByText("Validate");
+    await userEvent.click(Submit);
+    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+  },
   args: {
     formModel: {},
     schema: {
@@ -596,10 +623,5 @@ export const ReadOnlyRequiredWithoutValue: Story = {
       },
       required: ["currency"],
     } as Schema,
-  },
-  parameters: {
-    msw: {
-      handlers: MOCK_REQUEST_CURRENCY,
-    },
   },
 };

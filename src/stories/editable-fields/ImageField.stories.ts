@@ -7,7 +7,7 @@ import { IMAGE_REQUEST } from "../mock-responses";
 
 
 export default {
-  title: "Forms/Controls/Image",
+  title: "Elements/Editable/Image",
   ...formStoryWrapperTemplate,
 };
 

@@ -3,14 +3,14 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaTextField } from "../../types/schema/elements";
-import { waitForMountedAsync } from "../controls/utils";
+import { waitForMountedAsync } from "../editable-fields/utils";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 import { initialize } from "msw-storybook-addon";
 
 
 export default {
-  title: "Forms/Features/Hide fields",
+  title: "Features/Hide fields",
   ...formStoryWrapperTemplate,
 };
 

@@ -3,15 +3,12 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import dayjs from "../../components/controls/date/dayjs";
 import { Schema } from "../../types/schema/Schema";
-import { SchemaDateField, SchemaTextField } from "../../types/schema/elements";
+import { SchemaDateField } from "../../types/schema/elements";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { StoryTemplateWithValidation } from "../templates/story-template";
-
-import { initialize } from "msw-storybook-addon";
-
+import { waitForMountedAsync } from "./utils";
 
 export default {
-  title: "Forms/Controls/Date",
+  title: "Elements/Editable/Date",
   ...formStoryWrapperTemplate,
 };
 
@@ -38,12 +35,32 @@ export const Standard: Story = {
   },
 };
 
+export const DefaultValue: Story = {
+  play: async (context) => {
+    await expect(context.args.formModel).toEqual({ dateWithDefault: "2024-01-29" });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: "object",
+      properties: {
+        dateWithDefault: {
+          label: "Date",
+          defaultValue: "2024-01-29",
+          layout: {
+            component: "date-picker",
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
 export const ReadOnly: Story = {
   play: async (context) => {
-    // const canvas = within(context.canvasElement);
-    // const field = canvas.getByLabelText('Date');
-    // await userEvent.type(field, '01/29/2024');
-    // await expect(context.args.formModel.simpleDate).toEqual('2024-01-29T00:00:00.000+01:00');
+    await waitForMountedAsync();
+    const btnClasses = document.getElementsByClassName("v-btn--icon v-btn--readonly");
+    await expect(btnClasses.length).toEqual(1);
   },
   args: {
     formModel: {
@@ -68,15 +85,13 @@ export const ReadOnly: Story = {
 };
 
 export const PickFromMenu: Story = {
+  name: "Case: pick date from menu",
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    //const field = canvas.getByLabelText('Date');
     const icon = document.getElementsByClassName("mdi-calendar");
     await userEvent.click(icon[0]);
-
     const dateButton = document.getElementsByClassName("v-btn__content");
     await userEvent.click(dateButton[10], { delay: 400 });
-    //await userEvent.type(field, '01/29/2024');
     await expect(dayjs(context.args.formModel.simpleDateFromPicker).isValid()).toBe(true);
   },
   args: {
@@ -95,31 +110,9 @@ export const PickFromMenu: Story = {
     } as Schema,
   },
 };
-/**
- * You can set the default value of field from schema
- */
-export const WithDefault: Story = {
-  play: async (context) => {
-    await expect(context.args.formModel).toEqual({ dateWithDefault: "2024-01-29" });
-  },
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        dateWithDefault: {
-          label: "Date",
-          defaultValue: "2024-01-29",
-          layout: {
-            component: "date-picker",
-          },
-        },
-      },
-    } as Schema,
-  },
-};
 
 export const CustomFormatInModel: Story = {
+  name: "Case: custom format in schema definition",
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText("Date");
@@ -144,46 +137,17 @@ export const CustomFormatInModel: Story = {
 };
 
 /**
- * You can personalize the form controls according to the options available in vuetify
- */
-export const WithVuetifyProps: Story = {
-  name: "DatePicker with Vuetify Props",
-  args: {
-    schema: {
-      type: "object",
-      properties: {
-        textField: {
-          label: "Date",
-          layout: {
-            component: "date-picker",
-            props: {
-              variant: "outlined",
-              density: "compact",
-            },
-          },
-        } as SchemaTextField,
-      },
-    } as Schema,
-  },
-};
-
-/**
  * Example shows how to define a "required" field on a form
  */
 export const SimpleValidation: Story = {
-  name: "DatePicker with required annotation",
-  
+  name: "Validation: required",
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
-
     await userEvent.click(Submit);
-    // 👇 Assert DOM structure
     await expect(canvas.getByText("Field is required.")).toBeInTheDocument();
-
     const field = canvas.getByLabelText("Date");
     await userEvent.type(field, "01/29/2024");
-    // 👇 Assert DOM structure
     await userEvent.click(Submit);
     await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
   },
@@ -205,15 +169,13 @@ export const SimpleValidation: Story = {
 };
 
 export const Validation_1: Story = {
-  name: "DatePicker with not past date allowed",
-  
+  name: "Validation: past date is not allowed",
+
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
-
     const field = canvas.getByLabelText("Date");
     await userEvent.type(field, "01/29/2023");
-    // 👇 Assert DOM structure
     await userEvent.click(Submit);
     await expect(canvas.getByText("Date cannot be in the past")).toBeInTheDocument();
   },
@@ -236,15 +198,12 @@ export const Validation_1: Story = {
 };
 
 export const Validation_2: Story = {
-  name: "DatePicker with not future date allowed",
-  
+  name: "Validation: future date is not allowed",
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText("Validate");
-
     const field = canvas.getByLabelText("Date");
     await userEvent.type(field, "01/29/2030");
-    // 👇 Assert DOM structure
     await userEvent.click(Submit);
     await expect(canvas.getByText("Date cannot be in the future")).toBeInTheDocument();
   },

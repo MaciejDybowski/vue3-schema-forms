@@ -1,16 +1,14 @@
 // @ts-nocheck
 import { Schema } from "../../types/schema/Schema";
 import { TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW } from "../mock-responses";
-import { formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 export default {
-  title: "Forms/Controls/TableView",
-  ...formStoryWrapperTemplateWithMSW,
+  title: "Elements/Editable/TableView",
+  ...formStoryWrapperTemplate,
 };
 
-/**
- * Description here
- */
+
 export const Standard: Story = {
   play: async (context) => {},
   args: {

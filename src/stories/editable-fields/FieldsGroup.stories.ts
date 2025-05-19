@@ -1,18 +1,14 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
-
 import { expect, userEvent, within } from "@storybook/test";
 
 import { DictionarySource } from "../../types/shared/Source";
 import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
-
-
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 export default {
-  title: "Forms/Controls/FieldsGroup",
-  ...formStoryWrapperTemplateWithMSW,
+  title: "Elements/Editable/FieldsGroup",
+  ...formStoryWrapperTemplate,
 };
 
 export const Standard = {
@@ -215,7 +211,7 @@ export const GroupWithHiddenDict = {
     await expect(context.args.formModel).toEqual({
       fieldQ: "Example value",
       showCurrency: true,
-      currency: { id: "AFN", label: "Afgani", digitsAfterDecimal: "2" },
+      currency: { id: "AFN", label: "Afgani", digitsAfterDecimal: "2", labels: "the-best" },
     });
   },
   args: {

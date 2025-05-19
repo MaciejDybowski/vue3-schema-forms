@@ -5,7 +5,7 @@ import FormStoryWrapper from "../../.storybook/components/FormStoryWrapper.vue";
 import { MULTI_ORDERED_SELECT_MOCK } from "./mock-responses";
 
 export default {
-  title: "Development Stories",
+  title: "Development Area",
   component: FormStoryWrapper,
   args: {
     formModel: {},

@@ -11,7 +11,7 @@ import { waitForMountedAsync } from "./utils";
 
 
 export default {
-  title: "Forms/Controls/Phone",
+  title: "Elements/Editable/Phone",
   ...formStoryWrapperTemplate,
 };
 

@@ -10,7 +10,7 @@ import { initialize } from "msw-storybook-addon";
 
 
 export default {
-  title: "Forms/Features/ConditionalRendering",
+  title: "Features/ConditionalRendering",
   ...formStoryWrapperTemplate,
 };
 

@@ -7,7 +7,7 @@ import { initialize } from "msw-storybook-addon";
 
 
 export default {
-  title: "Forms/Features/Layouts",
+  title: "Features/Layouts",
   ...formStoryWrapperTemplate,
 };
 

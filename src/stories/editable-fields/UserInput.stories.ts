@@ -3,7 +3,7 @@ import { USER_INPUT_MOCKS } from "../mock-responses";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 export default {
-  title: "Forms/Controls/UserInput",
+  title: "Elements/Editable/UserInput",
   ...formStoryWrapperTemplate,
 };
 

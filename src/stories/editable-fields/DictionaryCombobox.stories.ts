@@ -1,15 +1,12 @@
 // @ts-nocheck
 import { HttpResponse, http } from "msw";
-import { initialize } from "msw-storybook-addon";
 
 import { Schema } from "../../types/schema/Schema";
-import { formStoryWrapperTemplate, formStoryWrapperTemplateWithMSW } from "../templates/shared-blocks";
-
-
+import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 
 export default {
-  title: "Forms/Controls/Dictionary [combobox]",
-  ...formStoryWrapperTemplateWithMSW,
+  title: "Elements/Editable/Dictionary [combobox]",
+  ...formStoryWrapperTemplate,
 };
 
 const MOCK_REQUEST = [

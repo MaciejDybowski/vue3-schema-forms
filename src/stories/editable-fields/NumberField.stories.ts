@@ -10,7 +10,7 @@ import { waitForMountedAsync } from "./utils";
 
 
 export default {
-  title: "Forms/Controls/NumberField",
+  title: "Elements/Editable/NumberField",
   ...formStoryWrapperTemplate,
 };
 

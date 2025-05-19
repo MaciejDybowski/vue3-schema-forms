@@ -1,12 +1,9 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
-
-import FormStoryWrapper from "../../.storybook/components/FormStoryWrapper.vue";
-import { MULTI_ORDERED_SELECT_MOCK } from "./mock-responses";
-import MultipleFormStoryWrapper from "../../.storybook/components/MultipleFormStoryWrapper.vue";
+import MultipleFormStoryWrapper from "../../../.storybook/components/MultipleFormStoryWrapper.vue";
 
 export default {
-  title: "Multi-Form Stories",
+  title: "Features/Multi-Form",
   component: MultipleFormStoryWrapper,
   args: {
     formModelOne: {},

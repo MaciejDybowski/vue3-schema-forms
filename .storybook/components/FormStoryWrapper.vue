@@ -21,7 +21,7 @@
             :default-form-actions="true"
             :options="options"
             :schema="schema"
-            :validation-behaviour="'scroll'"
+            :validation-behaviour="'messages'"
             @is-form-ready="catchSignalFormIsReady"
             @call-action="handleAction"
           />

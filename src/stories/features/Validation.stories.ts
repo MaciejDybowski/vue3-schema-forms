@@ -3,12 +3,12 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import { Schema } from "../../types/schema/Schema";
 import { SchemaField } from "../../types/schema/elements";
-import { waitForMountedAsync } from "../controls/utils";
+import { waitForMountedAsync } from "../editable-fields/utils";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { StoryTemplateWithCustomValidation } from "../templates/story-template";
 
 export default {
-  title: "Forms/Features/Validations",
+  title: "Features/Validations",
   ...formStoryWrapperTemplate,
 };
 

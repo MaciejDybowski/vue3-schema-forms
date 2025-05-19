@@ -6,7 +6,7 @@ import { formStoryWrapperTemplate } from "../templates/shared-blocks";
 import { waitForMountedAsync } from "./utils";
 
 export default {
-  title: "Forms/Controls/Switch",
+  title: "Elements/Editable/Switch",
   ...formStoryWrapperTemplate,
 };
 

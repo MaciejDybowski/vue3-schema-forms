@@ -5,7 +5,7 @@ import { initialize } from "msw-storybook-addon";
 
 
 export default {
-  title: "Forms/Static content",
+  title: "Elements/Static/Markdown",
   ...formStoryWrapperTemplate,
 };
 

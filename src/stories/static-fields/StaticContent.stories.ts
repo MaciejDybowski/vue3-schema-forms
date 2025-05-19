@@ -4,10 +4,10 @@ import { expect, within } from "@storybook/test";
 import { Schema } from "../../types/schema/Schema";
 import { Layout } from "../../types/schema/elements";
 import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { waitForMountedAsync } from "./utils";
+import { waitForMountedAsync } from "../editable-fields/utils";
 
 export default {
-  title: "Forms/Static content",
+  title: "Elements/Static/Paragraphs And Headings",
   ...formStoryWrapperTemplate,
 };
 
@@ -79,16 +79,17 @@ export const Examples: Story = {
 };
 
 export const TextWithVariablesAndHTML: Story = {
+  name:"Case: combine text with variables and HTML elements",
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("Hello Maciej Dybowski!")).toBeInTheDocument();
+    await expect(canvas.getByText("Hello Karol Kowalski!")).toBeInTheDocument();
   },
   args: {
     formModel: {
       data: {
-        firstName: "Maciej",
-        lastName: "Dybowski",
+        firstName: "Karol",
+        lastName: "Kowalski",
         datetime: "2025-03-25T12:37:34.12312",
       },
     },
@@ -116,6 +117,7 @@ export const TextWithVariablesAndHTML: Story = {
 };
 
 export const JsonataInText: Story = {
+  name:"Case: JSONata function",
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const span = canvasElement.querySelector('span div');
@@ -152,105 +154,3 @@ export const JsonataInText: Story = {
   },
 };
 
-export const GenerateVuetifyStaticComponent: Story = {
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
-    const canvas = within(canvasElement);
-    await expect(canvas.getByText("Is difference between Value A = 123 and Value B = 321")).toBeInTheDocument();
-  },
-  args: {
-    formModel: {
-      valueA: "123",
-      valueB: "321",
-    },
-    schema: {
-      type: "object",
-      properties: {
-        alert: {
-          content: "Is difference between Value A = {valueA} and Value B = {valueB}",
-          layout: {
-            component: "static-content",
-            tag: "v-alert",
-            props: {
-              type: "warning",
-              variant: "outlined",
-            },
-          },
-        },
-      } as any,
-    },
-  },
-};
-
-export const DividerDefault: Story = {
-  play: async () => {},
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        divider: {
-          layout: {
-            component: "divider",
-          },
-        },
-      },
-    } as Schema,
-  },
-};
-
-export const DividerThickness: Story = {
-  play: async () => {},
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        divider: {
-          layout: {
-            component: "divider",
-          },
-          thickness: 20,
-        },
-      },
-    } as Schema,
-  },
-};
-
-export const DividerColor: Story = {
-  play: async () => {},
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        divider: {
-          layout: {
-            component: "divider",
-          },
-          thickness: 5,
-          color: "#B80D1AAD",
-          opacity: "100",
-        },
-      },
-    } as Schema,
-  },
-};
-
-export const DividerOpacity: Story = {
-  play: async () => {},
-  args: {
-    formModel: {},
-    schema: {
-      type: "object",
-      properties: {
-        divider: {
-          layout: {
-            component: "divider",
-          },
-          opacity: "25",
-        },
-      },
-    } as Schema,
-  },
-};

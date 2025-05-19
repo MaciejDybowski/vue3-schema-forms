@@ -5,7 +5,7 @@ import { initialize } from "msw-storybook-addon";
 
 
 export default {
-  title: "Forms/Integrations",
+  title: "Features/Integrations",
   ...formStoryWrapperTemplate,
 };
 
