@@ -29,7 +29,7 @@ export function useConditionalRendering() {
     //if (!shouldRender.value) {
     originalIf.value = cloneDeep(schema.layout.if);
     if (schema.layout.if !== undefined && schema.layout.if?.includes("nata(")) {
-      const match = schema.layout.if.match(/^nata\((.*)\)$/);
+      const match = schema.layout.if.match(/^nata\(([^]*)\)$/);
       if (match) {
         const expression = fillPath(schema.path, schema.index, match[1]);
         await ifByJsonNata(schema, expression, model);
