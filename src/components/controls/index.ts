@@ -29,6 +29,7 @@ import Markdown from "./markdown/Markdown.vue";
 import OrderedMultiSelect from "./ordered-multi-select/OrderedMultiSelect.vue";
 import NumberFieldv2 from "@/components/controls/NumberFieldv2.vue";
 import KeyValueList from "@/components/controls/KeyValueList.vue";
+import Alert from "@/components/controls/Alert.vue";
 
 export const vueSchemaFromControls: Components = {
   "text-field": TextField,
@@ -58,5 +59,6 @@ export const vueSchemaFromControls: Components = {
   "user-input": UserInput,
   "markdown": Markdown,
   "ordered-multi-select": OrderedMultiSelect,
-  "key-value-list": KeyValueList
+  "key-value-list": KeyValueList,
+  "alert": Alert
 };
