@@ -1,8 +1,11 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
 
+
+
 import FormStoryWrapper from "../../.storybook/components/FormStoryWrapper.vue";
 import { MULTI_ORDERED_SELECT_MOCK } from "./mock-responses";
+
 
 export default {
   title: "Development Stories",
@@ -300,9 +303,7 @@ export const Table: Story = {
 
 export const Table4: Story = {
   args: {
-    formModel: {
-      alert: false
-    },
+    formModel: {},
     schema: {
       type: "object",
       properties: {
@@ -316,6 +317,24 @@ export const Table4: Story = {
               type: "info",
               variant: "tonal",
             },
+          },
+        },
+      },
+    },
+    options: {
+      fieldProps: {
+        variant: "outlined",
+        density: "compact",
+      },
+      context: {
+        userInfo: {
+          properties: {
+            alerts: [
+              {
+                path: "alert",
+                expanded: false,
+              },
+            ],
           },
         },
       },

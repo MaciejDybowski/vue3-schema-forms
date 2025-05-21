@@ -32,7 +32,8 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import get from "lodash/get";
+import { computed, onMounted, ref } from "vue";
 
 import { useClass, useFormModel, useProps, useResolveVariables } from "@/core/composables";
 import { EngineAlertField } from "@/types/engine/controls";
@@ -74,9 +75,12 @@ onMounted(async () => {
   });
 
   if (memorable.value) {
-    expanded.value = getValue(model, schema, true);
-    setValue(null, schema);
+    expanded.value = userProperties.value?.alerts?.find((alert) => alert?.path === schema.key)?.expanded ?? true;
   }
+});
+
+const userProperties = computed(() => {
+  return get(schema.options, "context.userInfo.properties", {});
 });
 
 function changeState() {
