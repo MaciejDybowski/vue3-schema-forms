@@ -255,7 +255,6 @@ const filteredButtons = ref<TableButton[]>([]);
 async function filteredButtonsFunction() {
   const tempActions = await Promise.all(
     buttons.value?.map(async (button: TableButton) => {
-
       // For readonly mode when whole form is in this state
       if (fieldProps.value.readonly == true) {
         button.disabled = true;
@@ -409,8 +408,12 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
 async function createBodyObjectFromRow(actionObj: any, row: any) {
   let body = {};
   for (const [key, value] of Object.entries(actionObj.body)) {
-    const unwrapped = (value as string).slice(1, -1);
-    body[key] = get(row, unwrapped, null);
+    if (typeof value === "string" && variableRegexp.test(value)) {
+      const unwrapped = (value as string).slice(1, -1);
+      body[key] = get(row, unwrapped, null);
+    } else {
+      body[key] = value;
+    }
   }
   return body;
 }
