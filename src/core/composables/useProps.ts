@@ -20,6 +20,11 @@ export function useProps() {
 
   async function bindProps(schema: EngineField) {
     switch (schema.layout.component) {
+      case "alert":
+        props.value = {
+          ...schema.layout?.props,
+        }
+        break;
       case "text-field":
         props.value = {
           ...defaultTextFieldProperties,

@@ -58,7 +58,19 @@ const { bindClass } = useClass();
 
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
+function changeState() {
+  expanded.value = !expanded.value;
+  actionHandlerEventBus.emit("form-action", {
+    code: "save-form-element-state",
+    path: schema.key,
+    expanded: expanded.value,
+  });
+}
+
 onMounted(async () => {
+  console.debug(schema);
+  await bindProps(schema);
+  console.debug(fieldProps.value);
   const isContentRef = typeof schema.content === "object" && "$ref" in schema.content;
   if (isContentRef) {
     // @ts-ignore
@@ -82,15 +94,6 @@ onMounted(async () => {
 const userProperties = computed(() => {
   return get(schema.options, "context.userInfo.properties", {});
 });
-
-function changeState() {
-  expanded.value = !expanded.value;
-  actionHandlerEventBus.emit("form-action", {
-    code: "save-form-element-state",
-    path: schema.key,
-    expanded: expanded.value,
-  });
-}
 </script>
 
 <style scoped>
