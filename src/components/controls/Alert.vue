@@ -68,9 +68,7 @@ function changeState() {
 }
 
 onMounted(async () => {
-  console.debug(schema);
   await bindProps(schema);
-  console.debug(fieldProps.value);
   const isContentRef = typeof schema.content === "object" && "$ref" in schema.content;
   if (isContentRef) {
     // @ts-ignore
