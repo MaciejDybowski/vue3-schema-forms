@@ -37,6 +37,11 @@ export interface EngineStaticField extends EngineField {
   content: string;
 }
 
+export interface EngineAlertField extends EngineField {
+  content: string;
+  memorable?: boolean;
+}
+
 export interface EngineDuplicatedSection extends EngineField {
   editable?: boolean;
 }

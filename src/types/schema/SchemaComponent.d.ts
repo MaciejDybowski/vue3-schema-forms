@@ -20,4 +20,5 @@ export type SchemaComponent =
   | "switch"
   | "user-input"
   | "fields-group"
-  | "image";
+  | "image"
+  | "alert";

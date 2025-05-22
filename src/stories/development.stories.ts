@@ -1,8 +1,11 @@
 // @ts-nocheck
 import { Meta, StoryObj } from "@storybook/vue3";
 
+
+
 import FormStoryWrapper from "../../.storybook/components/FormStoryWrapper.vue";
 import { MULTI_ORDERED_SELECT_MOCK } from "./mock-responses";
+
 
 export default {
   title: "Development Area",
@@ -300,38 +303,38 @@ export const Table: Story = {
 
 export const Table4: Story = {
   args: {
-    formModel: {
-      fieldA: "2025-05-09",
-    },
+    formModel: {},
     schema: {
       type: "object",
       properties: {
-        fieldA: {
-          label: "Date",
+        alert: {
+          memorable: true,
+          content:
+            "<p><strong>Please select the appropriate customer decision based on the feedback received:</strong></p><ul><li><strong>Yes – Accept the Offer:</strong> Choose this option if the customer has accepted the offer without changes. You will be able to generate a pricelist file, which must then be forwarded to the Customer Service Office (CSO).</li><li><strong>No – Cancel the Offer:</strong> Select this option if the customer has rejected the offer. This will end the offer process with no further actions required.</li><li><strong>No – Update the Offer:</strong> Use this option if the customer has requested changes (e.g., pricing adjustments or product modifications). The process will return to the offer preparation step, where you will be able to fully edit the offer.</li><li><strong>No – Re-send the Offer:</strong> Choose this option if you only need to revise the offer description or validity dates. The process will return to the previous task, allowing you to generate an updated version of the offer without full editing.</li></ul>",
           layout: {
-            component: "date-picker",
-            cols: 4,
+            component: "alert",
             props: {
-              readonly: true,
+              type: "info",
+              variant: "tonal",
             },
           },
         },
-        fieldB: {
-          label: "Text",
-          layout: {
-            component: "text-field",
-            cols: 4,
-            props: {
-              hint: "Test",
-              "persistent-hint": true,
-            },
-          },
-        },
-        fieldC: {
-          label: "Date&Time",
-          layout: {
-            component: "date-time-picker",
-            cols: 4,
+      },
+    },
+    options: {
+      fieldProps: {
+        variant: "outlined",
+        density: "compact",
+      },
+      context: {
+        userInfo: {
+          properties: {
+            alerts: [
+              {
+                path: "alert",
+                expanded: false,
+              },
+            ],
           },
         },
       },

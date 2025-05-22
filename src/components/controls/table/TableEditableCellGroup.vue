@@ -5,7 +5,7 @@
     v-bind="attrs"
   >
     <v-text-field
-      v-if="item.type == 'NUMBER'"
+      v-if="item.type == 'NUMBER' && shouldRenderMap[item.valueMapping]"
       :class="[
         (item.rules && item.rules.length > 0) || items.length <= 1
           ? `content-right ${item.class}`

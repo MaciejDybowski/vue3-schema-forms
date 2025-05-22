@@ -48,14 +48,14 @@
 </template>
 
 <script lang="ts" setup>
+import { debounce } from "lodash";
 import { onMounted, ref, toRaw, watch } from "vue";
 import VueJsonPretty from "vue-json-pretty";
 import "vue-json-pretty/lib/styles.css";
 
-import VueSchemaForms from "../../src/components/engine/VueSchemaForms.vue";
-
 import { Schema } from "@/types/schema/Schema.d";
-import { debounce } from "lodash";
+
+import VueSchemaForms from "../../src/components/engine/VueSchemaForms.vue";
 
 const snackbar = ref(false);
 const { schema, options, formModel, emittedObject } = defineProps<{
@@ -74,16 +74,21 @@ function catchSignalFormIsReady() {
 }
 
 function handleAction(properties) {
-  console.debug(`[vue-schema-forms] - catch action with properties`);
+  console.debug(`[vue-schema-forms] - catch action with properties`, properties);
   // @ts-ignore
-  Object.assign(toRaw(emittedObject), properties);
-  console.debug(emittedObject);
+  try {
+    Object.assign(toRaw(emittedObject), properties);
+    console.debug(emittedObject);
+  } catch (e) {
+    console.warn("error");
+  }
 }
 
 const debounced = {
-  saveState: debounce(simulateSavedState, 300)
-}
-function simulateSavedState(){
+  saveState: debounce(simulateSavedState, 300),
+};
+
+function simulateSavedState() {
   if (mySchemaForm.value) {
     mySchemaForm.value.formDataWasSaved = true;
   }
@@ -97,7 +102,7 @@ watch(
       mySchemaForm.value.formDataWasSaved = false;
     }
     Object.assign(toRaw(formModel), model.value);
-    debounced.saveState()
+    debounced.saveState();
   },
   { deep: true },
 );
