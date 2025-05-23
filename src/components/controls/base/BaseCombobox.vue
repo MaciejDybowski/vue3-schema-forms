@@ -3,21 +3,13 @@
     v-model="model"
     v-bind="attrs"
   >
-    <template #item="{ item, props }">
-      <slot
-        name="item"
-        :item="item"
-        :props="props"
-      />
-    </template>
-
     <template
-      v-for="(_, slot) in $slots as VComboboxSlots"
-      v-slot:[slot]="scope"
+      v-for="(_, name) in $slots"
+      #[name]="scope"
     >
       <slot
-        :name="slot"
-        v-bind="scope"
+        :name
+        v-bind="scope ?? {}"
       />
     </template>
 
@@ -41,8 +33,6 @@ import { VCombobox } from 'vuetify/components';
 import { computed, ref, useAttrs } from 'vue';
 
 import { Pagination } from './Pagination';
-
-type VComboboxSlots = InstanceType<typeof VCombobox>['$slots'];
 
 const attrs = useAttrs();
 const props = withDefaults(

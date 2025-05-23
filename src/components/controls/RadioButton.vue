@@ -50,7 +50,7 @@ const { getValue, setValue } = useFormModel();
 const initValue: boolean = props.schema.initValue !== undefined ? props.schema.initValue : true;
 
 const localModel = computed({
-  get(): string | number {
+  get(): string | number | null {
     if (returnObject) {
       const obj = getValue(props.model, props.schema);
       return obj ? obj[value] : null;

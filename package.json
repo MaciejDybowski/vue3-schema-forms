@@ -47,7 +47,7 @@
     "@vueuse/math": "13.0.0",
     "github-markdown-css": "^5.8.1",
     "jsonata": "2.0.6",
-    "leaflet-geosearch": "^4.0.0",
+    "leaflet-geosearch": "^4.2.0",
     "libphonenumber-js": "^1.11.4",
     "lodash": "^4.17.21",
     "markdown-it": "^14.1.0",
@@ -111,10 +111,10 @@
     "typescript": "^5.5.3",
     "urijs": "^1.19.11",
     "vite": "^5.3.4",
-    "vite-plugin-dts": "^3.9.1",
-    "vite-plugin-vuetify": "^2.0.3",
-    "vitest": "^3.0.8",
-    "vue-tsc": "^2.0.26"
+    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-vuetify": "^2.1.1",
+    "vitest": "^3.1.4",
+    "vue-tsc": "^2.2.10"
   },
   "bugs": {
     "url": "https://github.com/MaciejDybowski/vue3-schema-forms/issues"
