@@ -23,7 +23,7 @@ export interface TableHeader {
   color?: string;
   items?: TableHeader[];
   footerMapping?: string;
-  condition?: string
+  condition?: string;
 }
 
 export interface HeaderEditableObject {
@@ -32,8 +32,8 @@ export interface HeaderEditableObject {
   class?: string;
   type: "NUMBER" | "TEXT" | "SELECT";
   rules?: any[];
-  condition?:string
-  readonly:? string
+  condition?: string;
+  readonly: ? string;
 }
 
 export interface TableHeaderAction {
@@ -44,7 +44,7 @@ export interface TableHeaderAction {
   config: Record<string, any>;
   code?: string;
   condition?: string;
-  disabled?: string | boolean
+  disabled?: string | boolean;
 
   // popup mode
   schema?: any;

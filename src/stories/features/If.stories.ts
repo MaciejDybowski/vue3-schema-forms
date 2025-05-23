@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { expect, userEvent, within } from '@storybook/test';
-import { initialize } from 'msw-storybook-addon';
 
 import { conditionSchema } from '@/stories/schemas';
 

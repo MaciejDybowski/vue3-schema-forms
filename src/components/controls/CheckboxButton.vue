@@ -58,7 +58,7 @@ const { getValue, setValue } = useFormModel();
 const localModel = computed({
   get(): string | number {
     if (returnObject) {
-      return getValue(props.model, props.schema)?.map((item:Record<string, any>) => item[value]);
+      return getValue(props.model, props.schema)?.map((item: Record<string, any>) => item[value]);
     } else {
       return getValue(props.model, props.schema);
     }

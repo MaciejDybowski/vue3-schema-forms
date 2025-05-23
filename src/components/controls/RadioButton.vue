@@ -60,7 +60,7 @@ const localModel = computed({
   },
   set(val: any) {
     if (returnObject) {
-      const obj = data.value.filter((item:Record<string, any>) => {
+      const obj = data.value.filter((item: Record<string, any>) => {
         return item[value] === val;
       })[0];
       setValue(obj, props.schema);

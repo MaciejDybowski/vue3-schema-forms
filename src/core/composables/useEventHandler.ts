@@ -1,6 +1,5 @@
 import { useEventBus } from '@vueuse/core';
 import { debounce } from 'lodash';
-import set from 'lodash/set';
 
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { variableRegexp } from '@/core/engine/utils';

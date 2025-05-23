@@ -1,5 +1,5 @@
 <template>
-  <v-card-text> Inject component here. </v-card-text>
+  <v-card-text> Inject component here.</v-card-text>
 </template>
 
 <script setup lang="ts"></script>

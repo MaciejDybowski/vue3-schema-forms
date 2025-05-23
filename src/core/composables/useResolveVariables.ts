@@ -7,7 +7,6 @@ import { EngineField } from '@/types/engine/EngineField';
 import dayjs from '../../components/controls/date/dayjs';
 import { variableRegexp } from '../engine/utils';
 import { useDateFormat } from './useDateFormat';
-import { SchemaField } from "@/types/schema/SchemaField";
 
 interface VariableSyntaxProps {
   defaultValue: any;
@@ -107,7 +106,7 @@ export function useResolveVariables() {
     field: any,
     value: any,
     valueProps: VariableSyntaxProps,
-    title:string,
+    title: string,
     rawNumber = false,
   ) {
     if (valueProps.typeOfValue == 'DATETIME' && value) {

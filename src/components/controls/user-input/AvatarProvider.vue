@@ -41,7 +41,7 @@ const props = withDefaults(
 const loading = ref(true);
 const image = ref('');
 
-const toBase64 = (file:any) =>
+const toBase64 = (file: any) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);

@@ -70,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import { toNumber } from 'lodash';
 import { MaskOptions } from 'maska';
 
 import { computed, onMounted, ref, useAttrs, watch } from 'vue';
@@ -86,7 +87,6 @@ import {
   useRules,
 } from '../../../core/composables';
 import dayjs from './dayjs';
-import { toNumber } from "lodash";
 
 const { locale, t } = useLocale();
 const props = defineProps<{ schema: EngineDateField; model: object }>();
@@ -172,7 +172,7 @@ function datePick(val: Date) {
   }
 }
 
-function timePick(val:string) {
+function timePick(val: string) {
   const h = val.split(':')[0];
   const min = val.split(':')[1];
   pickerValue.value?.setHours(toNumber(h));

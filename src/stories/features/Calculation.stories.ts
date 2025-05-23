@@ -1,9 +1,7 @@
 // @ts-nocheck
 import { expect, userEvent, within } from '@storybook/test';
-import { initialize } from 'msw-storybook-addon';
 
 import { calculationSchemaInDuplicatedSection, simpleCalculationSchema } from '@/stories/schemas';
-import { invoicePositionsSchema } from '@/tests/test-schemas';
 
 import { Schema } from '../../types/schema/Schema';
 import { Layout, SchemaTextField } from '../../types/schema/elements';

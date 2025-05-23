@@ -33,7 +33,7 @@ const props = withDefaults(
   },
 );
 
-function prevent(ev:Event): void {
+function prevent(ev: Event): void {
   ev.stopPropagation();
   ev.preventDefault();
 }

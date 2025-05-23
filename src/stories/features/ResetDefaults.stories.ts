@@ -1,8 +1,5 @@
 // @ts-nocheck
 import { expect, userEvent, within } from '@storybook/test';
-import { initialize } from 'msw-storybook-addon';
-
-import { StoryTemplateWithValidation } from '@/stories/templates/story-template';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField } from '../../types/schema/elements';

@@ -5,9 +5,9 @@
     style="border: 1px rgb(0, 0, 0, 0.12) solid"
   >
     <v-col cols="6">
-      <v-card-title class="text-subtitle-2 text-high-emphasis bg-surface">{{
-        t('available')
-      }}</v-card-title>
+      <v-card-title class="text-subtitle-2 text-high-emphasis bg-surface"
+        >{{ t('available') }}
+      </v-card-title>
       <v-divider class="mt-1" />
       <v-list
         class="overflow-y-auto pa-0 ma-0"
@@ -34,9 +34,9 @@
       cols="6"
       style="border-left: 1px rgb(0, 0, 0, 0.12) solid"
     >
-      <v-card-title class="text-subtitle-2 text-high-emphasis bg-surface">{{
-        t('selected')
-      }}</v-card-title>
+      <v-card-title class="text-subtitle-2 text-high-emphasis bg-surface"
+        >{{ t('selected') }}
+      </v-card-title>
       <v-divider class="mt-1" />
 
       <draggable

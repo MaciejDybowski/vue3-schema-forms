@@ -7,7 +7,7 @@
       size="20"
       @click="transformSchema"
     >
-      <v-icon size="16"> mdi-pencil </v-icon>
+      <v-icon size="16"> mdi-pencil</v-icon>
     </v-btn>
     <form-root
       :schema="wrappedSchema"

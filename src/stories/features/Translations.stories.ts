@@ -1,6 +1,4 @@
 // @ts-nocheck
-import { initialize } from 'msw-storybook-addon';
-
 import { schemaWithTranslation } from '@/stories/schemas';
 
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';

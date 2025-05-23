@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { expect, fireEvent, userEvent, within } from '@storybook/test';
-import { initialize } from 'msw-storybook-addon';
 
 import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';

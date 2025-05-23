@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 
-import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
+import { useClass, useProps } from '@/core/composables';
 import { EngineDividerField } from '@/types/engine/controls';
 
 const props = defineProps<{

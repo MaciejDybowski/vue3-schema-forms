@@ -3,14 +3,16 @@
     v-model="model"
     v-bind="attrs"
   >
-
     <template #item="{ item, props }">
-      <slot name="item" :item="item" :props="props" />
+      <slot
+        name="item"
+        :item="item"
+        :props="props"
+      />
     </template>
 
-
     <template
-      v-for="(_, slot) in ($slots as VComboboxSlots)"
+      v-for="(_, slot) in $slots as VComboboxSlots"
       v-slot:[slot]="scope"
     >
       <slot
@@ -30,16 +32,15 @@
         </v-list-item>
       </div>
     </template>
-
-
   </v-combobox>
 </template>
 
 <script lang="ts" setup>
+import { VCombobox } from 'vuetify/components';
+
 import { computed, ref, useAttrs } from 'vue';
 
 import { Pagination } from './Pagination';
-import { VCombobox } from "vuetify/components";
 
 type VComboboxSlots = InstanceType<typeof VCombobox>['$slots'];
 

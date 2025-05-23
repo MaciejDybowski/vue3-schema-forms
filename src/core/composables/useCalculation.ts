@@ -9,7 +9,6 @@ import { useNumber } from '@/core/composables/useNumber';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { logger, useFormModel, useResolveVariables } from '@/main';
 import { EngineField } from '@/types/engine/EngineField';
-import { FormModelForDependency } from "@/types/shared/FormModelForDependency";
 
 export function useCalculation() {
   const { roundTo } = useNumber();
@@ -46,7 +45,8 @@ export function useCalculation() {
 
   async function calculationListener(field: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 5));
-    if (field.index == undefined) { // for safety-hazards for SUM or etc function above the duplicated section
+    if (field.index == undefined) {
+      // for safety-hazards for SUM or etc function above the duplicated section
       await new Promise((r) => setTimeout(r, 1));
     }
     let calculation = field.calculation as string;

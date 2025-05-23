@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { expect } from '@storybook/test';
-import { initialize } from 'msw-storybook-addon';
 
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';

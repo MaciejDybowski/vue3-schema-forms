@@ -1,6 +1,4 @@
 // @ts-nocheck
-import { initialize } from 'msw-storybook-addon';
-
 import { IMAGE_REQUEST } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 

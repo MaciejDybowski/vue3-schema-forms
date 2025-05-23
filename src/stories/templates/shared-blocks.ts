@@ -1,5 +1,3 @@
-import { mswLoader } from 'msw-storybook-addon';
-
 import FormStoryWrapper from '../../../.storybook/components/FormStoryWrapper.vue';
 
 export const formStoryWrapperTemplate = {

@@ -1,8 +1,6 @@
 // @ts-nocheck
 import { expect, userEvent, within } from '@storybook/test';
 
-import { Schema } from '../../types/schema/Schema';
-import { Layout } from '../../types/schema/elements';
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 

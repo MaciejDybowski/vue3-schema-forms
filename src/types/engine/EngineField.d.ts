@@ -1,5 +1,4 @@
 import { EngineOptions } from '@/types/engine/EngineOptions';
-import { Schema } from '@/types/schema/Schema';
 import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
 import { Layout } from '@/types/shared/Layout';
 import { SchemaFieldType } from '@/types/shared/SchemaFieldType';

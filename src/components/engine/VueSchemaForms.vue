@@ -22,28 +22,28 @@
 </template>
 
 <script lang="ts" setup>
-import { useEventBus } from "@vueuse/core";
-import { debounce } from "lodash";
-import set from "lodash/set";
-import { useI18n } from "vue-i18n";
+import { useEventBus } from '@vueuse/core';
+import { debounce } from 'lodash';
+import set from 'lodash/set';
+import { useI18n } from 'vue-i18n';
 
-import { getCurrentInstance, onMounted, Ref, ref, watch } from "vue";
+import { Ref, getCurrentInstance, onMounted, ref, watch } from 'vue';
 
-import { vueSchemaFromControls } from "@/components/controls";
+import { vueSchemaFromControls } from '@/components/controls';
 
-import { provideFormModel } from "@/core/state/useFormModelProvider";
-import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
-import { ValidationFromBehaviour } from "@/types/engine/ValidationFromBehaviour";
-import { ValidationFromError } from "@/types/engine/ValidationFromError";
-import { ValidationFromItem } from "@/types/engine/ValidationFromItem";
-import { Schema } from "@/types/schema/Schema";
-import { SchemaOptions } from "@/types/schema/SchemaOptions";
+import { provideFormModel } from '@/core/state/useFormModelProvider';
+import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
+import { ValidationFromBehaviour } from '@/types/engine/ValidationFromBehaviour';
+import { ValidationFromError } from '@/types/engine/ValidationFromError';
+import { ValidationFromItem } from '@/types/engine/ValidationFromItem';
+import { Schema } from '@/types/schema/Schema';
+import { SchemaOptions } from '@/types/schema/SchemaOptions';
 
-import usePerformanceAPI from "../../core/composables/usePerformanceAPI";
-import { resolveSchemaWithLocale } from "../../core/engine/utils";
-import { logger } from "../../main";
-import FormRoot from "./FormRoot.vue";
-import FormDefaultActions from "./validation/FormDefaultActions.vue";
+import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
+import { resolveSchemaWithLocale } from '../../core/engine/utils';
+import { logger } from '../../main';
+import FormRoot from './FormRoot.vue';
+import FormDefaultActions from './validation/FormDefaultActions.vue';
 
 // register components to VueInstance if not installed yet by plugin options
 const instance = getCurrentInstance();
@@ -71,16 +71,16 @@ const props = withDefaults(
   }>(),
   {
     defaultFormActions: false,
-    validationBehaviour: "scroll"
-  }
+    validationBehaviour: 'scroll',
+  },
 );
 
 const emit = defineEmits<{
-  (e: "update:modelValue", val: any): void;
-  (e: "isFormReady"): void;
+  (e: 'update:modelValue', val: any): void;
+  (e: 'isFormReady'): void;
   (
-    e: "callAction",
-    payload: { code: string; body: Record<any, any>; params: Record<any, any> }
+    e: 'callAction',
+    payload: { code: string; body: Record<any, any>; params: Record<any, any> },
   ): void;
 }>();
 
@@ -97,33 +97,33 @@ const formReadySignalSent = ref(false);
 
 const internalValues = ref<Set<string>>(new Set<string>());
 
-const vueSchemaFormEventBus = useEventBus<string>("form-model");
-const actionHandlerEventBus = useEventBus<string>("form-action");
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
+const actionHandlerEventBus = useEventBus<string>('form-action');
 
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
   localModel.value = { ...localModel.value, ...model.value } as any;
   form.updateFormModel(localModel.value);
-  vueSchemaFormEventBus.emit("model-changed", "action-callback");
+  vueSchemaFormEventBus.emit('model-changed', 'action-callback');
 }
 
 actionHandlerEventBus.on(async (event, payload) => {
   if (formReadySignalSent.value) {
     if (payload.callback) {
-      emit("callAction", { ...payload });
+      emit('callAction', { ...payload });
       return;
     }
-    emit("callAction", { ...payload, callback: actionCallback });
+    emit('callAction', { ...payload, callback: actionCallback });
   }
 });
 
 const debounced = {
-  formIsReady: (WAIT: number = 1000) => debounce(formIsReady, WAIT)
+  formIsReady: (WAIT: number = 1000) => debounce(formIsReady, WAIT),
 };
 
 function formIsReady() {
   if (!formReadySignalSent.value) {
-    emit("isFormReady");
+    emit('isFormReady');
     formReadySignalSent.value = true;
     if (logger.formUpdateLogger) {
       console.debug(`[vue-schema-forms] => Form ${formId}] sent ready signal`);
@@ -137,7 +137,7 @@ function updateModel(event: NodeUpdateEvent) {
   form.updateFormModel(localModel.value);
 
   if (event.emitBlocker) {
-    vueSchemaFormEventBus.emit("model-changed", event);
+    vueSchemaFormEventBus.emit('model-changed', event);
     internalValues.value.add(event.key);
     return;
   }
@@ -147,13 +147,13 @@ function updateModel(event: NodeUpdateEvent) {
     delete formModel[value];
   });
 
-  emit("update:modelValue", formModel);
+  emit('update:modelValue', formModel);
 
   if (logger.formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, localModel.value);
   }
 
-  vueSchemaFormEventBus.emit("model-changed", event);
+  vueSchemaFormEventBus.emit('model-changed', event);
   debounced.formIsReady()();
 }
 
@@ -166,10 +166,10 @@ async function loadResolvedSchema() {
 watch(
   locale,
   async () => {
-    console.debug("[vue-schema-forms] => Reload form in other language");
+    console.debug('[vue-schema-forms] => Reload form in other language');
     await loadResolvedSchema();
   },
-  { deep: true }
+  { deep: true },
 );
 
 onMounted(async () => {
@@ -188,28 +188,28 @@ async function validate(option?: ValidationFromBehaviour) {
   errorMessages.value = [];
 
   // Alert error block validation !
-  const alertElements = document.querySelectorAll("[role=\"alert\"]");
+  const alertElements = document.querySelectorAll('[role="alert"]');
   alertElements.forEach((alertElement) => {
     const isError =
-      alertElement.classList.contains("v-alert") && alertElement.classList.contains("text-error");
+      alertElement.classList.contains('v-alert') && alertElement.classList.contains('text-error');
     const alertText = alertElement.textContent;
 
-    if (isError && option == "messages") {
+    if (isError && option == 'messages') {
       preValid = false;
       errorMessages.value.push({
         id: Math.random().toString(16).slice(2),
-        label: "Alert",
-        messages: [alertText + ""]
+        label: 'Alert',
+        messages: [alertText + ''],
       });
     }
 
-    if (isError && option == "scroll") {
+    if (isError && option == 'scroll') {
       preValid = false;
-      const alert = document.getElementById(alertElement?.id + "");
+      const alert = document.getElementById(alertElement?.id + '');
       if (alert)
         alert?.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
+          behavior: 'smooth',
+          block: 'center',
         });
     }
   });
@@ -225,19 +225,19 @@ async function validate(option?: ValidationFromBehaviour) {
     errorMessages.value = [];
   }
 
-  if (!valid && option === "scroll") {
+  if (!valid && option === 'scroll') {
     let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
     const item = arr.find((item: ValidationFromItem) => !item.isValid);
-    const itemRef = document.getElementById(item?.id + "");
+    const itemRef = document.getElementById(item?.id + '');
     if (item)
       itemRef?.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
+        behavior: 'smooth',
+        block: 'center',
       });
     return { valid };
   }
 
-  if (!valid && option === "messages") {
+  if (!valid && option === 'messages') {
     let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
     errorMessages.value = arr
       .filter((item: ValidationFromItem) => !item.isValid)
@@ -249,17 +249,17 @@ async function validate(option?: ValidationFromBehaviour) {
         return {
           id: item.id,
           label: label,
-          messages: item.errorMessages.length > 0 ? item.errorMessages : null
+          messages: item.errorMessages.length > 0 ? item.errorMessages : null,
         } as ValidationFromError;
       })
       .filter((item) => item.messages);
     return { valid, messages: errorMessages.value };
   }
 
-  if (valid && option === "messages") {
+  if (valid && option === 'messages') {
     return { valid, messages: [] };
   }
-  if (valid && option === "scroll") {
+  if (valid && option === 'scroll') {
     return { valid };
   }
 }
@@ -274,17 +274,17 @@ function resetValidation() {
   errorMessages.value = [];
 }
 
-const formExternalStateEventBus = useEventBus<string>("form-state");
+const formExternalStateEventBus = useEventBus<string>('form-state');
 const formDataWasSaved = ref(true);
 watch(formDataWasSaved, (newValue) => {
-  formExternalStateEventBus.emit("form-data-saved", formDataWasSaved.value);
+  formExternalStateEventBus.emit('form-data-saved', formDataWasSaved.value);
 });
 
 defineExpose({
   validate,
   reset,
   resetValidation,
-  formDataWasSaved
+  formDataWasSaved,
 });
 </script>
 

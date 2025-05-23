@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { expect, userEvent, within } from '@storybook/test';
-import { initialize } from 'msw-storybook-addon';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaTextField } from '../../types/schema/elements';

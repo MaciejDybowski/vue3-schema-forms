@@ -61,7 +61,7 @@
 import axios from 'axios';
 import get from 'lodash/get';
 
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import OrderedMultiselectLists from '@/components/controls/ordered-multi-select/OrderedMultiselectLists.vue';
 

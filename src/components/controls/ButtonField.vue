@@ -195,7 +195,7 @@ async function runBtnLogic() {
       break;
     case 'copy':
       snackbar.modelValue = true;
-      const value = get(model, schema.config.modelReference, "");
+      const value = get(model, schema.config.modelReference, '');
       await navigator.clipboard.writeText(value);
       break;
     case 'api-call':
