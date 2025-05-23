@@ -20,7 +20,7 @@
         variant="text"
         @click="changeState"
       >
-        <v-icon>{{ expanded ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
+        <v-icon>{{ expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
       </v-btn>
     </div>
 
@@ -32,12 +32,13 @@
 </template>
 
 <script lang="ts" setup>
-import get from "lodash/get";
-import { computed, onMounted, ref } from "vue";
+import { useEventBus } from '@vueuse/core';
+import get from 'lodash/get';
 
-import { useClass, useFormModel, useProps, useResolveVariables } from "@/core/composables";
-import { EngineAlertField } from "@/types/engine/controls";
-import { useEventBus } from "@vueuse/core";
+import { computed, onMounted, ref } from 'vue';
+
+import { useClass, useFormModel, useProps, useResolveVariables } from '@/core/composables';
+import { EngineAlertField } from '@/types/engine/controls';
 
 const { schema, model } = defineProps<{
   schema: EngineAlertField;
@@ -45,7 +46,7 @@ const { schema, model } = defineProps<{
 }>();
 const { getValue, setValue } = useFormModel();
 
-const actionHandlerEventBus = useEventBus<string>("form-action");
+const actionHandlerEventBus = useEventBus<string>('form-action');
 
 const memorable = ref(schema.memorable ? schema.memorable : false);
 const expanded = ref(true);
@@ -56,12 +57,12 @@ const { bindProps, fieldProps } = useProps();
 const resolvedContent = ref<any>({ resolvedText: null, allVariablesResolved: false });
 const { bindClass } = useClass();
 
-const vueSchemaFormEventBus = useEventBus<string>("form-model");
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
 function changeState() {
   expanded.value = !expanded.value;
-  actionHandlerEventBus.emit("form-action", {
-    code: "save-form-element-state",
+  actionHandlerEventBus.emit('form-action', {
+    code: 'save-form-element-state',
     path: schema.key,
     expanded: expanded.value,
   });
@@ -69,10 +70,10 @@ function changeState() {
 
 onMounted(async () => {
   await bindProps(schema);
-  const isContentRef = typeof schema.content === "object" && "$ref" in schema.content;
+  const isContentRef = typeof schema.content === 'object' && '$ref' in schema.content;
   if (isContentRef) {
     // @ts-ignore
-    resolvedContent.value.resolvedText = "#" + schema.content.$ref.split("/").pop();
+    resolvedContent.value.resolvedText = '#' + schema.content.$ref.split('/').pop();
     resolvedContent.value.allVariablesResolved = true;
     return;
   }
@@ -85,12 +86,14 @@ onMounted(async () => {
   });
 
   if (memorable.value) {
-    expanded.value = userProperties.value?.alerts?.find((alert) => alert?.path === schema.key)?.expanded ?? true;
+    expanded.value =
+      userProperties.value?.alerts?.find((alert: { path: string }) => alert?.path === schema.key)
+        ?.expanded ?? true;
   }
 });
 
 const userProperties = computed(() => {
-  return get(schema.options, "context.userInfo.properties", {});
+  return get(schema.options, 'context.userInfo.properties', {});
 });
 </script>
 

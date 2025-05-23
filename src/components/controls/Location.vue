@@ -1,23 +1,24 @@
 <template>
   <v-autocomplete
-    :label='label'
-    v-model='localModel'
-    :items='items'
-    @update:search='debounced.search'
-    :no-filter='true'
-    item-title='formatted_address'
-    :return-object='true'
-    :rules="!fieldProps.readonly ? rules: []"
-    :class='bindClass(schema) + requiredInputClass'
-    v-bind='fieldProps'
+    :label="label"
+    v-model="localModel"
+    :items="items"
+    @update:search="debounced.search"
+    :no-filter="true"
+    item-title="formatted_address"
+    :return-object="true"
+    :rules="!fieldProps.readonly ? rules : []"
+    :class="bindClass(schema) + requiredInputClass"
+    v-bind="fieldProps"
   >
   </v-autocomplete>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { debounce } from 'lodash';
-import { computed, onMounted, ref, Ref } from 'vue';
+
+import { Ref, computed, onMounted, ref } from 'vue';
 
 import { EngineLocationField } from '@/types/engine/controls';
 
@@ -54,7 +55,7 @@ const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 
 const localModel = computed({
-  get(): string | number {
+  get(): Location | null {
     return getValue(props.model, props.schema);
   },
   set(val: any) {
@@ -72,7 +73,6 @@ const provider = new OpenStreetMapProvider({
   },
   // https://nominatim.org/release-docs/develop/api/Search/#parameters
 });
-
 
 async function searchFunc(val: string) {
   if (val) {

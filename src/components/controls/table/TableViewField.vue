@@ -20,10 +20,18 @@
             cols="auto"
           >
             <v-btn
-              v-bind="{ ...tableButtonDefaultProps, ...button.btnProps, disabled: button.disabled as boolean }"
+              v-bind="{
+                ...tableButtonDefaultProps,
+                ...button.btnProps,
+                disabled: button.disabled as boolean,
+              }"
               @click="runTableBtnLogic(button)"
             >
-              {{ typeof button.label == "string" ? button.label : "#" + button.label.$ref.split("/").pop() }}
+              {{
+                typeof button.label == "string"
+                  ? button.label
+                  : "#" + button.label.$ref.split("/").pop()
+              }}
             </v-btn>
           </v-col>
         </v-row>
@@ -62,7 +70,13 @@
         v-if="!loading && aggregates"
         v-slot:body.append="{}"
       >
-        <tr :class="[theme.global.current.value.dark ? 'v-data-table__tr-aggregates-dark' : 'v-data-table__tr-aggregates-light']">
+        <tr
+          :class="[
+            theme.global.current.value.dark
+              ? 'v-data-table__tr-aggregates-dark'
+              : 'v-data-table__tr-aggregates-light',
+          ]"
+        >
           <td v-for="(header, headerIndex) in headers">
             <table-footer-cell
               v-if="header.footerMapping"
@@ -80,8 +94,8 @@
           :page="page"
           :pageCount="pageCount"
           :total-items="itemsTotalElements"
-          @update:page="(val) => (tableOptions.page = val)"
-          @update:itemsPerPage="(val) => (tableOptions.itemsPerPage = val)"
+          @update:page="(val: number) => (tableOptions.page = val)"
+          @update:itemsPerPage="(val: number) => (tableOptions.itemsPerPage = val)"
         />
       </template>
     </v-data-table-server>
@@ -122,17 +136,19 @@
 </template>
 
 <script lang="ts" setup>
+import { useEventBus } from "@vueuse/core";
 import axios from "axios";
 import jsonata from "jsonata";
 import { cloneDeep, debounce } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
-import { ComputedRef, Ref, computed, onMounted, reactive, ref } from "vue";
 import { useTheme } from "vuetify";
+
+import { computed, ComputedRef, onMounted, reactive, Ref, ref } from "vue";
 
 import TableCellWrapper from "@/components/controls/table/TableCellWrapper.vue";
 import TableFooterCell from "@/components/controls/table/TableFooterCell.vue";
-import TablePagination from "@/components/controls/table/TablePagination.vue";
+
 import { TableFetchOptions, TableOptions } from "@/components/controls/table/table-types";
 import { mapQuery, mapSort } from "@/components/controls/table/utils";
 import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
@@ -144,7 +160,7 @@ import { EngineTableField } from "@/types/engine/EngineTableField";
 import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
 import { Schema } from "@/types/schema/Schema";
 import { TableButton, TableHeader, TableHeaderAction } from "@/types/shared/Source";
-import { useEventBus } from "@vueuse/core";
+import TablePagination from "@/components/controls/table/TablePagination.vue";
 
 const actionHandlerEventBus = useEventBus<string>("form-action");
 const vueSchemaFormEventBus = useEventBus<string>("form-model");
@@ -177,7 +193,7 @@ const itemsTotalElements = ref(0);
 const loading = ref(true);
 const debounced = {
   load: debounce(loadData, 200),
-  updateRow: debounce(updateRow, 300),
+  updateRow: debounce(updateRow, 300)
 };
 
 const aggregates = ref(null);
@@ -206,14 +222,15 @@ const actionPopup = reactive<{
   options: props.schema.options,
   item: {},
   itemIndex: 0,
-  acceptFunction: () => {},
-  acceptText: t("save"),
+  acceptFunction: () => {
+  },
+  acceptText: t("save")
 });
 
 const tableButtonDefaultProps = {
   rounded: true,
   size: "small",
-  color: "primary",
+  color: "primary"
 };
 
 const headers: ComputedRef<TableHeader[]> = computed(() => {
@@ -221,7 +238,18 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
 });
 
 const buildHeader = (item: TableHeader): TableHeader => {
-  const { key, title, type, valueMapping, color, footerMapping, properties, items, editable, actions } = item;
+  const {
+    key,
+    title,
+    type,
+    valueMapping,
+    color,
+    footerMapping,
+    properties,
+    items,
+    editable,
+    actions
+  } = item;
   //@ts-ignore - builder purpose
   const titleRef = typeof title == "string" ? title : "#" + title.$ref.split("/").pop();
   const header: TableHeader = {
@@ -233,7 +261,7 @@ const buildHeader = (item: TableHeader): TableHeader => {
     footerMapping,
     editable,
     items,
-    actions,
+    actions
   };
 
   if (properties) {
@@ -269,7 +297,7 @@ async function filteredButtonsFunction() {
       } else {
         return button;
       }
-    }) ?? [],
+    }) ?? []
   );
   return tempActions.filter((item) => item != null);
 }
@@ -277,7 +305,7 @@ async function filteredButtonsFunction() {
 const tableOptions = ref<TableOptions>({
   page: 1,
   sortBy: [],
-  itemsPerPage: 10,
+  itemsPerPage: 10
 });
 
 const fetchDataParams = computed<TableFetchOptions>(() => {
@@ -286,7 +314,7 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
     size: tableOptions.value.itemsPerPage,
     sort: tableOptions.value.sortBy,
     filter: null,
-    query: null,
+    query: null
   };
 });
 
@@ -311,13 +339,16 @@ async function loadData(params: TableFetchOptions) {
         size: params.size,
         query: query,
         sort: sort,
-        filter: filter,
-      },
+        filter: filter
+      }
     });
 
     items.value = response.data.content;
     itemsTotalElements.value = mapTotalElements(response.data);
-    aggregates.value = "aggregates" in response.data && response.data.aggregates != null ? response.data.aggregates : null;
+    aggregates.value =
+      "aggregates" in response.data && response.data.aggregates != null
+        ? response.data.aggregates
+        : null;
     filteredButtons.value = await filteredButtonsFunction();
   } catch (e) {
     console.error(e);
@@ -333,12 +364,12 @@ function mapTotalElements(data: any) {
 function runTableBtnLogic(btn: TableButton) {
   switch (btn.mode) {
     case "action":
-      const btnConfigWithoutCode = cloneDeep(btn.config);
+      const btnConfigWithoutCode: Record<string, any> = cloneDeep(btn.config);
       delete btnConfigWithoutCode.code;
       let payloadObject = {
         code: btn.config.code,
         body: null,
-        params: { ...btnConfigWithoutCode },
+        params: { ...btnConfigWithoutCode }
       };
       actionHandlerEventBus.emit("form-action", payloadObject);
       break;
@@ -351,7 +382,7 @@ function runTableBtnLogic(btn: TableButton) {
         let payloadObject = {
           code: btn.config.code,
           body: actionPopup.model,
-          params: { script: btn.config.scriptName },
+          params: { script: btn.config.scriptName }
         };
         actionHandlerEventBus.emit("form-action", payloadObject);
       };
@@ -360,7 +391,10 @@ function runTableBtnLogic(btn: TableButton) {
   }
 }
 
-async function runTableActionLogic(payload: { action: TableHeaderAction; item: any }, index: number) {
+async function runTableActionLogic(
+  payload: { action: TableHeaderAction; item: any },
+  index: number
+) {
   const action = payload.action;
   switch (action.mode) {
     case "action":
@@ -369,7 +403,7 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
       const obj = {
         mode: "action",
         body: action.config.body,
-        params: action.config.params,
+        params: action.config.params
       };
 
       let body = await createBodyObjectFromRow(obj as any, payload.item);
@@ -378,7 +412,7 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
       let payloadObject = {
         code: action.code,
         body: body,
-        params: params,
+        params: params
       };
 
       actionHandlerEventBus.emit("form-action", payloadObject);
@@ -388,7 +422,11 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
     case "popup":
       actionPopup.errorMessages = [];
       actionPopup.title = action.title;
-      set(actionPopup.model, action.modelReference, payload.item[action.modelReference as string]);
+      set(
+        actionPopup.model,
+        action.modelReference ? action.modelReference : "",
+        payload.item[action.modelReference as string]
+      );
       actionPopup.schema = action.schema;
       actionPopup.item = payload.item;
       actionPopup.itemIndex = index;
@@ -406,7 +444,7 @@ async function runTableActionLogic(payload: { action: TableHeaderAction; item: a
 }
 
 async function createBodyObjectFromRow(actionObj: any, row: any) {
-  let body = {};
+  let body: Record<string, any> = {};
   for (const [key, value] of Object.entries(actionObj.body)) {
     if (typeof value === "string" && variableRegexp.test(value)) {
       const unwrapped = (value as string).slice(1, -1);
@@ -447,7 +485,7 @@ async function createUpdateRowURL(item: any) {
 async function updateRow(value: any, index: number, headerKey: string, row: any) {
   headerKey = headerKey.split(":")[0];
   try {
-    const payload = {};
+    const payload: Record<string, any> = {};
     payload[headerKey] = value;
 
     const updateRowURL = await createUpdateRowURL(row);

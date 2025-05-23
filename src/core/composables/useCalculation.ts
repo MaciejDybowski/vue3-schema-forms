@@ -1,18 +1,20 @@
-import jsonata from "jsonata";
-import get from "lodash/get";
-import { ref } from "vue";
+import { Fn, useEventBus } from '@vueuse/core';
+import jsonata from 'jsonata';
+import get from 'lodash/get';
 
-import { useEventHandler } from "@/core/composables/useEventHandler";
-import { useNumber } from "@/core/composables/useNumber";
-import { logger, useFormModel, useResolveVariables } from "@/main";
-import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
-import { EngineField } from "@/types/engine/EngineField";
-import { Fn, useEventBus } from "@vueuse/core";
+import { ref } from 'vue';
+
+import { useEventHandler } from '@/core/composables/useEventHandler';
+import { useNumber } from '@/core/composables/useNumber';
+import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
+import { logger, useFormModel, useResolveVariables } from '@/main';
+import { EngineField } from '@/types/engine/EngineField';
+import { FormModelForDependency } from "@/types/shared/FormModelForDependency";
 
 export function useCalculation() {
   const { roundTo } = useNumber();
   const { onChange } = useEventHandler();
-  const vueSchemaFormEventBus = useEventBus<string>("form-model");
+  const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const unsubscribeListener = ref<Fn>(() => {});
   const calculationResultWasModified = ref(false);
   const { fillPath } = useResolveVariables();
@@ -27,7 +29,9 @@ export function useCalculation() {
     let result = ref(0);
     let calculation = field.calculation as string;
 
-    unsubscribeListener.value = vueSchemaFormEventBus.on(async () => await calculationListener(field, model));
+    unsubscribeListener.value = vueSchemaFormEventBus.on(
+      async () => await calculationListener(field, model),
+    );
 
     try {
       calculation = fillPath(field.path as string, field.index as number, calculation);
@@ -42,8 +46,7 @@ export function useCalculation() {
 
   async function calculationListener(field: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 5));
-    if (field.index == undefined) {
-      // sumy poza sekcja powielana mialy hazard
+    if (field.index == undefined) { // for safety-hazards for SUM or etc function above the duplicated section
       await new Promise((r) => setTimeout(r, 1));
     }
     let calculation = field.calculation as string;
@@ -57,7 +60,9 @@ export function useCalculation() {
 
       result = await nata.evaluate(mergedModel);
       if (logger.calculationListener) {
-        console.debug(`[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}, result=${result}`);
+        console.debug(
+          `[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}, result=${result}`,
+        );
       }
       if (!result) {
         result = 0;
@@ -68,7 +73,10 @@ export function useCalculation() {
 
     const currentValue = get(model, field.key, null);
     if (roundTo(result, precision) !== currentValue) {
-      if (`${field.key}ManuallyChanged` in mergedModel && mergedModel[`${field.key}ManuallyChanged`] == true) {
+      if (
+        `${field.key}ManuallyChanged` in mergedModel &&
+        mergedModel[`${field.key}ManuallyChanged`] == true
+      ) {
         return;
       }
       setValue(roundTo(result, precision), field);

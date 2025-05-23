@@ -18,12 +18,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted } from 'vue';
 
-import { useConditionalRendering } from "@/core/composables";
-import { useConditionalHide } from "@/core/composables/useConditionalHide";
-import { useSchemaCols } from "@/core/composables/useSchemaCols";
-import { EngineField } from "@/types/engine/EngineField";
+import { useConditionalRendering } from '@/core/composables';
+import { useConditionalHide } from '@/core/composables/useConditionalHide';
+import { useSchemaCols } from '@/core/composables/useSchemaCols';
+import { EngineField } from '@/types/engine/EngineField';
 
 const props = defineProps<{
   schema: EngineField;
@@ -35,7 +35,7 @@ const { shouldHide, shouldHideField } = useConditionalHide();
 const { cols, completionOfRow, isOffsetExist, offset, fillRow } = useSchemaCols(props.schema);
 
 const layoutCssClass = computed(() => {
-  let cssString = "";
+  let cssString = '';
   if (isOffsetExist) {
     cssString += `offset-${offset}`;
   }

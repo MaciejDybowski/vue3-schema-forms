@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { USER_INPUT_MOCKS } from "../mock-responses";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { USER_INPUT_MOCKS } from '../mock-responses';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Elements/Editable/UserInput",
+  title: 'Elements/Editable/UserInput',
   ...formStoryWrapperTemplate,
 };
 
@@ -14,16 +14,16 @@ export const Standard: Story = {
   args: {
     model: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         user: {
-          label: "User",
+          label: 'User',
           layout: {
             cols: 12,
-            component: "user-input",
+            component: 'user-input',
           },
           source: {
-            url: "/mocks/users",
+            url: '/mocks/users',
             itemsPerPage: 20,
           },
         },
@@ -38,24 +38,24 @@ export const Standard: Story = {
 };
 
 export const LimitModel: Story = {
-  name: "Case: model = object, multiple = false",
+  name: 'Case: model = object, multiple = false',
   play: async (context) => {},
   args: {
     model: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         user: {
-          label: "User",
+          label: 'User',
           layout: {
             cols: 12,
-            component: "user-input",
+            component: 'user-input',
             props: {
               multiple: false,
             },
           },
           source: {
-            url: "/mocks/users",
+            url: '/mocks/users',
             itemsPerPage: 20,
           },
         },
@@ -70,25 +70,25 @@ export const LimitModel: Story = {
 };
 
 export const LimitModelArray: Story = {
-  name: "Case: model = array, maxSelection enabled",
+  name: 'Case: model = array, maxSelection enabled',
   play: async (context) => {},
   args: {
     model: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         user: {
-          label: "User",
+          label: 'User',
           layout: {
             cols: 12,
-            component: "user-input",
+            component: 'user-input',
             props: {
               maxSelection: 2,
               multiple: true,
             },
           },
           source: {
-            url: "/mocks/users",
+            url: '/mocks/users',
             itemsPerPage: 20,
           },
         },
@@ -103,29 +103,29 @@ export const LimitModelArray: Story = {
 };
 
 export const AutoSelect: Story = {
-  name: "Case: autoselect",
+  name: 'Case: autoselect',
   play: async (context) => {},
   args: {
     formModel: {
       owner: {
-        id: "1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56"
-      }
+        id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+      },
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         user: {
-          label: "User",
+          label: 'User',
           layout: {
             cols: 12,
-            component: "user-input",
+            component: 'user-input',
             props: {
               maxSelection: 1,
               multiple: true,
             },
           },
           source: {
-            url: "/mocks/users?filter=id=={owner.id}",
+            url: '/mocks/users?filter=id=={owner.id}',
             itemsPerPage: 20,
             singleOptionAutoSelect: true,
           },

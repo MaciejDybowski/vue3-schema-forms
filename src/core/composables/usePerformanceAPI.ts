@@ -1,10 +1,9 @@
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref } from 'vue';
 
 export default function usePerformanceAPI() {
   let result = ref<any>(null); // Start z null, aby wykryć brak pomiaru
-  let stopMeasure = () => {
-  };
-  const isShouldMeasureRenderTime = import.meta.env.VITE_ENABLE_RENDER_TEST === "true";
+  let stopMeasure = () => {};
+  const isShouldMeasureRenderTime = import.meta.env.VITE_ENABLE_RENDER_TEST === 'true';
 
   if (isShouldMeasureRenderTime) {
     const ID = Math.floor(Math.random() * 100 + 1);
@@ -20,14 +19,14 @@ export default function usePerformanceAPI() {
 
     // Nasłuchujemy na zdarzenie "isFormReady" do zakończenia pomiaru
     stopMeasure = () => {
-      if (isShouldMeasureRenderTime){
+      if (isShouldMeasureRenderTime) {
         performance.mark(END_MARK);
         performance.measure(MEASURE_NAME, START_MARK, END_MARK);
         const measure = performance.getEntriesByName(MEASURE_NAME)[0];
 
         if (measure) {
           result.value = measure.duration;
-          console.debug("Final Render Time:", result.value);
+          console.debug('Final Render Time:', result.value);
         }
       }
     };

@@ -1,13 +1,13 @@
 // @ts-nocheck
-import { expect, userEvent, within } from "@storybook/test";
+import { expect, userEvent, within } from '@storybook/test';
 
-import { DictionarySource } from "../../types/shared/Source";
-import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { waitForMountedAsync } from "./utils";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { DictionarySource } from '../../types/shared/Source';
+import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { waitForMountedAsync } from './utils';
 
 export default {
-  title: "Elements/Editable/FieldsGroup",
+  title: 'Elements/Editable/FieldsGroup',
   ...formStoryWrapperTemplate,
 };
 
@@ -15,39 +15,39 @@ export const Standard = {
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText("Field A in group A");
-    await userEvent.type(field, "Field closed in group", {
+    const field = canvas.getByLabelText('Field A in group A');
+    await userEvent.type(field, 'Field closed in group', {
       delay: 100,
     });
-    await expect(context.args.formModel).toEqual({ fieldA: "Field closed in group" });
+    await expect(context.args.formModel).toEqual({ fieldA: 'Field closed in group' });
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         group: {
           layout: {
-            component: "fields-group",
+            component: 'fields-group',
             schema: {
-              type: "object",
+              type: 'object',
               properties: {
                 fieldA: {
-                  label: "Field A in group A",
+                  label: 'Field A in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 fieldQ: {
-                  label: "Field Q in group A",
+                  label: 'Field Q in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 field1: {
-                  label: "Field C in group A",
+                  label: 'Field C in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
               },
@@ -64,46 +64,46 @@ export const Required = {
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    const fieldA = canvas.getByLabelText("Field A in group A");
-    const Submit = canvas.getByText("Validate");
+    const fieldA = canvas.getByLabelText('Field A in group A');
+    const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
-    await userEvent.type(fieldA, "Example value", {
+    await userEvent.type(fieldA, 'Example value', {
       delay: 100,
     });
     await userEvent.click(Submit);
-    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         data: {
           layout: {
-            component: "fields-group",
+            component: 'fields-group',
             schema: {
-              type: "object",
+              type: 'object',
               properties: {
                 fieldA: {
-                  label: "Field A in group A",
+                  label: 'Field A in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 fieldQ: {
-                  label: "Field Q in group A",
+                  label: 'Field Q in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 field1: {
-                  label: "Field C in group A",
+                  label: 'Field C in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
               },
-              required: ["fieldA"],
+              required: ['fieldA'],
             },
             cols: 6,
           },
@@ -117,49 +117,49 @@ export const TwoFieldsGroup = {
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText("Field A in group A");
-    await userEvent.type(field, "Field closed in group", {
+    const field = canvas.getByLabelText('Field A in group A');
+    await userEvent.type(field, 'Field closed in group', {
       delay: 100,
     });
 
-    const field2 = canvas.getByLabelText("Field K in group B");
-    await userEvent.type(field2, "Field closed in other group", {
+    const field2 = canvas.getByLabelText('Field K in group B');
+    await userEvent.type(field2, 'Field closed in other group', {
       delay: 100,
     });
 
     await expect(context.args.formModel).toEqual({
-      fieldA: "Field closed in group",
-      fieldK: "Field closed in other group",
+      fieldA: 'Field closed in group',
+      fieldK: 'Field closed in other group',
     });
   },
-  name: "Case: Two groups",
+  name: 'Case: Two groups',
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         data: {
           layout: {
-            component: "fields-group",
+            component: 'fields-group',
             schema: {
-              type: "object",
+              type: 'object',
               properties: {
                 fieldA: {
-                  label: "Field A in group A",
+                  label: 'Field A in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 fieldQ: {
-                  label: "Field Q in group A",
+                  label: 'Field Q in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 field1: {
-                  label: "Field C in group A",
+                  label: 'Field C in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
               },
@@ -169,14 +169,14 @@ export const TwoFieldsGroup = {
         },
         lane2: {
           layout: {
-            component: "fields-group",
+            component: 'fields-group',
             schema: {
-              type: "object",
+              type: 'object',
               properties: {
                 fieldK: {
-                  label: "Field K in group B",
+                  label: 'Field K in group B',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
               },
@@ -190,72 +190,72 @@ export const TwoFieldsGroup = {
 };
 
 export const GroupWithHiddenDict = {
-  name: "Case: if/dependency/hidden",
+  name: 'Case: if/dependency/hidden',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
 
-    const switcher = canvas.getByLabelText("Show currency field");
-    let currency = canvas.queryByLabelText("Currency");
+    const switcher = canvas.getByLabelText('Show currency field');
+    let currency = canvas.queryByLabelText('Currency');
 
     await expect(currency).not.toBeInTheDocument();
     await userEvent.click(switcher, { delay: 200 });
-    currency = canvas.getByLabelText("Currency");
+    currency = canvas.getByLabelText('Currency');
     await expect(currency).toBeInTheDocument();
 
     await userEvent.click(currency, { pointerEventsCheck: 0, delay: 200 });
 
-    const items = document.getElementsByClassName("v-list-item");
+    const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
 
     await expect(context.args.formModel).toEqual({
-      fieldQ: "Example value",
+      fieldQ: 'Example value',
       showCurrency: true,
-      currency: { id: "AFN", label: "Afgani", digitsAfterDecimal: "2", labels: "the-best" },
+      currency: { id: 'AFN', label: 'Afgani', digitsAfterDecimal: '2', labels: 'the-best' },
     });
   },
   args: {
     formModel: {
-      fieldQ: "Example value",
+      fieldQ: 'Example value',
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         data: {
           layout: {
-            component: "fields-group",
+            component: 'fields-group',
             schema: {
-              type: "object",
+              type: 'object',
               properties: {
                 showCurrency: {
-                  label: "Show currency field",
+                  label: 'Show currency field',
                   layout: {
-                    component: "switch",
+                    component: 'switch',
                   },
                 },
                 currency: {
-                  label: "Currency",
+                  label: 'Currency',
                   layout: {
-                    component: "dictionary",
-                    if: "nata(showCurrency)",
+                    component: 'dictionary',
+                    if: 'nata(showCurrency)',
                   },
                   source: {
-                    url: "/mocks/currencies",
-                    title: "label",
-                    value: "id",
-                    description: "label",
+                    url: '/mocks/currencies',
+                    title: 'label',
+                    value: 'id',
+                    description: 'label',
                   } as DictionarySource,
                 } as SchemaSourceField,
                 fieldQ: {
-                  label: "Field Q in group A",
+                  label: 'Field Q in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 field1: {
-                  label: "Field C in group A",
+                  label: 'Field C in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
               },
@@ -274,15 +274,15 @@ export const GroupWithHiddenDict = {
 };
 
 export const ResetValueWhenIF = {
-  name: "Case: reset value on IF",
+  name: 'Case: reset value on IF',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
 
-    const switcher = canvas.getByLabelText("Change it!");
+    const switcher = canvas.getByLabelText('Change it!');
 
     await expect(context.args.formModel).toEqual({
-      fieldQ: "Example value",
+      fieldQ: 'Example value',
       switch: true,
     });
 
@@ -300,48 +300,48 @@ export const ResetValueWhenIF = {
   args: {
     formModel: {
       switch: true,
-      fieldQ: "Example value",
+      fieldQ: 'Example value',
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         switch: {
-          label: "Change it!",
+          label: 'Change it!',
           layout: {
-            component: "switch",
+            component: 'switch',
           },
         },
         data: {
           layout: {
-            component: "fields-group",
-            if: "nata(switch)",
+            component: 'fields-group',
+            if: 'nata(switch)',
             schema: {
-              type: "object",
+              type: 'object',
               properties: {
                 temp: {
                   properties: {
                     fieldA: {
-                      label: "Nested with properties",
+                      label: 'Nested with properties',
                       layout: {
-                        component: "text-field",
+                        component: 'text-field',
                       },
                     },
                   },
                 },
                 fieldQ: {
-                  label: "Field Q in group A",
+                  label: 'Field Q in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 field1: {
-                  label: "Field C in group A",
+                  label: 'Field C in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
               },
-              required: ["fieldA"],
+              required: ['fieldA'],
             },
             cols: 6,
           },
@@ -351,15 +351,15 @@ export const ResetValueWhenIF = {
   },
 };
 export const NotResetValueWhenHidden = {
-  name: "Case: not reset value when hidden",
+  name: 'Case: not reset value when hidden',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
 
-    const switcher = canvas.getByLabelText("Change it!");
+    const switcher = canvas.getByLabelText('Change it!');
 
     await expect(context.args.formModel).toEqual({
-      fieldQ: "Example value",
+      fieldQ: 'Example value',
       switch: true,
     });
 
@@ -367,7 +367,7 @@ export const NotResetValueWhenHidden = {
 
     await expect(context.args.formModel).toEqual({
       switch: false,
-      fieldQ: "Example value",
+      fieldQ: 'Example value',
     });
 
     await userEvent.click(switcher, { delay: 200 });
@@ -375,48 +375,48 @@ export const NotResetValueWhenHidden = {
   args: {
     formModel: {
       switch: true,
-      fieldQ: "Example value",
+      fieldQ: 'Example value',
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         switch: {
-          label: "Change it!",
+          label: 'Change it!',
           layout: {
-            component: "switch",
+            component: 'switch',
           },
         },
         data: {
           layout: {
-            component: "fields-group",
-            hide: "nata(switch)",
+            component: 'fields-group',
+            hide: 'nata(switch)',
             schema: {
-              type: "object",
+              type: 'object',
               properties: {
                 temp: {
                   properties: {
                     fieldA: {
-                      label: "Nested with properties",
+                      label: 'Nested with properties',
                       layout: {
-                        component: "text-field",
+                        component: 'text-field',
                       },
                     },
                   },
                 },
                 fieldQ: {
-                  label: "Field Q in group A",
+                  label: 'Field Q in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 field1: {
-                  label: "Field C in group A",
+                  label: 'Field C in group A',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
               },
-              required: ["fieldA"],
+              required: ['fieldA'],
             },
             cols: 6,
           },

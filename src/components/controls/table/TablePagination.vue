@@ -1,27 +1,25 @@
 <template>
   <div class="footer">
-
     <v-menu location="bottom">
       <template #activator="{ props: p, isActive }">
         <v-chip
-          v-bind="p"
-          label
-          variant="outlined"
-
           class="px-2"
+          label
+          v-bind="p"
+          variant="outlined"
         >
           {{ itemsPerPage }}
           <v-icon
-            class="toggle-menu"
             :class="{ rotate: isActive }"
+            class="toggle-menu"
           >
             mdi-chevron-down
           </v-icon>
         </v-chip>
       </template>
       <v-list
-        select-strategy="leaf"
         :selected="[itemsPerPage]"
+        select-strategy="leaf"
       >
         <v-list-item
           v-for="option in itemsPerPageOptions"
@@ -35,28 +33,38 @@
 
     <div class="pagination-wrapper">
       <div class="pagination">
-        <v-btn icon="mdi-chevron-left" size="small" variant="text" @click="changePage(page - 1)"
-               :disabled="prevDisabled"></v-btn>
+        <v-btn
+          :disabled="prevDisabled"
+          icon="mdi-chevron-left"
+          size="small"
+          variant="text"
+          @click="changePage(page - 1)"
+        ></v-btn>
         <span class="page-info">{{ page }}</span>
-        <v-btn icon="mdi-chevron-right" size="small" variant="text" @click="changePage(page + 1)"
-               :disabled="nextDisabled"></v-btn>
+        <v-btn
+          :disabled="nextDisabled"
+          icon="mdi-chevron-right"
+          size="small"
+          variant="text"
+          @click="changePage(page + 1)"
+        ></v-btn>
       </div>
-
     </div>
     <span class="item-info">{{ startItem }} - {{ endItem }} of {{ totalItems }}</span>
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { computed, toRefs } from 'vue';
 
-const props = defineProps({
-  page: Number,
-  itemsPerPage: Number,
-  pageCount: Number,
-  itemsPerPageOptions: Array,
-  totalItems: Number,
-});
+const props = defineProps<{
+  page: number;
+  itemsPerPage: number;
+  pageCount: number;
+  totalItems: number;
+  itemsPerPageOptions: any[];
+}>();
+
 const emit = defineEmits(['update:page', 'update:itemsPerPage']);
 
 const { page, itemsPerPage, pageCount, totalItems } = toRefs(props);
@@ -64,7 +72,7 @@ const { page, itemsPerPage, pageCount, totalItems } = toRefs(props);
 const prevDisabled = computed(() => page.value <= 1);
 const nextDisabled = computed(() => page.value >= pageCount.value);
 
-const changePage = (newPage) => {
+const changePage = (newPage: number) => {
   if (newPage >= 1 && newPage <= pageCount.value) {
     emit('update:page', newPage);
   }
@@ -73,8 +81,6 @@ const changePage = (newPage) => {
 const startItem = computed(() => (page.value - 1) * itemsPerPage.value + 1);
 const endItem = computed(() => Math.min(page.value * itemsPerPage.value, totalItems.value));
 </script>
-
-
 
 <style scoped>
 .footer {

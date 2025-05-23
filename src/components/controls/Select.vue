@@ -1,26 +1,33 @@
 <template>
   <v-select
-    v-model='localModel'
-    :label='label'
-    v-bind='fieldProps'
-    :rules="!fieldProps.readonly ? rules: []"
-    :class='bindClass(schema) + requiredInputClass'
-    :item-title='title'
-    :item-value='value'
-    :items='data'
-    :loading='loading'
-    :return-object='returnObject as any'
-    @change="onChange(schema, model);"
+    v-model="localModel"
+    :label="label"
+    v-bind="fieldProps"
+    :rules="!fieldProps.readonly ? rules : []"
+    :class="bindClass(schema) + requiredInputClass"
+    :item-title="title"
+    :item-value="value"
+    :items="data"
+    :loading="loading"
+    :return-object="returnObject as any"
+    @change="onChange(schema, model)"
   ></v-select>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted } from 'vue';
 
+import { useEventHandler } from '@/core/composables/useEventHandler';
 import { EngineSourceField } from '@/types/engine/controls';
 
-import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
-import { useEventHandler } from "@/core/composables/useEventHandler";
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useProps,
+  useRules,
+  useSource,
+} from '../../core/composables';
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -33,7 +40,6 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
-
 
 const localModel = computed({
   get(): string | number {
@@ -51,4 +57,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>

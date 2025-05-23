@@ -1,30 +1,30 @@
 // @ts-nocheck
-import { expect, userEvent, within } from "@storybook/test";
+import { expect, userEvent, within } from '@storybook/test';
 
-import { Schema } from "../../types/schema/Schema";
-import { BTN_MOCK } from "../mock-responses";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { waitForMountedAsync } from "./utils";
+import { Schema } from '../../types/schema/Schema';
+import { BTN_MOCK } from '../mock-responses';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { waitForMountedAsync } from './utils';
 
 export default {
-  title: "Elements/Editable/Button",
+  title: 'Elements/Editable/Button',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const button = await canvas.findByRole("button", { name: "Click it!" });
+    const button = await canvas.findByRole('button', { name: 'Click it!' });
     await expect(button).toBeInTheDocument();
   },
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textArea: {
-          label: "Click it!",
+          label: 'Click it!',
           layout: {
-            component: "button",
+            component: 'button',
           },
         },
       },
@@ -33,25 +33,25 @@ export const Standard: Story = {
 };
 
 export const WithProps: Story = {
-  name: "Case: customization",
+  name: 'Case: customization',
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const button = await canvas.findByRole("button", { name: "Click it!" });
+    const button = await canvas.findByRole('button', { name: 'Click it!' });
     await expect(button).toBeInTheDocument();
 
-    const btnClasses = document.getElementsByClassName("mdi-plus mdi v-icon");
+    const btnClasses = document.getElementsByClassName('mdi-plus mdi v-icon');
     await expect(btnClasses.length).toEqual(1);
   },
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textArea: {
-          label: "Click it!",
+          label: 'Click it!',
           layout: {
-            component: "button",
+            component: 'button',
             props: {
-              "prepend-icon": "mdi-plus",
+              'prepend-icon': 'mdi-plus',
             },
           },
         },
@@ -63,36 +63,36 @@ export const WithProps: Story = {
 export const Disabled: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const button = await canvas.findByRole("button", { name: "Click it!" });
+    const button = await canvas.findByRole('button', { name: 'Click it!' });
     await expect(button).toBeInTheDocument();
 
-    const btnClasses = document.getElementsByClassName("v-btn--disabled v-btn--readonly");
+    const btnClasses = document.getElementsByClassName('v-btn--disabled v-btn--readonly');
     await expect(btnClasses.length).toEqual(1);
   },
-  name: "Case: disabled",
+  name: 'Case: disabled',
   args: {
     formModel: {
-      itemId: "item-1",
-      example1: "Example",
+      itemId: 'item-1',
+      example1: 'Example',
       item: {
-        example2: "Example 2",
+        example2: 'Example 2',
       },
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         button: {
-          label: "Click it!",
+          label: 'Click it!',
           layout: {
-            component: "button",
+            component: 'button',
           },
-          mode: "api-call",
+          mode: 'api-call',
           config: {
-            source: "/mocks/files/{itemId}",
-            method: "PUT",
+            source: '/mocks/files/{itemId}',
+            method: 'PUT',
             body: {
-              example1: "{example1}",
-              example2: "{item.example2}",
+              example1: '{example1}',
+              example2: '{item.example2}',
             },
           },
         },
@@ -107,14 +107,14 @@ export const Disabled: Story = {
 };
 
 export const CopyToClipboard: Story = {
-  name: "Mode: copy value to clipboard  ",
+  name: 'Mode: copy value to clipboard  ',
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const button = await canvas.findByRole("button", { name: "Copy above" });
+    const button = await canvas.findByRole('button', { name: 'Copy above' });
     await expect(button).toBeInTheDocument();
 
     const copiedValues: string[] = [];
-    Object.defineProperty(navigator.clipboard, "writeText", {
+    Object.defineProperty(navigator.clipboard, 'writeText', {
       value: (text) => {
         window.__copiedText = text;
         copiedValues.push(text);
@@ -123,32 +123,32 @@ export const CopyToClipboard: Story = {
     });
 
     await button.click();
-    await expect(copiedValues[0]).toEqual("Lorem ipsum...");
+    await expect(copiedValues[0]).toEqual('Lorem ipsum...');
   },
   args: {
     formModel: {
-      input: "Lorem ipsum...",
+      input: 'Lorem ipsum...',
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         input: {
-          label: "Input",
+          label: 'Input',
           layout: {
-            component: "text-area",
+            component: 'text-area',
           },
         },
         button: {
-          label: "Copy above",
+          label: 'Copy above',
           layout: {
-            component: "button",
+            component: 'button',
             props: {
-              "append-icon": "mdi-content-copy",
+              'append-icon': 'mdi-content-copy',
             },
           },
-          mode: "copy",
+          mode: 'copy',
           config: {
-            modelReference: "input",
+            modelReference: 'input',
           },
         },
       },
@@ -157,81 +157,81 @@ export const CopyToClipboard: Story = {
 };
 
 export const DialogWithInjectedForm: Story = {
-  name: "Mode: dialog with internal form",
+  name: 'Mode: dialog with internal form',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    const button = await canvas.findByRole("button", { name: "Open dialog!" });
+    const button = await canvas.findByRole('button', { name: 'Open dialog!' });
     await expect(button).toBeInTheDocument();
     await button.click();
 
-    const fieldA = await within(document.body).findByLabelText("field A");
-    await userEvent.type(fieldA, "Test", { delay: 150 });
+    const fieldA = await within(document.body).findByLabelText('field A');
+    await userEvent.type(fieldA, 'Test', { delay: 150 });
 
-    const buttonCopied = await within(document.body).findByRole("button", { name: "Copy field A" });
+    const buttonCopied = await within(document.body).findByRole('button', { name: 'Copy field A' });
     await expect(buttonCopied).toBeInTheDocument();
 
-    const buttonSave = await within(document.body).findByRole("button", { name: "Save" });
+    const buttonSave = await within(document.body).findByRole('button', { name: 'Save' });
 
     await buttonSave.click();
     await new Promise((resolve) => setTimeout(resolve, 400));
 
-    await expect(context.args.emittedObject.code).toEqual("my_action_code");
-    await expect(context.args.emittedObject.body.fieldA).toEqual("Test");
+    await expect(context.args.emittedObject.code).toEqual('my_action_code');
+    await expect(context.args.emittedObject.body.fieldA).toEqual('Test');
   },
   args: {
     formModel: {},
     emittedObject: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         button: {
-          label: "Open dialog!",
+          label: 'Open dialog!',
           layout: {
-            component: "button",
+            component: 'button',
           },
-          mode: "form-and-action",
+          mode: 'form-and-action',
           config: {
-            code: "my_action_code",
-            modelReference: "popupModel",
-            title: "Title of the dialog - static text without deps",
-            acceptText: "Save",
+            code: 'my_action_code',
+            modelReference: 'popupModel',
+            title: 'Title of the dialog - static text without deps',
+            acceptText: 'Save',
           },
           schema: {
             properties: {
               fieldA: {
-                label: "field A",
+                label: 'field A',
                 layout: {
-                  component: "text-field",
+                  component: 'text-field',
                   cols: 4,
                 },
               },
               fieldB: {
-                label: "field B",
+                label: 'field B',
                 layout: {
-                  component: "text-field",
+                  component: 'text-field',
                   cols: 4,
                 },
               },
               fieldC: {
-                label: "field C",
+                label: 'field C',
                 layout: {
-                  component: "text-field",
+                  component: 'text-field',
                   cols: 4,
                 },
               },
               button: {
-                label: "Copy field A",
+                label: 'Copy field A',
                 layout: {
-                  component: "button",
+                  component: 'button',
                   props: {
-                    "append-icon": "mdi-content-copy",
+                    'append-icon': 'mdi-content-copy',
                   },
                   cols: 6,
                 },
-                mode: "copy",
+                mode: 'copy',
                 config: {
-                  modelReference: "fieldA",
+                  modelReference: 'fieldA',
                 },
               },
             },
@@ -243,35 +243,35 @@ export const DialogWithInjectedForm: Story = {
 };
 
 export const EmitActionObject: Story = {
-  name: "Mode: emit action object",
+  name: 'Mode: emit action object',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    const button = await canvas.findByRole("button", { name: "Emit action object!" });
+    const button = await canvas.findByRole('button', { name: 'Emit action object!' });
     await expect(button).toBeInTheDocument();
     await new Promise((resolve) => setTimeout(resolve, 1000));
     await button.click();
 
-    await expect(context.args.emittedObject.code).toEqual("my_action_code");
-    await expect(context.args.emittedObject.params.script).toEqual("temp");
+    await expect(context.args.emittedObject.code).toEqual('my_action_code');
+    await expect(context.args.emittedObject.params.script).toEqual('temp');
   },
   args: {
     formModel: {},
     emittedObject: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         button: {
-          label: "Emit action object!",
+          label: 'Emit action object!',
           layout: {
-            component: "button",
+            component: 'button',
           },
-          mode: "action",
+          mode: 'action',
           config: {
-            code: "my_action_code",
+            code: 'my_action_code',
             params: {
-              script: "temp",
-            }
+              script: 'temp',
+            },
           },
         },
       },
@@ -280,54 +280,54 @@ export const EmitActionObject: Story = {
 };
 
 export const APICall: Story = {
-  name: "Mode: API call with emit event",
+  name: 'Mode: API call with emit event',
   play: async (context) => {
     await waitForMountedAsync();
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const canvas = within(context.canvasElement);
-    const button = await canvas.findByRole("button", { name: "Call API" });
+    const button = await canvas.findByRole('button', { name: 'Call API' });
     await expect(button).toBeInTheDocument();
 
     button.click();
 
     await new Promise((resolve) => setTimeout(resolve, 400));
-    await expect(context.args.emittedObject.code).toEqual("refresh-attachments");
+    await expect(context.args.emittedObject.code).toEqual('refresh-attachments');
   },
   args: {
     formModel: {
-      itemId: "item-1",
-      example1: "Example",
+      itemId: 'item-1',
+      example1: 'Example',
       item: {
-        example2: "Example 2",
+        example2: 'Example 2',
       },
     },
     emittedObject: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         description: {
           content:
-            "Btn has ability to call API directly with mapped body and params object, after that it can emit event with action code",
+            'Btn has ability to call API directly with mapped body and params object, after that it can emit event with action code',
           layout: {
-            component: "static-content",
-            tag: "span",
+            component: 'static-content',
+            tag: 'span',
           },
         },
         button: {
-          label: "Call API",
+          label: 'Call API',
           layout: {
-            component: "button",
+            component: 'button',
           },
-          mode: "api-call",
+          mode: 'api-call',
           config: {
-            source: "/mocks/files/{itemId}",
-            method: "POST",
+            source: '/mocks/files/{itemId}',
+            method: 'POST',
             body: {
-              example1: "{example1}",
-              example2: "{item.example2}",
+              example1: '{example1}',
+              example2: '{item.example2}',
             },
             emit: {
-              code: "refresh-attachments",
+              code: 'refresh-attachments',
             },
           },
         },
@@ -342,65 +342,65 @@ export const APICall: Story = {
 };
 
 export const APICallWaitForSave: Story = {
-  name: "Mode: API call with emit event and wait for saved state",
+  name: 'Mode: API call with emit event and wait for saved state',
   play: async (context) => {
     await waitForMountedAsync();
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const canvas = within(context.canvasElement);
-    const button = await canvas.findByRole("button", { name: "Call API" });
+    const button = await canvas.findByRole('button', { name: 'Call API' });
     await expect(button).toBeInTheDocument();
 
-    const fieldA = await canvas.findByLabelText("Field A");
-    await userEvent.type(fieldA, "Should wait for this", {
+    const fieldA = await canvas.findByLabelText('Field A');
+    await userEvent.type(fieldA, 'Should wait for this', {
       delay: 100,
     });
     button.click();
 
     await new Promise((resolve) => setTimeout(resolve, 400));
-    await expect(context.args.emittedObject.code).toEqual("refresh-attachments");
+    await expect(context.args.emittedObject.code).toEqual('refresh-attachments');
   },
   args: {
     formModel: {
-      itemId: "item-1",
-      example1: "Example",
+      itemId: 'item-1',
+      example1: 'Example',
       item: {
-        example2: "Example 2",
+        example2: 'Example 2',
       },
     },
     emittedObject: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         description: {
           content:
             "VueSchemaForms component expose variable formDataWasSaved for manage state of form. If some fields on form has impact for API Call we should add `waitForSaveState:true` and button will wait for next 'saved' state. For start/default form state is saved (true)",
           layout: {
-            component: "static-content",
-            tag: "span",
+            component: 'static-content',
+            tag: 'span',
           },
         },
         fieldA: {
-          label: "Field A",
+          label: 'Field A',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
         button: {
-          label: "Call API",
+          label: 'Call API',
           layout: {
-            component: "button",
+            component: 'button',
           },
-          mode: "api-call",
+          mode: 'api-call',
           config: {
-            source: "/mocks/files/{itemId}",
-            method: "POST",
+            source: '/mocks/files/{itemId}',
+            method: 'POST',
             body: {
-              example1: "{example1}",
-              example2: "{item.example2}",
+              example1: '{example1}',
+              example2: '{item.example2}',
             },
             waitForSaveState: true,
             emit: {
-              code: "refresh-attachments",
+              code: 'refresh-attachments',
             },
           },
         },

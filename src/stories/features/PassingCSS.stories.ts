@@ -1,41 +1,38 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
+import { expect } from '@storybook/test';
+import { initialize } from 'msw-storybook-addon';
 
-import { expect } from "@storybook/test";
-
-import { waitForMountedAsync } from "../editable-fields/utils";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-
-
+import { waitForMountedAsync } from '../editable-fields/utils';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Features/Passing css classes",
+  title: 'Features/Passing css classes',
   ...formStoryWrapperTemplate,
 };
 
 export const Story1: Story = {
-  name: "Example 1",
+  name: 'Example 1',
   play: async (context) => {
     await waitForMountedAsync();
-    const field = document.getElementsByClassName("text-h4");
+    const field = document.getElementsByClassName('text-h4');
     await expect(field[0]).toBeInTheDocument();
   },
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         span: {
-          content: "Text with class",
+          content: 'Text with class',
           layout: {
-            component: "static-content",
-            tag: "span",
-            class: "text-subtitle-4 text-h4",
+            component: 'static-content',
+            tag: 'span',
+            class: 'text-subtitle-4 text-h4',
           },
         },
         textField: {
-          label: "Text",
+          label: 'Text',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
       },

@@ -7,16 +7,15 @@
 </template>
 
 <script lang="ts" setup>
-import markdownit from "markdown-it";
-import markdownItMultimdTable from "markdown-it-multimd-table";
-import { markdownItTable } from "markdown-it-table";
-import { computed, onMounted, ref } from "vue";
+import { useEventBus } from '@vueuse/core';
+import markdownit from 'markdown-it';
+import markdownItMultimdTable from 'markdown-it-multimd-table';
+import { markdownItTable } from 'markdown-it-table';
 
-import { useFormModel, useProps, useResolveVariables } from "@/core/composables";
-import { useEventBus } from "@vueuse/core";
-import { EngineField } from "@/types/engine/EngineField";
+import { computed, onMounted, ref } from 'vue';
 
-
+import { useFormModel, useProps, useResolveVariables } from '@/core/composables';
+import { EngineField } from '@/types/engine/EngineField';
 
 const props = defineProps<{
   schema: EngineField;
@@ -28,11 +27,11 @@ const { bindProps } = useProps();
 
 const resolvedContent = ref<any>({ resolvedText: null, allVariablesResolved: false });
 
-const vueSchemaFormEventBus = useEventBus<string>("form-model");
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
 const { getValue } = useFormModel();
 
 const localModel = computed(() => getValue(props.model, props.schema));
-const md = markdownit().use(markdownItMultimdTable).use(markdownItTable).enable("table");
+const md = markdownit().use(markdownItMultimdTable).use(markdownItTable).enable('table');
 
 onMounted(async () => {
   await bindProps(props.schema);

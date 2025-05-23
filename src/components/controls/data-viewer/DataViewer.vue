@@ -11,8 +11,10 @@
 </template>
 
 <script lang="ts" setup>
-import { parsePhoneNumber } from "libphonenumber-js";
-import { computed, onMounted, ref } from "vue";
+import { useEventBus } from '@vueuse/core';
+import { parsePhoneNumber } from 'libphonenumber-js';
+
+import { computed, onMounted, ref } from 'vue';
 
 import {
   useCalculation,
@@ -22,13 +24,12 @@ import {
   useLabel,
   useLocale,
   useResolveVariables,
-} from "@/core/composables";
-import { useDictionary } from "@/core/composables/useDictionary";
-import { useNumber } from "@/core/composables/useNumber";
-import { EngineDataViewerField, EngineDictionaryField } from "@/types/engine/controls";
-import { useEventBus } from "@vueuse/core";
+} from '@/core/composables';
+import { useDictionary } from '@/core/composables/useDictionary';
+import { useNumber } from '@/core/composables/useNumber';
+import { EngineDataViewerField, EngineDictionaryField } from '@/types/engine/controls';
 
-import dayjs from "../date/dayjs";
+import dayjs from '../date/dayjs';
 
 const props = defineProps<{
   schema: EngineDataViewerField;
@@ -45,41 +46,41 @@ const { resolve } = useResolveVariables();
 const { calculationFunc } = useCalculation();
 
 const isValueMapping = !!props.schema.valueMapping;
-const vueSchemaFormEventBus = useEventBus<string>("form-model");
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
 const localModelForValueMapping = ref<any>(null);
 const localModel = computed({
   get(): string | number {
     let value = getValue(props.model, props.schema);
 
     switch (props.schema.type) {
-      case "text":
-        if (!value || value == "null") break;
+      case 'text':
+        if (!value || value == 'null') break;
         break;
-      case "number":
-        if (!value || value == "null") break;
+      case 'number':
+        if (!value || value == 'null') break;
         value = formattedNumber(
           value,
-          "decimal",
+          'decimal',
           props.schema.precisionMin ? Number(props.schema.precisionMin) : 0,
           props.schema.precision ? Number(props.schema.precision) : 0,
         );
         break;
-      case "date":
-        if (!value || value == "null") break;
+      case 'date':
+        if (!value || value == 'null') break;
         value = dayjs(value).format(dateFormat.value);
         break;
-      case "date-time":
-        if (!value || value == "null") break;
+      case 'date-time':
+        if (!value || value == 'null') break;
         value = dayjs(value).format(dateTimeFormat.value);
         break;
-      case "phone":
-        if (!value || value == "null") break;
+      case 'phone':
+        if (!value || value == 'null') break;
         value = parsePhoneNumber(value).formatNational();
         break;
       default:
       //console.warn("Type of data not recognized =" + props.schema.type);
     }
-    return value !== "null" && !!value ? value : t("emptyValue");
+    return value !== 'null' && !!value ? value : t('emptyValue');
   },
   set(val: any) {
     setValue(val, props.schema);
@@ -88,24 +89,24 @@ const localModel = computed({
 
 function formatter(value: any) {
   switch (props.schema.type) {
-    case "text":
-      if (!value || value == "null") break;
+    case 'text':
+      if (!value || value == 'null') break;
       break;
-    case "number":
-      if (!value || typeof value == "string" || value == "null") break;
+    case 'number':
+      if (!value || typeof value == 'string' || value == 'null') break;
       value = formattedNumber(
         value,
-        "decimal",
+        'decimal',
         props.schema.precisionMin ? Number(props.schema.precisionMin) : 0,
         props.schema.precision ? Number(props.schema.precision) : 2,
       );
       break;
-    case "date":
-      if (!value || value == "null") break;
+    case 'date':
+      if (!value || value == 'null') break;
       value = dayjs(value).format(dateFormat.value);
       break;
-    case "phone":
-      if (!value || value == "null") break;
+    case 'phone':
+      if (!value || value == 'null') break;
       value = parsePhoneNumber(value).formatNational();
       break;
     default:
@@ -121,11 +122,11 @@ async function runCalculationIfExist() {
 }
 
 async function resolveIfDictionary() {
-  if ("source" in props.schema && props.schema.source && "url" in props.schema.source) {
+  if ('source' in props.schema && props.schema.source && 'url' in props.schema.source) {
     const { data, load, singleOptionAutoSelect, initState } = await useDictionary();
 
     await initState(props.schema as EngineDictionaryField);
-    await load("dataViewer");
+    await load('dataViewer');
 
     if (data.value.length === 1 && singleOptionAutoSelect.value) {
       localModel.value = data.value[0];
@@ -139,7 +140,7 @@ if (isValueMapping) {
     const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
     if (localModel.value !== resolvedText) {
       const result = formatter(resolvedText);
-      localModelForValueMapping.value = result != "null" ? result : t("emptyValue");
+      localModelForValueMapping.value = result != 'null' ? result : t('emptyValue');
     }
   });
 }
@@ -151,7 +152,7 @@ onMounted(async () => {
   if (isValueMapping) {
     const { resolvedText } = await resolve(props.schema, props.schema.valueMapping as string);
     const result = formatter(resolvedText);
-    localModelForValueMapping.value = result != "null" ? result : t("emptyValue");
+    localModelForValueMapping.value = result != 'null' ? result : t('emptyValue');
   }
 });
 </script>

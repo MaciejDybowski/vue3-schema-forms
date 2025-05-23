@@ -1,28 +1,26 @@
 // @ts-nocheck
-import { expect, within } from "@storybook/test";
+import { expect, within } from '@storybook/test';
 
-import { Schema } from "../../types/schema/Schema";
-import { Layout } from "../../types/schema/elements";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { waitForMountedAsync } from "../editable-fields/utils";
+import { Schema } from '../../types/schema/Schema';
+import { Layout } from '../../types/schema/elements';
+import { waitForMountedAsync } from '../editable-fields/utils';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Elements/Static/Divider",
+  title: 'Elements/Static/Divider',
   ...formStoryWrapperTemplate,
 };
-
-
 
 export const Default: Story = {
   play: async () => {},
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         divider: {
           layout: {
-            component: "divider",
+            component: 'divider',
           },
         },
       },
@@ -35,11 +33,11 @@ export const Thickness: Story = {
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         divider: {
           layout: {
-            component: "divider",
+            component: 'divider',
           },
           thickness: 20,
         },
@@ -53,15 +51,15 @@ export const Color: Story = {
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         divider: {
           layout: {
-            component: "divider",
+            component: 'divider',
           },
           thickness: 5,
-          color: "#B80D1AAD",
-          opacity: "100",
+          color: '#B80D1AAD',
+          opacity: '100',
         },
       },
     } as Schema,
@@ -73,13 +71,13 @@ export const Opacity: Story = {
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         divider: {
           layout: {
-            component: "divider",
+            component: 'divider',
           },
-          opacity: "25",
+          opacity: '25',
         },
       },
     } as Schema,

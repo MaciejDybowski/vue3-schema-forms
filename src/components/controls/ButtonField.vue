@@ -56,34 +56,35 @@
 </template>
 
 <script lang="ts" setup>
-import axios from "axios";
-import get from "lodash/get";
-import { Ref, computed, onMounted, reactive, ref } from "vue";
-import { useTheme } from "vuetify";
+import { useEventBus } from '@vueuse/core';
+import axios from 'axios';
+import get from 'lodash/get';
+import { useTheme } from 'vuetify';
 
-import { useClass, useLabel, useLocale, useProps, useResolveVariables } from "@/core/composables";
-import { variableRegexp } from "@/core/engine/utils";
-import { EngineButtonField } from "@/types/engine/EngineButtonField";
-import { Schema } from "@/types/schema/Schema";
-import { useEventBus } from "@vueuse/core";
+import { Ref, computed, onMounted, reactive, ref } from 'vue';
 
-import VueSchemaForms from "../engine/VueSchemaForms.vue";
-import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
+import { useClass, useLabel, useLocale, useProps, useResolveVariables } from '@/core/composables';
+import { variableRegexp } from '@/core/engine/utils';
+import { EngineButtonField } from '@/types/engine/EngineButtonField';
+import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
+import { Schema } from '@/types/schema/Schema';
 
-const vueSchemaFormEventBus = useEventBus<string>("form-model");
+import VueSchemaForms from '../engine/VueSchemaForms.vue';
 
-const popupReferenceReload= ref(0)
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
+
+const popupReferenceReload = ref(0);
 vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
-  if (payload == "action-callback" && schema.mode == 'form-and-action') {
-    const newModel = get(model, schema.config.modelReference, {})
+  if (payload == 'action-callback' && schema.mode == 'form-and-action') {
+    const newModel = get(model, schema.config.modelReference, {});
     if (schema.config.modelReference) {
-      popup.model = newModel
-      popupReferenceReload.value++
+      popup.model = newModel;
+      popupReferenceReload.value++;
     }
   }
 });
 
-const actionHandlerEventBus = useEventBus<string>("form-action");
+const actionHandlerEventBus = useEventBus<string>('form-action');
 const loading = ref(false);
 const { schema, model } = defineProps<{
   schema: EngineButtonField;
@@ -97,13 +98,14 @@ const { resolve } = useResolveVariables();
 
 const { t } = useLocale();
 const theme = useTheme();
-const primaryWhite = computed(() => (theme.current.value.dark ? "white" : "primary"));
+const primaryWhite = computed(() => (theme.current.value.dark ? 'white' : 'primary'));
 
-const shouldWaitForSaveState = schema.config && schema.config.waitForSaveState ? schema.config.waitForSaveState : false;
+const shouldWaitForSaveState =
+  schema.config && schema.config.waitForSaveState ? schema.config.waitForSaveState : false;
 const caller = ref<Function>(() => {});
 const formCurrentSaveState = ref(true);
 if (shouldWaitForSaveState) {
-  const formExternalStateEventBus = useEventBus<string>("form-state");
+  const formExternalStateEventBus = useEventBus<string>('form-state');
   formExternalStateEventBus.on((event, payload) => {
     formCurrentSaveState.value = payload;
     if (payload == true) {
@@ -128,23 +130,23 @@ const popup = reactive<{
 }>({
   errorMessages: ref([]),
   show: false,
-  title: "",
+  title: '',
   model: {},
   schema: {} as Schema,
   options: schema.options,
   item: {},
   itemIndex: 0,
   acceptFunction: () => {},
-  acceptText: t("save"),
+  acceptText: t('save'),
 });
 
 const snackbar = reactive({
   modelValue: false,
-  text: t("valueCopied"),
+  text: t('valueCopied'),
 });
 
 async function saveDialogForm(isActive: Ref<boolean>) {
-  const { valid, messages } = await popupReference.value.validate("messages");
+  const { valid, messages } = await popupReference.value.validate('messages');
   popup.errorMessages = messages;
   if (valid) {
     popup.acceptFunction();
@@ -154,7 +156,7 @@ async function saveDialogForm(isActive: Ref<boolean>) {
 
 async function runBtnLogic() {
   switch (schema.mode) {
-    case "action":
+    case 'action':
       const body = await createBodyObject();
       let payloadObject = {
         code: schema.config.code,
@@ -163,9 +165,9 @@ async function runBtnLogic() {
           ...schema.config.params,
         },
       };
-      actionHandlerEventBus.emit("form-action", payloadObject);
+      actionHandlerEventBus.emit('form-action', payloadObject);
       break;
-    case "form-and-action":
+    case 'form-and-action':
       popup.errorMessages = [];
       popup.title = schema.config.title;
       if (schema.config.modelReference) {
@@ -183,17 +185,20 @@ async function runBtnLogic() {
             ...schema.config.params,
           },
         };
-        console.debug(`Popup model is ready to save, event [form-action] was emitted`, payloadObject);
-        actionHandlerEventBus.emit("form-action", payloadObject);
+        console.debug(
+          `Popup model is ready to save, event [form-action] was emitted`,
+          payloadObject,
+        );
+        actionHandlerEventBus.emit('form-action', payloadObject);
       };
       popup.show = true;
       break;
-    case "copy":
+    case 'copy':
       snackbar.modelValue = true;
-      const value = get(model, schema.config.modelReference, null);
-      navigator.clipboard.writeText(value);
+      const value = get(model, schema.config.modelReference, "");
+      await navigator.clipboard.writeText(value);
       break;
-    case "api-call":
+    case 'api-call':
       loading.value = true;
       if (shouldWaitForSaveState && !formCurrentSaveState.value) {
         caller.value = apiCallMode;
@@ -206,17 +211,22 @@ async function runBtnLogic() {
 }
 
 async function apiCallMode() {
-  const { resolvedText, allVariablesResolved } = await resolve(schema, schema.config.source, "title", true);
+  const { resolvedText, allVariablesResolved } = await resolve(
+    schema,
+    schema.config.source,
+    'title',
+    true,
+  );
   const body = await createBodyObject();
   if (allVariablesResolved) {
     const response = await axios({
-      method: schema.config.method || "POST",
+      method: schema.config.method || 'POST',
       url: resolvedText,
       data: body,
     });
 
     if (schema.config.emit) {
-      actionHandlerEventBus.emit("form-action", schema.config.emit);
+      actionHandlerEventBus.emit('form-action', schema.config.emit);
     }
 
     // TODO - dalsza implementacja - co ma się dziać z response, jakie warianty
@@ -227,12 +237,12 @@ async function apiCallMode() {
 }
 
 async function createBodyObject() {
-  let body = {};
+  let body: Record<string, any> = {};
   if (schema.config.body == undefined) return body;
   const entries = Object.entries(schema.config.body);
   const resolvedEntries = await Promise.all(
     entries.map(async ([key, value]) => {
-      if (typeof value === "string" && variableRegexp.test(value)) {
+      if (typeof value === 'string' && variableRegexp.test(value)) {
         const { resolvedText, allVariablesResolved } = await resolve(schema, value as string);
         return [key, allVariablesResolved ? resolvedText : null];
       } else {

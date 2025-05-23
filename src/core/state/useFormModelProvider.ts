@@ -1,5 +1,6 @@
-import { provide, inject } from 'vue';
-import { FormModelInstance, useFormModel } from "./useFormModel";
+import { inject, provide } from 'vue';
+
+import { FormModelInstance, useFormModel } from './useFormModel';
 
 const FORM_MODEL_KEY = Symbol();
 

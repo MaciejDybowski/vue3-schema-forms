@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ValidationFromError } from "@/types/engine/ValidationFromError";
+import { ValidationFromError } from '@/types/engine/ValidationFromError';
 
 const props = defineProps<{
   errorMessages: Array<ValidationFromError>;
@@ -39,8 +39,8 @@ function scrollToItem(id: string) {
   const itemRef = document.getElementById(id);
   if (itemRef)
     itemRef?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
+      behavior: 'smooth',
+      block: 'center',
     });
 }
 </script>

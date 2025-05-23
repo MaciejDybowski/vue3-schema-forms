@@ -1,14 +1,15 @@
-import axios from "axios";
-import { Ref, ref } from "vue";
+import axios from 'axios';
 
-import { SimpleSource } from "@/types/shared/Source";
+import { Ref, ref } from 'vue';
+
+import { SimpleSource } from '@/types/shared/Source';
 
 export function useSource(source: SimpleSource) {
-  const title = source.title ? source.title : "title";
-  const value = source.value ? source.value : "value";
+  const title = source.title ? source.title : 'title';
+  const value = source.value ? source.value : 'value';
   const returnObject = source.returnObject ? source.returnObject : false;
   const loading = ref(false);
-  let data: Ref<Array<object>> = ref([]);
+  let data: Ref<Array<Record<string, any>>> = ref([]);
 
   const load = async () => {
     loading.value = true;

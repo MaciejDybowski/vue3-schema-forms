@@ -6,17 +6,18 @@
 </template>
 
 <script lang="ts" setup>
-import jsonata from "jsonata";
-import get from "lodash/get";
-import { onMounted, ref, useAttrs } from "vue";
+import { useEventBus } from '@vueuse/core';
+import jsonata from 'jsonata';
+import get from 'lodash/get';
 
-import { useNumber } from "@/core/composables/useNumber";
-import { variableRegexp } from "@/core/engine/utils";
-import { useEventBus } from "@vueuse/core";
+import { onMounted, ref, useAttrs } from 'vue';
+
+import { useNumber } from '@/core/composables/useNumber';
+import { variableRegexp } from '@/core/engine/utils';
 
 const attrs = useAttrs();
 const { formattedNumber } = useNumber();
-const htmlContent = ref<string>("");
+const htmlContent = ref<string>('');
 const props = defineProps<{
   footerMapping: string;
   aggregates: object;
@@ -30,7 +31,7 @@ async function simpleResolveVariable() {
       arrayOfVariables.map(async (wrappedVariable) => {
         const unwrapped = wrappedVariable.slice(1, -1);
 
-        const split = unwrapped.split(":");
+        const split = unwrapped.split(':');
         let variable = split[0];
         const defaultValue = split.length >= 2 ? split[1] : null;
         const typeOfValue = split.length >= 3 ? split[2] : null;
@@ -41,17 +42,21 @@ async function simpleResolveVariable() {
         const nata = jsonata(variable);
         let value = await nata.evaluate(model);
 
-        if (typeOfValue == "NUMBER") {
+        if (typeOfValue == 'NUMBER') {
           let decimalPlaces = 4;
           if (isNaN(formatterProps)) {
             decimalPlaces = get(model, formatterProps, 2);
           } else {
             decimalPlaces = formatterProps;
           }
-          value = formattedNumber(value, "decimal", decimalPlaces, decimalPlaces);
+          value = formattedNumber(value, 'decimal', decimalPlaces, decimalPlaces);
         }
 
-        if ((value == null && defaultValue !== null) || (value == "" && value != 0) || value == undefined) {
+        if (
+          (value == null && defaultValue !== null) ||
+          (value == '' && value != 0) ||
+          value == undefined
+        ) {
           value = defaultValue;
         }
         htmlContent.value = htmlContent.value.replace(`{${unwrapped}}`, value);
@@ -72,10 +77,10 @@ onMounted(async () => {
   await init();
 });
 
-const vueSchemaFormEventBus = useEventBus<string>("form-model");
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
 vueSchemaFormEventBus.on(async (event, payload) => {
-  if (payload == "table-aggregates") {
+  if (payload == 'table-aggregates') {
     await init();
   }
 });

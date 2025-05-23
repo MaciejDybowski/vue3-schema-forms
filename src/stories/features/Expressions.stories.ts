@@ -1,11 +1,10 @@
 // @ts-nocheck
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { initialize } from 'msw-storybook-addon';
 
-import { initialize } from "msw-storybook-addon";
-
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Features/Expressions",
+  title: 'Features/Expressions',
   ...formStoryWrapperTemplate,
 };
 
@@ -27,17 +26,17 @@ export const examples: Story = {
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         stages: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 simpleDate: {
-                  label: "DateTime",
+                  label: 'DateTime',
                   layout: {
-                    component: "date-time-picker",
+                    component: 'date-time-picker',
                   },
                 },
               },
@@ -46,13 +45,13 @@ export const examples: Story = {
         },
         stages2: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 simpleDate: {
-                  label: "DateTime",
+                  label: 'DateTime',
                   layout: {
-                    component: "date-time-picker",
+                    component: 'date-time-picker',
                   },
                 },
               },
@@ -60,39 +59,39 @@ export const examples: Story = {
           },
         },
         minimum: {
-          label: "Minimum",
+          label: 'Minimum',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
-          expression: "FIND_OLDEST_DATE(simpleDate, stages)",
+          expression: 'FIND_OLDEST_DATE(simpleDate, stages)',
         },
         maximum: {
-          label: "Maximum",
+          label: 'Maximum',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
-          expression: "FIND_EARLIEST_DATE(simpleDate, stages2)",
+          expression: 'FIND_EARLIEST_DATE(simpleDate, stages2)',
         },
         dni: {
-          label: "Dni",
+          label: 'Dni',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
-          expression: "CALC_DATE_DIFF_RETURN_DAY(maximum, minimum)",
+          expression: 'CALC_DATE_DIFF_RETURN_DAY(maximum, minimum)',
         },
         godziny: {
-          label: "Godziny",
+          label: 'Godziny',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
-          expression: "CALC_DATE_DIFF_RETURN_HOURS(maximum, minimum)",
+          expression: 'CALC_DATE_DIFF_RETURN_HOURS(maximum, minimum)',
         },
         minuty: {
-          label: "Minuty",
+          label: 'Minuty',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
-          expression: "CALC_DATE_DIFF_RETURN_MINUTES(maximum, minimum)",
+          expression: 'CALC_DATE_DIFF_RETURN_MINUTES(maximum, minimum)',
         },
       },
     },

@@ -4,7 +4,7 @@
       v-model="localModel"
       :class="bindClass(schema) + requiredInputClass"
       :label="label"
-      :rules="!fieldProps.readonly ? rules: []"
+      :rules="!fieldProps.readonly ? rules : []"
       v-bind="fieldProps"
       @update:model-value="onChange(schema, model)"
     />
@@ -12,13 +12,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted } from 'vue';
 
-import { useClass, useExpression, useFormModel, useLabel, useProps, useResolveVariables, useRules } from "@/core/composables";
-import { useEventHandler } from "@/core/composables/useEventHandler";
-import { variableRegexp } from "@/core/engine/utils";
-import { EngineTextField } from "@/types/engine/controls";
-
+import {
+  useClass,
+  useExpression,
+  useFormModel,
+  useLabel,
+  useProps,
+  useResolveVariables,
+  useRules,
+} from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
+import { variableRegexp } from '@/core/engine/utils';
+import { EngineTextField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineTextField;
@@ -45,14 +52,18 @@ const localModel = computed({
 });
 
 async function runExpressionIfExist() {
-  if (props.schema.expression && props.schema.expression !== "") {
+  if (props.schema.expression && props.schema.expression !== '') {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
     localModel.value = await resolveExpression(props.schema.key, expression, props.model);
   }
 }
 
 async function resolveIfLocalModelHasDependencies() {
-  if (localModel.value && typeof localModel.value == "string" && localModel.value.match(variableRegexp)) {
+  if (
+    localModel.value &&
+    typeof localModel.value == 'string' &&
+    localModel.value.match(variableRegexp)
+  ) {
     const result = await resolve(props.schema, localModel.value);
     if (result.allVariablesResolved) {
       localModel.value = result.resolvedText;

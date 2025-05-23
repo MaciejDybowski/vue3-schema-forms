@@ -7,7 +7,9 @@
         style="cursor: pointer; border: 0"
         v-bind="activatorProps"
       >
-        <v-img :src="src.replace('{width}', size.toString()).replace('{height}', size.toString())" />
+        <v-img
+          :src="src.replace('{width}', size.toString()).replace('{height}', size.toString())"
+        />
       </v-avatar>
     </template>
     <template v-slot:default="{ isActive }">
@@ -24,7 +26,7 @@
             color="primary"
             variant="elevated"
             @click="isActive.value = false"
-            >{{ t("closeDialog") }}
+            >{{ t('closeDialog') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -33,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useLocale } from "@/core/composables";
+import { useLocale } from '@/core/composables';
 
 const props = withDefaults(
   defineProps<{

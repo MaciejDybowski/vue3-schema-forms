@@ -46,11 +46,12 @@
 </template>
 
 <script lang="ts" setup>
-import get from "lodash/get";
-import { computed, onMounted } from "vue";
+import get from 'lodash/get';
 
-import { useFormModel, useLabel } from "@/core/composables";
-import { EngineField } from "@/types/engine/EngineField";
+import { computed, onMounted } from 'vue';
+
+import { useFormModel, useLabel } from '@/core/composables';
+import { EngineField } from '@/types/engine/EngineField';
 
 const { schema, model } = defineProps<{
   schema: EngineField;

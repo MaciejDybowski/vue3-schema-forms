@@ -10,7 +10,9 @@
         :items="collectionItem.editable as any"
         :row="item"
         v-bind="fieldProps"
-        @update:field="(event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })"
+        @update:field="
+          (event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })
+        "
       />
 
       <table-cell
@@ -35,7 +37,9 @@
       :items="header.editable"
       :row="item"
       v-bind="fieldProps"
-      @update:field="(event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })"
+      @update:field="
+        (event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })
+      "
     />
 
     <table-action-menu-wrapper
@@ -49,16 +53,17 @@
 </template>
 
 <script lang="ts" setup>
-import jsonata from "jsonata";
-import { isArray } from "lodash";
-import { onMounted, ref } from "vue";
-import { useTheme } from "vuetify";
+import jsonata from 'jsonata';
+import { isArray } from 'lodash';
+import { useTheme } from 'vuetify';
 
-import TableActionMenuWrapper from "@/components/controls/table/TableActionMenuWrapper.vue";
-import TableCell from "@/components/controls/table/TableCell.vue";
-import TableEditableCellGroup from "@/components/controls/table/TableEditableCellGroup.vue";
+import { onMounted, ref } from 'vue';
 
-import { TableHeader, TableHeaderAction } from "@/types/shared/Source";
+import TableActionMenuWrapper from '@/components/controls/table/TableActionMenuWrapper.vue';
+import TableCell from '@/components/controls/table/TableCell.vue';
+import TableEditableCellGroup from '@/components/controls/table/TableEditableCellGroup.vue';
+
+import { TableHeader, TableHeaderAction } from '@/types/shared/Source';
 
 const props = defineProps<{
   header: TableHeader;
@@ -68,15 +73,15 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "updateRow", payload: { value: string; path: string; item: any }): void;
-  (e: "runTableActionLogic", payload: { action: TableHeaderAction; item: object });
+  (e: 'updateRow', payload: { value: string; path: string; item: any }): void;
+  (e: 'runTableActionLogic', payload: { action: TableHeaderAction; item: object }): void;
 }>();
 
 const theme = useTheme();
 
-const refClass = ref("");
+const refClass = ref('');
 
-async function getCssClass(header: TableHeader, item) {
+async function getCssClass(header: TableHeader, item: any) {
   if (header.color) {
     const mergedModel = {
       header: header,
@@ -88,7 +93,7 @@ async function getCssClass(header: TableHeader, item) {
       return result;
     }
   }
-  return "";
+  return '';
 }
 
 onMounted(async () => {

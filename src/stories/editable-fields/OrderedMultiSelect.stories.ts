@@ -1,12 +1,11 @@
 // @ts-nocheck
-import { MULTI_ORDERED_SELECT_MOCK } from "../mock-responses";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { MULTI_ORDERED_SELECT_MOCK } from '../mock-responses';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Elements/Editable/OrderedMultiSelect",
+  title: 'Elements/Editable/OrderedMultiSelect',
   ...formStoryWrapperTemplate,
 };
-
 
 // TODO - napisać testy !!!!!!
 
@@ -17,19 +16,19 @@ export const Standard: Story = {
       orderedMultiSelect: null,
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         orderedMultiSelect: {
-          label: "Wybierz elementy do generowania exclea",
-          variant: "list",
+          label: 'Wybierz elementy do generowania exclea',
+          variant: 'list',
           layout: {
             cols: 12,
-            component: "ordered-multi-select",
+            component: 'ordered-multi-select',
           },
           source: {
-            url: "/mocks/multi-ordered-items",
-            title: "label",
-            value: "id",
+            url: '/mocks/multi-ordered-items',
+            title: 'label',
+            value: 'id',
           },
         },
       },
@@ -50,23 +49,23 @@ export const Required: Story = {
       orderedMultiSelect: null,
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         orderedMultiSelect: {
-          label: "Wybierz elementy do generowania exclea",
-          variant: "list",
+          label: 'Wybierz elementy do generowania exclea',
+          variant: 'list',
           layout: {
             cols: 12,
-            component: "ordered-multi-select",
+            component: 'ordered-multi-select',
           },
           source: {
-            url: "/mocks/multi-ordered-items",
-            title: "label",
-            value: "id",
+            url: '/mocks/multi-ordered-items',
+            title: 'label',
+            value: 'id',
           },
         },
       },
-      required: ["orderedMultiSelect"],
+      required: ['orderedMultiSelect'],
       i18n: {},
     },
   },
@@ -78,26 +77,26 @@ export const Required: Story = {
 };
 
 export const Variant: Story = {
-  name: "Case: input variant",
+  name: 'Case: input variant',
   play: async (context) => {},
   args: {
     model: {
       orderedMultiSelect: null,
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         orderedMultiSelect: {
-          label: "Wybierz elementy do generowania exclea",
-          variant: "combobox",
+          label: 'Wybierz elementy do generowania exclea',
+          variant: 'combobox',
           layout: {
             cols: 12,
-            component: "ordered-multi-select",
+            component: 'ordered-multi-select',
           },
           source: {
-            url: "/mocks/multi-ordered-items",
-            title: "label",
-            value: "id",
+            url: '/mocks/multi-ordered-items',
+            title: 'label',
+            value: 'id',
           },
         },
       },

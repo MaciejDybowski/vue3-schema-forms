@@ -11,19 +11,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from "vue";
-import { useTheme } from "vuetify";
-import { VSwitch } from "vuetify/components";
+import { useTheme } from 'vuetify';
+import { VSwitch } from 'vuetify/components';
 
-import { useClass, useFormModel, useLabel, useProps, useRules } from "@/core/composables";
-import { EngineField } from "@/types/engine/EngineField";
+import { computed, onMounted, ref } from 'vue';
+
+import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
+import { EngineField } from '@/types/engine/EngineField';
 
 const props = defineProps<{
   schema: EngineField;
   model: object;
 }>();
 
-const mode = props.schema.mode ? props.schema.mode : "none";
+const mode = props.schema.mode ? props.schema.mode : 'none';
 
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
@@ -38,18 +39,18 @@ const primaryWhite = computed(() => {
     return fieldProps.value.color;
   }
 
-  return theme.current.value.dark ? "white" : "primary";
+  return theme.current.value.dark ? 'white' : 'primary';
 });
 
-const formSwitch = ref({});
-const switchId = Math.random().toString().slice(2, 5);
+const formSwitch = ref<Record<string, any>>({});
+const switchId: string = Math.random().toString().slice(2, 5);
 
 const localModel = computed({
   get(): any {
     return getValue(props.model, props.schema);
   },
   set(val: any) {
-    setValue(val, props.schema, undefined, mode == "visibility");
+    setValue(val, props.schema, undefined, mode == 'visibility');
   },
 });
 
@@ -58,12 +59,12 @@ onMounted(async () => {
   await bindRules(props.schema);
   await bindProps(props.schema);
 
-  if (mode == "visibility") {
+  if (mode == 'visibility') {
     fieldProps.value.readonly = false;
   }
 
-  if (!("defaultValue" in props.schema)) {
-    let falseValue = fieldProps.value["false-value"] as string | boolean | undefined;
+  if (!('defaultValue' in props.schema)) {
+    let falseValue = fieldProps.value['false-value'] as string | boolean | undefined;
     localModel.value = falseValue === undefined ? false : falseValue;
   }
 });

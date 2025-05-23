@@ -1,13 +1,12 @@
 // @ts-nocheck
-import { schemaWithTranslation } from "@/stories/schemas";
+import { initialize } from 'msw-storybook-addon';
 
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { schemaWithTranslation } from '@/stories/schemas';
 
-import { initialize } from "msw-storybook-addon";
-
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Features/Translations",
+  title: 'Features/Translations',
   ...formStoryWrapperTemplate,
 };
 /**
@@ -18,7 +17,7 @@ export default {
  * ##### !!! The schema is translated at the very beginning of the rendering process; changing the language "live" can be costly and requires re-rendering the entire form. !!!
  */
 export const TranslationWithI18n: Story = {
-  name: "Translations with i18n",
+  name: 'Translations with i18n',
   args: {
     schema: schemaWithTranslation,
   },

@@ -1,9 +1,10 @@
-import { computed } from "vue";
-import { DisplayBreakpoint, useDisplay } from "vuetify";
+import { DisplayBreakpoint, useDisplay } from 'vuetify';
 
-import { EngineField } from "@/types/engine/EngineField";
-import { Cols } from "@/types/shared/Cols";
-import { Layout } from "@/types/shared/Layout";
+import { computed } from 'vue';
+
+import { EngineField } from '@/types/engine/EngineField';
+import { Cols } from '@/types/shared/Cols';
+import { Layout } from '@/types/shared/Layout';
 
 export function useSchemaCols(schema: EngineField) {
   const display = useDisplay();
@@ -19,7 +20,7 @@ export function useSchemaCols(schema: EngineField) {
     if (layout.cols === undefined) {
       return 12;
     }
-    if (typeof layout.cols === "object") {
+    if (typeof layout.cols === 'object') {
       return getColsByDisplay(display.name.value, layout.cols);
     } else {
       return schema.layout.cols as number;
@@ -35,22 +36,22 @@ export function useSchemaCols(schema: EngineField) {
 
 function getColsByDisplay(displayBreakpoint: DisplayBreakpoint, cols: Cols): number {
   switch (displayBreakpoint) {
-    case "xxl":
+    case 'xxl':
       const xxl = cols.xxl;
       return xxl ? xxl : 12;
-    case "xl":
+    case 'xl':
       const xl = cols.xl;
       return xl ? xl : 12;
-    case "lg":
+    case 'lg':
       const lg = cols.lg;
       return lg ? lg : 12;
-    case "md":
+    case 'md':
       const md = cols.md;
       return md ? md : 12;
-    case "sm":
+    case 'sm':
       const sm = cols.sm;
       return sm ? sm : 12;
-    case "xs":
+    case 'xs':
       const xs = cols.xs;
       return xs ? xs : 12;
   }

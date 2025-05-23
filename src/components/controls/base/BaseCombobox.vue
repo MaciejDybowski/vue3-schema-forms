@@ -3,8 +3,20 @@
     v-model="model"
     v-bind="attrs"
   >
-    <template v-for="(_, name) in $slots" #[name]="scope">
-      <slot :name v-bind="scope ?? {}" />
+
+    <template #item="{ item, props }">
+      <slot name="item" :item="item" :props="props" />
+    </template>
+
+
+    <template
+      v-for="(_, slot) in ($slots as VComboboxSlots)"
+      v-slot:[slot]="scope"
+    >
+      <slot
+        :name="slot"
+        v-bind="scope"
+      />
     </template>
 
     <template #append-item>
@@ -18,13 +30,18 @@
         </v-list-item>
       </div>
     </template>
+
+
   </v-combobox>
 </template>
 
-<script setup lang="ts">
-import { computed, ref, useAttrs } from "vue";
+<script lang="ts" setup>
+import { computed, ref, useAttrs } from 'vue';
 
-import { Pagination } from "./Pagination";
+import { Pagination } from './Pagination';
+import { VCombobox } from "vuetify/components";
+
+type VComboboxSlots = InstanceType<typeof VCombobox>['$slots'];
 
 const attrs = useAttrs();
 const props = withDefaults(
@@ -43,13 +60,13 @@ const model = computed({
     return props.modelValue;
   },
   set(val: any[]) {
-    emit("update:modelValue", val);
+    emit('update:modelValue', val);
   },
 });
 
 const emit = defineEmits<{
-  (e: "update:modelValue", val: any[]);
-  (e: "loadMoreRecords");
+  (e: 'update:modelValue', val: any[]): void;
+  (e: 'loadMoreRecords'): void;
 }>();
 
 const appending = ref(false);
@@ -58,12 +75,12 @@ const isNextPage = computed(() => {
   return props.options?.isNextPage();
 });
 
-function loadMore(isIntersecting) {
+function loadMore(isIntersecting: boolean) {
   appending.value = isIntersecting;
   if (isIntersecting) {
-    emit("loadMoreRecords");
+    emit('loadMoreRecords');
   }
 }
 </script>
 
-<style scoped lang="css"></style>
+<style lang="css" scoped></style>

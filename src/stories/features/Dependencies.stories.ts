@@ -1,36 +1,42 @@
 // @ts-nocheck
-import { expect, userEvent, within } from "@storybook/test";
+import { expect, userEvent, within } from '@storybook/test';
 
-import { EngineSourceField } from "../../types/engine/controls";
-import { Schema, SchemaOptions } from "../../types/schema/Schema";
-import { DictionarySource, Layout, SchemaSourceField, SchemaTextField, SimpleSource } from "../../types/schema/elements";
-import { waitForMountedAsync } from "../editable-fields/utils";
-import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { EngineSourceField } from '../../types/engine/controls';
+import { Schema, SchemaOptions } from '../../types/schema/Schema';
+import {
+  DictionarySource,
+  Layout,
+  SchemaSourceField,
+  SchemaTextField,
+  SimpleSource,
+} from '../../types/schema/elements';
+import { waitForMountedAsync } from '../editable-fields/utils';
+import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Features/Dependencies",
+  title: 'Features/Dependencies',
   ...formStoryWrapperTemplate,
 };
 
 export const step1: Story = {
-  name: "Step1. Simple, no nested",
+  name: 'Step1. Simple, no nested',
   play: async (context) => {},
   args: {
     formModel: {},
     schema: {
       properties: {
         fieldA: {
-          label: "Field A",
+          label: 'Field A',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
         fieldB: {
-          content: "This is text with value of fieldA: {fieldA:Default value}",
+          content: 'This is text with value of fieldA: {fieldA:Default value}',
           layout: {
-            component: "static-content",
-            tag: "span",
+            component: 'static-content',
+            tag: 'span',
           },
         },
       },
@@ -39,81 +45,81 @@ export const step1: Story = {
 };
 
 export const step2: Story = {
-  name: "Step2. Simple, nested object",
+  name: 'Step2. Simple, nested object',
   play: async (context) => {},
   args: {
     formModel: {},
     schema: {
       properties: {
         fieldA: {
-          label: "Field A",
-          defaultValue: { value: 1, title: "Option 1" },
+          label: 'Field A',
+          defaultValue: { value: 1, title: 'Option 1' },
           layout: {
-            component: "select",
+            component: 'select',
           },
           source: {
             items: [
-              { value: 1, title: "Option 1" },
-              { value: 2, title: "Option 2" },
-              { value: 3, title: "Option 3" },
+              { value: 1, title: 'Option 1' },
+              { value: 2, title: 'Option 2' },
+              { value: 3, title: 'Option 3' },
             ],
             returnObject: true,
           },
         },
         divider: {
           layout: {
-            component: "divider",
+            component: 'divider',
           },
           thickness: 10,
-          color: "blue",
+          color: 'blue',
         },
         fieldB: {
-          content: "This is text with value of fieldA: {fieldA:Default value}",
+          content: 'This is text with value of fieldA: {fieldA:Default value}',
           layout: {
-            component: "static-content",
-            tag: "span",
+            component: 'static-content',
+            tag: 'span',
           },
         },
         fieldC: {
-          content: "This is text with value of fieldA: {fieldA.value:Default value}",
+          content: 'This is text with value of fieldA: {fieldA.value:Default value}',
           layout: {
-            component: "static-content",
-            tag: "span",
+            component: 'static-content',
+            tag: 'span',
           },
         },
         fieldD: {
-          content: "This is text with value of fieldA: {fieldA.title:Default value}",
+          content: 'This is text with value of fieldA: {fieldA.title:Default value}',
           layout: {
-            component: "static-content",
-            tag: "span",
+            component: 'static-content',
+            tag: 'span',
           },
         },
         divider2: {
           layout: {
-            component: "divider",
+            component: 'divider',
           },
           thickness: 10,
-          color: "blue",
+          color: 'blue',
         },
         fieldE: {
-          label: "This is text with value of fieldA: {fieldA:Default value}",
-          valueMapping: "{fieldA:Default value}",
+          label: 'This is text with value of fieldA: {fieldA:Default value}',
+          valueMapping: '{fieldA:Default value}',
           layout: {
-            component: "data-viewer",
+            component: 'data-viewer',
           },
         },
         fieldF: {
-          label: "This is text with value of fieldA: {fieldA.value:Default value}",
-          valueMapping: "{fieldA.value:Default value}",
+          label: 'This is text with value of fieldA: {fieldA.value:Default value}',
+          valueMapping: '{fieldA.value:Default value}',
           layout: {
-            component: "data-viewer",
+            component: 'data-viewer',
           },
         },
         fieldG: {
-          label: "This is text with value of fieldA: {fieldA.title:Default value}",
-          valueMapping: "{fieldA.title:Default value}",
+          label: 'This is text with value of fieldA: {fieldA.title:Default value}',
+          valueMapping: '{fieldA.title:Default value}',
           layout: {
-            component: "data-viewer",
+            component: 'data-viewer',
           },
         },
       },
@@ -122,59 +128,59 @@ export const step2: Story = {
 };
 
 export const step3: Story = {
-  name: "Step3. In duplicated section",
+  name: 'Step3. In duplicated section',
   play: async (context) => {},
   args: {
     formModel: {
-      fieldB: "Root level",
+      fieldB: 'Root level',
       products: [
         {
           dataId: 1,
-          name: "any value #1",
+          name: 'any value #1',
         },
         {
           dataId: 2,
-          name: "any value #2",
+          name: 'any value #2',
         },
       ],
     },
     schema: {
       properties: {
         fieldB: {
-          label: "Root level field",
+          label: 'Root level field',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
         divider: {
           layout: {
-            component: "divider",
+            component: 'divider',
           },
           thickness: 20,
-          color: "blue",
+          color: 'blue',
         },
         products: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 dataId: {
-                  label: "dataId",
+                  label: 'dataId',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 name: {
-                  label: "name",
+                  label: 'name',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 merge2: {
-                  content: "#{products[].dataId} - {fieldB} - {products[].name}",
+                  content: '#{products[].dataId} - {fieldB} - {products[].name}',
                   layout: {
-                    component: "static-content",
-                    tag: "span",
+                    component: 'static-content',
+                    tag: 'span',
                   },
                 },
               },
@@ -187,18 +193,18 @@ export const step3: Story = {
 };
 
 export const step4: Story = {
-  name: "Step4. In duplicated section with nested duplicated",
+  name: 'Step4. In duplicated section with nested duplicated',
   play: async (context) => {},
   args: {
     formModel: {
-      fieldB: "Root level",
+      fieldB: 'Root level',
       testObject: {
-        testField: "Test value",
+        testField: 'Test value',
       },
       products: [
         {
           dataId: 1,
-          name: "Item 1",
+          name: 'Item 1',
           prices: [
             {
               id: 99,
@@ -212,7 +218,7 @@ export const step4: Story = {
         },
         {
           dataId: 300,
-          name: "Item 300",
+          name: 'Item 300',
           prices: [
             {
               id: 300,
@@ -229,62 +235,62 @@ export const step4: Story = {
     schema: {
       properties: {
         fieldB: {
-          label: "Root level field",
+          label: 'Root level field',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
         divider: {
           layout: {
-            component: "divider",
+            component: 'divider',
           },
           thickness: 20,
-          color: "blue",
+          color: 'blue',
         },
         products: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 dataId: {
-                  label: "dataId",
+                  label: 'dataId',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 name: {
-                  label: "name",
+                  label: 'name',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
                 prices: {
                   layout: {
-                    component: "duplicated-section",
+                    component: 'duplicated-section',
                     schema: {
                       properties: {
                         id: {
-                          label: "price id",
+                          label: 'price id',
                           layout: {
-                            component: "text-field",
+                            component: 'text-field',
                             cols: 2,
                           },
                         },
                         value: {
-                          label: "price value",
-                          type: "float",
+                          label: 'price value',
+                          type: 'float',
                           precision: 2,
                           layout: {
-                            component: "number-field",
+                            component: 'number-field',
                             cols: 2,
                           },
                         },
                         testField: {
                           content:
-                            "#{products[].dataId} - {fieldB} - {products[].name}, multi nested price Id = {products[].prices[].id},  {testObject.testField}",
+                            '#{products[].dataId} - {fieldB} - {products[].name}, multi nested price Id = {products[].prices[].id},  {testObject.testField}',
                           layout: {
-                            component: "static-content",
-                            tag: "span",
+                            component: 'static-content',
+                            tag: 'span',
                             cols: 8,
                           },
                         },
@@ -293,10 +299,11 @@ export const step4: Story = {
                   },
                 },
                 merge2: {
-                  content: "#{products[].dataId} - {fieldB} - {products[].name}, {testObject.testField}",
+                  content:
+                    '#{products[].dataId} - {fieldB} - {products[].name}, {testObject.testField}',
                   layout: {
-                    component: "static-content",
-                    tag: "span",
+                    component: 'static-content',
+                    tag: 'span',
                   },
                 },
               },
@@ -309,23 +316,23 @@ export const step4: Story = {
 };
 
 export const step5: Story = {
-  name: "Step5. In group",
+  name: 'Step5. In group',
   play: async (context) => {},
   args: {
     formModel: {
-      fieldA: "value in field group",
+      fieldA: 'value in field group',
     },
     schema: {
       properties: {
         group: {
           layout: {
-            component: "fields-group",
+            component: 'fields-group',
             schema: {
               properties: {
                 fieldA: {
-                  label: "Root level field",
+                  label: 'Root level field',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                   },
                 },
               },
@@ -334,16 +341,16 @@ export const step5: Story = {
         },
         divider: {
           layout: {
-            component: "divider",
+            component: 'divider',
           },
           thickness: 20,
-          color: "blue",
+          color: 'blue',
         },
         fieldB: {
-          content: "This is text with value of fieldA: {fieldA:Default value}",
+          content: 'This is text with value of fieldA: {fieldA:Default value}',
           layout: {
-            component: "static-content",
-            tag: "span",
+            component: 'static-content',
+            tag: 'span',
           },
         },
       },
@@ -352,20 +359,20 @@ export const step5: Story = {
 };
 
 export const UseDependenciesInLabel: Story = {
-  name: "Step6. With label",
+  name: 'Step6. With label',
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
-    await context.step("Resolved deps on load", async () => {
-      let labelResolved = await canvas.findAllByText("Price (net)");
+    await context.step('Resolved deps on load', async () => {
+      let labelResolved = await canvas.findAllByText('Price (net)');
       await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
     });
 
-    await context.step("Resolved when variable changed", async () => {
-      const gross = canvas.getByLabelText("at gross prices");
+    await context.step('Resolved when variable changed', async () => {
+      const gross = canvas.getByLabelText('at gross prices');
       await userEvent.click(gross, { delay: 200 });
 
-      let labelResolved = await canvas.findAllByText("Price (gross)");
+      let labelResolved = await canvas.findAllByText('Price (gross)');
       await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
     });
   },
@@ -374,12 +381,12 @@ export const UseDependenciesInLabel: Story = {
       data: {
         items: [
           {
-            product: "Computer",
+            product: 'Computer',
             quantity: 1,
             price: 3200,
           },
           {
-            product: "Laptop",
+            product: 'Laptop',
             quantity: 2,
             price: 1334.23,
           },
@@ -387,18 +394,18 @@ export const UseDependenciesInLabel: Story = {
       },
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         invoiceMetadata: {
           properties: {
             pricing: {
-              label: "The invoice is issued:",
-              layout: { component: "radio-button", cols: 3, fillRow: true } as Layout,
-              default: { value: "net", title: "at net prices", formatted: "net" },
+              label: 'The invoice is issued:',
+              layout: { component: 'radio-button', cols: 3, fillRow: true } as Layout,
+              default: { value: 'net', title: 'at net prices', formatted: 'net' },
               source: {
                 items: [
-                  { value: "net", title: "at net prices", formatted: "net" },
-                  { value: "gross", title: "at gross prices", formatted: "gross" },
+                  { value: 'net', title: 'at net prices', formatted: 'net' },
+                  { value: 'gross', title: 'at gross prices', formatted: 'gross' },
                 ],
                 returnObject: true,
               } as SimpleSource,
@@ -409,20 +416,20 @@ export const UseDependenciesInLabel: Story = {
           properties: {
             items: {
               layout: {
-                component: "duplicated-section",
+                component: 'duplicated-section',
                 schema: {
                   properties: {
-                    product: { label: "Product", layout: { component: "text-field", cols: 4 } },
+                    product: { label: 'Product', layout: { component: 'text-field', cols: 4 } },
                     quantity: {
-                      label: "Quantity",
-                      type: "number",
+                      label: 'Quantity',
+                      type: 'number',
                       default: 1,
-                      layout: { component: "text-field", cols: 2 },
+                      layout: { component: 'text-field', cols: 2 },
                     },
                     price: {
-                      label: "Price ({invoiceMetadata.pricing.formatted})",
-                      type: "number",
-                      layout: { component: "text-field", cols: 3 },
+                      label: 'Price ({invoiceMetadata.pricing.formatted})',
+                      type: 'number',
+                      layout: { component: 'text-field', cols: 3 },
                     },
                   },
                 },
@@ -436,31 +443,31 @@ export const UseDependenciesInLabel: Story = {
 };
 
 export const UseFormVariablesInFieldProps: Story = {
-  name: "Step7. In props",
+  name: 'Step7. In props',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    const currency = canvas.getByLabelText("Currency");
+    const currency = canvas.getByLabelText('Currency');
 
-    await context.step("Resolve dependency", async () => {
+    await context.step('Resolve dependency', async () => {
       await userEvent.click(currency, { pointerEventsCheck: 0, delay: 200 });
-      const items = document.getElementsByClassName("v-list-item");
+      const items = document.getElementsByClassName('v-list-item');
       await userEvent.click(items[0], { delay: 200 });
 
-      const querySuffix = await canvas.findAllByText("AFN");
-      let queryHint = await canvas.findAllByText("Digits after decimal = 2");
+      const querySuffix = await canvas.findAllByText('AFN');
+      let queryHint = await canvas.findAllByText('Digits after decimal = 2');
 
       await expect(querySuffix.length).toEqual(2);
       await expect(queryHint.length).toEqual(2);
     });
 
-    await context.step("Dynamic changed already resolved", async () => {
-      const items = document.getElementsByClassName("v-list-item");
+    await context.step('Dynamic changed already resolved', async () => {
+      const items = document.getElementsByClassName('v-list-item');
 
       await userEvent.click(currency, { pointerEventsCheck: 0, delay: 200 });
       await userEvent.click(items[1], { delay: 200 });
 
-      const queryHint = await canvas.findAllByText("Digits after decimal = 3");
+      const queryHint = await canvas.findAllByText('Digits after decimal = 3');
       await expect(queryHint.length).toEqual(2);
     });
   },
@@ -468,72 +475,72 @@ export const UseFormVariablesInFieldProps: Story = {
   args: {
     formModel: {
       amount: 32,
-      items: [{ item: "Item 1", quantity: 3, price: 32.21 }],
+      items: [{ item: 'Item 1', quantity: 3, price: 32.21 }],
     },
     schema: {
       properties: {
         currency: {
-          label: "Currency",
+          label: 'Currency',
           layout: {
-            component: "dictionary",
+            component: 'dictionary',
             cols: 3,
           },
           source: {
-            url: "/mocks/currencies",
-            title: "label",
-            value: "id",
+            url: '/mocks/currencies',
+            title: 'label',
+            value: 'id',
           } as DictionarySource,
         } as SchemaSourceField,
         amount: {
-          label: "Amount (outside)",
-          type: "number",
+          label: 'Amount (outside)',
+          type: 'number',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 3,
             props: {
-              suffix: "{currency.id}",
-              hint: "Digits after decimal = {currency.digitsAfterDecimal}",
-              "persistent-hint": true,
+              suffix: '{currency.id}',
+              hint: 'Digits after decimal = {currency.digitsAfterDecimal}',
+              'persistent-hint': true,
             },
           },
         } as SchemaTextField,
         items: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 item: {
-                  label: "Item",
-                  layout: { component: "text-field", cols: 3 },
+                  label: 'Item',
+                  layout: { component: 'text-field', cols: 3 },
                 },
                 quantity: {
-                  label: "Quantity",
-                  type: "number",
+                  label: 'Quantity',
+                  type: 'number',
                   default: 1,
-                  layout: { component: "text-field", cols: 3 },
+                  layout: { component: 'text-field', cols: 3 },
                 },
                 price: {
-                  label: "Price",
-                  type: "number",
-                  layout: { component: "text-field", cols: 3 },
+                  label: 'Price',
+                  type: 'number',
+                  layout: { component: 'text-field', cols: 3 },
                   props: {
-                    suffix: "{currency.id}",
-                    "persistent-hint": true,
+                    suffix: '{currency.id}',
+                    'persistent-hint': true,
                   },
                 },
                 summary: {
-                  label: "Amount",
-                  type: "number",
+                  label: 'Amount',
+                  type: 'number',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                     cols: 3,
                     props: {
-                      suffix: "{currency.id}",
-                      hint: "Digits after decimal = {currency.digitsAfterDecimal}",
-                      "persistent-hint": true,
+                      suffix: '{currency.id}',
+                      hint: 'Digits after decimal = {currency.digitsAfterDecimal}',
+                      'persistent-hint': true,
                     },
                   },
-                  calculation: "quantity * price",
+                  calculation: 'quantity * price',
                 } as SchemaTextField,
               },
             },
@@ -542,7 +549,7 @@ export const UseFormVariablesInFieldProps: Story = {
       },
     } as Schema,
     options: {
-      digitsAfterDecimal: "{currency.digitsAfterDecimal}",
+      digitsAfterDecimal: '{currency.digitsAfterDecimal}',
     } as SchemaOptions,
   },
   parameters: {
@@ -553,54 +560,54 @@ export const UseFormVariablesInFieldProps: Story = {
 };
 
 export const UseVariableDependencyWithFallbackMessage: Story = {
-  name: "Example of fallback message",
+  name: 'Example of fallback message',
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
-    await context.step("Check default label with fallback message", async () => {
-      let labelResolved = await canvas.findAllByText("Telephone with your country prefix");
+    await context.step('Check default label with fallback message', async () => {
+      let labelResolved = await canvas.findAllByText('Telephone with your country prefix');
       await expect(labelResolved.length).toEqual(2); // 1 visible and 1 not visible
     });
 
-    await context.step("Check default label after variable set in model", async () => {
-      const select = canvas.getByLabelText("Country");
+    await context.step('Check default label after variable set in model', async () => {
+      const select = canvas.getByLabelText('Country');
       await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
-      const items = document.getElementsByClassName("v-list-item");
+      const items = document.getElementsByClassName('v-list-item');
       await userEvent.click(items[0], { delay: 200 });
 
-      let labelResolved = await canvas.findAllByText("Telephone with PL prefix");
+      let labelResolved = await canvas.findAllByText('Telephone with PL prefix');
       await expect(labelResolved.length).toEqual(2); // 1 visible and 1 not visible
     });
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         description: {
           content:
-            "If we want to have dependencies and a default value when this value is not yet in the model then we do it as follows: <b>path_to_variable:value_default</b>",
+            'If we want to have dependencies and a default value when this value is not yet in the model then we do it as follows: <b>path_to_variable:value_default</b>',
           layout: {
-            component: "static-content",
-            tag: "span",
+            component: 'static-content',
+            tag: 'span',
           },
         },
         country: {
-          label: "Country",
+          label: 'Country',
           layout: {
-            component: "select",
+            component: 'select',
             cols: 3,
             fillRow: true,
           },
           source: {
-            items: [{ value: "PL", title: "Poland" }],
+            items: [{ value: 'PL', title: 'Poland' }],
           } as SimpleSource,
         },
         textField: {
-          label: "Telephone with {country:your country} prefix",
+          label: 'Telephone with {country:your country} prefix',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 3,
           },
         },
@@ -612,95 +619,96 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
 export const ComplexExample: Story = {
   args: {
     formModel: {
-      dataId: "#01",
-      name: "Main name",
+      dataId: '#01',
+      name: 'Main name',
       products: [
         {
-          dataId: "1",
-          name: "Test",
-          description: "Test",
-          items: [{ item: "Test" }],
+          dataId: '1',
+          name: 'Test',
+          description: 'Test',
+          items: [{ item: 'Test' }],
         },
         {
-          dataId: "2",
-          name: "Test2",
-          description: "Test2",
-          items: [{ item: "Test2" }],
+          dataId: '2',
+          name: 'Test2',
+          description: 'Test2',
+          items: [{ item: 'Test2' }],
         },
       ],
       products2: [
         {
-          dataId: "1",
-          name: "Test",
-          description: "Test",
-          items: [{ item: "Test" }],
+          dataId: '1',
+          name: 'Test',
+          description: 'Test',
+          items: [{ item: 'Test' }],
         },
         {
-          dataId: "2",
-          name: "Test2",
-          description: "Test2",
-          items: [{ item: "Test2" }],
+          dataId: '2',
+          name: 'Test2',
+          description: 'Test2',
+          items: [{ item: 'Test2' }],
         },
       ],
     },
     schema: {
       properties: {
         dataId: {
-          label: "DataId {dataId}",
+          label: 'DataId {dataId}',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
         name: {
-          label: "Name",
+          label: 'Name',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
         products: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 dataId: {
-                  label: "dataId",
+                  label: 'dataId',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                     cols: 3,
                   },
                 },
                 name: {
-                  label: "name",
+                  label: 'name',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                     cols: 3,
                   },
                 },
                 merge2: {
-                  content: "{dataId} main, {products[].dataId} - w section",
+                  content: '{dataId} main, {products[].dataId} - w section',
                   layout: {
-                    component: "static-content",
-                    tag: "span",
+                    component: 'static-content',
+                    tag: 'span',
                     cols: 3,
                   },
                 },
                 items: {
                   layout: {
-                    component: "duplicated-section",
+                    component: 'duplicated-section',
                     schema: {
                       properties: {
                         item: {
-                          label: "Item",
+                          label: 'Item',
                           layout: {
-                            component: "text-field",
+                            component: 'text-field',
                             cols: 6,
                           },
                         },
                         turboMerge: {
-                          content: "{dataId} main, {products[].dataId} section, {products[].items[].item}",
+                          content:
+                            '{dataId} main, {products[].dataId} section, {products[].items[].item}',
                           layout: {
-                            component: "static-content",
-                            tag: "span",
+                            component: 'static-content',
+                            tag: 'span',
                             cols: 3,
                           },
                         },
@@ -715,54 +723,55 @@ export const ComplexExample: Story = {
 
         group: {
           layout: {
-            component: "fields-group",
+            component: 'fields-group',
             cols: 6,
             schema: {
               properties: {
                 products2: {
                   layout: {
-                    component: "duplicated-section",
+                    component: 'duplicated-section',
                     schema: {
                       properties: {
                         dataId: {
-                          label: "dataId",
+                          label: 'dataId',
                           layout: {
-                            component: "text-field",
+                            component: 'text-field',
                             cols: 3,
                           },
                         },
                         name: {
-                          label: "name",
+                          label: 'name',
                           layout: {
-                            component: "text-field",
+                            component: 'text-field',
                             cols: 3,
                           },
                         },
                         merge2: {
-                          content: "{dataId} głowne, {products[].dataId} - w sekcji",
+                          content: '{dataId} głowne, {products[].dataId} - w sekcji',
                           layout: {
-                            component: "static-content",
-                            tag: "span",
+                            component: 'static-content',
+                            tag: 'span',
                             cols: 3,
                           },
                         },
                         items: {
                           layout: {
-                            component: "duplicated-section",
+                            component: 'duplicated-section',
                             schema: {
                               properties: {
                                 item: {
-                                  label: "Item",
+                                  label: 'Item',
                                   layout: {
-                                    component: "text-field",
+                                    component: 'text-field',
                                     cols: 6,
                                   },
                                 },
                                 turboMerge: {
-                                  content: "{dataId} głowne, {products[].dataId} sekcja, {products[].items[].item}",
+                                  content:
+                                    '{dataId} głowne, {products[].dataId} sekcja, {products[].items[].item}',
                                   layout: {
-                                    component: "static-content",
-                                    tag: "span",
+                                    component: 'static-content',
+                                    tag: 'span',
                                     cols: 3,
                                   },
                                 },

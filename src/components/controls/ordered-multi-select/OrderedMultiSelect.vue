@@ -58,14 +58,22 @@
 </template>
 
 <script lang="ts" setup>
-import axios from "axios";
-import get from "lodash/get";
-import { computed, onMounted, ref, watch } from "vue";
+import axios from 'axios';
+import get from 'lodash/get';
 
-import OrderedMultiselectLists from "@/components/controls/ordered-multi-select/OrderedMultiselectLists.vue";
+import { computed, onMounted, ref, watch } from 'vue';
 
-import { useClass, useFormModel, useLabel, useProps, useResolveVariables, useRules } from "@/core/composables";
-import { EngineOrderedMultiSelect } from "@/types/engine/controls";
+import OrderedMultiselectLists from '@/components/controls/ordered-multi-select/OrderedMultiselectLists.vue';
+
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useProps,
+  useResolveVariables,
+  useRules,
+} from '@/core/composables';
+import { EngineOrderedMultiSelect } from '@/types/engine/controls';
 
 const { resolve } = useResolveVariables();
 
@@ -97,11 +105,13 @@ function updateOrderedList(val: any): void {
   localModel.value = val;
 }
 
-const formattedSelection = computed(() => localModel.value.map((item, idx) => `${item[title.value]}`).join(", "));
+const formattedSelection = computed(() =>
+  localModel.value.map((item, idx) => `${item[title.value]}`).join(', '),
+);
 
 // pobrane ze wspoldzielonego
-let title = ref("title");
-let value = ref("value");
+let title = ref('title');
+let value = ref('value');
 
 const loading = ref(false);
 
@@ -114,7 +124,7 @@ async function load() {
       params: {},
     });
 
-    items.value = get(response.data, "content", []);
+    items.value = get(response.data, 'content', []);
     loading.value = false;
   }
 }
@@ -124,8 +134,8 @@ onMounted(async () => {
   await bindRules(schema);
   await bindProps(schema);
 
-  title.value = schema.source.title ? schema.source.title : "title";
-  value.value = schema.source.value ? schema.source.value : "value";
+  title.value = schema.source.title ? schema.source.title : 'title';
+  value.value = schema.source.value ? schema.source.value : 'value';
   await load();
 });
 </script>

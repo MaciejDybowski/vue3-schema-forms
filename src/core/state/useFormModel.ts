@@ -1,15 +1,16 @@
-import { computed, ref } from "vue";
+import { computed, ComputedRef, Ref, ref } from "vue";
+import { FormModelForDependency } from "@/types/shared/FormModelForDependency";
+import { FormOptionsContext } from "@/types/shared/FormOptionsContext";
 
 export type FormModelInstance = ReturnType<typeof useFormModel>;
 
-
 export function useFormModel() {
-  const model = ref({});
-  const context = ref({});
+  const model: Ref<Record<string, any>> = ref({});
+  const context: Ref<FormOptionsContext> = ref({});
 
   const getFormModel = computed(() => model.value);
 
-  const getFormModelForResolve = computed(() => ({
+  const getFormModelForResolve: ComputedRef<FormModelForDependency> = computed(() => ({
     ...model.value,
     context: {
       ...context.value,

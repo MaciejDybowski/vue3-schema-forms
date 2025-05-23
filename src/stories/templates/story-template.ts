@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { defineComponent, ref } from "vue";
+import { StoryFn } from '@storybook/vue3';
 
-import VueSchemaForms from "@/components/engine/VueSchemaForms.vue";
+import { defineComponent, ref } from 'vue';
 
-import { StoryFn } from "@storybook/vue3";
+import VueSchemaForms from '@/components/engine/VueSchemaForms.vue';
 
 export default defineComponent({
   components: { VueSchemaForms },
@@ -26,7 +26,10 @@ export const StoryTemplate: StoryFn<typeof VueSchemaForms> = (args: any, { argTy
   `,
 });
 
-export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (args: any, { argTypes }) => ({
+export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (
+  args: any,
+  { argTypes },
+) => ({
   props: Object.keys(argTypes),
   components: { VueSchemaForms },
   setup(args) {
@@ -52,7 +55,10 @@ export const StoryTemplateWithValidation: StoryFn<typeof VueSchemaForms> = (args
   `,
 });
 
-export const StoryTemplateWithCustomValidation: StoryFn<typeof VueSchemaForms> = (args: any, { argTypes }) => ({
+export const StoryTemplateWithCustomValidation: StoryFn<typeof VueSchemaForms> = (
+  args: any,
+  { argTypes },
+) => ({
   props: Object.keys(argTypes),
   components: { VueSchemaForms },
   setup(args) {
@@ -61,7 +67,7 @@ export const StoryTemplateWithCustomValidation: StoryFn<typeof VueSchemaForms> =
 
     async function validate() {
       const { valid } = await myForm.value.validate();
-      window.alert("Validation result: " + valid);
+      window.alert('Validation result: ' + valid);
     }
 
     return {

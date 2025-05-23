@@ -1,7 +1,6 @@
-import axios from "axios";
-import URI from "urijs";
-
-import { Resolver } from "@stoplight/json-ref-resolver";
+import { Resolver } from '@stoplight/json-ref-resolver';
+import axios from 'axios';
+import URI from 'urijs';
 
 export const jsonSchemaResolver = new Resolver({
   resolvers: {

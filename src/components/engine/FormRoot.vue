@@ -1,27 +1,28 @@
 <template>
-  <v-row class='form-root'>
+  <v-row class="form-root">
     <form-node
-      v-for='node in nodes'
-      :key='"index" in node ? node.key + node.index : node.key'
-      :model='model'
-      :schema='node'
+      v-for="node in nodes"
+      :key="'index' in node ? node.key + node.index : node.key"
+      :model="model"
+      :schema="node"
     ></form-node>
   </v-row>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { cloneDeep } from 'lodash';
+
 import { onMounted, ref, watch } from 'vue';
 
+import { logger } from '@/main';
 import { EngineField } from '@/types/engine/EngineField';
 import { EngineOptions } from '@/types/engine/EngineOptions';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { Schema } from '@/types/schema/Schema';
 import { SchemaField } from '@/types/schema/SchemaField';
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
-import FormNode from './FormNode.vue';
-import { logger } from '@/main';
 
+import FormNode from './FormNode.vue';
 
 let nodes = ref([] as Array<EngineField>);
 
@@ -66,24 +67,29 @@ function input(event: NodeUpdateEvent) {
 const schemaRef = ref(props.schema);
 
 /*
-* Id dla schemy nadaję tylko dla tych powielanych w sekcji powielanej więc watch fajnie żeby był warunkowo
-* Ten kod jest potrzebny do przeładowania sekcji powielanje po usunięciu lub wyprzesuwaniu elementów za pomocą
-* draggable. Na indexie bazuje rozwiązywanie zależności w modelu więc muszę to przerenderować
-*/
+ * Id dla schemy nadaję tylko dla tych powielanych w sekcji powielanej więc watch fajnie żeby był warunkowo
+ * Ten kod jest potrzebny do przeładowania sekcji powielanje po usunięciu lub wyprzesuwaniu elementów za pomocą
+ * draggable. Na indexie bazuje rozwiązywanie zależności w modelu więc muszę to przerenderować
+ */
 if (schemaRef.value.id) {
-  watch(schemaRef, () => {
+  watch(
+    schemaRef,
+    () => {
+      const currentIndex = nodes.value[0].index;
+      const reIndexNodes = objectToArray(cloneDeep(props.schema));
+      const reIndex = reIndexNodes[0].index;
+      if (currentIndex !== reIndex) {
+        nodes.value = reIndexNodes;
+      }
 
-    const currentIndex = nodes.value[0].index;
-    const reIndexNodes = objectToArray(cloneDeep(props.schema));
-    const reIndex = reIndexNodes[0].index;
-    if (currentIndex !== reIndex) {
-      nodes.value = reIndexNodes;
-    }
-
-    if (logger.duplicatedSchemaWatchLogger) {
-      console.debug(`[vue-schema-forms] [DuplicatedSchemaWatchLogger] => nodes re-rendered currentIndex=[${currentIndex}] newIndex=[${reIndex}]`);
-    }
-  }, { deep: true });
+      if (logger.duplicatedSchemaWatchLogger) {
+        console.debug(
+          `[vue-schema-forms] [DuplicatedSchemaWatchLogger] => nodes re-rendered currentIndex=[${currentIndex}] newIndex=[${reIndex}]`,
+        );
+      }
+    },
+    { deep: true },
+  );
 }
 
 onMounted(() => {
@@ -94,9 +100,9 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang='scss'></style>
+<style scoped lang="scss"></style>
 
-<i18n lang='json'>
+<i18n lang="json">
 {
   "en": {},
   "pl": {}

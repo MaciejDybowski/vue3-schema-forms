@@ -1,12 +1,16 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep } from 'lodash';
 
-import { jsonSchemaResolver } from "@/core/engine/jsonSchemaResolver";
-import { SchemaOptions, baseUri } from "@/main";
-import { Schema } from "@/types/schema/Schema";
+import { jsonSchemaResolver } from '@/core/engine/jsonSchemaResolver';
+import { SchemaOptions, baseUri } from '@/main';
+import { Schema } from '@/types/schema/Schema';
 
-export const variableRegexp: RegExp = new RegExp("{.*?}", "g");
+export const variableRegexp: RegExp = new RegExp('{.*?}', 'g');
 
-export async function resolveSchemaWithLocale(originalSchema: Schema, locale: string, options?: SchemaOptions): Promise<Schema> {
+export async function resolveSchemaWithLocale(
+  originalSchema: Schema,
+  locale: string,
+  options?: SchemaOptions,
+): Promise<Schema> {
   const schema = cloneDeep(originalSchema);
 
   if (options) {
@@ -16,10 +20,10 @@ export async function resolveSchemaWithLocale(originalSchema: Schema, locale: st
 
   resolveRefsAndReplace(schema);
 
-  const temp = JSON.parse(JSON.stringify(schema).replaceAll("~$locale~", locale));
+  const temp = JSON.parse(JSON.stringify(schema).replaceAll('~$locale~', locale));
   let resolved: any = await jsonSchemaResolver.resolve(temp, { baseUri });
 
-  const stillHasRef = JSON.stringify(resolved.result).includes("/~$locale~/");
+  const stillHasRef = JSON.stringify(resolved.result).includes('/~$locale~/');
   if (stillHasRef) {
     return resolveSchemaWithLocale(resolved.result as Schema, locale);
   }
@@ -47,16 +51,16 @@ function resolveRefsAndReplace(schema: any) {
   function walk(obj: any) {
     if (Array.isArray(obj)) {
       obj.forEach((item) => walk(item));
-    } else if (typeof obj === "object" && obj !== null) {
+    } else if (typeof obj === 'object' && obj !== null) {
       for (const key in obj) {
-        if (typeof obj[key] === "object") {
+        if (typeof obj[key] === 'object') {
           walk(obj[key]);
         }
       }
 
-      if (obj.$ref && obj.$ref.includes("/~$locale~/")) {
-        const refPath = obj.$ref.split("/~$locale~/")[1];
-        const pathParts = refPath.split("/");
+      if (obj.$ref && obj.$ref.includes('/~$locale~/')) {
+        const refPath = obj.$ref.split('/~$locale~/')[1];
+        const pathParts = refPath.split('/');
 
         const replacements: Record<number, string> = {};
         Object.keys(obj)
@@ -68,7 +72,7 @@ function resolveRefsAndReplace(schema: any) {
         if (Object.keys(replacements).length > 0) {
           for (const locale in i18nCopy) {
             let translation = getDeepValue(i18nCopy[locale], pathParts);
-            if (typeof translation === "string") {
+            if (typeof translation === 'string') {
               for (const index in replacements) {
                 translation = translation.replace(`{${index}}`, replacements[Number(index)]);
               }

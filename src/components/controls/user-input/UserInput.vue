@@ -93,24 +93,33 @@
 </template>
 
 <script lang="ts" setup>
-import axios from "axios";
-import { debounce } from "lodash";
-import get from "lodash/get";
-import { computed, onMounted, ref, watch } from "vue";
+import { useEventBus } from '@vueuse/core';
+import axios from 'axios';
+import { debounce } from 'lodash';
+import get from 'lodash/get';
 
-import BaseAutocomplete from "@/components/controls/base/BaseAutocomplete.vue";
-import { Pagination } from "@/components/controls/base/Pagination";
-import { mapSliceTotalElements } from "@/components/controls/base/SliceResponse";
-import AvatarProvider from "@/components/controls/user-input/AvatarProvider.vue";
-import UserInputLabel from "@/components/controls/user-input/UserInputLabel.vue";
+import { computed, onMounted, ref, watch } from 'vue';
 
-import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "@/core/composables";
-import { variableRegexp } from "@/core/engine/utils";
-import { logger } from "@/main";
-import { Label } from "@/types/engine/Label";
-import { User } from "@/types/engine/User";
-import { EngineUserField } from "@/types/engine/controls";
-import { useEventBus } from "@vueuse/core";
+import BaseAutocomplete from '@/components/controls/base/BaseAutocomplete.vue';
+import { Pagination } from '@/components/controls/base/Pagination';
+import { mapSliceTotalElements } from '@/components/controls/base/SliceResponse';
+import AvatarProvider from '@/components/controls/user-input/AvatarProvider.vue';
+import UserInputLabel from '@/components/controls/user-input/UserInputLabel.vue';
+
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useLocale,
+  useProps,
+  useResolveVariables,
+  useRules,
+} from '@/core/composables';
+import { variableRegexp } from '@/core/engine/utils';
+import { logger } from '@/main';
+import { Label } from '@/types/engine/Label';
+import { User } from '@/types/engine/User';
+import { EngineUserField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineUserField;
@@ -135,22 +144,24 @@ const localModel = computed({
     return getValue(props.model, props.schema);
   },
   set(val: any) {
-    if (typeof val !== "string") {
+    if (typeof val !== 'string') {
       setValue(val, props.schema);
-      query.value = "";
+      query.value = '';
     }
   },
 });
 
 // DEFAULTS VALUES //
-const usersAPIEndpoint = ref<string>("/api/workspaces/members");
+const usersAPIEndpoint = ref<string>('/api/workspaces/members');
 
-const query = ref("");
+const query = ref('');
 const pagination = props.schema.source.itemsPerPage
   ? ref(new Pagination(props.schema.source.itemsPerPage))
   : ref(new Pagination(10));
 const menu = ref(false);
-const showMenuItemsOnFocusIn = props.schema.source.showMenuItemsOnFocusIn ? props.schema.source.showMenuItemsOnFocusIn : false;
+const showMenuItemsOnFocusIn = props.schema.source.showMenuItemsOnFocusIn
+  ? props.schema.source.showMenuItemsOnFocusIn
+  : false;
 const loading = ref(false);
 
 const items = ref([]);
@@ -180,7 +191,7 @@ async function load() {
       },
     });
 
-    items.value = get(response.data, "content", []);
+    items.value = get(response.data, 'content', []);
     pagination.value.setTotalElements(mapSliceTotalElements(response.data));
     loadCounter.value++;
   } catch (e) {
@@ -205,7 +216,7 @@ async function loadMoreRecords() {
         },
       });
       pagination.value.nextPage();
-      items.value = items.value.concat(get(response.data, "content", []));
+      items.value = items.value.concat(get(response.data, 'content', []));
       pagination.value.setTotalElements(mapSliceTotalElements(response.data));
     }
   } catch (error: any) {
@@ -217,10 +228,10 @@ async function loadMoreRecords() {
 async function checkIfURLHasDependency(createListener = false) {
   const isApiContainsDependency = !(usersAPIEndpoint.value.match(variableRegexp) == null);
   if (isApiContainsDependency) {
-    let endpoint = await resolve(props.schema, usersAPIEndpoint.value, "title", true);
+    let endpoint = await resolve(props.schema, usersAPIEndpoint.value, 'title', true);
 
     if (endpoint.resolvedText.match(variableRegexp)) {
-      endpoint = await resolve(props.schema, endpoint.resolvedText, "title", true);
+      endpoint = await resolve(props.schema, endpoint.resolvedText, 'title', true);
     }
 
     if (endpoint.allVariablesResolved) {
@@ -233,12 +244,12 @@ async function checkIfURLHasDependency(createListener = false) {
     }
 
     if (createListener) {
-      const vueSchemaFormEventBus = useEventBus<string>("form-model");
+      const vueSchemaFormEventBus = useEventBus<string>('form-model');
       const unsubscribe = vueSchemaFormEventBus.on(async () => await listener());
 
       const listener = async () => {
         await new Promise((r) => setTimeout(r, 50));
-        const temp = await resolve(props.schema, props.schema.source.url as string, "title", true);
+        const temp = await resolve(props.schema, props.schema.source.url as string, 'title', true);
         if (temp.resolvedText !== usersAPIEndpoint.value) {
           usersAPIEndpoint.value = temp.resolvedText;
           await load();
@@ -258,15 +269,15 @@ function removeValue(item: User) {
 }
 
 function makeInitials(item: any) {
-  if ("firstName" in item && "lastName" in item) {
+  if ('firstName' in item && 'lastName' in item) {
     return item.firstName.charAt(0).toUpperCase() + item.lastName.charAt(0).toUpperCase();
-  } else if ("email" in item) {
+  } else if ('email' in item) {
     return item.email.charAt(0).toUpperCase() + item.email.charAt(1).toUpperCase();
   }
 }
 
 function labels(item: User): Label[] {
-  if ("labels" in item) {
+  if ('labels' in item) {
     const providedLabels: Label[] =
       props.schema.options.dictionaryProps && props.schema.options.dictionaryProps.labels
         ? props.schema.options.dictionaryProps.labels
@@ -281,23 +292,23 @@ function labels(item: User): Label[] {
         return item.labels.map((id) => ({
           id: id,
           title: id,
-          backgroundColor: "primary",
-          textColor: "white",
+          backgroundColor: 'primary',
+          textColor: 'white',
         }));
       }
     }
 
     // string separated by coma
-    if (item.labels && item.labels.includes(",")) {
-      const labels = item.labels.split(",");
+    if (item.labels && item.labels.includes(',')) {
+      const labels = item.labels.split(',');
       if (providedLabels.length > 0) {
         return providedLabels.filter((element) => labels.includes(element.id));
       } else {
         return labels.map((id) => ({
           id: id,
           title: id,
-          backgroundColor: "primary",
-          textColor: "white",
+          backgroundColor: 'primary',
+          textColor: 'white',
         }));
       }
     }
@@ -310,8 +321,8 @@ function labels(item: User): Label[] {
           {
             id: item.labels,
             title: item.labels,
-            backgroundColor: "primary",
-            textColor: "white",
+            backgroundColor: 'primary',
+            textColor: 'white',
           },
         ];
       }
@@ -334,7 +345,7 @@ const loadCounter = ref(0);
 function singleOptionAutoSelectFunction() {
   const selectSingleOptionLogic = () => {
     if (items.value.length !== 1 || !singleOptionAutoSelect.value || loadCounter.value > 1) return;
-    console.debug("HERE");
+    console.debug('HERE');
     const selectedValue = items.value[0];
 
     if (JSON.stringify(localModel.value) !== JSON.stringify(selectedValue)) {
@@ -348,7 +359,7 @@ function singleOptionAutoSelectFunction() {
 
 onMounted(async () => {
   singleOptionAutoSelect.value =
-    "singleOptionAutoSelect" in props.schema.source && props.schema.source.singleOptionAutoSelect
+    'singleOptionAutoSelect' in props.schema.source && props.schema.source.singleOptionAutoSelect
       ? props.schema.source.singleOptionAutoSelect
       : false;
   await bindLabel(props.schema);

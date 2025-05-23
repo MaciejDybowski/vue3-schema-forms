@@ -32,9 +32,10 @@
 </template>
 
 <script lang="ts" setup>
-import get from "lodash/get";
-import set from "lodash/set";
-import { computed, onMounted, ref } from "vue";
+import get from 'lodash/get';
+import set from 'lodash/set';
+
+import { computed, onMounted, ref } from 'vue';
 
 import {
   useCalculation,
@@ -46,15 +47,15 @@ import {
   useProps,
   useResolveVariables,
   useRules,
-} from "@/core/composables";
-import { useEventHandler } from "@/core/composables/useEventHandler";
-import { variableRegexp } from "@/core/engine/utils";
-import { logger } from "@/main";
-import { EngineNumberField } from "@/types/engine/controls";
+} from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
+import { variableRegexp } from '@/core/engine/utils';
+import { logger } from '@/main';
+import { EngineNumberField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineNumberField;
-  model: object;
+  model: Record<string, any>;
 }>();
 
 const { t } = useLocale();
@@ -69,14 +70,15 @@ const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 
 const { fillPath } = useResolveVariables();
-let precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? Number(props.schema.precision) : 2;
+let precision =
+  props.schema.type == 'int' ? 0 : 'precision' in props.schema ? Number(props.schema.precision) : 2;
 
 const lastValue = ref<any>(null);
 
 const localModel = computed({
   get(): any {
     const value = getValue(props.model, props.schema);
-    if (value && typeof value == "string" && value.match(variableRegexp)) {
+    if (value && typeof value == 'string' && value.match(variableRegexp)) {
       return value; // defaultValue with dependencies
     }
     return Number(value);
@@ -88,17 +90,21 @@ const localModel = computed({
 });
 
 const isCalculationDefined = computed(() => {
-  return props.schema.calculation && props.schema.calculation !== "";
+  return props.schema.calculation && props.schema.calculation !== '';
 });
 
 const isValueFromModelAndNotChangedManually = computed(() => {
-  return !localModel.value || (localModel.value && !(`${props.schema.key}ManuallyChanged` in props.model));
+  return (
+    !localModel.value ||
+    (localModel.value && !(`${props.schema.key}ManuallyChanged` in props.model))
+  );
 });
 
 const showIconForVisualizationOfManuallyChangedResult = computed(() => {
   return (
     calculationResultWasModified.value ||
-    (`${props.schema.key}ManuallyChanged` in props.model && props.model[`${props.schema.key}ManuallyChanged`] == true)
+    (`${props.schema.key}ManuallyChanged` in props.model &&
+      props.model[`${props.schema.key}ManuallyChanged`] == true)
   );
 });
 
@@ -126,14 +132,18 @@ async function runCalculationIfExist() {
 }
 
 async function runExpressionIfExist() {
-  if (props.schema.expression && props.schema.expression !== "") {
+  if (props.schema.expression && props.schema.expression !== '') {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
     localModel.value = await resolveExpression(props.schema.key, expression, props.model);
   }
 }
 
 async function resolveIfLocalModelHasDependencies() {
-  if (localModel.value && typeof localModel.value == "string" && localModel.value.match(variableRegexp)) {
+  if (
+    localModel.value &&
+    typeof localModel.value == 'string' &&
+    localModel.value.match(variableRegexp)
+  ) {
     const result = await resolve(props.schema, localModel.value);
     if (result.allVariablesResolved) {
       localModel.value = Number(result.resolvedText);

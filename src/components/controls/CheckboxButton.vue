@@ -1,40 +1,47 @@
 <template>
   <div
     :class="'checkbox-root ' + bindClass(schema) + requiredInputClass"
-    v-if='!loading'
+    v-if="!loading"
   >
     <label
-      v-if='label'
-      class='v-label'
+      v-if="label"
+      class="v-label"
     >
       {{ label }}
     </label>
     <template
-      v-for='(option, index) in data'
-      :key='option[value]'
+      v-for="(option, index) in data"
+      :key="option[value]"
     >
       <v-checkbox
-        v-model='localModel'
-        v-bind='fieldProps'
-        :rules="!fieldProps.readonly ? rules: []"
-        :label='option[title]'
-        :value='option[value]'
+        v-model="localModel"
+        v-bind="fieldProps"
+        :rules="!fieldProps.readonly ? rules : []"
+        :label="option[title]"
+        :value="option[value]"
         :hide-details="index == data.length - 1 ? 'auto' : true"
       >
-        <template #message='{ message }'>
-          <div class='ml-4'>{{ message }}</div>
+        <template #message="{ message }">
+          <div class="ml-4">{{ message }}</div>
         </template>
       </v-checkbox>
     </template>
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted } from 'vue';
 
 import { EngineSourceField } from '@/types/engine/controls';
 
-import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useProps,
+  useRules,
+  useSource,
+} from '../../core/composables';
 
 const props = defineProps<{
   schema: EngineSourceField;
@@ -48,11 +55,10 @@ const { bindProps, fieldProps } = useProps();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 
-
 const localModel = computed({
   get(): string | number {
     if (returnObject) {
-      return getValue(props.model, props.schema)?.map((item) => item[value]);
+      return getValue(props.model, props.schema)?.map((item:Record<string, any>) => item[value]);
     } else {
       return getValue(props.model, props.schema);
     }
@@ -82,4 +88,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>

@@ -40,28 +40,29 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from "vue";
-import { useI18n } from "vue-i18n";
+import { useI18n } from 'vue-i18n';
+
+import { reactive } from 'vue';
 
 const { t } = useI18n();
 const actions = reactive([
   {
-    actionId: "delete",
-    icon: "mdi-trash-can-outline",
-    iconColor: "error",
-    translationKey: "deleteAction",
+    actionId: 'delete',
+    icon: 'mdi-trash-can-outline',
+    iconColor: 'error',
+    translationKey: 'deleteAction',
   },
   {
-    actionId: "copyBelow",
-    icon: "mdi-content-copy",
-    iconColor: "success",
-    translationKey: "copyBelowAction",
+    actionId: 'copyBelow',
+    icon: 'mdi-content-copy',
+    iconColor: 'success',
+    translationKey: 'copyBelowAction',
   },
   {
-    actionId: "addBelow",
-    icon: "mdi-playlist-plus",
-    iconColor: "success",
-    translationKey: "addBelowAction",
+    actionId: 'addBelow',
+    icon: 'mdi-playlist-plus',
+    iconColor: 'success',
+    translationKey: 'addBelowAction',
   },
 ]);
 
@@ -75,7 +76,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: "handleAction", actionId: string): void;
+  (e: 'handleAction', actionId: string): void;
 }>();
 </script>
 

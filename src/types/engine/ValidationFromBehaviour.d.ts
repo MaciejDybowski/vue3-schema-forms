@@ -1,1 +1,1 @@
-export type ValidationFromBehaviour = "scroll" | "messages";
+export type ValidationFromBehaviour = 'scroll' | 'messages';

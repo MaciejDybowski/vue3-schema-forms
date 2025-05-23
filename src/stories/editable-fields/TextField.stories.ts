@@ -1,35 +1,32 @@
 // @ts-nocheck
-import { initialize } from "msw-storybook-addon";
+import { expect, userEvent, within } from '@storybook/test';
+import { initialize } from 'msw-storybook-addon';
 
-import { expect, userEvent, within } from "@storybook/test";
-
-import { Schema } from "../../types/schema/Schema";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-
-
+import { Schema } from '../../types/schema/Schema';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Elements/Editable/TextField",
+  title: 'Elements/Editable/TextField',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  name: "Standard",
+  name: 'Standard',
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText("Text field");
-    await userEvent.type(field, "This is standard text field...", { delay: 100 });
-    await expect(context.args.formModel).toEqual({ textField: "This is standard text field..." });
+    const field = canvas.getByLabelText('Text field');
+    await userEvent.type(field, 'This is standard text field...', { delay: 100 });
+    await expect(context.args.formModel).toEqual({ textField: 'This is standard text field...' });
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textField: {
-          label: "Text field",
+          label: 'Text field',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
       },
@@ -40,20 +37,20 @@ export const Standard: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefault: Story = {
-  name: "Default value",
+  name: 'Default value',
   play: async (context) => {
-    await expect(context.args.formModel).toEqual({ textFieldWithDefault: "Item 1" });
+    await expect(context.args.formModel).toEqual({ textFieldWithDefault: 'Item 1' });
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textFieldWithDefault: {
-          label: "Text field",
-          defaultValue: "Item 1",
+          label: 'Text field',
+          defaultValue: 'Item 1',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
       },
@@ -65,65 +62,64 @@ export const WithDefault: Story = {
  * Example shows how to define a "required" field on a form
  */
 export const SimpleValidation: Story = {
-  name: "Required",
+  name: 'Required',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const exampleElement = canvas.getByLabelText("Text field");
-    await userEvent.type(exampleElement, "Required field", {
+    const exampleElement = canvas.getByLabelText('Text field');
+    await userEvent.type(exampleElement, 'Required field', {
       delay: 100,
     });
-    const Submit = canvas.getByText("Validate");
+    const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
-    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textField: {
-          label: "Text field",
+          label: 'Text field',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
       },
-      required: ["textField"],
+      required: ['textField'],
     } as Schema,
   },
 };
 
-
 export const TextFieldCounter: Story = {
-  name: "Case: counter validation",
+  name: 'Case: counter validation',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const exampleElement = canvas.getByLabelText("Text field");
-    await userEvent.type(exampleElement, "Required field with counter", { delay: 100 });
-    const Submit = canvas.getByText("Validate");
+    const exampleElement = canvas.getByLabelText('Text field');
+    await userEvent.type(exampleElement, 'Required field with counter', { delay: 100 });
+    const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 400 });
 
     await expect(canvas.getAllByText(/Max/)[0]).toBeInTheDocument();
 
-    await expect(canvas.getByText("Max 20 characters.")).toBeInTheDocument();
+    await expect(canvas.getByText('Max 20 characters.')).toBeInTheDocument();
 
     await userEvent.clear(exampleElement, { delay: 400 });
-    await userEvent.type(exampleElement, "Counter pass", { delay: 100 });
+    await userEvent.type(exampleElement, 'Counter pass', { delay: 100 });
     await userEvent.click(Submit);
-    await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
+    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textField: {
-          label: "Text field",
+          label: 'Text field',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             props: {
-              counter: 20
-            }
+              counter: 20,
+            },
           },
         },
       },

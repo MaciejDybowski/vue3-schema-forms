@@ -68,26 +68,31 @@
           </div>
         </template>
       </v-list-item>
-
     </template>
-
-
   </base-autocomplete>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from 'vue';
 
-import { useDictionary } from "@/core/composables/useDictionary";
-import { useEventHandler } from "@/core/composables/useEventHandler";
-import { variableRegexp } from "@/core/engine/utils";
-import { EngineDictionaryField } from "@/types/engine/controls";
+import UserInputLabel from '@/components/controls/user-input/UserInputLabel.vue';
 
-import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "../../core/composables";
-import BaseAutocomplete from "./base/BaseAutocomplete.vue";
-import UserInputLabel from "@/components/controls/user-input/UserInputLabel.vue";
-import { User } from "@/types/engine/User";
-import { Label } from "@/types/engine/Label";
+import { useDictionary } from '@/core/composables/useDictionary';
+import { useEventHandler } from '@/core/composables/useEventHandler';
+import { variableRegexp } from '@/core/engine/utils';
+import { Label } from '@/types/engine/Label';
+import { EngineDictionaryField } from '@/types/engine/controls';
+
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useLocale,
+  useProps,
+  useResolveVariables,
+  useRules,
+} from '../../core/composables';
+import BaseAutocomplete from './base/BaseAutocomplete.vue';
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -148,7 +153,7 @@ function singleOptionAutoSelectFunction() {
 }
 
 async function resolveIfLocalModelHasDependencies() {
-  if (typeof localModel.value == "string" && localModel.value.match(variableRegexp)) {
+  if (typeof localModel.value == 'string' && localModel.value.match(variableRegexp)) {
     const result = await resolve(props.schema, localModel.value);
     if (result.allVariablesResolved) {
       localModel.value = result.resolvedText;
@@ -172,7 +177,7 @@ onMounted(async () => {
   await bindProps(props.schema);
 
   if (localModel.value) {
-    if (typeof localModel.value == "object") {
+    if (typeof localModel.value == 'object') {
       data.value.push(localModel.value);
     } else {
       await resolveIfLocalModelHasDependencies();
@@ -194,20 +199,20 @@ async function fetchDictionaryData() {
     if (!returnObject.value) {
       queryBlocker.value = query.value === localModelCurrent.value;
     }
-    await load("autocomplete");
+    await load('autocomplete');
   }
 }
 
 function updateSearch(val: string) {
   if (returnObject.value) {
-    queryBlocker.value = val === localModelCurrent.value + "";
+    queryBlocker.value = val === localModelCurrent.value + '';
   } else {
     queryBlocker.value = false;
   }
 }
 
 function labels(item: any): Label[] {
-  if ("labels" in item) {
+  if ('labels' in item) {
     const providedLabels: Label[] =
       props.schema.options.dictionaryProps && props.schema.options.dictionaryProps.labels
         ? props.schema.options.dictionaryProps.labels
@@ -219,26 +224,26 @@ function labels(item: any): Label[] {
         const userLabels: string[] = item.labels;
         return providedLabels.filter((element) => userLabels.includes(element.id));
       } else {
-        return item.labels.map((id) => ({
+        return item.labels.map((id: string) => ({
           id: id,
           title: id,
-          backgroundColor: "primary",
-          textColor: "white",
+          backgroundColor: 'primary',
+          textColor: 'white',
         }));
       }
     }
 
     // string separated by coma
-    if (item.labels && item.labels.includes(",")) {
-      const labels = item.labels.split(",");
+    if (item.labels && item.labels.includes(',')) {
+      const labels = item.labels.split(',');
       if (providedLabels.length > 0) {
         return providedLabels.filter((element) => labels.includes(element.id));
       } else {
-        return labels.map((id) => ({
+        return labels.map((id: string) => ({
           id: id,
           title: id,
-          backgroundColor: "primary",
-          textColor: "white",
+          backgroundColor: 'primary',
+          textColor: 'white',
         }));
       }
     }
@@ -251,8 +256,8 @@ function labels(item: any): Label[] {
           {
             id: item.labels,
             title: item.labels,
-            backgroundColor: "primary",
-            textColor: "white",
+            backgroundColor: 'primary',
+            textColor: 'white',
           },
         ];
       }

@@ -1,34 +1,33 @@
 // @ts-nocheck
-import { expect, userEvent, within } from "@storybook/test";
+import { expect, userEvent, within } from '@storybook/test';
 
-import { Schema } from "../../types/schema/Schema";
-import { Layout } from "../../types/schema/elements";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-import { waitForMountedAsync } from "../editable-fields/utils";
+import { Schema } from '../../types/schema/Schema';
+import { Layout } from '../../types/schema/elements';
+import { waitForMountedAsync } from '../editable-fields/utils';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Elements/Static/Alert",
+  title: 'Elements/Static/Alert',
   ...formStoryWrapperTemplate,
 };
-
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("Lorem ipsum...")).toBeInTheDocument();
+    await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         alert: {
-          content: "Lorem ipsum...",
+          content: 'Lorem ipsum...',
           layout: {
-            component: "alert",
+            component: 'alert',
             props: {
-              variant: "outlined",
+              variant: 'outlined',
             },
           },
         },
@@ -41,20 +40,20 @@ export const Info: Story = {
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("Lorem ipsum...")).toBeInTheDocument();
+    await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         alert: {
-          content: "Lorem ipsum...",
+          content: 'Lorem ipsum...',
           layout: {
-            component: "alert",
+            component: 'alert',
             props: {
-              type: "info",
-              variant: "outlined",
+              type: 'info',
+              variant: 'outlined',
             },
           },
         },
@@ -67,20 +66,20 @@ export const Warning: Story = {
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("Lorem ipsum...")).toBeInTheDocument();
+    await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         alert: {
-          content: "Lorem ipsum...",
+          content: 'Lorem ipsum...',
           layout: {
-            component: "alert",
+            component: 'alert',
             props: {
-              type: "warning",
-              variant: "outlined",
+              type: 'warning',
+              variant: 'outlined',
             },
           },
         },
@@ -93,23 +92,23 @@ export const Error: Story = {
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("Lorem ipsum...")).toBeInTheDocument();
-    const Submit = canvas.getByText("Validate");
+    await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
+    const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
-    await expect(canvas.getByText("Alert")).toBeInTheDocument();
+    await expect(canvas.getByText('Alert')).toBeInTheDocument();
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         alert: {
-          content: "Lorem ipsum...",
+          content: 'Lorem ipsum...',
           layout: {
-            component: "alert",
+            component: 'alert',
             props: {
-              type: "error",
-              variant: "outlined",
+              type: 'error',
+              variant: 'outlined',
             },
           },
         },
@@ -119,27 +118,29 @@ export const Error: Story = {
 };
 
 export const CombineWithModelVariables: Story = {
-  name: "Case: combine with model variables",
+  name: 'Case: combine with model variables',
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("Is difference between Value A = 123 and Value B = 321")).toBeInTheDocument();
+    await expect(
+      canvas.getByText('Is difference between Value A = 123 and Value B = 321'),
+    ).toBeInTheDocument();
   },
   args: {
     formModel: {
-      valueA: "123",
-      valueB: "321",
+      valueA: '123',
+      valueB: '321',
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         alert: {
-          content: "Is difference between Value A = {valueA} and Value B = {valueB}",
+          content: 'Is difference between Value A = {valueA} and Value B = {valueB}',
           layout: {
-            component: "alert",
+            component: 'alert',
             props: {
-              type: "warning",
-              variant: "outlined",
+              type: 'warning',
+              variant: 'outlined',
             },
           },
         },
@@ -152,46 +153,52 @@ export const MemorableState: Story = {
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")).toBeInTheDocument();
+    await expect(
+      canvas.getByText(
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+      ),
+    ).toBeInTheDocument();
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         span: {
-          content: "<p>\n" +
-            "  The <strong>alert</strong> component can save its state (e.g. expanded/collapsed) by emitting an event. The parent application is responsible for handling and storing this state.\n" +
-            "</p>\n" +
-            "\n" +
-            "\n" +
-            "<pre><code>function changeState() {\n" +
-            "  expanded.value = !expanded.value;\n" +
-            "  actionHandlerEventBus.emit(\"form-action\", {\n" +
-            "    code: \"save-form-element-state\",\n" +
-            "    path: schema.key,\n" +
-            "    expanded: expanded.value,\n" +
-            "  });\n" +
-            "}\n" +
-            "</code></pre>\n" +
-            "\n" +
-            "\n" +
-            "<p>\n" +
-            "  The saved state should be passed to the form options via <code>context.userInfoProperties.alerts</code>, allowing the alert to restore its state on load.\n" +
-            "</p>\n",
+          content:
+            '<p>\n' +
+            '  The <strong>alert</strong> component can save its state (e.g. expanded/collapsed) by emitting an event. The parent application is responsible for handling and storing this state.\n' +
+            '</p>\n' +
+            '\n' +
+            '\n' +
+            '<pre><code>function changeState() {\n' +
+            '  expanded.value = !expanded.value;\n' +
+            '  actionHandlerEventBus.emit("form-action", {\n' +
+            '    code: "save-form-element-state",\n' +
+            '    path: schema.key,\n' +
+            '    expanded: expanded.value,\n' +
+            '  });\n' +
+            '}\n' +
+            '</code></pre>\n' +
+            '\n' +
+            '\n' +
+            '<p>\n' +
+            '  The saved state should be passed to the form options via <code>context.userInfoProperties.alerts</code>, allowing the alert to restore its state on load.\n' +
+            '</p>\n',
           layout: {
-            component: "static-content",
-            tag: "span",
+            component: 'static-content',
+            tag: 'span',
           },
         },
         alert: {
           memorable: true,
-          content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+          content:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
           layout: {
-            component: "alert",
+            component: 'alert',
             props: {
-              type: "info",
-              variant: "outlined",
+              type: 'info',
+              variant: 'outlined',
             },
           },
         },

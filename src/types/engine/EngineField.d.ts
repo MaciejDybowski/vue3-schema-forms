@@ -1,8 +1,8 @@
-import { EngineOptions } from "@/types/engine/EngineOptions";
-import { EventHandlerDefinition } from "@/types/shared/EventHandlerDefinition";
-import { Layout } from "@/types/shared/Layout";
-import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
-import { Schema } from "@/types/schema/Schema";
+import { EngineOptions } from '@/types/engine/EngineOptions';
+import { Schema } from '@/types/schema/Schema';
+import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
+import { Layout } from '@/types/shared/Layout';
+import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
 
 export interface EngineField {
   key: string;
@@ -13,7 +13,7 @@ export interface EngineField {
   required: boolean;
 
   // moze do dziedziczenia z SchemaField.d.ts
-  label: string | any
+  label: string | any;
   defaultValue?: number | string | boolean | object | Array<any> | undefined | null;
   type?: SchemaFieldType;
   layout: Layout;
@@ -35,8 +35,8 @@ export interface EngineField {
   onChange?: EventHandlerDefinition;
 
   //switch
-  mode?: string
+  mode?: string;
 
   // key-value-list
-  config?: any
+  config?: any;
 }

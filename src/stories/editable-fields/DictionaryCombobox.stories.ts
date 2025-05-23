@@ -1,21 +1,21 @@
 // @ts-nocheck
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from 'msw';
 
-import { Schema } from "../../types/schema/Schema";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { Schema } from '../../types/schema/Schema';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Elements/Editable/Dictionary [combobox]",
+  title: 'Elements/Editable/Dictionary [combobox]',
   ...formStoryWrapperTemplate,
 };
 
 const MOCK_REQUEST = [
-  http.get("/api/combo-mock", async (req, res, ctx) => {
+  http.get('/api/combo-mock', async (req, res, ctx) => {
     return HttpResponse.json({
       content: [
         {
           id: 27,
-          label: "Test",
+          label: 'Test',
         },
       ],
     });
@@ -31,26 +31,26 @@ export const Standard: Story = {
   },
   args: {
     model: {
-      textField: "Maciej",
+      textField: 'Maciej',
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         textField: {
-          label: "Textfield",
+          label: 'Textfield',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
         combobox: {
-          label: "Combobox",
+          label: 'Combobox',
           layout: {
-            component: "combobox",
+            component: 'combobox',
           },
           source: {
-            url: "/api/combo-mock?query={textField}",
-            title: "label",
-            value: "id",
+            url: '/api/combo-mock?query={textField}',
+            title: 'label',
+            value: 'id',
             lazy: true,
             returnObject: false,
             singleOptionAutoSelect: true,

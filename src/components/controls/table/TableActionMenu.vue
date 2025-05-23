@@ -29,11 +29,11 @@ const props = withDefaults(
     icon: string;
   }>(),
   {
-    icon: "mdi-dots-vertical",
+    icon: 'mdi-dots-vertical',
   },
 );
 
-function prevent(ev) {
+function prevent(ev:Event): void {
   ev.stopPropagation();
   ev.preventDefault();
 }

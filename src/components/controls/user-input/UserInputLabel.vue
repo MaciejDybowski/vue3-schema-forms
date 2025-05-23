@@ -10,8 +10,8 @@
 </template>
 
 <script lang="ts" setup>
-import { useLocale } from "@/core/composables";
-import { Label } from "@/types/engine/Label";
+import { useLocale } from '@/core/composables';
+import { Label } from '@/types/engine/Label';
 
 export interface BuiltInTranslationLanguages {
   default?: string;
@@ -30,7 +30,7 @@ const props = withDefaults(
 );
 
 function getTranslatedTitle(title: string | BuiltInTranslationLanguages) {
-  if (typeof title === "string") {
+  if (typeof title === 'string') {
     return title;
   } else {
     return title[locale.value] ? title[locale.value] : title.default;

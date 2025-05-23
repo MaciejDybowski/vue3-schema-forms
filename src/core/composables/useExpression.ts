@@ -1,14 +1,15 @@
-import get from "lodash/get";
-import set from "lodash/set";
-import { ref } from "vue";
+import { useEventBus } from '@vueuse/core';
+import get from 'lodash/get';
+import set from 'lodash/set';
 
-import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
-import { useEventBus } from "@vueuse/core";
+import { ref } from 'vue';
 
-import { functions } from "../engine/expressionResolver";
+import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
+
+import { functions } from '../engine/expressionResolver';
 
 export function useExpression() {
-  const vueSchemaFormEventBus = useEventBus<string>("form-model");
+  const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const form = useInjectedFormModel();
 
   async function resolveExpression(key: string, expression: string, model: object) {
@@ -19,8 +20,10 @@ export function useExpression() {
       const mergedModel = form.getFormModelForResolve.value;
       result.value = await f(expression, mergedModel);
 
-      if (!functionName.includes("_GENERATOR")) {
-        const unsubscribe = vueSchemaFormEventBus.on(async () => await expressionListener(key, expression, model));
+      if (!functionName.includes('_GENERATOR')) {
+        const unsubscribe = vueSchemaFormEventBus.on(
+          async () => await expressionListener(key, expression, model),
+        );
       }
       return result.value;
     }
@@ -35,7 +38,7 @@ export function useExpression() {
         return null; // Return null if no match is found
       }
     } catch (error) {
-      console.error("Error extracting function name:", error);
+      console.error('Error extracting function name:', error);
       return null; // Return null in case of an error
     }
   }

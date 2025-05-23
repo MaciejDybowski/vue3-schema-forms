@@ -1,7 +1,9 @@
+import { useEventBus } from "@vueuse/core";
 import axios from "axios";
 import jsonata from "jsonata";
 import { debounce } from "lodash";
 import get from "lodash/get";
+
 import { Ref, ref, watch } from "vue";
 
 import { Pagination } from "@/components/controls/base/Pagination";
@@ -14,7 +16,6 @@ import { logger } from "@/main";
 import { EngineDictionaryField } from "@/types/engine/controls";
 import { ResponseReference } from "@/types/shared/ResponseReference";
 import { DictionarySource } from "@/types/shared/Source";
-import { useEventBus } from "@vueuse/core";
 
 export function useDictionary() {
   const vueSchemaFormEventBus = useEventBus<string>("form-model");
@@ -34,14 +35,14 @@ export function useDictionary() {
   let endpoint = { resolvedText: "", allVariablesResolved: false };
   let isUrlHasDependency: RegExpMatchArray | null = null;
   let loading = ref(false);
-  let data: Ref<Array<object>> = ref([]);
+  let data: Ref<Array<Record<string, any>>> = ref([]);
   let query = ref("");
   let field: EngineDictionaryField = {} as EngineDictionaryField;
   let queryBlocker = ref(false);
   let dependencyWasChanged = ref(false);
 
   const debounced = {
-    load: debounce(load, 300),
+    load: debounce(load, 300)
   };
 
   async function checkConditionalFilters() {
@@ -98,11 +99,15 @@ export function useDictionary() {
     returnObject.value = source.returnObject !== undefined ? source.returnObject : true;
     lazy.value = source.lazy !== undefined ? source.lazy : true;
     description.value = source.description ? source.description : null;
-    paginationOptions.value = source.itemsPerPage ? new Pagination(source.itemsPerPage) : new Pagination(50);
+    paginationOptions.value = source.itemsPerPage
+      ? new Pagination(source.itemsPerPage)
+      : new Pagination(50);
     responseReference = source.references
       ? source.references
       : ({ data: "content", totalElements: "numberOfElements" } as ResponseReference);
-    singleOptionAutoSelect.value = source.singleOptionAutoSelect ? source.singleOptionAutoSelect : true;
+    singleOptionAutoSelect.value = source.singleOptionAutoSelect
+      ? source.singleOptionAutoSelect
+      : true;
 
     //endpoint = { resolvedText: source.url, allVariablesResolved: true };
     endpoint = await resolve(field, source.url, title.value, true);
@@ -132,7 +137,7 @@ export function useDictionary() {
   async function load(caller: string) {
     if (logger.dictionaryLogger) {
       console.debug(
-        `[vue-schema-forms] => Dictionary load call function = ${caller}, queryBlocker=${queryBlocker.value} query=${query.value}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
+        `[vue-schema-forms] => Dictionary load call function = ${caller}, queryBlocker=${queryBlocker.value} query=${query.value}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`
       );
     }
     await checkConditionalFilters();
@@ -145,13 +150,13 @@ export function useDictionary() {
       const response = await axios.get(combinedUrl, {
         params: lazy.value
           ? {
-              page: paginationOptions.value.getPage(),
-              size: paginationOptions.value.getItemsPerPage(),
-              query: query.value && !queryBlocker.value ? query.value : null,
-            }
+            page: paginationOptions.value.getPage(),
+            size: paginationOptions.value.getItemsPerPage(),
+            query: query.value && !queryBlocker.value ? query.value : null
+          }
           : {
-              query: query.value && !queryBlocker.value ? query.value : null,
-            },
+            query: query.value && !queryBlocker.value ? query.value : null
+          }
       });
 
       data.value = get(response.data, responseReference.data, []);
@@ -161,7 +166,7 @@ export function useDictionary() {
     } else {
       if (logger.dictionaryLogger) {
         console.debug(
-          `[vue-schema-forms] => API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`,
+          `[vue-schema-forms] => API call was blocked, not every variable from endpoint was resolved ${endpoint.resolvedText}`
         );
       }
     }
@@ -177,13 +182,14 @@ export function useDictionary() {
         params: {
           page: paginationOptions.value.getPage() + 1,
           size: paginationOptions.value.getItemsPerPage(),
-          query: query.value && !queryBlocker.value ? query.value : null,
-        },
+          query: query.value && !queryBlocker.value ? query.value : null
+        }
       });
       paginationOptions.value.nextPage();
       const newData = get(response.data, responseReference.data, []);
       const filteredData = newData.filter(
-        (item) => !data.value.some((existingItem) => existingItem[value.value] === item[value.value]), // Adjust comparison logic as needed
+        (item: any) =>
+          !data.value.some((existingItem: any) => existingItem[value.value] === item[value.value]) // Adjust comparison logic as needed
       );
       data.value = data.value.concat(filteredData);
       paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
@@ -205,7 +211,7 @@ export function useDictionary() {
     return { url: urlParts[0], params: urlParams.toString() };
   }
 
-  function removeParams(url, paramsToRemove) {
+  function removeParams(url: string, paramsToRemove: string[]) {
     const [path, queryString] = url.split("?");
     if (!queryString) return url;
 
@@ -233,6 +239,6 @@ export function useDictionary() {
     loadMoreRecords,
     singleOptionAutoSelect,
     loadCounter,
-    dependencyWasChanged,
+    dependencyWasChanged
   };
 }

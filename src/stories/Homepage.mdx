@@ -1,4 +1,4 @@
-import { Meta } from "@storybook/blocks";
+import { Meta } from '@storybook/blocks';
 
 <Meta title="Vue Schema Forms" />
 
@@ -43,11 +43,11 @@ npm install vue3-schema-forms
 ## Usage
 
 ```typescript
-import { createVueSchemaForms } from "vue3-schema-forms";
+import { createVueSchemaForms } from 'vue3-schema-forms';
 
 const schemaForms = createVueSchemaForms({});
 
-createApp(App).use(schemaForms).mount("#app");
+createApp(App).use(schemaForms).mount('#app');
 ```
 
 After importing the plugin, we can invoke the form-generating component and pass the appropriate props.
@@ -68,12 +68,12 @@ After importing the plugin, we can invoke the form-generating component and pass
 const formOptions = ref({});
 const model = ref({});
 const schema = ref({
-  type: "object",
+  type: 'object',
   properties: {
     field1: {
-      label: "Field 1",
+      label: 'Field 1',
       layout: {
-        component: "text-field",
+        component: 'text-field',
       },
     },
   },
@@ -117,8 +117,8 @@ The following table shows the default values for each field
 
 #### Component slots
 
-| Name        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | formActions | The slot contains predefined default actions for the form: validation, reset validation and reset form. The user is free to override this slot and write his own buttons using exposed functions from the component. Just give "ref" and enjoy a ready-made validation function that takes 3 options: no parameter / scroll / messages [example](https://maciejdybowski.github.io/vue3-schema-?path=/story/forms-features-validations--add-custom-submit-with-built-in-validation) |
 
 ## Integrated fields
@@ -135,7 +135,7 @@ The fields are described in the readme on the Github code repository [link](http
 ```typescript
 // example of adding options
 const customs = {
-  "user-input": UserInput,
+  'user-input': UserInput,
 };
 
 const vueSchemaForms = createVueSchemaForms({

@@ -1,4 +1,4 @@
-import { Label } from "@/types/engine/Label";
+import { Label } from '@/types/engine/Label';
 
 export interface EngineOptions {
   fieldProps: Record<string, any>;
@@ -12,8 +12,8 @@ export interface EngineOptions {
   context?: Record<string, any>;
   userInputProps?: Record<string, any> & {
     labels?: Label[];
-  }
-  dictionaryProps?:  Record<string, any> & {
+  };
+  dictionaryProps?: Record<string, any> & {
     labels?: Label[];
-  }
+  };
 }

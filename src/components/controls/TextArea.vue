@@ -1,14 +1,14 @@
 <template>
   <v-textarea
-    v-model='localModel'
-    :label='label'
-    :rules="!fieldProps.readonly ? rules: []"
-    v-bind='fieldProps'
-    :class='bindClass(schema) + requiredInputClass'
+    v-model="localModel"
+    :label="label"
+    :rules="!fieldProps.readonly ? rules : []"
+    v-bind="fieldProps"
+    :class="bindClass(schema) + requiredInputClass"
   />
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted } from 'vue';
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
@@ -38,7 +38,6 @@ onMounted(async () => {
   await bindRules(props.schema);
   await bindProps(props.schema);
 });
-
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>

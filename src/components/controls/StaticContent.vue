@@ -11,11 +11,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { useEventBus } from '@vueuse/core';
 
-import { useClass, useProps, useResolveVariables } from "@/core/composables";
-import { EngineStaticField } from "@/types/engine/controls";
-import { useEventBus } from "@vueuse/core";
+import { onMounted, ref } from 'vue';
+
+import { useClass, useProps, useResolveVariables } from '@/core/composables';
+import { EngineStaticField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineStaticField;
@@ -28,13 +29,13 @@ const { bindProps, fieldProps } = useProps();
 const resolvedContent = ref<any>({ resolvedText: null, allVariablesResolved: false });
 const { bindClass } = useClass();
 
-const vueSchemaFormEventBus = useEventBus<string>("form-model");
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
 onMounted(async () => {
-  const isContentRef = typeof props.schema.content === "object" && "$ref" in props.schema.content;
+  const isContentRef = typeof props.schema.content === 'object' && '$ref' in props.schema.content;
   if (isContentRef) {
     // @ts-ignore
-    resolvedContent.value.resolvedText = '#'+props.schema.content.$ref.split("/").pop();
+    resolvedContent.value.resolvedText = '#' + props.schema.content.$ref.split('/').pop();
     resolvedContent.value.allVariablesResolved = true;
     return;
   }

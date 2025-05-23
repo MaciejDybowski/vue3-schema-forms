@@ -1,14 +1,19 @@
 {
   "tabWidth": 2,
   "semi": true,
-  "singleQuote": false,
-  "printWidth": 130,
+  "singleQuote": true,
+  "printWidth": 100,
   "singleAttributePerLine": true,
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
+    "^vue$",
+    "^@vue/",
     "^@/components/(.*)$",
-    "^@.*$",
+    "^@/composables/(.*)$",
+    "^@/store/(.*)$",
+    "^@/utils/(.*)$",
+    "^@/.*$",
     "^[./]"
   ],
   "importOrderSeparation": true,

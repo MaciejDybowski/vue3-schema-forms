@@ -5,7 +5,9 @@
     style="border: 1px rgb(0, 0, 0, 0.12) solid"
   >
     <v-col cols="6">
-      <v-card-title class="text-subtitle-2 text-high-emphasis bg-surface">{{ t("available") }}</v-card-title>
+      <v-card-title class="text-subtitle-2 text-high-emphasis bg-surface">{{
+        t('available')
+      }}</v-card-title>
       <v-divider class="mt-1" />
       <v-list
         class="overflow-y-auto pa-0 ma-0"
@@ -32,7 +34,9 @@
       cols="6"
       style="border-left: 1px rgb(0, 0, 0, 0.12) solid"
     >
-      <v-card-title class="text-subtitle-2 text-high-emphasis bg-surface">{{ t("selected") }}</v-card-title>
+      <v-card-title class="text-subtitle-2 text-high-emphasis bg-surface">{{
+        t('selected')
+      }}</v-card-title>
       <v-divider class="mt-1" />
 
       <draggable
@@ -73,9 +77,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import draggable from "vuedraggable";
+import { useI18n } from 'vue-i18n';
+import draggable from 'vuedraggable';
+
+import { defineEmits, ref, watch } from 'vue';
 
 const { items, selectedItems, title, value } = defineProps<{
   items: any[];
@@ -96,12 +101,12 @@ watch(
 const { t } = useI18n();
 
 const emit = defineEmits<{
-  (e: "update:selectedItems", value: any[]): void;
+  (e: 'update:selectedItems', value: any[]): void;
 }>();
 
 const removeItem = (item: (typeof items)[number]) => {
   const updatedItems = selectedItems.filter((i) => i[value] !== item[value]);
-  emit("update:selectedItems", updatedItems);
+  emit('update:selectedItems', updatedItems);
 };
 
 const toggleItem = (item: (typeof items)[number]) => {
@@ -112,7 +117,7 @@ const toggleItem = (item: (typeof items)[number]) => {
   } else {
     updatedItems.splice(idx, 1);
   }
-  emit("update:selectedItems", updatedItems);
+  emit('update:selectedItems', updatedItems);
 };
 
 const isSelected = (item: (typeof items)[number]) => {

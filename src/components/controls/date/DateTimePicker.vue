@@ -1,16 +1,16 @@
 <template>
   <v-text-field
-    ref='inputFieldRef'
-    :label='label'
-    v-model='inputValue'
-    :focused='isInputFocused || pickerModel'
-    @update:focused='(val) => (isInputFocused = val)'
-    :placeholder='dateFormat.toLocaleLowerCase()'
-    :clearable='!fieldProps.readonly'
-    :rules="!fieldProps.readonly ? dateRules: []"
-    @update:model-value='dateTyping'
-    :class='bindClass(schema) + requiredInputClass'
-    v-bind='{ ...attrs, ...fieldProps }'
+    ref="inputFieldRef"
+    :label="label"
+    v-model="inputValue"
+    :focused="isInputFocused || pickerModel"
+    @update:focused="(val) => (isInputFocused = val)"
+    :placeholder="dateFormat.toLocaleLowerCase()"
+    :clearable="!fieldProps.readonly"
+    :rules="!fieldProps.readonly ? dateRules : []"
+    @update:model-value="dateTyping"
+    :class="bindClass(schema) + requiredInputClass"
+    v-bind="{ ...attrs, ...fieldProps }"
   >
     <template v-slot:append-inner>
       <v-btn
@@ -23,43 +23,43 @@
     </template>
   </v-text-field>
   <v-menu
-    v-model='pickerModel'
-    :close-on-content-click='false'
-    min-width='0'
-    :open-on-click='false'
-    :activator='inputFieldRef'
-    scrim='transparent'
-    offset='5'
-    :disabled='fieldProps.readonly as boolean'
+    v-model="pickerModel"
+    :close-on-content-click="false"
+    min-width="0"
+    :open-on-click="false"
+    :activator="inputFieldRef"
+    scrim="transparent"
+    offset="5"
+    :disabled="fieldProps.readonly as boolean"
   >
-    <v-card min-width='0'>
-      <v-card-text class='pa-0'>
+    <v-card min-width="0">
+      <v-card-text class="pa-0">
         <v-tabs
           fixed-tabs
-          v-model='activeTabRef'
+          v-model="activeTabRef"
         >
-          <v-tab value='0'>
+          <v-tab value="0">
             <v-icon>mdi-calendar-today</v-icon>
           </v-tab>
-          <v-tab value='1'>
+          <v-tab value="1">
             <v-icon>mdi-update</v-icon>
           </v-tab>
         </v-tabs>
-        <v-tabs-window v-model='activeTabRef'>
-          <v-tabs-window-item :value='0'>
+        <v-tabs-window v-model="activeTabRef">
+          <v-tabs-window-item :value="0">
             <v-date-picker
-              :show-adjacent-months='true'
-              v-model='pickerValue'
-              @update:model-value='datePick'
-              :min='isPastDateAvailable ? undefined : currentDate.toISOString()'
-              :max='isFutureDateAvailable ? undefined : currentDate.toISOString()'
+              :show-adjacent-months="true"
+              v-model="pickerValue"
+              @update:model-value="datePick"
+              :min="isPastDateAvailable ? undefined : currentDate.toISOString()"
+              :max="isFutureDateAvailable ? undefined : currentDate.toISOString()"
             />
           </v-tabs-window-item>
-          <v-tabs-window-item :value='1'>
+          <v-tabs-window-item :value="1">
             <v-time-picker
-              v-model='timeValue'
-              @update:model-value='timePick'
-              format='24hr'
+              v-model="timeValue"
+              @update:model-value="timePick"
+              format="24hr"
             >
             </v-time-picker>
           </v-tabs-window-item>
@@ -69,10 +69,10 @@
   </v-menu>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { MaskOptions } from 'maska';
-import { computed, onMounted, ref, useAttrs, watch } from 'vue';
 
+import { computed, onMounted, ref, useAttrs, watch } from 'vue';
 
 import { EngineDateField } from '@/types/engine/controls';
 
@@ -86,6 +86,7 @@ import {
   useRules,
 } from '../../../core/composables';
 import dayjs from './dayjs';
+import { toNumber } from "lodash";
 
 const { locale, t } = useLocale();
 const props = defineProps<{ schema: EngineDateField; model: object }>();
@@ -106,13 +107,11 @@ const localModel = computed({
   },
 });
 
-
 onMounted(async () => {
   await bindLabel(props.schema);
   await bindRules(props.schema);
-  await bindProps((props.schema));
+  await bindProps(props.schema);
 });
-
 
 const currentDate = new Date();
 currentDate.setHours(0, 0, 0, 0);
@@ -124,11 +123,16 @@ const inputValue = ref('');
 const pickerValue = ref<Date>();
 const timeValue = ref();
 
-const isPastDateAvailable: boolean = 'pastDateAvailable' in props.schema ? (props.schema.pastDateAvailable as boolean) : true;
+const isPastDateAvailable: boolean =
+  'pastDateAvailable' in props.schema ? (props.schema.pastDateAvailable as boolean) : true;
 const isFutureDateAvailable: boolean =
   'futureDateAvailable' in props.schema ? (props.schema.futureDateAvailable as boolean) : true;
-const isCloseOnFirstClick: boolean = 'closeOnFirstClick' in props.schema ? (props.schema.closeOnFirstClick as boolean) : true;
-const modelFormat: string = 'formatInModel' in props.schema ? (props.schema.formatInModel as string) : 'YYYY-MM-DDTHH:mm:ss.sssZ';
+const isCloseOnFirstClick: boolean =
+  'closeOnFirstClick' in props.schema ? (props.schema.closeOnFirstClick as boolean) : true;
+const modelFormat: string =
+  'formatInModel' in props.schema
+    ? (props.schema.formatInModel as string)
+    : 'YYYY-MM-DDTHH:mm:ss.sssZ';
 const isInputFocused = ref(false);
 const firstClickPick = ref<Date>();
 
@@ -168,11 +172,11 @@ function datePick(val: Date) {
   }
 }
 
-function timePick(val) {
+function timePick(val:string) {
   const h = val.split(':')[0];
   const min = val.split(':')[1];
-  pickerValue.value?.setHours(h);
-  pickerValue.value?.setMinutes(min);
+  pickerValue.value?.setHours(toNumber(h));
+  pickerValue.value?.setMinutes(toNumber(min));
   const date = dayjs(pickerValue.value);
   if (date.isValid()) {
     localModel.value = date.format(modelFormat);
@@ -260,7 +264,7 @@ function isDateComplete(val: string) {
 }
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 :deep(.v-picker-title) {
   display: none;
 }

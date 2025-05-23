@@ -1,15 +1,15 @@
-import jsonata from "jsonata";
-import { cloneDeep } from "lodash";
-import get from "lodash/get";
-import set from "lodash/set";
+import { useEventBus } from '@vueuse/core';
+import jsonata from 'jsonata';
+import { cloneDeep } from 'lodash';
+import get from 'lodash/get';
+import set from 'lodash/set';
 
-import { logger } from "@/main";
-import { EngineField } from "@/types/engine/EngineField";
-import { useEventBus } from "@vueuse/core";
-import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
+import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
+import { logger } from '@/main';
+import { EngineField } from '@/types/engine/EngineField';
 
 export function useJSONataExpression() {
-  const vueSchemaFormEventBus = useEventBus<string>("form-model");
+  const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const form = useInjectedFormModel();
 
   // persistent-hint, props: {'persistent-hint': 'nata(fieldA=PLN?true:false'}
@@ -17,8 +17,10 @@ export function useJSONataExpression() {
   async function resolveJSONataExpression(keyToResolve: string, object: any, schema: EngineField) {
     //console.debug(keyToResolve, object, object[keyToResolve].includes("nata("));
 
-    if (object[keyToResolve].includes("nata(") || `${keyToResolve}Expression` in object) {
-      const unsubscribe = vueSchemaFormEventBus.on(async () => expressionResolverListener(keyToResolve, object, schema));
+    if (object[keyToResolve].includes('nata(') || `${keyToResolve}Expression` in object) {
+      const unsubscribe = vueSchemaFormEventBus.on(async () =>
+        expressionResolverListener(keyToResolve, object, schema),
+      );
       object[`${keyToResolve}Expression`] = cloneDeep(object[keyToResolve]);
       delete object[keyToResolve];
 
@@ -47,7 +49,9 @@ export function useJSONataExpression() {
   ) {
     //if (schema.index == undefined || schema.index == payloadIndex) {
     if (logger.JSONataExpressionListener)
-      console.debug(`[vue-schema-forms] [JSONataExpressionListener] => key=[${keyToResolve}], index=[${schema.index}]`);
+      console.debug(
+        `[vue-schema-forms] [JSONataExpressionListener] => key=[${keyToResolve}], index=[${schema.index}]`,
+      );
 
     const model = form.getFormModelForResolve.value;
     await tryResolveExpression(keyToResolve, object, model);

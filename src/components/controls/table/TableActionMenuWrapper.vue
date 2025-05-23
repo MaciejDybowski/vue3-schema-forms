@@ -27,20 +27,21 @@
         v-else
         density="compact"
       >
-        {{ t("noActions") }}
+        {{ t('noActions') }}
       </v-list-item>
     </v-list>
   </table-action-menu>
 </template>
 
 <script lang="ts" setup>
-import jsonata from "jsonata";
-import { onMounted, ref, useAttrs } from "vue";
+import jsonata from 'jsonata';
 
-import TableActionMenu from "@/components/controls/table/TableActionMenu.vue";
+import { onMounted, ref, useAttrs } from 'vue';
 
-import { useLocale } from "@/core/composables";
-import { TableHeader, TableHeaderAction } from "@/types/shared/Source";
+import TableActionMenu from '@/components/controls/table/TableActionMenu.vue';
+
+import { useLocale } from '@/core/composables';
+import { TableHeader, TableHeaderAction } from '@/types/shared/Source';
 
 const attrs = useAttrs();
 const props = defineProps<{
@@ -49,7 +50,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "runTableActionLogic", payload: { action: TableHeaderAction; item: object }): void;
+  (e: 'runTableActionLogic', payload: { action: TableHeaderAction; item: object }): void;
 }>();
 
 const { t } = useLocale();

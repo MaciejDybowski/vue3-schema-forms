@@ -1,35 +1,42 @@
 <template>
   <v-radio-group
-    v-model='localModel'
-    :label='label'
-    v-bind='fieldProps'
-    :rules="!fieldProps.readonly ? rules: []"
-    :class='bindClass(schema) + requiredInputClass'
-    v-if='!loading'
+    v-model="localModel"
+    :label="label"
+    v-bind="fieldProps"
+    :rules="!fieldProps.readonly ? rules : []"
+    :class="bindClass(schema) + requiredInputClass"
+    v-if="!loading"
   >
     <template
-      v-for='(option, index) in data'
-      :key='option[value]'
+      v-for="(option, index) in data"
+      :key="option[value]"
     >
       <v-radio
-        v-bind='fieldProps'
-        :value='option[value]'
+        v-bind="fieldProps"
+        :value="option[value]"
         :class="index !== data.length - 1 && !fieldProps.inline ? 'mb-2' : ''"
       >
-        <template #label='{ label }'>
-          <div class='mr-2'>{{ option[title] }}</div>
+        <template #label="{ label }">
+          <div class="mr-2">{{ option[title] }}</div>
         </template>
       </v-radio>
     </template>
   </v-radio-group>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, watch } from 'vue';
 
 import { RadioField } from '@/types/engine/controls';
 
-import { useClass, useFormModel, useLabel, useProps, useRules, useSource } from '../../core/composables';
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useProps,
+  useRules,
+  useSource,
+} from '../../core/composables';
 
 const props = defineProps<{
   schema: RadioField;
@@ -42,7 +49,6 @@ const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const initValue: boolean = props.schema.initValue !== undefined ? props.schema.initValue : true;
 
-
 const localModel = computed({
   get(): string | number {
     if (returnObject) {
@@ -54,7 +60,7 @@ const localModel = computed({
   },
   set(val: any) {
     if (returnObject) {
-      const obj = data.value.filter((item) => {
+      const obj = data.value.filter((item:Record<string, any>) => {
         return item[value] === val;
       })[0];
       setValue(obj, props.schema);
@@ -85,7 +91,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang='css'>
+<style scoped lang="css">
 :deep(.v-label) {
   margin-inline-start: 0 !important;
 }

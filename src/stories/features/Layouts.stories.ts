@@ -1,13 +1,12 @@
 // @ts-nocheck
-import { offsetSchema } from "@/stories/schemas";
+import { initialize } from 'msw-storybook-addon';
 
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { offsetSchema } from '@/stories/schemas';
 
-import { initialize } from "msw-storybook-addon";
-
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Features/Layouts",
+  title: 'Features/Layouts',
   ...formStoryWrapperTemplate,
 };
 
@@ -28,48 +27,48 @@ export const FillRowAndOffsets: Story = {
 export const FillRow: Story = {
   args: {
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         item1: {
-          label: "Item 1",
+          label: 'Item 1',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 3,
           },
         },
         item4: {
-          label: "Item 4",
+          label: 'Item 4',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 12,
           },
         },
         item5: {
-          label: "Item 5",
+          label: 'Item 5',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 3,
           },
         },
         item6: {
-          label: "Item 6",
+          label: 'Item 6',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 3,
             fillRow: true,
           },
         },
         item2: {
-          label: "Item 2",
+          label: 'Item 2',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 3,
           },
         },
         item3: {
-          label: "Item 3",
+          label: 'Item 3',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 1,
           },
         },

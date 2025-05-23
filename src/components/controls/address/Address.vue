@@ -8,14 +8,15 @@
 </template>
 
 <script setup lang="ts">
-import { merge } from "lodash";
-import { computed, onBeforeMount, reactive } from "vue";
+import { merge } from 'lodash';
 
-import { EngineField } from "@/types/engine/EngineField";
-import { Schema } from "@/types/schema/Schema";
+import { computed, onBeforeMount, reactive } from 'vue';
 
-import { useFormModel, useLocale } from "../../../core/composables";
-import FormRoot from "../../engine/FormRoot.vue";
+import { EngineField } from '@/types/engine/EngineField';
+import { Schema } from '@/types/schema/Schema';
+
+import { useFormModel, useLocale } from '../../../core/composables';
+import FormRoot from '../../engine/FormRoot.vue';
 
 const props = defineProps<{
   schema: EngineField;
@@ -27,12 +28,12 @@ const { getValue, setValue } = useFormModel();
 
 const country = merge(
   {
-    label: t("address.country"),
+    label: t('address.country'),
     layout: {
-      component: "text-field",
+      component: 'text-field',
       cols: 12,
       props: {
-        autocomplete: "country-name",
+        autocomplete: 'country-name',
       },
     },
   },
@@ -41,12 +42,12 @@ const country = merge(
 
 const region = merge(
   {
-    label: t("address.region"),
+    label: t('address.region'),
     layout: {
-      component: "text-field",
+      component: 'text-field',
       cols: 12,
       props: {
-        autocomplete: "address-level1",
+        autocomplete: 'address-level1',
       },
     },
   },
@@ -55,12 +56,12 @@ const region = merge(
 
 const addressLine = merge(
   {
-    label: t("address.addressLine"),
+    label: t('address.addressLine'),
     layout: {
-      component: "text-field",
+      component: 'text-field',
       cols: 12,
       props: {
-        autocomplete: "street-address",
+        autocomplete: 'street-address',
       },
     },
   },
@@ -69,12 +70,12 @@ const addressLine = merge(
 
 const postalCode = merge(
   {
-    label: t("address.postalCode"),
+    label: t('address.postalCode'),
     layout: {
-      component: "text-field",
+      component: 'text-field',
       cols: 6,
       props: {
-        autocomplete: "postal-code",
+        autocomplete: 'postal-code',
       },
     },
   },
@@ -83,12 +84,12 @@ const postalCode = merge(
 
 const city = merge(
   {
-    label: t("address.city"),
+    label: t('address.city'),
     layout: {
-      component: "text-field",
+      component: 'text-field',
       cols: 6,
       props: {
-        autocomplete: "address-level2",
+        autocomplete: 'address-level2',
       },
     },
   },
@@ -97,10 +98,10 @@ const city = merge(
 
 const required = props.schema.layout?.schema?.required
   ? props.schema.layout?.schema?.required
-  : ["country", "addressLine", "postalCode", "city"];
+  : ['country', 'addressLine', 'postalCode', 'city'];
 
 let addressSchema: Schema = {
-  type: "object",
+  type: 'object',
   properties: {
     country: country,
     region: region,
@@ -111,7 +112,7 @@ let addressSchema: Schema = {
   required: required,
 };
 
-let address = reactive({
+let address: Record<string, any> = reactive({
   country: null,
   region: null,
   addressLine: null,

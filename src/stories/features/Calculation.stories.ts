@@ -1,31 +1,29 @@
 // @ts-nocheck
-import { calculationSchemaInDuplicatedSection, simpleCalculationSchema } from "@/stories/schemas";
-import { invoicePositionsSchema } from "@/tests/test-schemas";
-import { expect, userEvent, within } from "@storybook/test";
+import { expect, userEvent, within } from '@storybook/test';
+import { initialize } from 'msw-storybook-addon';
 
-import { Schema } from "../../types/schema/Schema";
-import { Layout, SchemaTextField } from "../../types/schema/elements";
-import { waitForMountedAsync } from "../editable-fields/utils";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { calculationSchemaInDuplicatedSection, simpleCalculationSchema } from '@/stories/schemas';
+import { invoicePositionsSchema } from '@/tests/test-schemas';
 
-import { initialize } from "msw-storybook-addon";
-
+import { Schema } from '../../types/schema/Schema';
+import { Layout, SchemaTextField } from '../../types/schema/elements';
+import { waitForMountedAsync } from '../editable-fields/utils';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Features/Calculations",
+  title: 'Features/Calculations',
   ...formStoryWrapperTemplate,
 };
 
-
 export const SimpleCalculation: Story = {
-  name:"Case: simple math",
+  name: 'Case: simple math',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    const field1 = canvas.getByLabelText("Field 1");
-    const field2 = canvas.getByLabelText("Field 2");
-    await userEvent.type(field1, "2", { delay: 200 });
-    await userEvent.type(field2, "13.25", { delay: 200 });
+    const field1 = canvas.getByLabelText('Field 1');
+    const field2 = canvas.getByLabelText('Field 2');
+    await userEvent.type(field1, '2', { delay: 200 });
+    await userEvent.type(field2, '13.25', { delay: 200 });
 
     await expect(context.args.formModel).toEqual({
       field1: 2,
@@ -44,14 +42,14 @@ export const SimpleCalculation: Story = {
  *
  */
 export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
-  name:"Case: float decimal places is 2 by default",
+  name: 'Case: float decimal places is 2 by default',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    const field1 = canvas.getByLabelText("Field 1");
-    const field2 = canvas.getByLabelText("Field 2");
-    await userEvent.type(field1, "2");
-    await userEvent.type(field2, "13.25");
+    const field1 = canvas.getByLabelText('Field 1');
+    const field2 = canvas.getByLabelText('Field 2');
+    await userEvent.type(field1, '2');
+    await userEvent.type(field2, '13.25');
 
     await expect(context.args.formModel).toEqual({
       field1: 2,
@@ -66,21 +64,20 @@ export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
   },
 };
 
-
 export const calculationInDuplicatedSchema: Story = {
-  name:"Case: heavy calculations in duplicated section",
+  name: 'Case: heavy calculations in duplicated section',
   play: async (context) => {
     const canvas = within(context.canvasElement);
-    const addButton = await canvas.findByRole("button", { name: "Add" });
+    const addButton = await canvas.findByRole('button', { name: 'Add' });
     await userEvent.click(addButton);
 
-    const duplicatedSections = document.getElementsByClassName("duplicated-section-item");
+    const duplicatedSections = document.getElementsByClassName('duplicated-section-item');
     await expect(duplicatedSections[1]).toBeInTheDocument();
 
-    const field1 = await within(duplicatedSections[1]).findByLabelText("Field 1");
-    const field2 = await within(duplicatedSections[1]).findByLabelText("Field 2");
-    await userEvent.type(field1, "3", { delay: 100 });
-    await userEvent.type(field2, "7.5", { delay: 100 });
+    const field1 = await within(duplicatedSections[1]).findByLabelText('Field 1');
+    const field2 = await within(duplicatedSections[1]).findByLabelText('Field 2');
+    await userEvent.type(field1, '3', { delay: 100 });
+    await userEvent.type(field2, '7.5', { delay: 100 });
 
     const expectedModel = {
       items: [
@@ -118,20 +115,20 @@ export const calculationInDuplicatedSchema: Story = {
 };
 
 export const SUM_function: Story = {
-  name: "Case: $sum(path.to.values)",
+  name: 'Case: $sum(path.to.values)',
   play: async (context) => {
     await new Promise((r) => setTimeout(r, 100));
     await expect(context.args.formModel).toEqual({
       data: {
         items: [
           {
-            product: "Computer",
+            product: 'Computer',
             quantity: 1,
             price: 3200,
             value: 3200,
           },
           {
-            product: "Laptop",
+            product: 'Laptop',
             quantity: 2,
             price: 1334.23,
             value: 2668.46,
@@ -148,12 +145,12 @@ export const SUM_function: Story = {
       data: {
         items: [
           {
-            product: "Computer",
+            product: 'Computer',
             quantity: 1,
             price: 3200,
           },
           {
-            product: "Laptop",
+            product: 'Laptop',
             quantity: 2,
             price: 1334.23,
           },
@@ -161,26 +158,26 @@ export const SUM_function: Story = {
       },
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         data: {
           properties: {
             items: {
               layout: {
-                component: "duplicated-section",
+                component: 'duplicated-section',
                 schema: {
                   properties: {
-                    product: { label: "Product", layout: { component: "text-field", cols: 4 } },
+                    product: { label: 'Product', layout: { component: 'text-field', cols: 4 } },
                     quantity: {
-                      label: "Quantity",
+                      label: 'Quantity',
                       defaultValue: 1,
-                      layout: { component: "number-field", cols: 2 },
+                      layout: { component: 'number-field', cols: 2 },
                     },
-                    price: { label: "Price", layout: { component: "number-field", cols: 3 } },
+                    price: { label: 'Price', layout: { component: 'number-field', cols: 3 } },
                     value: {
-                      label: "Value",
-                      layout: { component: "number-field", cols: 3 },
-                      calculation: "data.items[].quantity * data.items[].price",
+                      label: 'Value',
+                      layout: { component: 'number-field', cols: 3 },
+                      calculation: 'data.items[].quantity * data.items[].price',
                     } as SchemaTextField,
                   },
                 },
@@ -191,12 +188,12 @@ export const SUM_function: Story = {
         summary: {
           properties: {
             sumValue: {
-              label: "SUM(Value)-300",
+              label: 'SUM(Value)-300',
               layout: {
-                component: "number-field",
+                component: 'number-field',
                 cols: 4,
               },
-              calculation: "$sum(data.items.value) - 300",
+              calculation: '$sum(data.items.value) - 300',
             } as SchemaTextField,
           },
         },

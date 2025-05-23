@@ -1,11 +1,10 @@
 // @ts-nocheck
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { initialize } from 'msw-storybook-addon';
 
-import { initialize } from "msw-storybook-addon";
-
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Features/Integrations",
+  title: 'Features/Integrations',
   ...formStoryWrapperTemplate,
 };
 
@@ -13,22 +12,22 @@ export const Dialog_Table_Integration: Story = {
   args: {
     model: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         items: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 nazwa: {
-                  label: "Item",
-                  layout: { component: "text-field", cols: 12 },
+                  label: 'Item',
+                  layout: { component: 'text-field', cols: 12 },
                 },
               },
             },
             options: {
               showDivider: true,
-              addBtnMode: "feature",
+              addBtnMode: 'feature',
             },
           },
         },
@@ -41,30 +40,30 @@ export const Dialog_Table_Action: Story = {
   args: {
     model: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         fieldA: {
-          label: "Fiela D",
+          label: 'Fiela D',
           layout: {
-            component: "text-field",
+            component: 'text-field',
           },
         },
         items: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 nazwa: {
-                  label: "Item",
-                  layout: { component: "text-field", cols: 12 },
+                  label: 'Item',
+                  layout: { component: 'text-field', cols: 12 },
                 },
               },
             },
             options: {
               showDivider: true,
-              addBtnMode: "action",
+              addBtnMode: 'action',
               action: {
-                code: "batchItemAdd",
+                code: 'batchItemAdd',
               },
             },
           },

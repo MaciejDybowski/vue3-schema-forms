@@ -79,12 +79,14 @@
 </template>
 
 <script lang="ts" setup>
+import { useEventBus } from "@vueuse/core";
 import { cloneDeep, isArray } from "lodash";
 import get from "lodash/get";
 import set from "lodash/set";
-import { Ref, computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import draggable from "vuedraggable";
+
+import { computed, onMounted, Ref, ref } from "vue";
 
 import { useFormModel, useProps } from "@/core/composables";
 import { duplicatedSectionBatchAddComponent } from "@/main";
@@ -94,7 +96,6 @@ import { EngineDuplicatedSection } from "@/types/engine/controls";
 import { Schema } from "@/types/schema/Schema";
 import { SchemaField } from "@/types/schema/SchemaField";
 import { DuplicatedSectionOptions } from "@/types/shared/DuplicatedSectionOptions";
-import { useEventBus } from "@vueuse/core";
 
 import FormRoot from "../../engine/FormRoot.vue";
 import DraggableContextMenu from "./DraggableContextMenu.vue";
@@ -102,7 +103,7 @@ import DraggableIcon from "./DraggableIcon.vue";
 import DuplicatedSectionItem from "./DuplicatedSectionItem.vue";
 
 function generateUUID() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     const r = (Math.random() * 16) | 0;
     const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -122,7 +123,7 @@ const { t } = useI18n();
 const dragOptions = ref({
   animation: 200,
   disabled: false,
-  ghostClass: "ghost",
+  ghostClass: "ghost"
 });
 const { bindProps, fieldProps } = useProps();
 
@@ -156,7 +157,9 @@ vueSchemaFormEventBus.on(async (event, payload) => {
   }
 });
 
-let isEditable: Ref<boolean> = ref("editable" in props.schema ? (props.schema.editable as boolean) : true);
+let isEditable: Ref<boolean> = ref(
+  "editable" in props.schema ? (props.schema.editable as boolean) : true
+);
 const showSectionElements = computed(() => {
   if (isEditable.value) {
     return "showElements" in props.schema ? (props.schema.showElements as boolean) : true;
@@ -166,7 +169,8 @@ const showSectionElements = computed(() => {
 });
 
 const ordinalNumberInModel: boolean =
-  duplicatedSectionOptions.value !== undefined && "ordinalNumberInModel" in duplicatedSectionOptions.value
+  duplicatedSectionOptions.value !== undefined &&
+  "ordinalNumberInModel" in duplicatedSectionOptions.value
     ? duplicatedSectionOptions.value.ordinalNumberInModel
     : false;
 
@@ -243,14 +247,14 @@ const getClearNode = computed((): Schema => {
     type: "object",
     properties: wrapPropertiesWithIndexAndPath(
       JSON.parse(JSON.stringify(props.schema.layout.schema?.properties)),
-      nodes.value.length,
+      nodes.value.length
     ),
-    required: props.schema.layout.schema?.required,
+    required: props.schema.layout.schema?.required
   } as Schema;
 });
 
 const getClearModel = computed(() => {
-  const newLocalModel = {};
+  const newLocalModel = {} as Record<string, any>;
   if (ordinalNumberInModel) {
     newLocalModel["ordinalNumber"] = nodes.value.length;
   }
@@ -262,7 +266,7 @@ function runDuplicatedSectionButtonLogic(init = false): void {
     let payloadObject = {
       code: duplicatedSectionOptions.value.action.code,
       body: null,
-      params: null,
+      params: null
     };
 
     actionHandlerEventBus.emit("form-action", payloadObject);
@@ -303,7 +307,8 @@ function changePosition(drag: VueDragable<Schema>) {
 
     if (ordinalNumberInModel) {
       const tempOrdinal = localModel.value[drag.moved.newIndex]["ordinalNumber"];
-      localModel.value[drag.moved.newIndex]["ordinalNumber"] = localModel.value[drag.moved.oldIndex]["ordinalNumber"];
+      localModel.value[drag.moved.newIndex]["ordinalNumber"] =
+        localModel.value[drag.moved.oldIndex]["ordinalNumber"];
       localModel.value[drag.moved.oldIndex]["ordinalNumber"] = tempOrdinal;
     }
 
@@ -318,7 +323,9 @@ function changePosition(drag: VueDragable<Schema>) {
 
 const getAddBtnText = computed(() => {
   const isRef =
-    duplicatedSectionOptions.value && typeof duplicatedSectionOptions.value.addBtnText === "object" && "$ref" in duplicatedSectionOptions.value.addBtnText;
+    duplicatedSectionOptions.value &&
+    typeof duplicatedSectionOptions.value.addBtnText === "object" &&
+    "$ref" in duplicatedSectionOptions.value.addBtnText;
   if (isRef) {
     //@ts-ignore
     return "#" + duplicatedSectionOptions.value.addBtnText.$ref.split("/").pop();
@@ -351,7 +358,7 @@ function init(): void {
   nodes.value = [];
   localModel.value = [];
   let isDefaultExist = false;
-  let sections: Object[] = get(props.model, props.schema.key, []) || []; //lodash error with default value = array
+  let sections: Record<any, any>[] = get(props.model, props.schema.key, []) || []; //lodash error with default value = array
   if (sections.length === 0 && isArray(props.schema.defaultValue)) {
     sections = props.schema.defaultValue as Array<any>;
     isDefaultExist = true;
@@ -363,9 +370,15 @@ function init(): void {
         id: generateUUID(),
         type: "object",
         properties: isDefaultExist
-          ? mapPropertiesIfDefault(props.schema.layout.schema?.properties as Record<any, SchemaField>, sections[index])
-          : wrapPropertiesWithIndexAndPath(JSON.parse(JSON.stringify(props.schema.layout.schema?.properties)), index),
-        required: props.schema.layout.schema?.required,
+          ? mapPropertiesIfDefault(
+            props.schema.layout.schema?.properties as Record<any, SchemaField>,
+            sections[index]
+          )
+          : wrapPropertiesWithIndexAndPath(
+            JSON.parse(JSON.stringify(props.schema.layout.schema?.properties)),
+            index
+          ),
+        required: props.schema.layout.schema?.required
       } as Schema);
 
       if (ordinalNumberInModel) {
@@ -387,7 +400,7 @@ function init(): void {
 function wrapPropertiesWithIndexAndPath(
   properties: Record<string, SchemaField>,
   index: number,
-  rootSchema: any = null,
+  rootSchema: any = null
 ): Record<string, SchemaField> {
   for (let [key, value] of Object.entries(properties)) {
     if ("properties" in value) {
@@ -400,9 +413,11 @@ function wrapPropertiesWithIndexAndPath(
       if (props.schema["path"] !== undefined && props.schema["index"] != undefined) {
         if (props.schema.layout.schema) {
           // jesteśmy w sekcji powielanej i napotykamy sekcje powielana
-          value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key + "[]";
+          value["path"] =
+            props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key + "[]";
         } else {
-          value["path"] = props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key;
+          value["path"] =
+            props.schema["path"] + "[" + props.schema["index"] + "]." + props.schema.key;
         }
       } else {
         value["path"] = props.schema.key + "[]";
@@ -413,8 +428,11 @@ function wrapPropertiesWithIndexAndPath(
   return properties;
 }
 
-function mapPropertiesIfDefault(fieldDefinition: Record<string, SchemaField>, defaultValue: object) {
-  let itemsWithDefault = {};
+function mapPropertiesIfDefault(
+  fieldDefinition: Record<string, SchemaField>,
+  defaultValue: Record<string, any>
+) {
+  let itemsWithDefault: Record<string, any> = {};
   for (let [key, value] of Object.entries(fieldDefinition)) {
     itemsWithDefault[key] = Object.assign({ ...value, defaultValue: defaultValue[key] });
   }

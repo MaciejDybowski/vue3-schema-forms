@@ -1,5 +1,5 @@
-import { EngineField } from "@/types/engine/EngineField";
-import { Schema } from "@/types/schema/Schema";
+import { EngineField } from '@/types/engine/EngineField';
+import { Schema } from '@/types/schema/Schema';
 
 export interface EngineButtonField extends EngineField {
   mode: string;

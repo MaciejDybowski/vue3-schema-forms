@@ -1,15 +1,13 @@
 // @ts-nocheck
-import { expect, userEvent, within } from "@storybook/test";
+import { expect, userEvent, within } from '@storybook/test';
+import { initialize } from 'msw-storybook-addon';
 
-import { Schema } from "../../types/schema/Schema";
-import { waitForMountedAsync } from "../editable-fields/utils";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
-
-import { initialize } from "msw-storybook-addon";
-
+import { Schema } from '../../types/schema/Schema';
+import { waitForMountedAsync } from '../editable-fields/utils';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Features/JSONata expressions",
+  title: 'Features/JSONata expressions',
   ...formStoryWrapperTemplate,
 };
 
@@ -115,39 +113,39 @@ export const OnPropsSimpleField: Story = {
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    let hint = document.getElementsByClassName("v-messages");
+    let hint = document.getElementsByClassName('v-messages');
     await expect(hint.length).toEqual(0);
 
-    const option2 = canvas.getByLabelText("Euro");
+    const option2 = canvas.getByLabelText('Euro');
     await userEvent.click(option2, { delay: 200 });
-    hint = document.getElementsByClassName("v-messages");
+    hint = document.getElementsByClassName('v-messages');
     await expect(hint.length).toEqual(1);
   },
   args: {
-    formModel: { waluta: { value: "PLN", title: "Polski złoty" } },
+    formModel: { waluta: { value: 'PLN', title: 'Polski złoty' } },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         waluta: {
-          label: "Waluta",
+          label: 'Waluta',
           layout: {
-            component: "radio-button",
+            component: 'radio-button',
           },
           source: {
             items: [
-              { value: "PLN", title: "Polski złoty" },
-              { value: "EUR", title: "Euro" },
+              { value: 'PLN', title: 'Polski złoty' },
+              { value: 'EUR', title: 'Euro' },
             ],
             returnObject: true,
           },
         },
         kwotaNetto: {
-          label: "Kwota netto",
+          label: 'Kwota netto',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             props: {
-              "persistent-hint": "nata(waluta.value!='PLN' ? true : false)",
-              hint: "Kwota netto PLN: {kwotaNettoPln:0}",
+              'persistent-hint': "nata(waluta.value!='PLN' ? true : false)",
+              hint: 'Kwota netto PLN: {kwotaNettoPln:0}',
             },
           },
         },
@@ -161,44 +159,44 @@ export const OnPropsIfInDuplicatedSection: Story = {
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    let hint = document.getElementsByClassName("v-messages");
+    let hint = document.getElementsByClassName('v-messages');
     await expect(hint.length).toEqual(0);
 
-    const option2 = canvas.getByLabelText("Euro");
+    const option2 = canvas.getByLabelText('Euro');
     await userEvent.click(option2, { delay: 200 });
-    hint = document.getElementsByClassName("v-messages");
+    hint = document.getElementsByClassName('v-messages');
     await expect(hint.length).toEqual(1);
   },
   args: {
-    formModel: { waluta: { value: "PLN", title: "Polski złoty" } },
+    formModel: { waluta: { value: 'PLN', title: 'Polski złoty' } },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         waluta: {
-          label: "Waluta",
+          label: 'Waluta',
           layout: {
-            component: "radio-button",
+            component: 'radio-button',
           },
           source: {
             items: [
-              { value: "PLN", title: "Polski złoty" },
-              { value: "EUR", title: "Euro" },
+              { value: 'PLN', title: 'Polski złoty' },
+              { value: 'EUR', title: 'Euro' },
             ],
             returnObject: true,
           },
         },
         section: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 kwotaNetto: {
-                  label: "Kwota netto",
+                  label: 'Kwota netto',
                   layout: {
-                    component: "text-field",
+                    component: 'text-field',
                     props: {
-                      "persistent-hint": "nata(waluta.value!='PLN' ? true :false)",
-                      hint: "Kwota netto PLN: {kwotaNettoPln:0}",
+                      'persistent-hint': "nata(waluta.value!='PLN' ? true :false)",
+                      hint: 'Kwota netto PLN: {kwotaNettoPln:0}',
                     },
                   },
                 },
@@ -213,16 +211,16 @@ export const OnPropsIfInDuplicatedSection: Story = {
 };
 
 export const UseJSONataFunctions: Story = {
-  name: "JSONata function in action",
+  name: 'JSONata function in action',
   args: {
     formModel: {
       pozycjeDokumentu: [
         {
-          rodzajKosztu: { id: "213" },
+          rodzajKosztu: { id: '213' },
           kwotaBrutto: 23.321,
         },
         {
-          rodzajKosztu: { id: "212133" },
+          rodzajKosztu: { id: '212133' },
           kwotaBrutto: 100.321,
         },
       ],
@@ -231,24 +229,24 @@ export const UseJSONataFunctions: Story = {
       properties: {
         pozycjeDokumentu: {
           layout: {
-            component: "duplicated-section",
+            component: 'duplicated-section',
             schema: {
               properties: {
                 rodzajKosztu: {
-                  label: "Rodzaj kosztu",
-                  type: "object",
-                  valueMapping: "{pozycjeDokumentu[].rodzajKosztu.id}",
+                  label: 'Rodzaj kosztu',
+                  type: 'object',
+                  valueMapping: '{pozycjeDokumentu[].rodzajKosztu.id}',
                   layout: {
-                    component: "data-viewer",
+                    component: 'data-viewer',
                     cols: 6,
                   },
                 },
                 kwotaBrutto: {
-                  label: "Kwota brutto",
-                  type: "number",
+                  label: 'Kwota brutto',
+                  type: 'number',
                   precision: 3,
                   layout: {
-                    component: "number-field",
+                    component: 'number-field',
                     cols: 6,
                   },
                 },
@@ -258,18 +256,18 @@ export const UseJSONataFunctions: Story = {
         },
         sklejenieRodzaj: {
           expression: 'JSONATA(pozycjeDokumentu.rodzajKosztu.id ~> $join(","))',
-          label: "Próba sklejenie rodzaj expresion jsonNata",
+          label: 'Próba sklejenie rodzaj expresion jsonNata',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 6,
           },
         },
         sklejenieKwoty: {
           expression:
             'JSONATA(pozycjeDokumentu.kwotaBrutto ~> $map(function($v) { $replace("limitKosztowPln>" & $string($v), ".", ",")}) ~> $join(";"))',
-          label: "Próba sklejenie kwoty expresion jsonNata",
+          label: 'Próba sklejenie kwoty expresion jsonNata',
           layout: {
-            component: "text-field",
+            component: 'text-field',
             cols: 6,
           },
         },

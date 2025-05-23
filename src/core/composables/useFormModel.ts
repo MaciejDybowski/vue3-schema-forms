@@ -25,7 +25,7 @@ export function useFormModel() {
       key: schema.key,
       value: (val !== undefined || val === 0) && val !== '' ? val : null,
       index: index,
-      emitBlocker: emitBlocker
+      emitBlocker: emitBlocker,
     };
     schema.on.input(event);
   }

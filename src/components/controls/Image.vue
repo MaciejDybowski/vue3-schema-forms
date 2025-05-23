@@ -19,10 +19,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref } from 'vue';
 
-import { useFormModel, useProps, useResolveVariables } from "@/core/composables";
-import { EngineImageField } from "@/types/engine/controls";
+import { useFormModel, useProps, useResolveVariables } from '@/core/composables';
+import { EngineImageField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineImageField;
@@ -34,7 +34,7 @@ const { bindProps, fieldProps } = useProps();
 const { resolve } = useResolveVariables();
 
 const localModel = computed({
-  get(): string | number {
+  get(): Record<string, any> {
     return getValue(props.model, props.schema);
   },
   set(val: any) {
@@ -45,13 +45,13 @@ const localModel = computed({
 const srcForImage = ref();
 
 async function updateImageUrl() {
-  const defaultWidth = "width" in fieldProps.value ? (fieldProps.value.width as string) : "200";
-  const defaultHeight = "height" in fieldProps.value ? (fieldProps.value.height as string) : "150";
+  const defaultWidth = 'width' in fieldProps.value ? (fieldProps.value.width as string) : '200';
+  const defaultHeight = 'height' in fieldProps.value ? (fieldProps.value.height as string) : '150';
 
-  let url = props.schema.src.replace("{width}", defaultWidth).replace("{height}", defaultHeight);
+  let url = props.schema.src.replace('{width}', defaultWidth).replace('{height}', defaultHeight);
   if (localModel.value) {
-    url = url.replace("{id}", localModel.value["id"]);
-    url = url.replace("{dataId}", localModel.value["dataId"]);
+    url = url.replace('{id}', localModel.value['id']);
+    url = url.replace('{dataId}', localModel.value['dataId']);
   }
 
   srcForImage.value = await resolve(props.schema, url);

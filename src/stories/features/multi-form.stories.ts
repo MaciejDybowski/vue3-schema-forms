@@ -1,9 +1,10 @@
 // @ts-nocheck
-import { Meta, StoryObj } from "@storybook/vue3";
-import MultipleFormStoryWrapper from "../../../.storybook/components/MultipleFormStoryWrapper.vue";
+import { Meta, StoryObj } from '@storybook/vue3';
+
+import MultipleFormStoryWrapper from '../../../.storybook/components/MultipleFormStoryWrapper.vue';
 
 export default {
-  title: "Features/Multi-Form",
+  title: 'Features/Multi-Form',
   component: MultipleFormStoryWrapper,
   args: {
     formModelOne: {},
@@ -12,8 +13,8 @@ export default {
     schemaOneTwo: {},
     options: {
       fieldProps: {
-        variant: "outlined",
-        density: "compact",
+        variant: 'outlined',
+        density: 'compact',
       },
     },
   },
@@ -25,40 +26,39 @@ export const MultiForms: Story = {
   args: {
     formModelOne: {},
     schemaOne: {
-      type: "object",
+      type: 'object',
       properties: {
         fieldA: {
-          label: "Field A",
+          label: 'Field A',
           layout: {
-            component: "text-field"
-          }
+            component: 'text-field',
+          },
         },
         fieldB: {
-          label: "Field {fieldA} with extra",
+          label: 'Field {fieldA} with extra',
           layout: {
-            component: "text-field"
-          }
-        }
-      }
+            component: 'text-field',
+          },
+        },
+      },
     },
     formModelTwo: {},
     schemaTwo: {
-      type: "object",
+      type: 'object',
       properties: {
         fieldA: {
-          label: "Field A",
+          label: 'Field A',
           layout: {
-            component: "text-field"
-          }
+            component: 'text-field',
+          },
         },
         fieldB: {
-          label: "Field {fieldA} with extra",
+          label: 'Field {fieldA} with extra',
           layout: {
-            component: "text-field"
-          }
-        }
-      }
+            component: 'text-field',
+          },
+        },
+      },
     },
   },
 };
-

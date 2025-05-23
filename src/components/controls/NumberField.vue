@@ -29,34 +29,34 @@
 </template>
 
 <script lang="ts" setup>
-import set from "lodash/set";
-import { computed, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
+import get from 'lodash/get';
+import set from 'lodash/set';
+
+import { computed, onMounted, ref } from 'vue';
 
 import {
   useCalculation,
   useClass,
   useExpression,
   useFormModel,
-  useLabel, useLocale,
+  useLabel,
+  useLocale,
   useProps,
   useResolveVariables,
-  useRules
-} from "@/core/composables";
-import { useEventHandler } from "@/core/composables/useEventHandler";
-import { NumberFormattingType, RoundOption, useNumber } from "@/core/composables/useNumber";
-import { variableRegexp } from "@/core/engine/utils";
-import { logger } from "@/main";
-import { EngineNumberField } from "@/types/engine/controls";
-
-import get from "lodash/get";
+  useRules,
+} from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
+import { NumberFormattingType, RoundOption, useNumber } from '@/core/composables/useNumber';
+import { variableRegexp } from '@/core/engine/utils';
+import { logger } from '@/main';
+import { EngineNumberField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineNumberField;
-  model: object;
+  model: Record<string, any>;
 }>();
 
-const { t } = useLocale()
+const { t } = useLocale();
 const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { fieldProps, bindProps } = useProps();
@@ -68,27 +68,32 @@ const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 const showFormattedNumber = ref(true);
 const { fillPath } = useResolveVariables();
-let precision = props.schema.type == "int" ? 0 : "precision" in props.schema ? props.schema.precision : 2;
-const precisionMin = props.schema.type == "int" ? 0 : "precisionMin" in props.schema ? props.schema.precision : 0;
+let precision =
+  props.schema.type == 'int' ? 0 : 'precision' in props.schema ? props.schema.precision : 2;
+const precisionMin =
+  props.schema.type == 'int' ? 0 : 'precisionMin' in props.schema ? props.schema.precision : 0;
 
-const formatType = ("formatType" in props.schema ? props.schema.formatType : "decimal") as NumberFormattingType;
+const formatType = (
+  'formatType' in props.schema ? props.schema.formatType : 'decimal'
+) as NumberFormattingType;
 
-const currency = ("currency" in props.schema ? props.schema.currency : "PLN") as string;
+const currency = ('currency' in props.schema ? props.schema.currency : 'PLN') as string;
 
-const roundOption: RoundOption = "roundOption" in props.schema ? (props.schema.roundOption as RoundOption) : "round";
+const roundOption: RoundOption =
+  'roundOption' in props.schema ? (props.schema.roundOption as RoundOption) : 'round';
 
 const { roundTo, formattedNumber } = useNumber();
 
 const lastValue = ref<any>(null);
 
-function isOnlyZeros(str) {
+function isOnlyZeros(str: string): boolean {
   return /^0+$/.test(str);
 }
 
 function parseDigitWithOnlyZeroFraction(value: number) {
-  let lastFraction = lastValue.value?.toString().split(".")[1];
+  let lastFraction = lastValue.value?.toString().split('.')[1];
   lastFraction = lastFraction?.slice(0, lastFraction.length - 1);
-  let current = value ? value.toString().split(".")[1] : null;
+  let current = value ? value.toString().split('.')[1] : null;
 
   if (isOnlyZeros(lastFraction) && current == undefined) {
     return value + `.${lastFraction}`;
@@ -99,10 +104,10 @@ function parseDigitWithOnlyZeroFraction(value: number) {
 const localModel = computed({
   get(): string | number | null {
     let value = getValue(props.model, props.schema);
-    if (value && typeof value == "string" && value.match(variableRegexp)) {
+    if (value && typeof value == 'string' && value.match(variableRegexp)) {
       return value; // defaultValue with dependencies
     }
-    if (typeof value == "string") {
+    if (typeof value == 'string') {
       value = Number(value);
     }
     if (value && showFormattedNumber.value) {
@@ -123,17 +128,21 @@ const localModel = computed({
 });
 
 const isCalculationDefined = computed(() => {
-  return props.schema.calculation && props.schema.calculation !== "";
+  return props.schema.calculation && props.schema.calculation !== '';
 });
 
 const isValueFromModelAndNotChangedManually = computed(() => {
-  return !localModel.value || (localModel.value && !(`${props.schema.key}ManuallyChanged` in props.model));
+  return (
+    !localModel.value ||
+    (localModel.value && !(`${props.schema.key}ManuallyChanged` in props.model))
+  );
 });
 
 const showIconForVisualizationOfManuallyChangedResult = computed(() => {
   return (
     calculationResultWasModified.value ||
-    (`${props.schema.key}ManuallyChanged` in props.model && props.model[`${props.schema.key}ManuallyChanged`] == true)
+    (`${props.schema.key}ManuallyChanged` in props.model &&
+      props.model[`${props.schema.key}ManuallyChanged`] == true)
   );
 });
 
@@ -169,14 +178,18 @@ async function runCalculationIfExist() {
 }
 
 async function runExpressionIfExist() {
-  if (props.schema.expression && props.schema.expression !== "") {
+  if (props.schema.expression && props.schema.expression !== '') {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
     localModel.value = await resolveExpression(props.schema.key, expression, props.model);
   }
 }
 
 async function resolveIfLocalModelHasDependencies() {
-  if (localModel.value && typeof localModel.value == "string" && localModel.value.match(variableRegexp)) {
+  if (
+    localModel.value &&
+    typeof localModel.value == 'string' &&
+    localModel.value.match(variableRegexp)
+  ) {
     const result = await resolve(props.schema, localModel.value);
     if (result.allVariablesResolved) {
       localModel.value = result.resolvedText;

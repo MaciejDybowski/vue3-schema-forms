@@ -1,6 +1,12 @@
-import { EngineField } from "@/types/engine/EngineField";
-import { LocationResult } from "@/types/shared/LocationResult";
-import { AvatarSource, DictionarySource, SimpleSource, Source, UserInputSource } from "@/types/shared/Source";
+import { EngineField } from '@/types/engine/EngineField';
+import { LocationResult } from '@/types/shared/LocationResult';
+import {
+  AvatarSource,
+  DictionarySource,
+  SimpleSource,
+  Source,
+  UserInputSource,
+} from '@/types/shared/Source';
 
 export interface EngineTextField extends EngineField {
   calculation?: string;
@@ -70,7 +76,7 @@ export interface EngineDictionaryField extends EngineField {
 }
 
 export interface EngineOrderedMultiSelect extends EngineDictionaryField {
-  variant: "list" | "combobox";
+  variant: 'list' | 'combobox';
   source: DictionarySource;
 }
 

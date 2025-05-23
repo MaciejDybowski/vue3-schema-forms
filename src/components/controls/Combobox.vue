@@ -47,16 +47,24 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch } from 'vue';
 
-import BaseCombobox from "@/components/controls/base/BaseCombobox.vue";
+import BaseCombobox from '@/components/controls/base/BaseCombobox.vue';
 
-import { useDictionary } from "@/core/composables/useDictionary";
-import { useEventHandler } from "@/core/composables/useEventHandler";
-import { variableRegexp } from "@/core/engine/utils";
-import { EngineDictionaryField } from "@/types/engine/controls";
+import { useDictionary } from '@/core/composables/useDictionary';
+import { useEventHandler } from '@/core/composables/useEventHandler';
+import { variableRegexp } from '@/core/engine/utils';
+import { EngineDictionaryField } from '@/types/engine/controls';
 
-import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "../../core/composables";
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useLocale,
+  useProps,
+  useResolveVariables,
+  useRules,
+} from '../../core/composables';
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -99,7 +107,7 @@ const {
   initState,
   queryBlocker,
   loadCounter,
-  dependencyWasChanged
+  dependencyWasChanged,
 } = useDictionary();
 
 function singleOptionAutoSelectFunction() {
@@ -116,7 +124,7 @@ function singleOptionAutoSelectFunction() {
 }
 
 async function resolveIfLocalModelHasDependencies() {
-  if (typeof localModel.value == "string" && localModel.value.match(variableRegexp)) {
+  if (typeof localModel.value == 'string' && localModel.value.match(variableRegexp)) {
     const result = await resolve(props.schema, localModel.value);
     if (result.allVariablesResolved) {
       localModel.value = result.resolvedText;
@@ -125,10 +133,10 @@ async function resolveIfLocalModelHasDependencies() {
 }
 
 watch(dependencyWasChanged, () => {
-  if(dependencyWasChanged.value){
-    localModel.value = null
+  if (dependencyWasChanged.value) {
+    localModel.value = null;
   }
-})
+});
 
 onMounted(async () => {
   await initState(props.schema);
@@ -137,7 +145,7 @@ onMounted(async () => {
   await bindRules(props.schema);
 
   if (localModel.value) {
-    if (typeof localModel.value == "object") {
+    if (typeof localModel.value == 'object') {
       data.value.push(localModel.value);
     } else {
       await resolveIfLocalModelHasDependencies();
@@ -152,13 +160,15 @@ onMounted(async () => {
 
 async function fetchDictionaryData() {
   if (!fieldProps.value.readonly) {
-    console.debug(`[vue-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
+    console.debug(
+      `[vue-focus] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`,
+    );
 
-    if(!returnObject.value){
+    if (!returnObject.value) {
       queryBlocker.value = query.value === localModelCurrent.value;
     }
 
-    await load("autocomplete");
+    await load('autocomplete');
   }
 }
 

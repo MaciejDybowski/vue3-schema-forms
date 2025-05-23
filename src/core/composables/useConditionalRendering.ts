@@ -1,35 +1,42 @@
-import jsonata from "jsonata";
-import { cloneDeep } from "lodash";
-import { ref } from "vue";
+import { useEventBus } from '@vueuse/core';
+import jsonata from 'jsonata';
+import { cloneDeep } from 'lodash';
 
-import { Schema, logger, useResolveVariables } from "@/main";
-import { EngineField } from "@/types/engine/EngineField";
-import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
-import { useEventBus } from "@vueuse/core";
-import { useInjectedFormModel } from "@/core/state/useFormModelProvider";
+import { ref } from 'vue';
+
+import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
+import { Schema, logger, useResolveVariables } from '@/main';
+import { EngineField } from '@/types/engine/EngineField';
+import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 
 export function useConditionalRendering() {
   let shouldRender = ref(false);
   let lastValueOfShouldRender = ref(false);
-  const vueSchemaFormEventBus = useEventBus<string>("form-model");
+  const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const { fillPath } = useResolveVariables();
   const form = useInjectedFormModel();
 
-  async function shouldRenderField(schema: EngineField, model: any, registerListener: boolean = true) {
+  async function shouldRenderField(
+    schema: EngineField,
+    model: any,
+    registerListener: boolean = true,
+  ) {
     // first use of function, set variable from schema only once
     if (registerListener) {
       shouldRender.value = !schema.layout.if;
     }
 
-    const originalIf = ref(!shouldRender.value ? cloneDeep(schema.layout.if) : "");
+    const originalIf = ref(!shouldRender.value ? cloneDeep(schema.layout.if) : '');
 
     if (schema.layout.if !== undefined && schema.layout.if && registerListener) {
-      const unsubscribe = vueSchemaFormEventBus.on(() => conditionalRenderingListener(schema, model));
+      const unsubscribe = vueSchemaFormEventBus.on(() =>
+        conditionalRenderingListener(schema, model),
+      );
     }
 
     //if (!shouldRender.value) {
     originalIf.value = cloneDeep(schema.layout.if);
-    if (schema.layout.if !== undefined && schema.layout.if?.includes("nata(")) {
+    if (schema.layout.if !== undefined && schema.layout.if?.includes('nata(')) {
       const match = schema.layout.if.match(/^nata\(([^]*)\)$/);
       if (match) {
         const expression = fillPath(schema.path, schema.index, match[1]);
@@ -40,7 +47,6 @@ export function useConditionalRendering() {
   }
 
   async function ifByJsonNata(schema: EngineField, expression: string, model: any) {
-
     const modelForResolve = form.getFormModelForResolve.value;
     const nata = jsonata(expression);
     shouldRender.value = await nata.evaluate(modelForResolve);
@@ -49,7 +55,7 @@ export function useConditionalRendering() {
 
   function resetModelValueWhenFalse(model: object, schema: EngineField) {
     if (lastValueOfShouldRender.value && !shouldRender.value) {
-      if (schema.layout.component == "fields-group") {
+      if (schema.layout.component == 'fields-group') {
         const internalSchema = schema.layout.schema as Schema;
         resetModelValues(internalSchema, schema);
       } else {
@@ -67,7 +73,7 @@ export function useConditionalRendering() {
     if (!schema.properties) return;
 
     Object.entries(schema.properties).forEach(([key, field]) => {
-      if (field.type === "object" && field.properties) {
+      if (field.type === 'object' && field.properties) {
         resetModelValues(field as any, formField);
       } else {
         const event: NodeUpdateEvent = {

@@ -1,7 +1,10 @@
-import jsonata from "jsonata";
-import get from "lodash/get";
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import duration from 'dayjs/plugin/duration';
+import jsonata from 'jsonata';
+import get from 'lodash/get';
 
-export const functions = {
+export const functions: Record<string, Function> = {
   FIND_OLDEST_DATE: FIND_OLDEST_DATE,
   FIND_EARLIEST_DATE: FIND_EARLIEST_DATE,
   CALC_DATE_DIFF_RETURN_DAY: CALC_DATE_DIFF_RETURN_DAY,
@@ -28,10 +31,10 @@ export function FIND_OLDEST_DATE(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const values = get(model, parameterArray[1], []);
-    let min = "";
+    let min = '';
     if (values.length > 1) {
       min = values
         .map((item) => item[parameterArray[0]])
@@ -39,7 +42,7 @@ export function FIND_OLDEST_DATE(expression: string, model: object) {
           return Date.parse(a) - Date.parse(b);
         })[0];
     } else {
-      min = values.length == 0 ? "" : values[0][parameterArray[0]];
+      min = values.length == 0 ? '' : values[0][parameterArray[0]];
     }
     return min;
   }
@@ -50,10 +53,10 @@ export function FIND_EARLIEST_DATE(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const values = get(model, parameterArray[1], []);
-    let max = "";
+    let max = '';
     if (values.length > 1) {
       max = values
         .map((item) => item[parameterArray[0]])
@@ -61,7 +64,7 @@ export function FIND_EARLIEST_DATE(expression: string, model: object) {
           return Date.parse(a) - Date.parse(b);
         })[values.length - 1];
     } else {
-      max = values.length == 0 ? "" : values[0][parameterArray[0]];
+      max = values.length == 0 ? '' : values[0][parameterArray[0]];
     }
     return max;
   }
@@ -72,12 +75,12 @@ export function CALC_DATE_DIFF_RETURN_DAY(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const date1 = get(model, parameterArray[0], 0);
     const date2 = get(model, parameterArray[1], 0);
     const result = calculateDateDifference(date1, date2);
-    return isNaN(result.days) ? "" : result.days + "";
+    return isNaN(result.days) ? '' : result.days + '';
   }
 }
 
@@ -104,12 +107,12 @@ export function CALC_DATE_DIFF_RETURN_HOURS(expression: string, model: object) {
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const date1 = get(model, parameterArray[0], 0);
     const date2 = get(model, parameterArray[1], 0);
     const result = calculateDateDifference(date1, date2);
-    return isNaN(result.hours) ? "" : result.hours + "";
+    return isNaN(result.hours) ? '' : result.hours + '';
   }
 }
 
@@ -118,24 +121,20 @@ export function CALC_DATE_DIFF_RETURN_MINUTES(expression: string, model: object)
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
 
     const date1 = get(model, parameterArray[0], 0);
     const date2 = get(model, parameterArray[1], 0);
     const result = calculateDateDifference(date1, date2);
-    return isNaN(result.minutes) ? "" : result.minutes + "";
+    return isNaN(result.minutes) ? '' : result.minutes + '';
   }
 }
-
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
 
 function calculateDateDifference(date1: string | number | Date, date2: string | number | Date) {
-  if(date1 == 0 || date2 == 0) return { days: 0, hours: 0, minutes: 0 };
+  if (date1 == 0 || date2 == 0) return { days: 0, hours: 0, minutes: 0 };
 
   const d1 = dayjs(date1);
   const d2 = dayjs(date2);
@@ -154,14 +153,12 @@ function calculateDateDifference(date1: string | number | Date, date2: string | 
   };
 }
 
-
-
 export function DELEGATION_DIET_CALC(expression: string, model: object) {
   let regex = /DELEGATION_DIET_CALC\((.*?)\)/;
   let match = regex.exec(expression);
   if (match) {
     let parameters = match[1];
-    let parameterArray = parameters.split(",").map((param) => param.trim());
+    let parameterArray = parameters.split(',').map((param) => param.trim());
     let dni = get(model, parameterArray[0], 0);
     let godziny = get(model, parameterArray[1], 0);
     let sniadania = get(model, parameterArray[2], 0);
@@ -181,7 +178,7 @@ export function DELEGATION_DIET_CALC(expression: string, model: object) {
     }
 
     if (sniadania > 0) {
-      dietaNalezna = dietaNalezna - sniadania *odliczeniaSniadania;
+      dietaNalezna = dietaNalezna - sniadania * odliczeniaSniadania;
     }
 
     if (obiady > 0) {
@@ -197,8 +194,8 @@ export function DELEGATION_DIET_CALC(expression: string, model: object) {
 }
 
 function generateRandomHash(length: number) {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
   const charactersLength = characters.length;
 
   for (let i = 0; i < length; i++) {

@@ -1,32 +1,51 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "strict": true,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "jsx": "preserve",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+    "strict": true,
     "esModuleInterop": true,
-    "noImplicitAny": false,
-    "lib": ["ESNext", "DOM"],
-    "skipLibCheck": true,
-    "noEmit": true,
-    "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
     "declaration": true,
-    "outDir": "dist",
     "declarationDir": "dist",
+    "outDir": "dist",
+    "composite": true,
+    "isolatedModules": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
-    "types": ["vite/client"] // for env variables
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/global-components.d.ts"],
-  "exclude": ["src/stories", "src/tests"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/stories",
+    "src/tests"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

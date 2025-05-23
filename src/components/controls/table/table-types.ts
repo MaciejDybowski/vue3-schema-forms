@@ -17,5 +17,5 @@ export type TableFetchOptions = {
   query?: string | null;
 };
 
-export type SortItem = { key: string; order?: boolean | "asc" | "desc" };
+export type SortItem = { key: string; order?: boolean | 'asc' | 'desc' };
 export type TableFilter = Map<string, string>;

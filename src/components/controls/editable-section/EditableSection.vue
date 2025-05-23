@@ -19,14 +19,15 @@
 </template>
 
 <script setup lang="ts">
-import set from "lodash/set";
-import { computed, ref } from "vue";
+import set from 'lodash/set';
 
-import { EngineField } from "@/types/engine/EngineField";
-import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
-import { Schema } from "@/types/schema/Schema";
+import { computed, ref } from 'vue';
 
-import FormRoot from "../../engine/FormRoot.vue";
+import { EngineField } from '@/types/engine/EngineField';
+import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
+import { Schema } from '@/types/schema/Schema';
+
+import FormRoot from '../../engine/FormRoot.vue';
 
 const props = defineProps<{
   schema: EngineField;
@@ -38,7 +39,7 @@ function updateModel(event: NodeUpdateEvent) {
 }
 
 let sectionSchema = ref({
-  type: "object",
+  type: 'object',
   properties: {
     [props.schema.key]: props.schema.layout.schema,
   },
@@ -49,7 +50,7 @@ let wrappedSchema = computed(() => {
 });
 
 function transformSchema() {
-  console.debug("#TODO");
+  console.debug('#TODO');
 }
 </script>
 <style scoped lang="css">

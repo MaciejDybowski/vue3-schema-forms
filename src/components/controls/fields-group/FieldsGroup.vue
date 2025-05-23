@@ -9,12 +9,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref } from 'vue';
 
-import FormRoot from "@/components/engine/FormRoot.vue";
+import FormRoot from '@/components/engine/FormRoot.vue';
 
-import { useFormModel } from "@/core/composables";
-import { EngineTextField } from "@/types/engine/controls";
+import { useFormModel } from '@/core/composables';
+import { EngineTextField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineTextField;

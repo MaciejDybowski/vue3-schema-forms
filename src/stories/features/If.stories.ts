@@ -1,36 +1,34 @@
 // @ts-nocheck
-import { conditionSchema } from "@/stories/schemas";
-import { expect, userEvent, within } from "@storybook/test";
+import { expect, userEvent, within } from '@storybook/test';
+import { initialize } from 'msw-storybook-addon';
 
-import { Schema } from "../../types/schema/Schema";
-import { SchemaField, SchemaTextField } from "../../types/schema/elements";
-import { formStoryWrapperTemplate } from "../templates/shared-blocks";
+import { conditionSchema } from '@/stories/schemas';
 
-import { initialize } from "msw-storybook-addon";
-import { waitForMountedAsync } from "../editable-fields/utils";
-
+import { Schema } from '../../types/schema/Schema';
+import { SchemaField, SchemaTextField } from '../../types/schema/elements';
+import { waitForMountedAsync } from '../editable-fields/utils';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: "Features/Conditional Rendering/If",
+  title: 'Features/Conditional Rendering/If',
   ...formStoryWrapperTemplate,
 };
 
-
 export const ConditionStory: Story = {
-  name: "Case: simple usage",
+  name: 'Case: simple usage',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const renderedField = canvas.queryByText("Result");
+    const renderedField = canvas.queryByText('Result');
     await expect(renderedField).toEqual(null);
 
-    const login = canvas.getByLabelText("Login");
-    const password = canvas.getByLabelText("Password");
+    const login = canvas.getByLabelText('Login');
+    const password = canvas.getByLabelText('Password');
 
-    await userEvent.type(login, "admin", { delay: 100 });
-    await userEvent.type(password, "admin", { delay: 300 });
+    await userEvent.type(login, 'admin', { delay: 100 });
+    await userEvent.type(password, 'admin', { delay: 300 });
 
-    const rendered = canvas.getByLabelText("Result");
+    const rendered = canvas.getByLabelText('Result');
     await expect(rendered).toBeInTheDocument();
   },
   args: {
@@ -40,46 +38,46 @@ export const ConditionStory: Story = {
 };
 
 export const ConditionWithCalcStory: Story = {
-  name: "Case: based on calculation result",
+  name: 'Case: based on calculation result',
   play: async ({ canvasElement }) => {
-    await waitForMountedAsync()
+    await waitForMountedAsync();
     const canvas = within(canvasElement);
-    const a = canvas.getByLabelText("A");
-    await userEvent.type(a, "10", { delay: 100 });
-    const renderedField = canvas.getByLabelText("Secret code");
-    await expect(renderedField).toBeInTheDocument()
+    const a = canvas.getByLabelText('A');
+    await userEvent.type(a, '10', { delay: 100 });
+    const renderedField = canvas.getByLabelText('Secret code');
+    await expect(renderedField).toBeInTheDocument();
   },
   args: {
     formModel: {
       b: 99,
     },
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         a: {
-          label: "A",
+          label: 'A',
           layout: {
-            component: "number-field",
+            component: 'number-field',
           },
         },
         b: {
-          label: "B",
+          label: 'B',
           layout: {
-            component: "number-field",
+            component: 'number-field',
           },
         },
         c: {
-          label: "Result",
+          label: 'Result',
           layout: {
-            component: "number-field",
+            component: 'number-field',
           },
-          calculation: "a + b",
+          calculation: 'a + b',
         },
         secretCode: {
-          label: "Secret code",
+          label: 'Secret code',
           layout: {
-            component: "text-field",
-            if: "nata(c>100)",
+            component: 'text-field',
+            if: 'nata(c>100)',
           },
         },
       },
@@ -88,25 +86,25 @@ export const ConditionWithCalcStory: Story = {
 };
 
 export const ConditionalWithDuplicatedSection: Story = {
-  name: "Case: usage in duplicated section",
+  name: 'Case: usage in duplicated section',
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
-    const renderedField = canvas.queryByText("Some field with if");
+    const renderedField = canvas.queryByText('Some field with if');
     await expect(renderedField).toEqual(null);
 
-    const field = await canvas.getByLabelText("Test");
-    await userEvent.type(field, "root", { delay: 100 });
+    const field = await canvas.getByLabelText('Test');
+    await userEvent.type(field, 'root', { delay: 100 });
 
-    const ifField = await canvas.getByLabelText("Some field with if");
-    await userEvent.type(ifField, "Test", { delay: 100 });
+    const ifField = await canvas.getByLabelText('Some field with if');
+    await userEvent.type(ifField, 'Test', { delay: 100 });
 
     await expect(context.args.formModel).toEqual({
       data: {
-        test: "root",
+        test: 'root',
       },
       invoice: {
-        items: [{ someFieldWithIf: "Test" }],
+        items: [{ someFieldWithIf: 'Test' }],
       },
     });
   },
@@ -117,9 +115,9 @@ export const ConditionalWithDuplicatedSection: Story = {
         data: {
           properties: {
             test: {
-              label: "Test",
+              label: 'Test',
               layout: {
-                component: "text-field",
+                component: 'text-field',
                 cols: 3,
               },
             } as SchemaTextField,
@@ -129,16 +127,16 @@ export const ConditionalWithDuplicatedSection: Story = {
           properties: {
             items: {
               layout: {
-                component: "duplicated-section",
+                component: 'duplicated-section',
                 schema: {
                   properties: {
                     someField: {
-                      label: "Item",
-                      layout: { component: "text-field", cols: 3 },
+                      label: 'Item',
+                      layout: { component: 'text-field', cols: 3 },
                     },
                     someFieldWithIf: {
-                      label: "Some field with if",
-                      layout: { component: "text-field", cols: 3, if: "nata(data.test='root')" },
+                      label: 'Some field with if',
+                      layout: { component: 'text-field', cols: 3, if: "nata(data.test='root')" },
                     },
                   },
                 },
@@ -151,41 +149,40 @@ export const ConditionalWithDuplicatedSection: Story = {
   },
 };
 
-
 export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
-  name:"Case: usage in duplicated section with internal condition",
+  name: 'Case: usage in duplicated section with internal condition',
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
-    const renderedField = canvas.queryByText("Some field with if");
+    const renderedField = canvas.queryByText('Some field with if');
     await expect(renderedField).toEqual(null);
 
-    const field = canvas.getByLabelText("Test");
-    await userEvent.type(field, "root", { delay: 100 });
+    const field = canvas.getByLabelText('Test');
+    await userEvent.type(field, 'root', { delay: 100 });
 
-    const ifField = canvas.getByLabelText("Item");
-    await userEvent.type(ifField, "root", { delay: 100 });
+    const ifField = canvas.getByLabelText('Item');
+    await userEvent.type(ifField, 'root', { delay: 100 });
 
     await expect(context.args.formModel).toEqual({
       data: {
-        test: "root",
+        test: 'root',
       },
       invoice: {
-        items: [{ dane: { someField: "root" } }],
+        items: [{ dane: { someField: 'root' } }],
       },
     });
   },
   args: {
     formModel: {},
     schema: {
-      type: "object",
+      type: 'object',
       properties: {
         data: {
           properties: {
             test: {
-              label: "Test",
+              label: 'Test',
               layout: {
-                component: "text-field",
+                component: 'text-field',
                 cols: 3,
               },
             },
@@ -195,30 +192,30 @@ export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
           properties: {
             items: {
               layout: {
-                component: "duplicated-section",
+                component: 'duplicated-section',
                 schema: {
                   properties: {
                     dane: {
                       properties: {
                         someField: {
-                          label: "Item",
+                          label: 'Item',
                           layout: {
-                            component: "text-field",
+                            component: 'text-field',
                             cols: 3,
                           },
                         },
                         someFieldWithIf: {
-                          label: "Some field with if",
+                          label: 'Some field with if',
                           layout: {
-                            component: "text-field",
+                            component: 'text-field',
                             cols: 3,
                             if: 'nata(dane.someField="root")',
                           },
                         },
                         someFieldWithIf2: {
-                          label: "Some field with if",
+                          label: 'Some field with if',
                           layout: {
-                            component: "text-field",
+                            component: 'text-field',
                             cols: 3,
                             if: 'nata(data.test="root")',
                           },

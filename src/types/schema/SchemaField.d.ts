@@ -1,8 +1,8 @@
-import { Layout } from "@/types/shared/Layout";
-import { LocationResult } from "@/types/shared/LocationResult";
-import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
-import { SchemaSimpleValidation } from "@/types/shared/SchemaSimpleValidation";
-import { Source } from "@/types/shared/Source";
+import { Layout } from '@/types/shared/Layout';
+import { LocationResult } from '@/types/shared/LocationResult';
+import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
+import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
+import { Source } from '@/types/shared/Source';
 
 export interface SchemaField {
   label?: string | { $ref: string };
@@ -28,4 +28,8 @@ export interface SchemaField {
 
   // simple validation
   validations?: Array<SchemaSimpleValidation>;
+
+  // duplicated section elements
+  path?: string;
+  index?: number;
 }

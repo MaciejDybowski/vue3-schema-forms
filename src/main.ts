@@ -1,7 +1,8 @@
 import { App, Component } from "vue";
 
 import { vueSchemaFromControls } from "@/components/controls";
-import DuplicatedSectionBatchAddDialogBody from "@/components/controls/duplicated-section/DuplicatedSectionBatchAddDialogBody.vue";
+import DuplicatedSectionBatchAddDialogBody
+  from "@/components/controls/duplicated-section/DuplicatedSectionBatchAddDialogBody.vue";
 
 import {
   useCalculation,
@@ -17,7 +18,7 @@ import {
   useProps,
   useResolveVariables,
   useRules,
-  useSource,
+  useSource
 } from "@/core/composables";
 import { EngineField } from "@/types/engine/EngineField";
 import { Schema } from "@/types/schema/Schema";
@@ -31,7 +32,6 @@ import { SchemaFieldType } from "@/types/shared/SchemaFieldType";
 import { Source } from "@/types/shared/Source";
 import { StaticContentTag } from "@/types/shared/StaticContentTag";
 import { Translation } from "@/types/shared/Translation";
-import { useEventBus } from "@vueuse/core";
 
 import * as components from "../src/components/index";
 
@@ -45,10 +45,13 @@ export let logger = {
   dictionaryLogger: false,
   duplicatedSchemaWatchLogger: false,
   eventEmitterListener: false,
-  registerComponentLogger: false,
+  registerComponentLogger: false
 };
 
-export let duplicatedSectionBatchAddComponent = { "batch-add-dialog-body": DuplicatedSectionBatchAddDialogBody } as Components;
+export let duplicatedSectionBatchAddComponent = {
+  "batch-add-dialog-body": DuplicatedSectionBatchAddDialogBody
+} as Components;
+
 export type VueSchemaLoggers = {
   formUpdateLogger?: boolean;
   calculationListener?: boolean;
@@ -74,7 +77,6 @@ export type VueSchemaFormsOptions = {
 };
 
 export let baseUri = window.origin;
-const vueSchemaFormEventBus = useEventBus<string>("form-model");
 
 export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchemaForms => {
   if (options?.logger) {
@@ -90,6 +92,7 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
   return {
     install: (app: App): void => {
       for (const componentName in components) {
+        // @ts-ignore
         const component = components[componentName];
         if (!app.component(componentName)) {
           if (logger.registerComponentLogger) {
@@ -120,7 +123,7 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
           }
         }
       }
-    },
+    }
   };
 };
 
@@ -136,7 +139,7 @@ export type {
   SchemaFieldType,
   Source,
   StaticContentTag,
-  Translation,
+  Translation
 };
 export {
   useLabel,
@@ -152,6 +155,5 @@ export {
   useProps,
   useResolveVariables,
   useRules,
-  useSource,
-  vueSchemaFormEventBus,
+  useSource
 };

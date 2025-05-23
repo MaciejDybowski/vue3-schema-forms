@@ -22,10 +22,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useEventBus } from "@vueuse/core";
 import { debounce } from "lodash";
 import set from "lodash/set";
-import { Ref, getCurrentInstance, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+
+import { getCurrentInstance, onMounted, Ref, ref, watch } from "vue";
 
 import { vueSchemaFromControls } from "@/components/controls";
 
@@ -36,7 +38,6 @@ import { ValidationFromError } from "@/types/engine/ValidationFromError";
 import { ValidationFromItem } from "@/types/engine/ValidationFromItem";
 import { Schema } from "@/types/schema/Schema";
 import { SchemaOptions } from "@/types/schema/SchemaOptions";
-import { useEventBus } from "@vueuse/core";
 
 import usePerformanceAPI from "../../core/composables/usePerformanceAPI";
 import { resolveSchemaWithLocale } from "../../core/engine/utils";
@@ -70,22 +71,25 @@ const props = withDefaults(
   }>(),
   {
     defaultFormActions: false,
-    validationBehaviour: "scroll",
-  },
+    validationBehaviour: "scroll"
+  }
 );
 
 const emit = defineEmits<{
   (e: "update:modelValue", val: any): void;
-  (e: "isFormReady");
-  (e: "callAction", payload: { code: string; body: Record<any, any>; params: Record<any, any> });
+  (e: "isFormReady"): void;
+  (
+    e: "callAction",
+    payload: { code: string; body: Record<any, any>; params: Record<any, any> }
+  ): void;
 }>();
 
 let loading = ref(true);
 const { locale, t } = useI18n();
 const resolvedSchema = ref({} as Schema);
 
-const formId = Math.random().toString().slice(2, 5);
-const formRef = ref({});
+const formId: string = Math.random().toString().slice(2, 5);
+const formRef = ref<Record<string, any>>({});
 const formValid = ref(false);
 const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
 
@@ -114,7 +118,7 @@ actionHandlerEventBus.on(async (event, payload) => {
 });
 
 const debounced = {
-  formIsReady: (WAIT: number = 1000) => debounce(formIsReady, WAIT),
+  formIsReady: (WAIT: number = 1000) => debounce(formIsReady, WAIT)
 };
 
 function formIsReady() {
@@ -138,7 +142,7 @@ function updateModel(event: NodeUpdateEvent) {
     return;
   }
 
-  const formModel = { ...localModel.value };
+  const formModel: Record<string, any> = { ...localModel.value };
   internalValues.value.forEach((value: string) => {
     delete formModel[value];
   });
@@ -165,7 +169,7 @@ watch(
     console.debug("[vue-schema-forms] => Reload form in other language");
     await loadResolvedSchema();
   },
-  { deep: true },
+  { deep: true }
 );
 
 onMounted(async () => {
@@ -184,9 +188,10 @@ async function validate(option?: ValidationFromBehaviour) {
   errorMessages.value = [];
 
   // Alert error block validation !
-  const alertElements = document.querySelectorAll('[role="alert"]');
+  const alertElements = document.querySelectorAll("[role=\"alert\"]");
   alertElements.forEach((alertElement) => {
-    const isError = alertElement.classList.contains("v-alert") && alertElement.classList.contains("text-error");
+    const isError =
+      alertElement.classList.contains("v-alert") && alertElement.classList.contains("text-error");
     const alertText = alertElement.textContent;
 
     if (isError && option == "messages") {
@@ -194,7 +199,7 @@ async function validate(option?: ValidationFromBehaviour) {
       errorMessages.value.push({
         id: Math.random().toString(16).slice(2),
         label: "Alert",
-        messages: [alertText + ""],
+        messages: [alertText + ""]
       });
     }
 
@@ -204,7 +209,7 @@ async function validate(option?: ValidationFromBehaviour) {
       if (alert)
         alert?.scrollIntoView({
           behavior: "smooth",
-          block: "center",
+          block: "center"
         });
     }
   });
@@ -227,7 +232,7 @@ async function validate(option?: ValidationFromBehaviour) {
     if (item)
       itemRef?.scrollIntoView({
         behavior: "smooth",
-        block: "center",
+        block: "center"
       });
     return { valid };
   }
@@ -238,11 +243,13 @@ async function validate(option?: ValidationFromBehaviour) {
       .filter((item: ValidationFromItem) => !item.isValid)
       .map((item: ValidationFromItem) => {
         const element: Ref<any> = ref(document.getElementById(item.id as string));
-        const label = element.value.labels[0].innerText ? element.value.labels[0].innerText : element.value.labels[1].innerText;
+        const label = element.value.labels[0].innerText
+          ? element.value.labels[0].innerText
+          : element.value.labels[1].innerText;
         return {
           id: item.id,
           label: label,
-          messages: item.errorMessages.length > 0 ? item.errorMessages : null,
+          messages: item.errorMessages.length > 0 ? item.errorMessages : null
         } as ValidationFromError;
       })
       .filter((item) => item.messages);
@@ -277,7 +284,7 @@ defineExpose({
   validate,
   reset,
   resetValidation,
-  formDataWasSaved,
+  formDataWasSaved
 });
 </script>
 
@@ -285,7 +292,7 @@ defineExpose({
 .required-input {
   .v-label:first-child:after,
   .v-field-label::after {
-    content: " *";
+    content: ' *';
     color: rgb(var(--v-theme-error));
   }
 }

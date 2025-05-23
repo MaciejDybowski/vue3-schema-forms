@@ -23,8 +23,9 @@
 </template>
 
 <script lang="ts" setup>
-import axios from "axios";
-import { onMounted, ref } from "vue";
+import axios from 'axios';
+
+import { onMounted, ref } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -38,9 +39,9 @@ const props = withDefaults(
 );
 
 const loading = ref(true);
-const image = ref("");
+const image = ref('');
 
-const toBase64 = (file) =>
+const toBase64 = (file:any) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -53,9 +54,9 @@ async function fetchUserAvatarById(id: string, size: number): Promise<any> {
     params: {
       size: size,
     },
-    responseType: "blob",
+    responseType: 'blob',
     headers: {
-      "Content-Type": "application/octet-stream",
+      'Content-Type': 'application/octet-stream',
     },
   });
 

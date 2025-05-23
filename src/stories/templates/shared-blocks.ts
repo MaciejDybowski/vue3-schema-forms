@@ -1,6 +1,6 @@
-import { mswLoader } from "msw-storybook-addon";
+import { mswLoader } from 'msw-storybook-addon';
 
-import FormStoryWrapper from "../../../.storybook/components/FormStoryWrapper.vue";
+import FormStoryWrapper from '../../../.storybook/components/FormStoryWrapper.vue';
 
 export const formStoryWrapperTemplate = {
   component: FormStoryWrapper,
@@ -9,9 +9,9 @@ export const formStoryWrapperTemplate = {
     schema: {},
     options: {
       fieldProps: {
-        variant: "outlined",
-        density: "comfortable",
+        variant: 'outlined',
+        density: 'comfortable',
       },
     },
-  }
+  },
 };

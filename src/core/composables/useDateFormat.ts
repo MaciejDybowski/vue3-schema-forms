@@ -1,29 +1,29 @@
-import { computed } from "vue";
+import { computed } from 'vue';
 
-import { useLocale } from "./useLocale";
+import { useLocale } from './useLocale';
 
 export function useDateFormat() {
   const { locale } = useLocale();
 
   const dateFormat = computed(() => {
     switch (locale.value) {
-      case "pl":
-        return "DD.MM.YYYY";
-      case "en":
-        return "MM/DD/YYYY";
+      case 'pl':
+        return 'DD.MM.YYYY';
+      case 'en':
+        return 'MM/DD/YYYY';
       default:
-        return "MM/DD/YYYY";
+        return 'MM/DD/YYYY';
     }
   });
 
   const dateTimeFormat = computed(() => {
     switch (locale.value) {
-      case "pl":
-        return "DD.MM.YYYY HH:mm";
-      case "en":
-        return "MM/DD/YYYY hh:mm A";
+      case 'pl':
+        return 'DD.MM.YYYY HH:mm';
+      case 'en':
+        return 'MM/DD/YYYY hh:mm A';
       default:
-        return "MM/DD/YYYY hh:mm A";
+        return 'MM/DD/YYYY hh:mm A';
     }
   });
 

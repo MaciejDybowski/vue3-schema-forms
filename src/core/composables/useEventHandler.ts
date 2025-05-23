@@ -1,12 +1,15 @@
-import { debounce } from "lodash";
-import set from "lodash/set";
+import { useEventBus } from '@vueuse/core';
+import { debounce } from 'lodash';
+import set from 'lodash/set';
 
-import { useResolveVariables } from "@/core/composables/useResolveVariables";
-import { variableRegexp } from "@/core/engine/utils";
-import { EngineField } from "@/types/engine/EngineField";
-import { EventHandlerDefinition } from "@/types/shared/EventHandlerDefinition";
-import { useEventBus } from "@vueuse/core";
-import { NodeUpdateEvent } from "@/types/engine/NodeUpdateEvent";
+import { useResolveVariables } from '@/core/composables/useResolveVariables';
+import { variableRegexp } from '@/core/engine/utils';
+import { EngineField } from '@/types/engine/EngineField';
+import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
+import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
+
+type EntryKey = string;
+type EntryValue = any;
 
 export function useEventHandler() {
   const { resolve } = useResolveVariables();
@@ -16,28 +19,28 @@ export function useEventHandler() {
   };
 
   async function onChange(field: EngineField, model: object) {
-    if ("onChange" in field) {
+    if ('onChange' in field) {
       debounced.onChange(field, model);
     }
   }
 
   async function onChangeDebounced(field: EngineField, model: object) {
     let eventDefinition: EventHandlerDefinition = field.onChange as EventHandlerDefinition;
-    if (eventDefinition.mode == "request") {
+    if (eventDefinition.mode == 'request') {
       await requestMode(eventDefinition, field, model);
     }
 
     switch (eventDefinition.mode) {
-      case "request":
+      case 'request':
         await requestMode(eventDefinition, field, model);
         break;
-      case "action":
+      case 'action':
         await actionMode(eventDefinition, field, model);
         break;
-      case "change-model":
+      case 'change-model':
         changeMode(eventDefinition, field, model);
         break;
-      case "emit-event":
+      case 'emit-event':
         emitEvent(eventDefinition, field, model);
         break;
       default:
@@ -47,21 +50,24 @@ export function useEventHandler() {
 
   function changeMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
     eventDefinition.variables?.forEach((variable) => {
-
       const event: NodeUpdateEvent = {
         key: variable.path,
-        value: variable.value
-      }
-      field.on.input(event)
+        value: variable.value,
+      };
+      field.on.input(event);
     });
   }
 
   function emitEvent(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
-    const vueSchemaFormEventBus = useEventBus<string>("form-model");
-    vueSchemaFormEventBus.emit("model-changed", eventDefinition.eventSignal as string);
+    const vueSchemaFormEventBus = useEventBus<string>('form-model');
+    vueSchemaFormEventBus.emit('model-changed', eventDefinition.eventSignal as string);
   }
 
-  async function requestMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
+  async function requestMode(
+    eventDefinition: EventHandlerDefinition,
+    field: EngineField,
+    model: object,
+  ) {
     let body = createBodyObject(eventDefinition, field);
     let params = createParamsObject(eventDefinition, field);
 
@@ -75,11 +81,15 @@ export function useEventHandler() {
     });*/
   }
 
-  async function actionMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
+  async function actionMode(
+    eventDefinition: EventHandlerDefinition,
+    field: EngineField,
+    model: object,
+  ) {
     let body = await createBodyObject(eventDefinition, field);
     let params = await createParamsObject(eventDefinition, field);
 
-    const actionHandlerEventBus = useEventBus<string>("form-action");
+    const actionHandlerEventBus = useEventBus<string>('form-action');
 
     let payloadObject = {
       code: eventDefinition.code,
@@ -87,19 +97,19 @@ export function useEventHandler() {
       params: params,
     };
 
-    actionHandlerEventBus.emit("form-action", payloadObject);
+    actionHandlerEventBus.emit('form-action', payloadObject);
   }
 
   async function createBodyObject(eventDefinition: EventHandlerDefinition, field: EngineField) {
-    let body = {};
+    let body: Record<EntryKey, EntryValue> = {};
     if (
-      (eventDefinition.method == "POST" && eventDefinition.body) ||
-      (eventDefinition.mode == "action" && eventDefinition.body)
+      (eventDefinition.method == 'POST' && eventDefinition.body) ||
+      (eventDefinition.mode == 'action' && eventDefinition.body)
     ) {
       const entries = Object.entries(eventDefinition.body);
       const resolvedEntries = await Promise.all(
         entries.map(async ([key, value]) => {
-          if (typeof value === "string" && variableRegexp.test(value)) {
+          if (typeof value === 'string' && variableRegexp.test(value)) {
             const { resolvedText, allVariablesResolved } = await resolve(field, value as string);
             return [key, allVariablesResolved ? resolvedText : null];
           } else {
@@ -116,13 +126,13 @@ export function useEventHandler() {
   }
 
   async function createParamsObject(eventDefinition: EventHandlerDefinition, field: EngineField) {
-    let params = {};
+    let params: Record<EntryKey, EntryValue> = {};
 
     if (eventDefinition.params) {
       const entries = Object.entries(eventDefinition.params);
       const resolvedEntries = await Promise.all(
         entries.map(async ([key, value]) => {
-          if (typeof value === "string" && variableRegexp.test(value)) {
+          if (typeof value === 'string' && variableRegexp.test(value)) {
             const { resolvedText, allVariablesResolved } = await resolve(field, value as string);
             return [key, allVariablesResolved ? resolvedText : null];
           } else {

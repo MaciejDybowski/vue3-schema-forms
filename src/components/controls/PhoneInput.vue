@@ -1,28 +1,35 @@
 <template>
   <v-phone-input
     :class="bindClass(schema) + requiredInputClass"
-    :label='label'
-    v-model='localModel'
+    :label="label"
+    v-model="localModel"
     :invalid-message="(options: any) => t('phoneInvalid', { example: options.example })"
-    :country-props='fieldPropsMerged'
-    :phone-props='fieldPropsMerged'
-    v-bind='fieldPropsMerged'
-    :rules="!fieldProps.readonly ? rules: []"
-    name='phone'
-    type='tel'
+    :country-props="fieldPropsMerged"
+    :phone-props="fieldPropsMerged"
+    v-bind="fieldPropsMerged"
+    :rules="!fieldProps.readonly ? rules : []"
+    name="phone"
+    type="tel"
   >
   </v-phone-input>
 </template>
 
-<script setup lang='ts'>
-import 'world-flags-sprite/stylesheets/flags32.css';
+<script setup lang="ts">
 import { VPhoneInput } from 'v-phone-input';
 import 'v-phone-input/dist/v-phone-input.css';
+import 'world-flags-sprite/stylesheets/flags32.css';
+
 import { computed, onMounted, ref } from 'vue';
 
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useLocale,
+  useProps,
+  useRules,
+} from '@/core/composables';
 import { EnginePhoneField } from '@/types/engine/controls';
-
-import { useClass, useFormModel, useLabel, useLocale, useProps, useRules } from '@/core/composables';
 
 const props = defineProps<{
   schema: EnginePhoneField;
@@ -41,8 +48,60 @@ const phoneInputProps = {
   countryLabel: t('address.country'),
   'guess-country': true,
   'include-countries': [
-    'al', 'ad', 'at', 'be', 'by', 'ba', 'bg', 'hr', 'me', 'cz', 'dk', 'ee', 'fi', 'fr', 'de', 'gr', 'es', 'nl', 'ie', 'is', 'xk', 'li', 'lt', 'lu', 'lv', 'mk', 'mt', 'md', 'mc', 'pl', 'pt', 'ru', 'ro', 'sm', 'rs', 'sk', 'si', 'ch', 'se', 'tr', 'ua', 'va', 'hu', 'gb', 'it', 'ca', 'mx', 'ar', 'br', 'cn', 'jp', 'au', 'us'
-  ]
+    'al',
+    'ad',
+    'at',
+    'be',
+    'by',
+    'ba',
+    'bg',
+    'hr',
+    'me',
+    'cz',
+    'dk',
+    'ee',
+    'fi',
+    'fr',
+    'de',
+    'gr',
+    'es',
+    'nl',
+    'ie',
+    'is',
+    'xk',
+    'li',
+    'lt',
+    'lu',
+    'lv',
+    'mk',
+    'mt',
+    'md',
+    'mc',
+    'pl',
+    'pt',
+    'ru',
+    'ro',
+    'sm',
+    'rs',
+    'sk',
+    'si',
+    'ch',
+    'se',
+    'tr',
+    'ua',
+    'va',
+    'hu',
+    'gb',
+    'it',
+    'ca',
+    'mx',
+    'ar',
+    'br',
+    'cn',
+    'jp',
+    'au',
+    'us',
+  ],
 };
 
 const propsRef = ref({});
@@ -71,4 +130,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang='css'></style>
+<style scoped lang="css"></style>

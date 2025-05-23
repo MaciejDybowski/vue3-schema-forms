@@ -30,11 +30,11 @@
 </template>
 
 <script setup lang="ts">
-import { ValidationFromError } from "@/types/engine/ValidationFromError";
+import { ValidationFromError } from '@/types/engine/ValidationFromError';
 
-import FormActionButton from "./FormActionButton.vue";
-import FormErrorVisualization from "./FormErrorVisualization.vue";
-import FormValidVisualization from "./FormValidVisualization.vue";
+import FormActionButton from './FormActionButton.vue';
+import FormErrorVisualization from './FormErrorVisualization.vue';
+import FormValidVisualization from './FormValidVisualization.vue';
 
 const props = defineProps<{
   formValid: boolean | null;
@@ -42,9 +42,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "validate"): void;
-  (e: "reset"): void;
-  (e: "resetValidation"): void;
+  (e: 'validate'): void;
+  (e: 'reset'): void;
+  (e: 'resetValidation'): void;
 }>();
 </script>
 

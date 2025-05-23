@@ -1,15 +1,20 @@
-import { createPinia } from "pinia";
-import * as process from "process";
-import { beforeEach, expect, test } from "vitest";
-import { createVuetify } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
+import { createPinia } from 'pinia';
+import * as process from 'process';
+import { beforeEach, expect, test } from 'vitest';
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
-import { VueWrapper, mount } from "@vue/test-utils";
+import { VueWrapper, mount } from '@vue/test-utils';
 
-import i18n from "../../.storybook/plugins/i18n";
-import { VueSchemaForms } from "../components";
-import { _10fieldSchema, _50fieldSchema, _100fieldSchema, invoicePositionsSchema } from "./test-schemas";
+import i18n from '../../.storybook/plugins/i18n';
+import { VueSchemaForms } from '../components';
+import {
+  _10fieldSchema,
+  _50fieldSchema,
+  _100fieldSchema,
+  invoicePositionsSchema,
+} from './test-schemas';
 
 const vuetify = createVuetify({ components, directives });
 const pinia = createPinia();
@@ -30,7 +35,7 @@ async function waitForResult(wrapper: VueWrapper): Promise<number> {
         // @ts-ignore
         resolve(wrapper.vm.result as number);
       } else if (Date.now() - startTime > timeout) {
-        reject(new Error("Timeout: Render time result was not set"));
+        reject(new Error('Timeout: Render time result was not set'));
       } else {
         setTimeout(check, 10); // Check again in 10ms
       }
@@ -41,14 +46,14 @@ async function waitForResult(wrapper: VueWrapper): Promise<number> {
 
 let wrapper: VueWrapper;
 beforeEach(() => {
-  process.env.VITE_ENABLE_RENDER_TEST = "true";
+  process.env.VITE_ENABLE_RENDER_TEST = 'true';
 });
 
 test.each([
   [80, _10fieldSchema],
   [240, _50fieldSchema],
   [410, _100fieldSchema],
-])("should render form with schema in < %d ms", async (maxTime, schema) => {
+])('should render form with schema in < %d ms', async (maxTime, schema) => {
   wrapper = mount(VueSchemaForms, {
     global,
     props: { schema, options: {}, modelValue: {} },
@@ -68,7 +73,7 @@ const generateInvoiceItems = (count: number) =>
     tax: 0.05 + Math.random() * 0.3,
   }));
 
-test("should render invoice form in < 1000 ms", async () => {
+test('should render invoice form in < 1000 ms', async () => {
   wrapper = mount(VueSchemaForms, {
     global,
     props: {
