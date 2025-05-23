@@ -1,4 +1,3 @@
-import { createPinia } from 'pinia';
 import * as process from 'process';
 import { beforeEach, expect, test } from 'vitest';
 import { createVuetify } from 'vuetify';
@@ -17,10 +16,9 @@ import {
 } from './test-schemas';
 
 const vuetify = createVuetify({ components, directives });
-const pinia = createPinia();
 
 const global = {
-  plugins: [vuetify, i18n, pinia],
+  plugins: [vuetify, i18n],
 };
 
 async function waitForResult(wrapper: VueWrapper): Promise<number> {
