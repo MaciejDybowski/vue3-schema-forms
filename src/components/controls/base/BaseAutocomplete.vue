@@ -30,7 +30,7 @@
 
 <script lang="ts" setup>
 import { isArray } from 'lodash';
-import { VAutocomplete, VCombobox } from 'vuetify/components';
+import { VAutocomplete } from 'vuetify/components';
 
 import { computed, ref, useAttrs } from 'vue';
 

@@ -36,7 +36,7 @@ import {
   useProps,
   useRules,
   useSource,
-} from '../../core/composables';
+} from '@/core/composables';
 
 const props = defineProps<{
   schema: RadioField;
