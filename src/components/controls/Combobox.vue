@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, ref, watch } from 'vue';
 
 import BaseCombobox from "@/components/controls/base/BaseCombobox.vue";
 
@@ -125,12 +125,15 @@ async function resolveIfLocalModelHasDependencies() {
 }
 
 watch(dependencyWasChanged, () => {
-  if(dependencyWasChanged.value){
+  if(dependencyWasChanged.value && internalStateIsSet.value){
     localModel.value = null
   }
 })
 
+const internalStateIsSet = ref(false);
+
 onMounted(async () => {
+  internalStateIsSet.value = false;
   await initState(props.schema);
   await bindLabel(props.schema);
   await bindProps(props.schema);
@@ -148,6 +151,7 @@ onMounted(async () => {
     }
   }
   singleOptionAutoSelectFunction();
+  internalStateIsSet.value = true;
 });
 
 async function fetchDictionaryData() {
