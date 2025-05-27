@@ -43,6 +43,31 @@
       >
       </v-list-item>
     </template>
+
+    <template
+      v-if="labels.length > 0"
+      #item="{ item, props }"
+    >
+      <v-list-item
+        :subtitle="item.raw[description]"
+        :title="item.title"
+        v-bind="props"
+      >
+        <template #append>
+          <div v-if="labels.length > 0">
+            <!-- todo zmienić nazwę komponentu skoro slownik tez juz moze -->
+            <user-input-label
+              v-for="element in labels(item.raw)"
+              :key="element.id"
+              :element="element"
+              v-bind="$attrs"
+              variant="flat"
+            />
+          </div>
+        </template>
+      </v-list-item>
+
+    </template>
   </base-combobox>
 </template>
 
@@ -57,6 +82,8 @@ import { variableRegexp } from "@/core/engine/utils";
 import { EngineDictionaryField } from "@/types/engine/controls";
 
 import { useClass, useFormModel, useLabel, useLocale, useProps, useResolveVariables, useRules } from "../../core/composables";
+import UserInputLabel from '@/components/controls/user-input/UserInputLabel.vue';
+import { Label } from '@/types/engine/Label';
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -171,6 +198,64 @@ function updateSearch(val: string) {
     queryBlocker.value = val === localModelCurrent.value;
   } else {
     queryBlocker.value = false;
+  }
+}
+
+function labels(item: any): Label[] {
+  if ("labels" in item) {
+    const providedLabels: Label[] =
+      props.schema.options.dictionaryProps && props.schema.options.dictionaryProps.labels
+        ? props.schema.options.dictionaryProps.labels
+        : [];
+
+    // array ['labelId', 'labelId2']
+    if (Array.isArray(item.labels)) {
+      if (providedLabels.length > 0) {
+        const userLabels: string[] = item.labels;
+        return providedLabels.filter((element) => userLabels.includes(element.id));
+      } else {
+        return item.labels.map((id) => ({
+          id: id,
+          title: id,
+          backgroundColor: "primary",
+          textColor: "white",
+        }));
+      }
+    }
+
+    // string separated by coma
+    if (item.labels && item.labels.includes(",")) {
+      const labels = item.labels.split(",");
+      if (providedLabels.length > 0) {
+        return providedLabels.filter((element) => labels.includes(element.id));
+      } else {
+        return labels.map((id) => ({
+          id: id,
+          title: id,
+          backgroundColor: "primary",
+          textColor: "white",
+        }));
+      }
+    }
+    // one string = label
+    else if (item.labels) {
+      if (providedLabels.length > 0) {
+        return providedLabels.filter((element) => element.id == item.labels);
+      } else {
+        return [
+          {
+            id: item.labels,
+            title: item.labels,
+            backgroundColor: "primary",
+            textColor: "white",
+          },
+        ];
+      }
+    }
+
+    return [];
+  } else {
+    return [];
   }
 }
 </script>
