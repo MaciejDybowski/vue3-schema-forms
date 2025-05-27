@@ -33,7 +33,7 @@
       />
     </template>
     <template
-      v-if="description !== null"
+      v-if="description !== null && description !== ''"
       #item="{ item, props }"
     >
       <v-list-item
