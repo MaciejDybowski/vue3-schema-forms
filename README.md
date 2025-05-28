@@ -106,10 +106,29 @@ createApp(App)
 
 ## 📋 Emits
 
-| Name          | Type     | Default | Description                                                                                                                                                             |
-|---------------|----------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `isFormReady` | `void`   | —       | Signal for Parent component when form is ready to ex. watch for model                                                                                                   |
-| `callAction`  | `object` | —       | `payload: { code: string; body: Record<any, any>; params: Record<any, any> }`<br/>Object for execute external actions / logic which is not connected directly with form |
+| Name          | Type     | Default | Description                                                                                                                                                                                      |
+|---------------|----------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `isFormReady` | `void`   | —       | Signal for Parent component when form is ready to ex. watch for model                                                                                                                            |
+| `callAction`  | `object` | —       | `payload: { code: string; body: Record<any, any>; params: Record<any, any>, payload: Function<Void> }`<br/>Object for execute external actions / logic which is not connected directly with form |
+
+
+There are many possibilities to integrate actions with external sources. It is possible to call an API to refresh the form or perform recalculations, depending on the action definition. A callback function is added by default, but it can be overridden if needed. 
+
+```mermaid
+sequenceDiagram
+    participant FieldA
+    participant VueSchemaForms
+    participant ParentComponent
+    participant VueSchemaFormsModelBus
+    FieldA ->> VueSchemaForms: emit("callAction", payload)
+    VueSchemaForms ->> VueSchemaForms: Add `actionCallback` to payload
+    VueSchemaForms ->> ParentComponent: emit("callAction", payload)
+    ParentComponent ->> ParentComponent: Do Your logic
+    ParentComponent ->> VueSchemaForms: `actionCallback` called
+    VueSchemaForms ->> VueSchemaFormsModelBus: emit(model-changed, actionCallback)
+    VueSchemaFormsModelBus ->> FieldA: recalculate / hide / show
+
+```
 
 ---
 
@@ -303,7 +322,3 @@ flowchart TB
 3. Commit your changes: ```git commit -am 'Add some feature'```
 4. Push to the branch: ```git push origin my-new-feature```
 5. Submit a pull request
-
-## 🛡️ License
-
-[MIT](LICENSE)

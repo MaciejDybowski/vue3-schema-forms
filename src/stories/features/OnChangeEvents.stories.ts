@@ -6,12 +6,17 @@ import { waitForMountedAsync } from '../editable-fields/utils';
 import { CURRENCIES_REQUEST } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
+
+
+
+
 export default {
-  title: 'Features/On change events',
+  title: 'Features/OnChange events',
   ...formStoryWrapperTemplate,
 };
 
 export const CallActionWithParametersAndRequestBody: Story = {
+  name: "Case: form action will be send after value change",
   play: async (context) => {},
   args: {
     formModel: {},
@@ -20,7 +25,14 @@ export const CallActionWithParametersAndRequestBody: Story = {
       properties: {
         description: {
           content:
-            'Definicja zdarzenia `onChange`, które wywoła akcję o podanym kodzie. Dodatkowo możemy dodać parametry żądania http oraz mapowanie body, które zostanie wysłane na endpoint akcji. Formularz wystawia funkcję callback() w obiekcie wysłanym do Hosta. Po wywołaniu tej funkcji formularz odświeża model danych tak aby być reaktywnym na zmiany z aplikacji trzeciej',
+            "Definition of the onChange event, which triggers an action with a given code. Additionally, we can specify HTTP request parameters and a body mapping that will be sent to the action's endpoint. The form exposes a callback() function in the object sent to the Host. When this function is called, the form refreshes its data model to remain reactive to changes from the third-party application.",
+          layout: {
+            component: 'static-content',
+            tag: 'p',
+          },
+        },
+        checkConsole: {
+          content: 'Check browser console!',
           layout: {
             component: 'static-content',
             tag: 'p',
@@ -35,11 +47,11 @@ export const CallActionWithParametersAndRequestBody: Story = {
             mode: 'action',
             code: 'callScript',
             params: {
-              scriptName: 'sprawdz_czy_duplikat',
+              scriptName: 'checkIfDuplicate',
             },
             body: {
-              nip: '{daneDostawcy.nip}',
-              numerFaktury: '{faktura.nrFaktury}',
+              number: '{supplier.number}',
+              invoiceNumber: '{invoice.number}',
             },
           },
         },
@@ -49,6 +61,7 @@ export const CallActionWithParametersAndRequestBody: Story = {
 };
 
 export const ResetValueOnChange: Story = {
+  name: "Case: reset value of other property in model",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -95,6 +108,7 @@ export const ResetValueOnChange: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSection: Story = {
+  name: "Case: reset value of other property (duplicate section) in model",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -156,6 +170,7 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
+  name: "Case: reset value of dictionary in duplicated section",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
