@@ -20,10 +20,14 @@ export function useExpression() {
       const mergedModel = form.getFormModelForResolve.value;
       result.value = await f(expression, mergedModel);
 
-      if (!functionName.includes('_GENERATOR')) {
-        const unsubscribe = vueSchemaFormEventBus.on(
-          async () => await expressionListener(key, expression, model),
-        );
+      if (!functionName.includes("_GENERATOR")) {
+        const unsubscribe = vueSchemaFormEventBus.on(async () => await expressionListener(key, expression, model, formId));
+      } else {
+        // if field has value generator is not needed // TODO maybe better code for this..?
+        const current = get(model, key, null);
+        if (current != null) {
+          return current;
+        }
       }
       return result.value;
     }

@@ -71,7 +71,7 @@ const { fillPath } = useResolveVariables();
 let precision =
   props.schema.type == 'int' ? 0 : 'precision' in props.schema ? props.schema.precision : 2;
 const precisionMin =
-  props.schema.type == 'int' ? 0 : 'precisionMin' in props.schema ? props.schema.precision : 0;
+  props.schema.type == 'int' ? 0 : 'precisionMin' in props.schema ? props.schema.precisionMin : 0;
 
 const formatType = (
   'formatType' in props.schema ? props.schema.formatType : 'decimal'

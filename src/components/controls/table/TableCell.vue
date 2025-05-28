@@ -305,58 +305,12 @@ watchEffect(async () => {
 
 <style lang="scss">
 .link {
-  cursor: pointer;
-  // text-underline-offset: 4px;
-  text-decoration: none;
-  background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.36) 0,
-      rgba(0, 0, 0, 0.36) 8px,
-      transparent 8px,
-      transparent 100%
-    )
-    bottom left / 12px 1px repeat-x;
-  display: inline;
-  padding-bottom: 0px;
-}
-
-table .link {
-  display: table-cell;
+  text-decoration-line: underline;
+  text-decoration-thickness: from-font;
+  text-decoration-style: dotted;
 }
 
 .link:hover {
-  background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.36) 0,
-      rgba(0, 0, 0, 0.36) 2px,
-      transparent 2px,
-      transparent 100%
-    )
-    bottom left / 1px 1px repeat-x;
-}
-
-.theme--dark {
-  .link {
-    // text-underline-offset: 4px;
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.36) 0,
-        rgba(255, 255, 255, 0.36) 8px,
-        transparent 8px,
-        transparent 100%
-      )
-      bottom left / 12px 1px repeat-x;
-  }
-
-  .link:hover {
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.36) 0,
-        rgba(255, 255, 255, 0.36) 2px,
-        transparent 2px,
-        transparent 100%
-      )
-      bottom left / 1px 1px repeat-x;
-  }
+  text-decoration-style: solid;
 }
 </style>
