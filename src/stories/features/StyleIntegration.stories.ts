@@ -5,12 +5,12 @@ import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Passing css classes',
+  title: 'Features/Style integration (CSS)',
   ...formStoryWrapperTemplate,
 };
 
 export const Story1: Story = {
-  name: 'Example 1',
+  name: 'Example 1: passing vuetify CSS classes into element',
   play: async (context) => {
     await waitForMountedAsync();
     const field = document.getElementsByClassName('text-h4');
@@ -21,7 +21,7 @@ export const Story1: Story = {
       type: 'object',
       properties: {
         span: {
-          content: 'Text with class',
+          content: 'Custom class was passed in',
           layout: {
             component: 'static-content',
             tag: 'span',

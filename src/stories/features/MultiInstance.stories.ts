@@ -2,9 +2,10 @@
 import { Meta, StoryObj } from '@storybook/vue3';
 
 import MultipleFormStoryWrapper from '../../../.storybook/components/MultipleFormStoryWrapper.vue';
+import { expect, userEvent, within } from '@storybook/test';
 
 export default {
-  title: 'Features/Multi-Form',
+  title: 'Features/Multi Instance',
   component: MultipleFormStoryWrapper,
   args: {
     formModelOne: {},
@@ -22,14 +23,26 @@ export default {
 
 type Story = StoryObj<typeof MultipleFormStoryWrapper>;
 
-export const MultiForms: Story = {
+export const Example1: Story = {
+  name: "Example 1: Check if 2 forms with same variables have separated models",
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const field = canvas.getByLabelText('Field A - form 1');
+    await userEvent.type(field, 'Form 1', { delay: 100 });
+
+    const field2 = canvas.getByLabelText('Field A - form 2');
+    await userEvent.type(field2, 'Form 2', { delay: 100 });
+
+    await expect(context.args.formModelOne).toEqual({ fieldA: 'Form 1' });
+    await expect(context.args.formModelTwo).toEqual({ fieldA: 'Form 2' });
+  },
   args: {
     formModelOne: {},
     schemaOne: {
       type: 'object',
       properties: {
         fieldA: {
-          label: 'Field A',
+          label: 'Field A - form 1',
           layout: {
             component: 'text-field',
           },
@@ -47,7 +60,7 @@ export const MultiForms: Story = {
       type: 'object',
       properties: {
         fieldA: {
-          label: 'Field A',
+          label: 'Field A - form 2',
           layout: {
             component: 'text-field',
           },

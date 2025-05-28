@@ -1,5 +1,5 @@
 import { Schema } from '../types/schema/Schema';
-import { SchemaTextField } from '../types/schema/elements';
+
 
 export const _10fieldSchema: Schema = {
   type: 'object',
@@ -207,7 +207,7 @@ export const invoicePositionsSchema: Schema = {
               layout: { component: 'number-field', cols: 3 },
               calculation:
                 'invoiceItems[].quantity * (invoiceItems[].netPrice+invoiceItems[].netPrice*invoiceItems[].tax)',
-            } as SchemaTextField,
+            },
           },
         },
         options: {
