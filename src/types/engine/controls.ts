@@ -29,6 +29,7 @@ export interface EngineDividerField extends EngineField {
 
 export interface EngineNumberField extends EngineField {
   precision: number;
+  precisionMin?: number;
   calculation?: string;
   expression?: string;
 }

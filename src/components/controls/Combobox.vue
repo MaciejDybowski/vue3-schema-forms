@@ -223,7 +223,7 @@ function labels(item: any): Label[] {
         const userLabels: string[] = item.labels;
         return providedLabels.filter((element) => userLabels.includes(element.id));
       } else {
-        return item.labels.map((id) => ({
+        return item.labels.map((id:string) => ({
           id: id,
           title: id,
           backgroundColor: "primary",
@@ -238,7 +238,7 @@ function labels(item: any): Label[] {
       if (providedLabels.length > 0) {
         return providedLabels.filter((element) => labels.includes(element.id));
       } else {
-        return labels.map((id) => ({
+        return labels.map((id:string) => ({
           id: id,
           title: id,
           backgroundColor: "primary",

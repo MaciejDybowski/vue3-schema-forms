@@ -30,30 +30,22 @@ export const Standard: Story = {
     // await expect(context.args.formModel).toEqual({ textArea: "This is standard text area..." });
   },
   args: {
-    model: {
-      textField: 'Maciej',
-    },
+    formModel: {},
     schema: {
       type: 'object',
       properties: {
-        textField: {
-          label: 'Textfield',
-          layout: {
-            component: 'text-field',
-          },
-        },
         combobox: {
           label: 'Combobox',
           layout: {
             component: 'combobox',
           },
           source: {
-            url: '/api/combo-mock?query={textField}',
+            url: '/api/combo-mock',
             title: 'label',
             value: 'id',
             lazy: true,
             returnObject: false,
-            singleOptionAutoSelect: true,
+            singleOptionAutoSelect: false,
           },
         },
       },
