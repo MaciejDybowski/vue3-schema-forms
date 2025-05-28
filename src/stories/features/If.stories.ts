@@ -9,7 +9,7 @@ import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Conditional Rendering/If',
+  title: 'Features/Conditional Rendering/Using if',
   ...formStoryWrapperTemplate,
 };
 

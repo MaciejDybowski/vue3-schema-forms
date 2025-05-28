@@ -7,7 +7,7 @@ import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Conditional Rendering/Hidden fields',
+  title: 'Features/Conditional Rendering/Using hide',
   ...formStoryWrapperTemplate,
 };
 

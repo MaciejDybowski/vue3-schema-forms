@@ -16,13 +16,8 @@ export default {
  *
  * `cols: number | Cols` - specifies the column width in the grid system. It can be a number or an object that meets the structure of the `Cols` interface.
  */
-export const FillRowAndOffsets: Story = {
-  args: {
-    schema: offsetSchema,
-  },
-};
-
-export const FillRow: Story = {
+export const Example1: Story = {
+  name: "Example 1: cols as numbers",
   args: {
     schema: {
       type: 'object',
@@ -31,43 +26,121 @@ export const FillRow: Story = {
           label: 'Item 1',
           layout: {
             component: 'text-field',
-            cols: 3,
-          },
-        },
-        item4: {
-          label: 'Item 4',
-          layout: {
-            component: 'text-field',
             cols: 12,
-          },
-        },
-        item5: {
-          label: 'Item 5',
-          layout: {
-            component: 'text-field',
-            cols: 3,
-          },
-        },
-        item6: {
-          label: 'Item 6',
-          layout: {
-            component: 'text-field',
-            cols: 3,
-            fillRow: true,
           },
         },
         item2: {
           label: 'Item 2',
           layout: {
             component: 'text-field',
-            cols: 3,
+            cols: 6,
           },
         },
         item3: {
           label: 'Item 3',
           layout: {
             component: 'text-field',
-            cols: 1,
+            cols: 6,
+          },
+        },
+      },
+    },
+  },
+};
+
+export const Example2: Story = {
+  name: "Example 2: cols as object",
+  args: {
+    schema: {
+      type: 'object',
+      properties: {
+        item1: {
+          label: 'Item 1',
+          layout: {
+            component: 'text-field',
+            cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 4 },
+          },
+        },
+        item2: {
+          label: 'Item 2',
+          layout: {
+            component: 'text-field',
+            cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 4 },
+          },
+        },
+        item3: {
+          label: 'Item 3',
+          layout: {
+            component: 'text-field',
+            cols: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6, xxl: 6 },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const Example3: Story = {
+  name: "Example 3: fillRow property",
+  args: {
+    schema: {
+      type: 'object',
+      properties: {
+        item1: {
+          label: 'Item 1',
+          layout: {
+            component: 'text-field',
+            cols: 4,
+            fillRow: true
+          },
+        },
+        item2: {
+          label: 'Item 2',
+          layout: {
+            component: 'text-field',
+            cols: 4,
+            fillRow: true
+          },
+        },
+        item3: {
+          label: 'Item 3',
+          layout: {
+            component: 'text-field',
+            cols: 4,
+            fillRow: true
+          },
+        },
+      },
+    },
+  },
+};
+
+export const Example4: Story = {
+  name: "Example 4: offset property",
+  args: {
+    schema: {
+      type: 'object',
+      properties: {
+        item1: {
+          label: 'Item 1',
+          layout: {
+            component: 'text-field',
+            cols: 12,
+          },
+        },
+        item2: {
+          label: 'Item 2',
+          layout: {
+            component: 'text-field',
+            offset: 6,
+            cols: 6,
+          },
+        },
+        item3: {
+          label: 'Item 3',
+          layout: {
+            component: 'text-field',
+            cols: 6,
           },
         },
       },

@@ -5,7 +5,7 @@ import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Context Object',
+  title: 'Features/Additional context object',
   ...formStoryWrapperTemplate,
 };
 
@@ -51,6 +51,7 @@ export const Standard: Story = {
 };
 
 export const StandardWithDefaultMapping: Story = {
+  name: "Case: pass context value as default value",
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);

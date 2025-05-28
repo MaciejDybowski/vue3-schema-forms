@@ -20,7 +20,7 @@ export default {
 };
 
 export const step1: Story = {
-  name: 'Step1. Simple, no nested',
+  name: 'Example 1: Usage of text value of field from model without nested objects',
   play: async (context) => {},
   args: {
     formModel: {},
@@ -45,7 +45,7 @@ export const step1: Story = {
 };
 
 export const step2: Story = {
-  name: 'Step2. Simple, nested object',
+  name: 'Example 2: Usage of nested values of field from model',
   play: async (context) => {},
   args: {
     formModel: {},
@@ -128,7 +128,7 @@ export const step2: Story = {
 };
 
 export const step3: Story = {
-  name: 'Step3. In duplicated section',
+  name: 'Example 3: Usage of values which are in duplicated section in the form model',
   play: async (context) => {},
   args: {
     formModel: {
@@ -193,7 +193,7 @@ export const step3: Story = {
 };
 
 export const step4: Story = {
-  name: 'Step4. In duplicated section with nested duplicated',
+  name: 'Example 4: Usage of values which are in nested duplicated section in the form model',
   play: async (context) => {},
   args: {
     formModel: {
@@ -316,7 +316,7 @@ export const step4: Story = {
 };
 
 export const step5: Story = {
-  name: 'Step5. In group',
+  name: 'Example 5: Usage of values which are in field group',
   play: async (context) => {},
   args: {
     formModel: {
@@ -359,7 +359,7 @@ export const step5: Story = {
 };
 
 export const UseDependenciesInLabel: Story = {
-  name: 'Step6. With label',
+  name: 'Example 6: Usage of values which are in form model to combine in label',
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
@@ -443,7 +443,7 @@ export const UseDependenciesInLabel: Story = {
 };
 
 export const UseFormVariablesInFieldProps: Story = {
-  name: 'Step7. In props',
+  name: 'Example 7: Usage of values which are in form model to combine in props',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -560,7 +560,7 @@ export const UseFormVariablesInFieldProps: Story = {
 };
 
 export const UseVariableDependencyWithFallbackMessage: Story = {
-  name: 'Example of fallback message',
+  name: 'Example 8: Define fallback massage in case of unresolved dependency',
   play: async (context) => {
     const canvas = within(context.canvasElement);
 
@@ -617,6 +617,7 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
 };
 
 export const ComplexExample: Story = {
+  name: 'Example 9: Complex example',
   args: {
     formModel: {
       dataId: '#01',

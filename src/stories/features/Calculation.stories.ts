@@ -9,7 +9,7 @@ import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Calculations',
+  title: 'Features/Internal calculations',
   ...formStoryWrapperTemplate,
 };
 

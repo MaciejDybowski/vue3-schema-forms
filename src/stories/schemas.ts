@@ -1,54 +1,5 @@
 import { Schema } from '../types/schema/Schema';
 
-export const offsetSchema: Schema = {
-  type: 'object',
-  properties: {
-    field1: {
-      label: 'Full-width Field',
-      layout: {
-        component: 'text-field',
-        cols: 12,
-      },
-    },
-    field2: {
-      label: 'Variable-width Field Relative to Screen',
-      layout: {
-        component: 'text-field',
-        cols: {
-          xxl: 4,
-          xl: 6,
-          md: 8,
-          sm: 12,
-        },
-        fillRow: true,
-      },
-    },
-    field3: {
-      label: 'Field with "fillRow" Option',
-      layout: {
-        component: 'text-field',
-        cols: 6,
-        fillRow: true,
-      },
-    },
-    field4: {
-      label: 'Field with Offset Set to 4',
-      layout: {
-        component: 'text-field',
-        offset: 4,
-        cols: 3,
-      },
-    },
-    field5: {
-      label: 'Field with Offset Set to 2',
-      layout: {
-        component: 'text-field',
-        offset: 2,
-        cols: 3,
-      },
-    },
-  },
-};
 export const conditionSchema: Schema = {
   type: 'object',
   properties: {
