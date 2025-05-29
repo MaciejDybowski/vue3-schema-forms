@@ -7,6 +7,7 @@ variables:
 stages:
   - prepare
   - build
+  - containerize
   - publish # no need to split it into separate stages, we can also avoid passing artifacts that way
 
 
@@ -34,6 +35,20 @@ build-storybook:
   artifacts:
     paths:
       - storybook-static
+  only:
+    - dev
+
+docker-push-storybook:
+  stage: containerize
+  image: docker.tecna.pl/docker
+  dependencies:
+    - build-storybook
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD ${DOWNSTREAM_REPO}
+    - docker login -u $UPSTREAM_REPO_USER -p $UPSTREAM_REPO_PASSWORD ${UPSTREAM_REPO}
+  script:
+    - docker build -f Dockerfile.storybook --build-arg "NEXUS3_URL=${UPSTREAM_REPO}" -t ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook .
+    - docker push ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
   only:
     - dev
 
