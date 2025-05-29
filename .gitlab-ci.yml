@@ -21,29 +21,6 @@ build-storybook:
   only:
     - dev
 
-docker-push-storybook:
-  stage: containerize
-  image: docker.tecna.pl/docker
-  dependencies:
-    - build-storybook
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD ${DOWNSTREAM_REPO}
-    - docker login -u $UPSTREAM_REPO_USER -p $UPSTREAM_REPO_PASSWORD ${UPSTREAM_REPO}
-  script:
-    - docker build -f Dockerfile.storybook --build-arg "NEXUS3_URL=${UPSTREAM_REPO}" -t ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook .
-    - docker push ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
-
-docker-deploy-dev-storybook:
-  extends: .docker-deploy
-  variables:
-    SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY_AUREADEV}
-    ENVIRONMENT: aureadev.tecna.pl
-    USER: gitlab
-    ENV_REPO_PATH: /opt/dashboards/
-    APP_NAME: storybook
-  only:
-    variables:
-      - $REGISTRY_URL == "registry.tecna.pl"
 
 npm-publish:
   stage: publish
