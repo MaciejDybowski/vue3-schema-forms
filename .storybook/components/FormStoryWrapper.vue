@@ -21,7 +21,7 @@
             :default-form-actions="true"
             :options="options"
             :schema="schema"
-            :validation-behaviour="'messages'"
+            :validation-behaviour="validationBehaviour != null ? validationBehaviour : 'scroll'"
             @is-form-ready="catchSignalFormIsReady"
             @call-action="handleAction"
           />
@@ -63,6 +63,7 @@ const { schema, options, formModel, emittedObject } = defineProps<{
   schema: Schema;
   options: object;
   emittedObject?: object;
+  validationBehaviour?: string;
 }>();
 
 const model = ref<any>(null);

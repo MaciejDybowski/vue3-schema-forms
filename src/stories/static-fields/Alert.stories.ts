@@ -96,6 +96,7 @@ export const Error: Story = {
     await expect(canvas.getByText('Alert')).toBeInTheDocument();
   },
   args: {
+    validationBehaviour: "messages",
     formModel: {},
     schema: {
       type: 'object',
