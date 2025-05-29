@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';

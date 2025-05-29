@@ -1,8 +1,8 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
+import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import MultipleFormStoryWrapper from '../../../.storybook/components/MultipleFormStoryWrapper.vue';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 export default {
   title: 'Features/Multi Instance',

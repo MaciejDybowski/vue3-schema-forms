@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { StoryFn } from '@storybook/vue3';
+import { StoryFn } from '@storybook/vue3-vite';
 
 import { defineComponent, ref } from 'vue';
 

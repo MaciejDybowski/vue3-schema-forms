@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { calculationSchemaInDuplicatedSection, simpleCalculationSchema } from '@/stories/schemas';
 

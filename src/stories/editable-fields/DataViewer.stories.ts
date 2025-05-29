@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, within } from '@storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';

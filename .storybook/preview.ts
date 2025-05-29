@@ -1,8 +1,8 @@
 import { initialize, mswLoader } from "msw-storybook-addon";
 
 import { install as VueMonacoEditorPlugin } from "@guolao/vue-monaco-editor";
-import type { Preview } from "@storybook/vue3";
-import { setup } from "@storybook/vue3";
+import type { Preview } from "@storybook/vue3-vite";
+import { setup } from "@storybook/vue3-vite";
 
 import i18n, { i18nConfig } from "./plugins/i18n";
 import vuetify from "./plugins/vuetify";

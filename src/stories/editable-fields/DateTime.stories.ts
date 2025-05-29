@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import dayjs from '../../components/controls/date/dayjs';
 import { Schema } from '../../types/schema/Schema';

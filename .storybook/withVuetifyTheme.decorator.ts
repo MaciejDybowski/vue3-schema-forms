@@ -1,7 +1,7 @@
 import { h, ref } from "vue"
 // @ts-ignore
 import StoryWrapper from "./components/StoryWrapper.vue"
-import { Decorator, StoryContext } from "@storybook/vue3"
+import { Decorator, StoryContext } from "@storybook/vue3-vite"
 import { i18nConfig } from "./plugins/i18n"
 
 export const DEFAULT_THEME = "light"

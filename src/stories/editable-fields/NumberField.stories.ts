@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, fireEvent, userEvent, within } from '@storybook/test';
+import { expect, fireEvent, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, fireEvent, userEvent, within } from '@storybook/test';
+import { expect, fireEvent, userEvent, within } from 'storybook/test';
 
 import { DictionarySource } from '../../types/shared/Source';
 import { waitForMountedAsync } from '../editable-fields/utils';

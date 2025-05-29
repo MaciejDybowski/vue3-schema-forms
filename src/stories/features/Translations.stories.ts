@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { HttpResponse, http } from 'msw';
 
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';

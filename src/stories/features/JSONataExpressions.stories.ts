@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { waitForMountedAsync } from '../editable-fields/utils';

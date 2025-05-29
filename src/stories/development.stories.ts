@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Meta, StoryObj } from '@storybook/vue3';
+import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 import { MULTI_ORDERED_SELECT_MOCK } from './mock-responses';

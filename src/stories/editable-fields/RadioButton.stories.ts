@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { EngineSourceField } from '../../types/engine/controls';
 import { Schema } from '../../types/schema/Schema';
