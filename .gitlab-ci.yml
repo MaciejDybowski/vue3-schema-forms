@@ -5,8 +5,24 @@ variables:
   NPM_PROXY: nexus3.tecna.pl/repository/npm-private
 
 stages:
-  - publish # no need to split it into separate stages, we can also avoid passing artifacts that way
+  - prepare
   - build
+  - publish # no need to split it into separate stages, we can also avoid passing artifacts that way
+
+
+npm-install:
+  stage: prepare
+  image: docker.tecna.pl/node:lts
+  script:
+    - npm config set registry https://${NPM_PROXY}
+    - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
+    - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 week
+
 
 build-storybook:
   stage: build
