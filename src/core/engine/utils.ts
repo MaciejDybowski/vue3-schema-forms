@@ -1,8 +1,10 @@
 import { cloneDeep } from 'lodash';
 
 import { jsonSchemaResolver } from '@/core/engine/jsonSchemaResolver';
-import { SchemaOptions, baseUri } from '@/main';
+
 import { Schema } from '@/types/schema/Schema';
+import { SchemaOptions } from '@/types/schema/SchemaOptions';
+import { baseUri } from '@/main';
 
 export const variableRegexp: RegExp = new RegExp('{.*?}', 'g');
 

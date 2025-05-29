@@ -1,10 +1,10 @@
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 import vue from '@vitejs/plugin-vue';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import * as path from 'path';
 import { defineConfig } from 'vite';
-import typescript2 from 'rollup-plugin-typescript2';
 import dts from 'vite-plugin-dts';
 import { exec } from 'node:child_process';
-import * as path from 'path';
 
 export default defineConfig({
   plugins: [
@@ -12,56 +12,46 @@ export default defineConfig({
     VueI18nPlugin({}),
     dts({
       insertTypesEntry: true,
-    }),
-    typescript2({
-      check: false,
-      include: ['src/components/**/*.vue'],
-      tsconfigOverride: {
-        compilerOptions: {
-          outDir: 'dist',
-          sourceMap: true,
-          declaration: true,
-          declarationMap: true,
-        },
-        exclude: ['vite.config.ts'],
-      },
+      outDir: 'dist/types',
+      include: ['src/components/**/*.vue', 'src/components/**/*.ts', 'src/core/**/*.ts', 'src/types/**/*.ts'],
     }),
     {
       name: 'include-global-components-types',
       closeBundle: async () => {
         exec('cat src/global-components.d.ts >> dist/main.d.ts');
-        console.log('Components type added');
+        console.log('✅ Added global component types to output');
       },
     },
   ],
   build: {
-    cssCodeSplit: true,
     lib: {
-      entry: './src/main.ts',
-      name: 'vue3-schema-forms',
-      formats: ['es', 'cjs', 'umd'],
+      entry: path.resolve(__dirname, 'src/main.ts'),
+      name: 'Vue3SchemaForms',
       fileName: (format) => `main.${format}.js`,
+      formats: ['es', 'cjs', 'umd'],
     },
     rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'src/main.ts'),
-      },
-      external: ['vue', 'vue-i18n', 'vuetify', 'vuedraggable', 'axios', 'pinia', "dayjs"],
+      external: ['vue', 'vue-i18n', 'vuetify', 'vuedraggable', 'axios', 'dayjs'],
       output: {
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'main.css') return 'style.css';
-          return assetInfo.name;
-        },
-        exports: 'named',
         globals: {
           vue: 'Vue',
+          'vue-i18n': 'VueI18n',
+          vuetify: 'Vuetify',
+          vuedraggable: 'vuedraggable',
+          axios: 'axios',
+          dayjs: 'dayjs',
         },
+        assetFileNames: 'style.css',
+        exports: 'named',
       },
     },
+    cssCodeSplit: true,
+    sourcemap: true,
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      'immer': path.resolve(__dirname, 'node_modules/immer/dist/immer.cjs.production.min.js')
     },
   },
 });

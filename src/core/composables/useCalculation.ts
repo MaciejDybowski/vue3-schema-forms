@@ -6,9 +6,11 @@ import { ref } from 'vue';
 
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { useNumber } from '@/core/composables/useNumber';
+import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
-import { logger, useFormModel, useResolveVariables } from '@/main';
+import { logger } from '@/main';
 import { EngineField } from '@/types/engine/EngineField';
+import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 
 export function useCalculation() {
   const { roundTo } = useNumber();
@@ -17,7 +19,6 @@ export function useCalculation() {
   const unsubscribeListener = ref<Fn>(() => {});
   const calculationResultWasModified = ref(false);
   const { fillPath } = useResolveVariables();
-  const { getValue, setValue } = useFormModel();
   const form = useInjectedFormModel();
 
   async function calculationFunc(field: EngineField, model: any): Promise<number | null> {
@@ -79,7 +80,11 @@ export function useCalculation() {
       ) {
         return;
       }
-      setValue(roundTo(result, precision), field);
+      const event: NodeUpdateEvent = {
+        key: field.key,
+        value: roundTo(result, precision),
+      };
+      field.on.input(event);
       await onChange(field, model);
     }
   }

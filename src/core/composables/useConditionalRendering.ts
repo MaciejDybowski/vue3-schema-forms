@@ -5,9 +5,12 @@ import { cloneDeep } from 'lodash';
 import { ref } from 'vue';
 
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
-import { Schema, logger, useResolveVariables } from '@/main';
+
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
+import { useResolveVariables } from '@/core/composables/useResolveVariables';
+import { Schema } from '@/types/schema/Schema';
+import { logger } from '@/main';
 
 export function useConditionalRendering() {
   let shouldRender = ref(false);

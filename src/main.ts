@@ -3,35 +3,6 @@ import { App, Component } from 'vue';
 import { vueSchemaFromControls } from '@/components/controls';
 import DuplicatedSectionBatchAddDialogBody from '@/components/controls/duplicated-section/DuplicatedSectionBatchAddDialogBody.vue';
 
-import {
-  useCalculation,
-  useClass,
-  useConditionalRendering,
-  useDateFormat,
-  useDateTimeFormat,
-  useDictionary,
-  useExpression,
-  useFormModel,
-  useLabel,
-  useLocale,
-  useProps,
-  useResolveVariables,
-  useRules,
-  useSource,
-} from '@/core/composables';
-import { EngineField } from '@/types/engine/EngineField';
-import { Schema } from '@/types/schema/Schema';
-import { SchemaComponent } from '@/types/schema/SchemaComponent';
-import { SchemaField } from '@/types/schema/SchemaField';
-import { SchemaOptions } from '@/types/schema/SchemaOptions';
-import { Cols } from '@/types/shared/Cols';
-import { DuplicatedSectionOptions } from '@/types/shared/DuplicatedSectionOptions';
-import { Layout } from '@/types/shared/Layout';
-import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
-import { Source } from '@/types/shared/Source';
-import { StaticContentTag } from '@/types/shared/StaticContentTag';
-import { Translation } from '@/types/shared/Translation';
-
 import * as components from '../src/components/index';
 
 export declare type Components = Record<string, Component>;
@@ -124,35 +95,4 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
       }
     },
   };
-};
-
-export type {
-  EngineField,
-  Schema,
-  SchemaOptions,
-  SchemaComponent,
-  SchemaField,
-  Cols,
-  DuplicatedSectionOptions,
-  Layout,
-  SchemaFieldType,
-  Source,
-  StaticContentTag,
-  Translation,
-};
-export {
-  useLabel,
-  useCalculation,
-  useClass,
-  useConditionalRendering,
-  useDateFormat,
-  useDateTimeFormat,
-  useDictionary,
-  useExpression,
-  useFormModel,
-  useLocale,
-  useProps,
-  useResolveVariables,
-  useRules,
-  useSource,
 };
