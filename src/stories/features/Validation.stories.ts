@@ -5,14 +5,74 @@ import { Schema } from '../../types/schema/Schema';
 import { SchemaField } from '../../types/schema/elements';
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { StoryTemplateWithCustomValidation } from '../templates/story-template';
+
+
+
+
 
 export default {
   title: 'Features/Validations',
   ...formStoryWrapperTemplate,
 };
 
+export const Required: Story = {
+  name: 'Example: define required field',
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit, { delay: 100 });
+
+    await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        item1: {
+          label: 'Normal Item',
+          layout: { component: 'text-field' },
+        },
+      },
+      required: ['item1'],
+    },
+  },
+};
+
+export const RequiredWithNested: Story = {
+  name: 'Example: define required field in nested object',
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit, { delay: 100 });
+
+    await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        item1: {
+          label: 'Normal Item',
+          layout: { component: 'text-field' },
+        },
+        nested: {
+          properties: {
+            item2: {
+              label: 'Nested Item',
+              layout: { component: 'text-field' },
+            },
+          },
+          required: ['item2'],
+        },
+      },
+    },
+  },
+};
+
 export const RegexpWithDependencies: Story = {
+  name: 'Example: using regexp expression for validation with params',
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
@@ -21,7 +81,7 @@ export const RegexpWithDependencies: Story = {
     const field = canvas.getByLabelText('Field with validation');
     await userEvent.type(field, '3.2123', { delay: 100 });
 
-    await expect(canvas.getByText('Zbyt dużo znaków po przecinku')).toBeInTheDocument();
+    await expect(canvas.getByText('To much digits')).toBeInTheDocument();
   },
   args: {
     formModel: {
@@ -46,12 +106,12 @@ export const RegexpWithDependencies: Story = {
           validations: [
             {
               name: 'regexpForDigitsLimitation',
-              message: 'Akceptowalna jest tylko liczba dodatnia',
+              message: 'Acceptable number above 0',
               regexp: '^[0-9]\\d*(\\.\\d+)?$',
             },
             {
               name: 'regexpForDigitsLimitation',
-              message: 'Zbyt dużo znaków po przecinku',
+              message: 'To much digits',
               regexp: '^\\d+(\\.\\d{0,{fieldA}})?$',
             },
           ],
@@ -62,6 +122,7 @@ export const RegexpWithDependencies: Story = {
 };
 
 export const CustomRegexpValidations: Story = {
+  name: 'Example: using regexp expression for validation with translation',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -71,7 +132,7 @@ export const CustomRegexpValidations: Story = {
     await expect(canvas.getByText('Email must be valid')).toBeInTheDocument();
 
     const field = canvas.getByLabelText('Email');
-    await userEvent.type(field, 'maciejdybowski@github.com', { delay: 100 });
+    await userEvent.type(field, 'john_smith@github.com', { delay: 100 });
 
     await userEvent.click(Submit, { delay: 100 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
@@ -107,118 +168,11 @@ export const CustomRegexpValidations: Story = {
 };
 
 /**
- * #### Required field with nested
- */
-export const RequiredWithNested: Story = {
-  args: {
-    formModel: {},
-    schema: {
-      type: 'object',
-      properties: {
-        item1: {
-          label: 'Normal Item',
-          layout: { component: 'text-field' },
-        },
-        nested: {
-          properties: {
-            item2: {
-              label: 'Nested Item',
-              layout: { component: 'text-field' },
-            },
-          },
-          required: ['item2'],
-        },
-      },
-      required: ['item1'] as Schema,
-    },
-  },
-};
-
-const validationExample = {
-  type: 'object',
-  properties: {
-    field1: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field2: { label: 'Identifier', layout: { component: 'text-field' } } as SchemaField,
-    field3: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field4: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field5: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field6: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field7: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field8: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field9: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field10: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field11: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field12: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field13: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field14: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field15: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field16: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field17: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-    field18: { label: 'Field 1', layout: { component: 'text-field' } } as SchemaField,
-  },
-  required: ['field2'],
-} as Schema;
-export const ExposedValidationAndScroll: Story = {
-  args: {
-    defaultFormActions: true,
-    validationBehaviour: 'scroll',
-    formModel: {},
-    schema: validationExample,
-  },
-};
-
-export const ExposedValidationAndScrollWithRules: Story = {
-  args: {
-    defaultFormActions: true,
-    validationBehaviour: 'scroll',
-    formModel: {},
-    schema: {
-      properties: {
-        fieldA: {
-          label: 'Field A',
-          layout: {
-            component: 'text-field',
-          },
-          validations: [
-            {
-              name: 'valid-sth',
-              rule: 'fieldA != fieldB',
-              message: 'Custom message',
-            },
-          ],
-        },
-        fieldB: {
-          label: 'Field B',
-          layout: {
-            component: 'text-field',
-          },
-        },
-      },
-    },
-  },
-};
-
-export const ExposedValidationAndMessages: Story = {
-  args: {
-    defaultFormActions: true,
-    validationBehaviour: 'messages',
-    formModel: {},
-    schema: validationExample,
-  },
-};
-
-export const AddCustomSubmitWithBuiltInValidation: Story = {
-  render: StoryTemplateWithCustomValidation,
-  args: {
-    formModel: {},
-    schema: validationExample,
-  },
-};
-
-/**
- * #### Warunkową wymagalność pola możemy zdefiniować dodając obiekt do tablicy `validations`, gdzie nazwa to `conditional-required` a warunek zgodny z JSONata
+ * #### Conditional field requirement can be defined by adding an object to the `validations` array,
+ * where the name is `conditional-required` and the condition is specified using JSONata.
  */
 export const ConditionalRequired: Story = {
+  name: 'Example: built-in conditional required with JSONata',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -271,6 +225,7 @@ export const ConditionalRequired: Story = {
 };
 
 export const ConditionalRequiredWithDefault: Story = {
+  name: 'Example: built-in conditional required with JSONata and default',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -332,129 +287,19 @@ export const ConditionalRequiredWithDefault: Story = {
   },
 };
 
-/**
- * #### Można definiować funkcje walidacyjne oparte o budowanie warunków JSONata
- */
-export const ValidationFunctionWithJSONNataAndContext: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-
-    const Submit = canvas.getByText('Validate');
-    await userEvent.click(Submit, { delay: 200 });
-    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-
-    let textField = canvas.getByLabelText('Username');
-    await userEvent.type(textField, 'Maciej', {
-      delay: 100,
-    });
-
-    await userEvent.click(Submit, { delay: 200 });
-    await expect(canvas.getByText('Custom message')).toBeInTheDocument();
-
-    const textField2 = canvas.getByLabelText('Username');
-    await userEvent.type(textField2, 'Karol', {
-      delay: 100,
-    });
-
-    await userEvent.click(Submit, { delay: 200 });
-    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
-
-  args: {
-    model: {},
-    schema: {
-      type: 'object',
-      properties: {
-        username: {
-          label: 'Username',
-          layout: {
-            component: 'text-field',
-          },
-          validations: [
-            {
-              name: 'valid-sth',
-              rule: 'username!=context.currentUser.username or $not($exists(username))',
-              message: 'Custom message',
-            },
-          ],
-        },
-      },
-    },
-    options: {
-      context: {
-        currentUser: {
-          username: 'Maciej',
-        },
-      },
-    },
-  },
-};
-
-export const ValidationFunctionInSections: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    const Submit = canvas.getByText('Validate');
-    await userEvent.click(Submit, { delay: 200 });
-    await expect(canvas.getByText('Value=Maciej is not allowed.')).toBeInTheDocument();
-  },
-
-  args: {
-    formModel: {
-      pozycjeDokumentu: [{ fieldA: 'Karol' }, { fieldA: 'Maciej' }],
-    },
-    schema: {
-      type: 'object',
-      properties: {
-        pozycjeDokumentu: {
-          layout: {
-            component: 'duplicated-section',
-            schema: {
-              properties: {
-                fieldA: {
-                  label: 'FieldA',
-                  layout: {
-                    component: 'text-field',
-                    cols: 6,
-                  },
-                  validations: [
-                    {
-                      name: 'valid-sth',
-                      rule: 'pozycjeDokumentu[].fieldA!=context.currentUser.username',
-                      message: 'Value=Maciej is not allowed.',
-                    },
-                  ],
-                },
-              },
-            },
-            options: {
-              addBtnText: 'Add',
-            },
-          },
-        },
-      },
-    },
-    options: {
-      context: {
-        currentUser: {
-          username: 'Maciej',
-        },
-      },
-    },
-  },
-};
-
 export const AlertErrorConnectionWithValidation: Story = {
+  name: 'Example: alert with error props trigger validation error',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Error message!')).toBeInTheDocument();
+    await expect(canvas.getByText('Alert')).toBeInTheDocument();
   },
 
   args: {
+    validationBehaviour: 'messages',
     formModel: {},
     schema: {
       properties: {
@@ -480,7 +325,130 @@ export const AlertErrorConnectionWithValidation: Story = {
   },
 };
 
+export const ValidationFunctionWithJSONNataAndContext: Story = {
+  name: 'Example: using JSONata expression with context object',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
+
+    let textField = canvas.getByLabelText('Username');
+    await userEvent.type(textField, 'john_smith', {
+      delay: 100,
+    });
+
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(
+      canvas.getByText('For some reason this value is not allowed.'),
+    ).toBeInTheDocument();
+
+    await userEvent.clear(textField);
+    await userEvent.type(textField, 'carol_brown', {
+      delay: 100,
+    });
+
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
+  },
+
+  args: {
+    model: {},
+    schema: {
+      type: 'object',
+      properties: {
+        username: {
+          label: 'Username',
+          layout: {
+            component: 'text-field',
+          },
+          validations: [
+            {
+              name: 'valid-sth',
+              rule: 'username!=context.currentUser.username or $not($exists(username))',
+              message: 'For some reason this value is not allowed.',
+            },
+          ],
+        },
+      },
+    },
+    options: {
+      fieldProps: {
+        variant: 'outlined',
+        density: 'comfortable',
+      },
+      context: {
+        currentUser: {
+          username: 'john_smith',
+        },
+      },
+    },
+  },
+};
+
+export const ValidationFunctionInSections: Story = {
+  name: 'Example: using JSONata expression in duplicated section and context object',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText('Value not allowed.')).toBeInTheDocument();
+  },
+
+  args: {
+    formModel: {
+      nicknames: [{ nickname: 'carol_brown' }, { nickname: 'john_smith' }],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        nicknames: {
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                nickname: {
+                  label: 'nickname',
+                  layout: {
+                    component: 'text-field',
+                    cols: 6,
+                  },
+                  validations: [
+                    {
+                      name: 'valid-sth',
+                      rule: 'nicknames[].nickname!=context.currentUser.username',
+                      message: 'Value not allowed.',
+                    },
+                  ],
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add',
+            },
+          },
+        },
+      },
+    },
+    options: {
+      fieldProps: {
+        variant: 'outlined',
+        density: 'comfortable',
+      },
+      context: {
+        currentUser: {
+          username: 'john_smith',
+        },
+      },
+    },
+  },
+};
+
 export const JsonataDateCompare: Story = {
+  name: 'Example: using complex JSONata function for date comparison',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -537,6 +505,14 @@ export const JsonataDateCompare: Story = {
     schema: {
       type: 'object',
       properties: {
+        span: {
+          content:
+            '($isValidRange := function($from, $to) { ($exists($from) and $from != null and $exists($to) and $to != null) ? $toMillis($from) < $toMillis($to) : true }; $isValidRange(validFrom, validTo))',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          } as Layout,
+        },
         validFrom: {
           label: 'Valid From',
           layout: {
