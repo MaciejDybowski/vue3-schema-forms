@@ -32,6 +32,8 @@ import { Ref, getCurrentInstance, onMounted, ref, watch } from 'vue';
 import { vueSchemaFromControls } from '@/components/controls';
 
 import { provideFormModel } from '@/core/state/useFormModelProvider';
+import { FormExternalAction } from '@/types/engine/FormExternalAction';
+import { FormModel } from '@/types/engine/FormModel';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { ValidationFromBehaviour } from '@/types/engine/ValidationFromBehaviour';
 import { ValidationFromError } from '@/types/engine/ValidationFromError';
@@ -60,7 +62,7 @@ const { result, stopMeasure } = usePerformanceAPI();
 const form = provideFormModel();
 const localModel = ref({});
 
-const model = defineModel<object>();
+const model = defineModel<FormModel>();
 
 const props = withDefaults(
   defineProps<{
@@ -76,12 +78,9 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', val: any): void;
+  (e: 'update:modelValue', val: FormModel): void;
   (e: 'isFormReady'): void;
-  (
-    e: 'callAction',
-    payload: { code: string; body: Record<any, any>; params: Record<any, any> },
-  ): void;
+  (e: 'callAction', payload: FormExternalAction): void;
 }>();
 
 let loading = ref(true);

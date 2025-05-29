@@ -1,10 +1,9 @@
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 import vue from '@vitejs/plugin-vue';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { exec } from 'node:child_process';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import { exec } from 'node:child_process';
 
 export default defineConfig({
   plugins: [
@@ -13,12 +12,19 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       outDir: 'dist/types',
-      include: ['src/components/**/*.vue', 'src/components/**/*.ts', 'src/core/**/*.ts', 'src/types/**/*.ts'],
+      entryRoot: 'src',
+      include: [
+        'src/main.ts',
+        'src/components/**/*.vue',
+        'src/components/**/*.ts',
+        'src/core/**/*.ts',
+        'src/types/**/*.ts',
+      ],
     }),
     {
       name: 'include-global-components-types',
       closeBundle: async () => {
-        exec('cat src/global-components.d.ts >> dist/main.d.ts');
+        exec('cat src/global-components.d.ts >> dist/types/main.d.ts');
         console.log('✅ Added global component types to output');
       },
     },
@@ -26,7 +32,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/main.ts'),
-      name: 'Vue3SchemaForms',
+      name: 'vue3-schema-forms',
       fileName: (format) => `main.${format}.js`,
       formats: ['es', 'cjs', 'umd'],
     },
@@ -51,7 +57,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
-      'immer': path.resolve(__dirname, 'node_modules/immer/dist/immer.cjs.production.min.js')
+      immer: path.resolve(__dirname, 'node_modules/immer/dist/immer.cjs.production.min.js'),
     },
   },
 });

@@ -3,6 +3,8 @@ import { App, Component } from 'vue';
 import { vueSchemaFromControls } from '@/components/controls';
 import DuplicatedSectionBatchAddDialogBody from '@/components/controls/duplicated-section/DuplicatedSectionBatchAddDialogBody.vue';
 
+export * from './components';
+
 import * as components from '../src/components/index';
 
 export declare type Components = Record<string, Component>;
@@ -96,3 +98,4 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
     },
   };
 };
+

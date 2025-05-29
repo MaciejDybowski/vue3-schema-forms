@@ -1,0 +1,1 @@
+export type FormModel = Record<string, string | number | boolean | object | Array | null>

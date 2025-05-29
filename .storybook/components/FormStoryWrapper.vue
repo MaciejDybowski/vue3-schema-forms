@@ -53,9 +53,11 @@ import { onMounted, ref, toRaw, watch } from "vue";
 import VueJsonPretty from "vue-json-pretty";
 import "vue-json-pretty/lib/styles.css";
 
-import { Schema } from "@/types/schema/Schema.d";
+
 
 import VueSchemaForms from "../../src/components/engine/VueSchemaForms.vue";
+import { Schema } from '@/types/schema/Schema.d';
+
 
 const snackbar = ref(false);
 const { schema, options, formModel, emittedObject } = defineProps<{
