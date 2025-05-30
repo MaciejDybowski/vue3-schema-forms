@@ -5,31 +5,26 @@ variables:
   NPM_PROXY: nexus3.tecna.pl/repository/npm-private
   NPM_TOKEN: $TECNA_NPM_TOKEN
 
+image: docker.tecna.pl/node:lts
+
 stages:
   - storybook
   - publish
 
-
 storybook-test:
   stage: storybook
-  image: docker.tecna.pl/node:lts
   script:
-    - npm config set registry https://${NPM_PROXY}
-    - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
-    - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
-    - npm ci
-    - npx playwright install --with-deps
     - npm run build-storybook
-    - npm install -g http-server
+    - npx playwright install --with-deps
+    - npm install -g http-server wait-on
     - http-server dist-storybook -p 6006 &
-    - sleep 5
+    - wait-on tcp:127.0.0.1:6006
     - npm run test-storybook
   only:
     - dev
 
 npm-publish:
   stage: publish
-  image: docker.tecna.pl/node:lts
   script:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - npm install

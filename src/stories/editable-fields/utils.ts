@@ -2,5 +2,5 @@
  Promise for mounted async functions
  ***/
 export async function waitForMountedAsync() {
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  await new Promise((resolve) => setTimeout(resolve, 10));
 }
