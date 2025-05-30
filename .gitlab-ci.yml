@@ -6,45 +6,19 @@ variables:
   NPM_TOKEN: $TECNA_NPM_TOKEN
 
 stages:
-  - prepare
-  - build
-  - test
-  - publish # no need to split it into separate stages, we can also avoid passing artifacts that way
+  - storybook
+  - publish
 
 
-npm-install:
-  stage: prepare
+storybook-test:
+  stage: storybook
   image: docker.tecna.pl/node:lts
   script:
     - npm config set registry https://${NPM_PROXY}
     - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
     - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
-    - npm install
-  artifacts:
-    paths:
-      - node_modules/
-    expire_in: 1 week
-
-
-build-storybook:
-  stage: build
-  image: docker.tecna.pl/node:lts
-  dependencies:
-    - npm-install
-  script:
+    - npm ci
     - npm run build-storybook
-  artifacts:
-    paths:
-      - dist-storybook/
-  only:
-    - dev
-
-test_storybook:
-  stage: test
-  image: docker.tecna.pl/node:lts
-  needs:
-    - build-storybook
-  script:
     - npm install -g http-server
     - http-server dist-storybook -p 6006 &
     - sleep 5
