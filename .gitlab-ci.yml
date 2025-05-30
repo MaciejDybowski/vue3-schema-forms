@@ -1,69 +1,44 @@
-variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_AUTH_CONFIG: $CI_DOCKER_AUTH_CONFIG
-  NPM_REGISTRY: nexus3.tecna.pl/repository/npm-private-releases
-  NPM_PROXY: nexus3.tecna.pl/repository/npm-private
-
 stages:
-  - prepare
+  - install
   - build
-  - containerize
-  - publish # no need to split it into separate stages, we can also avoid passing artifacts that way
+  - test
 
+variables:
+  NODE_ENV: development
+  CI: 'true'
+  PNPM_HOME: "$CI_PROJECT_DIR/.pnpm"
 
-npm-install:
-  stage: prepare
-  image: docker.tecna.pl/node:lts
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - .pnpm-store/
+
+before_script:
+  - corepack enable
+  - corepack prepare pnpm@latest --activate
+  - pnpm install --frozen-lockfile
+
+install_dependencies:
+  stage: install
   script:
-    - npm config set registry https://${NPM_PROXY}
-    - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
-    - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
-    - npm install
-  artifacts:
-    paths:
-      - node_modules/
-    expire_in: 1 week
+    - echo "Dependencies installed with pnpm"
 
-
-build-storybook:
+build_storybook:
   stage: build
-  image: docker.tecna.pl/node:lts
-  dependencies:
-    - npm-install
   script:
-    - npm run build-storybook
+    - pnpm build-storybook
   artifacts:
     paths:
-      - storybook-static
-  only:
-    - dev
+      - dist-storybook/
+    expire_in: 1 hour
 
-docker-push-storybook:
-  stage: containerize
-  image: docker.tecna.pl/docker
-  dependencies:
-    - build-storybook
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD ${DOWNSTREAM_REPO}
-    - docker login -u $UPSTREAM_REPO_USER -p $UPSTREAM_REPO_PASSWORD ${UPSTREAM_REPO}
+test_storybook:
+  stage: test
+  needs:
+    - build_storybook
   script:
-    - docker build -f Dockerfile.storybook --build-arg "NEXUS3_URL=${UPSTREAM_REPO}" -t ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook .
-    - docker push ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
-  only:
-    - dev
-
-
-npm-publish:
-  stage: publish
-  image: docker.tecna.pl/node:lts
-  script:
-    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm install
-    - npm run build
-    - npm run publish:nexus
-  only:
-    - master
-
-
-
-
+    - pnpm build-storybook
+    - npx http-server dist-storybook -p 6006 &
+    - sleep 5
+    - pnpm test-storybook
