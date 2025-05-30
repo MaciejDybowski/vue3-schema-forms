@@ -3,31 +3,20 @@ stages:
   - build
   - test
 
-variables:
-  NODE_ENV: development
-  CI: 'true'
-  PNPM_HOME: "$CI_PROJECT_DIR/.pnpm"
-
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - node_modules/
-    - .pnpm-store/
-
-before_script:
-  - corepack enable
-  - corepack prepare pnpm@latest --activate
-  - pnpm install --frozen-lockfile
 
 install_dependencies:
   stage: install
   script:
-    - echo "Dependencies installed with pnpm"
+    - npm ci
 
 build_storybook:
   stage: build
   script:
-    - pnpm build-storybook
+    - npm run build-storybook
   artifacts:
     paths:
       - dist-storybook/
@@ -37,8 +26,9 @@ test_storybook:
   stage: test
   needs:
     - build_storybook
+  image: node:20 # lub inna zgodna z twoim projektem
   script:
-    - pnpm build-storybook
-    - npx http-server dist-storybook -p 6006 &
-    - sleep 5
-    - pnpm test-storybook
+    - npm install -g http-server
+    - http-server dist-storybook -p 6006 &
+    - sleep 5 # poczekaj aż serwer się uruchomi
+    - npm run test-storybook
