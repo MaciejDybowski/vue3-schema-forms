@@ -42,7 +42,7 @@ build-storybook:
 test_storybook:
   stage: test
   needs:
-    - build_storybook
+    - build-storybook
   script:
     - npm install -g http-server
     - http-server dist-storybook -p 6006 &
