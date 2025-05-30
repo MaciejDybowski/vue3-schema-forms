@@ -17,12 +17,11 @@ storybook-test:
     - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
     - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
     - npm ci
-    - npm install --save-dev wait-on
     - npx playwright install --with-deps --only-shell chromium
     - npm run build-storybook
     - npm install -g http-server
     - http-server dist-storybook -p 6006 &
-    - wait-on tcp:127.0.0.1:6006
+    - sleep 15
     - npm run test-storybook
   only:
     - dev
