@@ -1,34 +1,67 @@
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_AUTH_CONFIG: $CI_DOCKER_AUTH_CONFIG
+  NPM_REGISTRY: nexus3.tecna.pl/repository/npm-private-releases
+  NPM_PROXY: nexus3.tecna.pl/repository/npm-private
+  NPM_TOKEN: $TECNA_NPM_TOKEN
+
 stages:
-  - install
+  - prepare
   - build
   - test
+  - publish # no need to split it into separate stages, we can also avoid passing artifacts that way
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - node_modules/
 
-install_dependencies:
-  stage: install
+npm-install:
+  stage: prepare
+  image: docker.tecna.pl/node:lts
   script:
-    - npm ci
+    - npm config set registry https://${NPM_PROXY}
+    - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
+    - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 week
 
-build_storybook:
+
+build-storybook:
   stage: build
+  image: docker.tecna.pl/node:lts
+  dependencies:
+    - npm-install
   script:
     - npm run build-storybook
   artifacts:
     paths:
       - dist-storybook/
-    expire_in: 1 hour
+  only:
+    - dev
 
 test_storybook:
   stage: test
   needs:
     - build_storybook
-  image: node:20 # lub inna zgodna z twoim projektem
   script:
     - npm install -g http-server
     - http-server dist-storybook -p 6006 &
-    - sleep 5 # poczekaj aż serwer się uruchomi
+    - sleep 5
     - npm run test-storybook
+  only:
+    - dev
+
+npm-publish:
+  stage: publish
+  image: docker.tecna.pl/node:lts
+  script:
+    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - npm install
+    - npm run build
+    - npm run publish:nexus
+  only:
+    - master
+
+
+
+
