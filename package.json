@@ -19,7 +19,7 @@
     "format": "prettier --write src/",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "test-storybook": "test-storybook --url http://localhost:6006 --browsers webkit",
+    "test-storybook": "test-storybook",
     "build-storybook": "storybook build -o dist-storybook",
     "test": "vitest",
     "publish:nexus": "npm publish --registry=https://nexus3.tecna.pl/repository/npm-private-releases"
