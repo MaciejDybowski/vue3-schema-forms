@@ -41,6 +41,7 @@ build-storybook:
 
 test_storybook:
   stage: test
+  image: docker.tecna.pl/node:lts
   needs:
     - build-storybook
   script:
