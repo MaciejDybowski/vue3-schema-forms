@@ -10,14 +10,13 @@ stages:
   - publish
 
 storybook-test:
-  image: docker.tecna.pl/node:lts
+  image: mcr.microsoft.com/playwright:v1.44.0-jammy
   stage: storybook
   script:
     - npm ci
-    - npx playwright install --with-deps --only-shell chromium
     - npm run build-storybook
     - npm install -g http-server
-    - http-server dist-storybook -p 6006 > /dev/null 2>&1 &
+    - npx serve dist-storybook -l 6006 &
     - sleep 15
     - npm run test-storybook
   only:
