@@ -13,9 +13,22 @@ storybook-test:
   image: docker.tecna.pl/node:lts
   stage: storybook
   script:
+    # Ustawienie strefy czasowej i locale EN
+    - apt-get update && apt-get install -y tzdata locales
+    - ln -fs /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
+    - dpkg-reconfigure -f noninteractive tzdata
+    - locale-gen en_US.UTF-8
+    - update-locale LANG=en_US.UTF-8
+    - export LANG=en_US.UTF-8
+    - export LANGUAGE=en_US:en
+    - export LC_ALL=en_US.UTF-8
+
+    # Konfiguracja NPM
     - npm config set registry https://${NPM_PROXY}
     - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
     - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
+
+    # Budowanie i testowanie Storybooka
     - npm ci
     - npx playwright install --with-deps --only-shell chromium
     - npm run build-storybook
