@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { Story } from 'storybook/dist/csf';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { EngineSourceField } from '../../types/engine/controls';
 import { Schema } from '../../types/schema/Schema';
@@ -7,6 +8,10 @@ import { SimpleSource } from '../../types/schema/elements';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
+
+
+
+
 
 export default {
   title: 'Elements/Editable/Select',
@@ -19,6 +24,10 @@ export const Standard: Story = {
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({ select: 1 });
@@ -87,6 +96,10 @@ export const SimpleValidation: Story = {
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     const Submit = canvas.getByText('Validate');
@@ -124,6 +137,10 @@ export const CustomMapping: Story = {
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({ selectCustomMapping: 1 });
@@ -160,6 +177,10 @@ export const CustomMappingReturnObject: Story = {
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({
@@ -237,6 +258,10 @@ export const GetOptionsFromAPI: Story = {
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
 

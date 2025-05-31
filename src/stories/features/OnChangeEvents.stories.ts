@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { expect, fireEvent, userEvent, within } from 'storybook/test';
+import { Story } from 'storybook/dist/csf';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
 import { DictionarySource } from '../../types/shared/Source';
 import { waitForMountedAsync } from '../editable-fields/utils';
@@ -16,7 +17,7 @@ export default {
 };
 
 export const CallActionWithParametersAndRequestBody: Story = {
-  name: "Case: form action will be send after value change",
+  name: 'Case: form action will be send after value change',
   play: async (context) => {},
   args: {
     formModel: {},
@@ -61,7 +62,7 @@ export const CallActionWithParametersAndRequestBody: Story = {
 };
 
 export const ResetValueOnChange: Story = {
-  name: "Case: reset value of other property in model",
+  name: 'Case: reset value of other property in model',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -108,7 +109,7 @@ export const ResetValueOnChange: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSection: Story = {
-  name: "Case: reset value of other property (duplicate section) in model",
+  name: 'Case: reset value of other property (duplicate section) in model',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -170,7 +171,7 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
-  name: "Case: reset value of dictionary in duplicated section",
+  name: 'Case: reset value of dictionary in duplicated section',
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
@@ -178,7 +179,12 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
     const list = document.getElementsByClassName('v-list');
-    fireEvent.scroll(list[0], { target: { scrollTop: 0 } });
+    await fireEvent.scroll(list[0], { target: { scrollTop: 0 } });
+
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
 

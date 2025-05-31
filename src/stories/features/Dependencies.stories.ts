@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { EngineSourceField } from '../../types/engine/controls';
 import { Schema, SchemaOptions } from '../../types/schema/Schema';
@@ -13,6 +13,7 @@ import {
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { Story } from 'storybook/dist/csf';
 
 export default {
   title: 'Features/Dependencies',
@@ -451,6 +452,10 @@ export const UseFormVariablesInFieldProps: Story = {
 
     await context.step('Resolve dependency', async () => {
       await userEvent.click(currency, { pointerEventsCheck: 0, delay: 200 });
+      await waitFor(() => {
+        const items = document.querySelectorAll('.v-list-item');
+        expect(items.length).toBeGreaterThan(0);
+      });
       const items = document.getElementsByClassName('v-list-item');
       await userEvent.click(items[0], { delay: 200 });
 
@@ -573,6 +578,10 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
       const select = canvas.getByLabelText('Country');
       await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
+      await waitFor(() => {
+        const items = document.querySelectorAll('.v-list-item');
+        expect(items.length).toBeGreaterThan(0);
+      });
       const items = document.getElementsByClassName('v-list-item');
       await userEvent.click(items[0], { delay: 200 });
 

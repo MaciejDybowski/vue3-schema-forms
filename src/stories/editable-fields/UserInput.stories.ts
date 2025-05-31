@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Story } from 'storybook/dist/csf';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { USER_INPUT_MOCKS } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
@@ -22,6 +22,11 @@ export const LimitModel: Story = {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('User');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({
@@ -71,6 +76,10 @@ export const LimitModelArray: Story = {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('User');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({
@@ -123,6 +132,10 @@ export const AutoSelect: Story = {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('User');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({

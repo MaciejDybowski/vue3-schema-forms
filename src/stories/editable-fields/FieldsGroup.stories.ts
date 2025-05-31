@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
@@ -205,6 +205,10 @@ export const GroupWithHiddenDict = {
 
     await userEvent.click(currency, { pointerEventsCheck: 0, delay: 200 });
 
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
 
