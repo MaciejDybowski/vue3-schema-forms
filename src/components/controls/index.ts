@@ -9,10 +9,10 @@ import UserInput from '@/components/controls/user-input/UserInput.vue';
 
 import { Components } from '@/main';
 
-import Autocomplete from './Autocomplete.vue';
+import Autocomplete from './dictionary/Autocomplete.vue';
 import ButtonField from './ButtonField.vue';
 import CheckboxButton from './CheckboxButton.vue';
-import Combobox from './Combobox.vue';
+import Combobox from './dictionary/Combobox.vue';
 import Divider from './Divider.vue';
 import Location from './Location.vue';
 import NumberField from './NumberField.vue';

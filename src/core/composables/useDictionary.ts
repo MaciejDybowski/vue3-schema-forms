@@ -6,22 +6,26 @@ import get from 'lodash/get';
 
 import { Ref, ref, watch } from 'vue';
 
-import { Pagination } from '@/components/controls/base/Pagination';
-import { mapSliceTotalElements } from '@/components/controls/base/SliceResponse';
+import { Pagination } from '@/components/controls/dictionary/Pagination';
+import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
 
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { variableRegexp } from '@/core/engine/utils';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { logger } from '@/main';
+import { EngineOptions } from '@/types/engine/EngineOptions';
+
 import { EngineDictionaryField } from '@/types/engine/controls';
 import { ResponseReference } from '@/types/shared/ResponseReference';
 import { DictionarySource } from '@/types/shared/Source';
+import { DictionaryItemChip } from '@/types/engine/DictionaryItemChip';
 
 export function useDictionary() {
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const { resolve } = useResolveVariables();
   const form = useInjectedFormModel();
 
+  let providedChips: DictionaryItemChip[] = [];
   let loadCounter = ref(0);
   let source: DictionarySource = {} as DictionarySource;
   let title = ref('title');
@@ -44,6 +48,37 @@ export function useDictionary() {
   const debounced = {
     load: debounce(load, 300),
   };
+
+  async function initState(fieldReference: EngineDictionaryField) {
+    const fieldOptions: EngineOptions = fieldReference.options;
+    providedChips =
+      fieldOptions.dictionaryProps && fieldOptions.dictionaryProps.labels
+        ? fieldOptions.dictionaryProps.labels
+        : [];
+    field = fieldReference;
+    source = fieldReference.source;
+    title.value = source.title ? source.title : 'title';
+    value.value = source.value ? source.value : 'value';
+    returnObject.value = source.returnObject !== undefined ? source.returnObject : true;
+    lazy.value = source.lazy !== undefined ? source.lazy : true;
+    description.value = source.description ? source.description : null;
+    paginationOptions.value = source.itemsPerPage
+      ? new Pagination(source.itemsPerPage)
+      : new Pagination(50);
+    responseReference = source.references
+      ? source.references
+      : ({ data: 'content', totalElements: 'numberOfElements' } as ResponseReference);
+    singleOptionAutoSelect.value = source.singleOptionAutoSelect
+      ? source.singleOptionAutoSelect
+      : true;
+
+    //endpoint = { resolvedText: source.url, allVariablesResolved: true };
+    endpoint = await resolve(field, source.url, title.value, true);
+
+    isUrlHasDependency = source.url.match(variableRegexp);
+    await checkConditionalFilters();
+    await checkUrlDependencies();
+  }
 
   async function checkConditionalFilters() {
     const params = new URLSearchParams(source.url);
@@ -89,32 +124,6 @@ export function useDictionary() {
       await updateEndpoint();
       vueSchemaFormEventBus.on(updateEndpoint);
     }
-  }
-
-  async function initState(fieldReference: EngineDictionaryField) {
-    field = fieldReference;
-    source = fieldReference.source;
-    title.value = source.title ? source.title : 'title';
-    value.value = source.value ? source.value : 'value';
-    returnObject.value = source.returnObject !== undefined ? source.returnObject : true;
-    lazy.value = source.lazy !== undefined ? source.lazy : true;
-    description.value = source.description ? source.description : null;
-    paginationOptions.value = source.itemsPerPage
-      ? new Pagination(source.itemsPerPage)
-      : new Pagination(50);
-    responseReference = source.references
-      ? source.references
-      : ({ data: 'content', totalElements: 'numberOfElements' } as ResponseReference);
-    singleOptionAutoSelect.value = source.singleOptionAutoSelect
-      ? source.singleOptionAutoSelect
-      : true;
-
-    //endpoint = { resolvedText: source.url, allVariablesResolved: true };
-    endpoint = await resolve(field, source.url, title.value, true);
-
-    isUrlHasDependency = source.url.match(variableRegexp);
-    await checkConditionalFilters();
-    await checkUrlDependencies();
   }
 
   watch(query, (currentQuery, previousQuery) => {
@@ -223,7 +232,61 @@ export function useDictionary() {
     return filteredParams.length ? `${path}?${filteredParams.join('&')}` : path;
   }
 
+  function loadItemChips(item: any): DictionaryItemChip[] {
+    if ('labels' in item) {
+      // array ['labelId', 'labelId2']
+      if (Array.isArray(item.labels)) {
+        if (providedChips.length > 0) {
+          const userLabels: string[] = item.labels;
+          return providedChips.filter((element) => userLabels.includes(element.id));
+        } else {
+          return item.labels.map((id: string) => ({
+            id: id,
+            title: id,
+            backgroundColor: 'primary',
+            textColor: 'white',
+          }));
+        }
+      }
+
+      // string separated by coma
+      if (item.labels && item.labels.includes(',')) {
+        const labels = item.labels.split(',');
+        if (providedChips.length > 0) {
+          return providedChips.filter((element) => labels.includes(element.id));
+        } else {
+          return labels.map((id: string) => ({
+            id: id,
+            title: id,
+            backgroundColor: 'primary',
+            textColor: 'white',
+          }));
+        }
+      }
+      // one string = label
+      else if (item.labels) {
+        if (providedChips.length > 0) {
+          return providedChips.filter((element) => element.id == item.labels);
+        } else {
+          return [
+            {
+              id: item.labels,
+              title: item.labels,
+              backgroundColor: 'primary',
+              textColor: 'white',
+            },
+          ];
+        }
+      }
+
+      return [];
+    } else {
+      return [];
+    }
+  }
+
   return {
+    loadItemChips,
     initState,
     title,
     value,

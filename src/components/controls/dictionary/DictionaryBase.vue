@@ -1,5 +1,6 @@
 <template>
-  <v-autocomplete
+  <component
+    :is="component"
     v-model="model"
     :multiple="multiple"
     v-bind="attrs"
@@ -25,20 +26,20 @@
         </v-list-item>
       </div>
     </template>
-  </v-autocomplete>
+  </component>
 </template>
 
 <script lang="ts" setup>
 import { isArray } from 'lodash';
-import { VAutocomplete } from 'vuetify/components';
 
 import { computed, ref, useAttrs } from 'vue';
 
 import { Pagination } from './Pagination';
-
+type ComponentType = "v-autocomplete" | "v-combobox";
 const attrs = useAttrs();
 const props = withDefaults(
   defineProps<{
+    component: ComponentType
     modelValue: any;
     lazy?: boolean;
     options?: Pagination;
@@ -46,6 +47,7 @@ const props = withDefaults(
     multiple?: boolean;
   }>(),
   {
+    component: "v-autocomplete",
     lazy: false,
     multiple: false,
     maxSelection: 0,

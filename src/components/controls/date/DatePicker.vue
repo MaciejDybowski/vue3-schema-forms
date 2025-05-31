@@ -17,8 +17,8 @@
       <v-btn
         :readonly="fieldProps.readonly as boolean"
         icon="mdi-calendar"
-        variant="plain"
         size="small"
+        variant="plain"
         @click="pickerModel = !pickerModel"
       />
     </template>
@@ -53,10 +53,6 @@ import { vMaska } from 'maska/vue';
 
 import { computed, onMounted, ref, useAttrs, watch } from 'vue';
 
-import BaseAutocomplete from '@/components/controls/base/BaseAutocomplete.vue';
-
-import { EngineDateField } from '@/types/engine/controls';
-
 import {
   useClass,
   useDateFormat,
@@ -65,7 +61,9 @@ import {
   useLocale,
   useProps,
   useRules,
-} from '../../../core/composables';
+} from '@/core/composables';
+import { EngineDateField } from '@/types/engine/controls';
+
 import dayjs from './dayjs';
 
 const { locale, t } = useLocale();
