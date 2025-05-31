@@ -15,7 +15,6 @@ storybook-test:
   script:
     - npm ci
     - npm run build-storybook
-    - npm install -g http-server
     - npx serve dist-storybook -l 6006 &
     - sleep 15
     - npm run test-storybook
