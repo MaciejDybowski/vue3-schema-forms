@@ -106,7 +106,7 @@ export const Required: Story = {
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 400 });
 
-    await expect(canvas.getByText('Custom message')).toBeInTheDocument();
+    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
   },
   args: {
     formModel: {},
