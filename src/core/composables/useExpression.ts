@@ -19,41 +19,35 @@ export function useExpression() {
     expression: string,
     model: object,
   ) {
-    let functionName = extractFunctionName(expression);
-    if (functionName) {
-      let result = ref();
-      let f = functions[functionName];
-      const mergedModel = form.getFormModelForResolve.value;
-      result.value = await f(expression, mergedModel);
+    const functionName = extractFunctionName(expression);
+    if (!functionName) return;
 
-      if (!functionName.includes('_GENERATOR')) {
-        const unsubscribe = vueSchemaFormEventBus.on(
-          async () => await expressionListener(schema, key, expression, model),
-        );
-      } else {
-        // if field has value generator is not needed // TODO maybe better code for this..?
-        const current = get(model, key, null);
-        if (current != null) {
-          return current;
-        }
-      }
-      return result.value;
+    const isGenerator = functionName.includes('_GENERATOR');
+    const currentValue = get(model, key, null);
+
+    if (isGenerator && currentValue != null) {
+      return currentValue;
     }
+
+    const result = ref();
+    const f = functions[functionName];
+    const mergedModel = form.getFormModelForResolve.value;
+    result.value = await f(expression, mergedModel);
+
+    if (!isGenerator) {
+      vueSchemaFormEventBus.on(
+        async () => await expressionListener(schema, key, expression, model),
+      );
+    }
+
+    return result.value;
   }
 
   function extractFunctionName(expression: string): string | null {
-    try {
-      const match = expression.match(/^(\w+)\s*\(/);
-      if (match) {
-        return match[1].trim();
-      } else {
-        return null; // Return null if no match is found
-      }
-    } catch (error) {
-      console.error('Error extracting function name:', error);
-      return null; // Return null in case of an error
-    }
+    const match = expression.match(/^(\w+)\s*\(/);
+    return match?.[1].trim() ?? null;
   }
+
 
   async function expressionListener(
     schema: EngineField,
@@ -61,20 +55,27 @@ export function useExpression() {
     expression: string,
     model: object,
   ) {
-    await new Promise((r) => setTimeout(r, 30));
-    let functionName = extractFunctionName(expression);
-    if (functionName) {
-      let f = functions[functionName];
-      const mergedModel = form.getFormModelForResolve.value;
-      const result = await f(expression, mergedModel);
-      const currentValue = get(model, key, null);
-      if (result !== currentValue) {
-        const event: NodeUpdateEvent = {
-          key: key,
-          value: result,
-        };
-        schema.on.input(event);
-      }
+    await new Promise((resolve) => setTimeout(resolve, 30));
+
+    const functionName = extractFunctionName(expression);
+    if (!functionName) return;
+
+    const resolverFn = functions[functionName];
+    if (!resolverFn) {
+      console.warn(`Function "${functionName}" not found in expression resolver.`);
+      return;
+    }
+
+    const mergedModel = form.getFormModelForResolve.value;
+    const newValue = await resolverFn(expression, mergedModel);
+    const currentValue = get(model, key, null);
+
+    if (newValue !== currentValue) {
+      const updateEvent: NodeUpdateEvent = {
+        key,
+        value: newValue,
+      };
+      schema.on.input(updateEvent);
     }
   }
 
