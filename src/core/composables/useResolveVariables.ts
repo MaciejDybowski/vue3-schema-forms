@@ -19,7 +19,73 @@ export function useResolveVariables() {
   const { formattedNumber, roundTo } = useNumber();
   const form = useInjectedFormModel();
 
+  /**
+   *
+   * @param match - for resolve jsonata function in paragraph or other static content field
+   */
+  async function resolveJsonata(match: string): Promise<{ value: any; success: boolean }> {
+    const expression = match.slice(1, -1).slice(5, -1); // Remove {{nata and last }}
+    const model = form.getFormModelForResolve.value;
+    const value = await jsonata(expression).evaluate(model);
+    return { value, success: value !== null && value !== undefined };
+  }
+
+  async function resolveVariable(
+    field: EngineField,
+    match: string,
+    title: string,
+    rawNumber: boolean
+  ): Promise<{ value: any; success: boolean }> {
+    let [variable, defaultValue, typeOfValue, formatterProps] = match.slice(1, -1).split(':');
+
+    const valueProps: VariableSyntaxProps = {
+      defaultValue,
+      typeOfValue,
+      formatterProps,
+    };
+
+    const model = form.getFormModelForResolve.value;
+
+    if (variable.includes('[]') && field.path) {
+      variable = fillPath(field.path, field.index as number, variable);
+    }
+
+    const nata = jsonata(variable);
+    let value = await nata.evaluate(model);
+    value = doSthWithValue(field, value, valueProps, title, rawNumber);
+
+    return { value, success: value !== null && value !== undefined && value !== '' };
+  }
+
+  // TODO testy jednostkowe do tej funkcji
   async function resolve(
+    field: EngineField,
+    inputString: string,
+    title = 'title',
+    rawNumber = false,
+  ): Promise<{ resolvedText: string; allVariablesResolved: boolean }> {
+    let allVariablesResolved = true;
+    const matches = inputString.match(variableRegexp);
+
+    if (!matches) return { resolvedText: inputString, allVariablesResolved };
+
+    for await (const match of matches) {
+      const isNata = match.includes('nata');
+      const { value, success } = isNata
+        ? await resolveJsonata(match)
+        : await resolveVariable(field, match, title, rawNumber);
+
+      if (!success) {
+        allVariablesResolved = false;
+      }
+
+      inputString = inputString.replace(match, String(value ?? ''));
+    }
+
+    return { resolvedText: inputString, allVariablesResolved };
+  }
+
+  async function resolveOLD(
     field: EngineField,
     inputString: string,
     title: string = 'title',
@@ -78,6 +144,7 @@ export function useResolveVariables() {
     return { resolvedText: inputString, allVariablesResolved };
   }
 
+
   function fillPath(
     fieldPath: string | undefined,
     fieldIndex: number | undefined,
@@ -102,6 +169,7 @@ export function useResolveVariables() {
     );
   }
 
+  // TODO - refaktoryzacja + testy dla tej funkcji
   function doSthWithValue(
     field: any,
     value: any,
@@ -109,65 +177,65 @@ export function useResolveVariables() {
     title: string,
     rawNumber = false,
   ) {
-    if (valueProps.typeOfValue == 'DATETIME' && value) {
-      if (!dayjs(value).isValid()) return value;
-      if (valueProps.defaultValue == value) return value;
+    const { typeOfValue, defaultValue, formatterProps } = valueProps;
+
+    const isValidDate = (val: any) => dayjs(val).isValid();
+    const isDateString = (val: string) =>
+      typeof val === 'string' &&
+      val.length === 10 &&
+      (val.includes('/') || val.includes('.') || val.includes('-')) &&
+      isValidDate(val);
+
+    if (typeOfValue === 'DATETIME' && value) {
+      if (!isValidDate(value) || defaultValue === value) return value;
       return dayjs(value).format(dateTimeFormat.value);
     }
 
-    if (valueProps.typeOfValue == 'DATE' && value) {
-      if (valueProps.defaultValue == value) return;
+    if (typeOfValue === 'DATE' && value) {
+      if (defaultValue === value) return;
       return dayjs(value).format(dateFormat.value);
     }
 
-    if (value == 0) {
-      return value;
-    }
-    if (typeof value === 'number' && value !== 0) {
+    if (value === 0) return value;
+
+    if (typeof value === 'number') {
       if (rawNumber) {
-        // gdy chcemy używać liczb w adresie URL to nie może być to kropka ani nie może być to formatowane
-        // TODO
-        value = Number(value);
-        if (!!value && !isNaN(value)) {
-          value = value + '';
-          value = value?.replaceAll(',', '.');
+        const numeric = Number(value);
+        if (!isNaN(numeric)) {
+          return String(numeric).replaceAll(',', '.');
         }
       } else {
-        value = formattedNumber(
-          value,
-          'decimal',
-          valueProps.formatterProps
-            ? valueProps.formatterProps
-            : field.precisionMin
-              ? Number(field.precisionMin)
-              : 0,
-          valueProps.formatterProps
-            ? valueProps.formatterProps
-            : field.precision
-              ? Number(field.precision)
-              : 2,
-        );
+        const minPrecision = formatterProps
+          ? formatterProps
+          : field.precisionMin
+            ? Number(field.precisionMin)
+            : 0;
+
+        const maxPrecision = formatterProps
+          ? formatterProps
+          : field.precision
+            ? Number(field.precision)
+            : 2;
+
+        return formattedNumber(value, 'decimal', minPrecision, maxPrecision);
       }
     }
-    if (
-      typeof value === 'string' &&
-      dayjs(value).isValid() &&
-      value.length == 10 &&
-      (value.includes('/') || value.includes('.') || value.includes('-'))
-    ) {
-      value = dayjs(value).format(dateFormat.value);
+
+    if (isDateString(value)) {
+      return dayjs(value).format(dateFormat.value);
     }
-    if (typeof value == 'object' && value !== null) {
+
+    if (typeof value === 'object' && value !== null) {
       value = value[title];
     }
 
-    if (
-      (value == null && valueProps.defaultValue !== null) ||
-      (value == '' && value != 0) ||
-      value == undefined ||
-      value == ''
-    ) {
-      value = valueProps.defaultValue;
+    const isEmpty =
+      value === null ||
+      value === undefined ||
+      (value === '' && value !== 0);
+
+    if (isEmpty && defaultValue !== null) {
+      value = defaultValue;
     }
 
     return value;
