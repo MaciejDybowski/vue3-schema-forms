@@ -61,7 +61,6 @@ export function useResolveVariables() {
     return { value, success: value !== null && value !== undefined && value !== '' };
   }
 
-  // TODO testy do tej funkcji
   async function resolve(
     field: EngineField,
     inputString: string,
