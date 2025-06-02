@@ -116,7 +116,7 @@ let value = ref('value');
 const loading = ref(false);
 
 async function load() {
-  const endpoint = await resolve(schema, schema.source.url, schema.source.title, true);
+  const endpoint = await resolve(schema, schema.source.url, true, schema.source.title);
 
   if (endpoint.allVariablesResolved) {
     loading.value = true;

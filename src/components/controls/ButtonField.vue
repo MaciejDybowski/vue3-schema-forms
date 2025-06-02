@@ -214,7 +214,6 @@ async function apiCallMode() {
   const { resolvedText, allVariablesResolved } = await resolve(
     schema,
     schema.config.source,
-    'title',
     true,
   );
   const body = await createBodyObject();

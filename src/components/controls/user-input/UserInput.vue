@@ -231,10 +231,10 @@ async function loadMoreRecords() {
 async function checkIfURLHasDependency(createListener = false) {
   const isApiContainsDependency = !(usersAPIEndpoint.value.match(variableRegexp) == null);
   if (isApiContainsDependency) {
-    let endpoint = await resolve(props.schema, usersAPIEndpoint.value, 'title', true);
+    let endpoint = await resolve(props.schema, usersAPIEndpoint.value, true);
 
     if (endpoint.resolvedText.match(variableRegexp)) {
-      endpoint = await resolve(props.schema, endpoint.resolvedText, 'title', true);
+      endpoint = await resolve(props.schema, endpoint.resolvedText, true);
     }
 
     if (endpoint.allVariablesResolved) {
@@ -252,7 +252,7 @@ async function checkIfURLHasDependency(createListener = false) {
 
       const listener = async () => {
         await new Promise((r) => setTimeout(r, 50));
-        const temp = await resolve(props.schema, props.schema.source.url as string, 'title', true);
+        const temp = await resolve(props.schema, props.schema.source.url as string, true);
         if (temp.resolvedText !== usersAPIEndpoint.value) {
           usersAPIEndpoint.value = temp.resolvedText;
           await load();

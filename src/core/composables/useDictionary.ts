@@ -13,12 +13,11 @@ import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { variableRegexp } from '@/core/engine/utils';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { logger } from '@/main';
+import { DictionaryItemChip } from '@/types/engine/DictionaryItemChip';
 import { EngineOptions } from '@/types/engine/EngineOptions';
-
 import { EngineDictionaryField } from '@/types/engine/controls';
 import { ResponseReference } from '@/types/shared/ResponseReference';
 import { DictionarySource } from '@/types/shared/Source';
-import { DictionaryItemChip } from '@/types/engine/DictionaryItemChip';
 
 export function useDictionary() {
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
@@ -73,7 +72,7 @@ export function useDictionary() {
       : true;
 
     //endpoint = { resolvedText: source.url, allVariablesResolved: true };
-    endpoint = await resolve(field, source.url, title.value, true);
+    endpoint = await resolve(field, source.url, true, title.value);
 
     isUrlHasDependency = source.url.match(variableRegexp);
     await checkConditionalFilters();
@@ -96,7 +95,7 @@ export function useDictionary() {
       endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
     } else {
       isUrlHasDependency = source.url.match(variableRegexp);
-      const resolved = await resolve(field, source.url, title.value, true);
+      const resolved = await resolve(field, source.url, true, title.value);
       const updatedUrl = removeParams(resolved.resolvedText, ['enable-filter']);
       endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
     }
@@ -105,10 +104,10 @@ export function useDictionary() {
   async function checkUrlDependencies() {
     if (isUrlHasDependency !== null) {
       const updateEndpoint = async () => {
-        let temp = await resolve(field, source.url, title.value, true);
+        let temp = await resolve(field, source.url, true, title.value);
 
         if (temp.resolvedText.match(variableRegexp)) {
-          temp = await resolve(field, temp.resolvedText, title.value, true);
+          temp = await resolve(field, temp.resolvedText, true, title.value);
         }
 
         if (loadCounter.value == 0 || temp.resolvedText !== endpoint.resolvedText) {
