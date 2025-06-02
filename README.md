@@ -207,6 +207,7 @@ listeners:
 |----------------------------|--------|----------------------------------|
 | Calculations               | `5ms`  | Ensures fresh model values       |
 | Prop updates               | `10ms` | Waits for model + calc to settle |
+| Decimal places             | `10ms` | Waits for model changes          |
 | Visibility (`if` / `hide`) | `50ms` | Triggers after all other logic   |
 
 This staging guarantees that dependent logic (e.g., showing/hiding fields) reacts only after all inputs and computed
