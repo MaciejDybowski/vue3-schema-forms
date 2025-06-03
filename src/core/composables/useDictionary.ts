@@ -6,13 +6,15 @@ import get from 'lodash/get';
 
 import { Ref, ref, watch } from 'vue';
 
-import { Pagination } from '@/components/controls/base/Pagination';
-import { mapSliceTotalElements } from '@/components/controls/base/SliceResponse';
+import { Pagination } from '@/components/controls/dictionary/Pagination';
+import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
 
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { variableRegexp } from '@/core/engine/utils';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { logger } from '@/main';
+import { DictionaryItemChip } from '@/types/engine/DictionaryItemChip';
+import { EngineOptions } from '@/types/engine/EngineOptions';
 import { EngineDictionaryField } from '@/types/engine/controls';
 import { ResponseReference } from '@/types/shared/ResponseReference';
 import { DictionarySource } from '@/types/shared/Source';
@@ -22,6 +24,7 @@ export function useDictionary() {
   const { resolve } = useResolveVariables();
   const form = useInjectedFormModel();
 
+  let providedChips: DictionaryItemChip[] = [];
   let loadCounter = ref(0);
   let source: DictionarySource = {} as DictionarySource;
   let title = ref('title');
@@ -45,53 +48,12 @@ export function useDictionary() {
     load: debounce(load, 300),
   };
 
-  async function checkConditionalFilters() {
-    const params = new URLSearchParams(source.url);
-    const hasConditionalFilter = params.has('enable-filter');
-
-    if (!hasConditionalFilter) return;
-
-    const expression = params.get('enable-filter') ?? '';
-    const nata = jsonata(expression);
-    const mergedModel = form.getFormModelForResolve.value;
-    const newValue = await nata.evaluate(mergedModel);
-
-    if (!newValue) {
-      const updatedUrl = removeParams(source.url, ['value-filter', 'filter', 'enable-filter']);
-      endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
-    } else {
-      isUrlHasDependency = source.url.match(variableRegexp);
-      const resolved = await resolve(field, source.url, title.value, true);
-      const updatedUrl = removeParams(resolved.resolvedText, ['enable-filter']);
-      endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
-    }
-  }
-
-  async function checkUrlDependencies() {
-    if (isUrlHasDependency !== null) {
-      const updateEndpoint = async () => {
-        let temp = await resolve(field, source.url, title.value, true);
-
-        if (temp.resolvedText.match(variableRegexp)) {
-          temp = await resolve(field, temp.resolvedText, title.value, true);
-        }
-
-        if (loadCounter.value == 0 || temp.resolvedText !== endpoint.resolvedText) {
-          dependencyWasChanged.value = true;
-          loadCounter.value = 0;
-          endpoint = temp;
-          debounced.load('watcher');
-        } else {
-          dependencyWasChanged.value = false;
-        }
-      };
-
-      await updateEndpoint();
-      vueSchemaFormEventBus.on(updateEndpoint);
-    }
-  }
-
   async function initState(fieldReference: EngineDictionaryField) {
+    const fieldOptions: EngineOptions = fieldReference.options;
+    providedChips =
+      fieldOptions.dictionaryProps && fieldOptions.dictionaryProps.labels
+        ? fieldOptions.dictionaryProps.labels
+        : [];
     field = fieldReference;
     source = fieldReference.source;
     title.value = source.title ? source.title : 'title';
@@ -110,11 +72,57 @@ export function useDictionary() {
       : true;
 
     //endpoint = { resolvedText: source.url, allVariablesResolved: true };
-    endpoint = await resolve(field, source.url, title.value, true);
+    endpoint = await resolve(field, source.url, true, title.value);
 
     isUrlHasDependency = source.url.match(variableRegexp);
     await checkConditionalFilters();
     await checkUrlDependencies();
+  }
+
+  async function checkConditionalFilters() {
+    const params = new URLSearchParams(source.url);
+    const hasConditionalFilter = params.has('enable-filter');
+
+    if (!hasConditionalFilter) return;
+
+    const expression = params.get('enable-filter') ?? '';
+    const nata = jsonata(expression);
+    const mergedModel = form.getFormModelForResolve.value;
+    const newValue = await nata.evaluate(mergedModel);
+
+    if (!newValue) {
+      const updatedUrl = removeParams(source.url, ['value-filter', 'filter', 'enable-filter']);
+      endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
+    } else {
+      isUrlHasDependency = source.url.match(variableRegexp);
+      const resolved = await resolve(field, source.url, true, title.value);
+      const updatedUrl = removeParams(resolved.resolvedText, ['enable-filter']);
+      endpoint = { resolvedText: updatedUrl, allVariablesResolved: true };
+    }
+  }
+
+  async function checkUrlDependencies() {
+    if (isUrlHasDependency !== null) {
+      const updateEndpoint = async () => {
+        let temp = await resolve(field, source.url, true, title.value);
+
+        if (temp.resolvedText.match(variableRegexp)) {
+          temp = await resolve(field, temp.resolvedText, true, title.value);
+        }
+
+        if (loadCounter.value == 0 || temp.resolvedText !== endpoint.resolvedText) {
+          dependencyWasChanged.value = true;
+          loadCounter.value = 0;
+          endpoint = temp;
+          debounced.load('watcher');
+        } else {
+          dependencyWasChanged.value = false;
+        }
+      };
+
+      await updateEndpoint();
+      vueSchemaFormEventBus.on(updateEndpoint);
+    }
   }
 
   watch(query, (currentQuery, previousQuery) => {
@@ -223,7 +231,61 @@ export function useDictionary() {
     return filteredParams.length ? `${path}?${filteredParams.join('&')}` : path;
   }
 
+  function loadItemChips(item: any): DictionaryItemChip[] {
+    if ('labels' in item) {
+      // array ['labelId', 'labelId2']
+      if (Array.isArray(item.labels)) {
+        if (providedChips.length > 0) {
+          const userLabels: string[] = item.labels;
+          return providedChips.filter((element) => userLabels.includes(element.id));
+        } else {
+          return item.labels.map((id: string) => ({
+            id: id,
+            title: id,
+            backgroundColor: 'primary',
+            textColor: 'white',
+          }));
+        }
+      }
+
+      // string separated by coma
+      if (item.labels && item.labels.includes(',')) {
+        const labels = item.labels.split(',');
+        if (providedChips.length > 0) {
+          return providedChips.filter((element) => labels.includes(element.id));
+        } else {
+          return labels.map((id: string) => ({
+            id: id,
+            title: id,
+            backgroundColor: 'primary',
+            textColor: 'white',
+          }));
+        }
+      }
+      // one string = label
+      else if (item.labels) {
+        if (providedChips.length > 0) {
+          return providedChips.filter((element) => element.id == item.labels);
+        } else {
+          return [
+            {
+              id: item.labels,
+              title: item.labels,
+              backgroundColor: 'primary',
+              textColor: 'white',
+            },
+          ];
+        }
+      }
+
+      return [];
+    } else {
+      return [];
+    }
+  }
+
   return {
+    loadItemChips,
     initState,
     title,
     value,

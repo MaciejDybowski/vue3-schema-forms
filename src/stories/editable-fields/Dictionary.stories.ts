@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
@@ -18,6 +19,10 @@ export const Standard: Story = {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({
@@ -57,6 +62,10 @@ export const WithDescription: Story = {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     const first = items[0];
     await expect(first.textContent).toEqual('AfganiAfganithe-best');
@@ -164,6 +173,10 @@ export const ReturnValue: Story = {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({
@@ -311,6 +324,10 @@ export const OneTimeValueFilter: Story = {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({

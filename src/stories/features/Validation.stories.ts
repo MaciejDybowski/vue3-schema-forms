@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { Story } from 'storybook/dist/csf';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField } from '../../types/schema/elements';
@@ -237,6 +238,10 @@ export const ConditionalRequiredWithDefault: Story = {
     const select = canvas.getByLabelText('Select with condition');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[1], { delay: 200 });
 

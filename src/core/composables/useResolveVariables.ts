@@ -12,6 +12,8 @@ interface VariableSyntaxProps {
   defaultValue: any;
   typeOfValue: any;
   formatterProps: any;
+  titleReference: string;
+  rawNumber: boolean;
 }
 
 export function useResolveVariables() {
@@ -19,60 +21,68 @@ export function useResolveVariables() {
   const { formattedNumber, roundTo } = useNumber();
   const form = useInjectedFormModel();
 
+  /**
+   *
+   * @param match - for resolve jsonata function in paragraph or other static content field
+   */
+  async function resolveJsonata(match: string): Promise<{ value: any; success: boolean }> {
+    const expression = match.slice(1, -1).slice(5, -1); // Remove {{nata and last }}
+    const model = form.getFormModelForResolve.value;
+    const value = await jsonata(expression).evaluate(model);
+    return { value, success: value !== null && value !== undefined };
+  }
+
+  async function resolveVariable(
+    field: EngineField,
+    match: string,
+    rawNumber: boolean,
+    titleReference: string,
+  ): Promise<{ value: any; success: boolean }> {
+    let [variable, defaultValue, typeOfValue, formatterProps] = match.slice(1, -1).split(':');
+
+    const valueProps: VariableSyntaxProps = {
+      defaultValue,
+      typeOfValue,
+      formatterProps,
+      titleReference: titleReference,
+      rawNumber: rawNumber,
+    };
+
+    const model = form.getFormModelForResolve.value;
+
+    if (variable.includes('[]') && field.path) {
+      variable = fillPath(field.path, field.index as number, variable);
+    }
+
+    const nata = jsonata(variable);
+    let value = await nata.evaluate(model);
+    value = doValueFormatting(field, value, valueProps);
+
+    return { value, success: value !== null && value !== undefined && value !== '' };
+  }
+
   async function resolve(
     field: EngineField,
     inputString: string,
-    title: string = 'title',
-    rawNumber = false,
-  ) {
+    forUrlPurpose = false,
+    objectTitleReference = 'title',
+  ): Promise<{ resolvedText: string; allVariablesResolved: boolean }> {
     let allVariablesResolved = true;
+    const matches = inputString.match(variableRegexp);
 
-    const arrayOfVariables = inputString.match(variableRegexp);
-    if (!!arrayOfVariables) {
-      for await (const match of arrayOfVariables) {
-        // obsluga jsonata funkcji w { } do umieszczenia w tekście
-        if (match.includes('nata')) {
-          const unwrapped = match.slice(1, -1);
-          let jsonataExpression = unwrapped.slice(5);
-          jsonataExpression = jsonataExpression.substring(0, jsonataExpression.length - 1);
-          const model = form.getFormModelForResolve.value;
-          const nata = jsonata(jsonataExpression);
-          let value = await nata.evaluate(model);
-          if (!value && value != 0) {
-            allVariablesResolved = false;
-          } else {
-            inputString = inputString.replace(match, value + '');
-          }
-        } else {
-          // obsluga zmiennych standardowo jak bylo
-          const unwrapped = match.slice(1, -1);
-          const split = unwrapped.split(':');
-          let variable = split[0];
-          const defaultValue = split.length >= 2 ? split[1] : null;
-          const typeOfValue = split.length >= 3 ? split[2] : null;
-          const formatterProps = split.length == 4 ? split[3] : null;
-          const valueProps: VariableSyntaxProps = {
-            defaultValue: defaultValue,
-            typeOfValue: typeOfValue,
-            formatterProps: formatterProps,
-          };
+    if (!matches) return { resolvedText: inputString, allVariablesResolved };
 
-          const model = form.getFormModelForResolve.value;
-          if (variable.includes('[]') && field.path) {
-            variable = fillPath(field.path, field.index as number, variable);
-          }
+    for await (const match of matches) {
+      const isNata = match.includes('nata');
+      const { value, success } = isNata
+        ? await resolveJsonata(match)
+        : await resolveVariable(field, match, forUrlPurpose, objectTitleReference);
 
-          const nata = jsonata(variable);
-          let value = await nata.evaluate(model);
-
-          value = doSthWithValue(field, value, valueProps, title, rawNumber);
-          inputString = inputString.replace(match, value + '');
-
-          if (!value && value != 0) {
-            allVariablesResolved = false;
-          }
-        }
+      if (!success) {
+        allVariablesResolved = false;
       }
+
+      inputString = inputString.replace(match, String(value ?? ''));
     }
 
     return { resolvedText: inputString, allVariablesResolved };
@@ -102,72 +112,42 @@ export function useResolveVariables() {
     );
   }
 
-  function doSthWithValue(
-    field: any,
-    value: any,
-    valueProps: VariableSyntaxProps,
-    title: string,
-    rawNumber = false,
-  ) {
-    if (valueProps.typeOfValue == 'DATETIME' && value) {
-      if (!dayjs(value).isValid()) return value;
-      if (valueProps.defaultValue == value) return value;
+  function doValueFormatting(field: any, value: any, valueProps: VariableSyntaxProps) {
+    const { typeOfValue, defaultValue, formatterProps, titleReference, rawNumber } = valueProps;
+
+    const isValidDate = (val: any) => dayjs(val).isValid();
+
+    if (typeOfValue === 'DATETIME' && value) {
+      if (!isValidDate(value) || defaultValue === value) return value;
       return dayjs(value).format(dateTimeFormat.value);
     }
 
-    if (valueProps.typeOfValue == 'DATE' && value) {
-      if (valueProps.defaultValue == value) return;
+    if (typeOfValue === 'DATE' && value) {
+      if (defaultValue === value) return;
       return dayjs(value).format(dateFormat.value);
     }
 
-    if (value == 0) {
-      return value;
-    }
-    if (typeof value === 'number' && value !== 0) {
-      if (rawNumber) {
-        // gdy chcemy używać liczb w adresie URL to nie może być to kropka ani nie może być to formatowane
-        // TODO
-        value = Number(value);
-        if (!!value && !isNaN(value)) {
-          value = value + '';
-          value = value?.replaceAll(',', '.');
-        }
-      } else {
-        value = formattedNumber(
-          value,
-          'decimal',
-          valueProps.formatterProps
-            ? valueProps.formatterProps
-            : field.precisionMin
-              ? Number(field.precisionMin)
-              : 0,
-          valueProps.formatterProps
-            ? valueProps.formatterProps
-            : field.precision
-              ? Number(field.precision)
-              : 2,
-        );
-      }
-    }
-    if (
-      typeof value === 'string' &&
-      dayjs(value).isValid() &&
-      value.length == 10 &&
-      (value.includes('/') || value.includes('.') || value.includes('-'))
-    ) {
-      value = dayjs(value).format(dateFormat.value);
-    }
-    if (typeof value == 'object' && value !== null) {
-      value = value[title];
+    if (typeOfValue === 'OBJECT' && value) {
+      value = value[titleReference];
     }
 
-    if (
-      (value == null && valueProps.defaultValue !== null) ||
-      (value == '' && value != 0) ||
-      value == undefined ||
-      value == ''
-    ) {
-      value = valueProps.defaultValue;
+    if ((typeOfValue === 'NUMBER' && value) || typeof value === 'number') {
+      if (value === 0) return value;
+
+      const numeric = Number(value);
+
+      const minPrecision = formatterProps ?? Number(field.precisionMin ?? 0);
+      const maxPrecision = formatterProps ?? Number(field.precision ?? 2);
+
+      return rawNumber && !isNaN(numeric)
+        ? String(numeric).replaceAll(',', '.')
+        : formattedNumber(numeric, 'decimal', minPrecision, maxPrecision);
+    }
+
+    const isEmpty = value === null || value === undefined || (value === '' && value !== 0);
+
+    if (isEmpty && defaultValue !== null) {
+      value = defaultValue;
     }
 
     return value;

@@ -1,12 +1,14 @@
 // @ts-nocheck
 import { expect, userEvent, within } from 'storybook/test';
 
-import { conditionSchema } from '@/stories/schemas';
-
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField, SchemaTextField } from '../../types/schema/elements';
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+
+
+
+
 
 export default {
   title: 'Features/Conditional Rendering/Using if',
@@ -32,7 +34,40 @@ export const ConditionStory: Story = {
   },
   args: {
     formModel: {},
-    schema: conditionSchema,
+    schema: {
+      type: 'object',
+      properties: {
+        description: {
+          content: 'Type: admin/admin',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        login: {
+          label: 'Login',
+          layout: {
+            component: 'text-field',
+          },
+        },
+        password: {
+          label: 'Password',
+          layout: {
+            component: 'text-field',
+            props: {
+              type: 'password',
+            },
+          },
+        },
+        secretCode: {
+          label: 'Result',
+          layout: {
+            component: 'text-field',
+            if: 'nata(login="admin" and password = "admin")',
+          },
+        },
+      },
+    },
   },
 };
 

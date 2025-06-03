@@ -6,6 +6,10 @@ import { Layout } from '../../types/schema/elements';
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
+
+
+
+
 export default {
   title: 'Elements/Static/Paragraphs And Headings',
   ...formStoryWrapperTemplate,
@@ -104,8 +108,81 @@ export const TextWithVariablesAndHTML: Story = {
           } as Layout,
         },
         description: {
+          content: '<b>{data.firstName}</b>, this span was generated as v-html content.',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          } as Layout,
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const NumberVariableInText = {
+  name: 'Case: combine text with variables and HTML elements',
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync();
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Integer number: 4 and float number: 4.230')).toBeInTheDocument();
+  },
+  args: {
+    formModel: {
+      data: {
+        int: 4,
+        float: 4.23032,
+      },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        description2: {
           content:
-            '<b>{data.firstName}</b>, this span was generated as v-html content. And datetime = {data.datetime:-:DATETIME}',
+            'It is possible to show numbers in text. Formatter is <kbd>variable:defaultValue:NUMBER:decimalPlaces</kbd>. Default decimal places is 2',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          } as Layout,
+        },
+        description: {
+          content: 'Integer number: {data.int} and float number: {data.float::NUMBER:3}',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          } as Layout,
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const DateAndDatetimeHTML = {
+  name: 'Case: combine date/datetime variables and HTML elements',
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync();
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Date is: 04/22/2025, datetime is: 03/25/2025 12:37 PM')).toBeInTheDocument();
+  },
+  args: {
+    formModel: {
+      data: {
+        date: '2025-04-22',
+        datetime: '2025-03-25T12:37:34.12312',
+      },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        description2: {
+          content:
+            'It is possible to show date and datetime in text. Formatter is <kbd>variable:defaultValue:DATE</kbd> or <kbd>variable:defaultValue:DATETIME </kbd>',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          } as Layout,
+        },
+        description: {
+          content: 'Date is: {data.date::DATE}, datetime is: {data.datetime::DATETIME}',
           layout: {
             component: 'static-content',
             tag: 'span',

@@ -5,6 +5,10 @@ import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
 
+
+
+
+
 export default {
   title: 'Elements/Editable/NumberField',
   ...formStoryWrapperTemplate,
@@ -255,4 +259,59 @@ export const DependenciesInDefaultValue: Story = {
       },
     } as Schema,
   },
+};
+
+export const PrecisionListener: Story = {
+  name: 'Case: dynamic precision',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const precision = await canvas.getByLabelText('Dynamic precision');
+
+    const tests = [
+      { input: '4', expected: { numberField: 1.2356, precisionReference: 4 } },
+      { input: '3', expected: { numberField: 1.236, precisionReference: 3 } },
+      { input: '2', expected: { numberField: 1.24, precisionReference: 2 } },
+    ];
+
+    await expect(context.args.formModel).toEqual({
+      numberField: 1.235567,
+      precisionReference: 5,
+    });
+
+    for (const { input, expected } of tests) {
+      await userEvent.clear(precision);
+      await userEvent.type(precision, input, { delay: 100 });
+      await expect(context.args.formModel).toEqual(expected);
+    }
+  },
+  args: {
+    formModel: {
+      numberField: 1.235567,
+      precisionReference: 5,
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        precisionReference: {
+          label: 'Dynamic precision',
+          type: 'float',
+          precision: 6,
+          layout: {
+            component: 'number-field',
+          },
+        },
+        numberField: {
+          label: 'Number field',
+          type: 'float',
+          precision: 'precisionReference',
+          layout: {
+            component: 'number-field',
+          },
+        },
+      },
+      i18n: {},
+    },
+  },
+  parameters: {},
 };

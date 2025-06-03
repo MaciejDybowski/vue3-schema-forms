@@ -1,16 +1,48 @@
 // @ts-nocheck
 import { expect, userEvent, within } from 'storybook/test';
 
-import { calculationSchemaInDuplicatedSection, simpleCalculationSchema } from '@/stories/schemas';
-
 import { Schema } from '../../types/schema/Schema';
 import { Layout, SchemaTextField } from '../../types/schema/elements';
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
+
+
+
+
 export default {
   title: 'Features/Internal calculations',
   ...formStoryWrapperTemplate,
+};
+
+const simpleCalculationSchema: Schema = {
+  type: 'object',
+  properties: {
+    field1: {
+      label: 'Field 1',
+      layout: { component: 'number-field', cols: 3 },
+    },
+    field2: {
+      label: 'Field 2',
+      layout: { component: 'number-field', cols: 3 },
+    },
+    field3: {
+      label: 'Result +',
+      layout: {
+        component: 'number-field',
+        cols: 3,
+      },
+      calculation: 'field1 + field2',
+    },
+    field4: {
+      label: 'Result ^2',
+      layout: {
+        component: 'number-field',
+        cols: 3,
+      },
+      calculation: 'field3 * field3',
+    },
+  },
 };
 
 export const SimpleCalculation: Story = {
@@ -108,7 +140,69 @@ export const calculationInDuplicatedSchema: Story = {
         },
       ],
     },
-    schema: calculationSchemaInDuplicatedSection,
+    schema: {
+      type: 'object',
+      properties: {
+        items: {
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              type: 'object',
+              properties: {
+                field1: {
+                  label: 'Field 1',
+                  precision: 4,
+                  layout: { component: 'number-field', cols: 2 },
+                },
+                field2: {
+                  label: 'Field 2',
+                  precision: 4,
+                  layout: { component: 'number-field', cols: 2 },
+                },
+                field3: {
+                  label: 'Result +',
+                  precision: 4,
+                  layout: {
+                    component: 'number-field',
+                    cols: 2,
+                  },
+                  calculation: 'items[].field1 + items[].field2',
+                },
+                field4: {
+                  label: 'Result ^2',
+                  precision: 4,
+                  type: 'float',
+                  layout: {
+                    component: 'number-field',
+                    cols: 2,
+                  },
+                  calculation: 'items[].field3 * items[].field3',
+                },
+                field5: {
+                  label: 'Result^2 - field1',
+                  type: 'float',
+                  precision: 4,
+                  layout: {
+                    component: 'number-field',
+                    cols: 2,
+                  },
+                  calculation: 'items[].field4 - items[].field1',
+                },
+                field6: {
+                  label: 'Result combined',
+                  precision: 4,
+                  layout: {
+                    component: 'number-field',
+                    cols: 2,
+                  },
+                  calculation: 'items[].field1 + items[].field2 + items[].field4 - items[].field5',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
 };
 

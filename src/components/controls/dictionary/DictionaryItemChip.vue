@@ -11,7 +11,8 @@
 
 <script lang="ts" setup>
 import { useLocale } from '@/core/composables';
-import { Label } from '@/types/engine/Label';
+import { DictionaryItemChip } from '@/types/engine/DictionaryItemChip';
+
 
 export interface BuiltInTranslationLanguages {
   default?: string;
@@ -24,7 +25,7 @@ export interface BuiltInTranslationLanguages {
 const { locale } = useLocale();
 const props = withDefaults(
   defineProps<{
-    element: Label;
+    element: DictionaryItemChip;
   }>(),
   {},
 );

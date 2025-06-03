@@ -70,7 +70,7 @@ export function useEventHandler() {
     let body = createBodyObject(eventDefinition, field);
     let params = createParamsObject(eventDefinition, field);
 
-    const { resolvedText, allVariablesResolved } = await resolve(field, eventDefinition.url);
+    const { resolvedText, allVariablesResolved } = await resolve(field, eventDefinition.url, true);
     //console.debug("URL = ", resolvedText);
     //console.debug(body);
     /*const response = await axios({

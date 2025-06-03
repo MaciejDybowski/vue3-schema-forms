@@ -23,12 +23,12 @@ export function useLabel(schema: EngineField) {
   async function bindLabel(schema: EngineField) {
     if (isLabelRef) return schema.label.$ref;
 
-    const { resolvedText, allVariablesResolved } = await resolve(schema, schema.label, 'title');
+    const { resolvedText, allVariablesResolved } = await resolve(schema, schema.label);
     allVariablesResolved ? (label.value = resolvedText) : (label.value = labelWithFallbackMessage);
   }
 
   async function labelResolverListener() {
-    const { resolvedText, allVariablesResolved } = await resolve(schema, schema.label, 'title');
+    const { resolvedText, allVariablesResolved } = await resolve(schema, schema.label);
     allVariablesResolved ? (label.value = resolvedText) : (label.value = labelWithFallbackMessage);
   }
 

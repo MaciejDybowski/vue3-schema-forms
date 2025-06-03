@@ -1,47 +1,47 @@
 // @ts-nocheck
+import { Story } from 'storybook/dist/csf';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+
 import { USER_INPUT_MOCKS } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { waitForMountedAsync } from './utils';
+
+
+
+
 
 export default {
   title: 'Elements/Editable/UserInput',
   ...formStoryWrapperTemplate,
 };
 
-// TODO - napisać testy !!!!!!
-
-export const Standard: Story = {
-  play: async (context) => {},
-  args: {
-    model: {},
-    schema: {
-      type: 'object',
-      properties: {
-        user: {
-          label: 'User',
-          layout: {
-            cols: 12,
-            component: 'user-input',
-          },
-          source: {
-            url: '/mocks/users',
-            itemsPerPage: 20,
-          },
-        },
-      },
-    },
-  },
-  parameters: {
-    msw: {
-      handlers: USER_INPUT_MOCKS,
-    },
-  },
-};
-
 export const LimitModel: Story = {
   name: 'Case: model = object, multiple = false',
-  play: async (context) => {},
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText('User');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[0], { delay: 200 });
+    await expect(context.args.formModel).toEqual({
+      user: {
+        id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+        email: 'alice@example.com',
+        firstName: 'Alice',
+        lastName: 'Smith',
+        username: 'asmith',
+        labels: 'the-best',
+      },
+    });
+  },
   args: {
-    model: {},
+    formModel: {},
     schema: {
       type: 'object',
       properties: {
@@ -71,7 +71,30 @@ export const LimitModel: Story = {
 
 export const LimitModelArray: Story = {
   name: 'Case: model = array, maxSelection enabled',
-  play: async (context) => {},
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText('User');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[0], { delay: 200 });
+    await expect(context.args.formModel).toEqual({
+      user: [
+        {
+          id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+          email: 'alice@example.com',
+          firstName: 'Alice',
+          lastName: 'Smith',
+          username: 'asmith',
+          labels: 'the-best',
+        },
+      ],
+    });
+  },
   args: {
     model: {},
     schema: {
@@ -104,7 +127,31 @@ export const LimitModelArray: Story = {
 
 export const AutoSelect: Story = {
   name: 'Case: autoselect',
-  play: async (context) => {},
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText('User');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[0], { delay: 200 });
+    await expect(context.args.formModel).toEqual({
+      owner: {
+        id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+      },
+      user: {
+        id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+        email: 'alice@example.com',
+        firstName: 'Alice',
+        lastName: 'Smith',
+        username: 'asmith',
+        labels: 'the-best',
+      },
+    });
+  },
   args: {
     formModel: {
       owner: {
@@ -119,10 +166,6 @@ export const AutoSelect: Story = {
           layout: {
             cols: 12,
             component: 'user-input',
-            props: {
-              maxSelection: 1,
-              multiple: true,
-            },
           },
           source: {
             url: '/mocks/users?filter=id=={owner.id}',

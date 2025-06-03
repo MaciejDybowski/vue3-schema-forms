@@ -29,6 +29,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useEventBus } from '@vueuse/core';
 import get from 'lodash/get';
 import set from 'lodash/set';
 
@@ -55,6 +56,7 @@ const props = defineProps<{
   schema: EngineNumberField;
   model: Record<string, any>;
 }>();
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
 const { t } = useLocale();
 const { bindClass } = useClass();
@@ -68,16 +70,16 @@ const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 const showFormattedNumber = ref(true);
 const { fillPath } = useResolveVariables();
+
 let precision =
   props.schema.type == 'int' ? 0 : 'precision' in props.schema ? props.schema.precision : 2;
 const precisionMin =
   props.schema.type == 'int' ? 0 : 'precisionMin' in props.schema ? props.schema.precisionMin : 0;
+let precisionReference = '';
 
 const formatType = (
   'formatType' in props.schema ? props.schema.formatType : 'decimal'
 ) as NumberFormattingType;
-
-const currency = ('currency' in props.schema ? props.schema.currency : 'PLN') as string;
 
 const roundOption: RoundOption =
   'roundOption' in props.schema ? (props.schema.roundOption as RoundOption) : 'round';
@@ -180,7 +182,12 @@ async function runCalculationIfExist() {
 async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== '') {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
-    localModel.value = await resolveExpression(props.schema, props.schema.key, expression, props.model);
+    localModel.value = await resolveExpression(
+      props.schema,
+      props.schema.key,
+      expression,
+      props.model,
+    );
   }
 }
 
@@ -197,14 +204,30 @@ async function resolveIfLocalModelHasDependencies() {
   }
 }
 
+async function checkIfPrecisionIsDependency() {
+  if (isNaN(precision)) {
+    precisionReference = precision + '';
+    precision = get(props.model, props.schema.precision, 2);
+    vueSchemaFormEventBus.on(async () => await precisionResolver());
+  }
+}
+
+async function precisionResolver() {
+  await new Promise((r) => setTimeout(r, 10));
+  const result = get(props.model, precisionReference);
+  console.debug(result);
+  if (precision != result && result != null) {
+    precision = result;
+    localModel.value = localModel.value;
+  }
+}
+
 const loading = ref(true);
 
 onMounted(async () => {
   loading.value = true;
-  // TODO - not reactive and probably model is wrong
-  if (isNaN(precision)) {
-    precision = get(props.model, props.schema.precision, 2);
-  }
+
+  await checkIfPrecisionIsDependency();
   await runCalculationIfExist();
   await bindLabel(props.schema);
   await bindRules(props.schema);

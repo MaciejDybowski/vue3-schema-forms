@@ -1,5 +1,5 @@
 <template>
-  <base-autocomplete
+  <dictionary-base
     v-model="localModel"
     v-model:menu="menu"
     :class="bindClass(schema) + requiredInputClass"
@@ -12,6 +12,7 @@
     :options="pagination"
     :rules="!fieldProps.readonly ? rules : []"
     :search="query"
+    component="v-autocomplete"
     item-title="firstName"
     item-value="id"
     no-filter
@@ -64,9 +65,9 @@
           </v-row>
         </v-list-item-title>
         <template #append>
-          <div v-if="labels.length > 0">
-            <user-input-label
-              v-for="element in labels(item.raw)"
+          <div v-if="loadItemChips.length > 0">
+            <dictionary-item-chip
+              v-for="element in loadItemChips(item.raw)"
               :key="element.id"
               :element="element"
               v-bind="$attrs"
@@ -89,7 +90,7 @@
         :title="t('noData')"
       />
     </template>
-  </base-autocomplete>
+  </dictionary-base>
 </template>
 
 <script lang="ts" setup>
@@ -100,14 +101,15 @@ import get from 'lodash/get';
 
 import { computed, onMounted, ref, watch } from 'vue';
 
-import BaseAutocomplete from '@/components/controls/base/BaseAutocomplete.vue';
-import { Pagination } from '@/components/controls/base/Pagination';
-import { mapSliceTotalElements } from '@/components/controls/base/SliceResponse';
+import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
+import DictionaryItemChip from '@/components/controls/dictionary/DictionaryItemChip.vue';
+import { Pagination } from '@/components/controls/dictionary/Pagination';
+import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
 import AvatarProvider from '@/components/controls/user-input/AvatarProvider.vue';
-import UserInputLabel from '@/components/controls/user-input/UserInputLabel.vue';
 
 import {
   useClass,
+  useDictionary,
   useFormModel,
   useLabel,
   useLocale,
@@ -117,9 +119,8 @@ import {
 } from '@/core/composables';
 import { variableRegexp } from '@/core/engine/utils';
 import { logger } from '@/main';
-import { Label } from '@/types/engine/Label';
 import { User } from '@/types/engine/User';
-import { EngineUserField } from '@/types/engine/controls';
+import { EngineDictionaryField, EngineUserField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineUserField;
@@ -134,6 +135,8 @@ const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { resolve } = useResolveVariables();
+
+const { initState, loadItemChips } = useDictionary();
 
 const debounced = {
   load: debounce(load, 300),
@@ -228,10 +231,10 @@ async function loadMoreRecords() {
 async function checkIfURLHasDependency(createListener = false) {
   const isApiContainsDependency = !(usersAPIEndpoint.value.match(variableRegexp) == null);
   if (isApiContainsDependency) {
-    let endpoint = await resolve(props.schema, usersAPIEndpoint.value, 'title', true);
+    let endpoint = await resolve(props.schema, usersAPIEndpoint.value, true);
 
     if (endpoint.resolvedText.match(variableRegexp)) {
-      endpoint = await resolve(props.schema, endpoint.resolvedText, 'title', true);
+      endpoint = await resolve(props.schema, endpoint.resolvedText, true);
     }
 
     if (endpoint.allVariablesResolved) {
@@ -249,7 +252,7 @@ async function checkIfURLHasDependency(createListener = false) {
 
       const listener = async () => {
         await new Promise((r) => setTimeout(r, 50));
-        const temp = await resolve(props.schema, props.schema.source.url as string, 'title', true);
+        const temp = await resolve(props.schema, props.schema.source.url as string, true);
         if (temp.resolvedText !== usersAPIEndpoint.value) {
           usersAPIEndpoint.value = temp.resolvedText;
           await load();
@@ -276,64 +279,6 @@ function makeInitials(item: any) {
   }
 }
 
-function labels(item: User): Label[] {
-  if ('labels' in item) {
-    const providedLabels: Label[] =
-      props.schema.options.dictionaryProps && props.schema.options.dictionaryProps.labels
-        ? props.schema.options.dictionaryProps.labels
-        : [];
-
-    // array ['labelId', 'labelId2']
-    if (Array.isArray(item.labels)) {
-      if (providedLabels.length > 0) {
-        const userLabels: string[] = item.labels;
-        return providedLabels.filter((element) => userLabels.includes(element.id));
-      } else {
-        return item.labels.map((id) => ({
-          id: id,
-          title: id,
-          backgroundColor: 'primary',
-          textColor: 'white',
-        }));
-      }
-    }
-
-    // string separated by coma
-    if (item.labels && item.labels.includes(',')) {
-      const labels = item.labels.split(',');
-      if (providedLabels.length > 0) {
-        return providedLabels.filter((element) => labels.includes(element.id));
-      } else {
-        return labels.map((id) => ({
-          id: id,
-          title: id,
-          backgroundColor: 'primary',
-          textColor: 'white',
-        }));
-      }
-    }
-    // one string = label
-    else if (item.labels) {
-      if (providedLabels.length > 0) {
-        return providedLabels.filter((element) => element.id == item.labels);
-      } else {
-        return [
-          {
-            id: item.labels,
-            title: item.labels,
-            backgroundColor: 'primary',
-            textColor: 'white',
-          },
-        ];
-      }
-    }
-
-    return [];
-  } else {
-    return [];
-  }
-}
-
 function updateQuery(val: any) {
   query.value = val;
   debounced.load();
@@ -345,11 +290,14 @@ const loadCounter = ref(0);
 function singleOptionAutoSelectFunction() {
   const selectSingleOptionLogic = () => {
     if (items.value.length !== 1 || !singleOptionAutoSelect.value || loadCounter.value > 1) return;
-    console.debug('HERE');
     const selectedValue = items.value[0];
 
     if (JSON.stringify(localModel.value) !== JSON.stringify(selectedValue)) {
-      localModel.value = [selectedValue];
+      if (fieldProps.value.multiple) {
+        localModel.value = [selectedValue];
+      } else {
+        localModel.value = selectedValue;
+      }
     }
   };
 
@@ -358,6 +306,8 @@ function singleOptionAutoSelectFunction() {
 }
 
 onMounted(async () => {
+  await initState(props.schema as EngineDictionaryField);
+
   singleOptionAutoSelect.value =
     'singleOptionAutoSelect' in props.schema.source && props.schema.source.singleOptionAutoSelect
       ? props.schema.source.singleOptionAutoSelect

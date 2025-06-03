@@ -1,5 +1,5 @@
 <template>
-  <base-combobox
+  <dictionary-base
     v-model="localModel"
     v-model:search="query"
     :auto-select-first="true"
@@ -10,10 +10,12 @@
     :label="label"
     :lazy="lazy"
     :loading="loading"
+    :multiple="false"
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
     :rules="!fieldProps.readonly ? rules : []"
+    component="v-combobox"
     v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
     @click="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
@@ -45,7 +47,7 @@
     </template>
 
     <template
-      v-if="labels.length > 0"
+      v-if="loadItemChips.length > 0"
       #item="{ item, props }"
     >
       <v-list-item
@@ -54,10 +56,9 @@
         v-bind="props"
       >
         <template #append>
-          <div v-if="labels.length > 0">
-            <!-- todo zmienić nazwę komponentu skoro slownik tez juz moze -->
-            <user-input-label
-              v-for="element in labels(item.raw)"
+          <div v-if="loadItemChips.length > 0">
+            <dictionary-item-chip
+              v-for="element in loadItemChips(item.raw)"
               :key="element.id"
               :element="element"
               v-bind="$attrs"
@@ -67,18 +68,13 @@
         </template>
       </v-list-item>
     </template>
-  </base-combobox>
+  </dictionary-base>
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue';
 
-import BaseCombobox from '@/components/controls/base/BaseCombobox.vue';
-
-import { useDictionary } from '@/core/composables/useDictionary';
-import { useEventHandler } from '@/core/composables/useEventHandler';
-import { variableRegexp } from '@/core/engine/utils';
-import { EngineDictionaryField } from '@/types/engine/controls';
+import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 
 import {
   useClass,
@@ -88,9 +84,11 @@ import {
   useProps,
   useResolveVariables,
   useRules,
-} from '../../core/composables';
-import UserInputLabel from '@/components/controls/user-input/UserInputLabel.vue';
-import { Label } from '@/types/engine/Label';
+} from '@/core/composables';
+import { useDictionary } from '@/core/composables/useDictionary';
+import { useEventHandler } from '@/core/composables/useEventHandler';
+import { variableRegexp } from '@/core/engine/utils';
+import { EngineDictionaryField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -134,6 +132,7 @@ const {
   queryBlocker,
   loadCounter,
   dependencyWasChanged,
+  loadItemChips,
 } = useDictionary();
 
 function singleOptionAutoSelectFunction() {
@@ -159,8 +158,8 @@ async function resolveIfLocalModelHasDependencies() {
 }
 
 watch(dependencyWasChanged, () => {
-  if(dependencyWasChanged.value && internalStateIsSet.value){
-    localModel.value = null
+  if (dependencyWasChanged.value && internalStateIsSet.value) {
+    localModel.value = null;
   }
 });
 
@@ -207,64 +206,6 @@ function updateSearch(val: string) {
     queryBlocker.value = val === localModelCurrent.value;
   } else {
     queryBlocker.value = false;
-  }
-}
-
-function labels(item: any): Label[] {
-  if ("labels" in item) {
-    const providedLabels: Label[] =
-      props.schema.options.dictionaryProps && props.schema.options.dictionaryProps.labels
-        ? props.schema.options.dictionaryProps.labels
-        : [];
-
-    // array ['labelId', 'labelId2']
-    if (Array.isArray(item.labels)) {
-      if (providedLabels.length > 0) {
-        const userLabels: string[] = item.labels;
-        return providedLabels.filter((element) => userLabels.includes(element.id));
-      } else {
-        return item.labels.map((id:string) => ({
-          id: id,
-          title: id,
-          backgroundColor: "primary",
-          textColor: "white",
-        }));
-      }
-    }
-
-    // string separated by coma
-    if (item.labels && item.labels.includes(",")) {
-      const labels = item.labels.split(",");
-      if (providedLabels.length > 0) {
-        return providedLabels.filter((element) => labels.includes(element.id));
-      } else {
-        return labels.map((id:string) => ({
-          id: id,
-          title: id,
-          backgroundColor: "primary",
-          textColor: "white",
-        }));
-      }
-    }
-    // one string = label
-    else if (item.labels) {
-      if (providedLabels.length > 0) {
-        return providedLabels.filter((element) => element.id == item.labels);
-      } else {
-        return [
-          {
-            id: item.labels,
-            title: item.labels,
-            backgroundColor: "primary",
-            textColor: "white",
-          },
-        ];
-      }
-    }
-
-    return [];
-  } else {
-    return [];
   }
 }
 </script>

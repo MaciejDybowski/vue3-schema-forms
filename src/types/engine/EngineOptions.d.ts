@@ -1,4 +1,5 @@
-import { Label } from '@/types/engine/Label';
+import DictionaryItemChip from '@/components/controls/dictionary/DictionaryItemChip.vue';
+
 
 export interface EngineOptions {
   fieldProps: Record<string, any>;
@@ -11,9 +12,9 @@ export interface EngineOptions {
   digitsAfterDecimal: number;
   context?: Record<string, any>;
   userInputProps?: Record<string, any> & {
-    labels?: Label[];
+    labels?: DictionaryItemChip[];
   };
   dictionaryProps?: Record<string, any> & {
-    labels?: Label[];
+    labels?: DictionaryItemChip[];
   };
 }
