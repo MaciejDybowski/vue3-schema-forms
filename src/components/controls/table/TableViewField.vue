@@ -405,7 +405,7 @@ async function runTableActionLogic(
       };
 
       let body = await createBodyObjectFromRow(obj as any, payload.item);
-      let params = await createParamsObject(obj as any, props.schema);
+      let params = await createParamsObjectFromRow(obj as any, payload.item);
 
       let payloadObject = {
         code: action.code,
@@ -439,6 +439,19 @@ async function runTableActionLogic(
     default:
       console.warn('unknown action mode');
   }
+}
+
+async function createParamsObjectFromRow(actionObj: any, row: any) {
+  let params: Record<string, any> = {};
+  for (const [key, value] of Object.entries(actionObj.body)) {
+    if (typeof value === 'string' && variableRegexp.test(value)) {
+      const unwrapped = (value as string).slice(1, -1);
+      params[key] = get(row, unwrapped, null);
+    } else {
+      params[key] = value;
+    }
+  }
+  return params;
 }
 
 async function createBodyObjectFromRow(actionObj: any, row: any) {
