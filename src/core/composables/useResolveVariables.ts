@@ -30,6 +30,8 @@ export function useResolveVariables() {
           const unwrapped = match.slice(1, -1);
           let jsonataExpression = unwrapped.slice(5);
           jsonataExpression = jsonataExpression.substring(0, jsonataExpression.length - 1);
+          jsonataExpression = fillPath(field.path, field.index, jsonataExpression)
+          await new Promise((r) => setTimeout(r, 50));
           const formModelStore = useFormModelStore(field.formId);
           const model = formModelStore.getFormModelForResolve;
           const nata = jsonata(jsonataExpression);
@@ -39,8 +41,6 @@ export function useResolveVariables() {
           } else {
             inputString = inputString.replace(match, value + "");
           }
-
-
         } else {
           // obsluga zmiennych standardowo jak bylo
           const unwrapped = match.slice(1, -1);
