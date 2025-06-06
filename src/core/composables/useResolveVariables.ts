@@ -21,12 +21,13 @@ export function useResolveVariables() {
   const { formattedNumber, roundTo } = useNumber();
   const form = useInjectedFormModel();
 
-  /**
-   *
-   * @param match - for resolve jsonata function in paragraph or other static content field
-   */
-  async function resolveJsonata(match: string): Promise<{ value: any; success: boolean }> {
-    const expression = match.slice(1, -1).slice(5, -1); // Remove {{nata and last }}
+  async function resolveJsonata(
+    field: EngineField,
+    match: string,
+  ): Promise<{ value: any; success: boolean }> {
+    let expression = match.slice(1, -1).slice(5, -1); // Remove {{nata and last }}
+    expression = fillPath(field.path, field.index, expression);
+    await new Promise((r) => setTimeout(r, 30));
     const model = form.getFormModelForResolve.value;
     const value = await jsonata(expression).evaluate(model);
     return { value, success: value !== null && value !== undefined };
@@ -75,7 +76,7 @@ export function useResolveVariables() {
     for await (const match of matches) {
       const isNata = match.includes('nata');
       const { value, success } = isNata
-        ? await resolveJsonata(match)
+        ? await resolveJsonata(field, match)
         : await resolveVariable(field, match, forUrlPurpose, objectTitleReference);
 
       if (!success) {

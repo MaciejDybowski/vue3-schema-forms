@@ -5,8 +5,9 @@ import get from 'lodash/get';
 import set from 'lodash/set';
 
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
-import { logger, useResolveVariables } from '@/main';
+import { logger } from '@/main';
 import { EngineField } from '@/types/engine/EngineField';
+import { useResolveVariables } from '@/core/composables/useResolveVariables';
 
 export function useJSONataExpression() {
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
