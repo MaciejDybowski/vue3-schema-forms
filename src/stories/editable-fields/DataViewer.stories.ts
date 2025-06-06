@@ -131,7 +131,7 @@ export const StandardDateTime: Story = {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Read value from model [date]');
-    const text = canvas.getByText('01/25/2024 01:00 AM');
+    const text = canvas.getByText('01/25/2024 1:00:00 AM');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();

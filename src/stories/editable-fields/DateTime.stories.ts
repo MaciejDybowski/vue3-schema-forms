@@ -20,7 +20,7 @@ export const Standard: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('DateTime');
-    await userEvent.type(field, '01/29/2024 14:30');
+    await userEvent.type(field, '01/29/2024 14:30:00 AM');
     await expect(context.args.formModel.simpleDate).toEqual('2024-01-29T14:30:00.000+01:00');
   },
   args: {
@@ -139,7 +139,7 @@ export const SimpleValidation: Story = {
     await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
 
     const field = canvas.getByLabelText('DateTime');
-    await userEvent.type(field, '01/29/2024 10:00');
+    await userEvent.type(field, '01/29/2024 10:00:00 AM');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
   },

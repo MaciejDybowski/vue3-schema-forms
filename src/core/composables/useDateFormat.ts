@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 import { computed } from 'vue';
 
 import { useLocale } from './useLocale';
@@ -6,25 +8,13 @@ export function useDateFormat() {
   const { locale } = useLocale();
 
   const dateFormat = computed(() => {
-    switch (locale.value) {
-      case 'pl':
-        return 'DD.MM.YYYY';
-      case 'en':
-        return 'MM/DD/YYYY';
-      default:
-        return 'MM/DD/YYYY';
-    }
+    return dayjs().localeData().longDateFormat('L');
   });
 
   const dateTimeFormat = computed(() => {
-    switch (locale.value) {
-      case 'pl':
-        return 'DD.MM.YYYY HH:mm';
-      case 'en':
-        return 'MM/DD/YYYY hh:mm A';
-      default:
-        return 'MM/DD/YYYY hh:mm A';
-    }
+    return (
+      dayjs().localeData().longDateFormat('L') + ' ' + dayjs().localeData().longDateFormat('LTS')
+    );
   });
 
   return { dateFormat, dateTimeFormat };

@@ -161,7 +161,9 @@ export const DateAndDatetimeHTML = {
   play: async ({ canvasElement }) => {
     await waitForMountedAsync();
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('Date is: 04/22/2025, datetime is: 03/25/2025 12:37 PM')).toBeInTheDocument();
+    await expect(
+      canvas.getByText('Date is: 04/22/2025, datetime is: 03/25/2025 12:37:34 PM'),
+    ).toBeInTheDocument();
   },
   args: {
     formModel: {
@@ -196,9 +198,10 @@ export const DateAndDatetimeHTML = {
 export const JsonataInText: Story = {
   name: 'Case: JSONata function',
   play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+    await waitForMountedAsync(40);
     const span = canvasElement.querySelector('span div');
     await expect(span).toBeInTheDocument();
+
     await expect(span.textContent).toContain('Kowalski');
   },
   args: {

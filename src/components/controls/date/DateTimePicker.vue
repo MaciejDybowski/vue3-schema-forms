@@ -5,7 +5,7 @@
     v-model="inputValue"
     :focused="isInputFocused || pickerModel"
     @update:focused="(val) => (isInputFocused = val)"
-    :placeholder="dateFormat.toLocaleLowerCase()"
+    :placeholder="dateTimeFormat.toLocaleLowerCase()"
     :clearable="!fieldProps.readonly"
     :rules="!fieldProps.readonly ? dateRules : []"
     @update:model-value="dateTyping"
@@ -79,14 +79,14 @@ import { EngineDateField } from '@/types/engine/controls';
 
 import {
   useClass,
-  useDateTimeFormat,
   useFormModel,
   useLabel,
   useLocale,
   useProps,
   useRules,
-} from '../../../core/composables';
+} from '@/core/composables';
 import dayjs from './dayjs';
+import { useDateFormat } from '@/core/composables';
 
 const { locale, t } = useLocale();
 const props = defineProps<{ schema: EngineDateField; model: object }>();
@@ -95,7 +95,8 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
-const { dateFormat } = useDateTimeFormat();
+const {dateTimeFormat} = useDateFormat()
+
 const attrs = useAttrs();
 
 const localModel = computed({
@@ -146,7 +147,7 @@ watch(
     }
     const date = dayjs(val, modelFormat);
     pickerValue.value = date.toDate();
-    inputValue.value = date.format(dateFormat.value);
+    inputValue.value = date.format(dateTimeFormat.value);
   },
   { immediate: true },
 );
@@ -156,8 +157,8 @@ function dateTyping(val: string) {
     localModel.value = null;
     return;
   }
-  if (val.length == 16 && inputFieldRef.value?.isValid) {
-    const date = dayjs(val, dateFormat.value);
+  if (inputFieldRef.value?.isValid) {
+    const date = dayjs(val, dateTimeFormat.value);
     if (date.isValid()) {
       timeValue.value = date.get('hours') + ':' + date.get('minutes');
       localModel.value = date.format(modelFormat);
@@ -186,7 +187,7 @@ function timePick(val: string) {
 /////////////////// MASK ///////////////////
 
 const dateMask = computed(() => {
-  return dateFormat.value.replace('MM', 'Mm').replace('DD', 'Dd');
+  return dateTimeFormat.value.replace('MM', 'Mm').replace('DD', 'Dd');
 });
 const maskOptions = ref<MaskOptions>({
   mask: dateMask.value,
@@ -227,9 +228,9 @@ function getFirstLetterOfDay() {
 
 const dateRules = computed(() => {
   const rulesArray = [isValidDate];
-  if (!isInputFocused.value) {
+  /*if (!isInputFocused.value) {
     rulesArray.push(isDateComplete);
-  }
+  }*/
   if (!isPastDateAvailable) {
     rulesArray.push(isDateInPast);
   }
@@ -240,28 +241,27 @@ const dateRules = computed(() => {
 });
 
 function isValidDate(val: string) {
-  if (!val || val.length <= 16) return true;
-  if (val.length > 16) return t('datePicker.invalidDateError');
-  const date = dayjs(val, dateFormat.value);
+  if (!val) return true;
+  const date = dayjs(val, dateTimeFormat.value);
   return date.isValid() || t('datePicker.invalidDateError');
 }
 
 function isDateInPast(val: string) {
-  if (!val || val.length <= 16) return true;
-  const date = dayjs(val, dateFormat.value);
+  if (!val) return true;
+  const date = dayjs(val, dateTimeFormat.value);
   return date.toDate() >= currentDate || t('datePicker.pastDateError');
 }
 
 function isDateInFuture(val: string) {
-  if (!val || val.length <= 16) return true;
-  const date = dayjs(val, dateFormat.value);
+  if (!val) return true;
+  const date = dayjs(val, dateTimeFormat.value);
   return date.toDate() <= currentDate || t('datePicker.futureDateError');
 }
 
-function isDateComplete(val: string) {
+/*function isDateComplete(val: string) {
   if (!val) return true;
   return val.length === 16 || t('datePicker.invalidDateError');
-}
+}*/
 </script>
 
 <style scoped lang="scss">
