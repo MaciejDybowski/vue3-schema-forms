@@ -154,7 +154,6 @@ import { mapQuery, mapSort } from '@/components/controls/table/utils';
 import VueSchemaForms from '@/components/engine/VueSchemaForms.vue';
 
 import { useLocale, useProps, useResolveVariables } from '@/core/composables';
-import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineTableField } from '@/types/engine/EngineTableField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
@@ -186,7 +185,6 @@ const theme = useTheme();
 const { t } = useLocale();
 const { bindProps, fieldProps } = useProps();
 const { resolve } = useResolveVariables();
-const { createParamsObject, createBodyObject } = useEventHandler();
 const items = ref<any[]>([]);
 const itemsTotalElements = ref(0);
 const loading = ref(true);
@@ -443,7 +441,7 @@ async function runTableActionLogic(
 
 async function createParamsObjectFromRow(actionObj: any, row: any) {
   let params: Record<string, any> = {};
-  for (const [key, value] of Object.entries(actionObj.body)) {
+  for (const [key, value] of Object.entries(actionObj.params)) {
     if (typeof value === 'string' && variableRegexp.test(value)) {
       const unwrapped = (value as string).slice(1, -1);
       params[key] = get(row, unwrapped, null);
@@ -451,6 +449,7 @@ async function createParamsObjectFromRow(actionObj: any, row: any) {
       params[key] = value;
     }
   }
+  console.debug("params", params);
   return params;
 }
 
