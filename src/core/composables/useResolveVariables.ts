@@ -128,7 +128,7 @@ export function useResolveVariables() {
       return dayjs(value).format(dateFormat.value);
     }
 
-    if (typeOfValue === 'OBJECT' && value) {
+    if (typeOfValue === 'OBJECT' && value || typeof value === 'object') {
       value = value[titleReference];
     }
 

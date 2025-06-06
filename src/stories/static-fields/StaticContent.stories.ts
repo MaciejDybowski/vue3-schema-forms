@@ -195,6 +195,38 @@ export const DateAndDatetimeHTML = {
   },
 };
 
+export const ObjectAndHtml = {
+  name: 'Case: combine standard dict object variables and HTML elements',
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync();
+    const span = canvasElement.querySelector('span div');
+    await expect(span).toBeInTheDocument();
+
+    await expect(span.textContent).toContain('It is possible to map dict object if it has title/value params: Paris');
+  },
+  args: {
+    formModel: {
+      dict: {
+        title: "Paris",
+        value: "1"
+      }
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        description2: {
+          content:
+            'It is possible to map dict object if it has title/value params: {dict}',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          } as Layout,
+        },
+      },
+    } as Schema,
+  },
+};
+
 export const JsonataInText: Story = {
   name: 'Case: JSONata function',
   play: async ({ canvasElement }) => {
