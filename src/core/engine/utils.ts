@@ -1,10 +1,9 @@
 import { cloneDeep } from 'lodash';
 
 import { jsonSchemaResolver } from '@/core/engine/jsonSchemaResolver';
-
+import { baseUri } from '@/main';
 import { Schema } from '@/types/schema/Schema';
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
-import { baseUri } from '@/main';
 
 export const variableRegexp: RegExp = new RegExp('{.*?}', 'g');
 
@@ -22,12 +21,14 @@ export async function resolveSchemaWithLocale(
 
   resolveRefsAndReplace(schema);
 
-  const temp = JSON.parse(JSON.stringify(schema).replaceAll('~$locale~', locale));
+  let localeWithoutCountry = locale.includes('-') ? locale.split('-')[0] : locale;
+
+  const temp = JSON.parse(JSON.stringify(schema).replaceAll('~$locale~', localeWithoutCountry));
   let resolved: any = await jsonSchemaResolver.resolve(temp, { baseUri });
 
   const stillHasRef = JSON.stringify(resolved.result).includes('/~$locale~/');
   if (stillHasRef) {
-    return resolveSchemaWithLocale(resolved.result as Schema, locale);
+    return resolveSchemaWithLocale(resolved.result as Schema, localeWithoutCountry);
   }
 
   return resolved.result as Schema;
