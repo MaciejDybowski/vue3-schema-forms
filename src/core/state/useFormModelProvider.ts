@@ -12,6 +12,9 @@ export function provideFormModel() {
 
 export function useInjectedFormModel(): FormModelInstance {
   const form = inject<FormModelInstance>(FORM_MODEL_KEY);
-  if (!form) throw new Error('Form model not provided');
+  if (!form) {
+    console.warn(`Form model not provided`);
+    return {} as FormModelInstance
+  }
   return form;
 }
