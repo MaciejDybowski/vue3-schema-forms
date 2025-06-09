@@ -26,10 +26,44 @@ type Story = StoryObj<typeof FormStoryWrapper>;
 
 export const Story1: Story = {
   args: {
-    formModel: {},
+    formModel: {
+      multiLanguage: null,
+    },
     schema: {
       type: 'object',
-      properties: {},
+      properties: {
+        multiLanguage: {
+          availableLanguages: [
+            {
+              code: 'en-GB',
+              name: 'English',
+            },
+            {
+              code: 'en-US',
+              name: 'United States',
+            },
+            {
+              code: 'de',
+              name: 'Deutsch',
+            },
+            {
+              code: 'pl',
+              name: 'Polski',
+            },
+          ],
+          label: 'Name of sth',
+          layout: {
+            component: 'multi-language-control',
+          },
+        },
+      },
+    },
+    options: {
+      fieldProps: {
+        variant: 'outlined',
+        density: 'compact',
+      },
+
     },
   },
   parameters: {},

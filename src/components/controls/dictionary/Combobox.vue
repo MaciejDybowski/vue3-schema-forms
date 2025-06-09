@@ -89,6 +89,7 @@ import { useDictionary } from '@/core/composables/useDictionary';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineDictionaryField } from '@/types/engine/controls';
+import DictionaryItemChip from '@/components/controls/dictionary/DictionaryItemChip.vue';
 
 const props = defineProps<{
   schema: EngineDictionaryField;

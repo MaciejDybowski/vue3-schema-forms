@@ -1,4 +1,5 @@
 import DictionaryItemChip from '@/components/controls/dictionary/DictionaryItemChip.vue';
+import { AvailableLanguage } from '@/types/engine/AvailableLanguage';
 
 
 export interface EngineOptions {
@@ -17,4 +18,6 @@ export interface EngineOptions {
   dictionaryProps?: Record<string, any> & {
     labels?: DictionaryItemChip[];
   };
+
+  availableLanguages?: AvailableLanguage[];
 }

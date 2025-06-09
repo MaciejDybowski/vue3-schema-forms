@@ -29,6 +29,7 @@ import DateTimePicker from './date/DateTimePicker.vue';
 import DuplicatedSection from './duplicated-section/DuplicatedSection.vue';
 import Markdown from './markdown/Markdown.vue';
 import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
+import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue';
 
 export const vueSchemaFromControls: Components = {
   'text-field': TextField,
@@ -59,4 +60,5 @@ export const vueSchemaFromControls: Components = {
   'ordered-multi-select': OrderedMultiSelect,
   'key-value-list': KeyValueList,
   alert: Alert,
+  "multi-language-control": MultiLanguageControl
 };
