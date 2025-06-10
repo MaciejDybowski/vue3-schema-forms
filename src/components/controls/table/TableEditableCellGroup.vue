@@ -40,7 +40,7 @@
       :items="getItemsForSelect(item.valueMapping, row)"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
-      :return-object="false"
+      :return-object="getReturnObjectFlag(item.valueMapping)"
       v-bind="{
         ...attrs,
         density: 'compact',
@@ -125,6 +125,12 @@ function getItemTitle(valueMapping: string) {
 function getItemValue(valueMapping: string) {
   const split = valueMapping.split(':');
   return split.length >= 4 ? split[3] : 'value';
+}
+
+function getReturnObjectFlag(valueMapping: string): boolean {
+  const split = valueMapping.split(':');
+  if (split.length < 5) return false;
+  return split[4].toLowerCase() === 'true';
 }
 
 // TODO - przytrzymywanie tutaj strzałek nie działa bo jest aktualizacja całego wiersza i robi się jakiś breakdown/lag

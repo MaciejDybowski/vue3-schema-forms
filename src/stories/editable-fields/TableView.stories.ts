@@ -1420,6 +1420,74 @@ export const EditableSelect: Story = {
   },
 };
 
+export const EditableSelectObject: Story = {
+  name: 'Editable field: Select model as object',
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        span: {
+          content: '',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: 'table-view',
+          },
+          source: {
+            data: '/mock-data/table-view-mock',
+            headers: [
+              {
+                title: 'Id',
+                key: 'id',
+                valueMapping: 'dataId',
+                type: 'TEXT',
+              },
+              {
+                title: 'Location',
+                key: 'location',
+                valueMapping: 'location',
+                type: 'TEXT',
+              },
+              {
+                title: 'Editable height',
+                key: 'height-collection',
+                type: 'COLLECTION',
+                editable: [
+                  {
+                    type: 'SELECT',
+                    title: 'Height',
+                    key: 'height',
+                    valueMapping: 'height:heightOptions:description:value:true',
+                  },
+                ],
+                properties: { minWidth: '200px', maxWidth: '200px', width: '100px' },
+              },
+              {
+                title: 'Base',
+                key: 'base',
+                valueMapping: 'base',
+                type: 'TEXT',
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
+    },
+  },
+};
+
+
 export const EditableSelectWithCondition: Story = {
   name: 'Case: Condition on editable field',
   play: async (context) => {},
@@ -1463,7 +1531,7 @@ export const EditableSelectWithCondition: Story = {
                     type: 'SELECT',
                     title: 'Height',
                     key: 'height',
-                    valueMapping: 'height:heightOptions:title:value',
+                    valueMapping: 'height:heightOptions:description:value',
                     condition: 'base > 40',
                   },
                 ],

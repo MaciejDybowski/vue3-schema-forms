@@ -19,9 +19,9 @@ export const generatePageData = (page, size) => {
     alerts: generateAlerts(),
     decimalPlaces: 2,
     heightOptions: [
-      { title: 'Height:10', value: 10 },
-      { title: 'Height:20', value: 20 },
-      { title: 'Height:30', value: 30 },
+      { title: 'Height:10', value: 10, description: 'Combined: height 10' },
+      { title: 'Height:20', value: 20, description: 'Combined: height 20' },
+      { title: 'Height:30', value: 30, description: 'Combined: height 30' },
     ],
   }));
 
@@ -67,9 +67,9 @@ export const UPDATE_TABLE_ROW = [
         volume: (Math.random() * 0.01).toFixed(5), // 0.00001 - 0.01
         dataId: Number(id),
         heightOptions: [
-          { title: 'Height:10', value: 10 },
-          { title: 'Height:20', value: 20 },
-          { title: 'Height:30', value: 30 },
+          { title: 'Height:10', value: 10, description: 'Combined: height 10' },
+          { title: 'Height:20', value: 20, description: 'Combined: height 20' },
+          { title: 'Height:30', value: 30, description: 'Combined: height 30' },
         ],
       },
       aggregates: {
