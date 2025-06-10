@@ -29,6 +29,7 @@
         </span>
       </template>
     </v-select>
+    {{localModel}}
     <v-text-field
       v-model="localModel[selectedLang]"
       :class="bindClass(schema) + requiredInputClass"
@@ -70,10 +71,11 @@ const { locale } = useLocale();
 
 const localModel = computed({
   get(): any {
-    const value = getValue(model, schema);
-    if (value == null) {
+    const value =  getValue(model, schema);
+    if(value == null){ // for builder purpose
+      return {[selectedLang.value] : ""}
     } else {
-      return value;
+      return value
     }
   },
   set(val: any) {
@@ -115,6 +117,7 @@ onMounted(async () => {
     localModel.value = { [selectedLang.value]: '' };
   }
 
+  console.debug(localModel.value)
   loading.value = false;
 });
 </script>
