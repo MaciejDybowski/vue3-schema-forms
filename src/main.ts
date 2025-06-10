@@ -6,6 +6,7 @@ import DuplicatedSectionBatchAddDialogBody from '@/components/controls/duplicate
 export * from './components';
 
 import * as components from '../src/components/index';
+export * from "./core/state/useFormModelProvider"
 
 export declare type Components = Record<string, Component>;
 export let logger = {
@@ -98,4 +99,5 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
     },
   };
 };
+
 
