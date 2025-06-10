@@ -43,6 +43,8 @@ export function useDictionary() {
   let field: EngineDictionaryField = {} as EngineDictionaryField;
   let queryBlocker = ref(false);
   let dependencyWasChanged = ref(false);
+  let multiple = ref(false)
+  let maxSelection = ref(0)
 
   const debounced = {
     load: debounce(load, 300),
@@ -70,6 +72,8 @@ export function useDictionary() {
     singleOptionAutoSelect.value = source.singleOptionAutoSelect
       ? source.singleOptionAutoSelect
       : true;
+    multiple.value = source.multiple ?? false
+    maxSelection.value = source.maxSelection ?? 0
 
     //endpoint = { resolvedText: source.url, allVariablesResolved: true };
     endpoint = await resolve(field, source.url, true, title.value);
@@ -302,5 +306,7 @@ export function useDictionary() {
     singleOptionAutoSelect,
     loadCounter,
     dependencyWasChanged,
+    multiple,
+    maxSelection
   };
 }

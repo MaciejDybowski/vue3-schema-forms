@@ -1,6 +1,5 @@
 <template>
   <dictionary-base
-    component="v-autocomplete"
     v-model="localModel"
     v-model:search="query"
     :auto-select-first="false"
@@ -11,16 +10,35 @@
     :label="label"
     :lazy="lazy"
     :loading="loading"
+    :multiple="multiple"
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
     :rules="!fieldProps.readonly ? rules : []"
+    component="v-autocomplete"
     v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
     @click="fetchDictionaryData"
     @loadMoreRecords="loadMoreRecords"
     @update:modelValue="onChange(schema, model)"
     @update:search="updateSearch"
+    :max-selection="maxSelection"
   >
+    <template
+      v-if="multiple"
+      #selection="{ item }"
+    >
+      <v-chip
+        :closable="!fieldProps.readonly"
+        close-icon="mdi-close"
+        label
+        variant="outlined"
+        @click:close="removeValue(item.raw)"
+      >
+        <span>
+          {{ item.raw[title] }}
+        </span>
+      </v-chip>
+    </template>
     <template #no-data>
       <v-list-item v-if="loading">
         <v-progress-linear
@@ -118,6 +136,8 @@ const localModel = computed({
 });
 
 const {
+  multiple,
+  maxSelection,
   queryBlocker,
   title,
   value,
@@ -134,7 +154,7 @@ const {
   initState,
   loadCounter,
   dependencyWasChanged,
-  loadItemChips
+  loadItemChips,
 } = useDictionary();
 
 function singleOptionAutoSelectFunction() {
@@ -208,6 +228,11 @@ function updateSearch(val: string) {
   } else {
     queryBlocker.value = false;
   }
+}
+
+function removeValue(item: any[]) {
+  const tempArray = (localModel.value as any[]).filter((val) => val != item);
+  localModel.value = tempArray.length > 0 ? tempArray : null;
 }
 </script>
 

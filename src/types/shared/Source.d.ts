@@ -90,6 +90,8 @@ export interface DictionarySource extends Source {
   itemsPerPage?: number;
   lazy?: boolean;
   singleOptionAutoSelect?: boolean;
+  multiple?: boolean;
+  maxSelection?: number;
 }
 
 export interface UserInputSource {

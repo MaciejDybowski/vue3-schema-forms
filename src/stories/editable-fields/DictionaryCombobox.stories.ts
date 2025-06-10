@@ -8,6 +8,7 @@ import { waitForMountedAsync } from './utils';
 import { expect, userEvent, within } from 'storybook/test';
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
+import { waitFor } from 'storybook/test';
 
 export default {
   title: 'Elements/Editable/Dictionary [combobox]',
@@ -118,6 +119,182 @@ export const Label: Story = {
         ],
       },
     },
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
+
+export const MultipleValues: Story = {
+  name: 'Case: model as array',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText('Currency');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    const first = items[0];
+    await expect(first.textContent).toEqual('Afganithe-best');
+    await userEvent.click(items[0], { delay: 200 });
+    await userEvent.click(items[1], { delay: 200 });
+    await userEvent.click(items[2], { delay: 200 });
+    await expect(context.args.formModel).toEqual({
+      currency: [
+        {
+          id: 'AFN',
+          label: 'Afgani',
+          digitsAfterDecimal: '2',
+          labels: 'the-best',
+        },
+        {
+          id: 'ALL',
+          label: 'Lek',
+          digitsAfterDecimal: '3',
+          labels: 'the-least',
+        },
+        {
+          id: 'AMD',
+          label: 'Dram',
+          digitsAfterDecimal: '2',
+        },
+      ],
+    });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        currency: {
+          label: 'Currency',
+          layout: {
+            component: 'combobox',
+          },
+          source: {
+            url: '/mocks/currencies',
+            title: 'label',
+            value: 'id',
+            multiple: true,
+          },
+        },
+      },
+      required: ['currency'],
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
+
+
+export const MultipleValuesWithLimit: Story = {
+  name: 'Case: model as array with limit',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText('Currency');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    const first = items[0];
+    await expect(first.textContent).toEqual('Afganithe-best');
+    await userEvent.click(items[0], { delay: 200 });
+    await userEvent.click(items[1], { delay: 200 });
+    await userEvent.click(items[2], { delay: 200 });
+    await expect(context.args.formModel).toEqual({
+      currency: [
+        {
+          id: 'ALL',
+          label: 'Lek',
+          digitsAfterDecimal: '3',
+          labels: 'the-least',
+        },
+        {
+          id: 'AMD',
+          label: 'Dram',
+          digitsAfterDecimal: '2',
+        },
+      ],
+    });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        currency: {
+          label: 'Currency',
+          layout: {
+            component: 'combobox',
+          },
+          source: {
+            url: '/mocks/currencies',
+            title: 'label',
+            value: 'id',
+            multiple: true,
+            maxSelection: 2,
+          },
+        },
+      },
+      required: ['currency'],
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
+
+export const WithDescription: Story = {
+  name: 'Case: add description to list item',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText('Currency');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    const first = items[0];
+    await expect(first.textContent).toEqual('AfganiAfganithe-best');
+    await userEvent.click(items[0], { delay: 200 });
+    await expect(context.args.formModel).toEqual({
+      currency: { id: 'AFN', label: 'Afgani', digitsAfterDecimal: '2', labels: 'the-best' },
+    });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        currency: {
+          label: 'Currency',
+          layout: {
+            component: 'combobox',
+          },
+          source: {
+            url: '/mocks/currencies',
+            title: 'label',
+            value: 'id',
+            description: 'label',
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
   },
   parameters: {
     msw: {

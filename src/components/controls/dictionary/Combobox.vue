@@ -10,7 +10,8 @@
     :label="label"
     :lazy="lazy"
     :loading="loading"
-    :multiple="false"
+    :multiple="multiple"
+    :max-selection="maxSelection"
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
@@ -117,6 +118,8 @@ const localModel = computed({
 });
 
 const {
+  maxSelection,
+  multiple,
   title,
   value,
   loading,
