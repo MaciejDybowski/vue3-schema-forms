@@ -21,7 +21,8 @@ export async function resolveSchemaWithLocale(
 
   resolveRefsAndReplace(schema);
 
-  let localeWithoutCountry = locale.includes('-') ? locale.split('-')[0] : locale;
+  let languages = originalSchema.i18n ? Object.keys(originalSchema.i18n) : [];
+  let localeWithoutCountry = languages.includes(locale) ? locale : locale.split('-')[0];
 
   const temp = JSON.parse(JSON.stringify(schema).replaceAll('~$locale~', localeWithoutCountry));
   let resolved: any = await jsonSchemaResolver.resolve(temp, { baseUri });
