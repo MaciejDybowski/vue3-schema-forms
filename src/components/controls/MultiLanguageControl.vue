@@ -29,7 +29,6 @@
         </span>
       </template>
     </v-select>
-    {{localModel}}
     <v-text-field
       v-model="localModel[selectedLang]"
       :class="bindClass(schema) + requiredInputClass"
@@ -117,7 +116,6 @@ onMounted(async () => {
     localModel.value = { [selectedLang.value]: '' };
   }
 
-  console.debug(localModel.value)
   loading.value = false;
 });
 </script>
