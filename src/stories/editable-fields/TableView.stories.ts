@@ -3,7 +3,7 @@ import { Schema } from '../../types/schema/Schema';
 import {
   TABLE_PAGE_WITHOUT_AGGREGATES,
   TABLE_PAGE_WITH_AGGREGATES,
-  UPDATE_TABLE_ROW,
+  UPDATE_TABLE_ROW, TABLE_PAGE_WITHOUT_AGGREGATES_ZERO
 } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
@@ -75,6 +75,71 @@ export const Standard: Story = {
     },
   },
 };
+
+export const EmptyTable: Story = {
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        span: {
+          content: 'Example of empty table',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: 'table-view',
+          },
+          source: {
+            data: '/mock-data/table-view-mock-zero',
+            headers: [
+              {
+                title: 'Name',
+                key: 'name',
+                valueMapping: 'name',
+                type: 'TEXT',
+              },
+              {
+                title: 'Location',
+                key: 'location',
+                valueMapping: 'location',
+                type: 'TEXT',
+              },
+              {
+                title: 'Height',
+                key: 'height',
+                valueMapping: 'height',
+                type: 'NUMBER',
+              },
+              {
+                title: 'Base',
+                key: 'base',
+                valueMapping: 'base',
+                type: 'TEXT',
+              },
+              {
+                title: 'Volume',
+                key: 'volume',
+                valueMapping: 'volume',
+                type: 'TEXT',
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES_ZERO,
+    },
+  },
+};
+
 
 export const ColorableCells: Story = {
   play: async (context) => {},

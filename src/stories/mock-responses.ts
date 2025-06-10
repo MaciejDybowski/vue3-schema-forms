@@ -132,6 +132,19 @@ export const TABLE_PAGE_WITHOUT_AGGREGATES = [
   }),
 ];
 
+export const TABLE_PAGE_WITHOUT_AGGREGATES_ZERO = [
+  http.get('/mock-data/table-view-mock-zero', async (req, res, ctx) => {
+    return HttpResponse.json({
+      content: [],
+      page: {
+        totalElements: 0,
+        page: 0,
+        itemsPerPage: 25,
+      },
+    });
+  }),
+];
+
 const allCurrencies = [
   { id: 'USD', label: 'US Dollar' },
   { id: 'EUR', label: 'Euro' },
@@ -500,7 +513,7 @@ export const USER_INPUT_MOCKS = [
             firstName: 'Alice',
             lastName: 'Smith',
             username: 'asmith',
-            labels: 'the-best'
+            labels: 'the-best',
           },
         ],
       });
@@ -514,7 +527,7 @@ export const USER_INPUT_MOCKS = [
           firstName: 'Alice',
           lastName: 'Smith',
           username: 'asmith',
-          labels: 'the-best'
+          labels: 'the-best',
         },
         {
           id: '2d6e0d79-5f5b-4c4f-b6e1-aaa2b38fba1f',

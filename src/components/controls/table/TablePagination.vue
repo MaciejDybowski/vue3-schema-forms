@@ -78,7 +78,13 @@ const changePage = (newPage: number) => {
   }
 };
 
-const startItem = computed(() => (page.value - 1) * itemsPerPage.value + 1);
+const startItem = computed(() => {
+  if (props.totalItems == 0) {
+    return 0;
+  } else {
+    return (page.value - 1) * itemsPerPage.value + 1;
+  }
+});
 const endItem = computed(() => Math.min(page.value * itemsPerPage.value, totalItems.value));
 </script>
 
