@@ -31,7 +31,7 @@
       </template>
     </v-select>
     <v-text-field
-      v-model="localModel[countryCode]"
+      v-model="safeLocalModel[countryCode]"
       :class="bindClass(schema) + requiredInputClass"
       :label="label"
       :rules="!fieldProps.readonly ? rules : []"
@@ -68,6 +68,13 @@ const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
 const { getValue, setValue } = useFormModel();
 const { locale } = useLocale();
+
+/**
+ * For builder purpose to generate field without initiated form model
+ */
+const safeLocalModel = computed(() => {
+  return localModel.value || {};
+});
 
 const localModel = computed({
   get(): any {
