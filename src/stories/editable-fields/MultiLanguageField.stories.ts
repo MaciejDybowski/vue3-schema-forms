@@ -19,10 +19,6 @@ const availableLanguages = [
     name: 'English',
   },
   {
-    code: 'en-US',
-    name: 'United States',
-  },
-  {
     code: 'de',
     name: 'Deutsch',
   },
@@ -42,7 +38,7 @@ export const ListOfCountriesFromSchem = {
 
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
-        'en-US': 'Poland power!',
+        'en': 'Poland power!',
       },
     });
     const select = await canvas.getByLabelText('Lang');
@@ -53,7 +49,7 @@ export const ListOfCountriesFromSchem = {
       expect(items.length).toBeGreaterThan(0);
     });
     const items = document.getElementsByClassName('v-list-item');
-    await userEvent.click(items[3], { delay: 200 });
+    await userEvent.click(items[2], { delay: 200 });
     await waitForMountedAsync(400);
     const field2 = await canvas.getByLabelText('Name of sth');
     await waitForMountedAsync(400);
@@ -61,7 +57,7 @@ export const ListOfCountriesFromSchem = {
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
         pl: 'Polska siła!',
-        'en-US': 'Poland power!',
+        'en': 'Poland power!',
       },
     });
   },
@@ -110,7 +106,7 @@ export const ListOfCountriesFromSchemaType2 = {
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
         pl: 'Polska siła!',
-        'en-GB': 'Poland power!',
+        'en': 'Poland power!',
       },
     });
   },
@@ -161,7 +157,7 @@ export const ListOfCountriesFromOptionsType1 = {
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
         pl: 'Polska siła!',
-        'en-GB': 'Poland power!',
+        'en': 'Poland power!',
       },
     });
   },

@@ -5,13 +5,14 @@
   >
     <v-select
       v-model="selectedLang"
-      :class="bindClass(schema) + requiredInputClass + `lang-select`"
+      :class="[bindClass(schema), requiredInputClass, 'lang-select']"
       :items="languages"
       :rules="!fieldProps.readonly ? rules : []"
       item-title="name"
       item-value="code"
       label="Lang"
       v-bind="fieldProps"
+      @update:modelValue="changeCountryCode"
     >
       <template #item="{ props, item }">
         <v-list-item v-bind="props">
@@ -30,7 +31,7 @@
       </template>
     </v-select>
     <v-text-field
-      v-model="localModel[selectedLang]"
+      v-model="localModel[countryCode]"
       :class="bindClass(schema) + requiredInputClass"
       :label="label"
       :rules="!fieldProps.readonly ? rules : []"
@@ -70,12 +71,7 @@ const { locale } = useLocale();
 
 const localModel = computed({
   get(): any {
-    const value =  getValue(model, schema);
-    if(value == null){ // for builder purpose
-      return {[selectedLang.value] : ""}
-    } else {
-      return value
-    }
+    return getValue(model, schema);
   },
   set(val: any) {
     setValue(val, schema);
@@ -90,13 +86,18 @@ const languages = (schema.availableLanguages ?? schema.options?.availableLanguag
   }),
 );
 
-const selectedLang = ref('pl');
+const selectedLang = ref('pl-PL');
+const countryCode = ref('pl');
 
 function getLocalePartAfterDash(lang: string) {
   if (lang.includes('-')) {
     return lang.split('-')[1].toLowerCase();
   }
   return lang;
+}
+
+function changeCountryCode(lang: string) {
+  countryCode.value = lang.split('-')[0];
 }
 
 const loading = ref(true);
@@ -111,24 +112,27 @@ onMounted(async () => {
       ? locale.value
       : languages.some((item: AvailableLanguage) => item.code == locale.value)
         ? locale.value
-        : 'en-US';
+        : 'en-GB';
+
+  countryCode.value = selectedLang.value.split('-')[0];
+
   if (localModel.value == null) {
-    localModel.value = { [selectedLang.value]: '' };
+    localModel.value = { [countryCode.value]: '' };
   }
 
   loading.value = false;
 });
 </script>
 
-<style lang="css" scoped>
+<style lang="css">
 .controls-container {
   display: flex;
+}
 
-  .lang-select {
-    width: 96px;
-    min-width: 96px;
-    max-width: 96px;
-    flex-shrink: 0;
-  }
+.lang-select {
+  width: 96px !important;
+  min-width: 96px;
+  max-width: 96px;
+  flex-shrink: 0;
 }
 </style>
