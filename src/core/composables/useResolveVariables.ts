@@ -129,7 +129,6 @@ export function useResolveVariables() {
     }
 
     if (((typeOfValue === 'OBJECT' && value) || typeof value === 'object') && value != null) {
-      console.debug(value);
       value = value[titleReference];
     }
 
