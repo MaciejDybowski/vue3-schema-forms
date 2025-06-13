@@ -187,3 +187,52 @@ export const ListOfCountriesFromOptionsType1 = {
     },
   },
 };
+
+
+export const Required = {
+  name: 'Case 4: Required',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const field = await canvas.getByLabelText('Name of sth');
+
+    const select = await canvas.getByLabelText('Lang');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 400 });
+
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[0], { delay: 400 });
+    await waitForMountedAsync(100);
+    await userEvent.type(field, 'Poland power!');
+    await expect(context.args.formModel).toEqual({
+      multiLanguage: {
+        'en': 'Poland power!',
+      },
+    });
+
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
+  },
+  args: {
+    formModel: {
+      multiLanguage: null,
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        multiLanguage: {
+          label: 'Name of sth',
+          availableLanguages: availableLanguages,
+          layout: {
+            component: 'multi-language-control',
+          },
+        },
+      },
+      required: ['multiLanguage']
+    },
+  },
+};

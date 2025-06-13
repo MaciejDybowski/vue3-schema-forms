@@ -1,11 +1,11 @@
 <template>
   <div
     v-if="!loading"
-    class="controls-container"
+    class="v-phone-input"
   >
     <v-select
       v-model="selectedLang"
-      :class="[bindClass(schema), requiredInputClass, 'lang-select']"
+      :class="[bindClass(schema), requiredInputClass, 'v-phone-input__country__input']"
       :items="languages"
       :rules="!fieldProps.readonly ? rules : []"
       item-title="name"
@@ -13,6 +13,7 @@
       label="Lang"
       v-bind="fieldProps"
       @update:modelValue="changeCountryCode"
+
     >
       <template #item="{ props, item }">
         <v-list-item v-bind="props">
@@ -132,14 +133,6 @@ onMounted(async () => {
 </script>
 
 <style lang="css">
-.controls-container {
-  display: flex;
-}
 
-.lang-select {
-  width: 96px !important;
-  min-width: 96px;
-  max-width: 96px;
-  flex-shrink: 0;
-}
+
 </style>
