@@ -225,33 +225,18 @@ async function validate(option?: ValidationFromBehaviour) {
   }
 
   if (!valid && option === 'scroll') {
-    let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
-    const item = arr.find((item: ValidationFromItem) => !item.isValid);
-    const itemRef = document.getElementById(item?.id + '');
-    if (item)
-      itemRef?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
+    prepareScrollToFirstInvalidField();
     return { valid };
   }
 
   if (!valid && option === 'messages') {
-    let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
-    errorMessages.value = arr
-      .filter((item: ValidationFromItem) => !item.isValid)
-      .map((item: ValidationFromItem) => {
-        const element: Ref<any> = ref(document.getElementById(item.id as string));
-        const label = element.value.labels[0].innerText
-          ? element.value.labels[0].innerText
-          : element.value.labels[1].innerText;
-        return {
-          id: item.id,
-          label: label,
-          messages: item.errorMessages.length > 0 ? item.errorMessages : null,
-        } as ValidationFromError;
-      })
-      .filter((item) => item.messages);
+    prepareArrayOfValidationMessages();
+    return { valid, messages: errorMessages.value };
+  }
+
+  if (!valid && option === 'combined') {
+    prepareScrollToFirstInvalidField();
+    prepareArrayOfValidationMessages();
     return { valid, messages: errorMessages.value };
   }
 
@@ -261,6 +246,38 @@ async function validate(option?: ValidationFromBehaviour) {
   if (valid && option === 'scroll') {
     return { valid };
   }
+  if (valid && option === 'combined') {
+    return { valid, messages: [] };
+  }
+}
+
+function prepareScrollToFirstInvalidField() {
+  let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
+  const item = arr.find((item: ValidationFromItem) => !item.isValid);
+  const itemRef = document.getElementById(item?.id + '');
+  if (item)
+    itemRef?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+}
+
+function prepareArrayOfValidationMessages() {
+  let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
+  errorMessages.value = arr
+    .filter((item: ValidationFromItem) => !item.isValid)
+    .map((item: ValidationFromItem) => {
+      const element: Ref<any> = ref(document.getElementById(item.id as string));
+      const label = element.value.labels[0].innerText
+        ? element.value.labels[0].innerText
+        : element.value.labels[1].innerText;
+      return {
+        id: item.id,
+        label: label,
+        messages: item.errorMessages.length > 0 ? item.errorMessages : null,
+      } as ValidationFromError;
+    })
+    .filter((item) => item.messages);
 }
 
 function reset() {

@@ -121,3 +121,21 @@ export const AddCustomSubmitWithBuiltInValidation: Story = {
     schema: validationExample,
   },
 };
+
+
+export const CombinedValidationBehaviour = {
+  name: 'Mode: combined',
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit, { delay: 400 });
+
+    await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
+  },
+  args: {
+    defaultFormActions: true,
+    validationBehaviour: 'combined',
+    formModel: {},
+    schema: validationExample,
+  },
+};

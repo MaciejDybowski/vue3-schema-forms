@@ -94,13 +94,13 @@ createApp(App)
 
 ## 📋 Props
 
-| Name                  | Type                     | Default    | Description                                                                                    |
-|-----------------------|--------------------------|------------|------------------------------------------------------------------------------------------------|
-| `model`               | `object`                 | —          | Two-way binding for form values.                                                               |
-| `schema`              | `Schema`                 | —          | JSON Schema object defining fields, types, and layouts.                                        |
-| `options`             | `object`                 | —          | Global options applied to all fields.                                                          |
-| `defaultFormActions`  | `boolean`                | `false`    | Toggles default form buttons (Submit / Reset).                                                 |
-| `validationBehaviour` | `"scroll" \| "messages"` | `"scroll"` | Defines validation behavior after error (auto-scroll to first invalid field or show messages). |
+| Name                  | Type                                   | Default    | Description                                                                                    |
+|-----------------------|----------------------------------------|------------|------------------------------------------------------------------------------------------------|
+| `model`               | `object`                               | —          | Two-way binding for form values.                                                               |
+| `schema`              | `Schema`                               | —          | JSON Schema object defining fields, types, and layouts.                                        |
+| `options`             | `object`                               | —          | Global options applied to all fields.                                                          |
+| `defaultFormActions`  | `boolean`                              | `false`    | Toggles default form buttons (Submit / Reset).                                                 |
+| `validationBehaviour` | `"scroll" \| "messages" \| "combined"` | `"scroll"` | Defines validation behavior after error (auto-scroll to first invalid field or show messages). |
 
 ---
 
