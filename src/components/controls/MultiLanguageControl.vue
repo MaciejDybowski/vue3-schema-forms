@@ -13,7 +13,6 @@
       label="Lang"
       v-bind="fieldProps"
       @update:modelValue="changeCountryCode"
-
     >
       <template #item="{ props, item }">
         <v-list-item v-bind="props">
@@ -132,7 +131,4 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="css">
-
-
-</style>
+<style lang="css"></style>

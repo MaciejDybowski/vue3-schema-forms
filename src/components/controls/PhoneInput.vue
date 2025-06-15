@@ -1,20 +1,20 @@
 <template>
   <v-phone-input
-    :class="bindClass(schema) + requiredInputClass"
-    :label="label"
     v-model="localModel"
-    :invalid-message="(options: any) => t('phoneInvalid', { example: options.example })"
+    :class="[bindClass(schema), requiredInputClass]"
     :country-props="fieldPropsMerged"
+    :invalid-message="(options: any) => t('phoneInvalid', { example: options.example })"
+    :label="label"
     :phone-props="fieldPropsMerged"
-    v-bind="fieldPropsMerged"
     :rules="!fieldProps.readonly ? rules : []"
     name="phone"
     type="tel"
+    v-bind="fieldPropsMerged"
   >
   </v-phone-input>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { VPhoneInput } from 'v-phone-input';
 import 'v-phone-input/dist/v-phone-input.css';
 import 'world-flags-sprite/stylesheets/flags32.css';
@@ -111,6 +111,8 @@ const fieldPropsMerged = computed(() => {
     ...phoneInputProps,
     ...props.schema.phoneInputProps,
   };
+
+  console.debug(propsRef.value);
   return propsRef.value;
 });
 
@@ -130,4 +132,10 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang="css"></style>
+<style lang="css">
+.v-phone-input .v-phone-input__country__input.v-input.v-input--density-compact {
+  height: auto;
+  min-height: 0;
+  --v-phone-input-country-icon-height: initial;
+}
+</style>
