@@ -43,8 +43,8 @@ export function useDictionary() {
   let field: EngineDictionaryField = {} as EngineDictionaryField;
   let queryBlocker = ref(false);
   let dependencyWasChanged = ref(false);
-  let multiple = ref(false)
-  let maxSelection = ref(0)
+  let multiple = ref(false);
+  let maxSelection = ref(0);
 
   const debounced = {
     load: debounce(load, 300),
@@ -72,8 +72,8 @@ export function useDictionary() {
     singleOptionAutoSelect.value = source.singleOptionAutoSelect
       ? source.singleOptionAutoSelect
       : true;
-    multiple.value = source.multiple ?? false
-    maxSelection.value = source.maxSelection ?? 0
+    multiple.value = source.multiple ?? false;
+    maxSelection.value = source.maxSelection ?? 0;
 
     //endpoint = { resolvedText: source.url, allVariablesResolved: true };
     endpoint = await resolve(field, source.url, true, title.value);
@@ -154,7 +154,7 @@ export function useDictionary() {
     }
     await checkConditionalFilters();
 
-    if (endpoint.allVariablesResolved) {
+    if (endpoint.allVariablesResolved && endpoint.resolvedText !== '') {
       loading.value = true;
       paginationOptions.value.resetPage();
       const { url, params } = prepareUrl();
@@ -307,6 +307,6 @@ export function useDictionary() {
     loadCounter,
     dependencyWasChanged,
     multiple,
-    maxSelection
+    maxSelection,
   };
 }
