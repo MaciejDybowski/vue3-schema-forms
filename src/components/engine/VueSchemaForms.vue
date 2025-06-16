@@ -103,7 +103,11 @@ async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
   localModel.value = { ...localModel.value, ...model.value } as any;
   form.updateFormModel(localModel.value);
+
+  // update internal
   vueSchemaFormEventBus.emit('model-changed', 'action-callback');
+  // update external
+  emitUpdateEvent()
 }
 
 actionHandlerEventBus.on(async (event, payload) => {
@@ -141,12 +145,7 @@ function updateModel(event: NodeUpdateEvent) {
     return;
   }
 
-  const formModel: Record<string, any> = { ...localModel.value };
-  internalValues.value.forEach((value: string) => {
-    delete formModel[value];
-  });
-
-  emit('update:modelValue', formModel);
+  emitUpdateEvent();
 
   if (logger.formUpdateLogger) {
     console.debug(`[vue-schema-forms] [${event.key}] =>`, localModel.value);
@@ -154,6 +153,15 @@ function updateModel(event: NodeUpdateEvent) {
 
   vueSchemaFormEventBus.emit('model-changed', event);
   debounced.formIsReady()();
+}
+
+function emitUpdateEvent() {
+  const formModel: Record<string, any> = { ...localModel.value };
+  internalValues.value.forEach((value: string) => {
+    delete formModel[value];
+  });
+
+  emit('update:modelValue', formModel);
 }
 
 async function loadResolvedSchema() {

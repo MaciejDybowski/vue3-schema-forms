@@ -449,7 +449,6 @@ async function createParamsObjectFromRow(actionObj: any, row: any) {
       params[key] = value;
     }
   }
-  console.debug("params", params);
   return params;
 }
 
