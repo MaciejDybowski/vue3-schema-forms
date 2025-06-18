@@ -32,12 +32,12 @@ const props = defineProps<{
 
 const { shouldRender, shouldRenderField } = useConditionalRendering();
 const { shouldHide, shouldHideField } = useConditionalHide();
-const { cols, completionOfRow, isOffsetExist, offset, fillRow } = useSchemaCols(props.schema);
+const { cols, isOffsetExist, offset, fillRow } = useSchemaCols(props.schema);
 
 const layoutCssClass = computed(() => {
   let cssString = '';
   if (isOffsetExist) {
-    cssString += `offset-${offset}`;
+    cssString += `offset-${offset.value}`;
   }
   return cssString;
 });

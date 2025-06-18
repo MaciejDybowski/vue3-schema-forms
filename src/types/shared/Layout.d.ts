@@ -3,6 +3,7 @@ import { SchemaComponent } from '@/types/schema/SchemaComponent';
 import { Cols } from '@/types/shared/Cols';
 import { DuplicatedSectionOptions } from '@/types/shared/DuplicatedSectionOptions';
 import { StaticContentTag } from '@/types/shared/StaticContentTag';
+import { Offset } from '@/types/shared/Offset';
 
 export interface Layout {
   component: SchemaComponent;
@@ -10,7 +11,7 @@ export interface Layout {
   if?: string;
   props?: Record<string, any>;
   fillRow?: boolean;
-  offset?: number;
+  offset?: Offset;
   hide?: boolean | string;
 
   // duplicated-section && section && address
