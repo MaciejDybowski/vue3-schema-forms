@@ -45,6 +45,41 @@ export const Standard: Story = {
   },
 };
 
+
+export const HorizontalLayout: Story = {
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    await expect(context.args.formModel).toEqual({ radioButton: 1 });
+    const option2 = canvas.getByLabelText('Option 2');
+    await userEvent.click(option2, { delay: 200 });
+    await expect(context.args.formModel).toEqual({ radioButton: 2 });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        radioButton: {
+          label: 'Choose option',
+          layout: {
+            component: 'radio-button',
+            props: {
+              inline: true
+            }
+          },
+          source: {
+            items: [
+              { value: 1, title: 'Option 1' },
+              { value: 2, title: 'Option 2' },
+              { value: 3, title: 'Option 3' },
+            ],
+          },
+        } as EngineSourceField,
+      },
+    } as Schema,
+  },
+};
 /**
  * You can set the default value of field from schema
  */

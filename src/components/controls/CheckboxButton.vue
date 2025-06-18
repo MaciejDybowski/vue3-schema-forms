@@ -1,7 +1,7 @@
 <template>
   <div
-    :class="'checkbox-root ' + bindClass(schema) + requiredInputClass"
     v-if="!loading"
+    :class="'checkbox-root ' + bindClass(schema) + requiredInputClass"
   >
     <label
       v-if="label"
@@ -9,27 +9,29 @@
     >
       {{ label }}
     </label>
-    <template
-      v-for="(option, index) in data"
-      :key="option[value]"
-    >
-      <v-checkbox
-        v-model="localModel"
-        v-bind="fieldProps"
-        :rules="!fieldProps.readonly ? rules : []"
-        :label="option[title]"
-        :value="option[value]"
-        :hide-details="index == data.length - 1 ? 'auto' : true"
+    <div :class="fieldProps.inline ? 'd-flex' : ''">
+      <template
+        v-for="(option, index) in data"
+        :key="option[value]"
       >
-        <template #message="{ message }">
-          <div class="ml-4">{{ message }}</div>
-        </template>
-      </v-checkbox>
-    </template>
+        <v-checkbox
+          v-model="localModel"
+          :hide-details="index == data.length - 1 ? 'auto' : true"
+          :label="option[title]"
+          :rules="!fieldProps.readonly ? rules : []"
+          :value="option[value]"
+          v-bind="fieldProps"
+        >
+          <template #message="{ message }">
+            <div class="ml-4">{{ message }}</div>
+          </template>
+        </v-checkbox>
+      </template>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, onMounted } from 'vue';
 
 import { EngineSourceField } from '@/types/engine/controls';
@@ -88,4 +90,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang="css"></style>
+<style lang="css" scoped></style>

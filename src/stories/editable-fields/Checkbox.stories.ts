@@ -43,6 +43,39 @@ export const Standard: Story = {
   },
 };
 
+export const HorizontalLayout: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const option2 = canvas.getByLabelText('Option 2');
+    await userEvent.click(option2, { delay: 200 });
+    await expect(context.args.formModel).toEqual({ checkboxStandard: [2] });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        checkboxStandard: {
+          label: 'Choose option',
+          layout: {
+            component: 'checkbox',
+            props: {
+              inline: true,
+            }
+          },
+          source: {
+            items: [
+              { value: 1, title: 'Option 1' },
+              { value: 2, title: 'Option 2' },
+              { value: 3, title: 'Option 3' },
+            ],
+          },
+        } as EngineSourceField,
+      },
+    } as Schema,
+  },
+};
+
 /**
  * You can set the default value of field from schema
  */
