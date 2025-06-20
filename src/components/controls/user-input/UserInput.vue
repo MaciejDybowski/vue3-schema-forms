@@ -188,7 +188,10 @@ async function load() {
       size: pagination.value.getItemsPerPage(),
     };
 
-    const response = await axios.get(usersAPIEndpoint.value, {
+    const {resolvedText, allVariablesResolved} = await resolve(props.schema, usersAPIEndpoint.value, true)
+    if(!allVariablesResolved) return
+
+    const response = await axios.get(resolvedText, {
       params: {
         ...obj,
       },
@@ -213,7 +216,10 @@ async function loadMoreRecords() {
         size: pagination.value.getItemsPerPage(),
       };
 
-      const response = await axios.get(usersAPIEndpoint.value, {
+      const {resolvedText, allVariablesResolved} = await resolve(props.schema, usersAPIEndpoint.value, true)
+      if(!allVariablesResolved) return
+
+      const response = await axios.get(resolvedText, {
         params: {
           ...obj,
         },
