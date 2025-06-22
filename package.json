@@ -19,7 +19,9 @@
     "format": "prettier --write src/",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "test-storybook": "test-storybook --browsers chromium",
+    "test-storybook": "test-storybook",
+    "test-storybook:ci": "test-storybook --clearCache && test-storybook",
+    "test-storybook:debug": "DEBUG_PRINT_LIMIT=5000 test-storybook --verbose",
     "build-storybook": "storybook build -o dist-storybook ",
     "test": "vitest",
     "publish:nexus": "npm publish --registry=https://nexus3.tecna.pl/repository/npm-private-releases"
