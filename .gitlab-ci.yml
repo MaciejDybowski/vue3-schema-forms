@@ -14,14 +14,11 @@ storybook-test:
   stage: storybook
   variables:
     TZ: "Europe/Warsaw"
-    NODE_ENV: "test"
-    DEBUG_PRINT_LIMIT: "5000"
   script:
-    - npm cache clean --force
-    - npm ci --prefer-offline --no-audit
-    - npm run build-storybook -- --quiet
-    - npx http-server storybook-static --port 6006 --silent &
-    - npx wait-on tcp:6006
+    - npm ci
+    - npm run build-storybook
+    - npx serve dist-storybook -l 6006 &
+    - sleep 15
     - npm run test-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
   only:
     - dev
