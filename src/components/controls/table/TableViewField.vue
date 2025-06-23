@@ -444,7 +444,13 @@ async function createParamsObjectFromRow(actionObj: any, row: any) {
   for (const [key, value] of Object.entries(actionObj.params)) {
     if (typeof value === 'string' && variableRegexp.test(value)) {
       const unwrapped = (value as string).slice(1, -1);
-      params[key] = get(row, unwrapped, null);
+
+      if (unwrapped.includes('nata')) {
+        let expression = unwrapped.slice(5, -1); // remove nata( )
+        params[key] = await jsonata(expression).evaluate(row);
+      } else {
+        params[key] = get(row, unwrapped, null);
+      }
     } else {
       params[key] = value;
     }
@@ -457,7 +463,13 @@ async function createBodyObjectFromRow(actionObj: any, row: any) {
   for (const [key, value] of Object.entries(actionObj.body)) {
     if (typeof value === 'string' && variableRegexp.test(value)) {
       const unwrapped = (value as string).slice(1, -1);
-      body[key] = get(row, unwrapped, null);
+
+      if (unwrapped.includes('nata')) {
+        let expression = unwrapped.slice(5, -1); // remove nata( )
+        body[key] = await jsonata(expression).evaluate(row);
+      } else {
+        body[key] = get(row, unwrapped, null);
+      }
     } else {
       body[key] = value;
     }
