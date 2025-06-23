@@ -8,7 +8,7 @@ import dts from 'vite-plugin-dts';
 export default defineConfig({
   plugins: [
     vue(),
-    VueI18nPlugin({}),
+    ...(process.env.STORYBOOK == 'true' ? [VueI18nPlugin({runtimeOnly:false})] : [VueI18nPlugin({})]),
     dts({
       insertTypesEntry: true,
       outDir: 'dist/types',

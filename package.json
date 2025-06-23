@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.2.4-snapshot-3",
+  "version": "0.2.4-snapshot-4",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -22,7 +22,7 @@
     "test-storybook": "test-storybook",
     "test-storybook:ci": "test-storybook --clearCache && test-storybook",
     "test-storybook:debug": "DEBUG_PRINT_LIMIT=5000 test-storybook --verbose",
-    "build-storybook": "storybook build -o dist-storybook ",
+    "build-storybook": "STORYBOOK=true storybook build -o dist-storybook ",
     "test": "vitest",
     "publish:nexus": "npm publish --registry=https://nexus3.tecna.pl/repository/npm-private-releases"
   },
