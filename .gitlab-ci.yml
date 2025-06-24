@@ -6,7 +6,8 @@ variables:
   NPM_TOKEN: $TECNA_NPM_TOKEN
 
 stages:
-  - storybook-tests
+  - prepare
+  #- storybook-tests
   - storybook-build
   - containerize
   - publish
@@ -24,6 +25,20 @@ stages:
 #    - npm run test-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
 #  only:
 #    - dev
+
+npm-install:
+  stage: prepare
+  image: docker.tecna.pl/node:lts
+  script:
+    - npm config set registry https://${NPM_PROXY}
+    - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
+    - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 week
+
 
 build-storybook:
   stage: storybook-build
