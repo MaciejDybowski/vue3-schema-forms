@@ -14,7 +14,7 @@ module.exports = {
     await page.waitForLoadState('networkidle');
 
     // Dodatkowe czekanie dla komponentów z animacjami
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(800);
   },
 
   tags: {
