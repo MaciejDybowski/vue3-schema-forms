@@ -44,6 +44,10 @@ export const globalTypes = {
       items: [
         { value: 'en', left: '🇺🇸', title: 'English' },
         { value: 'pl', left: '🇵🇱', title: 'Polski' },
+        { value: 'de', left: '🇩🇪', title: 'Deutsch' },
+        { value: 'ru', left: '🇷🇺', title: 'Русский' },
+        { value: 'es', left: '🇪🇸', title: 'Español' },
+        { value: 'fr', left: '🇫🇷', title: 'Français' }
       ],
       dynamicTitle: true,
     },

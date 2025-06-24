@@ -600,20 +600,3 @@ onMounted(async () => {
   color: #ffcdd2;
 }
 </style>
-
-<i18n lang="json">
-{
-  "en": {
-    "sum": "Total",
-    "avg": "Average",
-    "save": "Save",
-    "close": "Close"
-  },
-  "pl": {
-    "sum": "Suma",
-    "avg": "Średnia",
-    "save": "Zapisz",
-    "close": "Zamknij"
-  }
-}
-</i18n>

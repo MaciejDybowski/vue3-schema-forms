@@ -6,11 +6,11 @@
     >
       <template v-slot:activator="{ isActive, props }">
         <v-btn
-          v-bind="props"
+          density="compact"
           icon
           size="small"
+          v-bind="props"
           variant="text"
-          density="compact"
         >
           <v-icon v-if="isActive || show">mdi-dots-vertical</v-icon>
         </v-btn>
@@ -18,16 +18,16 @@
       <slot>
         <v-list density="compact">
           <v-list-item
-            :link="true"
             v-for="item in actions"
             :key="item.actionId"
+            :link="true"
             @click="emit('handleAction', item.actionId)"
           >
             <div class="d-flex align-center">
               <v-icon
-                size="small"
                 :color="item.iconColor"
                 class="mr-1"
+                size="small"
               >
                 {{ item.icon }}
               </v-icon>
@@ -39,30 +39,30 @@
     </v-menu>
   </div>
 </template>
-<script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-
+<script lang="ts" setup>
 import { reactive } from 'vue';
 
-const { t } = useI18n();
+import { useLocale } from '@/core/composables';
+
+const { t } = useLocale();
 const actions = reactive([
   {
     actionId: 'delete',
     icon: 'mdi-trash-can-outline',
     iconColor: 'error',
-    translationKey: 'deleteAction',
+    translationKey: 'duplicatedSection.deleteAction',
   },
   {
     actionId: 'copyBelow',
     icon: 'mdi-content-copy',
     iconColor: 'success',
-    translationKey: 'copyBelowAction',
+    translationKey: 'duplicatedSection.copyBelowAction',
   },
   {
     actionId: 'addBelow',
     icon: 'mdi-playlist-plus',
     iconColor: 'success',
-    translationKey: 'addBelowAction',
+    translationKey: 'duplicatedSection.addBelowAction',
   },
 ]);
 
@@ -80,7 +80,7 @@ const emit = defineEmits<{
 }>();
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .draggable-context-menu {
   min-width: 0;
   max-width: 0;
@@ -89,18 +89,3 @@ const emit = defineEmits<{
   top: 0;
 }
 </style>
-
-<i18n lang="json">
-{
-  "en": {
-    "deleteAction": "Delete",
-    "addBelowAction": "Add below",
-    "copyBelowAction": "Copy below"
-  },
-  "pl": {
-    "deleteAction": "Usuń",
-    "addBelowAction": "Dodaj poniżej",
-    "copyBelowAction": "Kopiuj poniżej"
-  }
-}
-</i18n>

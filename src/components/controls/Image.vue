@@ -70,16 +70,3 @@ onMounted(async () => {
 </script>
 
 <style lang="css" scoped></style>
-
-<i18n lang="json">
-{
-  "en": {
-    "closeDialog": "Close",
-    "imageNotFound": "Image with src {src} not found."
-  },
-  "pl": {
-    "closeDialog": "Zamknij",
-    "imageNotFound": "Zdjęcia o ścieżce {src} nie znaleziono."
-  }
-}
-</i18n>

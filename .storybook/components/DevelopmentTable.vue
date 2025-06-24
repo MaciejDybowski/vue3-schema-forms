@@ -90,14 +90,3 @@ async function handleAction(payload: any) {
 </script>
 
 <style lang="scss" scoped></style>
-
-<i18n lang="json">
-{
-  "en": {
-    "test": "EN"
-  },
-  "pl": {
-    "test": "PL"
-  }
-}
-</i18n>

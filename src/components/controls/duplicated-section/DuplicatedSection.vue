@@ -68,7 +68,7 @@
                 variant="elevated"
                 @click="closeAndAddBatch(isActive)"
               >
-                {{ t('closeAndAdd') }}
+                {{ t('duplicatedSection.closeAndAdd') }}
               </v-btn>
             </template>
           </v-card>
@@ -83,12 +83,11 @@ import { useEventBus } from '@vueuse/core';
 import { cloneDeep, isArray } from 'lodash';
 import get from 'lodash/get';
 import set from 'lodash/set';
-import { useI18n } from 'vue-i18n';
 import draggable from 'vuedraggable';
 
 import { Ref, computed, onMounted, ref } from 'vue';
 
-import { useFormModel, useProps } from '@/core/composables';
+import { useFormModel, useLocale, useProps } from '@/core/composables';
 import { duplicatedSectionBatchAddComponent } from '@/main';
 import { VueDragable } from '@/types/VueDragable';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
@@ -119,7 +118,7 @@ const actionHandlerEventBus = useEventBus<string>('form-action');
 const nodes = ref([] as Array<Schema>);
 const localModel = ref([] as Array<any>);
 const drag = ref(false);
-const { t } = useI18n();
+const { t } = useLocale();
 const dragOptions = ref({
   animation: 200,
   disabled: false,
@@ -334,7 +333,7 @@ const getAddBtnText = computed(() => {
   if (duplicatedSectionOptions.value?.addBtnText) {
     return duplicatedSectionOptions.value.addBtnText;
   } else {
-    return t('addAction');
+    return t('duplicatedSection.addAction');
   }
 });
 
@@ -454,18 +453,3 @@ onMounted(async () => {
   background: #d3d3d3;
 }
 </style>
-
-<i18n lang="json">
-{
-  "en": {
-    "addAction": "Add",
-    "close": "Close",
-    "closeAndAdd": "Close and add"
-  },
-  "pl": {
-    "addAction": "Dodaj",
-    "close": "Zamknij",
-    "closeAndAdd": "Dodaj i zamknij"
-  }
-}
-</i18n>

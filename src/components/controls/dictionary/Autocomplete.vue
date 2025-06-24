@@ -48,7 +48,7 @@
       </v-list-item>
       <v-list-item
         v-else
-        :title="t('noData')"
+        :title="t('dictionary.noData')"
       />
     </template>
     <template
@@ -237,14 +237,3 @@ function removeValue(item: any[]) {
 </script>
 
 <style lang="css" scoped></style>
-
-<i18n lang="json">
-{
-  "en": {
-    "noData": "No data available."
-  },
-  "pl": {
-    "noData": "Brak danych."
-  }
-}
-</i18n>

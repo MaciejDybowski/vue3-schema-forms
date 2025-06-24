@@ -28,46 +28,20 @@ export const Story1: Story = {
   args: {
     formModel: {},
     schema: {
-      type: 'object',
       properties: {
-        item: {
-          label: 'Text-field',
+        alert: {
+          memorable: true,
+          content:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
           layout: {
-            component: 'text-field',
-
-            cols: {
-              xs: 6,
-              sm: 6,
-              md: 6,
-              lg: 4,
-              xl: 2,
-              xxl: 2,
-            },
-            offset: {
-              xs: 0,
-              sm: 0,
-              md: 0,
-              lg: 4,
-              xl: 2,
-              xxl: 2,
+            component: 'alert',
+            props: {
+              type: 'info',
+              variant: 'outlined',
             },
           },
         },
-        item2: {
-          label: 'Text-field',
-          layout: {
-            component: 'text-field',
-            cols: {
-              xs: 0,
-              sm: 0,
-              md: 2,
-              lg: 4,
-              xl: 2,
-              xxl: 2,
-            },
-          },
-        },
-      },
+      }
     },
   },
   parameters: {},

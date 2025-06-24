@@ -264,18 +264,3 @@ onMounted(async () => {
 </script>
 
 <style lang="css" scoped></style>
-
-<i18n lang="json">
-{
-  "en": {
-    "save": "Save",
-    "close": "Close",
-    "valueCopied": "Copied!"
-  },
-  "pl": {
-    "save": "Zapisz",
-    "close": "Zamknij",
-    "valueCopied": "Skopiowano!"
-  }
-}
-</i18n>

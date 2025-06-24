@@ -253,14 +253,3 @@ onMounted(async () => {
   text-align: left;
 }
 </style>
-
-<i18n lang="json">
-{
-  "en": {
-    "resultWasModified": "Result was manually modified."
-  },
-  "pl": {
-    "resultWasModified": "Wynik został ręcznie zmodyfikowany."
-  }
-}
-</i18n>

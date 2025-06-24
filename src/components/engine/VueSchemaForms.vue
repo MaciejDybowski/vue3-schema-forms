@@ -321,10 +321,3 @@ defineExpose({
   }
 }
 </style>
-
-<i18n lang="json">
-{
-  "en": {},
-  "pl": {}
-}
-</i18n>

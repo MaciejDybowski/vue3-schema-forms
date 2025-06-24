@@ -10,8 +10,8 @@
     :label="label"
     :lazy="lazy"
     :loading="loading"
-    :multiple="multiple"
     :max-selection="maxSelection"
+    :multiple="multiple"
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
@@ -32,7 +32,7 @@
       </v-list-item>
       <v-list-item
         v-else
-        :title="t('noData')"
+        :title="t('dictionary.noData')"
       />
     </template>
     <template
@@ -76,6 +76,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
+import DictionaryItemChip from '@/components/controls/dictionary/DictionaryItemChip.vue';
 
 import {
   useClass,
@@ -90,7 +91,6 @@ import { useDictionary } from '@/core/composables/useDictionary';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineDictionaryField } from '@/types/engine/controls';
-import DictionaryItemChip from '@/components/controls/dictionary/DictionaryItemChip.vue';
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -215,14 +215,3 @@ function updateSearch(val: string) {
 </script>
 
 <style lang="css" scoped></style>
-
-<i18n lang="json">
-{
-  "en": {
-    "noData": "No data available."
-  },
-  "pl": {
-    "noData": "Brak danych."
-  }
-}
-</i18n>

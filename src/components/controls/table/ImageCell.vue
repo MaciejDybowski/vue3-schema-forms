@@ -26,7 +26,7 @@
             color="primary"
             variant="elevated"
             @click="isActive.value = false"
-            >{{ t('closeDialog') }}
+            >{{ t('close') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -53,14 +53,3 @@ const { t } = useLocale();
 </script>
 
 <style lang="css" scoped></style>
-
-<i18n lang="json">
-{
-  "en": {
-    "closeDialog": "Close"
-  },
-  "pl": {
-    "closeDialog": "Zamknij"
-  }
-}
-</i18n>

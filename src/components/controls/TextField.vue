@@ -81,10 +81,3 @@ onMounted(async () => {
 </script>
 
 <style lang="css" scoped></style>
-
-<i18n lang="json">
-{
-  "en": {},
-  "pl": {}
-}
-</i18n>

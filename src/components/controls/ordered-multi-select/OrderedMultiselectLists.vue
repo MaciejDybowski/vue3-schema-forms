@@ -77,10 +77,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n';
 import draggable from 'vuedraggable';
 
 import { defineEmits, ref, watch } from 'vue';
+
+import { useLocale } from '@/core/composables';
 
 const { items, selectedItems, title, value } = defineProps<{
   items: any[];
@@ -98,7 +99,7 @@ watch(
   },
 );
 
-const { t } = useI18n();
+const { t } = useLocale();
 
 const emit = defineEmits<{
   (e: 'update:selectedItems', value: any[]): void;
@@ -130,20 +131,3 @@ const isSelected = (item: (typeof items)[number]) => {
   display: block;
 }
 </style>
-
-<i18n lang="json">
-{
-  "en": {
-    "available": "Available",
-    "selected": "Selected"
-  },
-  "pl": {
-    "available": "Dostępne",
-    "selected": "Wybrane"
-  },
-  "de": {
-    "available": "Verfügbar",
-    "selected": "Ausgewählt"
-  }
-}
-</i18n>

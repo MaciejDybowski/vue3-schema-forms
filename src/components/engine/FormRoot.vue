@@ -101,10 +101,3 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss"></style>
-
-<i18n lang="json">
-{
-  "en": {},
-  "pl": {}
-}
-</i18n>

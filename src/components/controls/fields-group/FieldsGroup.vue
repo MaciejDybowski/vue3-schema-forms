@@ -35,5 +35,3 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped></style>
-
-<i18n lang="json"></i18n>

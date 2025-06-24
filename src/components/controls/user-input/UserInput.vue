@@ -8,7 +8,7 @@
     :label="label"
     :lazy="true"
     :loading="loading"
-    :no-data-text="t('noData')"
+    :no-data-text="t('userInput.noData')"
     :options="pagination"
     :rules="!fieldProps.readonly ? rules : []"
     :search="query"
@@ -331,14 +331,3 @@ onMounted(async () => {
 </script>
 
 <style lang="css" scoped></style>
-
-<i18n lang="json">
-{
-  "en": {
-    "noData": "No users available."
-  },
-  "pl": {
-    "noData": "Brak dostępnych użytkowników."
-  }
-}
-</i18n>
