@@ -154,6 +154,7 @@ import { mapQuery, mapSort } from '@/components/controls/table/utils';
 import VueSchemaForms from '@/components/engine/VueSchemaForms.vue';
 
 import { useLocale, useProps, useResolveVariables } from '@/core/composables';
+import { useVariableParser } from '@/core/composables/useVariableParser';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineTableField } from '@/types/engine/EngineTableField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
@@ -185,6 +186,7 @@ const theme = useTheme();
 const { t } = useLocale();
 const { bindProps, fieldProps } = useProps();
 const { resolve } = useResolveVariables();
+const { parse } = useVariableParser();
 const items = ref<any[]>([]);
 const itemsTotalElements = ref(0);
 const loading = ref(true);
@@ -443,14 +445,9 @@ async function createParamsObjectFromRow(actionObj: any, row: any) {
   let params: Record<string, any> = {};
   for (const [key, value] of Object.entries(actionObj.params)) {
     if (typeof value === 'string' && variableRegexp.test(value)) {
-      const unwrapped = (value as string).slice(1, -1);
-
-      if (unwrapped.includes('nata')) {
-        let expression = unwrapped.slice(5, -1); // remove nata( )
-        params[key] = await jsonata(expression).evaluate(row);
-      } else {
-        params[key] = get(row, unwrapped, null);
-      }
+      const { resolvedText, allVariablesResolved } = await parse(value, row);
+      console.warn(`[vue-schema-forms] Key: ${key} with Value:${value} was not resolved properly.`)
+      allVariablesResolved ? (params[key] = resolvedText) : null;
     } else {
       params[key] = value;
     }
@@ -462,14 +459,10 @@ async function createBodyObjectFromRow(actionObj: any, row: any) {
   let body: Record<string, any> = {};
   for (const [key, value] of Object.entries(actionObj.body)) {
     if (typeof value === 'string' && variableRegexp.test(value)) {
-      const unwrapped = (value as string).slice(1, -1);
+      const { resolvedText, allVariablesResolved } = await parse(value, row);
+      console.warn(`[vue-schema-forms] Key: ${key} with Value:${value} was not resolved properly.`)
+      allVariablesResolved ? (body[key] = resolvedText) : null;
 
-      if (unwrapped.includes('nata')) {
-        let expression = unwrapped.slice(5, -1); // remove nata( )
-        body[key] = await jsonata(expression).evaluate(row);
-      } else {
-        body[key] = get(row, unwrapped, null);
-      }
     } else {
       body[key] = value;
     }
