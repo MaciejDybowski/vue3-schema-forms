@@ -49,7 +49,7 @@ build-storybook:
     - npm run build-storybook
   artifacts:
     paths:
-      - dist-storybook
+      - storybook-static
   only:
     - dev
 
