@@ -6,28 +6,36 @@
   >
     <div
       v-if="memorable"
-      class="d-flex"
+      class="d-flex align-center"
     >
       <div
-        :class="!expanded ? `one-liner` : 'whole-content'"
+        :class="[!expanded ? `one-liner` : 'whole-content']"
         v-html="resolvedContent.resolvedText"
       />
       <v-spacer />
-      <v-btn
-        class="pa-0 ma-0 mx-2"
-        density="compact"
-        icon
-        variant="text"
+      <div
+        v-if="!expanded"
+        class="expander d-flex text-no-wrap cursor-pointer mt-1"
         @click="changeState"
       >
-        <v-icon>{{ expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-      </v-btn>
+        <span class="link">{{ t('hint.show') }}</span>
+        <v-icon size="small" class="mx-1">mdi-eye-outline</v-icon>
+      </div>
     </div>
 
     <div
       v-else
       v-html="resolvedContent.resolvedText"
     ></div>
+    <v-spacer />
+    <div
+      v-if="expanded && memorable"
+      class="text-right cursor-pointer link mt-2"
+      @click="changeState"
+    >
+      <span>{{ t('hint.hide') }}</span>
+      <v-icon class="mx-1" size="small">mdi-check</v-icon>
+    </div>
   </v-alert>
 </template>
 
@@ -37,7 +45,13 @@ import get from 'lodash/get';
 
 import { computed, onMounted, ref } from 'vue';
 
-import { useClass, useFormModel, useProps, useResolveVariables } from '@/core/composables';
+import {
+  useClass,
+  useFormModel,
+  useLocale,
+  useProps,
+  useResolveVariables,
+} from '@/core/composables';
 import { EngineAlertField } from '@/types/engine/controls';
 
 const { schema, model } = defineProps<{
@@ -51,6 +65,7 @@ const actionHandlerEventBus = useEventBus<string>('form-action');
 const memorable = ref(schema.memorable ? schema.memorable : false);
 const expanded = ref(true);
 
+const { t } = useLocale();
 const { resolve } = useResolveVariables();
 const { bindProps, fieldProps } = useProps();
 
@@ -97,13 +112,13 @@ const userProperties = computed(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .whole-content {
   margin-top: 5px;
 }
 
 .one-liner {
-  margin-top: 5px;
+  margin-top: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
