@@ -4,6 +4,10 @@ variables:
   NPM_REGISTRY: nexus3.tecna.pl/repository/npm-private-releases
   NPM_PROXY: nexus3.tecna.pl/repository/npm-private
   NPM_TOKEN: $TECNA_NPM_TOKEN
+  UPSTREAM_REPO: $DOCKER_PROXY_URL
+  DOWNSTREAM_REPO: $CI_REGISTRY
+  UPSTREAM_REPO_USER: $NEXUS_USER
+  UPSTREAM_REPO_PASSWORD: $NEXUS_PASSWORD
 
 stages:
   - prepare
