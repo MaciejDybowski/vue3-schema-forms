@@ -20,6 +20,8 @@ export interface BuiltInTranslationLanguages {
   en?: string;
   ru?: string;
   de?: string;
+  es?: string;
+  fr?: string;
 }
 
 const { locale } = useLocale();
