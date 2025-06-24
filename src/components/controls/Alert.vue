@@ -15,11 +15,15 @@
       <v-spacer />
       <div
         v-if="!expanded"
-        class="expander d-flex text-no-wrap cursor-pointer mt-1"
+        class="expander d-flex text-no-wrap cursor-pointer mt-1 ml-1"
         @click="changeState"
       >
         <span class="link">{{ t('hint.show') }}</span>
-        <v-icon size="small" class="mx-1">mdi-eye-outline</v-icon>
+        <v-icon
+          class="mx-1"
+          size="small"
+          >mdi-eye-outline</v-icon
+        >
       </div>
     </div>
 
@@ -27,14 +31,20 @@
       v-else
       v-html="resolvedContent.resolvedText"
     ></div>
-    <v-spacer />
-    <div
-      v-if="expanded && memorable"
-      class="text-right cursor-pointer link mt-2"
-      @click="changeState"
-    >
-      <span>{{ t('hint.hide') }}</span>
-      <v-icon class="mx-1" size="small">mdi-check</v-icon>
+    <div class="d-flex">
+      <v-spacer />
+      <div
+        v-if="expanded && memorable"
+        class="text-right cursor-pointer link mt-2"
+        @click="changeState"
+      >
+        <span>{{ t('hint.hide') }}</span>
+        <v-icon
+          class="mx-1"
+          size="small"
+          >mdi-check</v-icon
+        >
+      </div>
     </div>
   </v-alert>
 </template>
