@@ -3,4 +3,4 @@ RUN mkdir -p /app/storybook
 COPY storybook-static/* /app/storybook/
 COPY nginx-storybook.conf /etc/nginx/nginx.conf
 RUN mkdir -p /app/storybook/static
-RUN cp -r /app/storybook/media /app/storybook/static/
+RUN cp -r /app/storybook/assets /app/storybook/static/
