@@ -91,7 +91,7 @@ docker-deploy-dev-storybook:
     ENVIRONMENT: aureadev.tecna.pl
     USER: gitlab
     ENV_REPO_PATH: /opt/dashboards/
-    APP_NAME: storybook
+    APP_NAME: aurea-forms-storybook
   only:
     variables:
       - $REGISTRY_URL == "registry.tecna.pl"
