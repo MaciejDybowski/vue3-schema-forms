@@ -13,7 +13,7 @@ variables:
 
 stages:
   - storybook-tests
-  - prepare
+  - parallel-start    # Oba joby w tym samym stage!
   - build
   - containerize
   - deploy
@@ -35,9 +35,9 @@ storybook-test:
   only:
     - dev
 
-# Ścieżka 1: Storybook deployment
+# Ścieżka 1: Storybook - START (równolegle)
 npm-install:
-  stage: prepare
+  stage: parallel-start    # Ten sam stage!
   image: docker.tecna.pl/node:lts
   needs: ["storybook-test"]
   script:
@@ -52,6 +52,25 @@ npm-install:
   only:
     - dev
 
+# Ścieżka 2: Publish - START (równolegle)
+npm-prepare-publish:
+  stage: parallel-start    # Ten sam stage!
+  image: docker.tecna.pl/node:lts
+  needs: ["storybook-test"]
+  script:
+    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+      - package.json
+    expire_in: 1 week
+  only:
+    - master
+    - dev
+
+# Kontynuacja ścieżki 1
 build-storybook:
   stage: build
   image: docker.tecna.pl/node:lts
@@ -105,24 +124,7 @@ docker-deploy-dev-storybook:
   script:
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
-# Ścieżka 2: NPM publish (równoległa)
-npm-prepare-publish:
-  stage: prepare
-  image: docker.tecna.pl/node:lts
-  needs: ["storybook-test"]
-  script:
-    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm install
-    - npm run build
-  artifacts:
-    paths:
-      - dist/
-      - package.json
-    expire_in: 1 week
-  only:
-    - master
-    - dev
-
+# Kontynuacja ścieżki 2
 npm-publish:
   stage: publish
   image: docker.tecna.pl/node:lts
