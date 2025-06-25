@@ -71,6 +71,7 @@ docker-push-storybook:
     - docker login -u $UPSTREAM_REPO_USER -p $UPSTREAM_REPO_PASSWORD ${UPSTREAM_REPO}
   script:
     - docker build -f Dockerfile.storybook --build-arg "NEXUS3_URL=${UPSTREAM_REPO}" -t ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook .
+    - echo "Pushing image: ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook"
     - docker push ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
   only:
     - dev
@@ -107,6 +108,7 @@ docker-deploy-dev-storybook:
     - chmod 644 ~/.ssh/known_hosts
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
+    - echo "docker compose pull $APP_NAME; docker compose up -d $APP_NAME"
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
 
