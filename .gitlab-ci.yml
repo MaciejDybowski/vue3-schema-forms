@@ -11,28 +11,27 @@ variables:
   GROUP_NAME: $CI_PROJECT_NAMESPACE
   APP_NAME: $CI_PROJECT_NAME
 
-
 stages:
+  - storybook-tests
   - prepare
-  #- storybook-tests
   - storybook-build
   - containerize
-  - publish
   - deploy
+  - publish
 
-#storybook-test:
-#  image: mcr.microsoft.com/playwright:v1.52.0-noble
-#  stage: storybook-tests
-#  variables:
-#    TZ: "Europe/Warsaw"
-#  script:
-#    - npm ci
-#    - npm run build-storybook
-#    - npx serve dist-storybook -l 6006 &
-#    - sleep 15
-#    - npm run test-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
-#  only:
-#    - dev
+storybook-test:
+  image: mcr.microsoft.com/playwright:v1.52.0-noble
+  stage: storybook-tests
+  variables:
+    TZ: "Europe/Warsaw"
+  script:
+    - npm ci
+    - npm run build-storybook
+    - npx serve dist-storybook -l 6006 &
+    - sleep 15
+    - npm run test-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
+  only:
+    - dev
 
 npm-install:
   stage: prepare
@@ -46,7 +45,8 @@ npm-install:
     paths:
       - node_modules/
     expire_in: 1 week
-
+  only:
+    - dev
 
 build-storybook:
   stage: storybook-build
@@ -70,42 +70,26 @@ docker-push-storybook:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD ${DOWNSTREAM_REPO}
     - docker login -u $UPSTREAM_REPO_USER -p $UPSTREAM_REPO_PASSWORD ${UPSTREAM_REPO}
   script:
-    - |
-      echo "=== DOCKER PUSH VARIABLES ==="
-      echo "DOWNSTREAM_REPO=${DOWNSTREAM_REPO}"
-      echo "UPSTREAM_REPO=${UPSTREAM_REPO}"
-      echo "GROUP_NAME=${GROUP_NAME}"
-      echo "APP_NAME=${APP_NAME}"
-      echo "CI_REGISTRY_USER=${CI_REGISTRY_USER}"
-      echo "Full image tag will be: ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook"
-      echo "================================"
     - docker build -f Dockerfile.storybook --build-arg "NEXUS3_URL=${UPSTREAM_REPO}" -t ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook .
     - docker push ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
   only:
     - dev
 
 docker-deploy-dev-storybook:
-  extends: .docker-deploy
+  stage: deploy
+  image: ${UPSTREAM_REPO}/alpine:latest
   variables:
     SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY_AUREADEV}
     ENVIRONMENT: aureadev.tecna.pl
     USER: gitlab
     ENV_REPO_PATH: /opt/dashboards/
     APP_NAME: aurea-forms-storybook
+    FILE_NAME: docker-compose.yml
   only:
     variables:
       - $REGISTRY_URL == "registry.tecna.pl"
-
-
-.docker-deploy:
-  stage: deploy
-  image: ${UPSTREAM_REPO}/alpine:latest
-  variables:
-    SSH_PRIVATE_KEY: changeme
-    ENVIRONMENT: changeme
-    USER: changeme
-    ENV_REPO_PATH: changeme
-    FILE_NAME: docker-compose.yml
+    refs:
+      - dev
   before_script:
     - apk update && apk add openssh-client bash rsync
     - eval $(ssh-agent -s)
@@ -116,20 +100,7 @@ docker-deploy-dev-storybook:
     - chmod 644 ~/.ssh/known_hosts
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
-    - echo "=== DEPLOYMENT VARIABLES ==="
-    - 'echo "ENVIRONMENT=${ENVIRONMENT}"'
-    - 'echo "USER=${USER}"'
-    - 'echo "ENV_REPO_PATH=${ENV_REPO_PATH}"'
-    - 'echo "APP_NAME=${APP_NAME}"'
-    - 'echo "DOWNSTREAM_REPO=${DOWNSTREAM_REPO}"'
-    - 'echo "CI_REGISTRY_USER=${CI_REGISTRY_USER}"'
-    - 'echo "FILE_NAME=${FILE_NAME}"'
-    - 'echo "Full SSH command will be: ${USER}@${ENVIRONMENT}"'
-    - 'echo "Docker compose commands will run in: ${ENV_REPO_PATH}"'
-    - echo "================================"
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
-
-
 
 
 npm-publish:
@@ -139,9 +110,13 @@ npm-publish:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - npm install
     - npm run build
-    - npm run publish:nexus
+    - export VERSION=$(node -p "require('./package.json').version")
+    - export TAG="stable-${VERSION}"
+    - echo "Publishing with tag= ${TAG}"
+    - npm run publish:nexus -- --tag ${TAG}
   only:
     - master
+    - dev
 
 
 
