@@ -13,8 +13,8 @@ variables:
 
 stages:
   - storybook-tests
-  - parallel-start    # Oba joby w tym samym stage!
-  - build
+  - prepare
+  - storybook-build
   - containerize
   - deploy
   - publish
@@ -30,16 +30,12 @@ storybook-test:
     - npx serve dist-storybook -l 6006 &
     - sleep 15
     - npm run test-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
-  allow_failure: true
-  when: manual
   only:
     - dev
 
-# Ścieżka 1: Storybook - START (równolegle)
 npm-install:
-  stage: parallel-start    # Ten sam stage!
+  stage: prepare
   image: docker.tecna.pl/node:lts
-  needs: ["storybook-test"]
   script:
     - npm config set registry https://${NPM_PROXY}
     - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
@@ -52,29 +48,11 @@ npm-install:
   only:
     - dev
 
-# Ścieżka 2: Publish - START (równolegle)
-npm-prepare-publish:
-  stage: parallel-start    # Ten sam stage!
-  image: docker.tecna.pl/node:lts
-  needs: ["storybook-test"]
-  script:
-    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm install
-    - npm run build
-  artifacts:
-    paths:
-      - dist/
-      - package.json
-    expire_in: 1 week
-  only:
-    - master
-    - dev
-
-# Kontynuacja ścieżki 1
 build-storybook:
-  stage: build
+  stage: storybook-build
   image: docker.tecna.pl/node:lts
-  needs: ["npm-install"]
+  dependencies:
+    - npm-install
   script:
     - npm run build-storybook
   artifacts:
@@ -86,7 +64,8 @@ build-storybook:
 docker-push-storybook:
   stage: containerize
   image: docker.tecna.pl/docker
-  needs: ["build-storybook"]
+  dependencies:
+    - build-storybook
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD ${DOWNSTREAM_REPO}
     - docker login -u $UPSTREAM_REPO_USER -p $UPSTREAM_REPO_PASSWORD ${UPSTREAM_REPO}
@@ -99,7 +78,6 @@ docker-push-storybook:
 docker-deploy-dev-storybook:
   stage: deploy
   image: ${UPSTREAM_REPO}/alpine:latest
-  needs: ["docker-push-storybook"]
   variables:
     SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY_AUREADEV}
     ENVIRONMENT: aureadev.tecna.pl
@@ -124,13 +102,14 @@ docker-deploy-dev-storybook:
   script:
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
-# Kontynuacja ścieżki 2
+
 npm-publish:
-  stage: publish
   image: docker.tecna.pl/node:lts
-  needs: ["npm-prepare-publish"]
+  stage: publish
   script:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - npm install
+    - npm run build
     - export VERSION=$(node -p "require('./package.json').version")
     - export TAG="stable-${VERSION}"
     - echo "Publishing with tag= ${TAG}"
@@ -138,3 +117,10 @@ npm-publish:
   only:
     - master
     - dev
+
+
+
+
+
+
+
