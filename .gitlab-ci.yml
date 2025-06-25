@@ -13,7 +13,9 @@ variables:
 
 stages:
   - storybook-tests
-  - parallel-paths
+  - prepare
+  - build
+  - containerize
   - deploy
   - publish
 
@@ -33,11 +35,11 @@ storybook-test:
   only:
     - dev
 
-# Ścieżka Storybook - zaczyna się równolegle po storybook-tests
+# Ścieżka 1: Storybook deployment
 npm-install:
-  stage: parallel-paths
+  stage: prepare
   image: docker.tecna.pl/node:lts
-  needs: []  # Zaczyna się natychmiast, nie czeka na storybook-tests
+  needs: ["storybook-test"]
   script:
     - npm config set registry https://${NPM_PROXY}
     - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
@@ -51,7 +53,7 @@ npm-install:
     - dev
 
 build-storybook:
-  stage: parallel-paths
+  stage: build
   image: docker.tecna.pl/node:lts
   needs: ["npm-install"]
   script:
@@ -63,7 +65,7 @@ build-storybook:
     - dev
 
 docker-push-storybook:
-  stage: parallel-paths
+  stage: containerize
   image: docker.tecna.pl/docker
   needs: ["build-storybook"]
   before_script:
@@ -103,11 +105,11 @@ docker-deploy-dev-storybook:
   script:
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
-# Ścieżka Publish - zaczyna się równolegle po storybook-tests
+# Ścieżka 2: NPM publish (równoległa)
 npm-prepare-publish:
-  stage: parallel-paths
+  stage: prepare
   image: docker.tecna.pl/node:lts
-  needs: []  # Zaczyna się natychmiast, nie czeka na storybook-tests
+  needs: ["storybook-test"]
   script:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - npm install
