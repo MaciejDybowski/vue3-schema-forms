@@ -20,7 +20,7 @@ stages:
   - publish
 
 storybook-test:
-  image: mcr.microsoft.com/playwright:v1.50.0-noble
+  image: docker.tecna.pl/mcr.microsoft.com/playwright:v1.50.0-noble
   stage: storybook-tests
   variables:
     TZ: "Europe/Warsaw"
