@@ -70,15 +70,15 @@ docker-push-storybook:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD ${DOWNSTREAM_REPO}
     - docker login -u $UPSTREAM_REPO_USER -p $UPSTREAM_REPO_PASSWORD ${UPSTREAM_REPO}
   script:
-    - # Logowanie zmiennych przed docker build i push
-    - echo "=== DOCKER PUSH VARIABLES ==="
-    - echo "DOWNSTREAM_REPO=${DOWNSTREAM_REPO}"
-    - echo "UPSTREAM_REPO=${UPSTREAM_REPO}"
-    - echo "GROUP_NAME=${GROUP_NAME}"
-    - echo "APP_NAME=${APP_NAME}"
-    - echo "CI_REGISTRY_USER=${CI_REGISTRY_USER}"
-    - echo "Full image tag will be ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook"
-    - echo "================================"
+    - |
+      echo "=== DOCKER PUSH VARIABLES ==="
+      echo "DOWNSTREAM_REPO=${DOWNSTREAM_REPO}"
+      echo "UPSTREAM_REPO=${UPSTREAM_REPO}"
+      echo "GROUP_NAME=${GROUP_NAME}"
+      echo "APP_NAME=${APP_NAME}"
+      echo "CI_REGISTRY_USER=${CI_REGISTRY_USER}"
+      echo "Full image tag will be: ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook"
+      echo "================================"
     - docker build -f Dockerfile.storybook --build-arg "NEXUS3_URL=${UPSTREAM_REPO}" -t ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook .
     - docker push ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
   only:
@@ -117,15 +117,15 @@ docker-deploy-dev-storybook:
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
     - echo "=== DEPLOYMENT VARIABLES ==="
-    - echo "ENVIRONMENT=${ENVIRONMENT}"
-    - echo "USER=${USER}"
-    - echo "ENV_REPO_PATH=${ENV_REPO_PATH}"
-    - echo "APP_NAME=${APP_NAME}"
-    - echo "DOWNSTREAM_REPO=${DOWNSTREAM_REPO}"
-    - echo "CI_REGISTRY_USER=${CI_REGISTRY_USER}"
-    - echo "FILE_NAME=${FILE_NAME}"
-    - echo "Full SSH command will be ${USER}@${ENVIRONMENT}"
-    - echo "Docker compose commands will run in ${ENV_REPO_PATH}"
+    - 'echo "ENVIRONMENT=${ENVIRONMENT}"'
+    - 'echo "USER=${USER}"'
+    - 'echo "ENV_REPO_PATH=${ENV_REPO_PATH}"'
+    - 'echo "APP_NAME=${APP_NAME}"'
+    - 'echo "DOWNSTREAM_REPO=${DOWNSTREAM_REPO}"'
+    - 'echo "CI_REGISTRY_USER=${CI_REGISTRY_USER}"'
+    - 'echo "FILE_NAME=${FILE_NAME}"'
+    - 'echo "Full SSH command will be: ${USER}@${ENVIRONMENT}"'
+    - 'echo "Docker compose commands will run in: ${ENV_REPO_PATH}"'
     - echo "================================"
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
