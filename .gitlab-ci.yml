@@ -49,7 +49,7 @@ storybook-npm-install:
       - node_modules/
     expire_in: 1 week
   only:
-    - dev
+    - stable
 
 aurea-forms-publish-stable:
   image: docker.tecna.pl/node:lts
@@ -91,7 +91,7 @@ build-storybook:
     paths:
       - storybook-static
   only:
-    - dev
+    - stable
 
 docker-push-storybook:
   stage: containerize
@@ -105,7 +105,7 @@ docker-push-storybook:
     - docker build -f Dockerfile.storybook --build-arg "NEXUS3_URL=${UPSTREAM_REPO}" -t ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook .
     - docker push ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
   only:
-    - dev
+    - stable
 
 docker-deploy-dev-storybook:
   stage: deploy
@@ -121,7 +121,7 @@ docker-deploy-dev-storybook:
     variables:
       - $REGISTRY_URL == "registry.tecna.pl"
     refs:
-      - dev
+      - stable
   before_script:
     - apk update && apk add openssh-client bash rsync
     - eval $(ssh-agent -s)
