@@ -18,6 +18,7 @@ stages:
   - storybook-build
   - containerize
   - publish
+  - deploy
 
 #storybook-test:
 #  image: mcr.microsoft.com/playwright:v1.52.0-noble
