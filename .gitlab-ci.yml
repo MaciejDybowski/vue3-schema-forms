@@ -71,7 +71,7 @@ build-storybook:
   stage: storybook-build
   image: docker.tecna.pl/node:lts
   dependencies:
-    - parallel-stage
+    - storybook-npm-install
   script:
     - npm run build-storybook
   artifacts:
