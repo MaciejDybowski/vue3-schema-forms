@@ -13,7 +13,7 @@ variables:
 
 stages:
   - storybook-tests
-  - parallel-stage
+  - storybook-prepare
   - storybook-build
   - containerize
   - deploy
@@ -38,7 +38,7 @@ storybook-test:
       allow_failure: true
 
 storybook-npm-install:
-  stage: parallel-stage
+  stage: storybook-prepare
   image: docker.tecna.pl/node:lts
   script:
     - npm config set registry https://${NPM_PROXY}
