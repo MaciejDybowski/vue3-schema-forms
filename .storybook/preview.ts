@@ -5,6 +5,7 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import i18n, { i18nConfig } from './plugins/i18n';
 import vuetify from './plugins/vuetify';
 import { withVuetifyTheme } from './withVuetifyTheme.decorator';
+import { MermaidWrapper } from './components/MermaidWrapper';
 
 const preview: Preview = {
   parameters: {
@@ -16,6 +17,11 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    docs: {
+      components: {
+        code: MermaidWrapper
+      }
+    }
   },
 
   tags: ['autodocs'],
