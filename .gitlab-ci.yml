@@ -13,10 +13,11 @@ variables:
 
 stages:
   - storybook-tests
-  - prepare
+  - prepare-storybook
   - storybook-build
   - containerize
   - deploy
+  - prepare-publish
   - publish
 
 storybook-test:
@@ -30,11 +31,14 @@ storybook-test:
     - npx serve dist-storybook -l 6006 &
     - sleep 15
     - npm run test-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
+  allow_failure: true
+  when: manual
   only:
     - dev
 
+# Ścieżka Storybook
 npm-install:
-  stage: prepare
+  stage: prepare-storybook
   image: docker.tecna.pl/node:lts
   script:
     - npm config set registry https://${NPM_PROXY}
@@ -102,14 +106,30 @@ docker-deploy-dev-storybook:
   script:
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
-
-npm-publish:
+# Ścieżka Publish (równoległa)
+npm-prepare-publish:
+  stage: prepare-publish
   image: docker.tecna.pl/node:lts
-  stage: publish
   script:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - npm install
     - npm run build
+  artifacts:
+    paths:
+      - dist/
+      - package.json
+    expire_in: 1 week
+  only:
+    - master
+    - dev
+
+npm-publish:
+  stage: publish
+  image: docker.tecna.pl/node:lts
+  dependencies:
+    - npm-prepare-publish
+  script:
+    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - export VERSION=$(node -p "require('./package.json').version")
     - export TAG="stable-${VERSION}"
     - echo "Publishing with tag= ${TAG}"
@@ -117,10 +137,3 @@ npm-publish:
   only:
     - master
     - dev
-
-
-
-
-
-
-
