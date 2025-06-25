@@ -17,6 +17,7 @@ stages:
   - storybook-build
   - containerize
   - deploy
+  - publish
 
 storybook-test:
   image: mcr.microsoft.com/playwright:v1.52.0-noble
@@ -26,7 +27,7 @@ storybook-test:
   script:
     - npm ci
     - npm run build-storybook
-    - npx serve dist-storybook -l 6006 &
+    - npx serve storybook-static -l 6006 &
     - sleep 15
     - npm run test-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
   rules:
@@ -50,35 +51,6 @@ storybook-npm-install:
     expire_in: 1 week
   only:
     - stable
-
-aurea-forms-publish-stable:
-  image: docker.tecna.pl/node:lts
-  stage: parallel-stage
-  script:
-    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm install
-    - npm run build
-    - export VERSION=$(node -p "require('./package.json').version")
-    - export TAG="stable-${VERSION}"
-    - echo "Publishing with tag= ${TAG}"
-    - npm run publish:nexus -- --tag ${TAG}
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "stable"'
-      when: always
-
-aurea-forms-publish-master:
-  image: docker.tecna.pl/node:lts
-  stage: parallel-stage
-  script:
-    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm install
-    - npm run build
-    - echo "Publishing without tag (master branch)"
-    - npm run publish:nexus
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "master"'
-      when: always
-
 
 build-storybook:
   stage: storybook-build
@@ -135,7 +107,33 @@ docker-deploy-dev-storybook:
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
 
+aurea-forms-publish-stable:
+  image: docker.tecna.pl/node:lts
+  stage: publish
+  script:
+    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - npm install
+    - npm run build
+    - export VERSION=$(node -p "require('./package.json').version")
+    - export TAG="stable-${VERSION}"
+    - echo "Publishing with tag= ${TAG}"
+    - npm run publish:nexus -- --tag ${TAG}
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable"'
+      when: always
 
+aurea-forms-publish-master:
+  image: docker.tecna.pl/node:lts
+  stage: publish
+  script:
+    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - npm install
+    - npm run build
+    - echo "Publishing without tag (master branch)"
+    - npm run publish:nexus
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      when: always
 
 
 
