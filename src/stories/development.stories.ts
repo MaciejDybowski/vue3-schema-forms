@@ -41,7 +41,7 @@ export const Story1: Story = {
             },
           },
         },
-      }
+      },
     },
   },
   parameters: {},

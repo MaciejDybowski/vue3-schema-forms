@@ -4,48 +4,58 @@
     :class="bindClass(schema)"
     v-bind="fieldProps"
   >
-    <div
-      v-if="memorable"
-      class="d-flex align-center"
-    >
-      <div
-        :class="[!expanded ? `one-liner` : 'whole-content']"
-        v-html="resolvedContent.resolvedText"
-      />
-      <v-spacer />
+    <div v-if="memorable">
       <div
         v-if="!expanded"
-        class="expander d-flex text-no-wrap cursor-pointer mt-1 ml-1"
-        @click="changeState"
+        class="d-flex align-center justify-space-between ma-0 pa-0"
       >
-        <span class="link">{{ t('hint.show') }}</span>
-        <v-icon
-          class="mx-1"
-          size="small"
-          >mdi-eye-outline</v-icon
+        <div
+
+          class="one-liner flex-grow-1"
+          v-html="resolvedContent.resolvedText"
+        />
+        <div
+          class="d-flex text-no-wrap cursor-pointer ml-1"
+          @click="changeState"
         >
+          <span class="link">{{ t('hint.show') }}</span>
+          <v-icon
+            class="mx-1"
+            size="small"
+            >mdi-eye-outline
+          </v-icon>
+        </div>
       </div>
+
+      <!-- Rozwijana część z animacją -->
+      <v-expand-transition class="pt-0" >
+        <div v-if="expanded">
+          <div
+            class="flex-grow-1"
+            v-html="resolvedContent.resolvedText"
+          />
+          <div class="d-flex justify-end">
+            <div
+              v-if="expanded && memorable"
+              class="text-right cursor-pointer link"
+              @click="changeState"
+            >
+              <span>{{ t('hint.hide') }}</span>
+              <v-icon
+                class="mx-1"
+                size="small"
+                >mdi-check
+              </v-icon>
+            </div>
+          </div>
+        </div>
+      </v-expand-transition>
     </div>
 
     <div
       v-else
       v-html="resolvedContent.resolvedText"
-    ></div>
-    <div class="d-flex">
-      <v-spacer />
-      <div
-        v-if="expanded && memorable"
-        class="text-right cursor-pointer link mt-2"
-        @click="changeState"
-      >
-        <span>{{ t('hint.hide') }}</span>
-        <v-icon
-          class="mx-1"
-          size="small"
-          >mdi-check</v-icon
-        >
-      </div>
-    </div>
+    />
   </v-alert>
 </template>
 
@@ -113,7 +123,7 @@ onMounted(async () => {
   if (memorable.value) {
     expanded.value =
       userProperties.value?.alerts?.find((alert: { path: string }) => alert?.path === schema.key)
-        ?.expanded ?? true;
+        ?.expanded ?? false;
   }
 });
 
@@ -123,17 +133,20 @@ const userProperties = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-.whole-content {
-  margin-top: 5px;
-}
-
 .one-liner {
-  margin-top: 4px;
+
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  word-break: break-all;
-  -webkit-line-clamp: 1; /* number of lines to show */
+  word-break: break-word;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.expander {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 </style>
