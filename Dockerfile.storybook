@@ -4,5 +4,3 @@ COPY storybook-static/ /app/storybook/
 COPY nginx-storybook.conf /etc/nginx/nginx.conf
 RUN mkdir -p /app/storybook/static
 RUN cp -r /app/storybook/assets /app/storybook/static/
-
-RUN cp /app/storybook/mockServiceWorker.js /usr/share/nginx/html/ 2>/dev/null || true

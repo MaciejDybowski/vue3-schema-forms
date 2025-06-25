@@ -1,14 +1,10 @@
 import type { StorybookConfig } from '@storybook/vue3-vite';
 import { mergeConfig } from 'vitest/config';
-import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   staticDirs: ['./static'],
-  addons: [
-    '@storybook/addon-links',
-    '@storybook/addon-docs',
-  ],
+  addons: ['@storybook/addon-links', '@storybook/addon-docs'],
   core: {},
   framework: {
     name: '@storybook/vue3-vite',
