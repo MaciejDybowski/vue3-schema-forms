@@ -13,11 +13,8 @@ variables:
 
 stages:
   - storybook-tests
-  - prepare-storybook
-  - storybook-build
-  - containerize
+  - parallel-paths
   - deploy
-  - prepare-publish
   - publish
 
 storybook-test:
@@ -36,10 +33,11 @@ storybook-test:
   only:
     - dev
 
-# Ścieżka Storybook
+# Ścieżka Storybook - zaczyna się równolegle po storybook-tests
 npm-install:
-  stage: prepare-storybook
+  stage: parallel-paths
   image: docker.tecna.pl/node:lts
+  needs: []  # Zaczyna się natychmiast, nie czeka na storybook-tests
   script:
     - npm config set registry https://${NPM_PROXY}
     - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
@@ -53,10 +51,9 @@ npm-install:
     - dev
 
 build-storybook:
-  stage: storybook-build
+  stage: parallel-paths
   image: docker.tecna.pl/node:lts
-  dependencies:
-    - npm-install
+  needs: ["npm-install"]
   script:
     - npm run build-storybook
   artifacts:
@@ -66,10 +63,9 @@ build-storybook:
     - dev
 
 docker-push-storybook:
-  stage: containerize
+  stage: parallel-paths
   image: docker.tecna.pl/docker
-  dependencies:
-    - build-storybook
+  needs: ["build-storybook"]
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD ${DOWNSTREAM_REPO}
     - docker login -u $UPSTREAM_REPO_USER -p $UPSTREAM_REPO_PASSWORD ${UPSTREAM_REPO}
@@ -82,6 +78,7 @@ docker-push-storybook:
 docker-deploy-dev-storybook:
   stage: deploy
   image: ${UPSTREAM_REPO}/alpine:latest
+  needs: ["docker-push-storybook"]
   variables:
     SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY_AUREADEV}
     ENVIRONMENT: aureadev.tecna.pl
@@ -106,10 +103,11 @@ docker-deploy-dev-storybook:
   script:
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
-# Ścieżka Publish (równoległa)
+# Ścieżka Publish - zaczyna się równolegle po storybook-tests
 npm-prepare-publish:
-  stage: prepare-publish
+  stage: parallel-paths
   image: docker.tecna.pl/node:lts
+  needs: []  # Zaczyna się natychmiast, nie czeka na storybook-tests
   script:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - npm install
@@ -126,8 +124,7 @@ npm-prepare-publish:
 npm-publish:
   stage: publish
   image: docker.tecna.pl/node:lts
-  dependencies:
-    - npm-prepare-publish
+  needs: ["npm-prepare-publish"]
   script:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - export VERSION=$(node -p "require('./package.json').version")
