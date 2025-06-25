@@ -13,7 +13,7 @@ variables:
 
 stages:
   - storybook-tests
-  - prepare
+  - parallel-stage
   - storybook-build
   - containerize
   - deploy
@@ -30,11 +30,15 @@ storybook-test:
     - npx serve dist-storybook -l 6006 &
     - sleep 15
     - npm run test-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
-  only:
-    - dev
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable"'
+      when: always
+    - if: '$CI_COMMIT_REF_NAME == "dev"'
+      when: manual
+      allow_failure: true
 
-npm-install:
-  stage: prepare
+storybook-npm-install:
+  stage: parallel-stage
   image: docker.tecna.pl/node:lts
   script:
     - npm config set registry https://${NPM_PROXY}
@@ -47,6 +51,22 @@ npm-install:
     expire_in: 1 week
   only:
     - dev
+
+aurea-forms-publish:
+  image: docker.tecna.pl/node:lts
+  stage: parallel-stage
+  script:
+    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - npm install
+    - npm run build
+    - export VERSION=$(node -p "require('./package.json').version")
+    - export TAG="stable-${VERSION}"
+    - echo "Publishing with tag= ${TAG}"
+    - npm run publish:nexus -- --tag ${TAG}
+  only:
+    - master
+    - dev
+
 
 build-storybook:
   stage: storybook-build
@@ -103,20 +123,6 @@ docker-deploy-dev-storybook:
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
 
-npm-publish:
-  image: docker.tecna.pl/node:lts
-  stage: publish
-  script:
-    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm install
-    - npm run build
-    - export VERSION=$(node -p "require('./package.json').version")
-    - export TAG="stable-${VERSION}"
-    - echo "Publishing with tag= ${TAG}"
-    - npm run publish:nexus -- --tag ${TAG}
-  only:
-    - master
-    - dev
 
 
 
