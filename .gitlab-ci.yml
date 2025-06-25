@@ -88,24 +88,6 @@ docker-deploy-dev-storybook:
       - $REGISTRY_URL == "registry.tecna.pl"
 
 
-
-
-npm-publish:
-  image: docker.tecna.pl/node:lts
-  stage: publish
-  script:
-    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm install
-    - npm run build
-    - npm run publish:nexus
-  only:
-    - master
-
-
-
-
-
-
 .docker-deploy:
   stage: deploy
   image: ${UPSTREAM_REPO}/alpine:latest
@@ -124,9 +106,23 @@ npm-publish:
     - ssh-keyscan ${ENVIRONMENT} >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-
   script:
-    - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker-compose pull ${APP_NAME}; docker-compose up -d ${APP_NAME}"
+    - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
+
+
+
+
+npm-publish:
+  image: docker.tecna.pl/node:lts
+  stage: publish
+  script:
+    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - npm install
+    - npm run build
+    - npm run publish:nexus
+  only:
+    - master
+
 
 
 
