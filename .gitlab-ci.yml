@@ -32,7 +32,7 @@ storybook-test:
   rules:
     - if: '$CI_COMMIT_REF_NAME == "stable"'
       when: always
-    - if: '$CI_COMMIT_REF_NAME == "dev"'
+    - if: '$CI_COMMIT_REF_NAME == "master"'
       when: manual
       allow_failure: true
 
@@ -51,7 +51,7 @@ storybook-npm-install:
   only:
     - dev
 
-aurea-forms-publish:
+aurea-forms-publish-stable:
   image: docker.tecna.pl/node:lts
   stage: parallel-stage
   script:
@@ -62,9 +62,22 @@ aurea-forms-publish:
     - export TAG="stable-${VERSION}"
     - echo "Publishing with tag= ${TAG}"
     - npm run publish:nexus -- --tag ${TAG}
-  only:
-    - master
-    - dev
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable"'
+      when: always
+
+aurea-forms-publish-master:
+  image: docker.tecna.pl/node:lts
+  stage: parallel-stage
+  script:
+    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - npm install
+    - npm run build
+    - echo "Publishing without tag (master branch)"
+    - npm run publish:nexus
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      when: always
 
 
 build-storybook:
