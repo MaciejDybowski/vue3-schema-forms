@@ -623,7 +623,7 @@ export const ConditionalValueFilter: Story = {
 export const RequiredDict: Story = {
   name: 'Validation: required',
   play: async (context) => {
-    /*  await waitForMountedAsync();
+      await waitForMountedAsync();
       await waitForMountedAsync();
       const canvas = within(context.canvasElement);
       const select = canvas.getByLabelText("Currency");
@@ -639,8 +639,8 @@ export const RequiredDict: Story = {
           id: "USD",
           label: "US Dollar",
         },
-      });*/
-    // TODO w GUI przechodzi w autoskrypcie - nie
+      });
+
   },
   args: {
     formModel: {},
