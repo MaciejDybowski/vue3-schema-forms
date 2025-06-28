@@ -16,6 +16,7 @@
       >
         <v-checkbox
           v-model="localModel"
+          :disabled="disabled(fieldProps.disabled, option.disabled)"
           :hide-details="index == data.length - 1 ? 'auto' : true"
           :label="option[title]"
           :rules="!fieldProps.readonly ? rules : []"
@@ -32,8 +33,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useEventBus } from '@vueuse/core';
+import jsonata from 'jsonata';
+
 import { computed, onMounted } from 'vue';
 
+import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { EngineSourceField } from '@/types/engine/controls';
 
 import {
@@ -56,6 +61,7 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
+const form = useInjectedFormModel();
 
 const localModel = computed({
   get(): string | number {
@@ -83,10 +89,40 @@ const localModel = computed({
   },
 });
 
+async function checkConditionIfExist(condition: string): Promise<boolean> {
+  if (condition) {
+    const model = form.getFormModelForResolve.value;
+    return (await jsonata(condition).evaluate(model)) as boolean;
+  }
+  return false;
+}
+
+async function reloadDisabledConditions() {
+  await Promise.all(
+    data.value.map(async (item) => {
+      if (item.disabledCondition) {
+        item['disabled'] = await checkConditionIfExist(item.disabledCondition);
+      }
+    }),
+  );
+}
+
+function disabled(props: boolean, item: boolean | undefined) {
+  if (props) {
+    return props;
+  }
+  return item;
+}
+
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
+
 onMounted(async () => {
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
+
+  await reloadDisabledConditions();
+  vueSchemaFormEventBus.on(async () => await reloadDisabledConditions());
 });
 </script>
 
