@@ -123,7 +123,7 @@ onMounted(async () => {
   if (memorable.value) {
     expanded.value =
       userProperties.value?.alerts?.find((alert: { path: string }) => alert?.path === schema.key)
-        ?.expanded ?? false;
+        ?.expanded ?? true;
   }
 });
 
