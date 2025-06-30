@@ -115,10 +115,7 @@ aurea-forms-publish-stable:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - npm install
     - npm run build
-    - export VERSION=$(node -p "require('./package.json').version")
-    - export TAG="stable-${VERSION}"
-    - echo "Publishing with tag= ${TAG}"
-    - npm run publish:nexus -- --tag ${TAG}
+    - npm run publish:nexus --tag stable
   rules:
     - if: '$CI_COMMIT_REF_NAME == "stable"'
       when: always
@@ -137,19 +134,17 @@ aurea-forms-publish-master:
       when: always
 
 
-
-trigger_library_update:
-  stage: trigger_dependencies
-  trigger:
-    project: aurea/aurea-runtime/aurea-forms-builder
-    branch: master
-    strategy: depend
-  variables:
-    VUE_FORMS_VERSION: $PACKAGE_VERSION
-    SOURCE_PROJECT: $CI_PROJECT_NAME
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "master"'
-      when: always
+#aurea-dashboards:
+#  stage: trigger_dependencies
+#  trigger:
+#    project: aurea/aurea-dashboard-frontend
+#    branch: master
+#    strategy: depend
+#  variables:
+#    SOURCE_PROJECT: $CI_PROJECT_NAME
+#  rules:
+#    - if: '$CI_COMMIT_REF_NAME == "master" || $CI_COMMIT_REF_NAME == "stable"'
+#      when: always
 
 
 
