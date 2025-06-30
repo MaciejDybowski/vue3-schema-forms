@@ -12,7 +12,7 @@
   >
     <template v-slot:append-inner>
       <v-tooltip
-        :text="t('resultWasModified')"
+        :text="t('numberInput.resultWasModified')"
         location="start"
       >
         <template v-slot:activator="{ props }">
