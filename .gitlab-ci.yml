@@ -147,7 +147,7 @@ get_version:
   artifacts:
     reports:
       dotenv: variables.env
-  needs: ["aurea-forms-publish-lab"]
+  #needs: ["aurea-forms-publish-lab"]
   rules:
     - if: '$CI_COMMIT_REF_NAME == "dev"'
       when: always
