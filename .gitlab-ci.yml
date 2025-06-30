@@ -138,21 +138,6 @@ aurea-forms-publish-master:
 
 
 
-get_version:
-  image: docker.tecna.pl/node:lts
-  stage: publish
-  script:
-    - export PACKAGE_VERSION=$(node -p "require('./package.json').version")
-    - echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> variables.env
-  artifacts:
-    reports:
-      dotenv: variables.env
-  #needs: ["aurea-forms-publish-lab"]
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "dev"'
-      when: always
-
-
 trigger_library_update:
   stage: trigger_dependencies
   trigger:
@@ -162,9 +147,8 @@ trigger_library_update:
   variables:
     VUE_FORMS_VERSION: $PACKAGE_VERSION
     SOURCE_PROJECT: $CI_PROJECT_NAME
-  needs: ["get_version"]
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "dev"'
+    - if: '$CI_COMMIT_REF_NAME == "master"'
       when: always
 
 
