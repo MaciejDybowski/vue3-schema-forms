@@ -18,6 +18,7 @@ stages:
   - containerize
   - deploy
   - publish
+  - trigger_dependencies
 
 storybook-test:
   image: mcr.microsoft.com/playwright:v1.52.0-noble
@@ -136,6 +137,35 @@ aurea-forms-publish-master:
       when: always
 
 
+
+get_version:
+  image: docker.tecna.pl/node:lts
+  stage: publish
+  script:
+    - export PACKAGE_VERSION=$(node -p "require('./package.json').version")
+    - echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> variables.env
+  artifacts:
+    reports:
+      dotenv: variables.env
+  needs: ["aurea-forms-publish-lab"]
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "dev"'
+      when: always
+
+
+trigger_library_update:
+  stage: trigger_dependencies
+  trigger:
+    project: aurea-runtime/aurea-forms-builder
+    branch: main
+    strategy: depend
+  variables:
+    VUE_FORMS_VERSION: $PACKAGE_VERSION
+    SOURCE_PROJECT: $CI_PROJECT_NAME
+  needs: ["get_version"]
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "dev"'
+      when: always
 
 
 
