@@ -156,8 +156,8 @@ get_version:
 trigger_library_update:
   stage: trigger_dependencies
   trigger:
-    project: aurea-runtime/aurea-forms-builder
-    branch: main
+    project: aurea/aurea-runtime/aurea-forms-builder
+    branch: master
     strategy: depend
   variables:
     VUE_FORMS_VERSION: $PACKAGE_VERSION
