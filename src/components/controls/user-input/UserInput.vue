@@ -87,7 +87,7 @@
       </v-list-item>
       <v-list-item
         v-else
-        :title="t('noData')"
+        :title="t('dictionary.noData')"
       />
     </template>
   </dictionary-base>
