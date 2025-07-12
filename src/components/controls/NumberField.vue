@@ -9,6 +9,7 @@
     @focusin="focusin"
     @focusout="focusout"
     @update:model-value="userTyping"
+    @click:append-inner="clickAppendInner"
   >
     <template v-slot:append-inner>
       <v-tooltip
@@ -26,6 +27,13 @@
       </v-tooltip>
     </template>
   </v-text-field>
+  <v-snackbar
+    v-model="snackbar"
+    :timeout="1000"
+    color="success"
+    variant="tonal"
+    >Copied!
+  </v-snackbar>
 </template>
 
 <script lang="ts" setup>
@@ -71,6 +79,8 @@ const { resolve } = useResolveVariables();
 const showFormattedNumber = ref(true);
 const { fillPath } = useResolveVariables();
 
+const snackbar = ref(false);
+
 let precision =
   props.schema.type == 'int' ? 0 : 'precision' in props.schema ? props.schema.precision : 2;
 const precisionMin =
@@ -84,7 +94,7 @@ const formatType = (
 const roundOption: RoundOption =
   'roundOption' in props.schema ? (props.schema.roundOption as RoundOption) : 'round';
 
-const { roundTo, formattedNumber } = useNumber();
+const { roundTo, formattedNumber, cleanFormattedNumber } = useNumber();
 
 const lastValue = ref<any>(null);
 
@@ -106,17 +116,24 @@ function parseDigitWithOnlyZeroFraction(value: number) {
 const localModel = computed({
   get(): string | number | null {
     let value = getValue(props.model, props.schema);
+
+    // Obsługa zmiennych z zależnościami
     if (value && typeof value == 'string' && value.match(variableRegexp)) {
-      return value; // defaultValue with dependencies
+      return value;
     }
+
+    /* // Konwersja string na number
     if (typeof value == 'string') {
       value = Number(value);
-    }
+    }*/
+
+    // Formatowanie liczby lub czyszczenie
     if (value && showFormattedNumber.value) {
       return formattedNumber(value, formatType, precisionMin, precision);
-    }
-    if (value === 0) {
-      return value;
+    } else if (value) {
+      // Jeśli nie pokazujemy sformatowanej liczby, wyczyść ją
+      const stringValue = typeof value === 'number' ? value.toString() : String(value);
+      return cleanFormattedNumber(stringValue);
     }
 
     value = parseDigitWithOnlyZeroFraction(value);
@@ -215,10 +232,30 @@ async function checkIfPrecisionIsDependency() {
 async function precisionResolver() {
   await new Promise((r) => setTimeout(r, 10));
   const result = get(props.model, precisionReference);
-  console.debug(result);
   if (precision != result && result != null) {
     precision = result;
     localModel.value = localModel.value;
+  }
+}
+
+function clickAppendInner() {
+  if (
+    'append-inner-icon' in fieldProps.value &&
+    fieldProps.value['append-inner-icon'] === 'mdi-content-copy'
+  ) {
+    if (!navigator.clipboard) {
+      console.error('Clipboard API not available');
+      return;
+    }
+    const textToCopy = localModel.value;
+    navigator.clipboard
+      .writeText(textToCopy as string)
+      .then(() => {
+        snackbar.value = true;
+      })
+      .catch((err) => {
+        console.error('Failed to copy to clipboard:', err);
+      });
   }
 }
 

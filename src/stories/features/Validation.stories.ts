@@ -81,6 +81,7 @@ export const RegexpWithDependencies: Story = {
 
     const field = canvas.getByLabelText('Field with validation');
     await userEvent.type(field, '3.2123', { delay: 100 });
+    await userEvent.tab()
 
     await expect(canvas.getByText('To much digits')).toBeInTheDocument();
   },

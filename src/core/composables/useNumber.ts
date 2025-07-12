@@ -12,7 +12,7 @@ export interface CurrencyFormatterOptions {
 }
 
 export function useNumber() {
-  const { n, numberFormats } = useI18n();
+  const { n, locale, numberFormats } = useI18n();
 
   const decimal = (precisionMin: number, precisionMax: number) => {
     return {
@@ -90,5 +90,42 @@ export function useNumber() {
     return null;
   }
 
-  return { roundTo, formattedNumber, formattedCurrency };
+  function cleanFormattedNumber(numStr: string): string {
+    const decimalSeparator = getDecimalSeparator(locale.value);
+    let cleaned = Number(numStr).toLocaleString(locale.value);
+
+    const allPossibleSeparators = [' ', '\u00A0', '.', ',', "'"];
+    const thousandSeparators = allPossibleSeparators.filter((sep) => sep !== decimalSeparator);
+
+    for (const sep of thousandSeparators) {
+      if (sep !== decimalSeparator) {
+        const regex = new RegExp(sep.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+        cleaned = cleaned.replace(regex, '');
+      }
+    }
+
+    return cleaned;
+  }
+
+  function getDecimalSeparator(locale: string): string {
+    const decimalSeparators: Record<string, string> = {
+      'pl-PL': ',',
+      pl: ',',
+      'de-DE': ',',
+      de: ',',
+      'fr-FR': ',',
+      fr: ',',
+      'es-ES': ',',
+      es: ',',
+      'ru-RU': ',',
+      ru: ',',
+      'en-US': '.',
+      'en-GB': '.',
+      en: '.',
+    };
+
+    return decimalSeparators[locale] || '.';
+  }
+
+  return { roundTo, formattedNumber, formattedCurrency, cleanFormattedNumber };
 }
