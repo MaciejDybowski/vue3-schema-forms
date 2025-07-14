@@ -131,20 +131,21 @@ export function useDictionary() {
 
   watch(query, (currentQuery, previousQuery) => {
     //console.debug(`[vue-schema-forms] => query was changed, new value is = ${currentQuery}`)
-    const queryInData =
+    /*const queryInData =
       data.value.filter((item: any) => {
         if (returnObject) {
-          return item[title.value] === currentQuery || Object.values(item).includes(currentQuery);
+          return item[title.value].toLowerCase() === currentQuery.toLocaleLowerCase || Object.values(item).includes(currentQuery);
         } else {
-          return item[title.value] == currentQuery;
+          return item[title.value].toLowerCase() == currentQuery.toLowerCase();
         }
       }).length > 0;
 
     if (logger.dictionaryLogger && queryInData) {
       console.debug('Result is in data, block CALL');
-      data.value = data.value.filter((item: any) => item[title.value] === currentQuery);
-    }
-    !queryInData ? debounced.load('query') : debounced.load.cancel();
+      data.value = data.value.filter((item: any) => item[title.value].toLowerCase() === currentQuery.toLowerCase());
+    }*/
+    //!queryInData ? debounced.load('query') : debounced.load.cancel();
+    debounced.load('query')
   });
 
   async function load(caller: string) {
