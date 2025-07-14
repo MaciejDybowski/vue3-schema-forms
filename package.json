@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.2.8-snapshot.2",
+  "version": "0.2.8-snapshot.3",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -53,7 +53,7 @@
     "markdown-it": "^14.1.0",
     "markdown-it-multimd-table": "^4.2.3",
     "markdown-it-table": "^4.1.1",
-    "maska": "^3.1.1",
+    "maska": "^3.2.0",
     "numbro": "^2.5.0",
     "v-phone-input": "5.0.0",
     "vue-json-pretty": "^2.4.0",

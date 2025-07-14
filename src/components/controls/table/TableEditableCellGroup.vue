@@ -5,6 +5,27 @@
     v-bind="attrs"
   >
     <v-text-field
+      v-if="item.type == 'TEXT' && shouldRenderMap[item.valueMapping]"
+      :class="`${item.class}`"
+      :label="item.label"
+      :model-value="getValue(item.valueMapping, index)"
+      v-bind="{
+        ...attrs,
+        density: 'compact',
+        readonly: shouldReadonlyMap[item.valueMapping] || attrs.readonly === true,
+      }"
+      width="100%"
+      @input="
+        (e: any) =>
+          emit('update:field', {
+            value: e.target.value,
+            valueMapping: item.valueMapping,
+          })
+      "
+      @keyup.enter="(e: any) => e.target.blur()"
+    />
+
+    <v-text-field
       v-if="item.type == 'NUMBER' && shouldRenderMap[item.valueMapping]"
       :class="[
         (item.rules && item.rules.length > 0) || items.length <= 1
