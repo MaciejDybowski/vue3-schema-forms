@@ -2,16 +2,17 @@
 import Alert from '@/components/controls/Alert.vue';
 import Image from '@/components/controls/Image.vue';
 import KeyValueList from '@/components/controls/KeyValueList.vue';
+import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue';
+import TextSwitchField from '@/components/controls/TextSwitchField.vue';
+import YearPicker from '@/components/controls/YearPicker.vue';
 import GroupOfFields from '@/components/controls/fields-group/FieldsGroup.vue';
 import TableViewField from '@/components/controls/table/TableViewField.vue';
 import UserInput from '@/components/controls/user-input/UserInput.vue';
 
 import { Components } from '@/main';
 
-import Autocomplete from './dictionary/Autocomplete.vue';
 import ButtonField from './ButtonField.vue';
 import CheckboxButton from './CheckboxButton.vue';
-import Combobox from './dictionary/Combobox.vue';
 import Divider from './Divider.vue';
 import Location from './Location.vue';
 import NumberField from './NumberField.vue';
@@ -26,11 +27,15 @@ import Address from './address/Address.vue';
 import DataViewer from './data-viewer/DataViewer.vue';
 import DatePicker from './date/DatePicker.vue';
 import DateTimePicker from './date/DateTimePicker.vue';
+import Autocomplete from './dictionary/Autocomplete.vue';
+import Combobox from './dictionary/Combobox.vue';
 import DuplicatedSection from './duplicated-section/DuplicatedSection.vue';
 import Markdown from './markdown/Markdown.vue';
 import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
-import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue';
-import YearPicker from '@/components/controls/YearPicker.vue';
+
+
+
+
 
 export const vueSchemaFromControls: Components = {
   'text-field': TextField,
@@ -61,6 +66,7 @@ export const vueSchemaFromControls: Components = {
   'ordered-multi-select': OrderedMultiSelect,
   'key-value-list': KeyValueList,
   alert: Alert,
-  "multi-language-control": MultiLanguageControl,
-  "year-picker": YearPicker
+  'multi-language-control': MultiLanguageControl,
+  'year-picker': YearPicker,
+  'text-switch-field': TextSwitchField,
 };
