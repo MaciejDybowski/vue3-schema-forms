@@ -52,6 +52,7 @@ storybook-npm-install:
     expire_in: 1 week
   only:
     - stable
+    - master
 
 build-storybook:
   stage: storybook-build
@@ -65,6 +66,7 @@ build-storybook:
       - storybook-static
   only:
     - stable
+    - master
 
 docker-push-storybook:
   stage: containerize
@@ -79,6 +81,7 @@ docker-push-storybook:
     - docker push ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
   only:
     - stable
+    - master
 
 docker-deploy-dev-storybook:
   stage: deploy
@@ -95,6 +98,7 @@ docker-deploy-dev-storybook:
       - $REGISTRY_URL == "registry.tecna.pl"
     refs:
       - stable
+      - master
   before_script:
     - apk update && apk add openssh-client bash rsync
     - eval $(ssh-agent -s)

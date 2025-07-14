@@ -142,6 +142,7 @@ export function useDictionary() {
 
     if (logger.dictionaryLogger && queryInData) {
       console.debug('Result is in data, block CALL');
+      data.value = data.value.filter((item: any) => item[title.value] === currentQuery);
     }
     !queryInData ? debounced.load('query') : debounced.load.cancel();
   });
