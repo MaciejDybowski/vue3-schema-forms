@@ -71,14 +71,50 @@
       @keyup.enter="(e: any) => e.target.blur()"
       @update:model-value="(e: any) => emitData(e, item)"
     />
+
+    <dictionary-base
+      v-if="item.type == 'DICTIONARY' && shouldRenderMap[item.valueMapping]"
+      v-model:search="query"
+      :auto-select-first="false"
+      :class="`${item.class}`"
+      :clearable="!shouldReadonlyMap[item.valueMapping]"
+      :item-title="getItemTitle(item.valueMapping)"
+      :item-value="getItemValue(item.valueMapping)"
+      :items="dictData"
+      :label="item.label"
+      :lazy="true"
+      :model-value="getValue(item.valueMapping, index)"
+      :multiple="false"
+      :no-filter="true"
+      :options="paginationOptions"
+      :return-object="getReturnObjectFlag(item.valueMapping)"
+      component="v-autocomplete"
+      v-bind="{
+        ...attrs,
+        density: 'compact',
+        readonly: shouldReadonlyMap[item.valueMapping] || attrs.readonly === true,
+      }"
+      width="100%"
+      @click="loadDataForDictionary(item)"
+      @loadMoreRecords="loadMoreRecordsForDictionary(item)"
+      @keyup.enter="(e: any) => e.target.blur()"
+      @update:model-value="(e: any) => emitData(e, item)"
+      @update:search="(e: string) => updateSearch(e, item, index)"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
+import axios from 'axios';
 import jsonata from 'jsonata';
+import { debounce } from 'lodash';
 import get from 'lodash/get';
 
 import { computed, onMounted, ref, useAttrs, watch, watchEffect } from 'vue';
+
+import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
+import { Pagination } from '@/components/controls/dictionary/Pagination';
+import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
 
 import { useNumber } from '@/core/composables/useNumber';
 import type { HeaderEditableObject, TableHeader } from '@/types/shared/Source';
@@ -165,6 +201,11 @@ function getItemsForSelect(valueMapping: string, row: any) {
   return get(row, path, []);
 }
 
+function getItemsUrlForDictionary(valueMapping: string) {
+  const split = valueMapping.split(':');
+  return split[1];
+}
+
 /* Dla wyrażen jsonata bo z racji ze to generuje w petli to nie podepne funckji asynchronicznej w template */
 const shouldRenderMap = ref<Record<string, boolean>>({});
 const shouldReadonlyMap = ref<Record<string, boolean>>({});
@@ -206,6 +247,55 @@ const hasConditionReadonly = computed(() => {
   return props.items.some((item) => !!item.readonly);
 });
 
+const dictData = ref([]);
+const paginationOptions = ref(new Pagination(50));
+const query = ref();
+const debounced = {
+  load: debounce(loadDataForDictionary, 200),
+};
+
+async function loadDataForDictionary(item: any, addQuery: boolean = false) {
+  try {
+    const url = getItemsUrlForDictionary(item.valueMapping);
+    paginationOptions.value.resetPage();
+    const response = await axios.get(url, {
+      params: {
+        page: paginationOptions.value.getPage(),
+        size: paginationOptions.value.getItemsPerPage(),
+        query: addQuery ? query.value : null,
+      },
+    });
+    dictData.value = response.data.content;
+    paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function loadMoreRecordsForDictionary(item: any, addQuery: boolean = false) {
+  try {
+    const url = getItemsUrlForDictionary(item.valueMapping);
+    const response = await axios.get(url, {
+      params: {
+        page: paginationOptions.value.getPage() + 1,
+        size: paginationOptions.value.getItemsPerPage(),
+        query: addQuery ? query.value : null,
+      },
+    });
+    paginationOptions.value.nextPage();
+    dictData.value = dictData.value.concat(response.data.content);
+    paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function updateSearch(val: string, item: any, index: number) {
+  if (getValue(item.valueMapping, index) != val) {
+    debounced.load(item, true);
+  }
+}
+
 onMounted(async () => {
   await computeShouldReadonly(props.items);
   await computeShouldRender(props.items);
@@ -235,4 +325,3 @@ onMounted(async () => {
   text-align: left;
 }
 </style>
-<script lang="ts" setup></script>
