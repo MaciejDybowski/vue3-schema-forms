@@ -359,14 +359,17 @@ function mapTotalElements(data: any) {
   return data.page.totalElements;
 }
 
-function runTableBtnLogic(btn: TableButton) {
+async function runTableBtnLogic(btn: TableButton) {
   switch (btn.mode) {
     case 'action':
       const btnConfigWithoutCode: Record<string, any> = cloneDeep(btn.config);
       delete btnConfigWithoutCode.code;
+      delete btnConfigWithoutCode.body;
+      const body = await createBodyObjectFromFormModel(btn.config.body);
+
       let payloadObject = {
         code: btn.config.code,
-        body: null,
+        body: body,
         params: { ...btnConfigWithoutCode },
       };
       actionHandlerEventBus.emit('form-action', payloadObject);
@@ -446,7 +449,7 @@ async function createParamsObjectFromRow(actionObj: any, row: any) {
   for (const [key, value] of Object.entries(actionObj.params)) {
     if (typeof value === 'string' && variableRegexp.test(value)) {
       const { resolvedText, allVariablesResolved } = await parse(value, row);
-      console.warn(`[vue-schema-forms] Key: ${key} with Value:${value} was not resolved properly.`)
+      console.warn(`[vue-schema-forms] Key: ${key} with Value:${value} was not resolved properly.`);
       allVariablesResolved ? (params[key] = resolvedText) : null;
     } else {
       params[key] = value;
@@ -455,14 +458,35 @@ async function createParamsObjectFromRow(actionObj: any, row: any) {
   return params;
 }
 
+async function createBodyObjectFromFormModel(btnBody: object | undefined) {
+  let body: Record<string, any> = {};
+  if (btnBody == undefined) return body;
+  const entries = Object.entries(btnBody);
+  const resolvedEntries = await Promise.all(
+    entries.map(async ([key, value]) => {
+      if (typeof value === 'string' && variableRegexp.test(value)) {
+        const { resolvedText, allVariablesResolved } = await resolve(props.schema, value as string);
+        return [key, allVariablesResolved ? resolvedText : null];
+      } else {
+        return [key, value];
+      }
+    }),
+  );
+
+  resolvedEntries.forEach(([key, value]) => {
+    body[key as string] = value;
+  });
+
+  return body;
+}
+
 async function createBodyObjectFromRow(actionObj: any, row: any) {
   let body: Record<string, any> = {};
   for (const [key, value] of Object.entries(actionObj.body)) {
     if (typeof value === 'string' && variableRegexp.test(value)) {
       const { resolvedText, allVariablesResolved } = await parse(value, row);
-      console.warn(`[vue-schema-forms] Key: ${key} with Value:${value} was not resolved properly.`)
+      console.warn(`[vue-schema-forms] Key: ${key} with Value:${value} was not resolved properly.`);
       allVariablesResolved ? (body[key] = resolvedText) : null;
-
     } else {
       body[key] = value;
     }
