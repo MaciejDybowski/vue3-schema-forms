@@ -366,11 +366,10 @@ async function runTableBtnLogic(btn: TableButton) {
       delete btnConfigWithoutCode.code;
       delete btnConfigWithoutCode.body;
       const body = await createBodyObjectFromFormModel(btn.config.body);
-
       let payloadObject = {
         code: btn.config.code,
         body: body,
-        params: { ...btnConfigWithoutCode },
+        params: { ...btnConfigWithoutCode.params },
       };
       actionHandlerEventBus.emit('form-action', payloadObject);
       break;
