@@ -3,6 +3,7 @@ import get from 'lodash/get';
 
 import { ref } from 'vue';
 
+import { useGeneratorCache } from '@/core/composables/useGeneratorCache';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
@@ -12,6 +13,7 @@ import { functions } from '../engine/expressionResolver';
 export function useExpression() {
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const form = useInjectedFormModel();
+  const cache = useGeneratorCache();
 
   async function resolveExpression(
     schema: EngineField,
@@ -24,6 +26,10 @@ export function useExpression() {
 
     const isGenerator = functionName.includes('_GENERATOR');
     const currentValue = get(model, key, null);
+
+    if (isGenerator) {
+      cache.set(key, currentValue);
+    }
 
     if (isGenerator && currentValue != null) {
       return currentValue;

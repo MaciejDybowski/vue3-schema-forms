@@ -27,7 +27,7 @@ import { debounce } from 'lodash';
 import set from 'lodash/set';
 import { useI18n } from 'vue-i18n';
 
-import { Ref, getCurrentInstance, onMounted, ref, watch } from 'vue';
+import { Ref, getCurrentInstance, onMounted, ref, watch, onBeforeMount } from 'vue';
 
 import { vueSchemaFromControls } from '@/components/controls';
 
@@ -46,6 +46,7 @@ import { resolveSchemaWithLocale } from '../../core/engine/utils';
 import { logger } from '../../main';
 import FormRoot from './FormRoot.vue';
 import FormDefaultActions from './validation/FormDefaultActions.vue';
+import { provideGeneratorCache } from '@/core/composables/useGeneratorCache';
 
 // register components to VueInstance if not installed yet by plugin options
 const instance = getCurrentInstance();
@@ -59,7 +60,11 @@ for (const [name, comp] of Object.entries(vueSchemaFromControls)) {
 // render tests
 const { result, stopMeasure } = usePerformanceAPI();
 
+onBeforeMount(() => {
+  provideGeneratorCache()
+})
 const form = provideFormModel();
+
 const localModel = ref({});
 
 const model = defineModel<FormModel>();

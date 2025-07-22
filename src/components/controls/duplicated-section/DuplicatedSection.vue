@@ -88,6 +88,7 @@ import draggable from 'vuedraggable';
 import { Ref, computed, onMounted, ref } from 'vue';
 
 import { useFormModel, useLocale, useProps } from '@/core/composables';
+import { useGeneratorCache } from '@/core/composables/useGeneratorCache';
 import { duplicatedSectionBatchAddComponent } from '@/main';
 import { VueDragable } from '@/types/VueDragable';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
@@ -100,6 +101,8 @@ import FormRoot from '../../engine/FormRoot.vue';
 import DraggableContextMenu from './DraggableContextMenu.vue';
 import DraggableIcon from './DraggableIcon.vue';
 import DuplicatedSectionItem from './DuplicatedSectionItem.vue';
+
+const cache = useGeneratorCache();
 
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -290,12 +293,41 @@ function addNewModelToDuplicatedSectionWhenCopyBtnMode(init = false) {
   if (init) {
     localModel.value.push({ ...getClearModel.value });
   } else {
-    const copiedLastRowModel = { ...localModel.value[localModel.value.length - 1] };
+    let copiedLastRowModel = { ...localModel.value[localModel.value.length - 1] };
+
+    copiedLastRowModel = processObjectWithCache(copiedLastRowModel, cache);
     if (ordinalNumberInModel) {
       copiedLastRowModel['ordinalNumber'] = ++copiedLastRowModel['ordinalNumber'];
     }
     localModel.value.push(copiedLastRowModel);
   }
+}
+
+function processObjectWithCache(obj: any, cache: any): any {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  if (typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => processObjectWithCache(item, cache));
+  }
+
+  const result: any = {};
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (cache.has(key)) {
+      result[key] = null;
+    } else if (typeof value === 'object' && value !== null) {
+      result[key] = processObjectWithCache(value, cache);
+    } else {
+      result[key] = value;
+    }
+  }
+
+  return result;
 }
 
 function changePosition(drag: VueDragable<Schema>) {
