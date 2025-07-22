@@ -25,7 +25,11 @@ export function useExpression() {
     if (!functionName) return;
 
     const isGenerator = functionName.includes('_GENERATOR');
-    const currentValue = get(model, key, null);
+    let currentValue = get(model, key, null);
+
+    if (cache.has(key) && currentValue == cache.get(key)) {
+      currentValue = null;
+    }
 
     if (isGenerator) {
       cache.set(key, currentValue);
@@ -53,7 +57,6 @@ export function useExpression() {
     const match = expression.match(/^(\w+)\s*\(/);
     return match?.[1].trim() ?? null;
   }
-
 
   async function expressionListener(
     schema: EngineField,
