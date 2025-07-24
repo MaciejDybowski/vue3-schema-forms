@@ -81,12 +81,12 @@ export function useResolveVariables() {
 
       if (!success) {
         allVariablesResolved = false;
+      } else {
+        inputString = inputString.replace(match, String(value ?? ''));
       }
-
-      inputString = inputString.replace(match, String(value ?? ''));
     }
 
-    return { resolvedText: inputString, allVariablesResolved };
+    return { resolvedText: inputString, allVariablesResolved: allVariablesResolved };
   }
 
   function fillPath(

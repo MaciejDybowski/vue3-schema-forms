@@ -4,12 +4,14 @@
     v-model:menu="menu"
     :class="bindClass(schema) + requiredInputClass"
     :hide-no-data="false"
-    :items="items"
+    :items="data"
     :label="label"
     :lazy="true"
     :loading="loading"
+    :max-selection="maxSelection"
+    :multiple="multiple"
     :no-data-text="t('userInput.noData')"
-    :options="pagination"
+    :options="paginationOptions"
     :rules="!fieldProps.readonly ? rules : []"
     :search="query"
     component="v-autocomplete"
@@ -20,7 +22,7 @@
     v-bind="fieldProps"
     @click="fetchData($event)"
     @loadMoreRecords="loadMoreRecords"
-    @update:search="updateQuery"
+    @update:search="updateSearch"
   >
     <template #selection="{ item }">
       <v-chip
@@ -95,16 +97,12 @@
 
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
-import axios from 'axios';
 import { debounce } from 'lodash';
-import get from 'lodash/get';
 
 import { computed, onMounted, ref, watch } from 'vue';
 
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 import DictionaryItemChip from '@/components/controls/dictionary/DictionaryItemChip.vue';
-import { Pagination } from '@/components/controls/dictionary/Pagination';
-import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
 import AvatarProvider from '@/components/controls/user-input/AvatarProvider.vue';
 
 import {
@@ -136,7 +134,22 @@ const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { resolve } = useResolveVariables();
 
-const { initState, loadItemChips } = useDictionary();
+const {
+  multiple,
+  maxSelection,
+  queryBlocker,
+  loading,
+  data,
+  query,
+  paginationOptions,
+  load,
+  loadMoreRecords,
+  singleOptionAutoSelect,
+  initState,
+  loadCounter,
+  dependencyWasChanged,
+  loadItemChips,
+} = useDictionary();
 
 const debounced = {
   load: debounce(load, 300),
@@ -157,80 +170,17 @@ const localModel = computed({
 // DEFAULTS VALUES //
 const usersAPIEndpoint = ref<string>('/api/workspaces/members');
 
-const query = ref('');
-const pagination = props.schema.source.itemsPerPage
-  ? ref(new Pagination(props.schema.source.itemsPerPage))
-  : ref(new Pagination(10));
 const menu = ref(false);
 const showMenuItemsOnFocusIn = props.schema.source.showMenuItemsOnFocusIn
   ? props.schema.source.showMenuItemsOnFocusIn
   : false;
-const loading = ref(false);
-
-const items = ref([]);
 
 async function fetchData(event: any) {
   if (!fieldProps.value.readonly) {
-    await load();
+    await load('load');
   }
   if (showMenuItemsOnFocusIn) {
     event.target.click();
-  }
-}
-
-async function load() {
-  try {
-    loading.value = true;
-    pagination.value.resetPage();
-    const obj = {
-      query: query.value,
-      page: 0,
-      size: pagination.value.getItemsPerPage(),
-    };
-
-    const {resolvedText, allVariablesResolved} = await resolve(props.schema, usersAPIEndpoint.value, true)
-    if(!allVariablesResolved) return
-
-    const response = await axios.get(resolvedText, {
-      params: {
-        ...obj,
-      },
-    });
-
-    items.value = get(response.data, 'content', []);
-    pagination.value.setTotalElements(mapSliceTotalElements(response.data));
-    loadCounter.value++;
-  } catch (e) {
-    console.error(e);
-  } finally {
-    loading.value = false;
-  }
-}
-
-async function loadMoreRecords() {
-  try {
-    if (pagination.value.isNextPage()) {
-      const obj = {
-        query: query.value,
-        page: pagination.value.getPage() + 1,
-        size: pagination.value.getItemsPerPage(),
-      };
-
-      const {resolvedText, allVariablesResolved} = await resolve(props.schema, usersAPIEndpoint.value, true)
-      if(!allVariablesResolved) return
-
-      const response = await axios.get(resolvedText, {
-        params: {
-          ...obj,
-        },
-      });
-      pagination.value.nextPage();
-      items.value = items.value.concat(get(response.data, 'content', []));
-      pagination.value.setTotalElements(mapSliceTotalElements(response.data));
-    }
-  } catch (error: any) {
-    console.error(error);
-    //  handleError(error, this.t("usersLoadingError"));
   }
 }
 
@@ -245,7 +195,7 @@ async function checkIfURLHasDependency(createListener = false) {
 
     if (endpoint.allVariablesResolved) {
       usersAPIEndpoint.value = endpoint.resolvedText;
-      await load();
+      await load('deps');
     } else if (logger.dictionaryLogger) {
       console.debug(
         `[vue-schema-forms] [DictionaryLogger] => API call was blocked, not every variable from endpoint was resolved ${usersAPIEndpoint.value}`,
@@ -261,7 +211,7 @@ async function checkIfURLHasDependency(createListener = false) {
         const temp = await resolve(props.schema, props.schema.source.url as string, true);
         if (temp.resolvedText !== usersAPIEndpoint.value) {
           usersAPIEndpoint.value = temp.resolvedText;
-          await load();
+          await load('listener');
         }
       };
     }
@@ -285,18 +235,15 @@ function makeInitials(item: any) {
   }
 }
 
-function updateQuery(val: any) {
+function updateSearch(val: any) {
   query.value = val;
-  debounced.load();
+  debounced.load('query');
 }
-
-const singleOptionAutoSelect = ref(false);
-const loadCounter = ref(0);
 
 function singleOptionAutoSelectFunction() {
   const selectSingleOptionLogic = () => {
-    if (items.value.length !== 1 || !singleOptionAutoSelect.value || loadCounter.value > 1) return;
-    const selectedValue = items.value[0];
+    if (data.value.length !== 1 || !singleOptionAutoSelect.value || loadCounter.value > 1) return;
+    const selectedValue = data.value[0];
 
     if (JSON.stringify(localModel.value) !== JSON.stringify(selectedValue)) {
       if (fieldProps.value.multiple) {
@@ -308,10 +255,14 @@ function singleOptionAutoSelectFunction() {
   };
 
   selectSingleOptionLogic();
-  watch(items, selectSingleOptionLogic, { deep: true });
+  watch(data, selectSingleOptionLogic, { deep: true });
 }
 
 onMounted(async () => {
+  if (props.schema.source.url == '' || props.schema.source.url == null) {
+    props.schema.source.url = usersAPIEndpoint.value;
+  }
+
   await initState(props.schema as EngineDictionaryField);
 
   singleOptionAutoSelect.value =
@@ -322,9 +273,6 @@ onMounted(async () => {
   await bindRules(props.schema);
   await bindProps(props.schema);
 
-  if (props.schema.source.url) {
-    usersAPIEndpoint.value = props.schema.source.url;
-  }
   await checkIfURLHasDependency(true);
   singleOptionAutoSelectFunction();
 });
