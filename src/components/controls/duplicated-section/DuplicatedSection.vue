@@ -157,6 +157,24 @@ vueSchemaFormEventBus.on(async (event, payload) => {
   ) {
     init();
   }
+
+  if (props.schema.layout.sourcePath != undefined && props.schema.key !== payload.key) {
+    console.debug(`Odśwież tą sekcje = ${props.schema.key}`);
+
+    init()
+   /* let source = props.schema.layout.sourcePath;
+    let sections: Record<any, any>[] = cloneDeep(get(props.model, source, []));
+
+    if (localModel.value.length != sections.length) {
+      const missingCount = sections.length - localModel.value.length;
+
+      if (missingCount > 0) {
+        const missingItems = sections.slice(-missingCount);
+        localModel.value.push(...missingItems);
+        nodes.value.push(getClearNode.value);
+      }
+    }*/
+  }
 });
 
 let isEditable: Ref<boolean> = ref(
@@ -389,7 +407,15 @@ function init(): void {
   nodes.value = [];
   localModel.value = [];
   let isDefaultExist = false;
-  let sections: Record<any, any>[] = get(props.model, props.schema.key, []) || []; //lodash error with default value = array
+
+  let source = props.schema.layout.sourcePath;
+
+  let sections: Record<any, any>[] =
+    cloneDeep(get(props.model, source ? source : props.schema.key, [])) || []; //lodash error with default value = array
+  if(source){
+    setValue(sections, props.schema)
+  }
+
   if (sections.length === 0 && isArray(props.schema.defaultValue)) {
     sections = props.schema.defaultValue as Array<any>;
     isDefaultExist = true;

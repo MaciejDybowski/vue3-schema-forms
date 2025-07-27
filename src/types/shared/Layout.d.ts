@@ -17,6 +17,7 @@ export interface Layout {
   // duplicated-section && section && address
   schema?: Schema;
   options?: Record<string, any> & DuplicatedSectionOptions;
+  sourcePath?: string;
 
   // static-content
   tag?: StaticContentTag;
