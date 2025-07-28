@@ -7,6 +7,7 @@ export * from './components';
 
 import * as components from '../src/components/index';
 export * from "./core/state/useFormModelProvider"
+export * from "./core/composables/useGeneratorCache"
 
 export declare type Components = Record<string, Component>;
 export let logger = {
