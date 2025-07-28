@@ -3,11 +3,12 @@ import { App, Component } from 'vue';
 import { vueSchemaFromControls } from '@/components/controls';
 import DuplicatedSectionBatchAddDialogBody from '@/components/controls/duplicated-section/DuplicatedSectionBatchAddDialogBody.vue';
 
+import * as components from '../src/components/index';
+
 export * from './components';
 
-import * as components from '../src/components/index';
-export * from "./core/state/useFormModelProvider"
-export * from "./core/composables/useGeneratorCache"
+export * from './core/state/useFormModelProvider';
+export * from './core/composables/useGeneratorCache';
 
 export declare type Components = Record<string, Component>;
 export let logger = {
@@ -21,6 +22,8 @@ export let logger = {
   eventEmitterListener: false,
   registerComponentLogger: false,
 };
+
+export let toast = null;
 
 export let duplicatedSectionBatchAddComponent = {
   'batch-add-dialog-body': DuplicatedSectionBatchAddDialogBody,
@@ -48,6 +51,7 @@ export type VueSchemaFormsOptions = {
   installFormControls?: boolean;
   duplicatedSectionBatchAddComponent?: Components;
   baseUri?: string;
+  toast?: any;
 };
 
 export let baseUri = window.origin;
@@ -61,6 +65,9 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
   }
   if (options?.baseUri) {
     baseUri = options?.baseUri;
+  }
+  if (options?.toast) {
+    toast = options?.toast;
   }
 
   return {
@@ -100,5 +107,3 @@ export const createVueSchemaForms = (options?: VueSchemaFormsOptions): VueSchema
     },
   };
 };
-
-

@@ -156,6 +156,7 @@ import VueSchemaForms from '@/components/engine/VueSchemaForms.vue';
 import { useLocale, useProps, useResolveVariables } from '@/core/composables';
 import { useVariableParser } from '@/core/composables/useVariableParser';
 import { variableRegexp } from '@/core/engine/utils';
+import { toast } from '@/main';
 import { EngineTableField } from '@/types/engine/EngineTableField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { Schema } from '@/types/schema/Schema';
@@ -193,6 +194,7 @@ const loading = ref(true);
 const debounced = {
   load: debounce(loadData, 200),
   updateRow: debounce(updateRow, 300),
+  showToast: debounce(showToast, 400),
 };
 
 const aggregates = ref(null);
@@ -535,9 +537,16 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
       await new Promise((r) => setTimeout(r, 1));
       vueSchemaFormEventBus.emit('model-changed', 'table-aggregates');
     }
-  } catch (e) {
-    console.error(e);
+  } catch (e: any) {
+    if (toast != null) {
+      debounced.showToast(e.response.data.message);
+    }
   }
+}
+
+function showToast(message: string) {
+  // @ts-ignore
+  toast.error(message);
 }
 
 onMounted(async () => {
