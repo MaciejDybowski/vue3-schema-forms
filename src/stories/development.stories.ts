@@ -170,7 +170,7 @@ export const Story2: Story = {
         },
         diety: {
           sourcePath: 'etapy',
-          updateTriggers: ["select"],
+          updateTriggers: ["select:value"],
           layout: {
             component: 'duplicated-section',
             cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },

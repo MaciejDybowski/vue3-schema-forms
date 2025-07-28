@@ -80,7 +80,7 @@
 
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
-import { cloneDeep, isArray } from 'lodash';
+import { cloneDeep, isArray, isEqual } from 'lodash';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import draggable from 'vuedraggable';
@@ -158,6 +158,10 @@ vueSchemaFormEventBus.on(async (event, payload) => {
     init();
   }
 
+  resolveDependenciesBetweenTwoDuplicatedSections(payload);
+});
+
+function resolveDependenciesBetweenTwoDuplicatedSections(payload: NodeUpdateEvent) {
   if (props.schema.sourcePath !== undefined && props.schema.key !== payload.key) {
     let source = props.schema.sourcePath;
     let sections: Record<any, any>[] = cloneDeep(get(props.model, source, []));
@@ -176,17 +180,40 @@ vueSchemaFormEventBus.on(async (event, payload) => {
       setValue(localModel.value, props.schema);
     }
 
-    // Aktualizacja pojedynczego rekordu (np. po zmianie pola w sekcji)
-    if (payload?.index !== undefined) {
-      const newItem = sections[payload.index];
-      const currentItem = localModel.value[payload.index];
-      if (JSON.stringify(currentItem) !== JSON.stringify(newItem)) {
-        localModel.value[payload.index] = cloneDeep(newItem);
+    // update existed rows by updateTriggers array and keyToVariable:comparator syntax
+    // updateTriggers: ["select:value"],
+    if (
+      payload?.index !== undefined &&
+      Array.isArray(props.schema.updateTriggers) &&
+      props.schema.updateTriggers.length > 0
+    ) {
+      const index = payload.index;
+      const newItem = sections[index];
+      const currentItem = localModel.value[index];
+
+      const shouldUpdate = props.schema.updateTriggers.some((triggerPath: string) => {
+        const pathToValue = triggerPath.split(':')[0];
+        const comparator = triggerPath.split(':')[1];
+
+        const oldVal = get(currentItem, pathToValue);
+        const newVal = get(newItem, pathToValue);
+
+        if (comparator) {
+          const comp1 = get(oldVal, comparator);
+          const comp2 = get(newVal, comparator);
+          return !isEqual(comp1, comp2);
+        }
+
+        return !isEqual(oldVal, newVal);
+      });
+
+      if (shouldUpdate) {
+        localModel.value[index] = cloneDeep(newItem);
         setValue(localModel.value, props.schema);
       }
     }
   }
-});
+}
 
 let isEditable: Ref<boolean> = ref(
   'editable' in props.schema ? (props.schema.editable as boolean) : true,

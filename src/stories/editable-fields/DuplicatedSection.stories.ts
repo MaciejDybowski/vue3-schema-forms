@@ -1,11 +1,15 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
+
+
+
+
 
 export default {
   title: 'Elements/Editable/DuplicatedSection',
@@ -706,7 +710,8 @@ export const Dialog_Table_Integration: Story = {
       type: 'object',
       properties: {
         span: {
-          content: 'It is possible to inject custom component. Please read the docs -> section options',
+          content:
+            'It is possible to inject custom component. Please read the docs -> section options',
           layout: {
             component: 'static-content',
             tag: 'span',
@@ -735,7 +740,7 @@ export const Dialog_Table_Integration: Story = {
 };
 
 export const Dialog_Table_Action: Story = {
-  name: "Case: emit custom event which let us adjust out batchAddLogic/integration",
+  name: 'Case: emit custom event which let us adjust out batchAddLogic/integration',
   args: {
     model: {},
     schema: {
@@ -772,3 +777,273 @@ export const Dialog_Table_Action: Story = {
   },
 };
 
+export const DependenciesBetweenDuplicatedSections = {
+  name: 'Case: 2 section dependencies',
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    // 1️⃣ Sprawdź początkowy stan modelu (1 element we "stages" i jego mapping w "meals")
+    await expect(args.formModel).toEqual({
+      stages: [
+        {
+          country: {
+            value: 'fr',
+            title: 'France',
+            item: { breakfast: 1, lunch: 2, dinner: 3 },
+          },
+        },
+      ],
+      meals: [
+        {
+          country: {
+            value: 'fr',
+            title: 'France',
+            item: { breakfast: 1, lunch: 2, dinner: 3 },
+          },
+        },
+      ],
+    });
+
+    await waitFor(() => {
+      expect(args.formModel.meals?.length).toBe(1);
+      expect(args.formModel.meals?.[0]?.country?.item).toEqual({
+        breakfast: 1,
+        lunch: 2,
+        dinner: 3,
+      });
+    });
+
+    // 2️⃣ Dodaj drugi element
+    const addStageButton = await canvas.findByRole('button', { name: /add stage/i });
+    await userEvent.click(addStageButton, { delay: 200 });
+
+    // Wybierz np. "Japan" dla drugiego kraju (drugi duplicated-section)
+    const duplicatedSections = document.getElementsByClassName('duplicated-section-item');
+    const secondSection = within(duplicatedSections[1]);
+    const selectCountry = await secondSection.findByLabelText('Country'); // zakładamy label = Country
+
+    await userEvent.click(selectCountry, { pointerEventsCheck: 0, delay: 200 });
+
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[2], { delay: 200 });
+
+    // Sprawdź stan po dodaniu Japan
+    await waitFor(() => {
+      expect(args.formModel.stages?.length).toBe(2);
+      expect(args.formModel.stages?.[1]?.country?.value).toBe('jp');
+      expect(args.formModel.meals?.[1]?.country?.item).toEqual({
+        breakfast: 3,
+        lunch: 2,
+        dinner: 1,
+        summary: 6,
+      });
+    });
+
+    // 3️⃣ Dodaj trzeci element
+    await userEvent.click(addStageButton, { delay: 200 });
+    const thirdSection = within(document.getElementsByClassName('duplicated-section-item')[2]);
+    const selectCountry3 = await thirdSection.findByLabelText('Country'); // zakładamy label = Country
+
+    await userEvent.click(selectCountry3, { pointerEventsCheck: 0, delay: 200 });
+
+    await waitFor(() => {
+      const items3 = document.querySelectorAll('.v-list-item');
+      expect(items3.length).toBeGreaterThan(0);
+    });
+    const items3 = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items3[4], { delay: 200 });
+
+    // Sprawdź stan po dodaniu Italy
+    await waitFor(() => {
+      expect(args.formModel.stages?.length).toBe(3);
+      expect(args.formModel.stages?.[2]?.country?.value).toBe('it');
+      expect(args.formModel.meals?.[2]?.country?.item).toEqual({
+        breakfast: 2,
+        lunch: 4,
+        dinner: 3,
+        summary: 9,
+      });
+    });
+
+    const contextMenu = secondSection.queryAllByRole('button')[0];
+
+    await userEvent.hover(duplicatedSections[0], { delay: 200 });
+    await userEvent.click(contextMenu, { delay: 200 });
+
+    const deleteAction = document.getElementsByClassName('v-list-item')[0];
+    await userEvent.click(deleteAction, { delay: 200 });
+
+    // Sprawdź stan modelu po usunięciu
+    await waitFor(() => {
+      expect(args.formModel.stages).toHaveLength(2);
+      expect(args.formModel.stages[0]?.country?.value).toBe('fr');
+      expect(args.formModel.stages[1]?.country?.value).toBe('it');
+
+      expect(args.formModel.meals).toHaveLength(2);
+      expect(args.formModel.meals[1]?.country?.item).toEqual({
+        breakfast: 2,
+        lunch: 4,
+        dinner: 3,
+        summary: 9,
+      });
+    });
+  },
+  args: {
+    formModel: {
+      stages: [
+        {
+          country: {
+            value: 'fr',
+            title: 'France',
+            item: {
+              breakfast: 1,
+              lunch: 2,
+              dinner: 3,
+            },
+          },
+        },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        stages: {
+          layout: {
+            component: 'duplicated-section',
+            cols: { xs: 12, sm: 12 },
+            offset: { xs: 0 },
+            schema: {
+              type: 'object',
+              properties: {
+                country: {
+                  label: 'Country',
+                  layout: {
+                    component: 'select',
+                    cols: 6,
+                  },
+                  source: {
+                    items: [
+                      {
+                        value: 'fr',
+                        title: 'France',
+                        item: { breakfast: 1, lunch: 2, dinner: 3 },
+                      },
+                      {
+                        value: 'us',
+                        title: 'United States',
+                        item: { breakfast: 2, lunch: 3, dinner: 4 },
+                      },
+                      {
+                        value: 'jp',
+                        title: 'Japan',
+                        item: { breakfast: 3, lunch: 2, dinner: 1 },
+                      },
+                      {
+                        value: 'in',
+                        title: 'India',
+                        item: { breakfast: 4, lunch: 3, dinner: 2 },
+                      },
+                      {
+                        value: 'it',
+                        title: 'Italy',
+                        item: { breakfast: 2, lunch: 4, dinner: 3 },
+                      },
+                    ],
+                    returnObject: true,
+                  },
+                },
+                note: {
+                  label: 'Additional notes',
+                  layout: {
+                    component: 'text-field',
+                    cols: 6,
+                  },
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add stage',
+              showDivider: false,
+              ordinalNumberInModel: false,
+              showFirstInitRow: true,
+            },
+          },
+          editable: true,
+          showElements: true,
+        },
+
+        sectionDivider: {
+          layout: {
+            component: 'divider',
+          },
+          thickness: 20,
+        },
+
+        meals: {
+          sourcePath: 'stages',
+          updateTriggers: ['country:value'],
+          layout: {
+            component: 'duplicated-section',
+            cols: { xs: 12, sm: 12 },
+            offset: { xs: 0 },
+            schema: {
+              type: 'object',
+              properties: {
+                country: {
+                  properties: {
+                    item: {
+                      properties: {
+                        breakfast: {
+                          label: 'Breakfast',
+                          layout: {
+                            component: 'number-field',
+                            cols: 3,
+                          },
+                        },
+                        lunch: {
+                          label: 'Lunch',
+                          layout: {
+                            component: 'number-field',
+                            cols: 3,
+                          },
+                        },
+                        dinner: {
+                          label: 'Dinner',
+                          layout: {
+                            component: 'number-field',
+                            cols: 3,
+                          },
+                        },
+                        summary: {
+                          label: 'Summary',
+                          layout: {
+                            component: 'number-field',
+                            cols: 3,
+                          },
+                          calculation:
+                            'meals[].country.item.breakfast + meals[].country.item.lunch + meals[].country.item.dinner',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add meal set',
+              showDivider: false,
+              ordinalNumberInModel: false,
+              showFirstInitRow: true,
+            },
+          },
+          editable: true,
+          showElements: false,
+        },
+      },
+    },
+  },
+};
