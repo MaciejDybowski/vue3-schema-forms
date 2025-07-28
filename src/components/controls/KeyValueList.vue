@@ -61,6 +61,9 @@ const { getValue } = useFormModel();
 const { label, bindLabel } = useLabel(schema);
 
 const localModel = computed(() => {
+  if (schema.sourcePath) {
+    return getValue(model, { key: schema.sourcePath } as EngineField);
+  }
   return getValue(model, schema);
 });
 

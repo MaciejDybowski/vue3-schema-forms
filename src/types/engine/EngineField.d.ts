@@ -38,4 +38,7 @@ export interface EngineField {
 
   // key-value-list
   config?: any;
+  // key-value-list && duplicated-section
+  sourcePath?: string;
+  updateTriggers?: Array<string>
 }

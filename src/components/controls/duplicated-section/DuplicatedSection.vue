@@ -158,20 +158,32 @@ vueSchemaFormEventBus.on(async (event, payload) => {
     init();
   }
 
-  // odświeżenie listy zaleznej od innej tablicy w modelu formularza np w celu wyswietlania innych danych
-  if (props.schema.layout.sourcePath != undefined && props.schema.key !== payload.key) {
-    let source = props.schema.layout.sourcePath;
+  if (props.schema.sourcePath !== undefined && props.schema.key !== payload.key) {
+    let source = props.schema.sourcePath;
     let sections: Record<any, any>[] = cloneDeep(get(props.model, source, []));
 
-    if (localModel.value.length != sections.length) {
+    // Obsługa dodania lub usunięcia sekcji
+    if (localModel.value.length !== sections.length) {
       const missingCount = sections.length - localModel.value.length;
-
       if (missingCount > 0) {
         const missingItems = sections.slice(-missingCount);
         localModel.value.push(...missingItems);
         nodes.value.push(getClearNode.value);
+      } else {
+        localModel.value.splice(sections.length);
+        nodes.value.splice(sections.length);
       }
       setValue(localModel.value, props.schema);
+    }
+
+    // Aktualizacja pojedynczego rekordu (np. po zmianie pola w sekcji)
+    if (payload?.index !== undefined) {
+      const newItem = sections[payload.index];
+      const currentItem = localModel.value[payload.index];
+      if (JSON.stringify(currentItem) !== JSON.stringify(newItem)) {
+        localModel.value[payload.index] = cloneDeep(newItem);
+        setValue(localModel.value, props.schema);
+      }
     }
   }
 });
@@ -408,7 +420,7 @@ function init(): void {
   let isDefaultExist = false;
 
   // obsluga listy zaleznej od innej tablicy w modelu formularza np w celu wyswietlania innych danych
-  let source = props.schema.layout.sourcePath;
+  let source = props.schema.sourcePath;
 
   let sections: Record<any, any>[] =
     cloneDeep(get(props.model, source ? source : props.schema.key, [])) || []; //lodash error with default value = array

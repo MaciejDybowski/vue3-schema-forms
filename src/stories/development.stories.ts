@@ -120,6 +120,7 @@ export const Story2: Story = {
                   label: 'Simple select',
                   layout: {
                     component: 'select',
+                    cols: 6,
                   },
                   source: {
                     items: [
@@ -142,6 +143,13 @@ export const Story2: Story = {
                     returnObject: true,
                   },
                 },
+                sthElse: {
+                  label: 'SthElse',
+                  layout: {
+                    component: 'text-field',
+                    cols: 6
+                  },
+                },
               },
             },
             options: {
@@ -161,9 +169,10 @@ export const Story2: Story = {
           thickness: 20,
         },
         diety: {
+          sourcePath: 'etapy',
+          updateTriggers: ["select"],
           layout: {
             component: 'duplicated-section',
-            sourcePath: 'etapy',
             cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
             offset: { xs: 0, sm: 0, md: 0, lg: 0, xl: 0, xxl: 0 },
             schema: {
