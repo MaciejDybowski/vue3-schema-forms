@@ -158,11 +158,9 @@ vueSchemaFormEventBus.on(async (event, payload) => {
     init();
   }
 
+  // odświeżenie listy zaleznej od innej tablicy w modelu formularza np w celu wyswietlania innych danych
   if (props.schema.layout.sourcePath != undefined && props.schema.key !== payload.key) {
-    console.debug(`Odśwież tą sekcje = ${props.schema.key}`);
-
-    init()
-   /* let source = props.schema.layout.sourcePath;
+    let source = props.schema.layout.sourcePath;
     let sections: Record<any, any>[] = cloneDeep(get(props.model, source, []));
 
     if (localModel.value.length != sections.length) {
@@ -173,7 +171,8 @@ vueSchemaFormEventBus.on(async (event, payload) => {
         localModel.value.push(...missingItems);
         nodes.value.push(getClearNode.value);
       }
-    }*/
+      setValue(localModel.value, props.schema);
+    }
   }
 });
 
@@ -408,12 +407,13 @@ function init(): void {
   localModel.value = [];
   let isDefaultExist = false;
 
+  // obsluga listy zaleznej od innej tablicy w modelu formularza np w celu wyswietlania innych danych
   let source = props.schema.layout.sourcePath;
 
   let sections: Record<any, any>[] =
     cloneDeep(get(props.model, source ? source : props.schema.key, [])) || []; //lodash error with default value = array
-  if(source){
-    setValue(sections, props.schema)
+  if (source) {
+    setValue(sections, props.schema);
   }
 
   if (sections.length === 0 && isArray(props.schema.defaultValue)) {
