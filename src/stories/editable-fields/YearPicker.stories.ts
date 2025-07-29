@@ -100,3 +100,28 @@ export const Required = {
     } as Schema,
   },
 };
+
+export const Expression = {
+  name: 'Case: expression for years',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    await selectFirstYearPickerItem(canvas);
+    await expect(context.args.formModel).toEqual({ year: 2025 });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        year: {
+          label: 'Year picker',
+          expression: '[currentYear .. (currentYear + 10)]',
+          layout: {
+            component: 'year-picker',
+          },
+        },
+      },
+    } as Schema,
+  },
+};

@@ -11,6 +11,8 @@
 </template>
 
 <script lang="ts" setup>
+import jsonata from 'jsonata';
+
 import { computed, onMounted, ref } from 'vue';
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
@@ -48,7 +50,10 @@ onMounted(async () => {
   await bindRules(schema);
   await bindProps(schema);
 
-  if (schema.range && schema.range.length == 2) {
+  if (schema.expression) {
+    const model = { currentYear: currentYear };
+    years.value = await jsonata(schema.expression).evaluate(model);
+  } else if (schema.range && schema.range.length == 2) {
     const [a, b] = schema.range;
     years.value = rangeDescending(Math.max(a, b), Math.min(a, b));
   }
