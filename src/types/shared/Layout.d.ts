@@ -22,4 +22,7 @@ export interface Layout {
   // static-content
   tag?: StaticContentTag;
   class?: string;
+
+  // to adjust <v-col> component
+  cellClass?: string;
 }

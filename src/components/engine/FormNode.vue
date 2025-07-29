@@ -2,7 +2,7 @@
   <v-col
     v-if="shouldRender"
     v-show="!shouldHide && shouldRender"
-    :class="layoutCssClass"
+    :class="[layoutCssClass, schema.layout.cellClass]"
     :cols="cols"
   >
     <component
