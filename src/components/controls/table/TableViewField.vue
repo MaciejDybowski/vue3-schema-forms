@@ -371,7 +371,7 @@ async function runTableBtnLogic(btn: TableButton) {
       let payloadObject = {
         code: btn.config.code,
         body: body,
-        params: { ...btnConfigWithoutCode.params },
+        params: { ...btnConfigWithoutCode },
       };
       actionHandlerEventBus.emit('form-action', payloadObject);
       break;
@@ -384,7 +384,7 @@ async function runTableBtnLogic(btn: TableButton) {
         let payloadObject = {
           code: btn.config.code,
           body: actionPopup.model,
-          params: { script: btn.config.scriptName },
+          params: { script: btn.config.script },
         };
         actionHandlerEventBus.emit('form-action', payloadObject);
       };

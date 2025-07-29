@@ -70,7 +70,7 @@ export interface TableButtonBatchAddConfig {
   featureId: string;
   viewId: string;
   batchAddAttributePath: string;
-  scriptName: string;
+  script: string;
 }
 
 export interface AvatarSource {

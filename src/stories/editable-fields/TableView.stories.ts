@@ -638,7 +638,7 @@ export const TopSlotAndButtons: Story = {
                   featureId: 'products',
                   viewId: '68304-tabela',
                   batchAddAttributePath: 'dataId',
-                  scriptName: 'dodaj_produkty_do_oferty',
+                  script: 'dodaj_produkty_do_oferty',
                 },
               },
               {
@@ -651,7 +651,7 @@ export const TopSlotAndButtons: Story = {
                 config: {
                   title: 'Import products from csv',
                   code: 'callScript',
-                  scriptName: 'import_products_from_csv',
+                  script: 'import_products_from_csv',
                 },
                 schema: {
                   properties: {
@@ -745,7 +745,7 @@ export const TopSlotAndButtonsDisabled: Story = {
                   featureId: 'products',
                   viewId: '68304-tabela',
                   batchAddAttributePath: 'dataId',
-                  scriptName: 'dodaj_produkty_do_oferty',
+                  script: 'dodaj_produkty_do_oferty',
                 },
               },
               {
@@ -758,7 +758,7 @@ export const TopSlotAndButtonsDisabled: Story = {
                 config: {
                   title: 'Import products from csv',
                   code: 'callScript',
-                  scriptName: 'import_products_from_csv',
+                  script: 'import_products_from_csv',
                 },
                 schema: {
                   properties: {
@@ -836,7 +836,7 @@ export const ContextActions: Story = {
                     code: 'callScript',
                     config: {
                       params: {
-                        scriptName: 'delete_product_from_offer',
+                        script: 'delete_product_from_offer',
                       },
                       body: {
                         name: '{name}',
@@ -853,7 +853,7 @@ export const ContextActions: Story = {
                     code: 'callScript',
                     config: {
                       params: {
-                        scriptName: 'add_pallet_price',
+                        script: 'add_pallet_price',
                       },
                       body: {
                         name: '{name}',
@@ -930,7 +930,7 @@ export const ContextActionsWithCondition: Story = {
                     condition: "location='Poland'",
                     config: {
                       params: {
-                        scriptName: 'delete_product_from_offer',
+                        script: 'delete_product_from_offer',
                       },
                       body: {
                         name: '{name}',
@@ -947,7 +947,7 @@ export const ContextActionsWithCondition: Story = {
                     code: 'callScript',
                     config: {
                       params: {
-                        scriptName: 'add_pallet_price',
+                        script: 'add_pallet_price',
                       },
                       body: {
                         name: '{name}',
@@ -1024,7 +1024,7 @@ export const ContextActionsWithConditionDisabled: Story = {
                     disabled: 'height > 2',
                     config: {
                       params: {
-                        scriptName: 'delete_product_from_offer',
+                        script: 'delete_product_from_offer',
                       },
                       body: {
                         name: '{name}',
@@ -1041,7 +1041,7 @@ export const ContextActionsWithConditionDisabled: Story = {
                     code: 'callScript',
                     config: {
                       params: {
-                        scriptName: 'add_pallet_price',
+                        script: 'add_pallet_price',
                       },
                       body: {
                         name: '{name}',
@@ -1891,7 +1891,7 @@ export const ReadonlyMode: Story = {
                     code: 'callScript',
                     config: {
                       params: {
-                        scriptName: 'delete_product_from_offer',
+                        script: 'delete_product_from_offer',
                       },
                       body: {
                         name: '{name}',
@@ -1908,7 +1908,7 @@ export const ReadonlyMode: Story = {
                     code: 'callScript',
                     config: {
                       params: {
-                        scriptName: 'add_pallet_price',
+                        script: 'add_pallet_price',
                       },
                       body: {
                         name: '{name}',
@@ -1934,7 +1934,7 @@ export const ReadonlyMode: Story = {
                   featureId: 'products',
                   viewId: '68304-tabela',
                   batchAddAttributePath: 'dataId',
-                  scriptName: 'dodaj_produkty_do_oferty',
+                  script: 'dodaj_produkty_do_oferty',
                 },
               },
               {
@@ -1947,7 +1947,7 @@ export const ReadonlyMode: Story = {
                 config: {
                   title: 'Import products from csv',
                   code: 'callScript',
-                  scriptName: 'import_products_from_csv',
+                  script: 'import_products_from_csv',
                 },
                 schema: {
                   properties: {
