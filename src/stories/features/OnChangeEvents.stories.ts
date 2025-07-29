@@ -48,7 +48,7 @@ export const CallActionWithParametersAndRequestBody: Story = {
             mode: 'action',
             code: 'callScript',
             params: {
-              scriptName: 'checkIfDuplicate',
+              script: 'checkIfDuplicate',
             },
             body: {
               number: '{supplier.number}',
