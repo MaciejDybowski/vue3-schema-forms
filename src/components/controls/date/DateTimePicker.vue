@@ -88,10 +88,12 @@ import {
 import dayjs from './dayjs';
 import { useDateFormat } from '@/core/composables';
 
+const inputFieldRef = ref<any>();
+
 const { locale, t } = useLocale();
 const props = defineProps<{ schema: EngineDateField; model: object }>();
 const { label, bindLabel } = useLabel(props.schema);
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules(inputFieldRef);
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
@@ -118,7 +120,7 @@ const currentDate = new Date();
 currentDate.setHours(0, 0, 0, 0);
 
 const activeTabRef = ref(0);
-const inputFieldRef = ref<any>();
+
 const pickerModel = ref(false);
 const inputValue = ref('');
 const pickerValue = ref<Date>();
@@ -157,13 +159,13 @@ function dateTyping(val: string) {
     localModel.value = null;
     return;
   }
-  if (inputFieldRef.value?.isValid) {
+  //if (inputFieldRef.value?.isValid) {
     const date = dayjs(val, dateTimeFormat.value);
     if (date.isValid()) {
       timeValue.value = date.get('hours') + ':' + date.get('minutes');
       localModel.value = date.format(modelFormat);
     }
-  }
+  //}
 }
 
 function datePick(val: Date) {

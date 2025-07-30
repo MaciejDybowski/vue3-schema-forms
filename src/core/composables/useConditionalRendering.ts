@@ -4,13 +4,12 @@ import { cloneDeep } from 'lodash';
 
 import { ref } from 'vue';
 
+import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
-
+import { logger } from '@/main';
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
-import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { Schema } from '@/types/schema/Schema';
-import { logger } from '@/main';
 
 export function useConditionalRendering() {
   let shouldRender = ref(false);
@@ -52,7 +51,17 @@ export function useConditionalRendering() {
   async function ifByJsonNata(schema: EngineField, expression: string, model: any) {
     const modelForResolve = form.getFormModelForResolve.value;
     const nata = jsonata(expression);
-    shouldRender.value = await nata.evaluate(modelForResolve);
+    try {
+      shouldRender.value = await nata.evaluate(modelForResolve);
+    } catch (err: any) {
+      console.error('JSONata error:', {
+        message: err.message,
+        expression: expression,
+        field: schema.key,
+      });
+      shouldRender.value = false;
+    }
+
     resetModelValueWhenFalse(model, schema);
   }
 

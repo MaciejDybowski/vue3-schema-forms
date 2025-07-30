@@ -1,12 +1,8 @@
-import dayjs from 'dayjs';
-
 import { computed } from 'vue';
 
-import { useLocale } from './useLocale';
+import dayjs from '@/components/controls/date/dayjs';
 
 export function useDateFormat() {
-  const { locale } = useLocale();
-
   const dateFormat = computed(() => {
     return dayjs().localeData().longDateFormat('L');
   });

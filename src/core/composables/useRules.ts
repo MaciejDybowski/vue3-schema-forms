@@ -10,7 +10,7 @@ import { EngineField } from '@/types/engine/EngineField';
 import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
 
 // https://github.com/vuetifyjs/vuetify/issues/16680#issuecomment-1816634335 - ValidationRule type is not exported
-export function useRules() {
+export function useRules(inputFieldRef?: Ref<HTMLInputElement>) {
   const { t } = useLocale();
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
   let rules: Ref<any[]> = ref([]);
@@ -46,6 +46,14 @@ export function useRules() {
           vueSchemaFormEventBus.on(() => ruleListener(schema, ruleDefinition));
         } else if (ruleDefinition.rule) {
           resolveValidationFunctionWithJSONataRule(ruleDefinition, schema);
+
+          vueSchemaFormEventBus.on((event, payload) => {
+            if (ruleDefinition.rule?.includes(payload.key)) {
+              resolveValidationFunctionWithJSONataRule(ruleDefinition, schema);
+              // @ts-ignore
+              inputFieldRef?.value.validate();
+            }
+          });
         } else if (ruleDefinition.regexp) {
           resolveValidationFunctionWithRegexp(ruleDefinition, schema);
         }
@@ -110,7 +118,9 @@ export function useRules() {
       const nata = jsonata(ruleDefinition.rule as string);
 
       const conditionResult = await nata.evaluate(model);
+      console.debug(conditionResult);
       if (conditionResult) return true;
+
       return ruleDefinition.message;
     });
   }
