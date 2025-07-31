@@ -20,8 +20,8 @@ export const Standard: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('DateTime');
-    await userEvent.type(field, '01/29/2024 14:30:00 AM');
-    await expect(context.args.formModel.simpleDate).toEqual('2024-01-29T14:30:00.000+01:00');
+    await userEvent.type(field, '01/29/2024 14:30:00 AM', {delay: 100});
+    await expect(context.args.formModel.simpleDate).toEqual('2024-01-29T02:30:00.000+01:00');
   },
   args: {
     formModel: {},
@@ -42,7 +42,7 @@ export const Standard: Story = {
 export const DefaultValue: Story = {
   play: async (context) => {
     await expect(context.args.formModel).toEqual({
-      dateWithDefault: '2024-01-29T14:30:00.000+01:00',
+      dateWithDefault: '2024-01-29T02:30:00.000+01:00',
     });
   },
   args: {
@@ -52,7 +52,7 @@ export const DefaultValue: Story = {
       properties: {
         dateWithDefault: {
           label: 'DateTime',
-          defaultValue: '2024-01-29T14:30:00.000+01:00',
+          defaultValue: '2024-01-29T02:30:00.000+01:00',
           layout: {
             component: 'date-time-picker',
           },

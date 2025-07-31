@@ -53,8 +53,9 @@ onMounted(async () => {
   if (schema.expression) {
     const model = { currentYear: currentYear };
     years.value = await jsonata(schema.expression).evaluate(model);
-  } else if (schema.range && schema.range.length == 2) {
-    const [a, b] = schema.range;
+  } else {
+    const a = currentYear - 25;
+    const b = currentYear + 25;
     years.value = rangeDescending(Math.max(a, b), Math.min(a, b));
   }
 });

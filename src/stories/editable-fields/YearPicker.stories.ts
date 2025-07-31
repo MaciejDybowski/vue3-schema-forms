@@ -25,7 +25,7 @@ export const Standard = {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     await selectFirstYearPickerItem(canvas);
-    await expect(context.args.formModel).toEqual({ year: 2025 });
+    await expect(context.args.formModel).toEqual({ year: 2050 });
   },
   args: {
     formModel: {},
@@ -34,31 +34,6 @@ export const Standard = {
       properties: {
         year: {
           label: 'Year picker',
-          layout: {
-            component: 'year-picker',
-          },
-        },
-      },
-    } as Schema,
-  },
-};
-
-export const Range = {
-  name: 'Case: pass rage of years',
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-    await selectFirstYearPickerItem(canvas);
-    await expect(context.args.formModel).toEqual({ year: 2023 });
-  },
-  args: {
-    formModel: {},
-    schema: {
-      type: 'object',
-      properties: {
-        year: {
-          label: 'Year picker',
-          range: [2020, 2023],
           layout: {
             component: 'year-picker',
           },
@@ -78,7 +53,7 @@ export const Required = {
     await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
 
     await selectFirstYearPickerItem(canvas);
-    await expect(context.args.formModel).toEqual({ year: 2023 });
+    await expect(context.args.formModel).toEqual({ year: 2050 });
 
     await userEvent.click(Submit, { delay: 100 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
@@ -90,7 +65,6 @@ export const Required = {
       properties: {
         year: {
           label: 'Year picker',
-          range: [2020, 2023],
           layout: {
             component: 'year-picker',
           },
