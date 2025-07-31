@@ -4,6 +4,7 @@ import get from 'lodash/get';
 import { ref } from 'vue';
 
 import { useGeneratorCache } from '@/core/composables/useGeneratorCache';
+import { useNumber } from '@/core/composables/useNumber';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
@@ -14,6 +15,7 @@ export function useExpression() {
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const form = useInjectedFormModel();
   const cache = useGeneratorCache();
+  const { roundTo } = useNumber();
 
   async function resolveExpression(
     schema: EngineField,
@@ -76,7 +78,8 @@ export function useExpression() {
     }
 
     const mergedModel = form.getFormModelForResolve.value;
-    const newValue = await resolverFn(expression, mergedModel);
+    let newValue = await resolverFn(expression, mergedModel);
+    newValue = roundTo(newValue, schema.precision ? Number(schema.precision) : 2);
     const currentValue = get(model, key, null);
 
     if (newValue !== currentValue) {

@@ -59,6 +59,7 @@ import { NumberFormattingType, RoundOption, useNumber } from '@/core/composables
 import { variableRegexp } from '@/core/engine/utils';
 import { logger } from '@/main';
 import { EngineNumberField } from '@/types/engine/controls';
+import { extractComponentSectionObject } from "storybook/dist/docs-tools";
 
 const props = defineProps<{
   schema: EngineNumberField;
@@ -142,6 +143,8 @@ const localModel = computed({
   set(val: any) {
     lastValue.value = localModel.value;
     val = roundTo(val, precision, roundOption);
+
+    console.debug(val)
     setValue(val, props.schema);
   },
 });

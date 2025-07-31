@@ -30,41 +30,14 @@ export const Story1: Story = {
     schema: {
       type: 'object',
       properties: {
-        fieldA: {
-          label: 'Field',
+        numberField: {
+          label: "Number",
           layout: {
-            component: 'text-field',
-            cols: 6,
-
+            component: "number-field",
+            cols: 4,
           },
-        },
-        fieldB: {
-          label: 'Field comment',
-          content: 'Add comment here',
-          layout: {
-            component: 'text-switch-field',
-            cols: 6,
-            cellClass: "d-flex align-center",
-            fillRow: true,
-          },
-        },
-        fieldC: {
-          label: 'Field',
-          layout: {
-            component: 'text-field',
-            cols: 6,
-            fillRow: true,
-          },
-        },
-        fieldD: {
-          label: 'Field',
-          layout: {
-            component: 'text-field',
-            cols: 6,
-            fillRow: true,
-          },
-        },
-
+          expression: "JSONATA(4.231321)"
+        }
       },
     },
   },
