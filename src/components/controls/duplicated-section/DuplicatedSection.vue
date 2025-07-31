@@ -158,11 +158,13 @@ vueSchemaFormEventBus.on(async (event, payload) => {
     init();
   }
 
-  resolveDependenciesBetweenTwoDuplicatedSections(payload);
+
+  await resolveDependenciesBetweenTwoDuplicatedSections(payload);
 });
 
-function resolveDependenciesBetweenTwoDuplicatedSections(payload: NodeUpdateEvent) {
+async function resolveDependenciesBetweenTwoDuplicatedSections(payload: NodeUpdateEvent) {
   if (props.schema.sourcePath !== undefined && props.schema.key !== payload.key) {
+    await new Promise((r) => setTimeout(r, 100));
     let source = props.schema.sourcePath;
     let sections: Record<any, any>[] = cloneDeep(get(props.model, source, []));
 
@@ -172,7 +174,11 @@ function resolveDependenciesBetweenTwoDuplicatedSections(payload: NodeUpdateEven
       if (missingCount > 0) {
         const missingItems = sections.slice(-missingCount);
         localModel.value.push(...missingItems);
-        nodes.value.push(getClearNode.value);
+
+        // Dodaj odpowiednią liczbę czystych węzłów
+        for (let i = 0; i < missingCount; i++) {
+          nodes.value.push(getClearNode.value);
+        }
       } else {
         localModel.value.splice(sections.length);
         nodes.value.splice(sections.length);

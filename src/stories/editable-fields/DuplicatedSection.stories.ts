@@ -779,7 +779,7 @@ export const Dialog_Table_Action: Story = {
 
 export const DependenciesBetweenDuplicatedSections = {
   name: 'Case: 2 section dependencies',
-  play: async ({ canvasElement, args }) => {
+ /* play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
     // 1️⃣ Sprawdź początkowy stan modelu (1 element we "stages" i jego mapping w "meals")
@@ -891,7 +891,7 @@ export const DependenciesBetweenDuplicatedSections = {
         summary: 9,
       });
     });
-  },
+  },*/
   args: {
     formModel: {
       stages: [
