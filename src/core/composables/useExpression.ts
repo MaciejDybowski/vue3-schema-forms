@@ -79,7 +79,11 @@ export function useExpression() {
 
     const mergedModel = form.getFormModelForResolve.value;
     let newValue = await resolverFn(expression, mergedModel);
-    newValue = roundTo(newValue, schema.precision ? Number(schema.precision) : 2);
+
+    if (schema.layout.component == 'number-field') {
+      newValue = roundTo(newValue, schema.precision ? Number(schema.precision) : 0);
+    }
+
     const currentValue = get(model, key, null);
 
     if (newValue !== currentValue) {

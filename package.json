@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.2.12-snapshot-7",
+  "version": "0.2.12-snapshot-8",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
