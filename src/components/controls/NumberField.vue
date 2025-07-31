@@ -59,7 +59,6 @@ import { NumberFormattingType, RoundOption, useNumber } from '@/core/composables
 import { variableRegexp } from '@/core/engine/utils';
 import { logger } from '@/main';
 import { EngineNumberField } from '@/types/engine/controls';
-import { extractComponentSectionObject } from "storybook/dist/docs-tools";
 
 const props = defineProps<{
   schema: EngineNumberField;
