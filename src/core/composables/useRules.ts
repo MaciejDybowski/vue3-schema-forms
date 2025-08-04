@@ -118,7 +118,6 @@ export function useRules() {
       const nata = jsonata(ruleDefinition.rule as string);
 
       const conditionResult = await nata.evaluate(model);
-      console.debug(conditionResult);
       if (conditionResult) return true;
 
       return ruleDefinition.message;

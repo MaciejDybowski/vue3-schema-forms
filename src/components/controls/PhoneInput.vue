@@ -111,8 +111,6 @@ const fieldPropsMerged = computed(() => {
     ...phoneInputProps,
     ...props.schema.phoneInputProps,
   };
-
-  console.debug(propsRef.value);
   return propsRef.value;
 });
 
