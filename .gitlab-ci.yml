@@ -12,13 +12,14 @@ variables:
   APP_NAME: $CI_PROJECT_NAME
 
 stages:
+  - publish
   - storybook-tests
   - storybook-prepare
   - storybook-build
   - containerize
   - deploy
-  - publish
-  - trigger_dependencies
+
+  #- trigger_dependencies
 
 storybook-test:
   image: mcr.microsoft.com/playwright:v1.52.0-noble
