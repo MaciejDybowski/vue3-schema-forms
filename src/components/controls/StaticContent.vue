@@ -16,6 +16,7 @@ import { useEventBus } from '@vueuse/core';
 import { onMounted, ref } from 'vue';
 
 import { useClass, useProps, useResolveVariables } from '@/core/composables';
+import { variableRegexp } from '@/core/engine/utils';
 import { EngineStaticField } from '@/types/engine/controls';
 
 const props = defineProps<{
@@ -42,9 +43,12 @@ onMounted(async () => {
 
   await bindProps(props.schema);
   resolvedContent.value = await resolve(props.schema, props.schema.content);
-  const unsubscribe = vueSchemaFormEventBus.on(async () => {
-    resolvedContent.value = await resolve(props.schema, props.schema.content);
-  });
+  if (props.schema.content.match(variableRegexp)) {
+    const unsubscribe = vueSchemaFormEventBus.on(async () => {
+      await new Promise((r) => setTimeout(r, 110));
+      resolvedContent.value = await resolve(props.schema, props.schema.content);
+    });
+  }
 });
 </script>
 
