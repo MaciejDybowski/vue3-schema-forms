@@ -36,6 +36,16 @@ export const Story1: Story = {
             component: "number-field",
             cols: 4,
           },
+          type: "float",
+          precision: 2,
+          expression: "JSONATA(4.231321)"
+        },
+        textField: {
+          label: "Text",
+          layout: {
+            component: "text-field",
+            cols: 4,
+          },
           expression: "JSONATA(4.231321)"
         }
       },
