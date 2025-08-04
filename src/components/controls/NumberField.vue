@@ -1,9 +1,9 @@
 <template>
   <v-text-field
     v-if="!loading"
-    v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
     :label="label"
+    :model-value="getLocalModel"
     :rules="!fieldProps.readonly ? rules : []"
     v-bind="fieldProps"
     @focusin="focusin"
@@ -39,7 +39,6 @@
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
 import get from 'lodash/get';
-import set from 'lodash/set';
 
 import { computed, onMounted, ref } from 'vue';
 
@@ -58,6 +57,7 @@ import { useEventHandler } from '@/core/composables/useEventHandler';
 import { NumberFormattingType, RoundOption, useNumber } from '@/core/composables/useNumber';
 import { variableRegexp } from '@/core/engine/utils';
 import { logger } from '@/main';
+import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { EngineNumberField } from '@/types/engine/controls';
 
 const props = defineProps<{
@@ -112,6 +112,10 @@ function parseDigitWithOnlyZeroFraction(value: number) {
   }
   return value;
 }
+
+const getLocalModel = computed(() => {
+  return localModel.value;
+});
 
 const localModel = computed({
   get(): string | number | null {
@@ -171,10 +175,16 @@ function userTyping(val: any) {
       console.debug(
         `[vue-schema-forms] [CalculationListener], key=${props.schema.key}, index=${props.schema.index}, manualResult=${val}`,
       );
-    unsubscribeListener.value();
-    set(props.model, `${props.schema.key}ManuallyChanged`, true);
     calculationResultWasModified.value = true;
+    unsubscribeListener.value();
+    const updateEvent: NodeUpdateEvent = {
+      key: `${props.schema.key}ManuallyChanged`,
+      value: true,
+    };
+    props.schema.on.input(updateEvent);
   }
+
+  localModel.value = val;
   onChange(props.schema, props.model);
 }
 

@@ -30,24 +30,26 @@ export const Story1: Story = {
     schema: {
       type: 'object',
       properties: {
-        numberField: {
-          label: 'Number',
+
+        section: {
           layout: {
-            component: 'number-field',
-            cols: 4,
-          },
-          type: 'float',
-          precision: 2,
-          expression: 'JSONATA(4.231321)',
-        },
-        textField: {
-          label: 'Text',
-          layout: {
-            component: 'text-field',
-            cols: 4,
-          },
-          expression: 'JSONATA(4.231321)',
-        },
+            component:  'duplicated-section',
+            schema: {
+              properties: {
+                numberField: {
+                  label: 'Number',
+                  layout: {
+                    component: 'number-field',
+                    cols: 4,
+                  },
+                  type: 'float',
+                  precision: 2,
+                  calculation: '2+2',
+                },
+              }
+            }
+          }
+        }
       },
     },
   },
