@@ -41,7 +41,10 @@ export function useConditionalRendering() {
     if (schema.layout.if !== undefined && schema.layout.if?.includes('nata(')) {
       const match = schema.layout.if.match(/^nata\(([^]*)\)$/);
       if (match) {
+        //console.debug('before fillPath', schema.layout.if, schema.index);
+        //console.debug(`schemaPath = ${schema.path} and index = ${schema.index}`);
         const expression = fillPath(schema.path, schema.index, match[1]);
+        //console.debug('after fillPath', expression);
         await ifByJsonNata(schema, expression, model);
       }
     }
@@ -61,6 +64,8 @@ export function useConditionalRendering() {
       });
       shouldRender.value = false;
     }
+
+    //console.debug(expression, modelForResolve);
 
     resetModelValueWhenFalse(model, schema);
   }

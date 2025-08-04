@@ -96,8 +96,11 @@ export function useResolveVariables() {
   ) {
     if (!fieldPath) return variable;
 
+    // Najpierw zastąp [] na [index], potem dopasuj ścieżki
+    const variableWithIndex = variable.replaceAll('[]', `[${fieldIndex}]`);
+
     const splitPath = fieldPath.split('.');
-    const splitVariable = variable.split('.');
+    const splitVariable = variableWithIndex.split('.');
     const updatedVariable = matchArrays(splitPath, splitVariable).join('.');
     return updatedVariable.replaceAll('[]', `[${fieldIndex}]`);
   }
