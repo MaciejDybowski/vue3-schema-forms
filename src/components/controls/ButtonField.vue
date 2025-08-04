@@ -18,8 +18,8 @@
       <v-card :title="popup.title">
         <v-card-text>
           <vue-schema-forms
-            ref="popupReference"
             :key="popupReferenceReload"
+            ref="popupReference"
             v-model="popup.model"
             :options="popup.options"
             :schema="popup.schema"
@@ -166,6 +166,10 @@ async function runBtnLogic() {
         },
       };
       actionHandlerEventBus.emit('form-action', payloadObject);
+      if (schema.config.emit) {
+        actionHandlerEventBus.emit('form-action', schema.config.emit);
+      }
+
       break;
     case 'form-and-action':
       popup.errorMessages = [];
@@ -211,11 +215,7 @@ async function runBtnLogic() {
 }
 
 async function apiCallMode() {
-  const { resolvedText, allVariablesResolved } = await resolve(
-    schema,
-    schema.config.source,
-    true,
-  );
+  const { resolvedText, allVariablesResolved } = await resolve(schema, schema.config.source, true);
   const body = await createBodyObject();
   if (allVariablesResolved) {
     const response = await axios({
