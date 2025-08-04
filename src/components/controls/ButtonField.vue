@@ -158,17 +158,21 @@ async function runBtnLogic() {
   switch (schema.mode) {
     case 'action':
       const body = await createBodyObject();
-      let payloadObject = {
+      let payloadObject: any = {
         code: schema.config.code,
         body: body,
         params: {
           ...schema.config.params,
         },
       };
-      actionHandlerEventBus.emit('form-action', payloadObject);
+
       if (schema.config.emit) {
-        actionHandlerEventBus.emit('form-action', schema.config.emit);
+        payloadObject.callback = () => {
+          actionHandlerEventBus.emit('form-action', schema.config.emit);
+        };
       }
+
+      actionHandlerEventBus.emit('form-action', payloadObject);
 
       break;
     case 'form-and-action':
