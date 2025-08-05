@@ -158,7 +158,6 @@ vueSchemaFormEventBus.on(async (event, payload) => {
     init();
   }
 
-
   await resolveDependenciesBetweenTwoDuplicatedSections(payload);
 });
 
@@ -507,7 +506,8 @@ function wrapPropertiesWithIndexAndPath(
   for (let [key, value] of Object.entries(properties)) {
     if ('properties' in value) {
       wrapPropertiesWithIndexAndPath(value.properties as any, index);
-    } else if (value.layout?.schema) {
+    } else if (value.layout?.schema && value.layout.component !== 'fields-group') {
+      // dla grupy nie dodajemy klucza jest przeźroczysta
       value['path'] = props.schema.key;
       value['index'] = index;
       wrapPropertiesWithIndexAndPath(value.layout.schema.properties as any, index, value);
