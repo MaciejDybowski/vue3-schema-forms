@@ -227,7 +227,7 @@ function removeValue(item: User) {
   }
 }
 
-function makeInitials(item: any): string | undefined {
+function makeInitials(item: any): string {
   const { firstName, lastName, email } = item;
 
   const firstInitial =
