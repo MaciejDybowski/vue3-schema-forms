@@ -172,6 +172,7 @@ function datePick(val: Date) {
   const date = dayjs(val);
   if (date.isValid()) {
     localModel.value = date.format(modelFormat);
+    activeTabRef.value = 1
   }
 }
 
