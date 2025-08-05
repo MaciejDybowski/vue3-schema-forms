@@ -227,12 +227,28 @@ function removeValue(item: User) {
   }
 }
 
-function makeInitials(item: any) {
-  if ('firstName' in item && 'lastName' in item) {
-    return item.firstName.charAt(0).toUpperCase() + item.lastName.charAt(0).toUpperCase();
-  } else if ('email' in item) {
-    return item.email.charAt(0).toUpperCase() + item.email.charAt(1).toUpperCase();
+function makeInitials(item: any): string | undefined {
+  const { firstName, lastName, email } = item;
+
+  const firstInitial =
+    typeof firstName === 'string' && firstName.length > 0
+      ? firstName.charAt(0).toUpperCase()
+      : '';
+
+  const lastInitial =
+    typeof lastName === 'string' && lastName.length > 0
+      ? lastName.charAt(0).toUpperCase()
+      : '';
+
+  if (firstInitial || lastInitial) {
+    return firstInitial + lastInitial;
   }
+
+  if (typeof email === 'string' && email.length >= 2) {
+    return email.charAt(0).toUpperCase() + email.charAt(1).toUpperCase();
+  }
+
+  return "U";
 }
 
 function updateSearch(val: any) {
