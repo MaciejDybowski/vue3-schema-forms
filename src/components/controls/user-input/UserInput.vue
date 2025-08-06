@@ -2,6 +2,8 @@
   <dictionary-base
     v-model="localModel"
     v-model:menu="menu"
+    v-model:search="query"
+    :auto-select-first="false"
     :class="bindClass(schema) + requiredInputClass"
     :hide-no-data="false"
     :items="data"
@@ -13,7 +15,6 @@
     :no-data-text="t('userInput.noData')"
     :options="paginationOptions"
     :rules="!fieldProps.readonly ? rules : []"
-    :search="query"
     component="v-autocomplete"
     item-title="firstName"
     item-value="id"
@@ -22,7 +23,6 @@
     v-bind="fieldProps"
     @click="fetchData($event)"
     @loadMoreRecords="loadMoreRecords"
-    @update:search="updateSearch"
   >
     <template #selection="{ item }">
       <v-chip
@@ -231,14 +231,10 @@ function makeInitials(item: any): string {
   const { firstName, lastName, email } = item;
 
   const firstInitial =
-    typeof firstName === 'string' && firstName.length > 0
-      ? firstName.charAt(0).toUpperCase()
-      : '';
+    typeof firstName === 'string' && firstName.length > 0 ? firstName.charAt(0).toUpperCase() : '';
 
   const lastInitial =
-    typeof lastName === 'string' && lastName.length > 0
-      ? lastName.charAt(0).toUpperCase()
-      : '';
+    typeof lastName === 'string' && lastName.length > 0 ? lastName.charAt(0).toUpperCase() : '';
 
   if (firstInitial || lastInitial) {
     return firstInitial + lastInitial;
@@ -248,12 +244,7 @@ function makeInitials(item: any): string {
     return email.charAt(0).toUpperCase() + email.charAt(1).toUpperCase();
   }
 
-  return "U";
-}
-
-function updateSearch(val: any) {
-  query.value = val;
-  debounced.load('query');
+  return 'U';
 }
 
 function singleOptionAutoSelectFunction() {
@@ -281,10 +272,6 @@ onMounted(async () => {
 
   await initState(props.schema as EngineDictionaryField);
 
-  singleOptionAutoSelect.value =
-    'singleOptionAutoSelect' in props.schema.source && props.schema.source.singleOptionAutoSelect
-      ? props.schema.source.singleOptionAutoSelect
-      : false;
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);

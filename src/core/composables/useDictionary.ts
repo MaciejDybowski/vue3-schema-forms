@@ -24,6 +24,9 @@ export function useDictionary() {
   const { resolve } = useResolveVariables();
   const form = useInjectedFormModel();
 
+  let requestId = ref(0);
+  let controller: any = null;
+
   let providedChips: DictionaryItemChip[] = [];
   let loadCounter = ref(0);
   let source: DictionarySource = {} as DictionarySource;
@@ -145,10 +148,12 @@ export function useDictionary() {
       data.value = data.value.filter((item: any) => item[title.value].toLowerCase() === currentQuery.toLowerCase());
     }*/
     //!queryInData ? debounced.load('query') : debounced.load.cancel();
-    debounced.load('query')
+    debounced.load('query');
   });
 
   async function load(caller: string) {
+    if (controller) controller.abort();
+    controller = new AbortController();
     if (logger.dictionaryLogger) {
       console.debug(
         `[vue-schema-forms] => Dictionary load call function = ${caller}, queryBlocker=${queryBlocker.value} query=${query.value}, allVariablesResolved=${endpoint.allVariablesResolved}, endpoint=${endpoint.resolvedText}`,
@@ -161,21 +166,39 @@ export function useDictionary() {
       paginationOptions.value.resetPage();
       const { url, params } = prepareUrl();
       const combinedUrl = params != '' ? `${url}?${params}` : url;
-      const response = await axios.get(combinedUrl, {
-        params: lazy.value
-          ? {
-              page: paginationOptions.value.getPage(),
-              size: paginationOptions.value.getItemsPerPage(),
-              query: query.value && !queryBlocker.value ? query.value : null,
-            }
-          : {
-              query: query.value && !queryBlocker.value ? query.value : null,
-            },
-      });
 
-      data.value = get(response.data, responseReference.data, []);
+      try {
+        const response = await axios.get(combinedUrl, {
+          params: lazy.value
+            ? {
+                page: paginationOptions.value.getPage(),
+                size: paginationOptions.value.getItemsPerPage(),
+                query: query.value && !queryBlocker.value ? query.value : null,
+              }
+            : {
+                query: query.value && !queryBlocker.value ? query.value : null,
+              },
+          signal: controller.signal,
+        });
 
-      paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
+        data.value = get(response.data, responseReference.data, []);
+
+        paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
+      } catch (error: any) {
+        if (
+          axios.isCancel(error) ||
+          error.name === 'CanceledError' ||
+          error.name === 'AbortError'
+        ) {
+          // Request został anulowany - brak akcji
+          if (logger.dictionaryLogger) {
+            console.debug(`[vue-schema-forms] => call was canceled due to next call was triggered`);
+          }
+        } else {
+          console.error(error);
+        }
+      }
+
       loading.value = false;
     } else {
       if (logger.dictionaryLogger) {
