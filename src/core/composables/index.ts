@@ -12,3 +12,4 @@ export { useFormModel } from './useFormModel';
 export { useDateFormat } from './useDateFormat';
 export { useResolveVariables } from './useResolveVariables';
 export { useExpression } from './useExpression';
+export { useDependencies } from './useDependencies';

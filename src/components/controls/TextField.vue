@@ -16,6 +16,7 @@ import { computed, onMounted } from 'vue';
 
 import {
   useClass,
+  useDependencies,
   useExpression,
   useFormModel,
   useLabel,
@@ -37,6 +38,7 @@ const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { resolveExpression } = useExpression();
+const { handleDependency } = useDependencies();
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
@@ -54,7 +56,24 @@ const localModel = computed({
 async function runExpressionIfExist() {
   if (props.schema.expression && props.schema.expression !== '') {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
-    localModel.value = await resolveExpression(props.schema, props.schema.key, expression, props.model);
+    localModel.value = await resolveExpression(
+      props.schema,
+      props.schema.key,
+      expression,
+      props.model,
+    );
+  }
+}
+
+async function runDependencyExpressionIfExist() {
+  if (props.schema.dependency && props.schema.dependency !== '') {
+    const expression = fillPath(props.schema.path, props.schema.index, props.schema.dependency);
+    localModel.value = await handleDependency(
+      props.schema,
+      props.schema.key,
+      expression,
+      props.model,
+    );
   }
 }
 
@@ -77,6 +96,7 @@ onMounted(async () => {
   await bindRules(props.schema);
   await bindProps(props.schema);
   await runExpressionIfExist();
+  await runDependencyExpressionIfExist()
 });
 </script>
 

@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.2.13-snapshot-3",
+  "version": "0.2.14",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -65,7 +65,7 @@
     "vue": "^3.4.27",
     "vue-i18n": "^9.13.1",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.8.1"
+    "vuetify": "3.8.1"
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",

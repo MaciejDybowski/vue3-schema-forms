@@ -429,3 +429,52 @@ export const Story2: Story = {
     },
   },
 };
+
+export const Story: Story = {
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        options: {
+          label: 'Options',
+          layout: { component: 'radio-button' },
+          source: {
+            items: [
+              { value: 1, title: 'Option 1' },
+              { value: 2, title: 'Option 2' },
+              {
+                value: 3,
+                title: 'Option 3',
+              },
+            ],
+            returnObject: true,
+          },
+        },
+        item: {
+          label: 'Item',
+          layout: { component: 'select', if: 'nata(options.value=1)' },
+          source: {
+            items: [
+              { value: 'option1', title: 'Option 1' },
+              {
+                value: 'option2',
+                title: 'Option 2',
+              },
+              { value: 'option3', title: 'Option 3' },
+            ],
+            returnObject: true,
+          },
+        },
+        projectName: {
+          label: 'Project Name',
+          layout: { component: 'text-field' },
+          dependency: 'item.value',
+          dependencyTriggers: ['item'],
+        },
+      },
+      required: ["projectName"]
+    },
+  },
+  parameters: {},
+};

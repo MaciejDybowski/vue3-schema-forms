@@ -41,4 +41,8 @@ export interface EngineField {
   // key-value-list && duplicated-section
   sourcePath?: string;
   updateTriggers?: Array<string>
+
+  // dependencies
+  dependency?: string,
+  dependencyTriggers?: Array<string>,
 }
