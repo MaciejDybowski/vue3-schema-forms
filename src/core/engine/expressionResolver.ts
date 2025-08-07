@@ -17,12 +17,19 @@ export const functions: Record<string, Function> = {
 };
 
 export async function JSONATA(expression: string, model: object) {
-  let regex = /JSONATA\((.*?)\)/;
-  let match = regex.exec(expression);
-  if (match) {
-    let nataExpression = expression.slice(8).slice(0, -1);
-    const nata = jsonata(nataExpression);
-    return await nata.evaluate(model);
+  try {
+    let regex = /JSONATA\((.*?)\)/;
+    let match = regex.exec(expression);
+    if (match) {
+      let nataExpression = expression.slice(8).slice(0, -1);
+      const nata = jsonata(nataExpression);
+      return await nata.evaluate(model);
+    }
+  } catch (err: any) {
+    console.error('JSONata error:', {
+      message: err.message,
+      expression: expression,
+    });
   }
 }
 
