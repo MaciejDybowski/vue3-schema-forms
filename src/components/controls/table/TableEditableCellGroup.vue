@@ -9,6 +9,7 @@
       :class="`${item.class}`"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
+      :rules="rulesMap[item.valueMapping]"
       v-bind="{
         ...attrs,
         density: 'compact',
@@ -28,12 +29,13 @@
     <v-text-field
       v-if="item.type == 'NUMBER' && shouldRenderMap[item.valueMapping]"
       :class="[
-        (item.rules && item.rules.length > 0) || items.length <= 1
+        (item.validations && item.validations.length > 0) || items.length <= 1
           ? `content-right ${item.class}`
           : `pb-4 content-right ${item.class}`,
       ]"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
+      :rules="rulesMap[item.valueMapping]"
       v-bind="{
         ...attrs,
         density: 'compact',
@@ -62,6 +64,7 @@
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
       :return-object="getReturnObjectFlag(item.valueMapping)"
+      :rules="rulesMap[item.valueMapping]"
       v-bind="{
         ...attrs,
         density: 'compact',
@@ -88,6 +91,7 @@
       :no-filter="true"
       :options="paginationOptions"
       :return-object="getReturnObjectFlag(item.valueMapping)"
+      :rules="rulesMap[item.valueMapping]"
       component="v-autocomplete"
       v-bind="{
         ...attrs,
@@ -117,6 +121,7 @@ import { Pagination } from '@/components/controls/dictionary/Pagination';
 import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
 
 import { useNumber } from '@/core/composables/useNumber';
+import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
 import type { HeaderEditableObject, TableHeader } from '@/types/shared/Source';
 
 const props = defineProps<{ header: TableHeader; items: HeaderEditableObject[]; row: object }>();
@@ -209,6 +214,26 @@ function getItemsUrlForDictionary(valueMapping: string) {
 /* Dla wyrażen jsonata bo z racji ze to generuje w petli to nie podepne funckji asynchronicznej w template */
 const shouldRenderMap = ref<Record<string, boolean>>({});
 const shouldReadonlyMap = ref<Record<string, boolean>>({});
+const rulesMap = ref<Record<string, any[]>>({});
+
+async function computeRulesForField(items: HeaderEditableObject[]) {
+  const newMap: Record<string, any[]> = {};
+  for (const item of items) {
+    let rules: any[] = [];
+
+    item.validations?.forEach((ruleDefinition: SchemaSimpleValidation) => {
+      rules.push(async (value: any) => {
+        const nata = jsonata(ruleDefinition.rule as string);
+        const conditionResult = await nata.evaluate(props.row);
+
+        if (conditionResult) return true;
+        return ruleDefinition.message;
+      });
+    });
+    newMap[item.valueMapping] = rules;
+  }
+  rulesMap.value = newMap;
+}
 
 async function computeShouldRender(items: HeaderEditableObject[]) {
   const newMap: Record<string, boolean> = {};
@@ -245,6 +270,10 @@ const hasConditionVisibility = computed(() => {
 
 const hasConditionReadonly = computed(() => {
   return props.items.some((item) => !!item.readonly);
+});
+
+const hasValidations = computed(() => {
+  return props.items.some((item) => !!item.validations);
 });
 
 const dictData = ref([]);
@@ -299,12 +328,14 @@ async function updateSearch(val: string, item: any, index: number) {
 onMounted(async () => {
   await computeShouldReadonly(props.items);
   await computeShouldRender(props.items);
-  if (hasConditionVisibility.value || hasConditionReadonly.value) {
+  await computeRulesForField(props.items);
+  if (hasConditionVisibility.value || hasConditionReadonly.value || hasValidations.value) {
     watch(
       () => props.row,
       async () => {
         await computeShouldReadonly(props.items);
         await computeShouldRender(props.items);
+        await computeRulesForField(props.items);
       },
       { deep: true },
     );

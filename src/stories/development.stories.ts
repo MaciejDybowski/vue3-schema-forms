@@ -2,6 +2,8 @@
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
+import { Schema } from "../types/schema/Schema";
+import { TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW } from "./mock-responses";
 
 
 
@@ -2168,6 +2170,81 @@ export const Story5 = {
         },
       },
       required: ['rodzajDelegacji', 'cbZobowiazanie'],
+    },
+  },
+};
+
+export const TextEditableField: Story = {
+  name: 'Editable field: Text',
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        span: {
+          content: '',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: 'table-view',
+          },
+          source: {
+            data: '/mock-data/table-view-mock',
+            headers: [
+              {
+                title: 'Id',
+                key: 'id',
+                valueMapping: 'dataId',
+                type: 'TEXT',
+              },
+              {
+                title: 'Location Collection',
+                key: 'location-collection',
+                editable: [
+                  {
+                    type: 'TEXT',
+                    title: 'Location',
+                    key: 'location',
+                    valueMapping: 'location',
+                    validations: [
+                      {
+                        name: 'valid-sth',
+                        rule: 'location="Brazil"',
+                        message: 'For some reason this value is not allowed.',
+                      },
+                    ]
+                  },
+                ],
+                properties: { minWidth: '200px', maxWidth: '200px', width: '100px' },
+                key: 'height-collection',
+                type: 'COLLECTION',
+              },
+              {
+                title: 'Height',
+                key: 'height',
+                valueMapping: 'height',
+                type: 'TEXT',
+              },
+              {
+                title: 'Base',
+                key: 'base',
+                valueMapping: 'base',
+                type: 'TEXT',
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
     },
   },
 };
