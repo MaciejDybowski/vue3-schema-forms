@@ -498,7 +498,7 @@ function init(): void {
   jest uzupełniany dynamicznie. Sprawdzałem na zagnieżdzonych tablicach typu: {products[].items[].item} w połączeniu z logiką
   w useResolveVariable daje niezłe możliwości
 */
-function wrapPropertiesWithIndexAndPath(
+function wrapPropertiesWithIndexAndPathOld(
   properties: Record<string, SchemaField>,
   index: number,
   rootSchema: any = null,
@@ -527,6 +527,35 @@ function wrapPropertiesWithIndexAndPath(
       value['index'] = index;
     }
   }
+  return properties;
+}
+
+function wrapPropertiesWithIndexAndPath(
+  properties: Record<string, SchemaField>,
+  index: number,
+  rootSchema: any = null,
+): Record<string, SchemaField> {
+  for (let [key, value] of Object.entries(properties)) {
+    const isNestedFieldExist = value.properties;
+    const isDuplicatedSection =
+      value.layout?.schema && value.layout.component == 'duplicated-section';
+    const isSimpleField =
+      value.layout?.component !== 'fields-group' && value.layout?.component != 'duplicated-section';
+
+    if (isNestedFieldExist) {
+      wrapPropertiesWithIndexAndPath(value.properties as any, index);
+    } else {
+      if (props.schema['path'] !== undefined && props.schema['index'] != undefined) {
+        const rootPath = props.schema.path?.replace("[]", "")
+        value['path'] = rootPath + '[' + props.schema['index'] + '].' + props.schema.key + '[]';
+      } else {
+        value['path'] = props.schema.key + '[]';
+      }
+
+      value['index'] = index;
+    }
+  }
+
   return properties;
 }
 
