@@ -6,6 +6,7 @@
   >
     <v-text-field
       v-if="item.type == 'TEXT' && shouldRenderMap[item.valueMapping]"
+      ref="tableCellTextInput"
       :class="`${item.class}`"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
@@ -16,13 +17,7 @@
         readonly: shouldReadonlyMap[item.valueMapping] || attrs.readonly === true,
       }"
       width="100%"
-      @input="
-        (e: any) =>
-          emit('update:field', {
-            value: e.target.value,
-            valueMapping: item.valueMapping,
-          })
-      "
+      @input="(e: any) => updateValue(e, item)"
       @keyup.enter="(e: any) => e.target.blur()"
     />
 
@@ -44,13 +39,7 @@
       width="100%"
       @focusin="showFormattedNumber[index] = false"
       @focusout="showFormattedNumber[index] = true"
-      @input="
-        (e: any) =>
-          emit('update:field', {
-            value: e.target.value.replaceAll(',', '.'),
-            valueMapping: item.valueMapping,
-          })
-      "
+      @input="(e: any) => updateValue(e, item)"
       @keyup.enter="(e: any) => e.target.blur()"
     />
 
@@ -128,6 +117,28 @@ const props = defineProps<{ header: TableHeader; items: HeaderEditableObject[]; 
 const emit = defineEmits<{ (e: 'update:field', val: any): void }>();
 const attrs = useAttrs();
 const { formattedNumber } = useNumber();
+
+
+async function updateValue(e: any, item: any) {
+  const rules = rulesMap.value[item.valueMapping] || [];
+
+  async function areAllValid(value: any) {
+    for (const rule of rules) {
+      const result = await rule(value);
+      if (result !== true) return false;
+    }
+    return true;
+  }
+
+  const isValid = await areAllValid(e.target.value);
+
+  if (isValid) {
+    emit('update:field', {
+      value: e.target.value,
+      valueMapping: item.valueMapping,
+    });
+  }
+}
 
 function getPrecision(valueMapping: string, index: number) {
   // invoicePrice:0:NUMBER:2
@@ -224,7 +235,13 @@ async function computeRulesForField(items: HeaderEditableObject[]) {
     item.validations?.forEach((ruleDefinition: SchemaSimpleValidation) => {
       rules.push(async (value: any) => {
         const nata = jsonata(ruleDefinition.rule as string);
-        const conditionResult = await nata.evaluate(props.row);
+
+        const tempRow = {
+          ...props.row,
+          [item.valueMapping]: value,
+        };
+        console.debug(tempRow);
+        const conditionResult = await nata.evaluate(tempRow);
 
         if (conditionResult) return true;
         return ruleDefinition.message;
