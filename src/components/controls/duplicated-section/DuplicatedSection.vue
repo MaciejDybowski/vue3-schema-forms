@@ -551,6 +551,7 @@ function wrapPropertiesWithIndexAndPath(
         value['path'] = props.schema.key + '[]';
         value['index'] = index;
       }
+      // @ts-ignore
       wrapPropertiesWithIndexAndPath(value.layout.schema.properties, index, value);
     }
 
