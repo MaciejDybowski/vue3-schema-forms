@@ -538,22 +538,30 @@ function wrapPropertiesWithIndexAndPath(
   for (let [key, value] of Object.entries(properties)) {
     const isNestedFieldExist = value.properties;
     const isDuplicatedSection =
-      value.layout?.schema && value.layout.component == 'duplicated-section';
-    const isSimpleField =
-      value.layout?.component !== 'fields-group' && value.layout?.component != 'duplicated-section';
+      value.layout && value.layout.schema && value.layout.component == 'duplicated-section';
+    const isFieldGroup =
+      value.layout && value.layout.schema && value.layout.component == 'fields-group';
 
     if (isNestedFieldExist) {
       wrapPropertiesWithIndexAndPath(value.properties as any, index);
-    } else {
-      if (props.schema['path'] !== undefined && props.schema['index'] != undefined) {
-        const rootPath = props.schema.path?.replace("[]", "")
-        value['path'] = rootPath + '[' + props.schema['index'] + '].' + props.schema.key + '[]';
-      } else {
-        value['path'] = props.schema.key + '[]';
-      }
-
-      value['index'] = index;
     }
+
+    if (isDuplicatedSection || isFieldGroup) {
+      if (isDuplicatedSection) {
+        value['path'] = props.schema.key + '[]';
+        value['index'] = index;
+      }
+      wrapPropertiesWithIndexAndPath(value.layout.schema.properties, index, value);
+    }
+
+    if (props.schema['path'] !== undefined && props.schema['index'] != undefined) {
+      const rootPath = props.schema.path?.replace('[]', '');
+      value['path'] = rootPath + '[' + props.schema['index'] + '].' + props.schema.key + '[]';
+    } else {
+      value['path'] = props.schema.key + '[]';
+    }
+
+    value['index'] = index;
   }
 
   return properties;
