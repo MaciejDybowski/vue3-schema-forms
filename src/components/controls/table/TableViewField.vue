@@ -45,11 +45,14 @@
             cols="auto"
           >
             <v-btn
+              style="text-transform: none"
               v-bind="{
                 ...tableButtonDefaultProps,
+                disabled: action.disabled as boolean,
               }"
-              @click="() => {}"
+              @click="doRowsActions(action)"
             >
+              <v-icon class="mr-1">{{ action.icon }}</v-icon>
               {{
                 typeof action.title == 'string'
                   ? action.title
@@ -122,7 +125,6 @@
         />
       </template>
     </v-data-table-server>
-    <pre>{{ selectedItems }}</pre>
 
     <v-dialog
       v-model="actionPopup.show"
@@ -252,7 +254,6 @@ const actionPopup = reactive<{
 });
 
 const tableButtonDefaultProps = {
-  rounded: true,
   size: 'small',
   color: 'primary',
 };
@@ -261,6 +262,7 @@ const headers: ComputedRef<TableHeader[]> = computed(() => {
   return props.schema.source.headers.map(buildHeader);
 });
 
+// Rows action section
 const selectedItems = ref([]);
 const showSelect = computed(() => {
   return props.schema.source.showSelect ? props.schema.source.showSelect : false;
@@ -270,48 +272,77 @@ const idMapper = computed(() => {
 });
 const availableRowActions: Ref<Array<TableHeaderAction>> = ref([]);
 
-watch(
-  () => selectedItems.value,
-  async () => {
-    const allActions: TableHeaderAction[] =
-      headers.value.find((item) => item.key === 'actions')?.actions || [];
+if (showSelect.value) {
+  watch(
+    () => selectedItems.value,
+    async () => {
+      let allActions: TableHeaderAction[] =
+        headers.value.find((item) => item.key === 'actions')?.actions || [];
 
-    if (selectedItems.value.length === 0) {
-      availableRowActions.value = [];
-      return;
-    }
+      allActions = allActions.filter((item: TableHeaderAction) => item.multiSelect);
 
-    const actionsPerRow: string[][] = await Promise.all(
-      selectedItems.value.map(async (row) => {
-        const validCodes = await Promise.all(
-          allActions.map(async (action) => {
-            if (!action.condition) {
-              return action.code ?? null;
-            }
-            try {
-              const nata = jsonata(action.condition);
-              const result = await nata.evaluate(row);
-              return Boolean(result) ? (action.code ?? null) : null;
-            } catch (e) {
-              console.error('Błąd w condition:', e, action);
-              return null;
-            }
-          }),
-        );
-        return validCodes.filter((c): c is string => c !== null);
-      }),
-    );
-    const commonIds: string[] = actionsPerRow.reduce((acc, curr) => {
-      const currSet = new Set(curr);
-      return acc.filter((x) => currSet.has(x));
-    });
-    const commonActions = commonIds.map((code) => allActions.find((a) => a.code === code)!);
+      if (selectedItems.value.length === 0) {
+        availableRowActions.value = [];
+        return;
+      }
 
-    availableRowActions.value = commonActions;
-    console.log('🟢 CommonActions:', commonActions);
-  },
-  { deep: true },
-);
+      const actionsPerRow: string[][] = await Promise.all(
+        selectedItems.value.map(async (row) => {
+          const validCodes = await Promise.all(
+            allActions.map(async (action) => {
+              if (!action.condition) {
+                return action.title ?? null;
+              }
+              try {
+                const nata = jsonata(action.condition);
+                const result = await nata.evaluate(row);
+                return Boolean(result) ? (action.title ?? null) : null;
+              } catch (e) {
+                console.error('Błąd w condition:', e, action);
+                return null;
+              }
+            }),
+          );
+          return validCodes.filter((c): c is string => c !== null);
+        }),
+      );
+      const commonIds: string[] = actionsPerRow.reduce((acc, curr) => {
+        const currSet = new Set(curr);
+        return acc.filter((x) => currSet.has(x));
+      });
+      let commonActions = commonIds
+        .map((title) => allActions.find((a) => a.title === title)!)
+        .map((action) => {
+          action.disabled = fieldProps.value.readonly == true;
+          return action;
+        });
+
+      //@ts-ignore
+      availableRowActions.value = commonActions;
+    },
+    { deep: true },
+  );
+}
+
+async function doRowsActions(action: TableHeaderAction) {
+  const actionConfigWithoutCode: Record<string, any> = cloneDeep(action.config);
+  delete actionConfigWithoutCode.code;
+  delete actionConfigWithoutCode.body;
+  const body = await Promise.all(
+    selectedItems.value.map(async (item) => {
+      return await createBodyObjectFromRow(action.config, item);
+    })
+  );
+
+  let payloadObject = {
+    code: action.code,
+    body: body,
+    params: { ...actionConfigWithoutCode.params },
+  };
+  actionHandlerEventBus.emit('form-action', payloadObject);
+}
+
+// Rows action section end
 
 const buildHeader = (item: TableHeader): TableHeader => {
   const {
@@ -499,7 +530,7 @@ async function runTableActionLogic(
 
     case 'popup':
       actionPopup.errorMessages = [];
-      actionPopup.title = action.title;
+      actionPopup.title = action.title as string;
       set(
         actionPopup.model,
         action.modelReference ? action.modelReference : '',

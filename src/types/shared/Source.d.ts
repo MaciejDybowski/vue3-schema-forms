@@ -47,6 +47,7 @@ export interface TableHeaderAction {
   code?: string;
   condition?: string;
   disabled?: string | boolean;
+  multiSelect?: boolean
 
   // popup mode
   schema?: any;
