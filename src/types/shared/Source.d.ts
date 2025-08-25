@@ -8,6 +8,8 @@ export interface Source {
 
 export interface TableSource {
   headers: TableHeader[];
+  showSelect?: boolean;
+  idMapper?: string;
   data: string;
   buttons?: TableButton[];
 }
@@ -37,7 +39,7 @@ export interface HeaderEditableObject {
 }
 
 export interface TableHeaderAction {
-  title: string;
+  title: string | { $ref: string };
   icon: string;
   props?: Record<string, any>;
   mode: "action" | string;

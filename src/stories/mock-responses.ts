@@ -10,6 +10,7 @@ export const generatePageData = (page, size) => {
   const endIndex = startIndex + size;
 
   const data = Array.from({ length: totalItems }, (_, index) => ({
+    id: index,
     name: randomItem(names),
     location: randomItem(locations),
     height: Math.floor(Math.random() * 10000) + 1000, // Generowanie wysokości między 1000 a 11000

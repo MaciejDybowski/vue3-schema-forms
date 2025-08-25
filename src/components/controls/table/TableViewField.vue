@@ -1,16 +1,20 @@
 <template>
   <div>
     <v-data-table-server
+      v-model="selectedItems"
       v-model:items-per-page="tableOptions.itemsPerPage"
       v-model:loading="loading"
       v-model:page="tableOptions.page"
       v-model:sort-by="tableOptions.sortBy"
       :headers="headers"
       :hover="true"
+      :item-value="idMapper"
       :items="items"
       :items-length="itemsTotalElements"
+      :show-select="showSelect"
       class="custom-table"
       density="compact"
+      return-object
       @update:options="updateOptions"
     >
       <template #top>
@@ -31,6 +35,25 @@
                 typeof button.label == 'string'
                   ? button.label
                   : '#' + button.label.$ref.split('/').pop()
+              }}
+            </v-btn>
+          </v-col>
+
+          <v-spacer />
+          <v-col
+            v-for="action in availableRowActions"
+            cols="auto"
+          >
+            <v-btn
+              v-bind="{
+                ...tableButtonDefaultProps,
+              }"
+              @click="() => {}"
+            >
+              {{
+                typeof action.title == 'string'
+                  ? action.title
+                  : '#' + action.title.$ref.split('/').pop()
               }}
             </v-btn>
           </v-col>
@@ -99,6 +122,7 @@
         />
       </template>
     </v-data-table-server>
+    <pre>{{ selectedItems }}</pre>
 
     <v-dialog
       v-model="actionPopup.show"
@@ -144,7 +168,7 @@ import get from 'lodash/get';
 import set from 'lodash/set';
 import { useTheme } from 'vuetify';
 
-import { ComputedRef, Ref, computed, onMounted, reactive, ref } from 'vue';
+import { ComputedRef, Ref, computed, onMounted, reactive, ref, watch } from 'vue';
 
 import TableCellWrapper from '@/components/controls/table/TableCellWrapper.vue';
 import TableFooterCell from '@/components/controls/table/TableFooterCell.vue';
@@ -236,6 +260,58 @@ const tableButtonDefaultProps = {
 const headers: ComputedRef<TableHeader[]> = computed(() => {
   return props.schema.source.headers.map(buildHeader);
 });
+
+const selectedItems = ref([]);
+const showSelect = computed(() => {
+  return props.schema.source.showSelect ? props.schema.source.showSelect : false;
+});
+const idMapper = computed(() => {
+  return props.schema.source.idMapper ? props.schema.source.idMapper : 'dataId';
+});
+const availableRowActions: Ref<Array<TableHeaderAction>> = ref([]);
+
+watch(
+  () => selectedItems.value,
+  async () => {
+    const allActions: TableHeaderAction[] =
+      headers.value.find((item) => item.key === 'actions')?.actions || [];
+
+    if (selectedItems.value.length === 0) {
+      availableRowActions.value = [];
+      return;
+    }
+
+    const actionsPerRow: string[][] = await Promise.all(
+      selectedItems.value.map(async (row) => {
+        const validCodes = await Promise.all(
+          allActions.map(async (action) => {
+            if (!action.condition) {
+              return action.code ?? null;
+            }
+            try {
+              const nata = jsonata(action.condition);
+              const result = await nata.evaluate(row);
+              return Boolean(result) ? (action.code ?? null) : null;
+            } catch (e) {
+              console.error('Błąd w condition:', e, action);
+              return null;
+            }
+          }),
+        );
+        return validCodes.filter((c): c is string => c !== null);
+      }),
+    );
+    const commonIds: string[] = actionsPerRow.reduce((acc, curr) => {
+      const currSet = new Set(curr);
+      return acc.filter((x) => currSet.has(x));
+    });
+    const commonActions = commonIds.map((code) => allActions.find((a) => a.code === code)!);
+
+    availableRowActions.value = commonActions;
+    console.log('🟢 CommonActions:', commonActions);
+  },
+  { deep: true },
+);
 
 const buildHeader = (item: TableHeader): TableHeader => {
   const {

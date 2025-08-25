@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 import { Schema } from '../types/schema/Schema';
-import { TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW } from './mock-responses';
+import { TABLE_PAGE_WITH_AGGREGATES, TABLE_PAGE_WITHOUT_AGGREGATES, UPDATE_TABLE_ROW } from "./mock-responses";
 
 
 
@@ -1931,3 +1931,104 @@ export const level3th = {
     },
   },
 };
+
+
+export const groupActions = {
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        span: {
+          content: 'Basic display all data as a text values',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: 'table-view',
+          },
+          source: {
+            data: '/mock-data/table-view-mock',
+            showSelect:true,
+            idMapper:"id",
+            headers: [
+              {
+                title: 'Id',
+                key: 'id',
+                valueMapping: 'id',
+                type: 'TEXT',
+              },
+              {
+                title: 'Name',
+                key: 'name',
+                valueMapping: 'name',
+                type: 'TEXT',
+              },
+              {
+                title: 'Location',
+                key: 'location',
+                valueMapping: 'location',
+                type: 'TEXT',
+              },
+              {
+                title: 'Height',
+                key: 'height',
+                valueMapping: 'height',
+                type: 'NUMBER',
+              },
+              {
+                title: 'Actions',
+                key: 'actions',
+                actions: [
+                  {
+                    title: 'Delete',
+                    icon: 'mdi-delete-outline',
+                    mode: 'action',
+                    code: 'delete',
+                    condition: "id=1",
+                    config: {
+                      params: {
+                        script: 'delete_product_from_offer',
+                      },
+                      body: {
+                        name: '{name}',
+                      },
+                    },
+                    props: {
+                      color: 'error',
+                    },
+                  },
+                  {
+                    title: 'Pallet shipping',
+                    icon: 'mdi-shipping-pallet',
+                    mode: 'action',
+                    code: 'pallet',
+                    config: {
+                      params: {
+                        script: 'add_pallet_price',
+                      },
+                      body: {
+                        name: '{name}',
+                      },
+                    },
+                    props: {
+                      color: 'primary',
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
+    },
+  },
+}
