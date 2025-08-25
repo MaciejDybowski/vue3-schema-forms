@@ -94,7 +94,6 @@ export function useResolveVariables() {
     fieldIndex: number | undefined,
     variable: string,
   ) {
-
     if (!fieldPath) return variable;
 
     const splitPath = fieldPath.split('.');
@@ -118,6 +117,10 @@ export function useResolveVariables() {
     const { typeOfValue, defaultValue, formatterProps, titleReference, rawNumber } = valueProps;
 
     const isValidDate = (val: any) => dayjs(val).isValid();
+
+    if (typeOfValue === 'TEXT' && value) {
+      return value + '';
+    }
 
     if (typeOfValue === 'DATETIME' && value) {
       if (!isValidDate(value) || defaultValue === value) return value;
