@@ -310,12 +310,7 @@ if (showSelect.value) {
         const currSet = new Set(curr);
         return acc.filter((x) => currSet.has(x));
       });
-      let commonActions = commonIds
-        .map((title) => allActions.find((a) => a.title === title)!)
-        .map((action) => {
-          action.disabled = fieldProps.value.readonly == true;
-          return action;
-        });
+      let commonActions = commonIds.map((title) => allActions.find((a) => a.title === title)!);
 
       //@ts-ignore
       availableRowActions.value = commonActions;
@@ -331,7 +326,7 @@ async function doRowsActions(action: TableHeaderAction) {
   const body = await Promise.all(
     selectedItems.value.map(async (item) => {
       return await createBodyObjectFromRow(action.config, item);
-    })
+    }),
   );
 
   let payloadObject = {
