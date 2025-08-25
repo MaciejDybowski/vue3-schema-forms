@@ -118,8 +118,7 @@ const emit = defineEmits<{ (e: 'update:field', val: any): void }>();
 const attrs = useAttrs();
 const { formattedNumber } = useNumber();
 
-
-async function updateValue(e: any, item: any) {
+async function updateValue(e: any, item: HeaderEditableObject) {
   const rules = rulesMap.value[item.valueMapping] || [];
 
   async function areAllValid(value: any) {
@@ -132,9 +131,15 @@ async function updateValue(e: any, item: any) {
 
   const isValid = await areAllValid(e.target.value);
 
+  let inputValue = e.target.value;
+  if (item.type == 'NUMBER') {
+    let value = (inputValue + '').replaceAll(',', '.');
+    inputValue = parseFloat(value);
+  }
+
   if (isValid) {
     emit('update:field', {
-      value: e.target.value,
+      value: inputValue,
       valueMapping: item.valueMapping,
     });
   }
