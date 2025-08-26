@@ -24,10 +24,56 @@ export default {
 
 type Story = StoryObj<typeof FormStoryWrapper>;
 
+export const task2 = {
+  args: {
+    formModel: {},
+    schema: {
+      properties: {
+        switch: {
+          label: 'switch',
+          layout: {
+            component: 'switch',
+          },
+        },
+        item2: {
+          label: 'item2',
+          layout: {
+            component: 'number-field',
+            if: 'nata(switch)',
+          },
+        },
+        item1: {
+          label: 'item1',
+          layout: {
+            component: 'number-field',
+            if: 'nata(switch)',
+          },
+          calculation: '2+2',
+        },
+        item3: {
+          label: 'item3',
+          layout: {
+            component: 'number-field',
+            if: 'nata(switch)',
+          },
+          expression: 'JSONATA(2+2)',
+        },
+        static:{
+          content:"test",
+          layout: {
+            component: 'static-content',
+            tag: "span",
+            if: 'nata(switch)',
+          }
+        }
+      },
+    },
+  },
+};
+
 export const task1 = {
   args: {
     formModel: {
-
       rodzajDelegacji: [
         {
           value: 'krajowa',
@@ -42,28 +88,22 @@ export const task1 = {
         {
           podrozDelegacjiZagr: [
             {
-
               dataWyjazduZagr: '2025-08-22T00:00:00.000+02:00',
               dataPrzyjazduZagr: '2025-08-22T01:00:00.000+02:00',
-
             },
             {
-
               dataWyjazduZagr: '2025-08-22T02:01:00.000+02:00',
               dataPrzyjazduZagr: '2025-08-24T22:00:00.000+02:00',
               liczbaKmZagr: 1500,
             },
             {
-
               dataWyjazduZagr: '2025-08-27T00:00:00.000+02:00',
               dataPrzyjazduZagr: '2025-08-29T00:00:00.000+02:00',
               liczbaKmZagr: 900,
             },
           ],
-        }
+        },
       ],
-
-
     },
     schema: {
       type: 'object',
@@ -163,7 +203,6 @@ export const task1 = {
                                   layout: {
                                     component: 'number-field',
                                     props: { suffix: 'ms', 'persistent-hint': true },
-
                                   },
                                   type: 'int',
                                   expression:
@@ -313,7 +352,6 @@ export const task1 = {
                           },
                           editable: true,
                           showElements: true,
-
                         },
                         rozdzielaczCzasu: {
                           layout: { component: 'divider' },
@@ -392,7 +430,6 @@ export const task1 = {
                           expression:
                             'JSONATA($floor(((layoutCelDelegacjiZagr[].czasDelegacjiZagranicznej ? layoutCelDelegacjiZagr[].czasDelegacjiZagranicznej : 0) -(layoutCelDelegacjiZagr[].czasPrywatnyDelegacjiZagranicznej ? layoutCelDelegacjiZagr[].czasPrywatnyDelegacjiZagranicznej : 0))%(1000 * 60 * 60 * 24)) % (1000 * 60 * 60) / (1000 * 60))',
                         },
-
                       },
                       required: [
                         'krajZagr',
@@ -511,8 +548,6 @@ export const task1 = {
                   expression:
                     'JSONATA($floor(((calkowityCzasDelegacjiZagranicznej ? calkowityCzasDelegacjiZagranicznej : 0) -(calkowityCzasPrywatnyDelegacjiZagranicznej ? calkowityCzasPrywatnyDelegacjiZagranicznej : 0))%(1000 * 60 * 60 * 24)) % (1000 * 60 * 60) / (1000 * 60))',
                 },
-
-
               },
             },
             props: {},
@@ -521,7 +556,6 @@ export const task1 = {
             if: "nata('zagraniczna' in rodzajDelegacji.value)",
           },
         },
-
       },
       required: ['rodzajDelegacji', 'celPodrozy', 'miejsceDocelowePodrozy', 'cbZobowiazanie'],
     },

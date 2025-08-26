@@ -70,8 +70,16 @@ export function useConditionalRendering() {
     resetModelValueWhenFalse(model, schema);
   }
 
+  function checkIfComponentIsStatic(schema: EngineField): boolean {
+    return !(schema.layout.component == 'static-content' ||
+      schema.layout.component == 'alert' ||
+      schema.layout.component == 'button' ||
+      schema.layout.component == 'divider' ||
+      schema.layout.component == 'table-view');
+  }
+
   function resetModelValueWhenFalse(model: object, schema: EngineField) {
-    if (lastValueOfShouldRender.value && !shouldRender.value) {
+    if (lastValueOfShouldRender.value && !shouldRender.value && checkIfComponentIsStatic(schema)) {
       if (schema.layout.component == 'fields-group') {
         const internalSchema = schema.layout.schema as Schema;
         resetModelValues(internalSchema, schema);
@@ -113,5 +121,19 @@ export function useConditionalRendering() {
     //}
   }
 
-  return { shouldRender, shouldRenderField };
+  async function conditionalRenderBlocker(field: EngineField): Promise<boolean> {
+    if (field.layout.if != undefined) {
+      const mergedModel = form.getFormModelForResolve.value;
+      const ifExpression = fillPath(
+        field.path as string,
+        field.index as number,
+        field.layout.if.slice(5, -1),
+      );
+      const nata = jsonata(ifExpression);
+      return (await nata.evaluate(mergedModel)) as boolean;
+    }
+    return true
+  }
+
+  return { shouldRender, shouldRenderField, conditionalRenderBlocker };
 }

@@ -3,8 +3,10 @@ import get from 'lodash/get';
 
 import { ref } from 'vue';
 
+import { useConditionalRendering } from '@/core/composables/useConditionalRendering';
 import { useGeneratorCache } from '@/core/composables/useGeneratorCache';
 import { useNumber } from '@/core/composables/useNumber';
+import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
@@ -16,6 +18,7 @@ export function useExpression() {
   const form = useInjectedFormModel();
   const cache = useGeneratorCache();
   const { roundTo } = useNumber();
+  const { conditionalRenderBlocker } = useConditionalRendering();
 
   async function resolveExpression(
     schema: EngineField,
@@ -67,8 +70,7 @@ export function useExpression() {
     model: object,
   ) {
     await new Promise((resolve) => setTimeout(resolve, 30));
-
-
+    if (!(await conditionalRenderBlocker(schema))) return;
 
     const functionName = extractFunctionName(expression);
     if (!functionName) return;

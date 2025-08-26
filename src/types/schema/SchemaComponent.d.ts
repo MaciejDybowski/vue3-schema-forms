@@ -21,4 +21,6 @@ export type SchemaComponent =
   | 'user-input'
   | 'fields-group'
   | 'image'
+  | 'divider'
+  | 'table-view'
   | 'alert';

@@ -11,6 +11,7 @@ import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { logger } from '@/main';
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
+import { useConditionalRendering } from '@/core/composables/useConditionalRendering';
 
 export function useCalculation() {
   const { roundTo } = useNumber();
@@ -20,6 +21,7 @@ export function useCalculation() {
   const calculationResultWasModified = ref(false);
   const { fillPath } = useResolveVariables();
   const form = useInjectedFormModel();
+  const {conditionalRenderBlocker} = useConditionalRendering()
 
   async function calculationFunc(field: EngineField, model: any): Promise<number | null> {
     const mergedModel = form.getFormModelForResolve.value;
@@ -44,8 +46,12 @@ export function useCalculation() {
     return roundTo(result.value, precision);
   }
 
+
+
   async function calculationListener(field: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 5));
+    if (!await conditionalRenderBlocker(field)) return;
+
     if (field.index == undefined) {
       // for safety-hazards for SUM or etc function above the duplicated section
       await new Promise((r) => setTimeout(r, 1));
