@@ -49,8 +49,8 @@ export function useLocale() {
           resultWasModified: 'Result was manually modified.',
         },
         tableField: {
-          enableRowActions: "Enable group actions",
-          disableRowActions: "Disable group actions"
+          enableRowActions: "Selection mode",
+          disableRowActions: "Single mode"
         }
       },
       pl: {
@@ -99,8 +99,8 @@ export function useLocale() {
           resultWasModified: 'Wynik został ręcznie zmodyfikowany.',
         },
         tableField: {
-          enableRowActions: "Włącz akcje grupowe",
-          disableRowActions: "Wyłącz akcje grupowe"
+          enableRowActions: "Tryb zaznaczania",
+          disableRowActions: "Tryb pojedynczy"
         }
       },
       de: {
@@ -149,8 +149,8 @@ export function useLocale() {
           resultWasModified: 'Ergebnis wurde manuell geändert.',
         },
         tableField: {
-          enableRowActions: "Gruppenaktionen aktivieren",
-          disableRowActions: "Gruppenaktionen deaktivieren"
+          enableRowActions: "Auswahlmodus",
+          disableRowActions: "Einzelmodus"
         }
       },
       ru: {
@@ -199,8 +199,8 @@ export function useLocale() {
           resultWasModified: 'Результат был изменён вручную.',
         },
         tableField: {
-          enableRowActions: "Включить групповые действия",
-          disableRowActions: "Отключить групповые действия"
+          enableRowActions: "Режим выделения",
+          disableRowActions: "Одиночный режим"
         }
       },
       es: {
@@ -249,8 +249,8 @@ export function useLocale() {
           resultWasModified: 'El resultado fue modificado manualmente.',
         },
         tableField: {
-          enableRowActions: "Habilitar acciones grupales",
-          disableRowActions: "Deshabilitar acciones grupales"
+          enableRowActions: "Modo de selección",
+          disableRowActions: "Modo único"
         }
       },
       fr: {
@@ -299,8 +299,8 @@ export function useLocale() {
           resultWasModified: 'Le résultat a été modifié manuellement.',
         },
         tableField: {
-          enableRowActions: "Activer les actions groupées",
-          disableRowActions: "Désactiver les actions groupées"
+          enableRowActions: "Mode sélection",
+          disableRowActions: "Mode simple"
         }
       },
     },

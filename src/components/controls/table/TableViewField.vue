@@ -94,7 +94,7 @@
             v-else
             cols="auto"
           >
-            <v-switch
+            <v-checkbox
               v-if="showSelect"
               :hide-details="true"
               density="compact"
@@ -104,7 +104,7 @@
               <template v-slot:label>
                 <span class="text-subtitle-2"> {{showSelectEditable ? t('tableField.disableRowActions') : t("tableField.enableRowActions")}} </span>
               </template>
-            </v-switch>
+            </v-checkbox>
           </v-col>
         </v-row>
       </template>
