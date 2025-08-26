@@ -1933,3 +1933,119 @@ export const level3th = {
 };
 
 
+
+export const groupActions2 = {
+  name: 'Case: actions on selected row',
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        span: {
+          content: 'Basic display all data as a text values',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: 'table-view',
+          },
+          source: {
+            data: '/mock-data/table-view-mock',
+            showSelect:true,
+            idMapper:"id",
+            headers: [
+              {
+                title: '',
+                key: 'alerts',
+                color:
+                  "volume > 0.03 ? 'table-cell-background-grey-lighten-3': 'table-cell-background-red-lighten-4'",
+                valueMapping: 'alerts',
+                type: 'ALERT',
+                properties: {
+                  width: '24px',
+                },
+              },
+              {
+                title: 'Id',
+                key: 'id',
+                valueMapping: 'id',
+                type: 'TEXT',
+              },
+              {
+                title: 'Name',
+                key: 'name',
+                valueMapping: 'name',
+                type: 'TEXT',
+              },
+              {
+                title: 'Location',
+                key: 'location',
+                valueMapping: 'location',
+                type: 'TEXT',
+              },
+              {
+                title: 'Height',
+                key: 'height',
+                valueMapping: 'height',
+                type: 'NUMBER',
+              },
+              {
+                title: 'Actions',
+                key: 'actions',
+                actions: [
+                  {
+                    "multiSelect": true,
+                    title: 'Delete',
+                    icon: 'mdi-delete-outline',
+                    mode: 'action',
+                    code: 'delete',
+                    condition: "id=1",
+                    config: {
+                      params: {
+                        script: 'delete_product_from_offer',
+                      },
+                      body: {
+                        name: '{name}',
+                      },
+                    },
+                    props: {
+                      color: 'error',
+                    },
+                  },
+                  {
+                    "multiSelect": true,
+                    title: 'Pallet shipping',
+                    icon: 'mdi-shipping-pallet',
+                    mode: 'action',
+                    code: 'pallet',
+                    config: {
+                      params: {
+                        script: 'add_pallet_price',
+                      },
+                      body: {
+                        name: '{name}',
+                      },
+                    },
+                    props: {
+                      color: 'primary',
+                    },
+                  },
+                ],
+              },
+            ],
+
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
+    },
+  },
+}

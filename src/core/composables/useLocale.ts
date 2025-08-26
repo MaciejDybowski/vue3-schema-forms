@@ -48,6 +48,10 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Result was manually modified.',
         },
+        tableField: {
+          enableRowActions: "Enable group actions",
+          disableRowActions: "Disable group actions"
+        }
       },
       pl: {
         noActions: 'Brak dostępnych akcji.',
@@ -94,6 +98,10 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Wynik został ręcznie zmodyfikowany.',
         },
+        tableField: {
+          enableRowActions: "Włącz akcje grupowe",
+          disableRowActions: "Wyłącz akcje grupowe"
+        }
       },
       de: {
         noActions: 'Keine Aktionen verfügbar.',
@@ -140,6 +148,10 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Ergebnis wurde manuell geändert.',
         },
+        tableField: {
+          enableRowActions: "Gruppenaktionen aktivieren",
+          disableRowActions: "Gruppenaktionen deaktivieren"
+        }
       },
       ru: {
         noActions: 'Нет доступных действий.',
@@ -186,6 +198,10 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Результат был изменён вручную.',
         },
+        tableField: {
+          enableRowActions: "Включить групповые действия",
+          disableRowActions: "Отключить групповые действия"
+        }
       },
       es: {
         noActions: 'No hay acciones disponibles.',
@@ -232,6 +248,10 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'El resultado fue modificado manualmente.',
         },
+        tableField: {
+          enableRowActions: "Habilitar acciones grupales",
+          disableRowActions: "Deshabilitar acciones grupales"
+        }
       },
       fr: {
         noActions: 'Aucune action disponible.',
@@ -278,6 +298,10 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Le résultat a été modifié manuellement.',
         },
+        tableField: {
+          enableRowActions: "Activer les actions groupées",
+          disableRowActions: "Désactiver les actions groupées"
+        }
       },
     },
     fallbackLocale: 'en',

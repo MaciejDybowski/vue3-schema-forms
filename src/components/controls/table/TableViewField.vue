@@ -11,12 +11,41 @@
       :item-value="idMapper"
       :items="items"
       :items-length="itemsTotalElements"
-      :show-select="showSelect"
+      :show-select="showSelectEditable"
       class="custom-table"
       density="compact"
       return-object
       @update:options="updateOptions"
     >
+      <!--
+      <template v-slot:header.data-table-select="{ allSelected, selectAll, someSelected }">
+        <Teleport
+          defer
+          to="#actionsSelect"
+        >
+          <v-checkbox-btn
+            :indeterminate="someSelected && !allSelected"
+            :model-value="allSelected"
+            color="primary"
+            @update:model-value="selectAll(!allSelected)"
+          ></v-checkbox-btn>
+        </Teleport>
+      </template>
+
+      <template v-slot:item.data-table-select="{ internalItem, isSelected, toggleSelect, index }">
+        <Teleport
+          :to="`#rowCheckbox-${index}`"
+          defer
+        >
+          <v-checkbox-btn
+            :model-value="isSelected(internalItem)"
+            color="primary"
+            @update:model-value="toggleSelect(internalItem)"
+          ></v-checkbox-btn>
+        </Teleport>
+      </template>
+-->
+
       <template #top>
         <v-row dense>
           <v-col
@@ -42,6 +71,7 @@
           <v-spacer />
           <v-col
             v-for="action in availableRowActions"
+            v-if="availableRowActions.length > 0"
             cols="auto"
           >
             <v-btn
@@ -60,6 +90,22 @@
               }}
             </v-btn>
           </v-col>
+          <v-col
+            v-else
+            cols="auto"
+          >
+            <v-switch
+              v-if="showSelect"
+              :hide-details="true"
+              density="compact"
+              v-model="showSelectEditable"
+              color="primary"
+            >
+              <template v-slot:label>
+                <span class="text-subtitle-2"> {{showSelectEditable ? t('tableField.disableRowActions') : t("tableField.enableRowActions")}} </span>
+              </template>
+            </v-switch>
+          </v-col>
         </v-row>
       </template>
 
@@ -69,6 +115,10 @@
         :key="header.key"
         #[`header.${header.key}`]
       >
+        <div
+          v-if="header.type == 'ALERT'"
+          id="actionsSelect"
+        ></div>
         <div :class="header.type === 'NUMBER' ? 'text-right' : ''">
           {{ header.title }}
         </div>
@@ -267,6 +317,8 @@ const selectedItems = ref([]);
 const showSelect = computed(() => {
   return props.schema.source.showSelect ? props.schema.source.showSelect : false;
 });
+const showSelectEditable = ref(false)
+
 const idMapper = computed(() => {
   return props.schema.source.idMapper ? props.schema.source.idMapper : 'dataId';
 });
@@ -734,3 +786,4 @@ onMounted(async () => {
   color: #ffcdd2;
 }
 </style>
+
