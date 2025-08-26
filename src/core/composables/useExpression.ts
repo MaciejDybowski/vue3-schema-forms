@@ -68,6 +68,8 @@ export function useExpression() {
   ) {
     await new Promise((resolve) => setTimeout(resolve, 30));
 
+
+
     const functionName = extractFunctionName(expression);
     if (!functionName) return;
 
@@ -79,6 +81,10 @@ export function useExpression() {
 
     const mergedModel = form.getFormModelForResolve.value;
     let newValue = await resolverFn(expression, mergedModel);
+
+    if(schema.key=='czasPrzejazduZagr'){
+      console.debug(expression);
+    }
 
     if (schema.layout.component == 'number-field') {
       newValue = roundTo(newValue, schema.precision ? Number(schema.precision) : 0);
