@@ -94,23 +94,29 @@ export function useResolveVariables() {
     fieldIndex: number | undefined,
     variable: string,
   ) {
-    if (!fieldPath) return variable;
+    if (!fieldPath || fieldIndex === undefined) return variable;
 
-    const splitPath = fieldPath.split('.');
-    const splitVariable = variable.split('.');
-    const updatedVariable = matchArrays(splitPath, splitVariable).join('.');
-    return updatedVariable.replaceAll('[]', `[${fieldIndex}]`);
-  }
+    const pathSegments = fieldPath.split('.');
 
-  function matchArrays(arrayA: string[], arrayB: string[]): string[] {
-    const extractName = (field: string) => field.split('[')[0];
-    const nameSetA = new Set(arrayA.map(extractName));
+    const segmentIndexMap: Record<string, number | null> = {};
+    for (const segment of pathSegments) {
+      const match = segment.match(/^([^\[\]]+)(\[(\d*)\])?$/);
+      if (match) {
+        const name = match[1];
+        const idx = match[3] !== undefined && match[3] !== '' ? parseInt(match[3], 10) : null;
+        segmentIndexMap[name] = idx;
+      }
+    }
 
-    return arrayB.map((itemB) =>
-      itemB.includes('[]') && nameSetA.has(extractName(itemB))
-        ? arrayA.find((a) => extractName(a) === extractName(itemB))!
-        : itemB,
-    );
+    let updatedVariable = variable;
+
+    for (const [name, idx] of Object.entries(segmentIndexMap)) {
+      const regex = new RegExp(`(${name})\\[\\]`, 'g');
+      const replacementIdx = idx !== null ? idx : fieldIndex;
+      updatedVariable = updatedVariable.replace(regex, `${name}[${replacementIdx}]`);
+    }
+
+    return updatedVariable;
   }
 
   function doValueFormatting(field: any, value: any, valueProps: VariableSyntaxProps) {
