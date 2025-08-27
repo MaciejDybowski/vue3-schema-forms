@@ -71,11 +71,13 @@ export function useConditionalRendering() {
   }
 
   function checkIfComponentIsStatic(schema: EngineField): boolean {
-    return !(schema.layout.component == 'static-content' ||
+    return !(
+      schema.layout.component == 'static-content' ||
       schema.layout.component == 'alert' ||
       schema.layout.component == 'button' ||
       schema.layout.component == 'divider' ||
-      schema.layout.component == 'table-view');
+      schema.layout.component == 'table-view'
+    );
   }
 
   function resetModelValueWhenFalse(model: object, schema: EngineField) {
@@ -122,17 +124,32 @@ export function useConditionalRendering() {
   }
 
   async function conditionalRenderBlocker(field: EngineField): Promise<boolean> {
-    if (field.layout.if != undefined) {
+    if (
+      field.layout.if !== undefined &&
+      field.layout.if !== '' &&
+      field.layout.if?.includes('nata(')
+    ) {
       const mergedModel = form.getFormModelForResolve.value;
       const ifExpression = fillPath(
         field.path as string,
         field.index as number,
         field.layout.if.slice(5, -1),
       );
-      const nata = jsonata(ifExpression);
-      return (await nata.evaluate(mergedModel)) as boolean;
+
+      try {
+        const nata = jsonata(ifExpression);
+        return (await nata.evaluate(mergedModel)) as boolean;
+      } catch (err: any) {
+        console.error('Conditional render (if) error:', {
+          message: err.message,
+          expression: ifExpression,
+          field: field.key,
+        });
+        return false;
+      }
     }
-    return true
+
+    return true;
   }
 
   return { shouldRender, shouldRenderField, conditionalRenderBlocker };
