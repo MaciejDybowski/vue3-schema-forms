@@ -79,8 +79,9 @@
               style="text-transform: none"
               v-bind="{
                 ...tableButtonDefaultProps,
-                disabled: action.disabled as boolean,
+                disabled: action.disabled as boolean || rowActionButtonLoading,
               }"
+              :loading="rowActionButtonLoading"
               @click="doRowsActions(action)"
             >
               <v-icon class="mr-1">{{ action.icon }}</v-icon>
@@ -103,7 +104,7 @@
               density="compact"
             >
               <template v-slot:label>
-                <span class="text-subtitle-2">{{ t('tableField.disableRowActions') }}</span>
+                <span class="text-subtitle-2">{{ t('tableField.enableRowActions') }}</span>
               </template>
             </v-checkbox>
           </v-col>
@@ -244,7 +245,10 @@ const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
 vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
   if (payload == 'action-callback') {
+    selectedItems.value = [];
+    rowActionButtonLoading.value = false;
     debounced.load(fetchDataParams.value);
+
   }
   if (typeof payload == 'object' && triggers.includes(payload.key)) {
     actionHandlerEventBus.emit('form-action', { code: 'refresh-table', callback: refreshTable });
@@ -324,6 +328,7 @@ const idMapper = computed(() => {
   return props.schema.source.idMapper ? props.schema.source.idMapper : 'dataId';
 });
 const availableRowActions: Ref<Array<TableHeaderAction>> = ref([]);
+const rowActionButtonLoading = ref(false)
 
 if (showSelect.value) {
   watch(
@@ -373,6 +378,7 @@ if (showSelect.value) {
 }
 
 async function doRowsActions(action: TableHeaderAction) {
+  rowActionButtonLoading.value = true;
   const actionConfigWithoutCode: Record<string, any> = cloneDeep(action.config);
   delete actionConfigWithoutCode.code;
   delete actionConfigWithoutCode.body;
