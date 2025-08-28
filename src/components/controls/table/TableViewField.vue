@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-data-table-server
+      :key="showSelectEditable + ''"
       v-model="selectedItems"
       v-model:items-per-page="tableOptions.itemsPerPage"
       v-model:loading="loading"
@@ -96,13 +97,13 @@
           >
             <v-checkbox
               v-if="showSelect"
-              :hide-details="true"
-              density="compact"
               v-model="showSelectEditable"
+              :hide-details="true"
               color="primary"
+              density="compact"
             >
               <template v-slot:label>
-                <span class="text-subtitle-2"> {{showSelectEditable ? t('tableField.disableRowActions') : t("tableField.enableRowActions")}} </span>
+                <span class="text-subtitle-2">{{ t('tableField.disableRowActions') }}</span>
               </template>
             </v-checkbox>
           </v-col>
@@ -317,7 +318,7 @@ const selectedItems = ref([]);
 const showSelect = computed(() => {
   return props.schema.source.showSelect ? props.schema.source.showSelect : false;
 });
-const showSelectEditable = ref(false)
+const showSelectEditable = ref(false);
 
 const idMapper = computed(() => {
   return props.schema.source.idMapper ? props.schema.source.idMapper : 'dataId';
@@ -785,5 +786,8 @@ onMounted(async () => {
 :global(.v-theme--dark .text-color-red) {
   color: #ffcdd2;
 }
-</style>
 
+:deep(.v-checkbox .v-selection-control) {
+  min-height: 20px;
+}
+</style>
