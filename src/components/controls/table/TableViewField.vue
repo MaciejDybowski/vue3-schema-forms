@@ -18,34 +18,26 @@
       return-object
       @update:options="updateOptions"
     >
-      <!--
       <template v-slot:header.data-table-select="{ allSelected, selectAll, someSelected }">
-        <Teleport
-          defer
-          to="#actionsSelect"
-        >
+
           <v-checkbox-btn
             :indeterminate="someSelected && !allSelected"
             :model-value="allSelected"
             color="primary"
             @update:model-value="selectAll(!allSelected)"
           ></v-checkbox-btn>
-        </Teleport>
+
       </template>
 
       <template v-slot:item.data-table-select="{ internalItem, isSelected, toggleSelect, index }">
-        <Teleport
-          :to="`#rowCheckbox-${index}`"
-          defer
-        >
+
           <v-checkbox-btn
             :model-value="isSelected(internalItem)"
             color="primary"
             @update:model-value="toggleSelect(internalItem)"
           ></v-checkbox-btn>
-        </Teleport>
+
       </template>
--->
 
       <template #top>
         <v-row dense>
@@ -76,12 +68,12 @@
             cols="auto"
           >
             <v-btn
+              :loading="rowActionButtonLoading"
               style="text-transform: none"
               v-bind="{
                 ...tableButtonDefaultProps,
-                disabled: action.disabled as boolean || rowActionButtonLoading,
+                disabled: (action.disabled as boolean) || rowActionButtonLoading,
               }"
-              :loading="rowActionButtonLoading"
               @click="doRowsActions(action)"
             >
               <v-icon class="mr-1">{{ action.icon }}</v-icon>
@@ -155,6 +147,7 @@
               : 'v-data-table__tr-aggregates-light',
           ]"
         >
+          <td v-if="showSelectEditable"></td>
           <td v-for="(header, headerIndex) in headers">
             <table-footer-cell
               v-if="header.footerMapping"
@@ -248,7 +241,6 @@ vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
     selectedItems.value = [];
     rowActionButtonLoading.value = false;
     debounced.load(fetchDataParams.value);
-
   }
   if (typeof payload == 'object' && triggers.includes(payload.key)) {
     actionHandlerEventBus.emit('form-action', { code: 'refresh-table', callback: refreshTable });
@@ -328,7 +320,7 @@ const idMapper = computed(() => {
   return props.schema.source.idMapper ? props.schema.source.idMapper : 'dataId';
 });
 const availableRowActions: Ref<Array<TableHeaderAction>> = ref([]);
-const rowActionButtonLoading = ref(false)
+const rowActionButtonLoading = ref(false);
 
 if (showSelect.value) {
   watch(
