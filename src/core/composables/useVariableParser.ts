@@ -21,6 +21,10 @@ export function useVariableParser() {
         allVariablesResolved = false;
       }
 
+      if (typeof value === 'object') {
+        input = value;
+        break;
+      }
       input = input.replace(match, String(value ?? ''));
     }
 

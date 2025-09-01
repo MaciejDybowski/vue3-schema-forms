@@ -635,18 +635,29 @@ async function createBodyObjectFromFormModel(btnBody: object | undefined) {
 }
 
 async function createBodyObjectFromRow(actionObj: any, row: any) {
-  let body: Record<string, any> = {};
-  for (const [key, value] of Object.entries(actionObj.body)) {
-    if (typeof value === 'string' && variableRegexp.test(value)) {
-      const { resolvedText, allVariablesResolved } = await parse(value, row);
-      console.warn(`[vue-schema-forms] Key: ${key} with Value:${value} was not resolved properly.`);
-      allVariablesResolved ? (body[key] = resolvedText) : null;
-    } else {
-      body[key] = value;
+  const processNode = async (node: any): Promise<any> => {
+    if (Array.isArray(node)) {
+      return Promise.all(node.map(item => processNode(item)));
+    } else if (node !== null && typeof node === 'object') {
+      const result: Record<string, any> = {};
+      for (const [key, value] of Object.entries(node)) {
+        result[key] = await processNode(value);
+      }
+      return result;
+    } else if (typeof node === 'string' && variableRegexp.test(node)) {
+      const { resolvedText, allVariablesResolved } = await parse(node, row);
+      if (!allVariablesResolved) {
+        console.warn(`[vue-schema-forms] Value: ${node} was not resolved properly.`);
+        return undefined;
+      }
+      return resolvedText;
     }
-  }
-  return body;
+    return node;
+  };
+
+  return await processNode(actionObj.body);
 }
+
 
 async function saveDialogForm(isActive: Ref<boolean>) {
   const { valid, messages } = await actionPopupReference.value.validate('messages');
