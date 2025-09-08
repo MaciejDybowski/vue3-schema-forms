@@ -1,42 +1,42 @@
 <template>
   <v-text-field
     ref="inputFieldRef"
-    :label="label"
     v-model="inputValue"
-    :focused="isInputFocused || pickerModel"
-    @update:focused="(val) => (isInputFocused = val)"
-    :placeholder="dateTimeFormat.toLocaleLowerCase()"
-    :clearable="!fieldProps.readonly"
-    :rules="!fieldProps.readonly ? dateRules : []"
-    @update:model-value="dateTyping"
     :class="bindClass(schema) + requiredInputClass"
+    :clearable="!fieldProps.readonly"
+    :focused="isInputFocused || pickerModel"
+    :label="label"
+    :placeholder="dateTimeFormat.toLocaleLowerCase()"
+    :rules="!fieldProps.readonly ? dateRules : []"
     v-bind="{ ...attrs, ...fieldProps }"
+    @update:focused="(val) => (isInputFocused = val)"
+    @update:model-value="dateTyping"
   >
     <template v-slot:append-inner>
       <v-btn
         :readonly="fieldProps.readonly as boolean"
         icon="mdi-calendar"
-        variant="plain"
         size="small"
+        variant="plain"
         @click="pickerModel = !pickerModel"
       />
     </template>
   </v-text-field>
   <v-menu
     v-model="pickerModel"
-    :close-on-content-click="false"
-    min-width="0"
-    :open-on-click="false"
     :activator="inputFieldRef"
-    scrim="transparent"
-    offset="5"
+    :close-on-content-click="false"
     :disabled="fieldProps.readonly as boolean"
+    :open-on-click="false"
+    min-width="0"
+    offset="5"
+    scrim="transparent"
   >
     <v-card min-width="0">
       <v-card-text class="pa-0">
         <v-tabs
-          fixed-tabs
           v-model="activeTabRef"
+          fixed-tabs
         >
           <v-tab value="0">
             <v-icon>mdi-calendar-today</v-icon>
@@ -48,18 +48,18 @@
         <v-tabs-window v-model="activeTabRef">
           <v-tabs-window-item :value="0">
             <v-date-picker
-              :show-adjacent-months="true"
               v-model="pickerValue"
-              @update:model-value="datePick"
-              :min="isPastDateAvailable ? undefined : currentDate.toISOString()"
               :max="isFutureDateAvailable ? undefined : currentDate.toISOString()"
+              :min="isPastDateAvailable ? undefined : currentDate.toISOString()"
+              :show-adjacent-months="true"
+              @update:model-value="datePick"
             />
           </v-tabs-window-item>
           <v-tabs-window-item :value="1">
             <v-time-picker
               v-model="timeValue"
-              @update:model-value="timePick"
               format="24hr"
+              @update:model-value="timePick"
             >
             </v-time-picker>
           </v-tabs-window-item>
@@ -69,24 +69,24 @@
   </v-menu>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { toNumber } from 'lodash';
 import { MaskOptions } from 'maska';
 
 import { computed, onMounted, ref, useAttrs, watch } from 'vue';
 
-import { EngineDateField } from '@/types/engine/controls';
-
 import {
   useClass,
+  useDateFormat,
   useFormModel,
   useLabel,
   useLocale,
   useProps,
   useRules,
 } from '@/core/composables';
+import { EngineDateField } from '@/types/engine/controls';
+
 import dayjs from './dayjs';
-import { useDateFormat } from '@/core/composables';
 
 const inputFieldRef = ref<any>();
 
@@ -97,7 +97,7 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
-const {dateTimeFormat} = useDateFormat()
+const { dateTimeFormat } = useDateFormat();
 
 const attrs = useAttrs();
 
@@ -160,19 +160,23 @@ function dateTyping(val: string) {
     return;
   }
   //if (inputFieldRef.value?.isValid) {
-    const date = dayjs(val, dateTimeFormat.value);
-    if (date.isValid()) {
-      timeValue.value = date.get('hours') + ':' + date.get('minutes');
-      localModel.value = date.format(modelFormat);
-    }
+  const date = dayjs(val, dateTimeFormat.value);
+  if (date.isValid()) {
+    timeValue.value = date.get('hours') + ':' + date.get('minutes');
+    localModel.value = date.format(modelFormat);
+  }
   //}
 }
 
 function datePick(val: Date) {
   const date = dayjs(val);
   if (date.isValid()) {
-    localModel.value = date.format(modelFormat);
-    activeTabRef.value = 1
+    if (timeValue.value) {
+      timePick(timeValue.value);
+    } else {
+      localModel.value = date.format(modelFormat);
+    }
+    activeTabRef.value = 1;
   }
 }
 
@@ -186,6 +190,17 @@ function timePick(val: string) {
     localModel.value = date.format(modelFormat);
   }
 }
+
+/*watch(() => pickerModel.value, (value, oldValue)=> {
+  console.debug(value,oldValue)
+  if(!value){
+    const date = dayjs(pickerValue.value);
+    console.debug(date.isValid())
+    if (date.isValid()) {
+      localModel.value = date.format(modelFormat);
+    }
+  }
+})*/
 
 /////////////////// MASK ///////////////////
 
@@ -267,7 +282,7 @@ function isDateInFuture(val: string) {
 }*/
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.v-picker-title) {
   display: none;
 }
