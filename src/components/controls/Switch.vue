@@ -7,6 +7,7 @@
     :label="label"
     :rules="!fieldProps.readonly ? rules : []"
     v-bind="fieldProps"
+    @update:model-value="onToggleByUser"
   />
 </template>
 
@@ -15,8 +16,16 @@ import { useTheme } from 'vuetify';
 import { VSwitch } from 'vuetify/components';
 
 import { computed, onMounted, ref } from 'vue';
-
-import { useClass, useFormModel, useLabel, useProps, useRules, useExpression, useResolveVariables, useCalculation } from '@/core/composables';
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useProps,
+  useRules,
+  useExpression,
+  useResolveVariables,
+  useCalculation,
+} from '@/core/composables';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { EngineSwitchField } from '@/types/engine/controls';
 
@@ -42,7 +51,6 @@ const primaryWhite = computed(() => {
   if (fieldProps.value.color) {
     return fieldProps.value.color;
   }
-
   return theme.current.value.dark ? 'white' : 'primary';
 });
 
@@ -65,18 +73,25 @@ const localModel = computed({
     return getValue(props.model, props.schema);
   },
   set(val: any) {
-    if (isCalculationDefined.value) {
-      calculationResultWasModified.value = true;
-      unsubscribeListener.value();
-      const updateEvent: NodeUpdateEvent = {
-        key: `${props.schema.key}ManuallyChanged`,
-        value: true,
-      };
-      props.schema.on.input(updateEvent);
-    }
     setValue(val, props.schema, undefined, mode == 'visibility');
   },
 });
+
+
+function onToggleByUser(val: any) {
+  if (isCalculationDefined.value) {
+    calculationResultWasModified.value = true;
+    unsubscribeListener.value();
+
+    const updateEvent: NodeUpdateEvent = {
+      key: `${props.schema.key}ManuallyChanged`,
+      value: true,
+    };
+    props.schema.on.input(updateEvent);
+  }
+
+  localModel.value = val;
+}
 
 async function runCalculationIfExist() {
   if (isCalculationDefined.value && isValueFromModelAndNotChangedManually.value) {
@@ -108,7 +123,6 @@ onMounted(async () => {
   }
 
   if (!('defaultValue' in props.schema)) {
-    // Only set default false if value is still undefined/null
     const current = getValue(props.model, props.schema);
     if (current === undefined || current === null) {
       let falseValue = fieldProps.value['false-value'] as string | boolean | undefined;
@@ -117,5 +131,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<style lang="css" scoped></style>

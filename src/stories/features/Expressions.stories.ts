@@ -2,6 +2,7 @@
 import { expect } from 'storybook/test';
 
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { userEvent, within } from 'storybook/test';
 
 
 
@@ -232,6 +233,62 @@ export const UseJSONataFunctions: Story = {
           label: 'JSONata joining gross amounts',
           layout: {
             component: 'text-field',
+            cols: 6,
+          },
+        },
+      },
+    },
+  },
+};
+
+export const SwitchAkceptacjaZarzadu: Story = {
+  name: 'Example 3: Switch z JSONata calculation',
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // znajdź pole "Kwota zaliczki"
+    const textField = await canvas.findByLabelText('Kwota zaliczki');
+
+    // wpisz 150000 znak po znaku
+    await userEvent.clear(textField);
+    await userEvent.type(textField, '150000', { delay: 100 });
+
+    // poczekaj aż kalkulacja się zaktualizuje
+    await new Promise((r) => setTimeout(r, 300));
+    await expect(await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu'))
+      .toBeChecked();
+
+    // teraz wpisz 50000
+    await userEvent.clear(textField);
+    await userEvent.type(textField, '50000', { delay: 100 });
+
+    await new Promise((r) => setTimeout(r, 300));
+    await expect(await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu'))
+      .not.toBeChecked();
+  },
+  args: {
+    formModel: {
+      kwota: 120000,
+      akceptacjaZarzadu: false,
+    },
+    schema: {
+      properties: {
+        kwota: {
+          label: 'Kwota zaliczki',
+          type: 'number',
+          precision: 0,
+          layout: {
+            component: 'number-field',
+            cols: 6,
+          },
+        },
+        akceptacjaZarzadu: {
+          label: 'Pozostałe koszty do zaliczki – akceptacja zarządu',
+          type: 'boolean',
+          defaultValue: false,
+          calculation: '$number(kwota) > 100000',
+          layout: {
+            component: 'switch',
             cols: 6,
           },
         },

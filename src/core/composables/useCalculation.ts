@@ -23,22 +23,46 @@ export function useCalculation() {
   const form = useInjectedFormModel();
   const {conditionalRenderBlocker} = useConditionalRendering()
 
-  async function evaluateCalculation(calculation: string, path: string, index: number, mergedModel: any, defaultValue: any) {
+  async function evaluateCalculation(
+    calculation: string,
+    path: string,
+    index: number,
+    mergedModel: any,
+    defaultValue: any
+  ) {
     try {
       calculation = fillPath(path, index, calculation);
+      console.debug(
+        `[vue-schema-forms] [evaluateCalculation] key=${path}, index=${index}, calculation="${calculation}", mergedModel=`,
+        mergedModel
+      );
       const nata = jsonata(calculation);
-      return await nata.evaluate(mergedModel);
+      const result = await nata.evaluate(mergedModel);
+      console.debug(
+        `[vue-schema-forms] [evaluateCalculation] result=`,
+        result
+      );
+      return result;
     } catch (error) {
+      console.error(
+        `[vue-schema-forms] [evaluateCalculation] ERROR in calculation="${calculation}":`,
+        error
+      );
       return defaultValue;
     }
   }
 
   async function calculationFunc(field: EngineField, model: any): Promise<any | null> {
+
     const mergedModel = form.getFormModelForResolve.value;
 
     const type = field.layout.component;
     let calculation = field.calculation as string;
     let result;
+
+    console.debug(
+      `[vue-schema-forms] [calculationFunc] field=${field.key}, type=${type}, calculation="${calculation}"`
+    );
 
     unsubscribeListener.value = vueSchemaFormEventBus.on(
       async () => await calculationListener(field, model)
@@ -88,7 +112,8 @@ export function useCalculation() {
 
       if (logger.calculationListener) {
         console.debug(
-          `[vue-schema-forms] [CalculationListener], key=${field.key}, index=${field.index}, result=${result}`,
+          `[vue-schema-forms] [CalculationListener] key=${field.key}, index=${field.index}, calculation="${calculation}", result=${result}, mergedModel=`,
+          mergedModel
         );
       }
     } catch (error) {
