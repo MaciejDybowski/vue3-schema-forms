@@ -17,11 +17,11 @@ import { VSwitch } from 'vuetify/components';
 import { computed, onMounted, ref } from 'vue';
 
 import { useClass, useFormModel, useLabel, useProps, useRules, useExpression, useResolveVariables, useCalculation } from '@/core/composables';
-import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
+import { EngineSwitchField } from '@/types/engine/controls';
 
 const props = defineProps<{
-  schema: EngineField;
+  schema: EngineSwitchField;
   model: object;
 }>();
 

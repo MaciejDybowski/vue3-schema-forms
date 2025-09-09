@@ -95,3 +95,8 @@ export interface EngineUserField extends EngineField {
 export interface EngineLocationField extends EngineField {
   results: LocationResult;
 }
+
+export interface EngineSwitchField extends EngineField {
+  calculation?: string;
+  expression?: string;
+}
