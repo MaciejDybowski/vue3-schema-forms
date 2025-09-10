@@ -16,15 +16,14 @@ import { useTheme } from 'vuetify';
 import { VSwitch } from 'vuetify/components';
 
 import { computed, onMounted, ref } from 'vue';
+
 import {
+  useCalculation,
   useClass,
   useFormModel,
   useLabel,
   useProps,
   useRules,
-  useExpression,
-  useResolveVariables,
-  useCalculation,
 } from '@/core/composables';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { EngineSwitchField } from '@/types/engine/controls';
@@ -41,9 +40,7 @@ const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { bindRules, rules, requiredInputClass } = useRules();
-const { resolveExpression } = useExpression();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
-const { fillPath } = useResolveVariables();
 
 const theme = useTheme();
 
@@ -77,7 +74,6 @@ const localModel = computed({
   },
 });
 
-
 function onToggleByUser(val: any) {
   if (isCalculationDefined.value) {
     calculationResultWasModified.value = true;
@@ -99,24 +95,11 @@ async function runCalculationIfExist() {
   }
 }
 
-async function runExpressionIfExist() {
-  if (props.schema.expression && props.schema.expression !== '') {
-    const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
-    localModel.value = await resolveExpression(
-      props.schema,
-      props.schema.key,
-      expression,
-      props.model,
-    );
-  }
-}
-
 onMounted(async () => {
   await runCalculationIfExist();
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
-  await runExpressionIfExist();
 
   if (mode == 'visibility') {
     fieldProps.value.readonly = false;

@@ -4,6 +4,7 @@ import get from 'lodash/get';
 
 import { ref } from 'vue';
 
+import { useConditionalRendering } from '@/core/composables/useConditionalRendering';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { useNumber } from '@/core/composables/useNumber';
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
@@ -11,7 +12,6 @@ import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { logger } from '@/main';
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
-import { useConditionalRendering } from '@/core/composables/useConditionalRendering';
 
 export function useCalculation() {
   const { roundTo } = useNumber();
@@ -21,79 +21,68 @@ export function useCalculation() {
   const calculationResultWasModified = ref(false);
   const { fillPath } = useResolveVariables();
   const form = useInjectedFormModel();
-  const {conditionalRenderBlocker} = useConditionalRendering()
+  const { conditionalRenderBlocker } = useConditionalRendering();
 
   async function evaluateCalculation(
     calculation: string,
     path: string,
     index: number,
     mergedModel: any,
-    defaultValue: any
+    defaultValue: any,
   ) {
     try {
       calculation = fillPath(path, index, calculation);
-      console.debug(
-        `[vue-schema-forms] [evaluateCalculation] key=${path}, index=${index}, calculation="${calculation}", mergedModel=`,
-        mergedModel
-      );
       const nata = jsonata(calculation);
-      const result = await nata.evaluate(mergedModel);
-      console.debug(
-        `[vue-schema-forms] [evaluateCalculation] result=`,
-        result
-      );
-      return result;
-    } catch (error) {
-      console.error(
-        `[vue-schema-forms] [evaluateCalculation] ERROR in calculation="${calculation}":`,
-        error
-      );
+      return await nata.evaluate(mergedModel);
+    } catch (error: any) {
+      console.error('Calculation error:', {
+        message: error.message,
+        calculation: calculation,
+      });
       return defaultValue;
     }
   }
 
   async function calculationFunc(field: EngineField, model: any): Promise<any | null> {
-
     const mergedModel = form.getFormModelForResolve.value;
-
     const type = field.layout.component;
-    let calculation = field.calculation as string;
-    let result;
-
-    console.debug(
-      `[vue-schema-forms] [calculationFunc] field=${field.key}, type=${type}, calculation="${calculation}"`
-    );
+    const calculation = field.calculation ?? '';
+    const defaultNumberPrecision = 2;
 
     unsubscribeListener.value = vueSchemaFormEventBus.on(
-      async () => await calculationListener(field, model)
+      async () => await calculationListener(field, model),
     );
 
-    // defaults per component type
-    let numberPrecision = field.precision ? Number(field.precision) : 2;
-    let defaultValue: any;
+    async function runCalculation(defaultValue: any): Promise<any> {
+      return await evaluateCalculation(
+        calculation,
+        field.path as string,
+        field.index as number,
+        mergedModel,
+        defaultValue,
+      );
+    }
 
     switch (type) {
-      case 'number-field':
-        result = ref(0);
-        defaultValue = 0;
-        result.value = await evaluateCalculation(calculation, field.path as string, field.index as number, mergedModel, defaultValue);
-        return roundTo(result.value, numberPrecision);
-      case 'switch':
-        result = ref(false);
-        defaultValue = false;
-        result.value = await evaluateCalculation(calculation, field.path as string, field.index as number, mergedModel, defaultValue);
-        return Boolean(result.value);
-      default:
-        result = ref(null);
-        defaultValue = '';
-        result.value = await evaluateCalculation(calculation, field.path as string, field.index as number, mergedModel, defaultValue);
-        return result.value == null ? '' : String(result.value);
+      case 'number-field': {
+        const numberPrecision = field.precision ? Number(field.precision) : defaultNumberPrecision;
+        const result = await runCalculation(0);
+        return roundTo(result, numberPrecision);
+      }
+      case 'switch': {
+        const result = await runCalculation(false);
+        return Boolean(result);
+      }
+      default: {
+        const result = await runCalculation('');
+        return result == null ? '' : String(result);
+      }
     }
   }
 
   async function calculationListener(field: EngineField, model: any) {
     await new Promise((r) => setTimeout(r, 5));
-    if (!await conditionalRenderBlocker(field)) return;
+    if (!(await conditionalRenderBlocker(field))) return;
 
     if (field.index == undefined) {
       // safety for SUM / aggregate functions
@@ -113,7 +102,7 @@ export function useCalculation() {
       if (logger.calculationListener) {
         console.debug(
           `[vue-schema-forms] [CalculationListener] key=${field.key}, index=${field.index}, calculation="${calculation}", result=${result}, mergedModel=`,
-          mergedModel
+          mergedModel,
         );
       }
     } catch (error) {
@@ -122,17 +111,17 @@ export function useCalculation() {
 
     let newValue: any;
     switch (field.layout.component) {
-      case "number-field":
-        if (result == null || result === "") result = 0;
+      case 'number-field':
+        if (result == null || result === '') result = 0;
         newValue = roundTo(Number(result), precision);
         break;
 
-      case "switch":
+      case 'switch':
         newValue = Boolean(result);
         break;
 
       default:
-        newValue = (result == null) ? "" : String(result);
+        newValue = result == null ? '' : String(result);
         break;
     }
 
