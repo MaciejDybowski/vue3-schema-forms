@@ -10,11 +10,11 @@ import {
 
 export interface EngineTextField extends EngineField {
   calculation?: string;
+  expression?: string;
 }
 
 export interface EngineTextSwitchFieldField extends EngineField {
   calculation?: string;
-  expression?: string;
   content: string;
 }
 
