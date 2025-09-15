@@ -13,6 +13,7 @@
         @update:field="
           (event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })
         "
+        @refresh:table="proxyRefreshTable"
       />
 
       <table-cell
@@ -37,6 +38,7 @@
       :items="header.editable"
       :row="item"
       v-bind="fieldProps"
+      @refresh:table="proxyRefreshTable"
       @update:field="
         (event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })
       "
@@ -75,6 +77,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'updateRow', payload: { value: string; path: string; item: any }): void;
   (e: 'runTableActionLogic', payload: { action: TableHeaderAction; item: object }): void;
+  (e: 'refresh:table'): void;
 }>();
 
 const theme = useTheme();
@@ -94,6 +97,10 @@ async function getCssClass(header: TableHeader, item: any) {
     }
   }
   return '';
+}
+
+function proxyRefreshTable() {
+  emit('refresh:table');
 }
 
 onMounted(async () => {

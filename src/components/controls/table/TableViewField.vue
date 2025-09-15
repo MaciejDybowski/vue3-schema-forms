@@ -127,6 +127,7 @@
           :item="item"
           @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
           @run-table-action-logic="(event) => runTableActionLogic(event, index)"
+          @refresh:table="refreshTableEvent"
         />
       </template>
 
@@ -682,7 +683,7 @@ async function createUpdateRowURL(item: any) {
 
 async function updateRow(value: any, index: number, headerKey: string, row: any) {
   const isDefinedRefreshCode = headerKey.split(':').length > 4;
-  console.debug(value, headerKey, isDefinedRefreshCode);
+
   headerKey = headerKey.split(':')[0];
 
   try {
@@ -699,15 +700,19 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
       await new Promise((r) => setTimeout(r, 1));
       vueSchemaFormEventBus.emit('model-changed', 'table-aggregates');
     }
-    if (isDefinedRefreshCode) {
-      await new Promise((r) => setTimeout(r, 5));
-      actionHandlerEventBus.emit('form-action', { code: 'instant-refresh-table', callback: refreshTable });
-    }
   } catch (e: any) {
     if (toast != null) {
       debounced.showToast(e.response.data.message);
     }
   }
+}
+
+async function refreshTableEvent() {
+  await new Promise((r) => setTimeout(r, 200));
+  actionHandlerEventBus.emit('form-action', {
+    code: 'instant-refresh-table',
+    callback: refreshTable,
+  });
 }
 
 function showToast(message: string) {
