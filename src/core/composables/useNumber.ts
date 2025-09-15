@@ -65,7 +65,7 @@ export function useNumber() {
     precisionMin: number = 0,
     precisionMax: number = 0,
   ) {
-    if (value) {
+    if (value || value == 0) {
       value = Number(value);
       switch (type) {
         case 'decimal':
