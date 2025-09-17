@@ -72,9 +72,7 @@ export function useDictionary() {
     responseReference = source.references
       ? source.references
       : ({ data: 'content', totalElements: 'numberOfElements' } as ResponseReference);
-    singleOptionAutoSelect.value = source.singleOptionAutoSelect
-      ? source.singleOptionAutoSelect
-      : true;
+    singleOptionAutoSelect.value = source.singleOptionAutoSelect ?? true;
     multiple.value = source.multiple ?? false;
     maxSelection.value = source.maxSelection ?? 0;
 
