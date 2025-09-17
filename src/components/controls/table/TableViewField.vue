@@ -19,24 +19,20 @@
       @update:options="updateOptions"
     >
       <template v-slot:header.data-table-select="{ allSelected, selectAll, someSelected }">
-
-          <v-checkbox-btn
-            :indeterminate="someSelected && !allSelected"
-            :model-value="allSelected"
-            color="primary"
-            @update:model-value="selectAll(!allSelected)"
-          ></v-checkbox-btn>
-
+        <v-checkbox-btn
+          :indeterminate="someSelected && !allSelected"
+          :model-value="allSelected"
+          color="primary"
+          @update:model-value="selectAll(!allSelected)"
+        ></v-checkbox-btn>
       </template>
 
       <template v-slot:item.data-table-select="{ internalItem, isSelected, toggleSelect, index }">
-
-          <v-checkbox-btn
-            :model-value="isSelected(internalItem)"
-            color="primary"
-            @update:model-value="toggleSelect(internalItem)"
-          ></v-checkbox-btn>
-
+        <v-checkbox-btn
+          :model-value="isSelected(internalItem)"
+          color="primary"
+          @update:model-value="toggleSelect(internalItem)"
+        ></v-checkbox-btn>
       </template>
 
       <template #top>
@@ -131,6 +127,7 @@
           :item="item"
           @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
           @run-table-action-logic="(event) => runTableActionLogic(event, index)"
+          @refresh:table="refreshTableEvent"
         />
       </template>
 
@@ -637,7 +634,7 @@ async function createBodyObjectFromFormModel(btnBody: object | undefined) {
 async function createBodyObjectFromRow(actionObj: any, row: any) {
   const processNode = async (node: any): Promise<any> => {
     if (Array.isArray(node)) {
-      return Promise.all(node.map(item => processNode(item)));
+      return Promise.all(node.map((item) => processNode(item)));
     } else if (node !== null && typeof node === 'object') {
       const result: Record<string, any> = {};
       for (const [key, value] of Object.entries(node)) {
@@ -657,7 +654,6 @@ async function createBodyObjectFromRow(actionObj: any, row: any) {
 
   return await processNode(actionObj.body);
 }
-
 
 async function saveDialogForm(isActive: Ref<boolean>) {
   const { valid, messages } = await actionPopupReference.value.validate('messages');
@@ -686,7 +682,10 @@ async function createUpdateRowURL(item: any) {
 }
 
 async function updateRow(value: any, index: number, headerKey: string, row: any) {
+  const isDefinedRefreshCode = headerKey.split(':').length > 4;
+
   headerKey = headerKey.split(':')[0];
+
   try {
     const payload: Record<string, any> = {};
     payload[headerKey] = value;
@@ -706,6 +705,14 @@ async function updateRow(value: any, index: number, headerKey: string, row: any)
       debounced.showToast(e.response.data.message);
     }
   }
+}
+
+async function refreshTableEvent() {
+  await new Promise((r) => setTimeout(r, 200));
+  actionHandlerEventBus.emit('form-action', {
+    code: 'instant-refresh-table',
+    callback: refreshTable,
+  });
 }
 
 function showToast(message: string) {

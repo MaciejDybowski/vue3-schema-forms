@@ -38,7 +38,7 @@
       }"
       width="100%"
       @focusin="showFormattedNumber[index] = false"
-      @focusout="showFormattedNumber[index] = true"
+      @focusout="focusOut(index, item)"
       @input="(e: any) => updateValue(e, item)"
       @keyup.enter="(e: any) => e.target.blur()"
     />
@@ -114,7 +114,11 @@ import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
 import type { HeaderEditableObject, TableHeader } from '@/types/shared/Source';
 
 const props = defineProps<{ header: TableHeader; items: HeaderEditableObject[]; row: object }>();
-const emit = defineEmits<{ (e: 'update:field', val: any): void }>();
+const emit = defineEmits<{
+  (e: 'update:field', val: any): void;
+  (e: 'refresh:table'): void;
+}>();
+
 const attrs = useAttrs();
 const { formattedNumber } = useNumber();
 
@@ -245,7 +249,6 @@ async function computeRulesForField(items: HeaderEditableObject[]) {
           ...props.row,
           [item.valueMapping]: value,
         };
-        console.debug(tempRow);
         const conditionResult = await nata.evaluate(tempRow);
 
         if (conditionResult) return true;
@@ -344,6 +347,15 @@ async function loadMoreRecordsForDictionary(item: any, addQuery: boolean = false
 async function updateSearch(val: string, item: any, index: number) {
   if (getValue(item.valueMapping, index) != val) {
     debounced.load(item, true);
+  }
+}
+
+function focusOut(index: number, item: HeaderEditableObject) {
+  showFormattedNumber.value[index] = true;
+
+  const isDefinedRefreshCode = item.valueMapping.split(':').length > 4;
+  if (isDefinedRefreshCode) {
+    emit('refresh:table');
   }
 }
 
