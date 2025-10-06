@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CodeOrSourceMdx } from "@storybook/addon-docs";
+import { CodeOrSourceMdx } from '@storybook/addon-docs/blocks';
+
 import mermaid from 'mermaid';
 
 export const MermaidWrapper = (props) => {
