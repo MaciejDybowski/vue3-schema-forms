@@ -1,5 +1,6 @@
 <template>
   <v-switch
+    class="px-2"
     :ref="(el) => (formSwitch[switchId] = el)"
     v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
