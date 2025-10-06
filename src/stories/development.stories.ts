@@ -2,8 +2,7 @@
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
-import { Schema } from '../types/schema/Schema';
-import { TABLE_PAGE_WITH_AGGREGATES, TABLE_PAGE_WITHOUT_AGGREGATES, UPDATE_TABLE_ROW } from "./mock-responses";
+import { MOCK_FOR_FILE_INPUT } from './mock-responses';
 
 
 
@@ -28,30 +27,41 @@ type Story = StoryObj<typeof FormStoryWrapper>;
 
 export const Story1: Story = {
   args: {
-    formModel: {},
+    formModel: {
+      file: {
+        id: '12345',
+        name: 'Projekt MON 2.1.zip',
+        size: 10360,
+        type: 'application/zip',
+      },
+    },
     schema: {
       type: 'object',
       properties: {
         field1: {
-          label: "field1",
+          label: 'field1',
           layout: {
-            component: 'text-field'
-          }
+            component: 'text-field',
+          },
         },
-        sw: {
-          label: "field1",
+        file: {
+          label: 'Plik z faktura',
           layout: {
-            component: 'switch'
-          }
+            component: 'file-field',
+          },
         },
         field2: {
-          label: "field1",
+          label: 'field1',
           layout: {
-            component: 'text-field'
-          }
-        }
+            component: 'text-field',
+          },
+        },
       },
     },
   },
-  parameters: {},
+  parameters: {
+    msw: {
+      handlers: [...MOCK_FOR_FILE_INPUT],
+    },
+  },
 };

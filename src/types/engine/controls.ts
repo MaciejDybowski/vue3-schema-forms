@@ -13,6 +13,11 @@ export interface EngineTextField extends EngineField {
   expression?: string;
 }
 
+export interface EngineFileField extends EngineField {
+  url?: string;
+  idQueryParamName?: string;
+}
+
 export interface EngineTextSwitchFieldField extends EngineField {
   calculation?: string;
   content: string;

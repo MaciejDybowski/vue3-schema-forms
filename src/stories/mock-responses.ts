@@ -1,6 +1,20 @@
 // @ts-nocheck
 import { HttpResponse, http } from 'msw';
 
+export const MOCK_FOR_FILE_INPUT = [
+  http.post('/api/v1/features/unknown-feature-id/files?dataId={dataId}&temporary=false', async ({ params }) => {
+    return HttpResponse.json({
+      fileId: '12345',
+    });
+  }),
+  http.delete('/api/v1/features/unknown-feature-id/files?dataId={dataId}&temporary=false', async ({ params }) => {
+    return HttpResponse.json({});
+  }),
+  http.get('/api/v1/features/unknown-feature-id/files/12345/content', async ({ params }) => {
+    return HttpResponse.json({});
+  }),
+];
+
 export const names = ['🥝 Kiwi', '🍏 Green Apple', '🍉 Watermelon', '🍌 Banana', '🍇 Grape'];
 export const locations = ['New Zealand', 'Brazil', 'USA', 'Italy', 'South Africa'];
 export const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];

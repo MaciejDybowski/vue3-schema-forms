@@ -1,5 +1,6 @@
 //@ts-nocheck
 import Alert from '@/components/controls/Alert.vue';
+import FileField from '@/components/controls/FileField.vue';
 import Image from '@/components/controls/Image.vue';
 import KeyValueList from '@/components/controls/KeyValueList.vue';
 import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue';
@@ -69,4 +70,5 @@ export const vueSchemaFromControls: Components = {
   'multi-language-control': MultiLanguageControl,
   'year-picker': YearPicker,
   'text-switch-field': TextSwitchField,
+  'file-field': FileField,
 };
