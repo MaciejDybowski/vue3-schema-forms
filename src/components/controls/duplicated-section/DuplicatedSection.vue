@@ -287,7 +287,8 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
     case 'copyBelow':
       nodes.value.splice(index + 1, 0, getClearNode.value);
       let copiedModel = ref(cloneDeep(localModel.value[index]));
-      copiedModel = processObjectWithCache(copiedModel, cache);
+      copiedModel.value = processObjectWithCache(copiedModel.value, cache);
+
 
       if (ordinalNumberInModel) {
         copiedModel.value['ordinalNumber'] = ++copiedModel.value['ordinalNumber'];
