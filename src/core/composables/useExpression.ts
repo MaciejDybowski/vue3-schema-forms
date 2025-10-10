@@ -89,8 +89,7 @@ export function useExpression() {
     }
 
     const currentValue = get(model, key, null);
-
-    if (newValue !== currentValue) {
+    if (newValue !== currentValue && newValue != undefined) {
       const updateEvent: NodeUpdateEvent = {
         key,
         value: newValue,

@@ -1,5 +1,8 @@
 <template>
-  <v-form :ref="(el) => (formRef[formId] = el)" autocomplete="off">
+  <v-form
+    :ref="(el) => (formRef[formId] = el)"
+    autocomplete="off"
+  >
     <form-root
       v-if="!loading"
       :model="localModel"
@@ -27,10 +30,11 @@ import { debounce } from 'lodash';
 import set from 'lodash/set';
 import { useI18n } from 'vue-i18n';
 
-import { Ref, getCurrentInstance, onMounted, ref, watch, onBeforeMount } from 'vue';
+import { Ref, getCurrentInstance, onBeforeMount, onMounted, ref, watch } from 'vue';
 
 import { vueSchemaFromControls } from '@/components/controls';
 
+import { provideGeneratorCache } from '@/core/composables/useGeneratorCache';
 import { provideFormModel } from '@/core/state/useFormModelProvider';
 import { FormExternalAction } from '@/types/engine/FormExternalAction';
 import { FormModel } from '@/types/engine/FormModel';
@@ -46,7 +50,6 @@ import { resolveSchemaWithLocale } from '../../core/engine/utils';
 import { logger } from '../../main';
 import FormRoot from './FormRoot.vue';
 import FormDefaultActions from './validation/FormDefaultActions.vue';
-import { provideGeneratorCache } from '@/core/composables/useGeneratorCache';
 
 // register components to VueInstance if not installed yet by plugin options
 const instance = getCurrentInstance();
@@ -61,8 +64,8 @@ for (const [name, comp] of Object.entries(vueSchemaFromControls)) {
 const { result, stopMeasure } = usePerformanceAPI();
 
 onBeforeMount(() => {
-  provideGeneratorCache()
-})
+  provideGeneratorCache();
+});
 const form = provideFormModel();
 
 const localModel = ref({});
@@ -112,7 +115,7 @@ async function actionCallback() {
   // update internal
   vueSchemaFormEventBus.emit('model-changed', 'action-callback');
   // update external
-  emitUpdateEvent()
+  emitUpdateEvent();
 }
 
 actionHandlerEventBus.on(async (event, payload) => {
@@ -172,6 +175,7 @@ function emitUpdateEvent() {
 async function loadResolvedSchema() {
   loading.value = true;
   resolvedSchema.value = await resolveSchemaWithLocale(props.schema, locale.value, props.options);
+  resolvedSchema.value = cleanJson(resolvedSchema.value);
   loading.value = false;
 }
 
@@ -184,12 +188,32 @@ watch(
   { deep: true },
 );
 
+/*
+ In order to clean JSON from formatted fields, e.g. expressions in JSONata can be formatted using indents or white spaces.
+ */
+function cleanJson(obj: any): any {
+  if (typeof obj === 'string') {
+    return obj.replace(/\s+/g, '');
+  } else if (Array.isArray(obj)) {
+    return obj.map(cleanJson);
+  } else if (obj && typeof obj === 'object') {
+    const cleanedObj = {};
+    for (const key in obj) {
+      // @ts-ignore
+      cleanedObj[key] = cleanJson(obj[key]);
+    }
+    return cleanedObj;
+  }
+  return obj;
+}
+
 onMounted(async () => {
   localModel.value = { ...model.value };
 
   form.updateFormModel(localModel.value);
   form.updateFormContext(props.options && props.options.context ? props.options.context : {});
 
+  console.debug('[vue-schema-forms] => Resolved', resolvedSchema.value);
   await loadResolvedSchema();
   stopMeasure();
   debounced.formIsReady(800)();
