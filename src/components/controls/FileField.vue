@@ -10,12 +10,13 @@
     v-bind="fieldProps"
     @change="updateFileByAPI()"
     @drop.prevent="updateFileByAPI()"
+    @click:clear="removeFile(localModel, true)"
   >
     <template #selection="{ fileNames }">
       <v-chip
         class="ma-1"
         closable
-        @click:close="removeFile"
+        @click:close="removeFile(localModel, true)"
       >
         <div
           class="cursor-pointer"
@@ -29,6 +30,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useEventBus } from '@vueuse/core';
 import axios from 'axios';
 
 import { computed, onMounted, ref } from 'vue';
@@ -65,10 +67,14 @@ const id = computed(() => {
   );
 });
 
+const actionHandlerEventBus = useEventBus<string>('form-action');
+
 const uploadFileUrl = ref(
   schema.url ||
     `/api/v1/features/{featureId}/files?dataId={dataId}&temporary=false&filePath=${schema.key}`,
 );
+const deleteFileUrl = ref(`/api/v1/features/{featureId}/files/{fileId}?dataId={dataId}`);
+
 const idReference = ref(schema.idQueryParamName || 'id');
 
 const featureId = computed(() => {
@@ -83,9 +89,17 @@ const localModel = computed({
     setValue(val, schema);
   },
 });
+const lastLocalModel = ref<FileInfo | null>(null);
+
+function refreshAttachments() {
+  actionHandlerEventBus.emit('form-action', { code: 'refresh-attachments' });
+}
 
 async function updateFileByAPI() {
   try {
+    if (lastLocalModel.value) {
+      await removeFile(lastLocalModel.value);
+    }
     const formData = new FormData();
     formData.append('file', localModel.value);
     const response = await axios.post(
@@ -100,6 +114,8 @@ async function updateFileByAPI() {
       size: localModel.value.size,
       type: localModel.value.type,
     };
+    lastLocalModel.value = {...localModel.value};
+    refreshAttachments();
   } catch (error) {
     console.error('Error uploading file:', error);
     if (toast != null) {
@@ -110,14 +126,19 @@ async function updateFileByAPI() {
   }
 }
 
-async function removeFile() {
+async function removeFile(file: FileInfo, cleanModel=false) {
   try {
     await axios.delete(
-      uploadFileUrl.value
-        .replace('{dataId}', id.value + '')
-        .replace(`{featureId}`, featureId.value + ''),
+      deleteFileUrl.value
+        .replace('{featureId}', featureId.value + '')
+        .replace(`{fileId}`, file.id + '')
+        .replace('{dataId}', id.value + ''),
     );
-    localModel.value = null;
+    lastLocalModel.value = null;
+    if(cleanModel) {
+      localModel.value = null;
+    }
+    refreshAttachments();
   } catch (error) {
     console.error('Error deleting file:', error);
     if (toast != null) {
@@ -161,6 +182,9 @@ async function getDownloadLink() {
 }
 
 onMounted(async () => {
+  if (localModel.value) {
+    lastLocalModel.value = localModel.value;
+  }
   await bindLabel(schema);
   await bindRules(schema);
   await bindProps(schema);
