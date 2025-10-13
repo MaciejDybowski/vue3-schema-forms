@@ -193,13 +193,22 @@ watch(
  */
 function cleanJson(obj: any): any {
   if (typeof obj === 'string') {
-    return obj.replace(/\s+/g, '');
+    if (
+      obj.trim().toLowerCase().startsWith('JSONATA('.toLowerCase()) ||
+      obj.trim().toLowerCase().startsWith('NATA('.toLowerCase())
+    ) {
+      return obj
+        .replace(/\s+/g, ' ')
+        .replace(/\s*\(\s*/g, '(')
+        .replace(/\s*\)\s*/g, ')');
+    }
+    // Dla innych stringów zwróć bez zmian
+    return obj;
   } else if (Array.isArray(obj)) {
     return obj.map(cleanJson);
   } else if (obj && typeof obj === 'object') {
-    const cleanedObj = {};
+    const cleanedObj = {} as any;
     for (const key in obj) {
-      // @ts-ignore
       cleanedObj[key] = cleanJson(obj[key]);
     }
     return cleanedObj;
