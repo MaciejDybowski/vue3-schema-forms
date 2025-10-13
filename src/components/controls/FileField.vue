@@ -67,7 +67,7 @@ const id = computed(() => {
 
 const uploadFileUrl = ref(
   schema.url ||
-    `/api/v1/features/{featureId}/files?dataId={dataId}&temporary=false&fieldPath=${schema.key}`,
+    `/api/v1/features/{featureId}/files?dataId={dataId}&temporary=false&filePath=${schema.key}`,
 );
 const idReference = ref(schema.idQueryParamName || 'id');
 
