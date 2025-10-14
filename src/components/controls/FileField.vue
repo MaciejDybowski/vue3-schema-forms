@@ -67,6 +67,8 @@ const id = computed(() => {
   );
 });
 
+const fileLabel = ref(schema.fileLabel || null);
+
 const actionHandlerEventBus = useEventBus<string>('form-action');
 
 const uploadFileUrl = ref(
@@ -114,7 +116,10 @@ async function updateFileByAPI() {
       size: localModel.value.size,
       type: localModel.value.type,
     };
-    lastLocalModel.value = {...localModel.value};
+    lastLocalModel.value = { ...localModel.value };
+    if(fileLabel.value){
+      await addFileLabel(localModel.value)
+    }
     refreshAttachments();
   } catch (error) {
     console.error('Error uploading file:', error);
@@ -126,7 +131,24 @@ async function updateFileByAPI() {
   }
 }
 
-async function removeFile(file: FileInfo, cleanModel=false) {
+async function addFileLabel(file: FileInfo) {
+  try {
+    await axios.post(
+      deleteFileUrl.value
+        .replace('{featureId}', featureId.value + '')
+        .replace(`{fileId}`, file.id + '')
+        .replace('{dataId}', id.value + ''),
+      {
+        labels: [fileLabel.value],
+        description: null,
+      },
+    );
+  } catch (e) {
+    console.error('Sth went wrong while adding file label');
+  }
+}
+
+async function removeFile(file: FileInfo, cleanModel = false) {
   try {
     await axios.delete(
       deleteFileUrl.value
@@ -135,7 +157,7 @@ async function removeFile(file: FileInfo, cleanModel=false) {
         .replace('{dataId}', id.value + ''),
     );
     lastLocalModel.value = null;
-    if(cleanModel) {
+    if (cleanModel) {
       localModel.value = null;
     }
     refreshAttachments();

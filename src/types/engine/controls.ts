@@ -16,6 +16,7 @@ export interface EngineTextField extends EngineField {
 export interface EngineFileField extends EngineField {
   url?: string;
   idQueryParamName?: string;
+  fileLabel?:string;
 }
 
 export interface EngineTextSwitchFieldField extends EngineField {
