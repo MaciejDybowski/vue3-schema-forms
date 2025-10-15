@@ -17,6 +17,8 @@ export interface EngineFileField extends EngineField {
   url?: string;
   idQueryParamName?: string;
   fileLabel?:string;
+  fileMaxSize?: number;
+  fileAvailableExtensions?: string;
 }
 
 export interface EngineTextSwitchFieldField extends EngineField {

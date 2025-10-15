@@ -46,3 +46,34 @@ export const Standard = {
     },
   },
 };
+
+export const MaxFileSizeAndExtension: Story = {
+  args: {
+    formModel: {
+      file: {
+        id: '12345',
+        name: 'Projekt Demo.zip',
+        size: 10360,
+        type: 'zip',
+      },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          label: 'Example file',
+          layout: {
+            component: 'file-field',
+          },
+          fileMaxSize: 5,
+          fileAvailableExtensions: 'pptx',
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...MOCK_FOR_FILE_INPUT],
+    },
+  },
+};

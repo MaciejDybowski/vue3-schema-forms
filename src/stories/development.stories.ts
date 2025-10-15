@@ -27,19 +27,24 @@ type Story = StoryObj<typeof FormStoryWrapper>;
 
 export const Story1: Story = {
   args: {
-    formModel: {},
+    formModel: {
+      file: {
+        id: '12345',
+        name: 'Projekt Demo.zip',
+        size: 10360,
+        type: 'zip',
+      },
+    },
     schema: {
       type: 'object',
       properties: {
-        test: {
-          label: 'Etykieta test',
-          layout: { component: 'text-field' },
-          expression: 'JSONATA(2+2)',
-        },
-        textField770: {
-          label: 'Etykieta test 2',
-          layout: { component: 'text-field' },
-          expression: 'JSONATA(\n    2\n    +\n    2 +\n    2\n)',
+        file: {
+          label: 'Example file',
+          layout: {
+            component: 'file-field',
+          },
+          fileMaxSize: 5,
+          fileAvailableExtensions: 'pptx',
         },
       },
     },

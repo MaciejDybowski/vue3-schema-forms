@@ -32,6 +32,7 @@
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
 import axios from 'axios';
+import { useI18n } from 'vue-i18n';
 
 import { computed, onMounted, ref } from 'vue';
 
@@ -51,11 +52,19 @@ const { schema, model } = defineProps<{
   model: object;
 }>();
 
+const { t } = useI18n();
 const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { label, bindLabel } = useLabel(schema);
+
+const maxFileSize = ref(schema.fileMaxSize || null);
+const availableExt = ref(
+  schema.fileAvailableExtensions?.trim().toLowerCase().split(',') ||
+    schema.options?.context?.fileAvailableExtensions ||
+    [],
+);
 
 const id = computed(() => {
   const params = new URLSearchParams(window.location.search);
@@ -203,14 +212,61 @@ async function getDownloadLink() {
   }
 }
 
+function mapAdditionalRules() {
+  if (maxFileSize.value != null) {
+    const maxBytes = maxFileSize.value * 1024 * 1024;
+    const fileSizeRule = (v: File | null | undefined) => {
+      if (!v) return true;
+      if (v.size > maxBytes) {
+        return t('maxSizeFileRule', { maxSize: formatSize(maxBytes) });
+      }
+      return true;
+    };
+    rules.value = [...rules.value, fileSizeRule];
+  }
+
+  if (availableExt.value.length > 0) {
+    const availableExtRule = (v: File | null | undefined) => {
+      if (!v) return true;
+      const ext = v.name.split('.').pop()?.toLowerCase();
+      const allowed = availableExt.value.map((e:string) => e.trim().toLowerCase());
+      if (ext && !allowed.includes(ext)) {
+        return t('availableExtRule', { ext: availableExt.value.join(', ') });
+      }
+      return true;
+    };
+    rules.value = [...rules.value, availableExtRule];
+  }
+}
+
+function formatSize(size: number | null): string {
+  if (!size) return '';
+  if (size >= 1024 * 1024) return `${(size / 1024 / 1024).toFixed(1)} MB`;
+  return `${(size / 1024).toFixed(1)} KB`;
+}
+
 onMounted(async () => {
   if (localModel.value) {
     lastLocalModel.value = localModel.value;
   }
   await bindLabel(schema);
   await bindRules(schema);
+  mapAdditionalRules();
   await bindProps(schema);
 });
 </script>
 
 <style lang="css" scoped></style>
+
+<i18n lang="json">
+{
+  "pl": {
+    "maxSizeFileRule": "Plik przekracza maksymalny rozmiar {maxSize}",
+    "availableExtRule": "Dozwolone rozszerzenia: {ext}"
+  },
+  "en": {
+    "maxSizeFileRule": "File exceeds the maximum size {maxSize}",
+    "availableExtRule": "Available extensions: {ext}"
+  }
+}
+</i18n>
