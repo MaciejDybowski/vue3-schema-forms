@@ -49,9 +49,10 @@ export function useLocale() {
           resultWasModified: 'Result was manually modified.',
         },
         tableField: {
-          enableRowActions: "Selection mode",
-          disableRowActions: "Single mode"
-        }
+          selectedItemsCount: 'No selected items | Selected {el} item | Selected {el} items',
+          enableRowActions: 'Selection mode',
+          disableRowActions: 'Single mode',
+        },
       },
       pl: {
         noActions: 'Brak dostępnych akcji.',
@@ -99,9 +100,11 @@ export function useLocale() {
           resultWasModified: 'Wynik został ręcznie zmodyfikowany.',
         },
         tableField: {
-          enableRowActions: "Tryb zaznaczania",
-          disableRowActions: "Tryb pojedynczy"
-        }
+          enableRowActions: 'Tryb zaznaczania',
+          disableRowActions: 'Tryb pojedynczy',
+          selectedItemsCount:
+            'Brak zaznaczonych elementów | Zaznaczono {el} element | Zaznaczono {el} elementy | Zaznaczono {el} elementów',
+        },
       },
       de: {
         noActions: 'Keine Aktionen verfügbar.',
@@ -149,9 +152,11 @@ export function useLocale() {
           resultWasModified: 'Ergebnis wurde manuell geändert.',
         },
         tableField: {
-          enableRowActions: "Auswahlmodus",
-          disableRowActions: "Einzelmodus"
-        }
+          selectedItemsCount:
+            'Keine ausgewählten Elemente | {el} Element ausgewählt | {el} Elemente ausgewählt',
+          enableRowActions: 'Auswahlmodus',
+          disableRowActions: 'Einzelmodus',
+        },
       },
       ru: {
         noActions: 'Нет доступных действий.',
@@ -199,9 +204,11 @@ export function useLocale() {
           resultWasModified: 'Результат был изменён вручную.',
         },
         tableField: {
-          enableRowActions: "Режим выделения",
-          disableRowActions: "Одиночный режим"
-        }
+          selectedItemsCount:
+            'Нет выбранных элементов | Выбран {el} элемент | Выбрано {el} элемента | Выбрано {el} элементов',
+          enableRowActions: 'Режим выделения',
+          disableRowActions: 'Одиночный режим',
+        },
       },
       es: {
         noActions: 'No hay acciones disponibles.',
@@ -249,9 +256,11 @@ export function useLocale() {
           resultWasModified: 'El resultado fue modificado manualmente.',
         },
         tableField: {
-          enableRowActions: "Modo de selección",
-          disableRowActions: "Modo único"
-        }
+          selectedItemsCount:
+            'Ningún elemento seleccionado | {el} elemento seleccionado | {el} elementos seleccionados',
+          enableRowActions: 'Modo de selección',
+          disableRowActions: 'Modo único',
+        },
       },
       fr: {
         noActions: 'Aucune action disponible.',
@@ -299,9 +308,11 @@ export function useLocale() {
           resultWasModified: 'Le résultat a été modifié manuellement.',
         },
         tableField: {
-          enableRowActions: "Mode sélection",
-          disableRowActions: "Mode simple"
-        }
+          selectedItemsCount:
+            'Aucun élément sélectionné | {el} élément sélectionné | {el} éléments sélectionnés',
+          enableRowActions: 'Mode sélection',
+          disableRowActions: 'Mode simple',
+        },
       },
     },
     fallbackLocale: 'en',

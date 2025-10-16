@@ -31,6 +31,19 @@
       </v-list>
     </v-menu>
 
+    <div
+      v-if="showElementsCount"
+      class="d-flex"
+    >
+      <v-chip
+        class="px-2"
+        label
+        variant="text"
+      >
+        {{ t('tableField.selectedItemsCount', { count: elementsCount, el: elementsCount }) }}
+      </v-chip>
+    </div>
+
     <div class="pagination-wrapper">
       <div class="pagination">
         <v-btn
@@ -57,14 +70,19 @@
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue';
 
+import { useLocale } from '@/core/composables';
+
 const props = defineProps<{
   page: number;
   itemsPerPage: number;
   pageCount: number;
   totalItems: number;
   itemsPerPageOptions: any[];
+  showElementsCount: boolean;
+  elementsCount: number;
 }>();
 
+const { t } = useLocale();
 const emit = defineEmits(['update:page', 'update:itemsPerPage']);
 
 const { page, itemsPerPage, pageCount, totalItems } = toRefs(props);

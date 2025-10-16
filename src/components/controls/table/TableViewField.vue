@@ -164,7 +164,10 @@
           :total-items="itemsTotalElements"
           @update:page="(val: number) => (tableOptions.page = val)"
           @update:itemsPerPage="(val: number) => (tableOptions.itemsPerPage = val)"
+          :show-elements-count="showSelectEditable"
+          :elements-count="selectedItems.length"
         />
+
       </template>
     </v-data-table-server>
 
