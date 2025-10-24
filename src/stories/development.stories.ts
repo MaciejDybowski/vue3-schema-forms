@@ -19,6 +19,11 @@ export default {
         variant: 'outlined',
         density: 'compact',
       },
+      buttonProps: {
+        size: "small",
+        variant: "elevated",
+        rounded: "",
+      }
     },
   },
 } satisfies Meta<typeof FormStoryWrapper>;
@@ -27,25 +32,31 @@ type Story = StoryObj<typeof FormStoryWrapper>;
 
 export const Story1: Story = {
   args: {
-    formModel: {
-      file: {
-        id: '12345',
-        name: 'Projekt Demo.zip',
-        size: 10360,
-        type: 'zip',
-      },
-    },
+    formModel: {},
     schema: {
       type: 'object',
       properties: {
-        file: {
-          label: 'Example file',
+        text: {
+          label: "Text",
           layout: {
-            component: 'file-field',
-          },
-          fileMaxSize: 5,
-          fileAvailableExtensions: 'pptx',
+            component: "text-field",
+            cols: 4
+          }
         },
+        text2: {
+          label: "Text",
+          layout: {
+            component: "button",
+            cols: 1
+          }
+        },
+        text3: {
+          label: "Text",
+          layout: {
+            component: "text-field",
+            cols: 4
+          }
+        }
       },
     },
   },

@@ -2,13 +2,14 @@
   <v-col
     v-if="shouldRender"
     v-show="!shouldHide && shouldRender"
-    :class="[layoutCssClass, schema.layout.cellClass]"
+    :class="[layoutCssClass, schema.layout.cellClass, 'd-flex align-center']"
     :cols="cols"
   >
     <component
       :is="`node-${schema.layout.component}`"
       :model="model"
       :schema="schema"
+      style="width: 100%"
     />
   </v-col>
   <div
