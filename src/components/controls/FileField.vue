@@ -82,14 +82,14 @@ const actionHandlerEventBus = useEventBus<string>('form-action');
 
 const uploadFileUrl = ref(
   schema.url ||
-    `/api/v1/features/{featureId}/files?dataId={dataId}&temporary=false&filePath=${schema.key}`,
+    `/api/v1/features/{menuFeatureId}/files?dataId={dataId}&temporary=false&filePath=${schema.key}`,
 );
-const deleteFileUrl = ref(`/api/v1/features/{featureId}/files/{fileId}?dataId={dataId}`);
+const deleteFileUrl = ref(`/api/v1/features/{menuFeatureId}/files/{fileId}?dataId={dataId}`);
 
 const idReference = ref(schema.idQueryParamName || 'id');
 
 const featureId = computed(() => {
-  return schema.options?.context?.featureId || 'unknown-feature-id';
+  return schema.options?.context?.menuFeatureId || 'unknown-feature-id';
 });
 
 const localModel = computed({
@@ -115,7 +115,7 @@ async function updateFileByAPI() {
     formData.append('file', localModel.value);
     const response = await axios.post(
       uploadFileUrl.value
-        .replace(`{featureId}`, featureId.value + '')
+        .replace(`{menuFeatureId}`, featureId.value + '')
         .replace('{dataId}', id.value + ''),
       formData,
     );
@@ -144,7 +144,7 @@ async function addFileLabel(file: FileInfo) {
   try {
     await axios.post(
       deleteFileUrl.value
-        .replace('{featureId}', featureId.value + '')
+        .replace('{menuFeatureId}', featureId.value + '')
         .replace(`{fileId}`, file.id + '')
         .replace('{dataId}', id.value + ''),
       {
@@ -161,7 +161,7 @@ async function removeFile(file: FileInfo, cleanModel = false) {
   try {
     await axios.delete(
       deleteFileUrl.value
-        .replace('{featureId}', featureId.value + '')
+        .replace('{menuFeatureId}', featureId.value + '')
         .replace(`{fileId}`, file.id + '')
         .replace('{dataId}', id.value + ''),
     );
@@ -182,7 +182,7 @@ async function removeFile(file: FileInfo, cleanModel = false) {
 async function getDownloadLink() {
   try {
     const [baseUrl, queryString] = uploadFileUrl.value
-      .replace(`{featureId}`, featureId.value + '')
+      .replace(`{menuFeatureId}`, featureId.value + '')
       .replace('{dataId}', String(id.value))
       .split('?');
     const downloadUrl = `${baseUrl}/${localModel.value.id}/content${queryString ? '?' + queryString : ''}`;
