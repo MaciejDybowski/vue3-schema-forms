@@ -16,7 +16,7 @@ export interface EngineTextField extends EngineField {
 export interface EngineFileField extends EngineField {
   url?: string;
   idQueryParamName?: string;
-  fileLabel?:string;
+  fileLabel?: string;
   fileMaxSize?: number;
   fileAvailableExtensions?: string;
 }
@@ -68,6 +68,15 @@ export interface EngineDuplicatedSection extends EngineField {
 
 export interface EngineSourceField extends EngineField {
   source: Source;
+}
+
+export interface EngineBookmarkField extends EngineField {
+  source: Source;
+  stacked?: boolean;
+  color?: string;
+  'bg-color'?: string;
+  horizontal: 'vertical' | 'horizontal';
+  'slider-color'?: string;
 }
 
 export interface RadioField extends EngineSourceField {
