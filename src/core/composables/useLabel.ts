@@ -12,15 +12,16 @@ export function useLabel(schema: EngineField) {
   const isLabelRef = typeof schema.label === 'object' && '$ref' in schema.label;
 
   const label = ref(
-    isLabelRef ? '#' + schema.label.$ref.split('/').pop() : (schema.label as string),
+    isLabelRef ? '#' + schema.label.$ref.split('/').pop() : schema.label ? schema.label : null,
   );
   const labelWithFallbackMessage = label.value;
 
-  if (label.value.match(variableRegexp)) {
+  if (label.value && label.value.match(variableRegexp)) {
     vueSchemaFormEventBus.on(() => labelResolverListener());
   }
 
   async function bindLabel(schema: EngineField) {
+    if (!schema.label) return;
     if (isLabelRef) return schema.label.$ref;
 
     const { resolvedText, allVariablesResolved } = await resolve(schema, schema.label);

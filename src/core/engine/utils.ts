@@ -95,3 +95,19 @@ function resolveRefsAndReplace(schema: any) {
   walk(schema.properties);
   schema.i18n = i18nCopy;
 }
+
+export function adjustColorForDarkMode(hex: string) {
+  hex = hex.replace(/^#/, '');
+  let r = parseInt(hex.substring(0, 2), 16);
+  let g = parseInt(hex.substring(2, 4), 16);
+  let b = parseInt(hex.substring(4, 6), 16);
+  r = Math.min(255, Math.round(r + (255 - r) * 0.4));
+  g = Math.min(255, Math.round(g + (255 - g) * 0.4));
+  b = Math.min(255, Math.round(b + (255 - b) * 0.4));
+  r = Math.round(r * 0.8 + 128 * 0.2);
+  g = Math.round(g * 0.8 + 128 * 0.2);
+  b = Math.round(b * 0.8 + 128 * 0.2);
+  const toHex = (c: any) => c.toString(16).padStart(2, '0');
+  console.debug(`#${toHex(r)}${toHex(g)}${toHex(b)}`)
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}

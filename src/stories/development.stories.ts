@@ -32,17 +32,57 @@ export default {
 
 type Story = StoryObj<typeof FormStoryWrapper>;
 
-export const Story1: Story = {
+export const Story2: Story = {
   args: {
     formModel: {},
     schema: {
       type: 'object',
       properties: {
-        select: {
-          'bg-color': '#f0f0f0',
+        text: {
+          label: 'Text',
+          layout: {
+            component: 'text-field',
+            cols: 4,
+          },
+        },
+        text2: {
+          label: 'Text',
+          layout: {
+            component: 'button',
+            cols: 1,
+          },
+        },
+        text3: {
+          label: 'Text',
+          layout: {
+            component: 'text-field',
+            cols: 4,
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...MOCK_FOR_FILE_INPUT],
+    },
+  },
+};
+
+export const Story1: Story = {
+  args: {
+    validationBehaviour: 'messages',
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        bookmark: {
+          //'bg-color': '#f0f0f0',
+          //color:"#eeaadd",
+          //direction: "vertical",
           layout: {
             component: 'bookmark',
-            cols:12
+            cols: 12,
           },
           source: {
             items: [
@@ -61,7 +101,68 @@ export const Story1: Story = {
               { value: 13, title: 'Walidacje' },
             ],
           },
-        } as EngineSourceField,
+        } ,
+        group: {
+          layout: {
+            hide: 'nata(select=1)',
+            component: 'fields-group',
+            schema: {
+              type: 'object',
+              properties: {
+                fieldA: {
+                  label: 'Field A in group A',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+                fieldQ: {
+                  label: 'Field Q in group A',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+                field1: {
+                  label: 'Field C in group A',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+              },
+            },
+            cols: 12,
+          },
+        },
+        group2: {
+          layout: {
+            hide: 'nata(select=2)',
+            component: 'fields-group',
+            schema: {
+              type: 'object',
+              properties: {
+                fieldT: {
+                  label: 'XXXX',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+                fieldG: {
+                  label: 'XXXX',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+                fieldK: {
+                  label: 'XXXXXX',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+              },
+              required: ['fieldT'],
+            },
+            cols: 12,
+          },
+        },
       },
     } as Schema,
   },

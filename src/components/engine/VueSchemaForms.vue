@@ -235,6 +235,7 @@ async function validate(option?: ValidationFromBehaviour) {
   // Alert error block validation !
   const alertElements = document.querySelectorAll('[role="alert"]');
   alertElements.forEach((alertElement) => {
+    console.debug(alertElement)
     const isError =
       alertElement.classList.contains('v-alert') && alertElement.classList.contains('text-error');
     const alertText = alertElement.textContent;

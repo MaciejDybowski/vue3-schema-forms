@@ -75,7 +75,7 @@ export interface EngineBookmarkField extends EngineField {
   stacked?: boolean;
   color?: string;
   'bg-color'?: string;
-  horizontal: 'vertical' | 'horizontal';
+  direction?: "vertical" | "horizontal";
   'slider-color'?: string;
 }
 

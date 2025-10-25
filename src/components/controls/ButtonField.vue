@@ -1,4 +1,5 @@
 <template>
+<div>
   <v-btn
     :class="bindClass(schema)"
     :color="primaryWhite"
@@ -53,6 +54,7 @@
   >
     {{ snackbar.text }}
   </v-snackbar>
+</div>
 </template>
 
 <script lang="ts" setup>
