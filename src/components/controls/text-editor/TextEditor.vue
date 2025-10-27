@@ -1,10 +1,31 @@
 <template>
   <div v-if="editor && !editorLoading">
-    <text-editor-toolbar :editor="editor" />
-    <editor-content
-      :editor="editor"
-      class="editor-content"
-    />
+    <v-input
+      v-model="localModel"
+      :rules="!fieldProps.readonly ? rules : []"
+      v-bind="fieldProps"
+    >
+      <v-row
+        dense
+        no-gutters
+      >
+        <v-col
+          class="ma-0 pa-0"
+          cols="12"
+        >
+          <text-editor-toolbar :editor="editor" />
+        </v-col>
+        <v-col
+          class="ma-0 pa-0"
+          cols="12"
+        >
+          <editor-content
+            :editor="editor"
+            class="editor-content"
+          />
+        </v-col>
+      </v-row>
+    </v-input>
   </div>
 </template>
 
@@ -41,20 +62,25 @@ const localModel = computed({
     return value;
   },
   set(val: any) {
-    emptyValueForHtml(val);
-    emptyValueFormJSON(val);
-    setValue(val, schema);
+    if (contentType == 'html') {
+      setValueForHtml(val);
+    } else if (contentType == 'json') {
+      setValueForJson(val);
+    } else {
+      setValue(val, schema);
+    }
   },
 });
 
-function emptyValueForHtml(val: any) {
+function setValueForHtml(val: any) {
   if (val == '<p></p>') {
     setValue(null, schema);
-    return;
+  } else {
+    setValue(val, schema);
   }
 }
 
-function emptyValueFormJSON(val: any) {
+function setValueForJson(val: any) {
   if (
     JSON.stringify(val) ==
     JSON.stringify({
@@ -67,7 +93,8 @@ function emptyValueFormJSON(val: any) {
     })
   ) {
     setValue(null, schema);
-    return;
+  } else {
+    setValue(val, schema);
   }
 }
 

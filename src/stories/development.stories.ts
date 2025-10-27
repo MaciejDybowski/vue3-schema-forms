@@ -43,11 +43,11 @@ export const Story3: Story = {
             component: 'text-editor',
             props: {
               //readonly: true
-            }
+            },
           },
         },
       },
-      required: ["text"]
+      required: ['text'],
     },
   },
   parameters: {
