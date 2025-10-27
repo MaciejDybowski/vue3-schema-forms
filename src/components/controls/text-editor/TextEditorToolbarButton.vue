@@ -2,14 +2,14 @@
   <v-tooltip location="bottom">
     <template v-slot:activator="{ props }">
       <v-btn
-        variant="tonal"
+        :class="{ active }"
+        :disabled="disabled"
+        :icon="`mdi-${icon}`"
+        class="editor-button"
         density="comfortable"
         size="small"
-        class="editor-button"
-        :class="{ active }"
-        :icon="`mdi-${icon}`"
-        :disabled="disabled"
         v-bind="props"
+        variant="tonal"
         @click="$emit('click', $event)"
       />
     </template>
@@ -17,18 +17,18 @@
   </v-tooltip>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 interface Props {
-  icon: string
-  name: string
-  active?: boolean
-  disabled?: boolean
+  icon: string;
+  name: string;
+  active?: boolean;
+  disabled?: boolean;
 }
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .editor-button {
   color: #333;
   background-color: #fff;

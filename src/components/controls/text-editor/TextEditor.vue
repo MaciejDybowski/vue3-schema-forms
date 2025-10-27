@@ -95,17 +95,9 @@ onBeforeUnmount(() => {
     Roboto,
     sans-serif;
   transition: all 0.25s ease;
-
-  /* Zmieniamy kolor obramowania przy hover/focus */
-  &:hover {
-    border-color: rgb(var(--v-theme-primary));
-  }
-
-  &:focus-within {
-    outline: none;
-    border-color: rgb(var(--v-theme-primary));
-    box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.15);
-  }
+  outline: none;
+  border-color: rgb(var(--v-theme-primary));
+  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.15);
 
   /* Stylowanie elementów TipTap */
   p {

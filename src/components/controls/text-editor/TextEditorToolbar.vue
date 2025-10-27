@@ -95,19 +95,23 @@ const buttons = [
 .editor-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 12px;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 6px 10px;
+  margin-left: 1px;
+  margin-right: 1px;
   border: 1px solid var(--v-theme-outline-variant);
-  background-color: rgb(var(--v-theme-surface));
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease;
-  box-shadow: var(--v-theme-shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  /* 🟢 lekko ciemniejsze tło w trybie jasnym */
+  background-color: color-mix(in srgb, rgb(var(--v-theme-surface)) 97%, black 3%);
   color: rgb(var(--v-theme-on-surface));
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+/* 🌓 Tryb ciemny */
 .v-theme--dark .editor-toolbar {
   background-color: rgb(var(--v-theme-surface-variant));
   border-color: rgba(var(--v-theme-outline), 0.4);
