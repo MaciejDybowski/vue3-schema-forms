@@ -43,7 +43,7 @@ const localModel = computed({
 const editor = useEditor({
   editorProps: {
     attributes: {
-      class: 'tcn-editor',
+      class: 'vue-forms-text-editor',
     },
   },
   extensions: [StarterKit, Markdown],
@@ -77,7 +77,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.tcn-editor) {
+:deep(.vue-forms-text-editor) {
   width: 100%;
   min-height: 160px;
   padding: 16px 20px;
@@ -99,20 +99,19 @@ onBeforeUnmount(() => {
   border-color: rgb(var(--v-theme-primary));
   box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.15);
 
-  /* Stylowanie elementów TipTap */
   p {
-    margin: 0 0 10px;
+    margin: 0 0 8px;
   }
 
   ul,
   ol {
-    margin: 8px 0 8px 20px;
+    margin: 8px 0 8px 16px;
   }
 
   h1,
   h2,
   h3 {
-    margin-top: 16px;
+    margin-top: 12px;
     margin-bottom: 8px;
     font-weight: 600;
     color: rgb(var(--v-theme-primary));
@@ -138,8 +137,7 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 🌓 Dostosowanie do ciemnego motywu */
-.v-theme--dark :deep(.tcn-editor) {
+.v-theme--dark :deep(.vue-forms-text-editor) {
   background-color: rgb(var(--v-theme-surface-variant));
   border-color: rgba(var(--v-theme-outline), 0.4);
   color: rgb(var(--v-theme-on-surface));

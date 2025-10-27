@@ -30,21 +30,21 @@ defineProps<Props>();
 
 <style lang="scss" scoped>
 .editor-button {
-  color: #333;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  color: rgb(var(--v-theme-on-surface));
+  background-color: rgb(var(--v-theme-surface));
+  border: 1px solid rgb(var(--v-theme-outline-variant));
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #e0e7ff;
-    border-color: #4f46e5;
-    color: #4f46e5;
+    background-color: rgba(var(--v-theme-primary), 0.1);
+    border-color: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-primary));
   }
 
   &.active {
-    background-color: #4f46e5;
-    border-color: #4f46e5;
-    color: #fff;
+    background-color: rgb(var(--v-theme-primary));
+    border-color: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-on-primary));
   }
 
   &:disabled {

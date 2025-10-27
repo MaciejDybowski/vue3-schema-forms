@@ -96,26 +96,19 @@ const buttons = [
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 0;
   padding: 6px 10px;
-  margin-left: 1px;
-  margin-right: 1px;
-  border: 1px solid var(--v-theme-outline-variant);
-  /* 🟢 lekko ciemniejsze tło w trybie jasnym */
-  background-color: color-mix(in srgb, rgb(var(--v-theme-surface)) 97%, black 3%);
+  background-color: transparent; /* 👈 brak osobnego tła */
   color: rgb(var(--v-theme-on-surface));
   transition:
     border-color 0.25s ease,
     background-color 0.25s ease;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* 🌓 Tryb ciemny */
 .v-theme--dark .editor-toolbar {
-  background-color: rgb(var(--v-theme-surface-variant));
   border-color: rgba(var(--v-theme-outline), 0.4);
-  box-shadow: none;
+  background-color: transparent;
 }
 </style>
 
