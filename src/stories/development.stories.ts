@@ -2,9 +2,6 @@
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
-import { EngineSourceField } from '../types/engine/controls';
-import { Schema } from '../types/schema/Schema';
-import { MOCK_FOR_FILE_INPUT } from './mock-responses';
 
 
 
@@ -32,31 +29,17 @@ export default {
 
 type Story = StoryObj<typeof FormStoryWrapper>;
 
-export const Story2: Story = {
+export const Story3: Story = {
   args: {
-    formModel: {},
+    formModel: {
+      text: '<p>Kurs ecsc</p><p>zegrze </p><h1>Karol</h1><ol><li><p>1</p></li><li><p>2</p></li><li><p>3</p></li><li><p>4</p></li><li><p>5</p></li><li><p>6</p></li></ol><p></p>',
+    },
     schema: {
       type: 'object',
       properties: {
         text: {
-          label: 'Text',
           layout: {
-            component: 'text-field',
-            cols: 4,
-          },
-        },
-        text2: {
-          label: 'Text',
-          layout: {
-            component: 'button',
-            cols: 1,
-          },
-        },
-        text3: {
-          label: 'Text',
-          layout: {
-            component: 'text-field',
-            cols: 4,
+            component: 'text-editor',
           },
         },
       },
@@ -64,111 +47,100 @@ export const Story2: Story = {
   },
   parameters: {
     msw: {
-      handlers: [...MOCK_FOR_FILE_INPUT],
+      handlers: [],
     },
   },
 };
 
-export const Story1: Story = {
+export const Story2: Story = {
   args: {
-    validationBehaviour: 'messages',
-    formModel: {},
+    formModel: {
+      markdownTable:
+        '# Markdown syntax guide\n' +
+        '\n' +
+        '## Headers\n' +
+        '\n' +
+        '# This is a Heading h1\n' +
+        '## This is a Heading h2\n' +
+        '###### This is a Heading h6\n' +
+        '\n' +
+        '## Emphasis\n' +
+        '\n' +
+        '*This text will be italic*  \n' +
+        '_This will also be italic_\n' +
+        '\n' +
+        '**This text will be bold**  \n' +
+        '__This will also be bold__\n' +
+        '\n' +
+        '_You **can** combine them_\n' +
+        '\n' +
+        '## Lists\n' +
+        '\n' +
+        '### Unordered\n' +
+        '\n' +
+        '* Item 1\n' +
+        '* Item 2\n' +
+        '* Item 2a\n' +
+        '* Item 2b\n' +
+        '    * Item 3a\n' +
+        '    * Item 3b\n' +
+        '\n' +
+        '### Ordered\n' +
+        '\n' +
+        '1. Item 1\n' +
+        '2. Item 2\n' +
+        '3. Item 3\n' +
+        '    1. Item 3a\n' +
+        '    2. Item 3b\n' +
+        '\n' +
+        '## Images\n' +
+        '\n' +
+        '![This is an alt text.](/image/sample.webp "This is a sample image.")\n' +
+        '\n' +
+        '## Links\n' +
+        '\n' +
+        'You may be using [Markdown Live Preview](https://markdownlivepreview.com/).\n' +
+        '\n' +
+        '## Blockquotes\n' +
+        '\n' +
+        '> Markdown is a lightweight markup language with plain-text-formatting syntax, created in 2004 by John Gruber with Aaron Swartz.\n' +
+        '>\n' +
+        '>> Markdown is often used to format readme files, for writing messages in online discussion forums, and to create rich text using a plain text editor.\n' +
+        '\n' +
+        '## Tables\n' +
+        '\n' +
+        '| Left columns  | Right columns |\n' +
+        '| ------------- |:-------------:|\n' +
+        '| left foo      | right foo     |\n' +
+        '| left bar      | right bar     |\n' +
+        '| left baz      | right baz     |\n' +
+        '\n' +
+        '## Blocks of code\n' +
+        '\n' +
+        '```\n' +
+        "let message = 'Hello world';\n" +
+        'alert(message);\n' +
+        '```\n' +
+        '\n' +
+        '## Inline code\n' +
+        '\n' +
+        'This web site is using `markedjs/marked`.\n',
+    },
     schema: {
       type: 'object',
       properties: {
-        bookmark: {
-          //'bg-color': '#f0f0f0',
-          //color:"#eeaadd",
-          //direction: "vertical",
+        markdownTable: {
+          label: 'Transport Rate',
           layout: {
-            component: 'bookmark',
-            cols: 12,
-          },
-          source: {
-            items: [
-              { value: 1, title: 'Informacje ogólne' },
-              { value: 2, title: '[1] Uprawy rok poprzedni' },
-              { value: 3, title: '[2] Umowy rok poprzedni' },
-              { value: 4, title: '[3] Szacunkowa produkcja' },
-              { value: 5, title: '[4] Dostawy' },
-              { value: 6, title: '[5] Stan magazynowy' },
-              { value: 7, title: '[6] Zniszeczenie' },
-              { value: 8, title: '[7] Uprawy rok bieżący' },
-              { value: 9, title: '[8] Umowy Umowy rok bieżący' },
-              { value: 10, title: '[9] Dodatkowe informacje/wyjaśnienia' },
-              { value: 11, title: 'Pismo' },
-              { value: 12, title: 'Załączniki' },
-              { value: 13, title: 'Walidacje' },
-            ],
-          },
-        } ,
-        group: {
-          layout: {
-            hide: 'nata(select=1)',
-            component: 'fields-group',
-            schema: {
-              type: 'object',
-              properties: {
-                fieldA: {
-                  label: 'Field A in group A',
-                  layout: {
-                    component: 'text-field',
-                  },
-                },
-                fieldQ: {
-                  label: 'Field Q in group A',
-                  layout: {
-                    component: 'text-field',
-                  },
-                },
-                field1: {
-                  label: 'Field C in group A',
-                  layout: {
-                    component: 'text-field',
-                  },
-                },
-              },
-            },
-            cols: 12,
-          },
-        },
-        group2: {
-          layout: {
-            hide: 'nata(select=2)',
-            component: 'fields-group',
-            schema: {
-              type: 'object',
-              properties: {
-                fieldT: {
-                  label: 'XXXX',
-                  layout: {
-                    component: 'text-field',
-                  },
-                },
-                fieldG: {
-                  label: 'XXXX',
-                  layout: {
-                    component: 'text-field',
-                  },
-                },
-                fieldK: {
-                  label: 'XXXXXX',
-                  layout: {
-                    component: 'text-field',
-                  },
-                },
-              },
-              required: ['fieldT'],
-            },
-            cols: 12,
+            component: 'markdown',
           },
         },
       },
-    } as Schema,
+    },
   },
   parameters: {
     msw: {
-      handlers: [...MOCK_FOR_FILE_INPUT],
+      handlers: [],
     },
   },
 };

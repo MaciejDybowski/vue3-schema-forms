@@ -9,6 +9,7 @@ import TextSwitchField from '@/components/controls/TextSwitchField.vue';
 import YearPicker from '@/components/controls/YearPicker.vue';
 import GroupOfFields from '@/components/controls/fields-group/FieldsGroup.vue';
 import TableViewField from '@/components/controls/table/TableViewField.vue';
+import TextEditor from '@/components/controls/text-editor/TextEditor.vue';
 import UserInput from '@/components/controls/user-input/UserInput.vue';
 
 import { Components } from '@/main';
@@ -40,6 +41,7 @@ import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
 
 
 export const vueSchemaFromControls: Components = {
+  'text-editor': TextEditor,
   'text-field': TextField,
   'duplicated-section': DuplicatedSection,
   'static-content': StaticContent,

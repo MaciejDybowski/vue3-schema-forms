@@ -44,6 +44,10 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@stoplight/json-ref-resolver": "3.1.6",
+    "@tiptap/markdown": "^3.8.0",
+    "@tiptap/pm": "^3.8.0",
+    "@tiptap/starter-kit": "^3.8.0",
+    "@tiptap/vue-3": "^3.8.0",
     "@vueuse/core": "13.2.0",
     "@vueuse/math": "13.2.0",
     "jsonata": "2.0.6",
