@@ -13,6 +13,10 @@ export interface EngineTextField extends EngineField {
   expression?: string;
 }
 
+export interface EngineTextEditorField extends EngineField {
+  contentType: 'markdown' | 'html' | 'json';
+}
+
 export interface EngineFileField extends EngineField {
   url?: string;
   idQueryParamName?: string;
@@ -75,7 +79,7 @@ export interface EngineBookmarkField extends EngineField {
   stacked?: boolean;
   color?: string;
   'bg-color'?: string;
-  direction?: "vertical" | "horizontal";
+  direction?: 'vertical' | 'horizontal';
   'slider-color'?: string;
 }
 

@@ -38,11 +38,16 @@ export const Story3: Story = {
       type: 'object',
       properties: {
         text: {
+          contentType: 'html',
           layout: {
             component: 'text-editor',
+            props: {
+              //readonly: true
+            }
           },
         },
       },
+      required: ["text"]
     },
   },
   parameters: {

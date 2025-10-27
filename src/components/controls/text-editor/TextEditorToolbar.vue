@@ -98,14 +98,13 @@ const buttons = [
   gap: 6px;
   margin-bottom: 0;
   padding: 6px 10px;
-  background-color: transparent; /* 👈 brak osobnego tła */
+  background-color: transparent;
   color: rgb(var(--v-theme-on-surface));
   transition:
     border-color 0.25s ease,
     background-color 0.25s ease;
 }
 
-/* 🌓 Tryb ciemny */
 .v-theme--dark .editor-toolbar {
   border-color: rgba(var(--v-theme-outline), 0.4);
   background-color: transparent;

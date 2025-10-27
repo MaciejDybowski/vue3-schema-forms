@@ -1,5 +1,5 @@
 <template>
-  <div v-if="editor">
+  <div v-if="editor && !editorLoading">
     <text-editor-toolbar :editor="editor" />
     <editor-content
       :editor="editor"
@@ -13,19 +13,24 @@ import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 
-import { computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import TextEditorToolbar from '@/components/controls/text-editor/TextEditorToolbar.vue';
 
-import { useFormModel } from '@/core/composables';
-import { EngineTextField } from '@/types/engine/controls';
+import { useFormModel, useProps, useRules } from '@/core/composables';
+import { EngineTextEditorField } from '@/types/engine/controls';
 
+const { bindRules, rules, requiredInputClass } = useRules();
 const { getValue, setValue } = useFormModel();
-
+const { bindProps, fieldProps } = useProps();
 const { schema, model } = defineProps<{
-  schema: EngineTextField;
+  schema: EngineTextEditorField;
   model: object;
 }>();
+
+const editorLoading = ref(true);
+
+const contentType = schema.contentType || 'html';
 
 const localModel = computed({
   get(): string | null {
@@ -36,9 +41,35 @@ const localModel = computed({
     return value;
   },
   set(val: any) {
+    emptyValueForHtml(val);
+    emptyValueFormJSON(val);
     setValue(val, schema);
   },
 });
+
+function emptyValueForHtml(val: any) {
+  if (val == '<p></p>') {
+    setValue(null, schema);
+    return;
+  }
+}
+
+function emptyValueFormJSON(val: any) {
+  if (
+    JSON.stringify(val) ==
+    JSON.stringify({
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+        },
+      ],
+    })
+  ) {
+    setValue(null, schema);
+    return;
+  }
+}
 
 const editor = useEditor({
   editorProps: {
@@ -47,28 +78,33 @@ const editor = useEditor({
     },
   },
   extensions: [StarterKit, Markdown],
-  contentType: 'html',
+  contentType: contentType,
   content: localModel.value,
   onUpdate({ editor }) {
-    //const doc = editor.state.doc;
-    //const markdown = defaultMarkdownSerializer.serialize(doc);
-    //model.value = markdown;
-
-    const html = editor.getHTML();
-    localModel.value = html;
-    console.debug('Serialized html:', html);
-    //model.value = html;
+    switch (contentType) {
+      case 'markdown':
+        localModel.value = editor.getMarkdown();
+        break;
+      case 'html':
+        localModel.value = editor.getHTML();
+        break;
+      case 'json':
+        localModel.value = editor.getJSON();
+        break;
+      default:
+        console.warn(`Unknown contentType = ${contentType}`);
+    }
   },
 });
 
-onBeforeMount(() => {
-  if (localModel.value == '' || localModel.value == undefined) {
-    localModel.value = null;
-  }
-});
+onMounted(async () => {
+  editorLoading.value = true;
+  await bindProps(schema);
+  await bindRules(schema);
 
-onMounted(() => {
-  console.log(`onMounted: ${localModel.value}`);
+  editor.value?.setEditable(!fieldProps.value.readonly);
+
+  editorLoading.value = false;
 });
 
 onBeforeUnmount(() => {
