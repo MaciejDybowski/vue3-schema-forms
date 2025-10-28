@@ -90,6 +90,57 @@ const buttons = [
     isActive: (editor: any) => editor.isActive('blockquote'),
   },
   {
+    name: 'insertTable',
+    icon: 'table',
+    action: (editor: any) => {
+      editor.chain().focus().insertTable({ rows: 2, cols: 2, withHeaderRow: true }).run();
+    },
+    isActive: (editor: any) => editor.isActive('table'),
+  },
+  {
+    name: 'addColumnBefore',
+    icon: 'table-column-plus-before',
+    action: (editor: any) => editor.chain().focus().addColumnBefore().run(),
+    isActive: () => false,
+  },
+  {
+    name: 'addColumnAfter',
+    icon: 'table-column-plus-after',
+    action: (editor: any) => editor.chain().focus().addColumnAfter().run(),
+    isActive: () => false,
+  },
+  {
+    name: 'addRowBefore',
+    icon: 'table-row-plus-before',
+    action: (editor: any) => editor.chain().focus().addRowBefore().run(),
+    isActive: () => false,
+  },
+  {
+    name: 'addRowAfter',
+    icon: 'table-row-plus-after',
+    action: (editor: any) => editor.chain().focus().addRowAfter().run(),
+    isActive: () => false,
+  },
+  {
+    name: 'deleteRow',
+    icon: 'table-row-remove',
+    action: (editor: any) => editor.chain().focus().deleteRow().run(),
+    isActive: () => false,
+  },
+  {
+    name: 'deleteColumn',
+    icon: 'table-column-remove',
+    action: (editor: any) => editor.chain().focus().deleteColumn().run(),
+    isActive: () => false,
+  },
+  {
+    name: 'deleteTable',
+    icon: 'table-remove',
+    action: (editor: any) => editor.chain().focus().deleteTable().run(),
+    isActive: () => false,
+  },
+
+  {
     name: 'source',
     icon: 'code-braces',
     action: (editor: any) => {
@@ -133,7 +184,15 @@ const buttons = [
     "orderedList": "Ordered List",
     "code": "Code",
     "blockquote": "Blockquote",
-    "source": "Source code"
+    "source": "Source code",
+    "insertTable": "Insert table",
+    "addColumnBefore": "Add column before",
+    "addColumnAfter": "Add column after",
+    "addRowBefore": "Add row before",
+    "addRowAfter": "Add row after",
+    "deleteRow": "Delete row",
+    "deleteColumn": "Delete column",
+    "deleteTable": "Delete table"
   },
   "pl": {
     "bold": "Pogrubienie",
@@ -146,7 +205,15 @@ const buttons = [
     "orderedList": "Lista numerowana",
     "code": "Kod",
     "blockquote": "Cytat",
-    "source": "Kod źródłowy"
+    "source": "Kod źródłowy",
+    "insertTable": "Wstaw tabelę",
+    "addColumnBefore": "Dodaj kolumnę przed",
+    "addColumnAfter": "Dodaj kolumnę po",
+    "addRowBefore": "Dodaj wiersz przed",
+    "addRowAfter": "Dodaj wiersz po",
+    "deleteRow": "Usuń wiersz",
+    "deleteColumn": "Usuń kolumnę",
+    "deleteTable": "Usuń tabelę"
   }
 }
 </i18n>

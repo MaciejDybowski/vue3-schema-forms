@@ -50,6 +50,7 @@
 </template>
 
 <script lang="ts" setup>
+import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
 import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
@@ -126,7 +127,16 @@ const editor = useEditor({
       class: 'vue-forms-text-editor',
     },
   },
-  extensions: [StarterKit, Markdown],
+  extensions: [
+    StarterKit.configure({}),
+    Markdown,
+    Table.configure({
+      resizable: true,
+    }),
+    TableRow,
+    TableHeader,
+    TableCell,
+  ],
   contentType: contentType,
   content: localModel.value,
   onUpdate({ editor }) {
@@ -268,6 +278,24 @@ onBeforeUnmount(() => {
   }
 }
 
+:deep(.vue-forms-text-editor table) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+}
+
+:deep(.vue-forms-text-editor th),
+:deep(.vue-forms-text-editor td) {
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.2);
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: middle;
+}
+:deep(.vue-forms-text-editor th) {
+  background-color: rgba(var(--v-theme-primary), 0.05);
+  font-weight: 600;
+}
+
 .v-theme--dark :deep(.vue-forms-text-editor) {
   background-color: transparent !important;
   border: none !important;
@@ -289,5 +317,10 @@ onBeforeUnmount(() => {
   h3 {
     color: rgb(var(--v-theme-on-surface));
   }
+}
+.v-theme--dark :deep(.vue-forms-text-editor th),
+.v-theme--dark :deep(.vue-forms-text-editor td) {
+  border-color: rgba(var(--v-theme-on-surface), 0.15);
+  background-color: transparent;
 }
 </style>
