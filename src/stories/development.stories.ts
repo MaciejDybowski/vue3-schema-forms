@@ -31,23 +31,20 @@ type Story = StoryObj<typeof FormStoryWrapper>;
 
 export const Story3: Story = {
   args: {
-    formModel: {
-      text: '<p>Kurs ecsc</p><p>zegrze </p><h1>Karol</h1><ol><li><p>1</p></li><li><p>2</p></li><li><p>3</p></li><li><p>4</p></li><li><p>5</p></li><li><p>6</p></li></ol><p></p>',
-    },
+    formModel: {},
     schema: {
       type: 'object',
       properties: {
-        text: {
-          contentType: 'html',
+        textField331: {
+          label: 'Item-textField331',
           layout: {
-            component: 'text-editor',
-            props: {
-              //readonly: true
-            },
+            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+            fillRow: true,
+            component: 'text-field',
           },
         },
+        textEditor056: { contentType: 'html', layout: { component: 'text-editor' } },
       },
-      required: ['text'],
     },
   },
   parameters: {

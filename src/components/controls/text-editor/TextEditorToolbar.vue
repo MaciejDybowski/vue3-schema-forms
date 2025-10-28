@@ -8,7 +8,7 @@
     <text-editor-toolbar-button
       v-for="btn in buttons"
       :key="btn.name"
-      :active="btn.isActive(editor)"
+      :active="btn.isActive(editor, showSource)"
       :icon="btn.icon"
       :name="t(btn.name)"
       @click="btn.action(editor)"
@@ -23,8 +23,9 @@ import TextEditorToolbarButton from '@/components/controls/text-editor/TextEdito
 
 const { t } = useI18n();
 
-const { editor } = defineProps<{
+const { editor, showSource } = defineProps<{
   editor: any;
+  showSource?: boolean;
 }>();
 
 const buttons = [
@@ -88,6 +89,14 @@ const buttons = [
     action: (editor: any) => editor.chain().focus().toggleBlockquote().run(),
     isActive: (editor: any) => editor.isActive('blockquote'),
   },
+  {
+    name: 'source',
+    icon: 'code-braces',
+    action: (editor: any) => {
+      editor.emit('toggle-source');
+    },
+    isActive: (_editor: any, showSource?: boolean) => !!showSource,
+  },
 ];
 </script>
 
@@ -123,7 +132,8 @@ const buttons = [
     "bulletList": "Bullet List",
     "orderedList": "Ordered List",
     "code": "Code",
-    "blockquote": "Blockquote"
+    "blockquote": "Blockquote",
+    "source": "Source code"
   },
   "pl": {
     "bold": "Pogrubienie",
@@ -135,7 +145,8 @@ const buttons = [
     "bulletList": "Lista punktowana",
     "orderedList": "Lista numerowana",
     "code": "Kod",
-    "blockquote": "Cytat"
+    "blockquote": "Cytat",
+    "source": "Kod źródłowy"
   }
 }
 </i18n>

@@ -14,7 +14,10 @@
             class="ma-0 pa-0"
             cols="12"
           >
-            <text-editor-toolbar :editor="editor" />
+            <text-editor-toolbar
+              :editor="editor"
+              :show-source="showSource"
+            />
           </v-col>
           <v-col
             class="ma-0 pa-0"
@@ -25,10 +28,19 @@
               :disabled="fieldProps.readonly"
               v-bind="fieldProps"
             >
-              <editor-content
-                :editor="editor"
-                class="vue-forms-text-editor"
-              />
+              <template v-if="!showSource">
+                <editor-content
+                  :editor="editor"
+                  class="vue-forms-text-editor"
+                />
+              </template>
+              <template v-else>
+                <textarea
+                  v-model="sourceContent"
+                  class="vue-forms-text-editor-source"
+                  spellcheck="false"
+                ></textarea>
+              </template>
             </v-field>
           </v-col>
         </v-row>
@@ -58,6 +70,8 @@ const { schema, model } = defineProps<{
 }>();
 
 const editorLoading = ref(true);
+const showSource = ref(false);
+const sourceContent = ref('');
 
 const contentType = schema.contentType || 'html';
 
@@ -139,6 +153,41 @@ onMounted(async () => {
 
   editor.value?.setEditable(!fieldProps.value.readonly);
 
+  editor.value?.on('toggle-source' as any, () => {
+    if (!showSource.value) {
+      switch (contentType) {
+        case 'markdown':
+          sourceContent.value = editor.value?.getMarkdown() || '';
+          break;
+        case 'json':
+          sourceContent.value = JSON.stringify(editor.value?.getJSON(), null, 2);
+          break;
+        default:
+          sourceContent.value = editor.value?.getHTML() || '';
+      }
+      editor.value?.setEditable(false);
+      showSource.value = true;
+    } else {
+      if (contentType === 'json') {
+        try {
+          const json = JSON.parse(sourceContent.value);
+          editor.value?.commands.setContent(json);
+        } catch (e) {
+          console.warn('Invalid JSON');
+        }
+      } else if (contentType === 'markdown') {
+        editor.value?.commands.setContent(sourceContent.value, {
+          parseOptions: { preserveWhitespace: true },
+        });
+      } else {
+        editor.value?.commands.setContent(sourceContent.value);
+      }
+
+      editor.value?.setEditable(!fieldProps.value.readonly);
+      showSource.value = false;
+    }
+  });
+
   editorLoading.value = false;
 });
 
@@ -148,6 +197,20 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+:deep(.vue-forms-text-editor-source) {
+  width: 100%;
+  min-height: 176px;
+  padding: 8px 12px;
+  border: none;
+  outline: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgb(var(--v-theme-on-surface));
+  white-space: pre;
+  resize: none;
+}
+
 :deep(.vue-forms-text-editor) {
   width: 100%;
   min-height: 160px;
@@ -206,25 +269,25 @@ onBeforeUnmount(() => {
 }
 
 .v-theme--dark :deep(.vue-forms-text-editor) {
-  background-color: rgb(var(--v-theme-surface-variant));
-  border-color: rgba(var(--v-theme-outline), 0.4);
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
   color: rgb(var(--v-theme-on-surface));
 
-  &:hover {
-    border-color: rgb(var(--v-theme-primary));
-  }
-
-  &:focus-within {
-    box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.3);
-  }
-
   code {
-    background: rgba(var(--v-theme-primary), 0.2);
+    background: none;
   }
 
   blockquote {
-    border-left-color: rgb(var(--v-theme-primary));
+    border-left: none;
     color: rgba(var(--v-theme-on-surface), 0.85);
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: rgb(var(--v-theme-on-surface));
   }
 }
 </style>
