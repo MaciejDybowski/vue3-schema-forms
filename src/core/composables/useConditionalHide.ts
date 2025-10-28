@@ -45,9 +45,18 @@ export function useConditionalHide() {
   }
 
   async function hideByJsonNata(schema: EngineField, expression: string, model: any) {
-    const modelForResolve = form.getFormModelForResolve.value;
-    const nata = jsonata(expression);
-    shouldHide.value = await nata.evaluate(modelForResolve);
+    try {
+      const modelForResolve = form.getFormModelForResolve.value;
+      const nata = jsonata(expression);
+      shouldHide.value = await nata.evaluate(modelForResolve);
+    } catch (err: any) {
+      console.error('JSONata error:', {
+        message: err.message,
+        expression: expression,
+        field: schema.key,
+      });
+      shouldHide.value = false;
+    }
   }
 
   async function conditionalHidingListener(schema: EngineField, model: any) {
