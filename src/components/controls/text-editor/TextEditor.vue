@@ -70,6 +70,7 @@ const { schema, model } = defineProps<{
   model: object;
 }>();
 
+const isUpdatingFromEditor = ref(false);
 const editorLoading = ref(true);
 const showSource = ref(false);
 const sourceContent = ref('');
@@ -140,6 +141,7 @@ const editor = useEditor({
   contentType: contentType,
   content: localModel.value,
   onUpdate({ editor }) {
+    isUpdatingFromEditor.value = true;
     switch (contentType) {
       case 'markdown':
         localModel.value = editor.getMarkdown();
@@ -153,13 +155,16 @@ const editor = useEditor({
       default:
         console.warn(`Unknown contentType = ${contentType}`);
     }
+    isUpdatingFromEditor.value = false;
   },
 });
 
 watch(
   () => localModel.value,
   (newValue) => {
-    editor.value?.commands.setContent(newValue);
+    if (!isUpdatingFromEditor.value && editor.value && editor.value?.getHTML() !== newValue) {
+      editor.value.commands.setContent(newValue);
+    }
   },
 );
 
