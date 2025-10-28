@@ -5,26 +5,34 @@
       :rules="!fieldProps.readonly ? rules : []"
       v-bind="fieldProps"
     >
-      <v-row
-        dense
-        no-gutters
-      >
-        <v-col
-          class="ma-0 pa-0"
-          cols="12"
+      <template #default>
+        <v-row
+          dense
+          no-gutters
         >
-          <text-editor-toolbar :editor="editor" />
-        </v-col>
-        <v-col
-          class="ma-0 pa-0"
-          cols="12"
-        >
-          <editor-content
-            :editor="editor"
-            class="editor-content"
-          />
-        </v-col>
-      </v-row>
+          <v-col
+            class="ma-0 pa-0"
+            cols="12"
+          >
+            <text-editor-toolbar :editor="editor" />
+          </v-col>
+          <v-col
+            class="ma-0 pa-0"
+            cols="12"
+          >
+            <v-field
+              :active="!!localModel"
+              :disabled="fieldProps.readonly"
+              v-bind="fieldProps"
+            >
+              <editor-content
+                :editor="editor"
+                class="vue-forms-text-editor"
+              />
+            </v-field>
+          </v-col>
+        </v-row>
+      </template>
     </v-input>
   </div>
 </template>
@@ -143,9 +151,8 @@ onBeforeUnmount(() => {
 :deep(.vue-forms-text-editor) {
   width: 100%;
   min-height: 160px;
-  padding: 16px 20px;
-  border-radius: 8px;
-  border: 1px solid var(--v-theme-outline-variant);
+  padding: 8px 12px;
+
   background-color: rgb(var(--v-theme-surface));
   color: rgb(var(--v-theme-on-surface));
   font-size: 15px;
@@ -159,8 +166,6 @@ onBeforeUnmount(() => {
     sans-serif;
   transition: all 0.25s ease;
   outline: none;
-  border-color: rgb(var(--v-theme-primary));
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.15);
 
   p {
     margin: 0 0 8px;
