@@ -55,7 +55,7 @@ import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import TextEditorToolbar from '@/components/controls/text-editor/TextEditorToolbar.vue';
 
@@ -155,6 +155,13 @@ const editor = useEditor({
     }
   },
 });
+
+watch(
+  () => localModel.value,
+  (newValue) => {
+    editor.value?.commands.setContent(newValue);
+  },
+);
 
 onMounted(async () => {
   editorLoading.value = true;
