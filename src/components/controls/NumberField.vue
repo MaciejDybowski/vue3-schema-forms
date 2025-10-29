@@ -1,39 +1,41 @@
 <template>
-  <v-text-field
-    v-if="!loading"
-    :class="bindClass(schema) + requiredInputClass"
-    :label="label"
-    :model-value="getLocalModel"
-    :rules="!fieldProps.readonly ? rules : []"
-    v-bind="fieldProps"
-    @focusin="focusin"
-    @focusout="focusout"
-    @update:model-value="userTyping"
-    @click:append-inner="clickAppendInner"
-  >
-    <template v-slot:append-inner>
-      <v-tooltip
-        :text="t('numberInput.resultWasModified')"
-        location="start"
-      >
-        <template v-slot:activator="{ props }">
-          <v-icon
-            v-if="showIconForVisualizationOfManuallyChangedResult"
-            icon="mdi-alert-circle-outline"
-            v-bind="props"
-          >
-          </v-icon>
-        </template>
-      </v-tooltip>
-    </template>
-  </v-text-field>
-  <v-snackbar
-    v-model="snackbar"
-    :timeout="1000"
-    color="success"
-    variant="tonal"
-    >Copied!
-  </v-snackbar>
+ <div>
+   <v-text-field
+     v-if="!loading"
+     :class="bindClass(schema) + requiredInputClass"
+     :label="label"
+     :model-value="getLocalModel"
+     :rules="!fieldProps.readonly ? rules : []"
+     v-bind="fieldProps"
+     @focusin="focusin"
+     @focusout="focusout"
+     @update:model-value="userTyping"
+     @click:append-inner="clickAppendInner"
+   >
+     <template v-slot:append-inner>
+       <v-tooltip
+         :text="t('numberInput.resultWasModified')"
+         location="start"
+       >
+         <template v-slot:activator="{ props }">
+           <v-icon
+             v-if="showIconForVisualizationOfManuallyChangedResult"
+             icon="mdi-alert-circle-outline"
+             v-bind="props"
+           >
+           </v-icon>
+         </template>
+       </v-tooltip>
+     </template>
+   </v-text-field>
+   <v-snackbar
+     v-model="snackbar"
+     :timeout="1000"
+     color="success"
+     variant="tonal"
+   >Copied!
+   </v-snackbar>
+ </div>
 </template>
 
 <script lang="ts" setup>
