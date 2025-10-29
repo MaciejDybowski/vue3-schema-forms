@@ -35,15 +35,53 @@ export const Story3: Story = {
     schema: {
       type: 'object',
       properties: {
-        textField331: {
-          label: 'Item-textField331',
+        textField2: {
+          label: 'Pole3',
           layout: {
-            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-            fillRow: true,
             component: 'text-field',
+            hide: "nata(maciek=)"
           },
         },
-        textEditor056: { contentType: 'html', layout: { component: 'text-editor' } },
+        paragraph: {
+          content: 'Static form text content',
+          layout: {
+            component: 'static-content',
+            tag: 'p',
+          } as Layout,
+        },
+        panelA: {
+          layout: {
+            component: 'expansion-panels',
+          },
+          panels: [
+            {
+              title: 'Panel A',
+              schema: {
+                properties: {
+                  textField: {
+                    label: 'Pole1',
+                    layout: {
+                      component: 'text-field',
+                    },
+                  },
+                },
+              },
+            },
+            {
+              title: 'Panel B',
+              schema: {
+                properties: {
+                  textFieldTest: {
+                    label: 'Pole3',
+                    layout: {
+                      component: 'text-field',
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
       },
     },
   },

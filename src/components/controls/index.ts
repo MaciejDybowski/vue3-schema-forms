@@ -17,6 +17,7 @@ import { Components } from '@/main';
 import ButtonField from './ButtonField.vue';
 import CheckboxButton from './CheckboxButton.vue';
 import Divider from './Divider.vue';
+import ExpansionPanels from './ExpansionPanels.vue';
 import Location from './Location.vue';
 import NumberField from './NumberField.vue';
 import PhoneInput from './PhoneInput.vue';
@@ -75,4 +76,5 @@ export const vueSchemaFromControls: Components = {
   'text-switch-field': TextSwitchField,
   'file-field': FileField,
   bookmark: Bookmark,
+  'expansion-panels': ExpansionPanels,
 };

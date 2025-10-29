@@ -7,10 +7,20 @@ import {
   Source,
   UserInputSource,
 } from '@/types/shared/Source';
+import { Schema } from '@/types/schema/Schema';
+
+export interface EngineExpansionPanel {
+  title?:string
+  schema: Schema
+}
 
 export interface EngineTextField extends EngineField {
   calculation?: string;
   expression?: string;
+}
+
+export interface EngineExpansionPanels extends EngineField {
+  panels: EngineExpansionPanel[];
 }
 
 export interface EngineTextEditorField extends EngineField {
