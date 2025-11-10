@@ -10,7 +10,7 @@ import {
 import { Schema } from '@/types/schema/Schema';
 
 export interface EngineExpansionPanel {
-  title?:string
+  title:string
   schema: Schema
 }
 

@@ -9,13 +9,15 @@
       v-for="(panel, index) in schema.panels"
       :key="index"
     >
-      <v-expansion-panel-title>
-        {{ panel.title }}
+      <v-expansion-panel-title v-if="panelTitles[index]">
+        {{ panelTitles[index].resolvedText }}
       </v-expansion-panel-title>
 
-      <v-expansion-panel-text>
+      <v-expansion-panel-text
+        v-memo="[panelSchemas[index]]"
+        eager
+      >
         <form-root
-          v-if="panelSchemas[index]"
           :model="model"
           :options="schema.options"
           :schema="panelSchemas[index]"
@@ -27,12 +29,15 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { useEventBus } from '@vueuse/core';
+
+import { computed, onMounted, ref } from 'vue';
 
 import FormRoot from '@/components/engine/FormRoot.vue';
 
-import { useFormModel } from '@/core/composables';
-import { EngineExpansionPanels } from '@/types/engine/controls';
+import { useFormModel, useResolveVariables } from '@/core/composables';
+import { variableRegexp } from '@/core/engine/utils';
+import { EngineExpansionPanel, EngineExpansionPanels } from '@/types/engine/controls';
 
 const { model, schema } = defineProps<{
   schema: EngineExpansionPanels;
@@ -40,15 +45,39 @@ const { model, schema } = defineProps<{
 }>();
 
 const { setValue } = useFormModel();
-
-const panelSchemas = ref<any[]>([]);
+const { resolve } = useResolveVariables();
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
 function updateModel(payload: any) {
   setValue(payload.value, { key: payload.key, on: schema.on } as any);
 }
 
-onMounted(async () => {
-  panelSchemas.value = schema.panels.map((p) => p.schema);
+const panelSchemas = computed(() => schema.panels.map((p) => p.schema));
+const panelTitles = ref<any[]>([]);
+
+onMounted(() => {
+  panelTitles.value = schema.panels.map((p: EngineExpansionPanel) => ({
+    resolvedText: p.title,
+  }));
+
+  Promise.all(
+    schema.panels.map(async (p: EngineExpansionPanel) => {
+      return await resolve(schema, p.title);
+    }),
+  ).then((resolved) => {
+    panelTitles.value = resolved;
+  });
+
+  const hasVariables = schema.panels.some((p) => p.title.match(variableRegexp));
+
+  if (hasVariables) {
+    const unsubscribe = vueSchemaFormEventBus.on(async () => {
+      await new Promise((r) => setTimeout(r, 110));
+      panelTitles.value = await Promise.all(
+        schema.panels.map(async (p) => await resolve(schema, p.title)),
+      );
+    });
+  }
 });
 </script>
 

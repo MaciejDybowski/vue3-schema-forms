@@ -2,6 +2,7 @@
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
+import { _100fieldSchema } from '../tests/test-schemas';
 
 
 
@@ -39,7 +40,6 @@ export const Story3: Story = {
           label: 'Pole3',
           layout: {
             component: 'text-field',
-            hide: "nata(maciek=)"
           },
         },
         paragraph: {
@@ -56,19 +56,10 @@ export const Story3: Story = {
           panels: [
             {
               title: 'Panel A',
-              schema: {
-                properties: {
-                  textField: {
-                    label: 'Pole1',
-                    layout: {
-                      component: 'text-field',
-                    },
-                  },
-                },
-              },
+              schema: _100fieldSchema,
             },
             {
-              title: 'Panel B',
+              title: '{textField2:Default Title}',
               schema: {
                 properties: {
                   textFieldTest: {
