@@ -1,9 +1,13 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
+
+
+
+
 
 export default {
   title: 'Elements/Editable/Switch',
@@ -28,6 +32,111 @@ export const Standard: Story = {
           label: 'Change it!',
           layout: {
             component: 'switch',
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const ValueByCalculation: Story = {
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const field = canvas.getByLabelText('Change it!');
+    await expect(context.args.formModel).toEqual({ switch: true });
+    await userEvent.click(field, { delay: 200 });
+    await expect(context.args.formModel).toEqual({ switch: false, switchManuallyChanged: true });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        switch: {
+          label: 'Change it!',
+          calculation: '2+2=4',
+          layout: {
+            component: 'switch',
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const TriggerEvent: Story = {
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const field = canvas.getByLabelText('Reset field B on change');
+    await expect(context.args.formModel).toEqual({
+      switch: false,
+      switch2: false,
+      fieldA: 'Template',
+      fieldB: 'Template',
+    });
+    await userEvent.click(field, { delay: 200 });
+
+    await waitFor(() => {
+      expect(context.args.formModel).toEqual({
+        switch: true,
+        switch2: false,
+        fieldA: 'Template',
+        fieldB: null,
+      });
+    });
+  },
+  args: {
+    formModel: {
+      fieldA: 'Template',
+      fieldB: 'Template',
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        fieldA: {
+          label: 'Field A',
+          layout: {
+            component: 'text-field',
+          },
+        },
+        fieldB: {
+          label: 'Field B',
+          layout: {
+            component: 'text-field',
+          },
+        },
+        switch: {
+          label: 'Reset field B on change',
+          layout: {
+            component: 'switch',
+          },
+
+          onChange: {
+            mode: 'change-model',
+            variables: [
+              {
+                path: 'fieldB',
+                value: null,
+              },
+            ],
+          },
+        },
+        switch2: {
+          label: 'Call script on change',
+          layout: {
+            component: 'switch',
+          },
+          onChange: {
+            mode: 'action',
+            code: 'callScript',
+            params: {
+              script: 'scriptA',
+            },
+            body: {
+              fieldA: '{fieldA}',
+            },
           },
         },
       },

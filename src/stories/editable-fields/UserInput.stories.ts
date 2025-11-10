@@ -182,3 +182,77 @@ export const AutoSelect: Story = {
     },
   },
 };
+
+export const TriggerEvent: Story = {
+  name: 'Case: trigger event',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText('User');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[0], { delay: 200 });
+    await waitFor(() => {
+      expect(context.args.formModel).toEqual({
+        user: {
+          id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+          email: 'alice@example.com',
+          firstName: 'Alice',
+          lastName: 'Smith',
+          username: 'asmith',
+          labels: 'the-best',
+        },
+        fieldB: null,
+      });
+    });
+  },
+  args: {
+    formModel: {
+      fieldB: 'Template',
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        fieldB: {
+          label: 'Field B',
+          layout: {
+            component: 'text-field',
+          },
+        },
+        user: {
+          label: 'User',
+          layout: {
+            cols: 12,
+            component: 'user-input',
+            props: {
+              multiple: false,
+            },
+          },
+          source: {
+            url: '/mocks/users',
+            itemsPerPage: 20,
+          },
+          onChange: {
+            mode: 'change-model',
+            variables: [
+              {
+                path: 'fieldB',
+                value: null,
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: USER_INPUT_MOCKS,
+    },
+  },
+};

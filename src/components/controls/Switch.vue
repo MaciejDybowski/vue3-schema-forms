@@ -1,14 +1,14 @@
 <template>
   <v-switch
-    class="px-2"
     :ref="(el) => (formSwitch[switchId] = el)"
     v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
     :color="primaryWhite"
     :label="label"
     :rules="!fieldProps.readonly ? rules : []"
+    class="px-2"
     v-bind="fieldProps"
-    @update:model-value="onToggleByUser"
+    @update:model-value="valueHasChanged"
   />
 </template>
 
@@ -26,22 +26,24 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { EngineSwitchField } from '@/types/engine/controls';
 
-const props = defineProps<{
+const { schema, model } = defineProps<{
   schema: EngineSwitchField;
   model: object;
 }>();
 
-const mode = props.schema.mode ? props.schema.mode : 'none';
+const mode = schema.mode ? schema.mode : 'none';
 
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
-const { label, bindLabel } = useLabel(props.schema);
+const { label, bindLabel } = useLabel(schema);
 const { getValue, setValue } = useFormModel();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
+const { onChange } = useEventHandler();
 
 const theme = useTheme();
 
@@ -56,24 +58,28 @@ const formSwitch = ref<Record<string, any>>({});
 const switchId: string = Math.random().toString().slice(2, 5);
 
 const isCalculationDefined = computed(() => {
-  return props.schema.calculation && props.schema.calculation !== '';
+  return schema.calculation && schema.calculation !== '';
 });
 
 const isValueFromModelAndNotChangedManually = computed(() => {
   return (
-    !localModel.value ||
-    (localModel.value && !(`${props.schema.key}ManuallyChanged` in (props.model as any)))
+    !localModel.value || (localModel.value && !(`${schema.key}ManuallyChanged` in (model as any)))
   );
 });
 
 const localModel = computed({
   get(): any {
-    return getValue(props.model, props.schema);
+    return getValue(model, schema);
   },
   set(val: any) {
-    setValue(val, props.schema, undefined, mode == 'visibility');
+    setValue(val, schema, undefined, mode == 'visibility');
   },
 });
+
+function valueHasChanged(val: any) {
+  onToggleByUser(val); // custom logic
+  onChange(schema, model); // fire events if defined
+}
 
 function onToggleByUser(val: any) {
   if (isCalculationDefined.value) {
@@ -81,10 +87,10 @@ function onToggleByUser(val: any) {
     unsubscribeListener.value();
 
     const updateEvent: NodeUpdateEvent = {
-      key: `${props.schema.key}ManuallyChanged`,
+      key: `${schema.key}ManuallyChanged`,
       value: true,
     };
-    props.schema.on.input(updateEvent);
+    schema.on.input(updateEvent);
   }
 
   localModel.value = val;
@@ -92,22 +98,22 @@ function onToggleByUser(val: any) {
 
 async function runCalculationIfExist() {
   if (isCalculationDefined.value && isValueFromModelAndNotChangedManually.value) {
-    localModel.value = await calculationFunc(props.schema, props.model);
+    localModel.value = await calculationFunc(schema, model);
   }
 }
 
 onMounted(async () => {
   await runCalculationIfExist();
-  await bindLabel(props.schema);
-  await bindRules(props.schema);
-  await bindProps(props.schema);
+  await bindLabel(schema);
+  await bindRules(schema);
+  await bindProps(schema);
 
   if (mode == 'visibility') {
     fieldProps.value.readonly = false;
   }
 
-  if (!('defaultValue' in props.schema)) {
-    const current = getValue(props.model, props.schema);
+  if (!('defaultValue' in schema)) {
+    const current = getValue(model, schema);
     if (current === undefined || current === null) {
       let falseValue = fieldProps.value['false-value'] as string | boolean | undefined;
       localModel.value = falseValue === undefined ? false : falseValue;

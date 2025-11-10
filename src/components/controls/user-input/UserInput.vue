@@ -23,6 +23,7 @@
     v-bind="fieldProps"
     @click="fetchData($event)"
     @loadMoreRecords="loadMoreRecords"
+    @update:model-value="valueHasChanged"
   >
     <template #selection="{ item }">
       <v-chip
@@ -119,6 +120,7 @@ import { variableRegexp } from '@/core/engine/utils';
 import { logger } from '@/main';
 import { User } from '@/types/engine/User';
 import { EngineDictionaryField, EngineUserField } from '@/types/engine/controls';
+import { useEventHandler } from '@/core/composables/useEventHandler';
 
 const props = defineProps<{
   schema: EngineUserField;
@@ -129,7 +131,7 @@ const { t } = useLocale();
 const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
-
+const { onChange } = useEventHandler();
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { resolve } = useResolveVariables();
@@ -166,6 +168,10 @@ const localModel = computed({
     }
   },
 });
+
+function valueHasChanged(val: any) {
+  onChange(props.schema, props.model); // fire events if defined
+}
 
 // DEFAULTS VALUES //
 const usersAPIEndpoint = ref<string>('/api/workspaces/members');
