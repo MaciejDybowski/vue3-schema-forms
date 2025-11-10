@@ -54,6 +54,45 @@ export const Standard: Story = {
     } as Schema,
   },
 };
+
+export const Multiple: Story = {
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText('Simple select');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[0], { delay: 200 });
+    await userEvent.click(items[1], { delay: 200 });
+    await expect(context.args.formModel).toEqual({ select: [1, 2] });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        select: {
+          label: 'Simple select',
+          layout: {
+            component: 'select',
+          },
+          source: {
+            multiple: true,
+            items: [
+              { value: 1, title: 'Option 1' },
+              { value: 2, title: 'Option 2' },
+              { value: 3, title: 'Option 3' },
+            ],
+          },
+        } as EngineSourceField,
+      },
+    } as Schema,
+  },
+};
 /**
  * You can set the default value of field from schema
  */

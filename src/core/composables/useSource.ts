@@ -7,6 +7,7 @@ import { SimpleSource } from '@/types/shared/Source';
 export function useSource(source: SimpleSource) {
   const title = source.title ? source.title : 'title';
   const value = source.value ? source.value : 'value';
+  let multiple = source.multiple ? source.multiple : false
   const returnObject = source.returnObject ? source.returnObject : false;
   const loading = ref(false);
   let data: Ref<Array<Record<string, any>>> = ref([]);
@@ -27,5 +28,5 @@ export function useSource(source: SimpleSource) {
 
   load();
 
-  return { title, value, loading, data, returnObject };
+  return { title, value, loading, data, returnObject, multiple };
 }

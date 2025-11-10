@@ -11,6 +11,7 @@
     :loading="loading"
     :return-object="returnObject as any"
     @change="onChange(schema, model)"
+    :multiple="multiple"
   ></v-select>
 </template>
 
@@ -34,7 +35,7 @@ const props = defineProps<{
   model: object;
 }>();
 const { label, bindLabel } = useLabel(props.schema);
-const { title, value, loading, data, returnObject } = useSource(props.schema.source);
+const { title, value, loading, data, returnObject, multiple } = useSource(props.schema.source);
 const { bindProps, fieldProps } = useProps();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
@@ -42,7 +43,7 @@ const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 
 const localModel = computed({
-  get(): string | number {
+  get(): any {
     return getValue(props.model, props.schema);
   },
   set(val: any) {

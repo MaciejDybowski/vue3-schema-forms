@@ -84,6 +84,7 @@ export interface AvatarSource {
 export interface SimpleSource extends Source {
   url?: string;
   items?: Array<any>;
+  multiple?:boolean
 }
 
 export interface DictionarySource extends Source {
