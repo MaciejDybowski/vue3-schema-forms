@@ -55,7 +55,7 @@ export const Story3: Story = {
           },
           panels: [
             {
-              title: 'Panel A',
+              title: '<i class="mdi mdi-briefcase-edit-outline mr-2"></i>Dane projektu',
               schema: _100fieldSchema,
             },
             {

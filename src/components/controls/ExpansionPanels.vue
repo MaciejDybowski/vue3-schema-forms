@@ -9,9 +9,10 @@
       v-for="(panel, index) in schema.panels"
       :key="index"
     >
-      <v-expansion-panel-title v-if="panelTitles[index]">
-        {{ panelTitles[index].resolvedText }}
-      </v-expansion-panel-title>
+      <v-expansion-panel-title
+        v-if="panelTitles[index]"
+        v-html="panelTitles[index].resolvedText"
+      />
 
       <v-expansion-panel-text
         v-memo="[panelSchemas[index]]"
@@ -93,7 +94,9 @@ onMounted(() => {
   position: relative;
   border-radius: 8px;
   margin-bottom: 8px;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   border-bottom: 1px solid rgba(var(--v-theme-primary), 0.1);
 
@@ -145,4 +148,7 @@ onMounted(() => {
   min-height: 48px;
 }
 
+:deep(.v-expansion-panel-title) {
+  justify-content: flex-start;
+}
 </style>
