@@ -110,6 +110,7 @@ const actionHandlerEventBus = useEventBus<string>('form-action');
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
   localModel.value = { ...localModel.value, ...model.value } as any;
+  await new Promise((r) => setTimeout(r, 100));
   form.updateFormModel(localModel.value);
 
   // update internal
@@ -235,7 +236,7 @@ async function validate(option?: ValidationFromBehaviour) {
   // Alert error block validation !
   const alertElements = document.querySelectorAll('[role="alert"]');
   alertElements.forEach((alertElement) => {
-    console.debug(alertElement)
+    console.debug(alertElement);
     const isError =
       alertElement.classList.contains('v-alert') && alertElement.classList.contains('text-error');
     const alertText = alertElement.textContent;
