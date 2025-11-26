@@ -2,14 +2,20 @@
 import { HttpResponse, http } from 'msw';
 
 export const MOCK_FOR_FILE_INPUT = [
-  http.post('/api/v1/features/unknown-feature-id/files?dataId={dataId}&temporary=false', async ({ params }) => {
-    return HttpResponse.json({
-      fileId: '12345',
-    });
-  }),
-  http.delete('/api/v1/features/unknown-feature-id/files?dataId={dataId}&temporary=false', async ({ params }) => {
-    return HttpResponse.json({});
-  }),
+  http.post(
+    '/api/v1/features/unknown-feature-id/files?dataId={dataId}&temporary=false',
+    async ({ params }) => {
+      return HttpResponse.json({
+        fileId: '12345',
+      });
+    },
+  ),
+  http.delete(
+    '/api/v1/features/unknown-feature-id/files?dataId={dataId}&temporary=false',
+    async ({ params }) => {
+      return HttpResponse.json({});
+    },
+  ),
   http.get('/api/v1/features/unknown-feature-id/files/12345/content', async ({ params }) => {
     return HttpResponse.json({});
   }),
@@ -634,6 +640,75 @@ export const USER_INPUT_MOCKS = [
     ];
 
     if (validUserIds.includes(id as string)) {
+      return new HttpResponse(avatarBlob, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+        },
+      });
+    }
+
+    return HttpResponse.json({ error: 'User not found' }, { status: 404 });
+  }),
+];
+
+export const GROUP_INPUT_MOCKS = [
+  http.get('/mocks/groups', ({ request, params }) => {
+    const urlParams = new URLSearchParams(request.url.split('?')[1]);
+    const filter = urlParams.get('filter');
+    if (filter) {
+      return HttpResponse.json({
+        content: [
+          {
+            id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+            name: 'Testowa',
+          },
+        ],
+      });
+    }
+
+    return HttpResponse.json({
+      content: [
+        {
+          id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+          name: 'Testowa',
+          labels: 'the-best',
+        },
+        {
+          id: '2d6e0d79-5f5b-4c4f-b6e1-aaa2b38fba1f',
+          name: 'Administratorzy',
+        },
+        {
+          id: '3c4c0aef-b9ae-4d50-8e5e-b8b3df5c5e2f',
+          name: 'Użytkownicy',
+        },
+      ],
+    });
+  }),
+  http.get('/api/v1/groups/:id/avatar', ({ params, request }) => {
+    const avatarBase64 =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
+    const binary = Uint8Array.from(atob(avatarBase64), (c) => c.charCodeAt(0));
+    const avatarBlob = new Blob([binary], { type: 'image/png' });
+
+    const { id } = params;
+    const url = new URL(request.url);
+    const size = url.searchParams.get('size') ?? '32';
+
+    const validGroups = [
+      '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+      '2d6e0d79-5f5b-4c4f-b6e1-aaa2b38fba1f',
+      '3c4c0aef-b9ae-4d50-8e5e-b8b3df5c5e2f',
+      '4aefc4a4-1ac4-4c6d-9de5-cb167a9b8f3b',
+      '5ba7e07c-d688-4ad5-89a4-2d5f9171099e',
+      '6d3091de-c019-4b89-b18f-10b91f6e0c22',
+      '79ec7de5-4121-45fa-9c56-045cb989672e',
+      '81adf4b0-3d24-412d-bc8c-4162cfd4f1b2',
+      '9a1f4d3c-1e6f-4c39-9956-7f4f2f8b0e4a',
+      'a2c9b7e3-f7b1-4c64-8fa7-3a08db9d079e',
+    ];
+
+    if (validGroups.includes(id as string)) {
       return new HttpResponse(avatarBlob, {
         status: 200,
         headers: {

@@ -32,9 +32,11 @@ const props = withDefaults(
     size?: number;
     id: string;
     initials: string;
+    groupMode?: boolean
   }>(),
   {
     size: 32,
+    groupMode: false,
   },
 );
 
@@ -50,7 +52,8 @@ const toBase64 = (file: any) =>
   });
 
 async function fetchUserAvatarById(id: string, size: number): Promise<any> {
-  const response = await axios.get(`/api/v1/users/${id}/avatar`, {
+  const url = !props.groupMode ? `/api/v1/users/${id}/avatar` : `/api/v1/groups/${id}/avatar`;
+  const response = await axios.get(url, {
     params: {
       size: size,
     },

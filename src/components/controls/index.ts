@@ -8,6 +8,7 @@ import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue
 import TextSwitchField from '@/components/controls/TextSwitchField.vue';
 import YearPicker from '@/components/controls/YearPicker.vue';
 import GroupOfFields from '@/components/controls/fields-group/FieldsGroup.vue';
+import GroupInput from '@/components/controls/group-input/GroupInput.vue';
 import TableViewField from '@/components/controls/table/TableViewField.vue';
 import TextEditor from '@/components/controls/text-editor/TextEditor.vue';
 import UserInput from '@/components/controls/user-input/UserInput.vue';
@@ -77,4 +78,5 @@ export const vueSchemaFromControls: Components = {
   'file-field': FileField,
   bookmark: Bookmark,
   'expansion-panels': ExpansionPanels,
+  'group-input': GroupInput
 };
