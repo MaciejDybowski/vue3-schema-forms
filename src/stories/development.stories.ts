@@ -59,6 +59,9 @@ export const Story3: Story = {
               schema: _100fieldSchema,
             },
             {
+              titleIcon: 'mdi-briefcase-edit-outline',
+              titleIconSize: 20,
+              titleCssDecorator: 'text-h6',
               title: '{textField2:Default Title}',
               schema: {
                 properties: {

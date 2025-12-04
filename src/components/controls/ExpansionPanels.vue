@@ -9,10 +9,20 @@
       v-for="(panel, index) in schema.panels"
       :key="index"
     >
-      <v-expansion-panel-title
-        v-if="panelTitles[index]"
-        v-html="panelTitles[index].resolvedText"
-      />
+      <v-expansion-panel-title v-if="panelTitles[index]">
+        <v-icon
+          v-if="panel.titleIcon"
+          :size="panel.titleIconSize ? panel.titleIconSize : 18"
+          class="mr-2"
+        >
+          {{ panel.titleIcon }}
+        </v-icon>
+
+        <div
+          :class="panel.titleCssDecorator ? [panel.titleCssDecorator] : ''"
+          v-html="panelTitles[index].resolvedText"
+        />
+      </v-expansion-panel-title>
 
       <v-expansion-panel-text
         v-memo="[panelSchemas[index]]"

@@ -1,17 +1,14 @@
-import { EngineField } from '@/types/engine/EngineField';
-import { LocationResult } from '@/types/shared/LocationResult';
-import {
-  AvatarSource,
-  DictionarySource,
-  SimpleSource,
-  Source,
-  UserInputSource,
-} from '@/types/shared/Source';
-import { Schema } from '@/types/schema/Schema';
+import { EngineField } from "@/types/engine/EngineField";
+import { LocationResult } from "@/types/shared/LocationResult";
+import { AvatarSource, DictionarySource, SimpleSource, Source, UserInputSource } from "@/types/shared/Source";
+import { Schema } from "@/types/schema/Schema";
 
 export interface EngineExpansionPanel {
-  title:string
-  schema: Schema
+  titleIcon?: string;
+  titleIconSize?: number;
+  titleCssDecorator: ?string;
+  title: string;
+  schema: Schema;
 }
 
 export interface EngineTextField extends EngineField {
@@ -24,7 +21,7 @@ export interface EngineExpansionPanels extends EngineField {
 }
 
 export interface EngineTextEditorField extends EngineField {
-  contentType: 'markdown' | 'html' | 'json';
+  contentType: "markdown" | "html" | "json";
 }
 
 export interface EngineFileField extends EngineField {
@@ -88,9 +85,9 @@ export interface EngineBookmarkField extends EngineField {
   source: Source;
   stacked?: boolean;
   color?: string;
-  'bg-color'?: string;
-  direction?: 'vertical' | 'horizontal';
-  'slider-color'?: string;
+  "bg-color"?: string;
+  direction?: "vertical" | "horizontal";
+  "slider-color"?: string;
 }
 
 export interface RadioField extends EngineSourceField {
@@ -113,7 +110,7 @@ export interface EngineDictionaryField extends EngineField {
 }
 
 export interface EngineOrderedMultiSelect extends EngineDictionaryField {
-  variant: 'list' | 'combobox';
+  variant: "list" | "combobox";
   source: DictionarySource;
 }
 
