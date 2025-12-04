@@ -1,60 +1,60 @@
 <template>
-<div>
-  <v-btn
-    :class="bindClass(schema)"
-    :color="primaryWhite"
-    :disabled="loading || fieldProps.readonly"
-    :loading="loading"
-    v-bind="fieldProps"
-    @click="runBtnLogic"
-  >
-    {{ label }}
-  </v-btn>
+  <div>
+    <v-btn
+      :class="bindClass(schema)"
+      :color="primaryWhite"
+      :disabled="loading || fieldProps.readonly"
+      :loading="loading"
+      v-bind="fieldProps"
+      @click="runBtnLogic"
+    >
+      {{ label }}
+    </v-btn>
 
-  <v-dialog
-    v-model="popup.show"
-    max-width="650"
-  >
-    <template v-slot:default="{ isActive }">
-      <v-card :title="popup.title">
-        <v-card-text>
-          <vue-schema-forms
-            :key="popupReferenceReload"
-            ref="popupReference"
-            v-model="popup.model"
-            :options="popup.options"
-            :schema="popup.schema"
-          />
-        </v-card-text>
-        <v-card-actions class="mx-4">
-          <v-spacer></v-spacer>
+    <v-dialog
+      v-model="popup.show"
+      max-width="650"
+    >
+      <template v-slot:default="{ isActive }">
+        <v-card :title="popup.title">
+          <v-card-text>
+            <vue-schema-forms
+              :key="popupReferenceReload"
+              ref="popupReference"
+              v-model="popup.model"
+              :options="popup.options"
+              :schema="popup.schema"
+            />
+          </v-card-text>
+          <v-card-actions class="mx-4">
+            <v-spacer></v-spacer>
 
-          <v-btn
-            :text="t('close')"
-            v-bind="{ ...fieldProps, color: '', variant: 'elevated' }"
-            @click="isActive.value = false"
-          ></v-btn>
+            <v-btn
+              :text="t('close')"
+              v-bind="{ ...fieldProps, color: '', variant: 'elevated' }"
+              @click="isActive.value = false"
+            ></v-btn>
 
-          <v-btn
-            v-bind="{ ...fieldProps, color: 'primary', variant: 'elevated' }"
-            @click="saveDialogForm(isActive)"
-          >
-            {{ popup.acceptText }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-dialog>
+            <v-btn
+              v-bind="{ ...fieldProps, color: 'primary', variant: 'elevated' }"
+              @click="saveDialogForm(isActive)"
+            >
+              {{ popup.acceptText }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
 
-  <v-snackbar
-    v-model="snackbar.modelValue"
-    :timeout="1000"
-    color="success"
-    variant="tonal"
-  >
-    {{ snackbar.text }}
-  </v-snackbar>
-</div>
+    <v-snackbar
+      v-model="snackbar.modelValue"
+      :timeout="1000"
+      color="success"
+      variant="tonal"
+    >
+      {{ snackbar.text }}
+    </v-snackbar>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -83,6 +83,10 @@ vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
       popup.model = newModel;
       popupReferenceReload.value++;
     }
+  }
+
+  if (payload == 'action-callback') {
+    loading.value = false;
   }
 });
 
@@ -159,6 +163,7 @@ async function saveDialogForm(isActive: Ref<boolean>) {
 async function runBtnLogic() {
   switch (schema.mode) {
     case 'action':
+      loading.value = true;
       const body = await createBodyObject();
       let payloadObject: any = {
         code: schema.config.code,

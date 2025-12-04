@@ -118,6 +118,10 @@ export interface EngineUserField extends EngineField {
   source: UserInputSource;
 }
 
+export interface EngineGroupField extends EngineUserField {
+
+}
+
 export interface EngineLocationField extends EngineField {
   results: LocationResult;
 }

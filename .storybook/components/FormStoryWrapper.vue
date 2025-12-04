@@ -85,6 +85,8 @@ function handleAction(properties) {
   } catch (e) {
     console.warn("error");
   }
+
+  properties.callback()
 }
 
 const debounced = {

@@ -34,8 +34,7 @@
         @click:close="removeValue(item.raw)"
       >
         <span>
-          {{ item.raw.firstName }}
-          {{ item.raw.lastName }}
+          {{ item.raw.name }}
         </span>
       </v-chip>
     </template>
@@ -53,17 +52,16 @@
           >
             <v-col cols="auto">
               <avatar-provider
+                :group-mode="true"
                 :id="item.raw.id"
                 :initials="makeInitials(item.raw)"
               />
             </v-col>
             <v-col
-              class="user-details"
+              class="group-details"
               cols="auto"
             >
-              <span class="font-weight-bold">{{ item.raw.firstName }} {{ item.raw.lastName }}</span>
-              <br />
-              <span>{{ item.raw.email }}</span>
+              <span class="font-weight-bold">{{ item.raw.name }}</span>
             </v-col>
           </v-row>
         </v-list-item-title>
@@ -120,10 +118,10 @@ import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
 import { logger } from '@/main';
 import { User } from '@/types/engine/User';
-import { EngineDictionaryField, EngineUserField } from '@/types/engine/controls';
+import { EngineDictionaryField, EngineGroupField } from '@/types/engine/controls';
 
 const props = defineProps<{
-  schema: EngineUserField;
+  schema: EngineGroupField;
   model: object;
 }>();
 
@@ -174,7 +172,7 @@ function valueHasChanged(val: any) {
 }
 
 // DEFAULTS VALUES //
-const usersAPIEndpoint = ref<string>('/api/workspaces/members');
+const DEFAULT_URL = ref<string>('/api/v1/groups');
 
 const menu = ref(false);
 const showMenuItemsOnFocusIn = props.schema.source.showMenuItemsOnFocusIn
@@ -191,20 +189,20 @@ async function fetchData(event: any) {
 }
 
 async function checkIfURLHasDependency(createListener = false) {
-  const isApiContainsDependency = !(usersAPIEndpoint.value.match(variableRegexp) == null);
+  const isApiContainsDependency = !(DEFAULT_URL.value.match(variableRegexp) == null);
   if (isApiContainsDependency) {
-    let endpoint = await resolve(props.schema, usersAPIEndpoint.value, true);
+    let endpoint = await resolve(props.schema, DEFAULT_URL.value, true);
 
     if (endpoint.resolvedText.match(variableRegexp)) {
       endpoint = await resolve(props.schema, endpoint.resolvedText, true);
     }
 
     if (endpoint.allVariablesResolved) {
-      usersAPIEndpoint.value = endpoint.resolvedText;
+      DEFAULT_URL.value = endpoint.resolvedText;
       await load('deps');
     } else if (logger.dictionaryLogger) {
       console.debug(
-        `[vue-schema-forms] [DictionaryLogger] => API call was blocked, not every variable from endpoint was resolved ${usersAPIEndpoint.value}`,
+        `[vue-schema-forms] [DictionaryLogger] => API call was blocked, not every variable from endpoint was resolved ${DEFAULT_URL.value}`,
       );
     }
 
@@ -215,8 +213,8 @@ async function checkIfURLHasDependency(createListener = false) {
       const listener = async () => {
         await new Promise((r) => setTimeout(r, 50));
         const temp = await resolve(props.schema, props.schema.source.url as string, true);
-        if (temp.resolvedText !== usersAPIEndpoint.value) {
-          usersAPIEndpoint.value = temp.resolvedText;
+        if (temp.resolvedText !== DEFAULT_URL.value) {
+          DEFAULT_URL.value = temp.resolvedText;
           await load('listener');
         }
       };
@@ -273,7 +271,7 @@ function singleOptionAutoSelectFunction() {
 
 onMounted(async () => {
   if (props.schema.source.url == '' || props.schema.source.url == null) {
-    props.schema.source.url = usersAPIEndpoint.value;
+    props.schema.source.url = DEFAULT_URL.value;
   }
 
   await initState(props.schema as EngineDictionaryField);
