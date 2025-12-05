@@ -6,7 +6,7 @@ import { Schema } from "@/types/schema/Schema";
 export interface EngineExpansionPanel {
   titleIcon?: string;
   titleIconSize?: number;
-  titleCssDecorator: ?string;
+  titleCssDecorator?:string;
   title: string;
   schema: Schema;
 }
