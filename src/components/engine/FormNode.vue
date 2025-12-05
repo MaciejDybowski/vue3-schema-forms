@@ -2,7 +2,7 @@
   <v-col
     v-if="shouldRender"
     v-show="!shouldHide && shouldRender"
-    :class="[layoutCssClass, schema.layout.cellClass]"
+    :class="[layoutCssClass, schema.layout.cellClass, 'py-1']"
     :cols="cols"
   >
     <div

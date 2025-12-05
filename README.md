@@ -25,7 +25,7 @@ npm install vue3-schema-forms
 > **Peer dependencies required:**
 
 ```bash
-npm install vue@3.4.14 vuetify@3.5.1 axios@1.6.5 dayjs@1.11.10 vue-i18n@9 vuedraggable@next
+npm install vue@^3.5.20 vuetify@3.8.1 axios@^1.7.2 dayjs@^1.11.11 vue-i18n@^9.13.1 vuedraggable@^4.1.0
 ```
 
 > **Optional for SFC i18n support:**
@@ -151,16 +151,16 @@ Field props priorities:
 
 Default values:
 
-| Name               | Type   | Default                                                        |
-|--------------------|--------|----------------------------------------------------------------|
-| `fieldProps`       | object | `-`                                                            |
-| `textFieldProps`   | object | `{ hide-details: 'auto' }`                                     |
-| `textAreaProps`    | object | `{ rows: 3, hide-details: 'auto', auto-grow: true }`           |
-| `radioButtonProps` | object | `{ density: 'compact', hide-details: 'auto' }`                 |
-| `checkboxProps`    | object | `{ density: 'compact', hide-details: 'auto', multiple: true }` |
-| `selectProps`      | object | `{ hide-details: 'auto' }`                                     |
-| `buttonProps`      | object | `-`                                                            |
-| `dictionaryProps`  | object | `{ labels: '[]Label' }`                                        |
+| Name               | Type   | Default                                                       |
+|--------------------|--------|---------------------------------------------------------------|
+| `fieldProps`       | object | `-`                                                           |
+| `textFieldProps`   | object | `{ hide-details: false }`                                     |
+| `textAreaProps`    | object | `{ rows: 3, hide-details: false, auto-grow: true }`           |
+| `radioButtonProps` | object | `{ density: 'compact', hide-details: false }`                 |
+| `checkboxProps`    | object | `{ density: 'compact', hide-details: false, multiple: true }` |
+| `selectProps`      | object | `{ hide-details: false }`                                     |
+| `buttonProps`      | object | `-`                                                           |
+| `dictionaryProps`  | object | `{ labels: '[]Label' }`                                       |
 
 ---
 
