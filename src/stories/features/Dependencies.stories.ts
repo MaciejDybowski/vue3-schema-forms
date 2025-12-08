@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { EngineSourceField } from '../../types/engine/controls';
@@ -13,7 +14,6 @@ import {
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { Story } from 'storybook/dist/csf';
 
 export default {
   title: 'Features/Dependencies',
@@ -798,6 +798,147 @@ export const ComplexExample: Story = {
           },
         },
       },
+    },
+  },
+};
+
+export const DependencyWithEditAndTriggers: Story = {
+  name: 'Exmaple 10: value from dict, ediable and reactive',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText('Currency');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[0], { delay: 200 });
+    await expect(context.args.formModel).toEqual({
+      textField: 'Afgani',
+      textField2: null,
+      textFieldInside: 'Afgani',
+      currency: {
+        id: 'AFN',
+        label: 'Afgani',
+        digitsAfterDecimal: '2',
+        labels: 'the-best',
+      },
+    });
+
+    const panels = document.querySelectorAll('.v-expansion-panel-title');
+    await userEvent.click(panels[0], { delay: 200 });
+
+    const select2 = await canvas.getByLabelText('Currency other dict');
+    await userEvent.click(select2, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items2 = document.querySelectorAll('.v-list-item');
+      expect(items2.length).toBeGreaterThan(0);
+    });
+    const items2 = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items2[1], { delay: 200 });
+
+    await expect(context.args.formModel).toEqual({
+      textField: 'Afgani',
+      textField2: 'Lek',
+      textFieldInside: 'Afgani',
+      currency: {
+        id: 'AFN',
+        label: 'Afgani',
+        digitsAfterDecimal: '2',
+        labels: 'the-best',
+      },
+      currency2: {
+        id: 'ALL',
+        label: 'Lek',
+        digitsAfterDecimal: '3',
+        labels: 'the-least',
+      },
+    });
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        currency: {
+          label: 'Currency',
+          layout: {
+            component: 'dictionary',
+          },
+          source: {
+            url: '/mocks/currencies',
+            title: 'label',
+            value: 'id',
+          },
+        },
+        textField: {
+          label: 'Currency label',
+          layout: {
+            component: 'text-field',
+          },
+          dependency: 'currency.label',
+          dependencyTriggers: ['currency'],
+        },
+
+        panelA: {
+          layout: {
+            component: 'expansion-panels',
+          },
+          panels: [
+            {
+              title: 'Currencies example',
+              schema: {
+                properties: {
+                  currency2: {
+                    label: 'Currency other dict',
+                    layout: {
+                      component: 'dictionary',
+                    },
+                    source: {
+                      url: '/mocks/currencies',
+                      title: 'label',
+                      value: 'id',
+                    },
+                  },
+                  textField2: {
+                    label: 'Currency label',
+                    layout: {
+                      component: 'text-field',
+                    },
+                    dependency: 'currency2.label',
+                    dependencyTriggers: ['currency2'],
+                  },
+                },
+              },
+            },
+            {
+              titleIcon: 'mdi-briefcase-edit-outline',
+              titleIconSize: 20,
+              titleCssDecorator: 'text-h6',
+              title: '{textField:Default Title}',
+              schema: {
+                properties: {
+                  textFieldInside: {
+                    label: 'Currency label deps from out of panels',
+                    layout: {
+                      component: 'text-field',
+                    },
+                    dependency: 'currency.label',
+                    dependencyTriggers: ['currency'],
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...MOCK_REQUEST_CURRENCY],
     },
   },
 };

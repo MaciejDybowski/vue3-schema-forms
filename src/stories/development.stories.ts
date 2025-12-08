@@ -2,7 +2,7 @@
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
-import { _100fieldSchema } from '../tests/test-schemas';
+import { MOCK_REQUEST_CURRENCY } from './mock-responses';
 
 
 
@@ -36,19 +36,26 @@ export const Story3: Story = {
     schema: {
       type: 'object',
       properties: {
-        textField2: {
-          label: 'Pole3',
+        currency: {
+          label: 'Currency',
+          layout: {
+            component: 'dictionary',
+          },
+          source: {
+            url: '/mocks/currencies',
+            title: 'label',
+            value: 'id',
+          },
+        },
+        textField: {
+          label: 'Currency label editor',
           layout: {
             component: 'text-field',
           },
+          dependency: 'currency.label',
+          dependencyTriggers: ['currency'],
         },
-        paragraph: {
-          content: 'Static form text content',
-          layout: {
-            component: 'static-content',
-            tag: 'p',
-          } as Layout,
-        },
+
         panelA: {
           layout: {
             component: 'expansion-panels',
@@ -56,7 +63,29 @@ export const Story3: Story = {
           panels: [
             {
               title: '<i class="mdi mdi-briefcase-edit-outline mr-2"></i>Dane projektu',
-              schema: _100fieldSchema,
+              schema: {
+                properties: {
+                  currency2: {
+                    label: 'Currency',
+                    layout: {
+                      component: 'dictionary',
+                    },
+                    source: {
+                      url: '/mocks/currencies',
+                      title: 'label',
+                      value: 'id',
+                    },
+                  },
+                  textField2: {
+                    label: 'Currency label editor',
+                    layout: {
+                      component: 'text-field',
+                    },
+                    dependency: 'currency.label',
+                    dependencyTriggers: ['currency'],
+                  },
+                },
+              },
             },
             {
               titleIcon: 'mdi-briefcase-edit-outline',
@@ -81,7 +110,7 @@ export const Story3: Story = {
   },
   parameters: {
     msw: {
-      handlers: [],
+      handlers: [...MOCK_REQUEST_CURRENCY],
     },
   },
 };
