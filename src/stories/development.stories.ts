@@ -105,6 +105,71 @@ export const Story3: Story = {
             },
           ],
         },
+
+        items: {
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                currencyInside: {
+                  label: 'Currency',
+                  layout: {
+                    component: 'dictionary',
+                  },
+                  source: {
+                    url: '/mocks/currencies',
+                    title: 'label',
+                    value: 'id',
+                  },
+                },
+                description: {
+                  content: '<b>{items[].currencyInside.label:No data}</b>, this span was generated as v-html content.',
+                  layout: {
+                    component: 'static-content',
+                    tag: 'span',
+                  } ,
+                },
+                panelA: {
+                  layout: {
+                    component: 'expansion-panels',
+                  },
+                  panels: [
+                    {
+                      titleIcon: 'mdi-briefcase-edit-outline',
+                      titleIconSize: 20,
+                      titleCssDecorator: 'text-h6',
+                      title: 'Sth panel',
+                      schema: {
+                        properties: {
+                          descriptionInPanel: {
+                            content: '<b>{items[].currencyInside.label:No data}</b>, this span was generated as v-html content.',
+                            layout: {
+                              component: 'static-content',
+                              tag: 'span',
+                            } ,
+                          },
+
+                          textFieldInside: {
+                            label: 'Currency label editor',
+                            layout: {
+                              component: 'text-field',
+                            },
+                            dependency: 'items[].currencyInside.label',
+                            dependencyTriggers: ['items[].currencyInside'],
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add',
+            },
+            cols: 12,
+          },
+        },
       },
     },
   },
@@ -114,7 +179,6 @@ export const Story3: Story = {
     },
   },
 };
-
 
 export const Story2: Story = {
   args: {
@@ -126,9 +190,7 @@ export const Story2: Story = {
           content: 'Lorem ipsum...',
           layout: {
             component: 'alert',
-            props: {
-
-            },
+            props: {},
           },
         },
         items: {
@@ -152,20 +214,19 @@ export const Story2: Story = {
           label: 'Text field',
           layout: {
             component: 'text-field',
-            cols:6
+            cols: 6,
           },
         },
         textField: {
           label: 'Text field',
           layout: {
             component: 'text-field',
-            cols:6
+            cols: 6,
           },
         },
       },
-      required: ['textField2']
+      required: ['textField2'],
     },
-
   },
   parameters: {
     msw: {
