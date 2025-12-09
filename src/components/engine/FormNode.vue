@@ -2,11 +2,11 @@
   <v-col
     v-if="shouldRender"
     v-show="!shouldHide && shouldRender"
-    :class="[layoutCssClass, schema.layout.cellClass, 'py-1']"
+    :class="[layoutCssClass, schema.layout.cellClass, '']"
     :cols="cols"
   >
     <div
-      class="d-flex align-center"
+      class="flex-column align-center justify-start"
       style="width: 100%; height: 100%"
     >
       <component

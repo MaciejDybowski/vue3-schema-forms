@@ -17,7 +17,7 @@
         <v-checkbox
           v-model="localModel"
           :disabled="disabled(fieldProps.disabled, option.disabled)"
-          :hide-details="!(index == data.length - 1)"
+          :hide-details="index == data.length - 1 ? 'auto' : true"
           :label="option[title]"
           :rules="!fieldProps.readonly ? rules : []"
           :value="option[value]"

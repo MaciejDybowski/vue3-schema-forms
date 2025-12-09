@@ -151,16 +151,16 @@ Field props priorities:
 
 Default values:
 
-| Name               | Type   | Default                                                       |
-|--------------------|--------|---------------------------------------------------------------|
-| `fieldProps`       | object | `-`                                                           |
-| `textFieldProps`   | object | `{ hide-details: false }`                                     |
-| `textAreaProps`    | object | `{ rows: 3, hide-details: false, auto-grow: true }`           |
-| `radioButtonProps` | object | `{ density: 'compact', hide-details: false }`                 |
-| `checkboxProps`    | object | `{ density: 'compact', hide-details: false, multiple: true }` |
-| `selectProps`      | object | `{ hide-details: false }`                                     |
-| `buttonProps`      | object | `-`                                                           |
-| `dictionaryProps`  | object | `{ labels: '[]Label' }`                                       |
+| Name               | Type   | Default                                                        |
+|--------------------|--------|----------------------------------------------------------------|
+| `fieldProps`       | object | `-`                                                            |
+| `textFieldProps`   | object | `{ hide-details: 'auto' }`                                      |
+| `textAreaProps`    | object | `{ rows: 3, hide-details: false, auto-grow: true }`            |
+| `radioButtonProps` | object | `{ density: 'compact', hide-details: 'auto' }`                 |
+| `checkboxProps`    | object | `{ density: 'compact', hide-details: 'auto', multiple: true }` |
+| `selectProps`      | object | `{ hide-details: false }`                                      |
+| `buttonProps`      | object | `-`                                                            |
+| `dictionaryProps`  | object | `{ labels: '[]Label' }`                                        |
 
 ---
 

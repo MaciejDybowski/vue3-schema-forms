@@ -94,14 +94,14 @@ export function useProps() {
         break;
       case 'user-input':
         props.value = {
-          'hide-details': false,
+          'hide-details': 'auto',
           ...schema.options?.fieldProps,
           ...schema.layout?.props,
         };
         break;
       default:
         props.value = {
-          'hide-details': false,
+          'hide-details': 'auto',
           ...schema.options?.fieldProps,
           ...schema.layout?.props,
         };
@@ -143,26 +143,26 @@ export function useProps() {
 }
 
 const defaultTextFieldProperties = {
-  'hide-details': false,
+  'hide-details': 'auto',
 };
 
 const defaultCheckboxProperties = {
   density: 'compact',
-  'hide-details': false,
+  'hide-details': 'auto',
   multiple: true,
 };
 
 const defaultRadioProps = {
   density: 'compact',
-  'hide-details': false,
+  'hide-details': 'auto',
 };
 
 const defaultTextAreaProps = {
   rows: 3,
   'auto-grow': true,
-  'hide-details': false,
+  'hide-details': 'auto',
 };
 
 const defaultSelectProps = {
-  'hide-details': false,
+  'hide-details': 'auto',
 };
