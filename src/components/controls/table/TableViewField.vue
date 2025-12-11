@@ -236,7 +236,7 @@ const actionHandlerEventBus = useEventBus<string>('form-action');
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
 const duplicatedSectionEventBus = useEventBus<string>('form-duplicated-section');
 
-duplicatedSectionEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
+duplicatedSectionEventBus.on(async (event:any, payload: NodeUpdateEvent) => {
   triggers.forEach((trigger) => {
     const value = fillPath(props.schema.path, props.schema.index, trigger);
     if (value == payload.key) {
