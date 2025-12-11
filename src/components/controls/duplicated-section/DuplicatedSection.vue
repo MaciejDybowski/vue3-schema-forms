@@ -254,9 +254,29 @@ const computedOptions = computed(() => {
   return options;
 });
 
+const duplicatedSectionEventBus = useEventBus<string>('form-duplicated-section');
+
 function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
+  informAboutUpdateSpecifiedFieldInDuplicatedSection(event, indexOfArray);
+
   set(localModel.value[indexOfArray], event.key, event.value);
   setValue(localModel.value, props.schema, indexOfArray);
+}
+
+/*
+  W celu poinformowania elementów zagnieżdżonych w sekcjach powielanych, które mogą być uzależnione od innych pól w modelu formularza
+  problem pojawił się gdy chcieliśmy uzależnić przeładowanie tabeli od pola powyżej + wrzucone wszystko w sekcje powielane
+  dodałem osobną komunikację event busem dedykowanym tylko pod to aby nie dublować zdarzeń na form-model bo mogłoby to jakieś inne
+  listener'y triggerować podwójnie. W TableView łapię tego event busa i sprawdzam czy po wypełnieniu zgadza się klucz z tym co jest w sekcji zdefiniowane
+*/
+function informAboutUpdateSpecifiedFieldInDuplicatedSection(
+  event: NodeUpdateEvent,
+  indexOfArray: number,
+) {
+  //console.log('Update poszczególnego pola', `${props.schema.key}[${indexOfArray}].${event.key}`);
+  duplicatedSectionEventBus.emit('form-duplicated-section', {
+    key: `${props.schema.key}[${indexOfArray}].${event.key}`,
+  });
 }
 
 function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, index: number) {
@@ -288,7 +308,6 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
       nodes.value.splice(index + 1, 0, getClearNode.value);
       let copiedModel = ref(cloneDeep(localModel.value[index]));
       copiedModel.value = processObjectWithCache(copiedModel.value, cache);
-
 
       if (ordinalNumberInModel) {
         copiedModel.value['ordinalNumber'] = ++copiedModel.value['ordinalNumber'];

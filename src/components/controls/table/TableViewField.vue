@@ -157,17 +157,16 @@
 
       <template #bottom="{ page, itemsPerPage, pageCount }">
         <TablePagination
+          :elements-count="selectedItems.length"
           :itemsPerPage="itemsPerPage"
           :itemsPerPageOptions="[5, 10, 20]"
           :page="page"
           :pageCount="pageCount"
+          :show-elements-count="showSelectEditable"
           :total-items="itemsTotalElements"
           @update:page="(val: number) => (tableOptions.page = val)"
           @update:itemsPerPage="(val: number) => (tableOptions.itemsPerPage = val)"
-          :show-elements-count="showSelectEditable"
-          :elements-count="selectedItems.length"
         />
-
       </template>
     </v-data-table-server>
 
@@ -235,6 +234,16 @@ import { TableButton, TableHeader, TableHeaderAction } from '@/types/shared/Sour
 
 const actionHandlerEventBus = useEventBus<string>('form-action');
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
+const duplicatedSectionEventBus = useEventBus<string>('form-duplicated-section');
+
+duplicatedSectionEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
+  triggers.forEach((trigger) => {
+    const value = fillPath(props.schema.path, props.schema.index, trigger);
+    if (value == payload.key) {
+      actionHandlerEventBus.emit('form-action', { code: 'refresh-table', callback: refreshTable });
+    }
+  });
+});
 
 vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
   if (payload == 'action-callback') {
@@ -242,6 +251,7 @@ vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
     rowActionButtonLoading.value = false;
     debounced.load(fetchDataParams.value);
   }
+
   if (typeof payload == 'object' && triggers.includes(payload.key)) {
     actionHandlerEventBus.emit('form-action', { code: 'refresh-table', callback: refreshTable });
   }
@@ -259,7 +269,7 @@ const props = defineProps<{
 const theme = useTheme();
 const { t } = useLocale();
 const { bindProps, fieldProps } = useProps();
-const { resolve } = useResolveVariables();
+const { resolve, fillPath } = useResolveVariables();
 const { parse } = useVariableParser();
 const items = ref<any[]>([]);
 const itemsTotalElements = ref(0);
