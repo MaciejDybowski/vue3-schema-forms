@@ -679,19 +679,19 @@ async function saveDialogForm(isActive: Ref<boolean>) {
 }
 
 async function createUpdateRowURL(item: any) {
-  // TODO parse it better as URL
-  let [updateRowURL] = props.schema.source.data.split('?');
+  let resolved = (await resolve(props.schema, props.schema.source.data)).resolvedText;
 
-  updateRowURL = (await resolve(props.schema, props.schema.source.data)).resolvedText;
+  let [updateRowURL] = resolved.split('?');
+
   updateRowURL += '/{dataId}';
-  if ((props.schema.source.data + '/{dataId}').match(variableRegexp)) {
-    const matches = (props.schema.source.data + '/{dataId}').match(variableRegexp);
-    if (matches) {
-      matches.forEach((variable) => {
-        const unwrapped = variable.slice(1, -1);
-        updateRowURL = updateRowURL.replaceAll(variable, get(item, unwrapped, null));
-      });
-    }
+  const rawWithDataId = resolved + '/{dataId}';
+  const matches = rawWithDataId.match(variableRegexp);
+
+  if (matches) {
+    matches.forEach((variable) => {
+      const unwrapped = variable.slice(1, -1);
+      updateRowURL = updateRowURL.replaceAll(variable, get(item, unwrapped, null));
+    });
   }
 
   return updateRowURL;
