@@ -83,7 +83,7 @@ function handleAction(properties) {
     Object.assign(toRaw(emittedObject), properties);
     console.debug(emittedObject);
   } catch (e) {
-    console.warn("error");
+    //console.warn("error");
   }
 
   properties.callback()

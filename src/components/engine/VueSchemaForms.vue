@@ -107,6 +107,18 @@ const internalValues = ref<Set<string>>(new Set<string>());
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
 const actionHandlerEventBus = useEventBus<string>('form-action');
 
+const pendingEvents: any[] = []; // kolejka zdarzeń wywołanych przed otrzymaniem sygnału, że form is ready
+function flushPendingEvents() {
+  while (pendingEvents.length) {
+    const { payload } = pendingEvents.shift();
+    if (payload.callback) {
+      emit('callAction', { ...payload });
+    } else {
+      emit('callAction', { ...payload, callback: actionCallback });
+    }
+  }
+}
+
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
   localModel.value = { ...localModel.value, ...model.value } as any;
@@ -117,22 +129,18 @@ async function actionCallback() {
   vueSchemaFormEventBus.emit('model-changed', 'action-callback');
   // update external
   emitUpdateEvent();
-
-  /*
-  Możliwość walidacji po każdej akcji ale to jest słabe rozwiązanie
-  await formRef.value[formId].resetValidation()
-  const { valid } = await formRef.value[formId].validate();
-   */
 }
 
 actionHandlerEventBus.on(async (event, payload) => {
-  if (formReadySignalSent.value) {
-    if (payload.callback) {
-      emit('callAction', { ...payload });
-      return;
-    }
-    emit('callAction', { ...payload, callback: actionCallback });
+  if (!formReadySignalSent.value) {
+    pendingEvents.push({ event, payload });
+    return;
   }
+  if (payload.callback) {
+    emit('callAction', { ...payload });
+    return;
+  }
+  emit('callAction', { ...payload, callback: actionCallback });
 });
 
 const debounced = {
@@ -146,6 +154,7 @@ function formIsReady() {
     if (logger.formUpdateLogger) {
       console.debug(`[vue-schema-forms] => Form ${formId}] sent ready signal`);
     }
+    flushPendingEvents();
   }
 }
 
