@@ -53,8 +53,9 @@ export function useConditionalRendering() {
 
   async function ifByJsonNata(schema: EngineField, expression: string, model: any) {
     const modelForResolve = form.getFormModelForResolve.value;
-    const nata = jsonata(expression);
+
     try {
+      const nata = jsonata(expression);
       shouldRender.value = await nata.evaluate(modelForResolve);
     } catch (err: any) {
       console.error('JSONata error:', {

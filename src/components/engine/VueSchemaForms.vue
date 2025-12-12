@@ -117,6 +117,12 @@ async function actionCallback() {
   vueSchemaFormEventBus.emit('model-changed', 'action-callback');
   // update external
   emitUpdateEvent();
+
+  /*
+  Możliwość walidacji po każdej akcji ale to jest słabe rozwiązanie
+  await formRef.value[formId].resetValidation()
+  const { valid } = await formRef.value[formId].validate();
+   */
 }
 
 actionHandlerEventBus.on(async (event, payload) => {
@@ -236,7 +242,6 @@ async function validate(option?: ValidationFromBehaviour) {
   // Alert error block validation !
   const alertElements = document.querySelectorAll('[role="alert"]');
   alertElements.forEach((alertElement) => {
-    console.debug(alertElement);
     const isError =
       alertElement.classList.contains('v-alert') && alertElement.classList.contains('text-error');
     const alertText = alertElement.textContent;
