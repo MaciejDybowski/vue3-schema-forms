@@ -679,7 +679,9 @@ async function saveDialogForm(isActive: Ref<boolean>) {
 }
 
 async function createUpdateRowURL(item: any) {
-  let updateRowURL = props.schema.source.data;
+  // TODO parse it better as URL
+  let [updateRowURL] = props.schema.source.data.split('?');
+
   updateRowURL = (await resolve(props.schema, props.schema.source.data)).resolvedText;
   updateRowURL += '/{dataId}';
   if ((props.schema.source.data + '/{dataId}').match(variableRegexp)) {
@@ -691,9 +693,8 @@ async function createUpdateRowURL(item: any) {
       });
     }
   }
-  // TODO parse it better as URL
-  const [cleanURL] = updateRowURL.split('?');
-  return cleanURL;
+
+  return updateRowURL;
 }
 
 async function updateRow(value: any, index: number, headerKey: string, row: any) {
