@@ -236,7 +236,7 @@ const actionHandlerEventBus = useEventBus<string>('form-action');
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
 const duplicatedSectionEventBus = useEventBus<string>('form-duplicated-section');
 
-duplicatedSectionEventBus.on(async (event:any, payload: NodeUpdateEvent) => {
+duplicatedSectionEventBus.on(async (event: any, payload: NodeUpdateEvent) => {
   triggers.forEach((trigger) => {
     const value = fillPath(props.schema.path, props.schema.index, trigger);
     if (value == payload.key) {
@@ -691,7 +691,9 @@ async function createUpdateRowURL(item: any) {
       });
     }
   }
-  return updateRowURL;
+  // TODO parse it better as URL
+  const [cleanURL] = updateRowURL.split('?');
+  return cleanURL;
 }
 
 async function updateRow(value: any, index: number, headerKey: string, row: any) {
