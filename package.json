@@ -1,13 +1,12 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
   "types": "dist/types/main.d.ts",
   "type": "module",
-  "sideEffects": true,
   "files": [
     "dist/*"
   ],
