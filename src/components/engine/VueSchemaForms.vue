@@ -26,7 +26,7 @@
 
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
-import { debounce } from 'lodash';
+import { debounce, merge } from 'lodash';
 import set from 'lodash/set';
 import { useI18n } from 'vue-i18n';
 
@@ -121,7 +121,8 @@ function flushPendingEvents() {
 
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
-  localModel.value = { ...localModel.value, ...model.value } as any;
+  // previous version invokes loop in calcs, probably due to destroyed reference by using {...obj} instruction
+  localModel.value = merge(localModel.value, model.value);
   await new Promise((r) => setTimeout(r, 100));
   form.updateFormModel(localModel.value);
 

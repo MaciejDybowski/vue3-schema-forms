@@ -48,16 +48,15 @@
 </template>
 
 <script lang="ts" setup>
-import { debounce } from "lodash";
-import { onMounted, ref, toRaw, watch } from "vue";
-import VueJsonPretty from "vue-json-pretty";
-import "vue-json-pretty/lib/styles.css";
+import { debounce } from 'lodash';
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
+import { onMounted, ref, toRaw, watch } from 'vue';
 
-
-import VueSchemaForms from "../../src/components/engine/VueSchemaForms.vue";
 import { Schema } from '@/types/schema/Schema.d';
 
+import VueSchemaForms from '../../src/components/engine/VueSchemaForms.vue';
 
 const snackbar = ref(false);
 const { schema, options, formModel, emittedObject } = defineProps<{
@@ -78,15 +77,17 @@ function catchSignalFormIsReady() {
 
 function handleAction(properties) {
   console.debug(`[vue-schema-forms] - catch action with properties`, properties);
-  // @ts-ignore
-  try {
-    Object.assign(toRaw(emittedObject), properties);
-    console.debug(emittedObject);
-  } catch (e) {
-    //console.warn("error");
-  }
-
-  properties.callback()
+  // merge sth with existed model
+  /*
+  const x = merge(model.value, {
+    budget: {
+      id: '1',
+      label: '20205',
+    },
+  });
+  Object.assign(toRaw(model.value), x);
+  */
+  properties.callback();
 }
 
 const debounced = {
