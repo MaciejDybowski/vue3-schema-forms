@@ -7,9 +7,12 @@
     <v-textarea
       v-if="item.type == 'TEXTAREA' && shouldRenderMap[item.valueMapping]"
       ref="tableCellTextInput"
+      :auto-grow="true"
       :class="`${item.class}`"
       :label="item.label"
+      :max-rows="3"
       :model-value="getValue(item.valueMapping, index)"
+      :rows="3"
       :rules="rulesMap[item.valueMapping]"
       v-bind="{
         ...attrs,
