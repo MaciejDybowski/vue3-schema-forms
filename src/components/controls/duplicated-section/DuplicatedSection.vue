@@ -150,18 +150,18 @@ const { getValue, setValue } = useFormModel();
 
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
 vueSchemaFormEventBus.on(async (event, payload) => {
+  const modelFromProps = JSON.stringify(
+    get(props.model, props.schema.key, showFirstInitRow ? [{}] : []),
+  );
+  const actualModel = JSON.stringify(localModel.value);
+
   if (
     (payload == 'action-callback' ||
       // -> tabela w sekcji powielanej z agregatami wywoływała ten event i za każdym razem się przeładowywałą od nowa
       // odkomentowałem AND i porównanie modelu przychodzącego po ew. modyfikacji
       payload == 'table-aggregates') &&
-      JSON.stringify(localModel.value) !== JSON.stringify(get(props.model, props.schema.key, [{}]))
+    modelFromProps !== actualModel
   ) {
-    console.debug(
-      JSON.stringify(localModel.value),
-      JSON.stringify(get(props.model, props.schema.key, [])),
-    );
-    console.debug('TUTAJ JESTEM');
     init();
   }
 
