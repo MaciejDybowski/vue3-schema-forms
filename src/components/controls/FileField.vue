@@ -1,8 +1,11 @@
 <template>
   <v-file-input
     v-model="localModel"
+    :accept="availableExtensionsString"
     :class="bindClass(schema) + requiredInputClass"
+    :hint="t('availableExtRule', { ext: availableExtensionsString })"
     :label="label"
+    :persistent-hint="availableExt.length > 0"
     :rules="!fieldProps.readonly ? rules : []"
     chips
     prepend-icon=""
@@ -65,6 +68,9 @@ const availableExt = ref(
     schema.options?.context?.fileAvailableExtensions ||
     [],
 );
+const availableExtensionsString = computed(() =>
+  availableExt.value.map((ext: string) => `${ext.toLowerCase()}`).join(','),
+);
 
 const id = computed(() => {
   const params = new URLSearchParams(window.location.search);
@@ -126,8 +132,8 @@ async function updateFileByAPI() {
       type: localModel.value.type,
     };
     lastLocalModel.value = { ...localModel.value };
-    if(fileLabel.value){
-      await addFileLabel(localModel.value)
+    if (fileLabel.value) {
+      await addFileLabel(localModel.value);
     }
     refreshAttachments();
   } catch (error) {
@@ -229,7 +235,7 @@ function mapAdditionalRules() {
     const availableExtRule = (v: File | null | undefined) => {
       if (!v) return true;
       const ext = v.name.split('.').pop()?.toLowerCase();
-      const allowed = availableExt.value.map((e:string) => e.trim().toLowerCase());
+      const allowed = availableExt.value.map((e: string) => e.trim().toLowerCase());
       if (ext && !allowed.includes(ext)) {
         return t('availableExtRule', { ext: availableExt.value.join(', ') });
       }

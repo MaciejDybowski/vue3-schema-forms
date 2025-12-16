@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { within } from 'storybook/test';
 
-import { MOCK_FOR_FILE_INPUT } from '../mock-responses';
+import { MOCK_FOR_FILE_INPUT, MOCK_FOR_FILE_INPUT_ERROR } from "../mock-responses";
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
 
@@ -77,3 +77,28 @@ export const MaxFileSizeAndExtension: Story = {
     },
   },
 };
+
+
+export const TRY_UPLOAD_FILE_AND_CATCH_ERROR: Story = {
+  args: {
+    formModel: {
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          fileAvailableExtensions: '.pdf',
+          label: 'Example file',
+          layout: {
+            component: 'file-field',
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...MOCK_FOR_FILE_INPUT_ERROR],
+    },
+  },
+}

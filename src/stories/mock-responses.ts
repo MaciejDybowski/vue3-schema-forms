@@ -1,6 +1,21 @@
 // @ts-nocheck
 import { HttpResponse, http } from 'msw';
 
+export const MOCK_FOR_FILE_INPUT_ERROR = [
+  http.post(
+    '/api/v1/features/unknown-feature-id/files?dataId={dataId}&temporary=false',
+    async ({ params }) => {
+      return HttpResponse.json(
+        {
+          message: 'Conflict: plik już istnieje lub zasób jest w konflikcie',
+          error: 'CONFLICT',
+        },
+        { status: 409 },
+      );
+    },
+  ),
+];
+
 export const MOCK_FOR_FILE_INPUT = [
   http.post(
     '/api/v1/features/unknown-feature-id/files?dataId={dataId}&temporary=false',
