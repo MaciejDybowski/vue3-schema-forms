@@ -37,7 +37,7 @@ import { useEventBus } from '@vueuse/core';
 import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
 import { toast } from '@/main';
@@ -106,6 +106,7 @@ const localModel = computed({
     setValue(val, schema);
   },
 });
+
 const lastLocalModel = ref<FileInfo | null>(null);
 
 function refreshAttachments() {
@@ -250,6 +251,15 @@ function formatSize(size: number | null): string {
   if (size >= 1024 * 1024) return `${(size / 1024 / 1024).toFixed(1)} MB`;
   return `${(size / 1024).toFixed(1)} KB`;
 }
+
+watch(
+  () => localModel.value,
+  () => {
+    localModel.value = null;
+    lastLocalModel.value = null;
+  },
+  { immediate: true },
+);
 
 onMounted(async () => {
   if (localModel.value) {
