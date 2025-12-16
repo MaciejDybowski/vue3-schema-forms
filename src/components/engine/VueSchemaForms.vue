@@ -26,7 +26,7 @@
 
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
-import { debounce } from 'lodash';
+import { debounce, merge } from 'lodash';
 import set from 'lodash/set';
 import { useI18n } from 'vue-i18n';
 
@@ -107,9 +107,22 @@ const internalValues = ref<Set<string>>(new Set<string>());
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
 const actionHandlerEventBus = useEventBus<string>('form-action');
 
+const pendingEvents: any[] = []; // kolejka zdarzeń wywołanych przed otrzymaniem sygnału, że form is ready
+function flushPendingEvents() {
+  while (pendingEvents.length) {
+    const { payload } = pendingEvents.shift();
+    if (payload.callback) {
+      emit('callAction', { ...payload });
+    } else {
+      emit('callAction', { ...payload, callback: actionCallback });
+    }
+  }
+}
+
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
-  localModel.value = { ...localModel.value, ...model.value } as any;
+  // previous version invokes loop in calcs, probably due to destroyed reference by using {...obj} instruction
+  localModel.value = merge(localModel.value, model.value);
   await new Promise((r) => setTimeout(r, 100));
   form.updateFormModel(localModel.value);
 
@@ -120,13 +133,15 @@ async function actionCallback() {
 }
 
 actionHandlerEventBus.on(async (event, payload) => {
-  if (formReadySignalSent.value) {
-    if (payload.callback) {
-      emit('callAction', { ...payload });
-      return;
-    }
-    emit('callAction', { ...payload, callback: actionCallback });
+  if (!formReadySignalSent.value) {
+    pendingEvents.push({ event, payload });
+    return;
   }
+  if (payload.callback) {
+    emit('callAction', { ...payload });
+    return;
+  }
+  emit('callAction', { ...payload, callback: actionCallback });
 });
 
 const debounced = {
@@ -140,6 +155,7 @@ function formIsReady() {
     if (logger.formUpdateLogger) {
       console.debug(`[vue-schema-forms] => Form ${formId}] sent ready signal`);
     }
+    flushPendingEvents();
   }
 }
 
@@ -236,7 +252,6 @@ async function validate(option?: ValidationFromBehaviour) {
   // Alert error block validation !
   const alertElements = document.querySelectorAll('[role="alert"]');
   alertElements.forEach((alertElement) => {
-    console.debug(alertElement);
     const isError =
       alertElement.classList.contains('v-alert') && alertElement.classList.contains('text-error');
     const alertText = alertElement.textContent;

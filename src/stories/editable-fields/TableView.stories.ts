@@ -1,11 +1,15 @@
 // @ts-nocheck
+import { HttpResponse, http } from 'msw';
+
 import { Schema } from '../../types/schema/Schema';
 import {
+  RESPONSE_DICTIONARY,
   TABLE_PAGE_WITHOUT_AGGREGATES,
   TABLE_PAGE_WITHOUT_AGGREGATES_ZERO,
   TABLE_PAGE_WITH_AGGREGATES,
-  UPDATE_TABLE_ROW, RESPONSE_DICTIONARY
-} from "../mock-responses";
+  UPDATE_TABLE_ROW,
+  generatePageData,
+} from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
@@ -206,6 +210,89 @@ export const ColorableCells: Story = {
     },
   },
 };
+const TEST = [
+  http.get('/mock-data/table-view-mock2', async (req, res, ctx) => {
+
+
+    return HttpResponse.json({
+      "content": [
+        {
+          "wniosekOWsparcieId": 1,
+          "funduszKod": "FPM",
+          "kosztKwalifikowanyId": 1,
+          "lp": 1,
+          "wykazKosztowKwalifikowanych": "reklama w telewizji, radiu, prasie, Internecie (kampanie i reklamy w serwisach społecznościowych, reklama on-line, np. banery reklamowe), reklama kinowa oraz reklama zewnętrzna typu outdoor (np. citylight, billboard)",
+          "szczegolowyWykazKosztow": "test",
+          "szczegolowaKalkulacjaIlosc": 10.0,
+          "szczegolowaKalkulacjaCenaJedn": 5.0,
+          "szczegolowaKalkulacjaLacznie": 40.0,
+          "procentDofinansowaniaZFunduszu": null,
+          "proponowanaWysokoscWsparciaZFunduszu": null,
+          "szczegolowaKalkulacjaLacznieWyliczone": 50.0,
+          "alerty": [
+            {
+              "type": "warning",
+              "message": "kwota \"łącznie\" powinna wynosić: 50.00"
+            }
+          ]
+        }
+      ],
+      "totalElements": 11,
+      "page": {
+        "size": 10,
+        "number": 0,
+        "numberOfElements": 10,
+        "first": true,
+        "last": false
+      }
+    });
+  }),
+];
+
+
+export const DynamicAlertsASDASDDASDAS: Story = {
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        span: {
+          content: 'Basic display all data as a text values',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: 'table-view',
+          },
+          source: {
+            data: '/mock-data/table-view-mock2',
+            headers: [
+              {
+                "title": "",
+                "type": "ALERT",
+                "key": "alerty",
+                "valueMapping": "alerty"
+              },
+
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: TEST,
+    },
+  },
+};
+
+
+
 
 export const DynamicAlerts: Story = {
   play: async (context) => {},
@@ -228,6 +315,12 @@ export const DynamicAlerts: Story = {
           source: {
             data: '/mock-data/table-view-mock',
             headers: [
+              {
+                "title": "",
+                "type": "ALERT",
+                "key": "alerts",
+                "valueMapping": "alerts"
+              },
               {
                 title: '',
                 key: 'alerts',

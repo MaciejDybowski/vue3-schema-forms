@@ -85,8 +85,19 @@ export function useRules() {
             }
 
             let model = form.getFormModelForResolve.value;
+
             const nata = jsonata(variablePathWithoutBrackets);
-            const result = await nata.evaluate(model);
+            let result = '';
+
+            try {
+              result = await nata.evaluate(model);
+            } catch (err: any) {
+              console.error('Rule error:', {
+                message: err.message,
+                expression: variablePathWithoutBrackets,
+                field: schema.key,
+              });
+            }
 
             if (result) {
               regexpString = regexpString.replace(wrappedVariable, result);
@@ -117,8 +128,16 @@ export function useRules() {
       let model = form.getFormModelForResolve.value;
       const nata = jsonata(ruleDefinition.rule as string);
 
-      const conditionResult = await nata.evaluate(model);
-      if (conditionResult) return true;
+      try {
+        const conditionResult = await nata.evaluate(model);
+        if (conditionResult) return true;
+      } catch (err: any) {
+        console.error('Rule error:', {
+          message: err.message,
+          expression: ruleDefinition.rule,
+          field: schema.key,
+        });
+      }
 
       return ruleDefinition.message;
     });

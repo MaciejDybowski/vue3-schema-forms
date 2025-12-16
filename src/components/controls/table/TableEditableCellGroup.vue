@@ -4,6 +4,26 @@
     :key="item.valueMapping"
     v-bind="attrs"
   >
+    <v-textarea
+      v-if="item.type == 'TEXTAREA' && shouldRenderMap[item.valueMapping]"
+      ref="tableCellTextInput"
+      :auto-grow="true"
+      :class="`${item.class}`"
+      :label="item.label"
+      :max-rows="3"
+      :model-value="getValue(item.valueMapping, index)"
+      :rows="3"
+      :rules="rulesMap[item.valueMapping]"
+      v-bind="{
+        ...attrs,
+        density: 'compact',
+        readonly: shouldReadonlyMap[item.valueMapping] || attrs.readonly === true,
+      }"
+      width="100%"
+      @input="(e: any) => updateValue(e, item)"
+      @keyup.enter="(e: any) => e.target.blur()"
+    />
+
     <v-text-field
       v-if="item.type == 'TEXT' && shouldRenderMap[item.valueMapping]"
       ref="tableCellTextInput"

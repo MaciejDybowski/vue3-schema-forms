@@ -2,20 +2,14 @@
   <v-col
     v-if="shouldRender"
     v-show="!shouldHide && shouldRender"
-    :class="[layoutCssClass, schema.layout.cellClass, '']"
+    :class="[layoutCssClass, schema.layout.cellClass]"
     :cols="cols"
   >
-    <div
-      class="flex-column align-center justify-start"
-      style="width: 100%; height: 100%"
-    >
-      <component
-        :is="`node-${schema.layout.component}`"
-        :model="model"
-        :schema="schema"
-        style="width: 100%"
-      />
-    </div>
+    <component
+      :is="`node-${schema.layout.component}`"
+      :model="model"
+      :schema="schema"
+    />
   </v-col>
   <div
     v-if="fillRow"

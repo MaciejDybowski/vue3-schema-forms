@@ -31,7 +31,7 @@
     class="table-cell-alert-type"
   >
     <v-tooltip
-      v-if="item.alerts && item.alerts.length > 0"
+      v-if="item[header.valueMapping] && item[header.valueMapping].length > 0"
       location="top"
       max-width="400px"
     >
@@ -41,7 +41,7 @@
         </div>
       </template>
       <div
-        v-for="(alert, index) in item.alerts"
+        v-for="(alert, index) in item[header.valueMapping]"
         :key="index"
         class="d-flex align-center"
       >
