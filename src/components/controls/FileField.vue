@@ -3,7 +3,7 @@
     v-model="localModel"
     :accept="availableExtensionsString"
     :class="bindClass(schema) + requiredInputClass"
-    :hint="t('availableExtRule', { ext: availableExtensionsString })"
+    :hint="availableExt.length > 0 ? t('availableExtRule', { ext: availableExtensionsString }) : ''"
     :label="label"
     :persistent-hint="availableExt.length > 0"
     :rules="!fieldProps.readonly ? rules : []"
@@ -65,11 +65,16 @@ const { label, bindLabel } = useLabel(schema);
 const maxFileSize = ref(schema.fileMaxSize || null);
 const availableExt = ref(
   schema.fileAvailableExtensions?.trim().toLowerCase().split(',') ||
-    schema.options?.context?.fileAvailableExtensions ||
+    schema.options?.context?.fileAvailableExtensions?.trim().toLowerCase().split(',') ||
     [],
 );
+
 const availableExtensionsString = computed(() =>
-  availableExt.value.map((ext: string) => `${ext.toLowerCase()}`).join(','),
+  availableExt.value
+    .map((ext: string) => ext.trim().toLowerCase())
+    .filter(Boolean)
+    .map((ext: string) => (ext.startsWith('.') ? ext : `.${ext}`))
+    .join(','),
 );
 
 const id = computed(() => {
@@ -255,8 +260,10 @@ function formatSize(size: number | null): string {
 watch(
   () => localModel.value,
   () => {
-    localModel.value = null;
-    lastLocalModel.value = null;
+    if (JSON.stringify(localModel.value) == JSON.stringify('{}')) {
+      localModel.value = null;
+      lastLocalModel.value = null;
+    }
   },
   { immediate: true },
 );

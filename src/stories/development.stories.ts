@@ -36,6 +36,30 @@ export default {
 type Story = StoryObj<typeof FormStoryWrapper>;
 
 
+export const TRY_UPLOAD_FILE_AND_CATCH_ERROR: Story = {
+  args: {
+    formModel: {
+      file: {}
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          fileAvailableExtensions: '.pdf',
+          label: 'Example file',
+          layout: {
+            component: 'file-field',
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...MOCK_FOR_FILE_INPUT_ERROR],
+    },
+  },
+}
 
 export const zagniezdzenie2PoziomyIObliczenia: Story = {
   args: {
