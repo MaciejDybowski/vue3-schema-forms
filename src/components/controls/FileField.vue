@@ -260,7 +260,7 @@ function formatSize(size: number | null): string {
 watch(
   () => localModel.value,
   () => {
-    if (JSON.stringify(localModel.value) == JSON.stringify('{}')) {
+    if (Object.keys(localModel.value).length === 0) {
       localModel.value = null;
       lastLocalModel.value = null;
     }
@@ -269,6 +269,11 @@ watch(
 );
 
 onMounted(async () => {
+  if (Object.keys(localModel.value).length === 0) {
+    localModel.value = null;
+    lastLocalModel.value = null;
+  }
+
   if (localModel.value) {
     lastLocalModel.value = localModel.value;
   }
