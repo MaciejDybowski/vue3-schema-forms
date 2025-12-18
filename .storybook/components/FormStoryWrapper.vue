@@ -21,7 +21,7 @@
             :default-form-actions="true"
             :options="options"
             :schema="schema"
-            :validation-behaviour="validationBehaviour != null ? validationBehaviour : 'scroll'"
+            :validation-behaviour="validationBehaviour != null ? validationBehaviour : 'combined'"
             @is-form-ready="catchSignalFormIsReady"
             @call-action="handleAction"
           />

@@ -325,15 +325,66 @@ function prepareScrollToFirstInvalidField() {
     });
 }
 
+function findInputLabel(inputEl: HTMLElement): string | null {
+  if (!inputEl) return null;
+
+  // 1) <label for="id">
+  const id = inputEl.id;
+  if (id) {
+    const forLabel = document.querySelector(`label[for="${id}"]`);
+    if (forLabel && forLabel.textContent?.trim()) {
+      return forLabel.textContent.trim();
+    }
+  }
+
+  // 2) aria-labelledby
+  const ariaLabelledby = inputEl.getAttribute('aria-labelledby');
+  if (ariaLabelledby) {
+    const labels = ariaLabelledby.trim().split(/\s+/);
+    for (const lblId of labels) {
+      const lblEl = document.getElementById(lblId);
+      if (lblEl?.textContent?.trim()) {
+        return lblEl.textContent.trim();
+      }
+    }
+  }
+
+  // 3) nearest ancestor label
+  let parent: any = inputEl.parentElement;
+  while (parent) {
+    if (parent.tagName.toLowerCase() === 'label' && parent.textContent?.trim()) {
+      return parent.textContent.trim();
+    }
+    parent = parent.parentElement;
+  }
+
+  // 4) sibling label elements
+  const siblings = [inputEl.previousElementSibling, inputEl.nextElementSibling];
+  for (const sib of siblings) {
+    if (sib?.tagName.toLowerCase() === 'label' && sib.textContent?.trim()) {
+      return sib.textContent.trim();
+    }
+  }
+
+  // 5) search in container
+  const container = inputEl.closest('div, form, fieldset');
+  if (container) {
+    const lblInside = container.querySelector('label');
+    if (lblInside?.textContent?.trim()) {
+      return lblInside.textContent.trim();
+    }
+  }
+
+  return null;
+}
+
 function prepareArrayOfValidationMessages() {
   let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
   errorMessages.value = arr
     .filter((item: ValidationFromItem) => !item.isValid)
     .map((item: ValidationFromItem) => {
       const element: Ref<any> = ref(document.getElementById(item.id as string));
-      const label = element.value.labels[0].innerText
-        ? element.value.labels[0].innerText
-        : element.value.labels[1].innerText;
+      const label = element.value ? findInputLabel(element.value) : item.id;
       return {
         id: item.id,
         label: label,

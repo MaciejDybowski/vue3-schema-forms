@@ -3,15 +3,11 @@ import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 import {
-  MOCK_FOR_FILE_INPUT, MOCK_FOR_FILE_INPUT_ERROR,
+  MOCK_FOR_FILE_INPUT_ERROR,
   MOCK_REQUEST_CURRENCY,
   TABLE_PAGE_WITH_AGGREGATES,
   UPDATE_TABLE_ROW
-} from "./mock-responses";
-
-
-
-
+} from './mock-responses';
 
 export default {
   title: 'Development Area',
@@ -35,11 +31,111 @@ export default {
 
 type Story = StoryObj<typeof FormStoryWrapper>;
 
+export const BOOKMARKS_VALIDATION = {
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        bookmarks: {
+          layout: {
+            component: 'bookmark',
+          },
+          source: {
+            items: [
+              { value: 1, title: 'General Information' },
+              { value: 2, title: 'Previous Year Crops' },
+              { value: 3, title: 'Previous Year Contracts' },
+            ],
+          },
+        },
+        fieldGroupA: {
+          layout: {
+            hide: 'nata($not(bookmarks=1))',
+            component: 'fields-group',
+            schema: {
+              properties: {
+                fieldGroupAOne: {
+                  label: 'Field Group A -1',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+                fieldGroupATwo: {
+                  label: 'Field Group A -2',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+              },
+            },
+          },
+        },
+        fieldGroupB: {
+          layout: {
+            hide: 'nata($not(bookmarks=2))',
+            component: 'fields-group',
+            schema: {
+              properties: {
+                fieldGroupBOne: {
+                  label: 'Field Group B -1',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+                fieldGroupBTwo: {
+                  label: 'Field Group B -2',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+              },
+            },
+          },
+        },
+        fieldGroupC: {
+          layout: {
+            hide: 'nata($not(bookmarks=3))',
+            component: 'fields-group',
+            schema: {
+              properties: {
+                phoneInput: {
+                  label: 'Phone Input',
+                  layout: {
+                    component: 'phone',
+                  },
+                  },
+                fieldGroupCOne: {
+                  label: 'Field Group C -1',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+                fieldGroupCTwo: {
+                  label: 'Field Group C -2',
+                  layout: {
+                    component: 'text-field',
+                  },
+                },
+              },
+              required: ['fieldGroupCOne', 'fieldGroupCTwo'],
+            },
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [],
+    },
+  },
+};
 
 export const TRY_UPLOAD_FILE_AND_CATCH_ERROR: Story = {
   args: {
     formModel: {
-      file: {}
+      file: {},
     },
     schema: {
       type: 'object',
@@ -59,7 +155,7 @@ export const TRY_UPLOAD_FILE_AND_CATCH_ERROR: Story = {
       handlers: [...MOCK_FOR_FILE_INPUT_ERROR],
     },
   },
-}
+};
 
 export const zagniezdzenie2PoziomyIObliczenia: Story = {
   args: {
@@ -84,7 +180,7 @@ export const zagniezdzenie2PoziomyIObliczenia: Story = {
             component: 'duplicated-section',
             schema: {
               properties: {
-              /*  costs: {
+                /*  costs: {
                   layout: {
                     component: 'duplicated-section',
                     schema: {

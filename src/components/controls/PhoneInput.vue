@@ -7,7 +7,6 @@
     :label="label"
     :phone-props="fieldPropsMerged"
     :rules="!fieldProps.readonly ? rules : []"
-    name="phone"
     type="tel"
     v-bind="fieldPropsMerged"
   >
@@ -110,6 +109,7 @@ const fieldPropsMerged = computed(() => {
     ...fieldProps.value,
     ...phoneInputProps,
     ...props.schema.phoneInputProps,
+    id: props.schema.key,
   };
   return propsRef.value;
 });
