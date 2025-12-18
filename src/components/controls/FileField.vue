@@ -17,7 +17,7 @@
   >
     <template #selection="{ fileNames }">
       <v-chip
-        class="ma-1"
+        class="pa-0 ma-0 py-1 px-2"
         closable
         @click:close="removeFile(localModel, true)"
       >
@@ -35,11 +35,17 @@
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
 import axios from 'axios';
-import { useI18n } from 'vue-i18n';
 
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useLocale,
+  useProps,
+  useRules,
+} from '@/core/composables';
 import { toast } from '@/main';
 import { EngineFileField } from '@/types/engine/controls';
 
@@ -55,7 +61,7 @@ const { schema, model } = defineProps<{
   model: object;
 }>();
 
-const { t } = useI18n();
+const { t } = useLocale();
 const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
@@ -146,7 +152,7 @@ async function updateFileByAPI() {
     console.error('Error uploading file:', error);
     if (toast != null) {
       // @ts-ignore
-      toast.error(message);
+      toast.error(error.message);
     }
     localModel.value = null;
   }
@@ -186,7 +192,7 @@ async function removeFile(file: FileInfo, cleanModel = false) {
     console.error('Error deleting file:', error);
     if (toast != null) {
       // @ts-ignore
-      toast.error(message);
+      toast.error(error.message);
     }
   }
 }
@@ -257,19 +263,18 @@ function formatSize(size: number | null): string {
   return `${(size / 1024).toFixed(1)} KB`;
 }
 
-watch(
+/*watch(
   () => localModel.value,
   () => {
-    if (Object.keys(localModel.value).length === 0) {
+    if (localModel.value && Object.keys(localModel.value).length === 0) {
       localModel.value = null;
       lastLocalModel.value = null;
     }
-  },
-  { immediate: true },
-);
+  }
+);*/
 
 onMounted(async () => {
-  if (Object.keys(localModel.value).length === 0) {
+  if (localModel.value && Object.keys(localModel.value).length === 0) {
     localModel.value = null;
     lastLocalModel.value = null;
   }

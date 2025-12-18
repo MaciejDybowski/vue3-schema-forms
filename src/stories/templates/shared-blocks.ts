@@ -8,7 +8,7 @@ export const formStoryWrapperTemplate = {
     options: {
       fieldProps: {
         variant: 'outlined',
-        density: 'comfortable',
+        density: 'compact',
       },
     },
   },
