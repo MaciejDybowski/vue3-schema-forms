@@ -10,6 +10,7 @@
     :label="label"
     :lazy="lazy"
     :loading="loading"
+    :max-selection="maxSelection"
     :multiple="multiple"
     :no-filter="true"
     :options="paginationOptions"
@@ -21,7 +22,6 @@
     @loadMoreRecords="loadMoreRecords"
     @update:modelValue="onChange(schema, model)"
     @update:search="updateSearch"
-    :max-selection="maxSelection"
   >
     <template
       v-if="multiple"
@@ -91,6 +91,8 @@
 </template>
 
 <script lang="ts" setup>
+import { isArray } from 'lodash';
+
 import { computed, onMounted, ref, watch } from 'vue';
 
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
@@ -188,6 +190,25 @@ watch(dependencyWasChanged, () => {
 
 const internalStateIsSet = ref(false);
 
+function fillInModelIfMultiple() {
+  if (isArray(localModel.value)) {
+    if (returnObject.value) {
+      data.value.push(...localModel.value);
+    } else {
+      fillInLocalModelWithValue();
+    }
+  }
+}
+
+function fillInLocalModelWithValue() {
+  localModel.value.forEach((val: any) => {
+    const obj: any = {};
+    obj[title.value] = val;
+    obj[value.value] = val;
+    data.value.push(obj);
+  });
+}
+
 onMounted(async () => {
   internalStateIsSet.value = false;
   await initState(props.schema);
@@ -196,14 +217,14 @@ onMounted(async () => {
   await bindProps(props.schema);
 
   if (localModel.value) {
-    if (typeof localModel.value == 'object') {
-      data.value.push(localModel.value);
-    } else {
-      await resolveIfLocalModelHasDependencies();
-      if (!fieldProps.value.readonly) {
-        query.value = localModel.value;
-        queryBlocker.value = true;
-      }
+    fillInModelIfMultiple();
+  } else if (typeof localModel.value == 'object') {
+    data.value.push(localModel.value);
+  } else {
+    await resolveIfLocalModelHasDependencies();
+    if (!fieldProps.value.readonly) {
+      query.value = localModel.value;
+      queryBlocker.value = true;
     }
   }
 
