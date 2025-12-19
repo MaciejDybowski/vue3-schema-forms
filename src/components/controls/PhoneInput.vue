@@ -3,7 +3,7 @@
     v-model="localModel"
     :class="[bindClass(schema), requiredInputClass]"
     :country-props="fieldPropsMerged"
-    :invalid-message="(options: any) => t('phoneInvalid', { example: options.example })"
+    :invalid-message="(options: any) => showMessage(options)"
     :label="label"
     :phone-props="fieldPropsMerged"
     :rules="!fieldProps.readonly ? rules : []"
@@ -42,65 +42,18 @@ const { bindProps, fieldProps } = useProps();
 const { t } = useLocale();
 const { getValue, setValue } = useFormModel();
 
+function showMessage(options: any) {
+  if (options.country.iso2.toLowerCase() == 'pl') {
+    return t('phoneInvalid', { example: '421 321 621' });
+  }
+  return t('phoneInvalid', { example: options.example });
+}
+
 const phoneInputProps = {
   'country-icon-mode': 'sprite',
   countryLabel: t('address.country'),
   'guess-country': true,
-  'include-countries': [
-    'al',
-    'ad',
-    'at',
-    'be',
-    'by',
-    'ba',
-    'bg',
-    'hr',
-    'me',
-    'cz',
-    'dk',
-    'ee',
-    'fi',
-    'fr',
-    'de',
-    'gr',
-    'es',
-    'nl',
-    'ie',
-    'is',
-    'xk',
-    'li',
-    'lt',
-    'lu',
-    'lv',
-    'mk',
-    'mt',
-    'md',
-    'mc',
-    'pl',
-    'pt',
-    'ru',
-    'ro',
-    'sm',
-    'rs',
-    'sk',
-    'si',
-    'ch',
-    'se',
-    'tr',
-    'ua',
-    'va',
-    'hu',
-    'gb',
-    'it',
-    'ca',
-    'mx',
-    'ar',
-    'br',
-    'cn',
-    'jp',
-    'au',
-    'us',
-  ],
+  'include-countries': ['pl', 'ru', 'tr', 'de', 'gb', 'fr', 'it', 'es', 'ua', 'ro', 'nl'],
 };
 
 const propsRef = ref({});
@@ -110,6 +63,10 @@ const fieldPropsMerged = computed(() => {
     ...phoneInputProps,
     ...props.schema.phoneInputProps,
     id: props.schema.key,
+    country: 'pl',
+    countryProps: {
+      label: null,
+    },
   };
   return propsRef.value;
 });
