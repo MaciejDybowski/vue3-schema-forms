@@ -188,6 +188,63 @@ export const MultipleValuesWithLimit: Story = {
   },
 };
 
+export const MultipleValuesWithLimitReturnObjectFalse: Story = {
+  name: 'Case: model as array with limit and returnObject=false',
+  play: async (context) => {
+    await waitForMountedAsync();
+    await expect(context.args.formModel).toEqual({
+      currency: ['Peso argentyńskie', 'Kwanza'],
+    });
+
+    const canvas = within(context.canvasElement);
+    const select = await canvas.getByLabelText('Currency');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    const first = items[0];
+    await expect(first.textContent).toEqual('Afganithe-best');
+    await userEvent.click(items[0], { delay: 200 });
+    await userEvent.click(items[1], { delay: 200 });
+    await userEvent.click(items[2], { delay: 200 });
+    await expect(context.args.formModel).toEqual({
+      currency: ['Lek', 'Dram'],
+    });
+  },
+  args: {
+    formModel: {
+      currency: ['Peso argentyńskie', 'Kwanza'],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        currency: {
+          label: 'Currency',
+          layout: {
+            component: 'dictionary',
+          },
+          source: {
+            url: '/mocks/currencies',
+            title: 'label',
+            value: 'id',
+            multiple: true,
+            maxSelection: 2,
+            returnObject: false,
+          },
+        },
+      },
+      required: ['currency'],
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
+
 export const WithDescription: Story = {
   name: 'Case: add description to list item',
   play: async (context) => {
@@ -623,24 +680,23 @@ export const ConditionalValueFilter: Story = {
 export const RequiredDict: Story = {
   name: 'Validation: required',
   play: async (context) => {
-      await waitForMountedAsync();
-      await waitForMountedAsync();
-      const canvas = within(context.canvasElement);
-      const select = canvas.getByLabelText("Currency");
-      await userEvent.click(select, { pointerEventsCheck: 0, delay: 100 });
-  
-      const items = document.getElementsByClassName("v-list-item");
-      await userEvent.click(items[0], { delay: 100 });
-      const Submit = canvas.getByText("Validate");
-      await userEvent.click(Submit, { delay: 100 });
-      await expect(canvas.getByText("Form is valid")).toBeInTheDocument();
-      await expect(context.args.formModel).toEqual({
-        currencyLabel: {
-          id: "USD",
-          label: "US Dollar",
-        },
-      });
+    await waitForMountedAsync();
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText('Currency');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 100 });
 
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[0], { delay: 100 });
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit, { delay: 100 });
+    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
+    await expect(context.args.formModel).toEqual({
+      currencyLabel: {
+        id: 'USD',
+        label: 'US Dollar',
+      },
+    });
   },
   args: {
     formModel: {},

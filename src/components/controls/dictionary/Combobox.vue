@@ -91,6 +91,7 @@ import { useDictionary } from '@/core/composables/useDictionary';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineDictionaryField } from '@/types/engine/controls';
+import { isArray } from "lodash";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -169,6 +170,26 @@ watch(dependencyWasChanged, () => {
 
 const internalStateIsSet = ref(false);
 
+function fillInModelIfMultiple() {
+  if (isArray(localModel.value)) {
+    if (returnObject.value) {
+      data.value.push(...localModel.value);
+    } else {
+      fillInLocalModelWithValue();
+    }
+  }
+}
+
+function fillInLocalModelWithValue() {
+  localModel.value.forEach((val: any) => {
+    const obj: any = {};
+    obj[title.value] = val;
+    obj[value.value] = val;
+    data.value.push(obj);
+  });
+}
+
+
 onMounted(async () => {
   internalStateIsSet.value = false;
   await initState(props.schema);
@@ -177,14 +198,14 @@ onMounted(async () => {
   await bindRules(props.schema);
 
   if (localModel.value) {
-    if (typeof localModel.value == 'object') {
-      data.value.push(localModel.value);
-    } else {
-      await resolveIfLocalModelHasDependencies();
-      if (!fieldProps.value.readonly) {
-        query.value = localModel.value;
-        queryBlocker.value = true;
-      }
+    fillInModelIfMultiple();
+  } else if (typeof localModel.value == 'object') {
+    data.value.push(localModel.value);
+  } else {
+    await resolveIfLocalModelHasDependencies();
+    if (!fieldProps.value.readonly) {
+      query.value = localModel.value;
+      queryBlocker.value = true;
     }
   }
   singleOptionAutoSelectFunction();
