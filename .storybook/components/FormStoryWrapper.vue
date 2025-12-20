@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="7">
+    <v-col cols="12">
       <v-card>
         <v-card-title>
           <span>Form Visualisation</span>

@@ -37,6 +37,7 @@ import Combobox from './dictionary/Combobox.vue';
 import DuplicatedSection from './duplicated-section/DuplicatedSection.vue';
 import Markdown from './markdown/Markdown.vue';
 import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
+import SchedulerGrid from './scheduler-grid/SchedulerGrid.vue';
 
 
 
@@ -78,5 +79,6 @@ export const vueSchemaFromControls: Components = {
   'file-field': FileField,
   bookmark: Bookmark,
   'expansion-panels': ExpansionPanels,
-  'group-input': GroupInput
+  'group-input': GroupInput,
+  "scheduler-grid": SchedulerGrid
 };

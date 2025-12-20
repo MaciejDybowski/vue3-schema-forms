@@ -16,6 +16,19 @@ export interface EngineTextField extends EngineField {
   expression?: string;
 }
 
+type LegendItem = {
+  statusKey: string;
+  label: string;
+  colors: {
+    light: string;
+    dark: string;
+  };
+};
+
+export interface EngineSchedulerGrid extends EngineField{
+  legend: LegendItem[]
+}
+
 export interface EngineExpansionPanels extends EngineField {
   panels: EngineExpansionPanel[];
 }

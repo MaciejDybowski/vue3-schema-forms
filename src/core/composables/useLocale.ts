@@ -53,6 +53,14 @@ export function useLocale() {
           enableRowActions: 'Selection mode',
           disableRowActions: 'Single mode',
         },
+        schedulerGrid: {
+          person: 'Person',
+          clickToEdit: 'Click to edit',
+          note: 'Note (Optional)',
+          status: 'Status',
+          notePlaceholder: 'e.g., 8-15, after 1PM',
+          editSchedule: 'Edit Schedule',
+        },
       },
       pl: {
         noActions: 'Brak dostępnych akcji.',
@@ -104,6 +112,14 @@ export function useLocale() {
           disableRowActions: 'Tryb pojedynczy',
           selectedItemsCount:
             'Brak zaznaczonych elementów | Zaznaczono {el} element | Zaznaczono {el} elementy | Zaznaczono {el} elementów',
+        },
+        schedulerGrid: {
+          person: 'Osoba',
+          clickToEdit: 'Naciśnij aby edytować.',
+          note: 'Notatka (Opcjonalna)',
+          status: 'Status',
+          notePlaceholder: 'np. 8-15, po 12:00',
+          editSchedule: 'Edytuj harmonogram',
         },
       },
       de: {
