@@ -1,21 +1,16 @@
-import 'vuetify/styles';
 import '@mdi/font/css/materialdesignicons.css';
-
-import { aliases, mdi } from 'vuetify/iconsets/mdi';
 import { createVuetify } from 'vuetify';
-
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
-import { en } from 'vuetify/locale';
-
+import { aliases, mdi } from 'vuetify/iconsets/mdi';
 // @ts-ignore
 import colors from 'vuetify/lib/util/colors';
-import { VTimePicker } from 'vuetify/labs/VTimePicker'
+import { en } from 'vuetify/locale';
+import 'vuetify/styles';
 
 export default createVuetify({
   components: {
     ...components,
-    VTimePicker,
   },
   directives,
   icons: {
