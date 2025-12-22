@@ -2,12 +2,13 @@
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
-import {
-  MOCK_FOR_FILE_INPUT_ERROR,
-  MOCK_REQUEST_CURRENCY,
-  TABLE_PAGE_WITH_AGGREGATES,
-  UPDATE_TABLE_ROW
-} from './mock-responses';
+import { Schema } from '../types/schema/Schema';
+import { DictionarySource } from '../types/shared/Source';
+import { MOCK_CALENDARS } from './mock-responses';
+
+
+
+
 
 export default {
   title: 'Development Area',
@@ -31,5 +32,36 @@ export default {
 
 type Story = StoryObj<typeof FormStoryWrapper>;
 
-
-
+export const CalendarAutocomplete: Story = {
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        yearAndMonth: {
+          label: 'Period',
+          layout: {
+            component: 'year-and-month',
+          },
+        },
+        calendar: {
+          label: 'Select calendar',
+          layout: {
+            component: 'calendar-autocomplete',
+          },
+          source: {
+            url: '/mocks/calendars',
+            title: 'label',
+            value: 'id',
+          } as DictionarySource,
+        } as SchemaSourceField,
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: MOCK_CALENDARS,
+    },
+  },
+};

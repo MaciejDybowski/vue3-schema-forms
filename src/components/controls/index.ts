@@ -1,6 +1,7 @@
 //@ts-nocheck
 import Alert from '@/components/controls/Alert.vue';
 import Bookmark from '@/components/controls/Bookmark.vue';
+import CalendarAutocomplete from '@/components/controls/CalendarAutocomplete.vue';
 import FileField from '@/components/controls/FileField.vue';
 import Image from '@/components/controls/Image.vue';
 import KeyValueList from '@/components/controls/KeyValueList.vue';
@@ -38,6 +39,7 @@ import DuplicatedSection from './duplicated-section/DuplicatedSection.vue';
 import Markdown from './markdown/Markdown.vue';
 import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
 import SchedulerGrid from './scheduler-grid/SchedulerGrid.vue';
+import YearAndMonth from '@/components/controls/YearAndMonth.vue';
 
 
 
@@ -80,5 +82,7 @@ export const vueSchemaFromControls: Components = {
   bookmark: Bookmark,
   'expansion-panels': ExpansionPanels,
   'group-input': GroupInput,
-  "scheduler-grid": SchedulerGrid
+  'scheduler-grid': SchedulerGrid,
+  'calendar-autocomplete': CalendarAutocomplete,
+  'year-and-month': YearAndMonth,
 };
