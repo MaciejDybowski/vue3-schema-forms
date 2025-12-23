@@ -6,44 +6,54 @@
     :clearable="!fieldProps.readonly"
     :focused="pickerModel"
     :label="label"
+    :rules="!fieldProps.readonly ? rules : []"
+    readonly
     v-bind="{ ...attrs, ...fieldProps }"
-    @click="() => (pickerModel = true)"
+    @click="openPicker"
   >
-    <template #append-inner>
-      <v-btn
-        icon="mdi-calendar"
-        size="small"
-        variant="plain"
-        @click.stop="openPicker"
-      />
-    </template>
   </v-text-field>
 
   <v-menu
+    v-if="inputFieldRef"
     v-model="pickerModel"
     :activator="inputFieldRef"
     :close-on-content-click="false"
     :disabled="fieldProps.readonly as boolean"
     :open-on-click="false"
-    min-width="0"
     offset="5"
     scrim="transparent"
   >
-    <v-card min-width="0">
+    <v-card width="330px">
       <v-date-picker
         v-model="pickerValue"
-        class="engine-month-picker"
         hide-header
         hide-title
         type="month"
-        @update:model-value="selectMonth"
       >
-        <template v-slot:controls="{ monthText, yearText, openMonths, openYears }">
-          <v-sheet class="w-100 d-flex align-center rounded-lg pa-1 ga-1" color="rgba(var(--v-theme-on-surface), .2)">
-            <v-btn :text="monthText" append-icon="$dropdown" class="bg-surface px-2" @click="openMonths"></v-btn>
-            <v-btn :text="yearText" append-icon="$dropdown" class="bg-surface px-2" @click="openYears"></v-btn>
-            <v-spacer></v-spacer>
-            <v-btn class="bg-surface px-2" prepend-icon="$plus" text="Add event"></v-btn>
+        <template #controls="{ monthText, yearText, openMonths, openYears }">
+          <v-sheet
+            class="w-100 d-flex align-center rounded-lg pa-1 ga-1"
+            color="rgba(var(--v-theme-on-surface), .2)"
+          >
+            <v-btn
+              :text="monthText"
+              append-icon="$dropdown"
+              class="bg-surface px-2"
+              @click="openMonths"
+            />
+            <v-btn
+              :text="yearText"
+              append-icon="$dropdown"
+              class="bg-surface px-2"
+              @click="openYears"
+            />
+            <v-spacer />
+            <v-btn
+              class="bg-surface px-2"
+              prepend-icon="$plus"
+              text="Save"
+              @click="savePickerValue(monthText, yearText)"
+            />
           </v-sheet>
         </template>
       </v-date-picker>
@@ -72,22 +82,28 @@ const monthNames = [
   'december',
 ];
 
-const props = defineProps<{ schema: EngineDateField; model: object }>();
+const props = defineProps<{
+  schema: EngineDateField;
+  model: object;
+}>();
 
 const { label, bindLabel } = useLabel(props.schema);
-const { bindRules, requiredInputClass } = useRules();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const attrs = useAttrs();
+const { bindRules, rules, requiredInputClass } = useRules();
 
 const pickerModel = ref(false);
-const inputFieldRef = ref();
+const inputFieldRef = ref<HTMLElement | null>(null);
 const inputValue = ref('');
 const pickerValue = ref<Date | null>(null);
 
-const localModel = computed({
-  get(): { year: number; month: string } | null {
+const localModel = computed<{
+  year: number;
+  month: number;
+} | null>({
+  get() {
     return getValue(props.model, props.schema);
   },
   set(v) {
@@ -96,30 +112,38 @@ const localModel = computed({
 });
 
 function openPicker() {
-  if (!fieldProps.value.readonly) pickerModel.value = true;
+  if (!fieldProps.value.readonly) {
+    pickerModel.value = true;
+  }
 }
 
-function formatDisplay(v) {
-  if (!v) return '';
-  const idx = monthNames.indexOf(v.month);
-  if (idx === -1) return '';
-  return `${String(idx + 1).padStart(2, '0')}/${v.year}`;
+function formatDisplay(v: { year: number; month: number }) {
+  return `${String(v.month).padStart(2, '0')}/${v.year}`;
 }
 
-function selectMonth(date: Date | string | null) {
-  if (!date) return;
+function savePickerValue(monthText: string, yearText: string) {
+  const year = Number(yearText);
+  if (Number.isNaN(year)) return;
 
-  const d = typeof date === 'string' ? new Date(date) : date;
+  let monthIndex: number | null = null;
+  if (pickerValue.value) {
+    monthIndex = pickerValue.value.getMonth();
+  } else {
+    const testDate = new Date(`${monthText} 1, ${year}`);
+    if (!Number.isNaN(testDate.getTime())) {
+      monthIndex = testDate.getMonth();
+    }
+  }
 
+  if (monthIndex === null) return;
+  pickerValue.value = new Date(year, monthIndex, 1);
   const result = {
-    year: d.getFullYear(),
-    month: monthNames[d.getMonth()],
+    year,
+    month: monthIndex + 1,
   };
 
   localModel.value = result;
   inputValue.value = formatDisplay(result);
-
-  console.debug(`selectMonth: ${date}`);
   pickerModel.value = false;
 }
 
@@ -132,7 +156,7 @@ watch(
       return;
     }
 
-    const idx = monthNames.indexOf(val.month);
+    const idx = monthNames.indexOf(val.month + '');
     if (idx === -1) return;
 
     pickerValue.value = new Date(val.year, idx, 1);
@@ -142,14 +166,17 @@ watch(
 );
 
 onMounted(async () => {
+  if (localModel.value) {
+    savePickerValue(localModel.value?.month + '', localModel.value?.year + '');
+  }
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);
 });
 </script>
 
-<style lang="scss" >
-.v-date-picker-month__days {
+<style lang="scss" scoped>
+:deep(.v-date-picker-month__days) {
   display: none !important;
 }
 </style>

@@ -35,11 +35,16 @@ type Story = StoryObj<typeof FormStoryWrapper>;
 export const CalendarAutocomplete: Story = {
   play: async (context) => {},
   args: {
-    formModel: {},
+    formModel: {
+      period: {
+        year: 2026,
+        month: 5,
+      },
+    },
     schema: {
       type: 'object',
       properties: {
-        yearAndMonth: {
+        period: {
           label: 'Period',
           layout: {
             component: 'year-and-month',
@@ -54,8 +59,8 @@ export const CalendarAutocomplete: Story = {
             url: '/mocks/calendars',
             title: 'label',
             value: 'id',
-          } as DictionarySource,
-        } as SchemaSourceField,
+          } ,
+        } ,
       },
     } as Schema,
   },
