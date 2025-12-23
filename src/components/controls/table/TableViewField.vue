@@ -553,6 +553,19 @@ async function runTableBtnLogic(btn: TableButton) {
       };
       actionPopup.acceptText = btn.config.acceptText ? btn.config.acceptText : t('save');
       actionPopup.show = true;
+      break;
+    case 'internal':
+      if(btn.config.code == "add"){
+        const newItem: Record<string, any> = {};
+        props.schema.source.headers.forEach((header) => {
+          newItem[header.key] = null;
+        });
+        items.value.push(newItem);
+        itemsTotalElements.value += 1;
+      }
+      break;
+    default:
+      console.warn('unknown button mode');
   }
 }
 
