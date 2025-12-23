@@ -7,6 +7,7 @@ import Image from '@/components/controls/Image.vue';
 import KeyValueList from '@/components/controls/KeyValueList.vue';
 import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue';
 import TextSwitchField from '@/components/controls/TextSwitchField.vue';
+import YearMonth from '@/components/controls/YearMonth.vue';
 import YearPicker from '@/components/controls/YearPicker.vue';
 import GroupOfFields from '@/components/controls/fields-group/FieldsGroup.vue';
 import GroupInput from '@/components/controls/group-input/GroupInput.vue';
@@ -39,7 +40,6 @@ import DuplicatedSection from './duplicated-section/DuplicatedSection.vue';
 import Markdown from './markdown/Markdown.vue';
 import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
 import SchedulerGrid from './scheduler-grid/SchedulerGrid.vue';
-import YearAndMonth from '@/components/controls/YearAndMonth.vue';
 
 
 
@@ -84,5 +84,5 @@ export const vueSchemaFromControls: Components = {
   'group-input': GroupInput,
   'scheduler-grid': SchedulerGrid,
   'calendar-autocomplete': CalendarAutocomplete,
-  'year-and-month': YearAndMonth,
+  'year-month': YearMonth,
 };

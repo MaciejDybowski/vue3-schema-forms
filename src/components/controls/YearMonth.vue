@@ -10,8 +10,7 @@
     readonly
     v-bind="{ ...attrs, ...fieldProps }"
     @click="openPicker"
-  >
-  </v-text-field>
+  />
 
   <v-menu
     v-if="inputFieldRef"
@@ -67,21 +66,6 @@ import { computed, onMounted, ref, useAttrs, watch } from 'vue';
 import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
 import { EngineDateField } from '@/types/engine/controls';
 
-const monthNames = [
-  'january',
-  'february',
-  'march',
-  'april',
-  'may',
-  'june',
-  'july',
-  'august',
-  'september',
-  'october',
-  'november',
-  'december',
-];
-
 const props = defineProps<{
   schema: EngineDateField;
   model: object;
@@ -99,10 +83,7 @@ const inputFieldRef = ref<HTMLElement | null>(null);
 const inputValue = ref('');
 const pickerValue = ref<Date | null>(null);
 
-const localModel = computed<{
-  year: number;
-  month: number;
-} | null>({
+const localModel = computed<string | null>({
   get() {
     return getValue(props.model, props.schema);
   },
@@ -121,11 +102,16 @@ function formatDisplay(v: { year: number; month: number }) {
   return `${String(v.month).padStart(2, '0')}/${v.year}`;
 }
 
+function formatIso(year: number, month: number) {
+  return `${year}-${String(month).padStart(2, '0')}`;
+}
+
 function savePickerValue(monthText: string, yearText: string) {
   const year = Number(yearText);
   if (Number.isNaN(year)) return;
 
   let monthIndex: number | null = null;
+
   if (pickerValue.value) {
     monthIndex = pickerValue.value.getMonth();
   } else {
@@ -136,14 +122,13 @@ function savePickerValue(monthText: string, yearText: string) {
   }
 
   if (monthIndex === null) return;
-  pickerValue.value = new Date(year, monthIndex, 1);
-  const result = {
-    year,
-    month: monthIndex + 1,
-  };
 
-  localModel.value = result;
-  inputValue.value = formatDisplay(result);
+  const month = monthIndex + 1;
+
+  pickerValue.value = new Date(year, monthIndex, 1);
+  localModel.value = formatIso(year, month);
+
+  inputValue.value = formatDisplay({ year, month });
   pickerModel.value = false;
 }
 
@@ -156,19 +141,24 @@ watch(
       return;
     }
 
-    const idx = monthNames.indexOf(val.month + '');
-    if (idx === -1) return;
+    const [yearStr, monthStr] = val.split('-');
+    const year = Number(yearStr);
+    const month = Number(monthStr);
 
-    pickerValue.value = new Date(val.year, idx, 1);
-    inputValue.value = formatDisplay(val);
+    if (Number.isNaN(year) || Number.isNaN(month)) return;
+
+    pickerValue.value = new Date(year, month - 1, 1);
+    inputValue.value = formatDisplay({ year, month });
   },
   { immediate: true },
 );
 
 onMounted(async () => {
   if (localModel.value) {
-    savePickerValue(localModel.value?.month + '', localModel.value?.year + '');
+    const [y, m] = localModel.value.split('-');
+    savePickerValue(m, y);
   }
+
   await bindLabel(props.schema);
   await bindRules(props.schema);
   await bindProps(props.schema);

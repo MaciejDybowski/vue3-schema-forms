@@ -3,7 +3,7 @@ import { MOCK_CALENDARS } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/YearAndMonth',
+  title: 'Elements/Editable/YearMonth',
   ...formStoryWrapperTemplate,
 };
 
@@ -18,7 +18,7 @@ export const Standard: Story = {
         period: {
           label: 'Period',
           layout: {
-            component: 'year-and-month',
+            component: 'year-month',
           },
         },
       },

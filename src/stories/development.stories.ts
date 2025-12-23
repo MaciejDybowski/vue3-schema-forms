@@ -3,7 +3,6 @@ import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 import { Schema } from '../types/schema/Schema';
-import { DictionarySource } from '../types/shared/Source';
 import { MOCK_CALENDARS } from './mock-responses';
 
 
@@ -36,10 +35,7 @@ export const CalendarAutocomplete: Story = {
   play: async (context) => {},
   args: {
     formModel: {
-      period: {
-        year: 2026,
-        month: 5,
-      },
+      period: '2021-12',
     },
     schema: {
       type: 'object',
@@ -47,7 +43,7 @@ export const CalendarAutocomplete: Story = {
         period: {
           label: 'Period',
           layout: {
-            component: 'year-and-month',
+            component: 'year-month',
           },
         },
         calendar: {
@@ -59,8 +55,8 @@ export const CalendarAutocomplete: Story = {
             url: '/mocks/calendars',
             title: 'label',
             value: 'id',
-          } ,
-        } ,
+          },
+        },
       },
     } as Schema,
   },
