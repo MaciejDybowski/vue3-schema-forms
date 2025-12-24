@@ -1,0 +1,766 @@
+<template>
+  <div>
+    <v-data-table-server
+      :key="showSelectEditable + ''"
+      v-model="selectedItems"
+      v-model:items-per-page="tableOptions.itemsPerPage"
+      v-model:loading="loadingLocal"
+      v-model:page="tableOptions.page"
+      v-model:sort-by="tableOptions.sortBy"
+      :headers="headers"
+      :hover="true"
+      :item-value="idMapper"
+      :items="items"
+      :items-length="itemsTotalElements"
+      :show-select="showSelectEditable"
+      class="custom-table"
+      density="compact"
+      return-object
+      @update:options="updateOptions"
+    >
+      <template v-slot:header.data-table-select="{ allSelected, selectAll, someSelected }">
+        <v-checkbox-btn
+          :indeterminate="someSelected && !allSelected"
+          :model-value="allSelected"
+          color="primary"
+          @update:model-value="selectAll(!allSelected)"
+        ></v-checkbox-btn>
+      </template>
+
+      <template v-slot:item.data-table-select="{ internalItem, isSelected, toggleSelect, index }">
+        <v-checkbox-btn
+          :model-value="isSelected(internalItem)"
+          color="primary"
+          @update:model-value="toggleSelect(internalItem)"
+        ></v-checkbox-btn>
+      </template>
+
+      <template #top>
+        <v-row dense>
+          <v-col
+            v-for="button in filteredButtons"
+            cols="auto"
+          >
+            <v-btn
+              v-bind="{
+                ...tableButtonDefaultProps,
+                ...button.btnProps,
+                disabled: button.disabled as boolean,
+              }"
+              @click="runTableBtnLogic(button)"
+            >
+              {{
+                typeof button.label == 'string'
+                  ? button.label
+                  : '#' + button.label.$ref.split('/').pop()
+              }}
+            </v-btn>
+          </v-col>
+
+          <v-spacer />
+          <v-col
+            v-for="action in availableRowActions"
+            v-if="availableRowActions.length > 0"
+            cols="auto"
+          >
+            <v-btn
+              :loading="rowActionButtonLoading"
+              style="text-transform: none"
+              v-bind="{
+                ...tableButtonDefaultProps,
+                disabled: (action.disabled as boolean) || rowActionButtonLoading,
+              }"
+              @click="doRowsActions(action)"
+            >
+              <v-icon class="mr-1">{{ action.icon }}</v-icon>
+              {{
+                typeof action.title == 'string'
+                  ? action.title
+                  : '#' + action.title.$ref.split('/').pop()
+              }}
+            </v-btn>
+          </v-col>
+          <v-col
+            v-else
+            cols="auto"
+          >
+            <v-checkbox
+              v-if="showSelect"
+              v-model="showSelectEditable"
+              :hide-details="true"
+              color="primary"
+              density="compact"
+            >
+              <template v-slot:label>
+                <span class="text-subtitle-2">{{ t('tableField.enableRowActions') }}</span>
+              </template>
+            </v-checkbox>
+          </v-col>
+        </v-row>
+      </template>
+
+      <!-- Poniższy template dotyczy nagłówków tabeli -->
+      <template
+        v-for="header in headers"
+        :key="header.key"
+        #[`header.${header.key}`]
+      >
+        <div
+          v-if="header.type == 'ALERT'"
+          id="actionsSelect"
+        ></div>
+        <div :class="header.type === 'NUMBER' ? 'text-right' : ''">
+          {{ header.title }}
+        </div>
+      </template>
+
+      <!-- Każda komórka -->
+      <template
+        v-for="header in headers"
+        :key="header.key"
+        #[`item.${header.key}`]="{ item, index }"
+      >
+        <table-cell-wrapper
+          :actions="actions"
+          :field-props="fieldProps"
+          :header="header"
+          :item="item"
+          @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
+          @run-table-action-logic="(event) => runTableActionLogic(event, index)"
+          @refresh:table="refreshTableEvent"
+        />
+      </template>
+
+      <!-- miejsce przygotowane na agregaty -->
+
+      <template
+        v-if="!loading && aggregates"
+        v-slot:body.append="{}"
+      >
+        <tr
+          :class="[
+            theme.global.current.value.dark
+              ? 'v-data-table__tr-aggregates-dark'
+              : 'v-data-table__tr-aggregates-light',
+          ]"
+        >
+          <td v-if="showSelectEditable"></td>
+          <td v-for="(header, headerIndex) in headers">
+            <table-footer-cell
+              v-if="header.footerMapping"
+              :aggregates="aggregates"
+              :footer-mapping="header.footerMapping"
+            />
+          </td>
+        </tr>
+      </template>
+
+      <template #bottom="{ page, itemsPerPage, pageCount }">
+        <TablePagination
+          :elements-count="selectedItems.length"
+          :itemsPerPage="itemsPerPage"
+          :itemsPerPageOptions="[5, 10, 20]"
+          :page="page"
+          :pageCount="pageCount"
+          :show-elements-count="showSelectEditable"
+          :total-items="itemsTotalElements"
+          @update:page="(val: number) => (tableOptions.page = val)"
+          @update:itemsPerPage="(val: number) => (tableOptions.itemsPerPage = val)"
+        />
+      </template>
+    </v-data-table-server>
+
+    <v-dialog
+      v-model="actionPopup.show"
+      max-width="650"
+    >
+      <template v-slot:default="{ isActive }">
+        <v-card :title="actionPopup.title">
+          <v-card-text>
+            <vue-schema-forms
+              ref="actionPopupReference"
+              v-model="actionPopup.model"
+              :options="actionPopup.options"
+              :schema="actionPopup.schema"
+            />
+          </v-card-text>
+          <v-card-actions class="mx-4">
+            <v-spacer></v-spacer>
+
+            <v-btn
+              :text="t('close')"
+              v-bind="{ ...tableButtonDefaultProps, color: '', variant: 'elevated' }"
+              @click="isActive.value = false"
+            ></v-btn>
+
+            <v-btn
+              :text="actionPopup.acceptText"
+              v-bind="{ ...tableButtonDefaultProps, variant: 'elevated' }"
+              @click="saveDialogForm(isActive)"
+            />
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { useEventBus } from '@vueuse/core';
+import jsonata from 'jsonata';
+import { cloneDeep, debounce } from 'lodash';
+import set from 'lodash/set';
+import { useTheme } from 'vuetify';
+
+import { ComputedRef, Ref, computed, onMounted, reactive, ref, watch } from 'vue';
+
+import TableCellWrapper from '@/components/controls/table/TableCellWrapper.vue';
+import TableFooterCell from '@/components/controls/table/TableFooterCell.vue';
+import TablePagination from '@/components/controls/table/TablePagination.vue';
+import { TableFetchOptions, TableOptions } from '@/components/controls/table/table-types';
+import VueSchemaForms from '@/components/engine/VueSchemaForms.vue';
+
+import { useLocale, useProps, useResolveVariables } from '@/core/composables';
+import { useVariableParser } from '@/core/composables/useVariableParser';
+import { variableRegexp } from '@/core/engine/utils';
+import { toast } from '@/main';
+import { EngineTableField } from '@/types/engine/EngineTableField';
+import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
+import { Schema } from '@/types/schema/Schema';
+import { TableButton, TableHeader, TableHeaderAction } from '@/types/shared/Source';
+
+const actionHandlerEventBus = useEventBus<string>('form-action');
+const vueSchemaFormEventBus = useEventBus<string>('form-model');
+const duplicatedSectionEventBus = useEventBus<string>('form-duplicated-section');
+
+duplicatedSectionEventBus.on(async (event: any, payload: NodeUpdateEvent) => {
+  triggers.forEach((trigger) => {
+    const value = fillPath(props.schema.path, props.schema.index, trigger);
+    if (value == payload.key) {
+      actionHandlerEventBus.emit('form-action', { code: 'refresh-table', callback: refreshTable });
+    }
+  });
+});
+
+vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
+  if (payload == 'action-callback') {
+    selectedItems.value = [];
+    rowActionButtonLoading.value = false;
+    debounced.load();
+  }
+
+  if (typeof payload == 'object' && triggers.includes(payload.key)) {
+    actionHandlerEventBus.emit('form-action', { code: 'refresh-table', callback: refreshTable });
+  }
+});
+
+function refreshTable() {
+  debounced.load();
+}
+
+const props = defineProps<{
+  schema: EngineTableField;
+  items: any[];
+  itemsTotalElements: number;
+  loadData: (params: TableFetchOptions) => Promise<void>;
+  updateRow: (value: any, index: number, headerKey: string, row: any) => Promise<void>;
+  tableActionPopupUpdate: (actionPopup: any) => Promise<void>;
+  loading: boolean;
+  aggregates: any;
+}>();
+
+const loadingLocal = computed({
+  get(): boolean {
+    return props.loading;
+  },
+  set(val: boolean) {
+    emit('update:loading', val);
+  },
+});
+
+const emit = defineEmits<{
+  (e: 'update:loading', value: boolean): void;
+  (e: 'btnModeInternalAddRecord', payload: any): void;
+}>();
+
+const theme = useTheme();
+const { t } = useLocale();
+const { bindProps, fieldProps } = useProps();
+const { resolve, fillPath } = useResolveVariables();
+const { parse } = useVariableParser();
+
+const debounced = {
+  load: debounce(loadDataWrapper, 200),
+  updateRow: debounce(props.updateRow, 300),
+  showToast: debounce(showToast, 400),
+};
+
+const actions = props.schema.actions ? props.schema.actions : {};
+
+const triggers: string[] = props.schema.triggers ? props.schema.triggers : [];
+
+const actionPopupReference = ref();
+const actionPopup = reactive<{
+  errorMessages: Ref<any[]>;
+  show: boolean;
+  title: string;
+  model: object;
+  schema: Schema;
+  options: object;
+  item: object;
+  itemIndex: number;
+  acceptFunction: Function;
+  acceptText: string;
+}>({
+  errorMessages: ref([]),
+  show: false,
+  title: '',
+  model: {},
+  schema: {} as Schema,
+  options: props.schema.options,
+  item: {},
+  itemIndex: 0,
+  acceptFunction: () => {},
+  acceptText: t('save'),
+});
+
+const tableButtonDefaultProps = {
+  size: 'small',
+  color: 'primary',
+};
+
+const headers: ComputedRef<TableHeader[]> = computed(() => {
+  return props.schema.source.headers.map(buildHeader);
+});
+
+// Rows action section
+const selectedItems = ref([]);
+const showSelect = computed(() => {
+  return props.schema.source.showSelect ? props.schema.source.showSelect : false;
+});
+const showSelectEditable = ref(false);
+
+const idMapper = computed(() => {
+  return props.schema.source.idMapper ? props.schema.source.idMapper : 'dataId';
+});
+const availableRowActions: Ref<Array<TableHeaderAction>> = ref([]);
+const rowActionButtonLoading = ref(false);
+
+if (showSelect.value) {
+  watch(
+    () => selectedItems.value,
+    async () => {
+      let allActions: TableHeaderAction[] =
+        headers.value.find((item) => item.key === 'actions')?.actions || [];
+
+      allActions = allActions.filter((item: TableHeaderAction) => item.multiSelect);
+
+      if (selectedItems.value.length === 0) {
+        availableRowActions.value = [];
+        return;
+      }
+
+      const actionsPerRow: string[][] = await Promise.all(
+        selectedItems.value.map(async (row) => {
+          const validCodes = await Promise.all(
+            allActions.map(async (action) => {
+              if (!action.condition) {
+                return action.title ?? null;
+              }
+              try {
+                const nata = jsonata(action.condition);
+                const result = await nata.evaluate(row);
+                return Boolean(result) ? (action.title ?? null) : null;
+              } catch (e) {
+                console.error('Błąd w condition:', e, action);
+                return null;
+              }
+            }),
+          );
+          return validCodes.filter((c): c is string => c !== null);
+        }),
+      );
+      const commonIds: string[] = actionsPerRow.reduce((acc, curr) => {
+        const currSet = new Set(curr);
+        return acc.filter((x) => currSet.has(x));
+      });
+      let commonActions = commonIds.map((title) => allActions.find((a) => a.title === title)!);
+
+      //@ts-ignore
+      availableRowActions.value = commonActions;
+    },
+    { deep: true },
+  );
+}
+
+async function doRowsActions(action: TableHeaderAction) {
+  rowActionButtonLoading.value = true;
+  const actionConfigWithoutCode: Record<string, any> = cloneDeep(action.config);
+  delete actionConfigWithoutCode.code;
+  delete actionConfigWithoutCode.body;
+  const body = await Promise.all(
+    selectedItems.value.map(async (item) => {
+      return await createBodyObjectFromRow(action.config, item);
+    }),
+  );
+
+  let payloadObject = {
+    code: action.code,
+    body: body,
+    params: { ...actionConfigWithoutCode.params },
+  };
+  actionHandlerEventBus.emit('form-action', payloadObject);
+}
+
+// Rows action section end
+
+const buildHeader = (item: TableHeader): TableHeader => {
+  const {
+    key,
+    title,
+    type,
+    valueMapping,
+    color,
+    footerMapping,
+    properties,
+    items,
+    editable,
+    actions,
+  } = item;
+  //@ts-ignore - builder purpose
+  const titleRef = typeof title == 'string' ? title : '#' + title.$ref.split('/').pop();
+  const header: TableHeader = {
+    key,
+    title: titleRef,
+    type,
+    valueMapping,
+    color,
+    footerMapping,
+    editable,
+    items,
+    actions,
+  };
+
+  if (properties) {
+    Object.assign(header, properties);
+  }
+
+  return header;
+};
+
+const buttons: ComputedRef<TableButton[]> = computed(() => {
+  if (props.schema.source.buttons) {
+    return props.schema.source.buttons;
+  } else {
+    return [] as TableButton[];
+  }
+});
+
+const tableOptions = ref<TableOptions>({
+  page: 1,
+  sortBy: [],
+  itemsPerPage: 10,
+});
+
+const fetchDataParams = computed<TableFetchOptions>(() => {
+  return {
+    page: tableOptions.value.page,
+    size: tableOptions.value.itemsPerPage,
+    sort: tableOptions.value.sortBy,
+    filter: null,
+    query: null,
+  };
+});
+
+async function updateOptions() {
+  await loadDataWrapper();
+}
+
+async function runTableBtnLogic(btn: TableButton) {
+  switch (btn.mode) {
+    case 'action':
+      const btnConfigWithoutCode: Record<string, any> = cloneDeep(btn.config);
+      delete btnConfigWithoutCode.code;
+      delete btnConfigWithoutCode.body;
+      const body = await createBodyObjectFromFormModel(btn.config.body);
+      let payloadObject = {
+        code: btn.config.code,
+        body: body,
+        params: { ...btnConfigWithoutCode },
+      };
+      actionHandlerEventBus.emit('form-action', payloadObject);
+      break;
+    case 'form-and-action':
+      actionPopup.errorMessages = [];
+      actionPopup.title = btn.config.title as string;
+      actionPopup.model = {};
+      actionPopup.schema = btn.schema;
+      actionPopup.acceptFunction = () => {
+        let payloadObject = {
+          code: btn.config.code,
+          body: actionPopup.model,
+          params: { script: btn.config.script },
+        };
+        actionHandlerEventBus.emit('form-action', payloadObject);
+      };
+      actionPopup.acceptText = btn.config.acceptText ? btn.config.acceptText : t('save');
+      actionPopup.show = true;
+      break;
+    case 'internal':
+      if (btn.config.code == 'add') {
+        const newItem: Record<string, any> = {};
+        props.schema.source.headers.forEach((header) => {
+          newItem[header.key] = null;
+        });
+        emit('btnModeInternalAddRecord', newItem);
+      }
+      break;
+    default:
+      console.warn('unknown button mode');
+  }
+}
+
+async function runTableActionLogic(
+  payload: { action: TableHeaderAction; item: any },
+  index: number,
+) {
+  const action = payload.action;
+  switch (action.mode) {
+    case 'action':
+      const actionHandlerEventBus = useEventBus<string>('form-action');
+
+      const obj = {
+        mode: 'action',
+        body: action.config.body,
+        params: action.config.params,
+      };
+
+      let body = await createBodyObjectFromRow(obj as any, payload.item);
+      let params = await createParamsObjectFromRow(obj as any, payload.item);
+
+      let payloadObject = {
+        code: action.code,
+        body: body,
+        params: params,
+      };
+
+      actionHandlerEventBus.emit('form-action', payloadObject);
+      //console.debug("Action payload", payloadObject);
+      break;
+
+    case 'popup':
+      actionPopup.errorMessages = [];
+      actionPopup.title = action.title as string;
+      set(
+        actionPopup.model,
+        action.modelReference ? action.modelReference : '',
+        payload.item[action.modelReference as string],
+      );
+      actionPopup.schema = action.schema;
+      actionPopup.item = payload.item;
+      actionPopup.itemIndex = index;
+      actionPopup.acceptFunction = props.tableActionPopupUpdate;
+      actionPopup.show = true;
+      break;
+    default:
+      console.warn('unknown action mode');
+  }
+}
+
+async function createParamsObjectFromRow(actionObj: any, row: any) {
+  let params: Record<string, any> = {};
+  for (const [key, value] of Object.entries(actionObj.params)) {
+    if (typeof value === 'string' && variableRegexp.test(value)) {
+      const { resolvedText, allVariablesResolved } = await parse(value, row);
+      console.warn(`[vue-schema-forms] Key: ${key} with Value:${value} was not resolved properly.`);
+      allVariablesResolved ? (params[key] = resolvedText) : null;
+    } else {
+      params[key] = value;
+    }
+  }
+  return params;
+}
+
+async function createBodyObjectFromFormModel(btnBody: object | undefined) {
+  let body: Record<string, any> = {};
+  if (btnBody == undefined) return body;
+  const entries = Object.entries(btnBody);
+  const resolvedEntries = await Promise.all(
+    entries.map(async ([key, value]) => {
+      if (typeof value === 'string' && variableRegexp.test(value)) {
+        const { resolvedText, allVariablesResolved } = await resolve(props.schema, value as string);
+        return [key, allVariablesResolved ? resolvedText : null];
+      } else {
+        return [key, value];
+      }
+    }),
+  );
+
+  resolvedEntries.forEach(([key, value]) => {
+    body[key as string] = value;
+  });
+
+  return body;
+}
+
+async function createBodyObjectFromRow(actionObj: any, row: any) {
+  const processNode = async (node: any): Promise<any> => {
+    if (Array.isArray(node)) {
+      return Promise.all(node.map((item) => processNode(item)));
+    } else if (node !== null && typeof node === 'object') {
+      const result: Record<string, any> = {};
+      for (const [key, value] of Object.entries(node)) {
+        result[key] = await processNode(value);
+      }
+      return result;
+    } else if (typeof node === 'string' && variableRegexp.test(node)) {
+      const { resolvedText, allVariablesResolved } = await parse(node, row);
+      if (!allVariablesResolved) {
+        console.warn(`[vue-schema-forms] Value: ${node} was not resolved properly.`);
+        return undefined;
+      }
+      return resolvedText;
+    }
+    return node;
+  };
+
+  return await processNode(actionObj.body);
+}
+
+async function saveDialogForm(isActive: Ref<boolean>) {
+  const { valid, messages } = await actionPopupReference.value.validate('messages');
+  actionPopup.errorMessages = messages;
+  if (valid) {
+    actionPopup.acceptFunction(actionPopup);
+    isActive.value = false;
+  }
+}
+
+async function refreshTableEvent() {
+  await new Promise((r) => setTimeout(r, 200));
+  actionHandlerEventBus.emit('form-action', {
+    code: 'instant-refresh-table',
+    callback: refreshTable,
+  });
+}
+
+function showToast(message: string) {
+  // @ts-ignore
+  toast.error(message);
+}
+
+const filteredButtons = ref<TableButton[]>([]);
+async function filteredButtonsFunction() {
+  const tempActions = await Promise.all(
+    buttons.value?.map(async (button: TableButton) => {
+      // For readonly mode when whole form is in this state
+      if (fieldProps.value.readonly == true) {
+        button.disabled = true;
+        return button;
+      }
+
+      if (button.disabled) {
+        const condition = button.disabled as string;
+        const nata = jsonata(condition);
+        button.disabled = await nata.evaluate(props.items);
+        return button;
+      } else {
+        return button;
+      }
+    }) ?? [],
+  );
+  return tempActions.filter((item) => item != null);
+}
+
+async function loadDataWrapper() {
+  await props.loadData(fetchDataParams.value);
+  filteredButtons.value = await filteredButtonsFunction();
+}
+
+onMounted(async () => {
+  await bindProps(props.schema);
+  //debounced.load(fetchDataParams.value);
+});
+
+// Ustaw kolor dynamicznie
+</script>
+
+<style lang="scss" scoped>
+.v-data-table__tr-aggregates-light {
+  background-color: #f5f5f5;
+  vertical-align: top;
+}
+
+.v-data-table__tr-aggregates-dark {
+  background-color: #424242;
+  vertical-align: top;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-light)) {
+  background-color: #f5f5f5;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-grey-dark)) {
+  background-color: #424242;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-blue)) {
+  background-color: #2196f3;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow)) {
+  background-color: #ffeb3b;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-red)) {
+  background-color: #f44336;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-blue-light-4)) {
+  background-color: #bbdefb;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow-light-4)) {
+  background-color: #fff9c4;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-red-light-4)) {
+  background-color: #ffcdd2;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-blue-dark-4)) {
+  background-color: #1e88e5;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-yellow-dark-4)) {
+  background-color: #fdd835;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-background-red-dark-4)) {
+  background-color: #e53935;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-alert-type)) {
+  padding: 0 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-table :deep(.v-data-table__td:has(.table-cell-context-actions)) {
+  padding: 0 0;
+  align-items: center;
+  justify-content: center;
+}
+
+:deep(.text-color-red) {
+  color: #e53935;
+}
+
+:global(.v-theme--dark .text-color-red) {
+  color: #ffcdd2;
+}
+
+:deep(.v-checkbox .v-selection-control) {
+  min-height: 20px;
+}
+</style>

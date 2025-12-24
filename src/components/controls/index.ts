@@ -40,7 +40,7 @@ import DuplicatedSection from './duplicated-section/DuplicatedSection.vue';
 import Markdown from './markdown/Markdown.vue';
 import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
 import SchedulerGrid from './scheduler-grid/SchedulerGrid.vue';
-
+import TableView from './table/table-view/TableView.vue'
 
 
 
@@ -70,6 +70,7 @@ export const vueSchemaFromControls: Components = {
   image: Image,
   'fields-group': GroupOfFields,
   'table-view': TableViewField,
+  'table-view-api': TableView,
   'user-input': UserInput,
   markdown: Markdown,
   'ordered-multi-select': OrderedMultiSelect,

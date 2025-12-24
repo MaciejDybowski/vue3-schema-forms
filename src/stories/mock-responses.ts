@@ -37,7 +37,7 @@ export const MOCK_FOR_FILE_INPUT = [
 ];
 
 export const names = ['🥝 Kiwi', '🍏 Green Apple', '🍉 Watermelon', '🍌 Banana', '🍇 Grape'];
-export const locations = ['New Zealand', 'Brazil', 'USA', 'Italy', 'South Africa'];
+export const locations = ['Poland', 'Brazil', 'USA', 'Italy', 'South Africa'];
 export const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 export const generatePageData = (page, size) => {
   const totalItems = 100; // Możemy łatwo dostosować liczbę elementów
