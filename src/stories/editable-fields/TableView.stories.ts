@@ -250,50 +250,6 @@ const TEST = [
 ];
 
 
-export const DynamicAlertsASDASDDASDAS: Story = {
-  play: async (context) => {},
-  args: {
-    formModel: {},
-    schema: {
-      type: 'object',
-      properties: {
-        span: {
-          content: 'Basic display all data as a text values',
-          layout: {
-            component: 'static-content',
-            tag: 'span',
-          },
-        },
-        tableOfProducts: {
-          layout: {
-            component: 'table-view',
-          },
-          source: {
-            data: '/mock-data/table-view-mock2',
-            headers: [
-              {
-                "title": "",
-                "type": "ALERT",
-                "key": "alerty",
-                "valueMapping": "alerty"
-              },
-
-            ],
-          },
-        },
-      },
-    } as Schema,
-  },
-  parameters: {
-    msw: {
-      handlers: TEST,
-    },
-  },
-};
-
-
-
-
 export const DynamicAlerts: Story = {
   play: async (context) => {},
   args: {
@@ -315,12 +271,6 @@ export const DynamicAlerts: Story = {
           source: {
             data: '/mock-data/table-view-mock',
             headers: [
-              {
-                "title": "",
-                "type": "ALERT",
-                "key": "alerts",
-                "valueMapping": "alerts"
-              },
               {
                 title: '',
                 key: 'alerts',

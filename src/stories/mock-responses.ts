@@ -37,7 +37,7 @@ export const MOCK_FOR_FILE_INPUT = [
 ];
 
 export const names = ['🥝 Kiwi', '🍏 Green Apple', '🍉 Watermelon', '🍌 Banana', '🍇 Grape'];
-export const locations = ['New Zealand', 'Brazil', 'USA', 'Italy', 'South Africa'];
+export const locations = ['Poland', 'Brazil', 'USA', 'Italy', 'South Africa'];
 export const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 export const generatePageData = (page, size) => {
   const totalItems = 100; // Możemy łatwo dostosować liczbę elementów
@@ -303,6 +303,201 @@ export const MOCK_REQUEST_CURRENCY = [
     });
   }),
 ];
+
+
+export const MOCK_CALENDARS = [
+  http.get('/mocks/calendars', async () => {
+    return HttpResponse.json([
+      {
+        "id": "08883-urlopy-pracownik-5",
+        "name": { "default": "Urlopy Pracownik 5", "pl": "Urlopy Pracownik 5" },
+        "color": "#1B5E20",
+        "type": "PERSONAL",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b", "username": "tecna", "firstName": "Admin", "lastName": "Tecna", "email": "admin@tecna.pl", "gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b", "username": "tecna", "firstName": "Admin", "lastName": "Tecna", "email": "admin@tecna.pl", "gender": null },
+        "createdAt": "2025-11-24T09:08:33.873021Z",
+        "modifiedAt": "2025-11-24T09:08:33.873235Z",
+        "role": "OWNER",
+        "kind": null
+      },
+      {
+        "id": "93353-sporty-wodne",
+        "name": { "default": "Sporty wodne", "en": "Sporty wodne" },
+        "color": "#00bcd4",
+        "type": "TEAM",
+        "createdBy": { "id": "c95f630c-d603-459e-a237-5d1c6eb51334", "username": "malgorzatao", "firstName": "Małgorzata", "lastName": "Testowa", "email": "oles@tecna.pl", "gender": null },
+        "modifiedBy": { "id": "c95f630c-d603-459e-a237-5d1c6eb51334", "username": "malgorzatao", "firstName": "Małgorzata", "lastName": "Testowa", "email": "oles@tecna.pl", "gender": null },
+        "createdAt": "2025-11-24T11:17:25.963607Z",
+        "modifiedAt": "2025-11-24T11:17:25.963924Z",
+        "role": "EDITOR",
+        "kind": null
+      },
+      {
+        "id": "87496-test",
+        "name": { "default": "Test", "pl": "Test23334" },
+        "color": "#2196f3",
+        "type": "PERSONAL",
+        "createdBy": {
+          "id": "df020457-874e-476c-a731-a91b15b8e07b", "username": "tecna",
+          "firstName": "Admin", "lastName": "Tecna", "email": "admin@tecna.pl", "gender": null
+        },
+        "modifiedBy": {
+          "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna",
+          "firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null
+        },
+        "createdAt": "2025-10-28T08:44:50.621329Z",
+        "modifiedAt": "2025-10-28T13:37:40.177875Z",
+        "role": "OWNER",
+        "kind": null
+      },
+      {
+        "id": "57275-test_zespolowy_owner",
+        "name": { "default": "Test_Zespolowy_Owner", "pl": "Test_Zespolowy_Owner" },
+        "color": "#3f51b5",
+        "type": "TEAM",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-10-29T11:46:44.101552Z",
+        "modifiedAt": "2025-10-29T11:46:44.103564Z",
+        "role": "OWNER",
+        "kind": null
+      },
+      {
+        "id": "05235-test_zespolowy_manager",
+        "name": { "default": "Test_Zespolowy_Manager", "pl": "Test_Zespolowy_Manager" },
+        "color": "#009688",
+        "type": "TEAM",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-10-29T11:49:07.910887Z",
+        "modifiedAt": "2025-10-29T11:49:07.910887Z",
+        "role": "MANAGER",
+        "kind": null
+      },
+      {
+        "id": "18273-test_zespolowy_viewer",
+        "name": { "default": "Test_Zespolowy_Viewer", "pl": "Test_Zespolowy_Viewer" },
+        "color": "#ffc107",
+        "type": "TEAM",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-10-29T11:49:30.286027Z",
+        "modifiedAt": "2025-10-29T11:49:30.286027Z",
+        "role": "VIEWER",
+        "kind": null
+      },
+      {
+        "id": "65807-test_zespolowy_contributor",
+        "name": { "default": "Test_Zespolowy_CONTRIBUTOR", "pl": "Test_Zespolowy_CONTRIBUTOR" },
+        "color": "#cddc39",
+        "type": "TEAM",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-10-29T11:49:56.277655Z",
+        "modifiedAt": "2025-10-29T11:49:56.277655Z",
+        "role": "CONTRIBUTOR",
+        "kind": null
+      },
+      {
+        "id": "16660-test_zespolowy_editor",
+        "name": { "default": "Test_Zespolowy_Editor", "pl": "Test_Zespolowy_Editor" },
+        "color": "#ffc107",
+        "type": "TEAM",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-10-29T11:50:10.555979Z",
+        "modifiedAt": "2025-10-29T11:50:10.556979Z",
+        "role": "EDITOR",
+        "kind": null
+      },
+      {
+        "id": "34616-urlopy-pracownik-3",
+        "name": { "default": "Urlopy Pracownik 3", "pl": "Urlopy Pracownik 3" },
+        "color": "#607d8b",
+        "type": "PERSONAL",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-11-24T09:07:53.707324Z",
+        "modifiedAt": "2025-11-24T09:07:53.707664Z",
+        "role": "OWNER",
+        "kind": null
+      },
+      {
+        "id": "35505-urlopy-pracownik-2",
+        "name": { "default": "Urlopy Pracownik 2", "pl": "Urlopy Pracownik 2" },
+        "color": "#cddc39",
+        "type": "PERSONAL",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-11-24T09:07:29.821392Z",
+        "modifiedAt": "2025-12-08T13:49:41.608758Z",
+        "role": "OWNER",
+        "kind": null
+      },
+      {
+        "id": "04869-urlopy-pracownik-1",
+        "name": { "default": "Urlopy Pracownik 1", "pl": "Urlopy Pracownik 1" },
+        "color": "#D81B60",
+        "type": "PERSONAL",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-11-24T09:07:12.674457Z",
+        "modifiedAt": "2025-12-08T15:27:50.106339Z",
+        "role": "OWNER",
+        "kind": null
+      },
+      {
+        "id": "50764-moj-kalendarz",
+        "name": { "default": "Mój kalendarz", "pl": "Mój kalendarz" },
+        "color": "#673ab7",
+        "type": "PERSONAL",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-10-30T10:15:52.564542Z",
+        "modifiedAt": "2025-12-08T16:54:54.871757Z",
+        "role": "OWNER",
+        "kind": null
+      },
+      {
+        "id": "16483-default-admin-tecna-pl",
+        "name": { "default": "Domyślny","de": "Domyślny","ru": "По умолчанию","en": "Default","pl": "Domyślny" },
+        "color": "#E0E0E0",
+        "type": "PERSONAL",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-12-08T12:18:34.231896Z",
+        "modifiedAt": "2025-12-08T16:54:54.881162Z",
+        "role": "OWNER",
+        "kind": "DEFAULT"
+      },
+      {
+        "id": "90407-urlopy-pracownik-4",
+        "name": { "default": "Urlopy Pracownik 4", "pl": "Urlopy Pracownik 4" },
+        "color": "#795548",
+        "type": "PERSONAL",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-11-24T09:08:11.425374Z",
+        "modifiedAt": "2025-11-24T09:08:11.425665Z",
+        "role": "OWNER",
+        "kind": null
+      },
+      {
+        "id": "27354-leave-admin-tecna-pl",
+        "name": { "default": "Urlopy","de": "Urlopy","ru": "календарь","en": "","pl": "Urlopy" },
+        "color": "#4527A0",
+        "type": "PERSONAL",
+        "createdBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "modifiedBy": { "id": "df020457-874e-476c-a731-a91b15b8e07b","username": "tecna","firstName": "Admin","lastName": "Tecna","email": "admin@tecna.pl","gender": null },
+        "createdAt": "2025-12-08T16:47:27.916353Z",
+        "modifiedAt": "2025-12-08T16:47:27.916353Z",
+        "role": "OWNER",
+        "kind": "LEAVE"
+      }
+    ]);
+  }),
+];
+
 
 export const RESPONSE_DICTIONARY = [
   http.get('/mock-dictionaries', async ({ request }) => {

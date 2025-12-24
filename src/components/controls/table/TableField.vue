@@ -4,7 +4,7 @@
       :key="showSelectEditable + ''"
       v-model="selectedItems"
       v-model:items-per-page="tableOptions.itemsPerPage"
-      v-model:loading="loading"
+      v-model:loading="loadingLocal"
       v-model:page="tableOptions.page"
       v-model:sort-by="tableOptions.sortBy"
       :headers="headers"
@@ -207,10 +207,8 @@
 
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
-import axios from 'axios';
 import jsonata from 'jsonata';
 import { cloneDeep, debounce } from 'lodash';
-import get from 'lodash/get';
 import set from 'lodash/set';
 import { useTheme } from 'vuetify';
 
@@ -220,7 +218,6 @@ import TableCellWrapper from '@/components/controls/table/TableCellWrapper.vue';
 import TableFooterCell from '@/components/controls/table/TableFooterCell.vue';
 import TablePagination from '@/components/controls/table/TablePagination.vue';
 import { TableFetchOptions, TableOptions } from '@/components/controls/table/table-types';
-import { mapQuery, mapSort } from '@/components/controls/table/utils';
 import VueSchemaForms from '@/components/engine/VueSchemaForms.vue';
 
 import { useLocale, useProps, useResolveVariables } from '@/core/composables';
@@ -249,7 +246,7 @@ vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
   if (payload == 'action-callback') {
     selectedItems.value = [];
     rowActionButtonLoading.value = false;
-    debounced.load(fetchDataParams.value);
+    debounced.load();
   }
 
   if (typeof payload == 'object' && triggers.includes(payload.key)) {
@@ -258,12 +255,32 @@ vueSchemaFormEventBus.on(async (event, payload: NodeUpdateEvent | string) => {
 });
 
 function refreshTable() {
-  debounced.load(fetchDataParams.value);
+  debounced.load();
 }
 
 const props = defineProps<{
   schema: EngineTableField;
-  model: object;
+  items: any[];
+  itemsTotalElements: number;
+  loadData: (params: TableFetchOptions) => Promise<void>;
+  updateRow: (value: any, index: number, headerKey: string, row: any) => Promise<void>;
+  tableActionPopupUpdate: (actionPopup: any) => Promise<void>;
+  loading: boolean;
+  aggregates: any;
+}>();
+
+const loadingLocal = computed({
+  get(): boolean {
+    return props.loading;
+  },
+  set(val: boolean) {
+    emit('update:loading', val);
+  },
+});
+
+const emit = defineEmits<{
+  (e: 'update:loading', value: boolean): void;
+  (e: 'btnModeInternalAddRecord', payload: any): void;
 }>();
 
 const theme = useTheme();
@@ -271,16 +288,13 @@ const { t } = useLocale();
 const { bindProps, fieldProps } = useProps();
 const { resolve, fillPath } = useResolveVariables();
 const { parse } = useVariableParser();
-const items = ref<any[]>([]);
-const itemsTotalElements = ref(0);
-const loading = ref(true);
+
 const debounced = {
-  load: debounce(loadData, 200),
-  updateRow: debounce(updateRow, 300),
+  load: debounce(loadDataWrapper, 200),
+  updateRow: debounce(props.updateRow, 300),
   showToast: debounce(showToast, 400),
 };
 
-const aggregates = ref(null);
 const actions = props.schema.actions ? props.schema.actions : {};
 
 const triggers: string[] = props.schema.triggers ? props.schema.triggers : [];
@@ -441,29 +455,6 @@ const buttons: ComputedRef<TableButton[]> = computed(() => {
     return [] as TableButton[];
   }
 });
-const filteredButtons = ref<TableButton[]>([]);
-
-async function filteredButtonsFunction() {
-  const tempActions = await Promise.all(
-    buttons.value?.map(async (button: TableButton) => {
-      // For readonly mode when whole form is in this state
-      if (fieldProps.value.readonly == true) {
-        button.disabled = true;
-        return button;
-      }
-
-      if (button.disabled) {
-        const condition = button.disabled as string;
-        const nata = jsonata(condition);
-        button.disabled = await nata.evaluate(items.value);
-        return button;
-      } else {
-        return button;
-      }
-    }) ?? [],
-  );
-  return tempActions.filter((item) => item != null);
-}
 
 const tableOptions = ref<TableOptions>({
   page: 1,
@@ -482,46 +473,7 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
 });
 
 async function updateOptions() {
-  await loadData(fetchDataParams.value);
-}
-
-async function loadData(params: TableFetchOptions) {
-  try {
-    loading.value = true;
-    items.value = [];
-
-    const url = (await resolve(props.schema, props.schema.source.data)).resolvedText;
-
-    const sort = params.sort ? mapSort(params.sort) : null;
-    const query = mapQuery(params.query);
-    const filter = params.filter ? params.filter : null;
-
-    const response = await axios.get(`${url}`, {
-      params: {
-        page: params.page - 1,
-        size: params.size,
-        query: query,
-        sort: sort,
-        filter: filter,
-      },
-    });
-
-    items.value = response.data.content;
-    itemsTotalElements.value = mapTotalElements(response.data);
-    aggregates.value =
-      'aggregates' in response.data && response.data.aggregates != null
-        ? response.data.aggregates
-        : null;
-    filteredButtons.value = await filteredButtonsFunction();
-  } catch (e) {
-    console.error(e);
-  } finally {
-    loading.value = false;
-  }
-}
-
-function mapTotalElements(data: any) {
-  return data.page.totalElements;
+  await loadDataWrapper();
 }
 
 async function runTableBtnLogic(btn: TableButton) {
@@ -555,13 +507,12 @@ async function runTableBtnLogic(btn: TableButton) {
       actionPopup.show = true;
       break;
     case 'internal':
-      if(btn.config.code == "add"){
+      if (btn.config.code == 'add') {
         const newItem: Record<string, any> = {};
         props.schema.source.headers.forEach((header) => {
           newItem[header.key] = null;
         });
-        items.value.push(newItem);
-        itemsTotalElements.value += 1;
+        emit('btnModeInternalAddRecord', newItem);
       }
       break;
     default:
@@ -608,12 +559,7 @@ async function runTableActionLogic(
       actionPopup.schema = action.schema;
       actionPopup.item = payload.item;
       actionPopup.itemIndex = index;
-      actionPopup.acceptFunction = async () => {
-        const payload = actionPopup.model;
-        const updateRowURL = await createUpdateRowURL(actionPopup.item);
-        const response = await axios.post(updateRowURL, payload);
-        items.value[actionPopup.itemIndex] = response.data.content;
-      };
+      actionPopup.acceptFunction = props.tableActionPopupUpdate;
       actionPopup.show = true;
       break;
     default:
@@ -685,54 +631,8 @@ async function saveDialogForm(isActive: Ref<boolean>) {
   const { valid, messages } = await actionPopupReference.value.validate('messages');
   actionPopup.errorMessages = messages;
   if (valid) {
-    actionPopup.acceptFunction();
-    //const modelReference = actionPopup.action.modelReference as string;
+    actionPopup.acceptFunction(actionPopup);
     isActive.value = false;
-  }
-}
-
-async function createUpdateRowURL(item: any) {
-  let resolved = (await resolve(props.schema, props.schema.source.data)).resolvedText;
-
-  let [updateRowURL] = resolved.split('?');
-
-  updateRowURL += '/{dataId}';
-  const rawWithDataId = resolved + '/{dataId}';
-  const matches = rawWithDataId.match(variableRegexp);
-
-  if (matches) {
-    matches.forEach((variable) => {
-      const unwrapped = variable.slice(1, -1);
-      updateRowURL = updateRowURL.replaceAll(variable, get(item, unwrapped, null));
-    });
-  }
-
-  return updateRowURL;
-}
-
-async function updateRow(value: any, index: number, headerKey: string, row: any) {
-  const isDefinedRefreshCode = headerKey.split(':').length > 4;
-
-  headerKey = headerKey.split(':')[0];
-
-  try {
-    const payload: Record<string, any> = {};
-    payload[headerKey] = value;
-
-    const updateRowURL = await createUpdateRowURL(row);
-    //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
-    const response = await axios.post(updateRowURL, payload);
-    items.value[index] = response.data.content;
-
-    if (aggregates.value != null) {
-      aggregates.value = response.data.aggregates;
-      await new Promise((r) => setTimeout(r, 1));
-      vueSchemaFormEventBus.emit('model-changed', 'table-aggregates');
-    }
-  } catch (e: any) {
-    if (toast != null) {
-      debounced.showToast(e.response.data.message);
-    }
   }
 }
 
@@ -747,6 +647,34 @@ async function refreshTableEvent() {
 function showToast(message: string) {
   // @ts-ignore
   toast.error(message);
+}
+
+const filteredButtons = ref<TableButton[]>([]);
+async function filteredButtonsFunction() {
+  const tempActions = await Promise.all(
+    buttons.value?.map(async (button: TableButton) => {
+      // For readonly mode when whole form is in this state
+      if (fieldProps.value.readonly == true) {
+        button.disabled = true;
+        return button;
+      }
+
+      if (button.disabled) {
+        const condition = button.disabled as string;
+        const nata = jsonata(condition);
+        button.disabled = await nata.evaluate(props.items);
+        return button;
+      } else {
+        return button;
+      }
+    }) ?? [],
+  );
+  return tempActions.filter((item) => item != null);
+}
+
+async function loadDataWrapper() {
+  await props.loadData(fetchDataParams.value);
+  filteredButtons.value = await filteredButtonsFunction();
 }
 
 onMounted(async () => {

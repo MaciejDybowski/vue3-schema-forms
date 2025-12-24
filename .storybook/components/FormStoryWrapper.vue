@@ -72,7 +72,7 @@ const model = ref<any>(null);
 const mySchemaForm = ref();
 
 function catchSignalFormIsReady() {
-  console.debug(`[vue-schema-forms] - signal about ready was sent.`);
+  // console.debug(`[vue-schema-forms] - signal about ready was sent.`);
 }
 
 function handleAction(properties) {

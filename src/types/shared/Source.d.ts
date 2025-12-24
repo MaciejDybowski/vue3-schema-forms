@@ -56,7 +56,7 @@ export interface TableHeaderAction {
 
 export interface TableButton {
   label: string | { $ref: string };
-  mode: "action" | "form-and-action" | string;
+  mode: "action" | "form-and-action" | "internal" | string;
   btnProps?: Record<string, any>;
   config: Record<string, any> & TableButtonBatchAddConfig & TableDialogFromConfig;
   schema?: any;

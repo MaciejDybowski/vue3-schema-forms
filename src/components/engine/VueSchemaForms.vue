@@ -239,7 +239,7 @@ onMounted(async () => {
   form.updateFormModel(localModel.value);
   form.updateFormContext(props.options && props.options.context ? props.options.context : {});
 
-  console.debug('[vue-schema-forms] => Resolved', resolvedSchema.value);
+  //console.debug('[vue-schema-forms] => Resolved', resolvedSchema.value);
   await loadResolvedSchema();
   stopMeasure();
   debounced.formIsReady(800)();

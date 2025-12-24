@@ -44,11 +44,11 @@
             <td
               v-for="scheduleDay in employeeSchedule.schedule"
               :key="scheduleDay.day"
+              :class="['status-cell', 'text-center', !fieldProps.readonly ? 'cursor-pointer' : '']"
               :style="{
                 backgroundColor: getStatusColor(scheduleDay.status),
                 color: getTextColor(scheduleDay.status),
               }"
-              class="status-cell text-center"
               @click="openEditDialog(employeeSchedule.user, scheduleDay)"
             >
               <v-tooltip
@@ -229,6 +229,9 @@ const editDialogState = reactive<{
 });
 
 const openEditDialog = (employee: User, day: ScheduleDay) => {
+  if (fieldProps.value.readonly) {
+    return;
+  }
   editDialogState.employee = employee;
   editDialogState.day = day;
   editDialogState.status = day.status;
@@ -341,7 +344,7 @@ thead th.sticky-col {
   width: 40px;
   min-width: 40px;
   height: 44px;
-  cursor: pointer; /* Indicates Clickable */
+
   transition: background-color 0.2s ease;
 }
 .status-cell:hover {
