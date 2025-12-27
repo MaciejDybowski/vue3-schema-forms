@@ -6,7 +6,7 @@ import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { CURRENCIES_REQUEST, MOCK_REQUEST_CURRENCY, RESPONSE_DICTIONARY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { getVuetifyInput, playWrapper, waitForMountedAsync, waitForVuetifyInputReady } from './utils';
 
 
 
@@ -18,8 +18,7 @@ export default {
 };
 
 export const Standard: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -32,7 +31,7 @@ export const Standard: Story = {
     await expect(context.args.formModel).toEqual({
       currency: { id: 'AFN', label: 'Afgani', digitsAfterDecimal: '2', labels: 'the-best' },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -61,8 +60,7 @@ export const Standard: Story = {
 
 export const MultipleValues: Story = {
   name: 'Case: model as array',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -97,7 +95,7 @@ export const MultipleValues: Story = {
         },
       ],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -128,8 +126,7 @@ export const MultipleValues: Story = {
 
 export const MultipleValuesWithLimit: Story = {
   name: 'Case: model as array with limit',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -158,7 +155,7 @@ export const MultipleValuesWithLimit: Story = {
         },
       ],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -190,8 +187,7 @@ export const MultipleValuesWithLimit: Story = {
 
 export const MultipleValuesWithLimitReturnObjectFalse: Story = {
   name: 'Case: model as array with limit and returnObject=false',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({
       currency: ['Peso argentyńskie', 'Kwanza'],
     });
@@ -212,7 +208,7 @@ export const MultipleValuesWithLimitReturnObjectFalse: Story = {
     await expect(context.args.formModel).toEqual({
       currency: ['Lek', 'Dram'],
     });
-  },
+  }),
   args: {
     formModel: {
       currency: ['Peso argentyńskie', 'Kwanza'],
@@ -247,8 +243,7 @@ export const MultipleValuesWithLimitReturnObjectFalse: Story = {
 
 export const WithDescription: Story = {
   name: 'Case: add description to list item',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -263,7 +258,7 @@ export const WithDescription: Story = {
     await expect(context.args.formModel).toEqual({
       currency: { id: 'AFN', label: 'Afgani', digitsAfterDecimal: '2', labels: 'the-best' },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -293,8 +288,7 @@ export const WithDescription: Story = {
 
 export const WithSearch: Story = {
   name: 'Case: searching by query parameter',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -329,7 +323,7 @@ export const WithSearch: Story = {
         digitsAfterDecimal: '2',
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -358,8 +352,7 @@ export const WithSearch: Story = {
 
 export const ReturnValue: Story = {
   name: 'Case: return object = false',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -372,7 +365,7 @@ export const ReturnValue: Story = {
     await expect(context.args.formModel).toEqual({
       currency: 'Afgani',
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -402,8 +395,7 @@ export const ReturnValue: Story = {
 
 export const Label: Story = {
   name: 'Case: extra label content',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -412,7 +404,7 @@ export const Label: Story = {
     await expect(chips.length).toEqual(2);
     await expect(chips[0].textContent).toEqual('The best');
     await expect(chips[1].textContent).toEqual('The least');
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -464,12 +456,11 @@ export const Label: Story = {
 
 export const DefaultValueAsATextWithDependencies: Story = {
   name: 'Case: pass a default value with variable (only returnObject=false mode)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({
       currency: 'Crypto coin as karold',
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -509,8 +500,7 @@ export const DefaultValueAsATextWithDependencies: Story = {
 
 export const OneTimeValueFilter: Story = {
   name: 'Case: value filter (disappear after first call)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -531,7 +521,7 @@ export const OneTimeValueFilter: Story = {
         labels: 'the-best',
       },
     });
-  },
+  }),
   args: {
     formModel: {
       customer: {
@@ -679,17 +669,30 @@ export const ConditionalValueFilter: Story = {
 
 export const RequiredDict: Story = {
   name: 'Validation: required',
-  play: async (context) => {
-    await waitForMountedAsync();
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
-    const select = canvas.getByLabelText('Currency');
-    await userEvent.click(select, { pointerEventsCheck: 0, delay: 100 });
 
-    const items = document.getElementsByClassName('v-list-item');
-    await userEvent.click(items[0], { delay: 100 });
+    // znajdź label 'Currency' i prawdziwy input Vuetify
+    const labels = await canvas.findAllByText('Currency');
+    const labelEl = labels[labels.length - 1];
+    const input = await getVuetifyInput(labelEl)
+
+    await waitForVuetifyInputReady(input);
+    await userEvent.click(input, { pointerEventsCheck: 0, delay: 100 });
+    const items = await waitFor(() =>
+      Array.from(document.getElementsByClassName('v-list-item')).filter(
+        (el) => el.textContent?.trim()
+      )
+    );
+
+    await userEvent.click(items[0] as HTMLElement, { delay: 100 });
+
+
+
+
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 100 });
+
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
     await expect(context.args.formModel).toEqual({
       currencyLabel: {
@@ -697,7 +700,7 @@ export const RequiredDict: Story = {
         label: 'US Dollar',
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -727,14 +730,14 @@ export const RequiredDict: Story = {
 
 export const ReadOnlyWithValue: Story = {
   name: 'Case: readonly with value',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       currencyReadonly: {
@@ -766,14 +769,14 @@ export const ReadOnlyWithValue: Story = {
 };
 export const ReadOnlyRequiredWithValue: Story = {
   name: 'Case: readonly with value and required',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
+
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       currency: {
@@ -806,14 +809,13 @@ export const ReadOnlyRequiredWithValue: Story = {
 };
 export const ReadOnlyRequiredWithoutValue: Story = {
   name: 'Case: readonly without value and required',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {

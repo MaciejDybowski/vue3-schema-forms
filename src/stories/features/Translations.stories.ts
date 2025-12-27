@@ -3,6 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { HttpResponse, http } from 'msw';
 
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { playWrapper } from '../editable-fields/utils';
 
 
 
@@ -21,7 +22,7 @@ export default {
  */
 export const i18nObjectInSchema: Story = {
   name: 'Example 1: i18n object in schema',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('First name');
     const field1 = canvas.getByLabelText('Last name');
@@ -32,7 +33,7 @@ export const i18nObjectInSchema: Story = {
     await expect(field1).toBeInTheDocument();
     await expect(field2).toBeInTheDocument();
     await expect(field3).toBeInTheDocument();
-  },
+  }),
   args: {
     schema: {
       type: 'object',

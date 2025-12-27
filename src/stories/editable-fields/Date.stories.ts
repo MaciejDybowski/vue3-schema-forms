@@ -5,7 +5,7 @@ import dayjs from '../../components/controls/date/dayjs';
 import { Schema } from '../../types/schema/Schema';
 import { SchemaDateField } from '../../types/schema/elements';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { playWrapper, waitForMountedAsync } from './utils';
 
 export default {
   title: 'Elements/Editable/Date',
@@ -13,12 +13,12 @@ export default {
 };
 
 export const Standard: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Date');
     await userEvent.type(field, '01/29/2024');
     await expect(context.args.formModel.simpleDate).toEqual('2024-01-29');
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -36,9 +36,9 @@ export const Standard: Story = {
 };
 
 export const DefaultValue: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({ dateWithDefault: '2024-01-29' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -57,11 +57,11 @@ export const DefaultValue: Story = {
 };
 
 export const ReadOnly: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await waitForMountedAsync();
     const btnClasses = document.getElementsByClassName('v-btn--icon v-btn--readonly');
     await expect(btnClasses.length).toEqual(1);
-  },
+  }),
   args: {
     formModel: {
       readonlyDate: '2024-01-29T00:00:00.000+01:00',
@@ -86,14 +86,14 @@ export const ReadOnly: Story = {
 
 export const PickFromMenu: Story = {
   name: 'Case: pick date from menu',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const icon = document.getElementsByClassName('mdi-calendar');
     await userEvent.click(icon[0]);
     const dateButton = document.getElementsByClassName('v-btn__content');
     await userEvent.click(dateButton[10], { delay: 400 });
     await expect(dayjs(context.args.formModel.simpleDateFromPicker).isValid()).toBe(true);
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -113,12 +113,12 @@ export const PickFromMenu: Story = {
 
 export const CustomFormatInModel: Story = {
   name: 'Case: custom format in schema definition',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Date');
     await userEvent.type(field, '01/30/2024');
     await expect(context.args.formModel).toEqual({ dateWithCustomFormat: '30/01/2024' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -141,7 +141,7 @@ export const CustomFormatInModel: Story = {
  */
 export const SimpleValidation: Story = {
   name: 'Validation: required',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
@@ -150,7 +150,7 @@ export const SimpleValidation: Story = {
     await userEvent.type(field, '01/29/2024');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -171,14 +171,14 @@ export const SimpleValidation: Story = {
 export const Validation_1: Story = {
   name: 'Validation: past date is not allowed',
 
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     const field = canvas.getByLabelText('Date');
     await userEvent.type(field, '01/29/2023');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Date cannot be in the past')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -199,14 +199,14 @@ export const Validation_1: Story = {
 
 export const Validation_2: Story = {
   name: 'Validation: future date is not allowed',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     const field = canvas.getByLabelText('Date');
     await userEvent.type(field, '01/29/2030');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Date cannot be in the future')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {

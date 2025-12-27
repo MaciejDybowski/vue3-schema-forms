@@ -77,6 +77,15 @@ function catchSignalFormIsReady() {
 
 function handleAction(properties) {
   console.debug(`[vue-schema-forms] - catch action with properties`, properties);
+
+  // @ts-ignore
+  try {
+    Object.assign(toRaw(emittedObject), properties);
+    console.debug(emittedObject);
+  } catch (e) {
+    //console.warn("error");
+  }
+
   // merge sth with existed model
   /*
   const x = merge(model.value, {

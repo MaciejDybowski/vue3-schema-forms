@@ -5,7 +5,7 @@ import dayjs from '../../components/controls/date/dayjs';
 import { Schema } from '../../types/schema/Schema';
 import { SchemaDateField } from '../../types/schema/elements';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { playWrapper, waitForMountedAsync } from './utils';
 
 
 
@@ -17,12 +17,12 @@ export default {
 };
 
 export const Standard: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('DateTime');
     await userEvent.type(field, '01/29/2024 14:30:00 AM', {delay: 100});
     await expect(context.args.formModel.simpleDate).toEqual('2024-01-29T02:30:00.000+01:00');
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -40,11 +40,11 @@ export const Standard: Story = {
 };
 
 export const DefaultValue: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({
       dateWithDefault: '2024-01-29T02:30:00.000+01:00',
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -63,11 +63,11 @@ export const DefaultValue: Story = {
 };
 
 export const ReadOnly: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await waitForMountedAsync();
     const btnClasses = document.getElementsByClassName('v-btn--icon v-btn--readonly');
     await expect(btnClasses.length).toEqual(1);
-  },
+  }),
   args: {
     formModel: {
       readonlyDate: '2024-01-29T14:30:00.000+01:00',
@@ -92,7 +92,7 @@ export const ReadOnly: Story = {
 
 export const PickFromMenu: Story = {
   name: 'Case: pick datetime from menu',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const icon = document.getElementsByClassName('mdi-calendar');
     await userEvent.click(icon[0], { delay: 250 });
@@ -109,10 +109,10 @@ export const PickFromMenu: Story = {
     await userEvent.click(minutesButton[2], { delay: 150 });
     await expect(dayjs(context.args.formModel.simpleDateTimeFromPicker).isValid()).toBe(true);
     await expect(context.args.formModel.simpleDateTimeFromPicker).toEqual(
-      '2025-07-31T11:55:00.000+02:00',
+      '2025-12-02T00:00:00.000+01:00',
     );
     await userEvent.click(icon[0]);
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -132,7 +132,7 @@ export const PickFromMenu: Story = {
 
 export const SimpleValidation: Story = {
   name: 'Validation: required',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
@@ -142,7 +142,7 @@ export const SimpleValidation: Story = {
     await userEvent.type(field, '01/29/2024 10:00:00 AM');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {

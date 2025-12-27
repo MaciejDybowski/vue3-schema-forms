@@ -5,7 +5,7 @@ import { Schema } from '../../types/schema/Schema';
 import { SchemaLocationField } from '../../types/schema/elements';
 import { LOCATION_MOCK_REQUEST } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { playWrapper, waitForMountedAsync } from './utils';
 
 
 
@@ -46,7 +46,7 @@ export const Standard: Story = {
 
 export const WithValue: Story = {
   name: 'Default value',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({
       location: {
         country: 'Polska',
@@ -64,7 +64,7 @@ export const WithValue: Story = {
         lng: 19.9105881,
       },
     });
-  },
+  }),
   args: {
     formModel: {
       location: {
@@ -105,7 +105,7 @@ export const WithValue: Story = {
 };
 
 export const Required: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Location field');
     const Submit = canvas.getByText('Validate');
@@ -125,7 +125,7 @@ export const Required: Story = {
 
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -156,7 +156,7 @@ export const Required: Story = {
 
 export const WithLangAndCountryLimits: Story = {
   name: 'Case: Lang and Country limitations',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Location field');
@@ -193,7 +193,7 @@ export const WithLangAndCountryLimits: Story = {
         lng: 19.914695,
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

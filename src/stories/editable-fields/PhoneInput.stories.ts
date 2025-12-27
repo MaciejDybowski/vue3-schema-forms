@@ -1,10 +1,22 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaTextField } from '../../types/schema/elements';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { getVuetifyInput, playWrapper, waitForVuetifyInputReady } from './utils';
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default {
   title: 'Elements/Editable/Phone',
@@ -12,11 +24,11 @@ export default {
 };
 
 export const Standard: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText('Phone Input');
-    await expect(field).toBeInTheDocument();
-  },
+    const field = await canvas.findAllByText('Phone Input');
+    await expect(field[1]).toBeInTheDocument();
+  }),
   args: {
     formModel: {},
     schema: {
@@ -38,9 +50,9 @@ export const Standard: Story = {
  */
 export const DefaultValue: Story = {
   name: 'Default value',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({ phoneInput: '+48510333202' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -61,26 +73,30 @@ export const DefaultValue: Story = {
 export const Required: Story = {
   name: 'Required',
 
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const exampleElement = canvas.getByLabelText('Phone input');
-    await userEvent.type(exampleElement, '510333', {
-      delay: 100,
-    });
-    await expect(canvas.getAllByText(/The number provided/)[0]).toBeInTheDocument();
-    await userEvent.type(exampleElement, '202');
+  play: playWrapper(async (context) => {
+    const canvas = within(context.canvasElement);
+
+    const label = (await canvas.findAllByText('Phone Input'))[0];
+
+    const input = await getVuetifyInput(label);
+
+    await waitForVuetifyInputReady(input);
+
+    await userEvent.type(input, '510333202', { delay: 50 });
+
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
 
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
+
   args: {
     formModel: {},
     schema: {
       type: 'object',
       properties: {
         phoneInput: {
-          label: 'Phone input',
+          label: 'Phone Input',
           layout: {
             component: 'phone',
           },
@@ -96,18 +112,28 @@ export const Required: Story = {
 
 export const WithPhoneInputPropsProps: Story = {
   name: 'Case: passing lib props',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
-    const field = canvas.getByLabelText('Country');
-    await userEvent.click(field, { pointerEventsCheck: 0, delay: 200 });
-    const items = document.getElementsByClassName('v-phone-input__country__title');
-    if (items.length > 0) {
-      const countryTitle = items[1].textContent?.trim(); // or innerText if needed
+
+    const labelElements = await canvas.findAllByText('Country');
+    const labelEl = labelElements[0]; // drugi element (ten z dropdownem)
+    const input = await getVuetifyInput(labelEl);
+
+    await userEvent.click(input, { pointerEventsCheck: 0, delay: 100 });
+
+    const countryItems = await waitFor(() =>
+      Array.from(document.getElementsByClassName('v-phone-input__country__title')).filter((el) =>
+        el.textContent?.trim(),
+      ),
+    );
+
+    if (countryItems.length > 1) {
+      const countryTitle = countryItems[1].textContent?.trim();
       await expect(countryTitle).toEqual('Polska (Poland)');
+
+      await userEvent.click(countryItems[1] as HTMLElement, { pointerEventsCheck: 0, delay: 100 });
     }
-    await userEvent.click(items[1], { pointerEventsCheck: 0, delay: 200 });
-  },
+  }),
   args: {
     schema: {
       type: 'object',

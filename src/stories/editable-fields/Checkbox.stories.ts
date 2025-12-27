@@ -6,7 +6,7 @@ import { Schema } from '../../types/schema/Schema';
 import { SimpleSource } from '../../types/schema/elements';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { playWrapper, waitForMountedAsync } from './utils';
 
 export default {
   title: 'Elements/Editable/Checkbox',
@@ -14,12 +14,12 @@ export default {
 };
 
 export const Standard: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ checkboxStandard: [2] });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -44,12 +44,12 @@ export const Standard: Story = {
 };
 
 export const HorizontalLayout: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ checkboxStandard: [2] });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

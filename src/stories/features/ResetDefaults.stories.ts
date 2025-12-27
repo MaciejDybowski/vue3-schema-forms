@@ -4,6 +4,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField } from '../../types/schema/elements';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { playWrapper } from '../editable-fields/utils';
 
 
 
@@ -16,7 +17,7 @@ export default {
 
 export const Validate: Story = {
   name: 'Case: validate',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field B');
     await userEvent.type(field, 'This is standard text field...', { delay: 100 });
@@ -25,7 +26,7 @@ export const Validate: Story = {
     await userEvent.click(Submit, { delay: 200 });
 
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
 
   args: {
     formModel: {},
@@ -52,7 +53,7 @@ export const Validate: Story = {
 
 export const ResetForm: Story = {
   name: 'Case: reset form',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field B');
     await userEvent.type(field, 'This is standard text field...', { delay: 100 });
@@ -64,7 +65,7 @@ export const ResetForm: Story = {
       fieldA: null,
       fieldB: null,
     });
-  },
+  }),
 
   args: {
     formModel: {},
@@ -90,7 +91,7 @@ export const ResetForm: Story = {
 
 export const ResetValidation: Story = {
   name: 'Case: reset validation',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field B');
     await userEvent.type(field, 'This is standard text field...', { delay: 100 });
@@ -105,7 +106,7 @@ export const ResetValidation: Story = {
     await userEvent.click(ResetValidation, { delay: 200 });
 
     await expect(validationText).not.toBeInTheDocument();
-  },
+  }),
 
   args: {
     formModel: {},

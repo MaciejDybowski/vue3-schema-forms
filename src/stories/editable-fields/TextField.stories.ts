@@ -3,6 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { playWrapper } from './utils';
 
 export default {
   title: 'Elements/Editable/TextField',
@@ -11,12 +12,12 @@ export default {
 
 export const Standard: Story = {
   name: 'Standard',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Text field');
     await userEvent.type(field, 'This is standard text field...', { delay: 100 });
     await expect(context.args.formModel).toEqual({ textField: 'This is standard text field...' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -37,9 +38,9 @@ export const Standard: Story = {
  */
 export const WithDefault: Story = {
   name: 'Default value',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({ textFieldWithDefault: 'Item 1' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -62,8 +63,8 @@ export const WithDefault: Story = {
  */
 export const SimpleValidation: Story = {
   name: 'Required',
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: playWrapper(async (context) => {
+    const canvas = within(context.canvasElement);
     const exampleElement = canvas.getByLabelText('Text field');
     await userEvent.type(exampleElement, 'Required field', {
       delay: 100,
@@ -71,7 +72,7 @@ export const SimpleValidation: Story = {
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -91,8 +92,8 @@ export const SimpleValidation: Story = {
 
 export const TextFieldCounter: Story = {
   name: 'Case: counter validation',
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: playWrapper(async (context) => {
+    const canvas = within(context.canvasElement);
     const exampleElement = canvas.getByLabelText('Text field');
     await userEvent.type(exampleElement, 'Required field with counter', { delay: 100 });
     const Submit = canvas.getByText('Validate');
@@ -106,7 +107,7 @@ export const TextFieldCounter: Story = {
     await userEvent.type(exampleElement, 'Counter pass', { delay: 100 });
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {

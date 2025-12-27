@@ -3,6 +3,8 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { playWrapper } from './utils';
+
 
 export default {
   title: 'Elements/Editable/Address',
@@ -10,7 +12,7 @@ export default {
 };
 
 export const Standard: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Country');
     await userEvent.type(field, 'Poland', { delay: 100 });
@@ -23,7 +25,7 @@ export const Standard: Story = {
         city: null,
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -50,7 +52,7 @@ export const Standard: Story = {
 
 export const Override: Story = {
   name: 'Case: fields customization',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Country');
     await userEvent.type(field, 'Poland', { delay: 100 });
@@ -63,7 +65,7 @@ export const Override: Story = {
         city: null,
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -121,7 +123,7 @@ export const Override: Story = {
 export const StandardValidation: Story = {
   name: 'Case: standard validation',
 
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const country = canvas.getByLabelText('Country');
     await userEvent.type(country, 'Poland', { delay: 100 });
@@ -150,7 +152,7 @@ export const StandardValidation: Story = {
 
     // 👇 Assert DOM structure
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -169,7 +171,7 @@ export const StandardValidation: Story = {
 
 export const OverrideValidation: Story = {
   name: 'Case: custom validation',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
 
     const addressLine = canvas.getByLabelText('Street and number');
@@ -190,7 +192,7 @@ export const OverrideValidation: Story = {
 
     // 👇 Assert DOM structure
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {

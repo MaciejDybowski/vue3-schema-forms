@@ -7,7 +7,18 @@ import { Schema } from '../../types/schema/Schema';
 import { SimpleSource } from '../../types/schema/elements';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { playWrapper, waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -19,7 +30,7 @@ export default {
 };
 
 export const Standard: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -31,7 +42,7 @@ export const Standard: Story = {
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({ select: 1 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -56,7 +67,7 @@ export const Standard: Story = {
 };
 
 export const Multiple: Story = {
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -69,7 +80,7 @@ export const Multiple: Story = {
     await userEvent.click(items[0], { delay: 200 });
     await userEvent.click(items[1], { delay: 200 });
     await expect(context.args.formModel).toEqual({ select: [1, 2] });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -98,9 +109,9 @@ export const Multiple: Story = {
  */
 export const WithDefault: Story = {
   name: 'Default value',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({ selectWithDefault: 3 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -130,7 +141,7 @@ export const WithDefault: Story = {
  */
 export const SimpleValidation: Story = {
   name: 'Required',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -144,7 +155,7 @@ export const SimpleValidation: Story = {
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -171,7 +182,7 @@ export const SimpleValidation: Story = {
 
 export const CustomMapping: Story = {
   name: 'Mapper: title/value',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -183,7 +194,7 @@ export const CustomMapping: Story = {
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 200 });
     await expect(context.args.formModel).toEqual({ selectCustomMapping: 1 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -211,7 +222,7 @@ export const CustomMapping: Story = {
 
 export const CustomMappingReturnObject: Story = {
   name: 'Mapper: title/value/returnObject',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -225,7 +236,7 @@ export const CustomMappingReturnObject: Story = {
     await expect(context.args.formModel).toEqual({
       selectCustomMappingObject: { id: 1, text: 'Option 1' },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -254,7 +265,7 @@ export const CustomMappingReturnObject: Story = {
 
 export const CustomMappingReturnObjectDefault: Story = {
   name: 'Mapper: title/value/returnObject/default',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await waitForMountedAsync();
     await expect(context.args.formModel).toEqual({
       selectCustomMappingObjectDefault: {
@@ -262,7 +273,7 @@ export const CustomMappingReturnObjectDefault: Story = {
         text: 'Option 2',
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -292,7 +303,7 @@ export const CustomMappingReturnObjectDefault: Story = {
 
 export const GetOptionsFromAPI: Story = {
   name: 'Case: Items from API',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -312,7 +323,7 @@ export const GetOptionsFromAPI: Story = {
         labels: 'the-best',
       },
     });
-  },
+  }),
 
   args: {
     formModel: {},

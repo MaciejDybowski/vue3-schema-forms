@@ -6,7 +6,7 @@ import { Schema } from '../../types/schema/Schema';
 import { Source } from '../../types/schema/elements';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { playWrapper, waitForMountedAsync } from './utils';
 
 export default {
   title: 'Elements/Editable/RadioButton',
@@ -85,9 +85,9 @@ export const HorizontalLayout: Story = {
  */
 export const DefaultValue: Story = {
   name: 'Default value',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({ radioButtonWithDefault: 3 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -117,8 +117,8 @@ export const DefaultValue: Story = {
  */
 export const Required: Story = {
   name: 'Required',
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: playWrapper(async (context) => {
+    const canvas = within(context.canvasElement);
     const exampleElement = canvas.getByLabelText('Option 3');
     await userEvent.click(exampleElement, 'Required field', {
       delay: 500,
@@ -126,7 +126,7 @@ export const Required: Story = {
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {

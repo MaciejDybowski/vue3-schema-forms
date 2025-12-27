@@ -5,7 +5,7 @@ import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { playWrapper, waitForMountedAsync } from './utils';
 
 
 
@@ -133,14 +133,14 @@ export const WithDefaults: Story = {
 
 export const WithDivider: Story = {
   name: 'Case: add divider between sections',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({
       items: [{ product: 'Product 1' }, { product: 'Product 1' }],
     });
     const divider = document.getElementsByClassName('v-divider mt-6');
     await expect(divider.length).toEqual(1);
-  },
+  }),
   args: {
     formModel: {
       items: [{ product: 'Product 1' }, { product: 'Product 1' }],
@@ -372,14 +372,14 @@ export const NotDisplayInitRowWhenEmpty: Story = {
 
 export const DisplayProperlyWhenModelAndInitRowIsEnabled: Story = {
   name: 'Case: display first row when model is exist',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: 'Item 1' }],
     });
     const inputElement = canvas.queryByLabelText('Product');
     await expect(inputElement).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       invoiceItems: [{ product: 'Item 1' }],
@@ -515,7 +515,7 @@ export const CopyBelowAction: Story = {
 
 export const DeleteAction: Story = {
   name: 'Test: Delete action',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
     });
@@ -535,7 +535,7 @@ export const DeleteAction: Story = {
     await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: 'Item 1' }],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -565,7 +565,7 @@ export const DeleteAction: Story = {
 
 export const AddBelowAction: Story = {
   name: 'Test: Add below action',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
     });
@@ -590,7 +590,7 @@ export const AddBelowAction: Story = {
     await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: 'Item 1' }, { product: 'new item' }, { product: 'Item 2' }],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

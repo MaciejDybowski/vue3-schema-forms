@@ -3,6 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { playWrapper } from './utils';
 
 
 
@@ -15,7 +16,7 @@ export default {
 
 export const Standard = {
   name: 'Standard',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Add comment here');
     expect(field).toBeInTheDocument();
@@ -26,7 +27,7 @@ export const Standard = {
     const input = canvas.getByLabelText('Item');
     await userEvent.type(input, 'This is standard text field...', { delay: 100 });
     await expect(context.args.formModel).toEqual({ item: 'This is standard text field...' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -46,12 +47,12 @@ export const Standard = {
 
 export const WithModel = {
   name: 'Case: with model',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const input = canvas.getByLabelText('Item');
     await expect(input).toHaveValue('Standard comment');
     await expect(context.args.formModel).toEqual({ item: 'Standard comment' });
-  },
+  }),
   args: {
     formModel: {
       item: 'Standard comment',
@@ -74,7 +75,7 @@ export const WithModel = {
 
 export const BackToTextModel = {
   name: 'Case: back to text mode by delete value',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const input = canvas.getByLabelText('Item');
     await new Promise((r) => setTimeout(r, 300));
@@ -88,7 +89,7 @@ export const BackToTextModel = {
 
     const field = canvas.getByText('Add comment here');
     expect(field).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       item: 'Test',

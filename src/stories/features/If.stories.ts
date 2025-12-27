@@ -3,7 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField, SchemaTextField } from '../../types/schema/elements';
-import { waitForMountedAsync } from '../editable-fields/utils';
+import { playWrapper, waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 
@@ -17,8 +17,8 @@ export default {
 
 export const ConditionStory: Story = {
   name: 'Case: simple usage',
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: playWrapper(async (context) => {
+    const canvas = within(context.canvasElement);
 
     const renderedField = canvas.queryByText('Result');
     await expect(renderedField).toEqual(null);
@@ -31,7 +31,7 @@ export const ConditionStory: Story = {
 
     const rendered = canvas.getByLabelText('Result');
     await expect(rendered).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -73,14 +73,14 @@ export const ConditionStory: Story = {
 
 export const ConditionWithCalcStory: Story = {
   name: 'Case: based on calculation result',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
-    const canvas = within(canvasElement);
+  play: playWrapper(async (context) => {
+
+    const canvas = within(context.canvasElement);
     const a = canvas.getByLabelText('A');
     await userEvent.type(a, '10', { delay: 100 });
     const renderedField = canvas.getByLabelText('Secret code');
     await expect(renderedField).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       b: 99,
@@ -121,7 +121,7 @@ export const ConditionWithCalcStory: Story = {
 
 export const ConditionalWithDuplicatedSection: Story = {
   name: 'Case: usage in duplicated section',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
 
     const renderedField = canvas.queryByText('Some field with if');
@@ -141,7 +141,7 @@ export const ConditionalWithDuplicatedSection: Story = {
         items: [{ someFieldWithIf: 'Test' }],
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -185,7 +185,7 @@ export const ConditionalWithDuplicatedSection: Story = {
 
 export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
   name: 'Case: usage in duplicated section with internal condition',
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
 
     const renderedField = canvas.queryByText('Some field with if');
@@ -205,7 +205,7 @@ export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
         items: [{ dane: { someField: 'root' } }],
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

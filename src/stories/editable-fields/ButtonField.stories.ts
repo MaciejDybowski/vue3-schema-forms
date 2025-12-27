@@ -1,10 +1,22 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { BTN_MOCK } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { waitForMountedAsync, waitForVuetifyDialogReady, waitForVuetifyInputReady } from './utils';
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default {
   title: 'Elements/Editable/Button',
@@ -158,27 +170,42 @@ export const CopyToClipboard: Story = {
 
 export const DialogWithInjectedForm: Story = {
   name: 'Mode: dialog with internal form',
+
   play: async (context) => {
     await waitForMountedAsync();
     const canvas = within(context.canvasElement);
-    const button = await canvas.findByRole('button', { name: 'Open dialog!' });
-    await expect(button).toBeInTheDocument();
-    await button.click();
 
-    const fieldA = await within(document.body).findByLabelText('field A');
-    await userEvent.type(fieldA, 'Test', { delay: 150 });
+    const openButton = await canvas.findByRole('button', {
+      name: 'Open dialog!',
+    });
 
-    const buttonCopied = await within(document.body).findByRole('button', { name: 'Copy field A' });
-    await expect(buttonCopied).toBeInTheDocument();
+    await userEvent.click(openButton);
 
-    const buttonSave = await within(document.body).findByRole('button', { name: 'Save' });
+    await waitForVuetifyDialogReady();
+    const dialogCanvas = within(document.body);
+    const fieldA = await dialogCanvas.findByLabelText('field A');
 
-    await buttonSave.click();
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    await waitForVuetifyInputReady(fieldA);
 
-    await expect(context.args.emittedObject.code).toEqual('my_action_code');
-    await expect(context.args.emittedObject.body.fieldA).toEqual('Test');
+    await userEvent.clear(fieldA);
+    await userEvent.type(fieldA, 'Test');
+
+    const copyButton = await dialogCanvas.findByRole('button', {
+      name: 'Copy field A',
+    });
+
+    await userEvent.click(copyButton);
+    const saveButton = await dialogCanvas.findByRole('button', {
+      name: 'Save',
+    });
+
+    await userEvent.click(saveButton);
+    await waitFor(() => {
+      expect(context.args.emittedObject.code).toBe('my_action_code');
+      expect(context.args.emittedObject.body.fieldA).toBe('Test');
+    });
   },
+
   args: {
     formModel: {},
     emittedObject: {},

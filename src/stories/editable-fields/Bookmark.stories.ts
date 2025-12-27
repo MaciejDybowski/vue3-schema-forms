@@ -6,15 +6,12 @@ import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
 
 
-
-
-
 export default {
   title: 'Elements/Editable/Bookmark',
   ...formStoryWrapperTemplate,
 };
 
-// ---------- Shared Data ----------
+// TODO - napisać testy
 
 const baseItems = [
   { value: 1, title: 'General Information' },

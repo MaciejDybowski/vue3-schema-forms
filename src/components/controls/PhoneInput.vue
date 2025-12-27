@@ -7,14 +7,14 @@
     :label="label"
     :phone-props="fieldPropsMerged"
     :rules="!fieldProps.readonly ? rules : []"
-    type="tel"
+
     v-bind="fieldPropsMerged"
   >
   </v-phone-input>
 </template>
 
 <script lang="ts" setup>
-import { VPhoneInput } from 'v-phone-input';
+import { MessageOptions, VPhoneInput } from 'v-phone-input';
 import 'v-phone-input/dist/v-phone-input.css';
 import 'world-flags-sprite/stylesheets/flags32.css';
 
@@ -59,14 +59,13 @@ const phoneInputProps = {
 const propsRef = ref({});
 const fieldPropsMerged = computed(() => {
   propsRef.value = {
+    countryLabel: () => "",
     ...fieldProps.value,
     ...phoneInputProps,
     ...props.schema.phoneInputProps,
     id: props.schema.key,
     country: 'pl',
-    countryProps: {
-      label: null,
-    },
+
   };
   return propsRef.value;
 });

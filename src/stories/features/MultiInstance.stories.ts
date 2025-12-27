@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import MultipleFormStoryWrapper from '../../../.storybook/components/MultipleFormStoryWrapper.vue';
 import { expect, userEvent, within } from 'storybook/test';
+import { playWrapper } from '../editable-fields/utils';
 
 export default {
   title: 'Features/Multi Instance',
@@ -25,7 +26,7 @@ type Story = StoryObj<typeof MultipleFormStoryWrapper>;
 
 export const Example1: Story = {
   name: "Example 1: Check if 2 forms with same variables have separated models",
-  play: async (context) => {
+  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field A - form 1');
     await userEvent.type(field, 'Form 1', { delay: 100 });
@@ -35,7 +36,7 @@ export const Example1: Story = {
 
     await expect(context.args.formModelOne).toEqual({ fieldA: 'Form 1' });
     await expect(context.args.formModelTwo).toEqual({ fieldA: 'Form 2' });
-  },
+  }),
   args: {
     formModelOne: {},
     schemaOne: {
