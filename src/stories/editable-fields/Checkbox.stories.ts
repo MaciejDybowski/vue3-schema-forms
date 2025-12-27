@@ -1,25 +1,23 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
-
-import { EngineSourceField } from '../../types/engine/controls';
-import { Schema } from '../../types/schema/Schema';
-import { SimpleSource } from '../../types/schema/elements';
-import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
+import { expect, userEvent, within, waitFor } from 'storybook/test';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper, waitForMountedAsync } from './utils';
-
+import {MOCK_REQUEST_CURRENCY} from "../mock-responses"
 export default {
-  title: 'Elements/Editable/Checkbox',
+  title: 'Elements/Editable/Checkbox ✅',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: playWrapper(async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ checkboxStandard: [2] });
-  }),
+  },
   args: {
     formModel: {},
     schema: {
@@ -37,19 +35,23 @@ export const Standard: Story = {
               { value: 3, title: 'Option 3' },
             ],
           },
-        } as EngineSourceField,
+        },
       },
-    } as Schema,
+    },
   },
 };
 
 export const HorizontalLayout: Story = {
-  play: playWrapper(async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ checkboxStandard: [2] });
-  }),
+  },
   args: {
     formModel: {},
     schema: {
@@ -61,7 +63,7 @@ export const HorizontalLayout: Story = {
             component: 'checkbox',
             props: {
               inline: true,
-            }
+            },
           },
           source: {
             items: [
@@ -70,19 +72,19 @@ export const HorizontalLayout: Story = {
               { value: 3, title: 'Option 3' },
             ],
           },
-        } as EngineSourceField,
+        },
       },
-    } as Schema,
+    },
   },
 };
 
-/**
- * You can set the default value of field from schema
- */
 export const WithDefault: Story = {
   name: 'Default value',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({ checkboxWithDefault: [3] });
     const option2 = canvas.getByLabelText('Option 2');
@@ -107,16 +109,19 @@ export const WithDefault: Story = {
               { value: 3, title: 'Option 3' },
             ],
           },
-        } as EngineSourceField,
+        },
       },
-    } as Schema,
+    },
   },
 };
 
 export const CustomMapping: Story = {
   name: 'Case: response/option mapping',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await expect(option2).toBeInTheDocument();
@@ -140,16 +145,19 @@ export const CustomMapping: Story = {
             value: 'id',
             title: 'text',
           },
-        } as EngineSourceField,
+        },
       },
-    } as Schema,
+    },
   },
 };
 
 export const CustomMappingReturnObject: Story = {
   name: 'Case: return object/option mapping',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
@@ -177,25 +185,25 @@ export const CustomMappingReturnObject: Story = {
             title: 'text',
             returnObject: true,
           },
-        } as EngineSourceField,
+        },
       },
-    } as Schema,
+    },
   },
 };
 
 export const CustomMappingReturnObjectDefault: Story = {
   name: 'Case: return object/option mapping/default',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const option3 = canvas.getByLabelText('Option 3');
     await userEvent.click(option3, { delay: 200 });
     await expect(context.args.formModel).toEqual({
       checkboxWithCustomMappingObjDefault: [
-        {
-          id: 2,
-          text: 'Option 2',
-        },
+        { id: 2, text: 'Option 2' },
         { id: 3, text: 'Option 3' },
       ],
     });
@@ -221,18 +229,21 @@ export const CustomMappingReturnObjectDefault: Story = {
             title: 'text',
             returnObject: true,
           },
-        } as EngineSourceField,
+        },
       },
-    } as Schema,
+    },
   },
 };
 
 export const GetOptionsFromAPI: Story = {
   name: 'Case: options from API',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
-    const canvas = within(canvasElement);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for api call
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    const canvas = within(context.canvasElement);
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for API call
     await expect(canvas.getByText('Dram')).toBeInTheDocument();
   },
   args: {
@@ -250,10 +261,10 @@ export const GetOptionsFromAPI: Story = {
             title: 'label',
             value: 'id',
             returnObject: true,
-          } as SimpleSource,
+          },
         },
       },
-    } as Schema,
+    },
   },
   parameters: {
     msw: {
@@ -262,25 +273,19 @@ export const GetOptionsFromAPI: Story = {
   },
 };
 
-/**
- * Example shows how to define a "required" field on a form
- */
 export const SimpleValidation: Story = {
   name: 'Required',
-
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
-    const canvas = within(canvasElement);
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 600 });
-
     const exampleElement = canvas.getByLabelText('Option 3');
-    await userEvent.click(exampleElement, 'Required field', {
-      delay: 600,
-    });
-
+    await userEvent.click(exampleElement, { delay: 600 });
     await userEvent.click(Submit, { delay: 600 });
-    // 👇 Assert DOM structure
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
   },
   args: {
@@ -300,9 +305,9 @@ export const SimpleValidation: Story = {
               { value: 3, title: 'Option 3' },
             ],
           },
-        } as EngineSourceField,
+        },
       },
       required: ['checkboxButtonRequired'],
-    } as Schema,
+    },
   },
 };

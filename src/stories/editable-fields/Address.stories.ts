@@ -1,18 +1,31 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper } from './utils';
+
+
+
+
+
+
+
+
+
 
 
 export default {
-  title: 'Elements/Editable/Address',
-  ...formStoryWrapperTemplate,
+  title: 'Elements/Editable/Address ✅',
+  ...formStoryWrapperTemplate
 };
 
 export const Standard: Story = {
-  play: playWrapper(async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Country');
     await userEvent.type(field, 'Poland', { delay: 100 });
@@ -25,7 +38,7 @@ export const Standard: Story = {
         city: null,
       },
     });
-  }),
+  },
   args: {
     formModel: {},
     schema: {
@@ -52,7 +65,11 @@ export const Standard: Story = {
 
 export const Override: Story = {
   name: 'Case: fields customization',
-  play: playWrapper(async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Country');
     await userEvent.type(field, 'Poland', { delay: 100 });
@@ -65,7 +82,7 @@ export const Override: Story = {
         city: null,
       },
     });
-  }),
+  },
   args: {
     formModel: {},
     schema: {
@@ -122,8 +139,11 @@ export const Override: Story = {
 
 export const StandardValidation: Story = {
   name: 'Case: standard validation',
-
-  play: playWrapper(async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const country = canvas.getByLabelText('Country');
     await userEvent.type(country, 'Poland', { delay: 100 });
@@ -147,12 +167,11 @@ export const StandardValidation: Story = {
       },
     });
 
-    const Submit = canvas.getByText('Validate');
-    await userEvent.click(Submit);
+    const submit = canvas.getByText('Validate');
+    await userEvent.click(submit);
 
-    // 👇 Assert DOM structure
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  }),
+  },
   args: {
     formModel: {},
     schema: {
@@ -171,7 +190,11 @@ export const StandardValidation: Story = {
 
 export const OverrideValidation: Story = {
   name: 'Case: custom validation',
-  play: playWrapper(async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
 
     const addressLine = canvas.getByLabelText('Street and number');
@@ -187,12 +210,11 @@ export const OverrideValidation: Story = {
       },
     });
 
-    const Submit = canvas.getByText('Validate');
-    await userEvent.click(Submit);
+    const submit = canvas.getByText('Validate');
+    await userEvent.click(submit);
 
-    // 👇 Assert DOM structure
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  }),
+  },
   args: {
     formModel: {},
     schema: {

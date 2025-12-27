@@ -59,12 +59,16 @@ import { Schema } from '@/types/schema/Schema.d';
 import VueSchemaForms from '../../src/components/engine/VueSchemaForms.vue';
 
 const snackbar = ref(false);
-const { schema, options, formModel, emittedObject } = defineProps<{
+const { schema, options, formModel, emittedObject, signals } = defineProps<{
   formModel: object;
   schema: Schema;
   options: object;
   emittedObject?: object;
   validationBehaviour?: string;
+  signals: {
+    formIsReady?: boolean;
+  }
+
 }>();
 
 const model = ref<any>(null);
@@ -72,7 +76,8 @@ const model = ref<any>(null);
 const mySchemaForm = ref();
 
 function catchSignalFormIsReady() {
-  // console.debug(`[vue-schema-forms] - signal about ready was sent.`);
+  Object.assign(toRaw(signals), {formIsReady: true});
+  console.debug(`[vue-schema-forms] - signal about ready was sent.`);
 }
 
 function handleAction(properties) {

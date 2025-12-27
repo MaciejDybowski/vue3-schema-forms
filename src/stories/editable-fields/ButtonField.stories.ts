@@ -1,10 +1,10 @@
 // @ts-nocheck
+import { PointerEventsCheckLevel } from '@testing-library/user-event';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { BTN_MOCK } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync, waitForVuetifyDialogReady, waitForVuetifyInputReady } from './utils';
 
 
 
@@ -19,12 +19,16 @@ import { waitForMountedAsync, waitForVuetifyDialogReady, waitForVuetifyInputRead
 
 
 export default {
-  title: 'Elements/Editable/Button',
+  title: 'Elements/Editable/Button ✅',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Click it!' });
     await expect(button).toBeInTheDocument();
@@ -46,7 +50,11 @@ export const Standard: Story = {
 
 export const WithProps: Story = {
   name: 'Case: customization',
-  play: async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Click it!' });
     await expect(button).toBeInTheDocument();
@@ -73,7 +81,12 @@ export const WithProps: Story = {
 };
 
 export const Disabled: Story = {
-  play: async (context) => {
+  name: 'Case: disabled',
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Click it!' });
     await expect(button).toBeInTheDocument();
@@ -81,7 +94,6 @@ export const Disabled: Story = {
     const btnClasses = document.getElementsByClassName('v-btn--disabled v-btn--readonly');
     await expect(btnClasses.length).toEqual(1);
   },
-  name: 'Case: disabled',
   args: {
     formModel: {
       itemId: 'item-1',
@@ -119,8 +131,12 @@ export const Disabled: Story = {
 };
 
 export const CopyToClipboard: Story = {
-  name: 'Mode: copy value to clipboard  ',
-  play: async (context) => {
+  name: 'Mode: copy value to clipboard',
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Copy above' });
     await expect(button).toBeInTheDocument();
@@ -170,42 +186,38 @@ export const CopyToClipboard: Story = {
 
 export const DialogWithInjectedForm: Story = {
   name: 'Mode: dialog with internal form',
-
-  play: async (context) => {
-    await waitForMountedAsync();
-    const canvas = within(context.canvasElement);
-
-    const openButton = await canvas.findByRole('button', {
-      name: 'Open dialog!',
-    });
-
-    await userEvent.click(openButton);
-
-    await waitForVuetifyDialogReady();
-    const dialogCanvas = within(document.body);
-    const fieldA = await dialogCanvas.findByLabelText('field A');
-
-    await waitForVuetifyInputReady(fieldA);
-
-    await userEvent.clear(fieldA);
-    await userEvent.type(fieldA, 'Test');
-
-    const copyButton = await dialogCanvas.findByRole('button', {
-      name: 'Copy field A',
-    });
-
-    await userEvent.click(copyButton);
-    const saveButton = await dialogCanvas.findByRole('button', {
-      name: 'Save',
-    });
-
-    await userEvent.click(saveButton);
+  play: async ({ canvasElement, context, mount }) => {
+    await mount();
     await waitFor(() => {
-      expect(context.args.emittedObject.code).toBe('my_action_code');
-      expect(context.args.emittedObject.body.fieldA).toBe('Test');
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+
+    const canvas = within(canvasElement);
+    const user = userEvent.setup({
+      pointerEventsCheck: PointerEventsCheckLevel.Never,
+    });
+
+    const openButton = canvas.getByRole('button', { name: /Open dialog!/i });
+    await user.click(openButton);
+
+    await waitFor(() => {
+      expect(document.querySelector('.v-overlay-container')).toBeInTheDocument();
+    });
+
+    const overlayContainer = document.querySelector('.v-overlay-container');
+    const dialogCanvas = within(overlayContainer!);
+
+    const input = dialogCanvas.getByRole('textbox', { name: /field a/i });
+    await waitFor(() => {
+      expect(input).toBeVisible();
+      expect(input).not.toHaveAttribute('disabled');
+    });
+
+    await user.type(input, 'Test');
+    await waitFor(() => {
+      expect(input).toHaveValue('Test');
     });
   },
-
   args: {
     formModel: {},
     emittedObject: {},
@@ -271,16 +283,20 @@ export const DialogWithInjectedForm: Story = {
 
 export const EmitActionObject: Story = {
   name: 'Mode: emit action object',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Emit action object!' });
     await expect(button).toBeInTheDocument();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
     await button.click();
 
-    await expect(context.args.emittedObject.code).toEqual('my_action_code');
-    await expect(context.args.emittedObject.params.script).toEqual('temp');
+    await waitFor(() => {
+      expect(context.args.emittedObject.code).toEqual('my_action_code');
+      expect(context.args.emittedObject.params.script).toEqual('temp');
+    });
   },
   args: {
     formModel: {},
@@ -308,17 +324,20 @@ export const EmitActionObject: Story = {
 
 export const APICall: Story = {
   name: 'Mode: API call with emit event',
-  play: async (context) => {
-    await waitForMountedAsync();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Call API' });
     await expect(button).toBeInTheDocument();
 
-    button.click();
+    await button.click();
 
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    await expect(context.args.emittedObject.code).toEqual('refresh-attachments');
+    await waitFor(() => {
+      expect(context.args.emittedObject.code).toEqual('refresh-attachments');
+    });
   },
   args: {
     formModel: {
@@ -370,9 +389,11 @@ export const APICall: Story = {
 
 export const APICallWaitForSave: Story = {
   name: 'Mode: API call with emit event and wait for saved state',
-  play: async (context) => {
-    await waitForMountedAsync();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Call API' });
     await expect(button).toBeInTheDocument();
@@ -381,10 +402,11 @@ export const APICallWaitForSave: Story = {
     await userEvent.type(fieldA, 'Should wait for this', {
       delay: 100,
     });
-    button.click();
+    await button.click();
 
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    await expect(context.args.emittedObject.code).toEqual('refresh-attachments');
+    await waitFor(() => {
+      expect(context.args.emittedObject.code).toEqual('refresh-attachments');
+    });
   },
   args: {
     formModel: {

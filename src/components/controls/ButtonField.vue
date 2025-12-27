@@ -14,6 +14,7 @@
     <v-dialog
       v-model="popup.show"
       max-width="650"
+      role="dialog"
     >
       <template v-slot:default="{ isActive }">
         <v-card :title="popup.title">

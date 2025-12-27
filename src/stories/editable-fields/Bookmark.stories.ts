@@ -1,17 +1,23 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
 
 
 export default {
-  title: 'Elements/Editable/Bookmark',
+  title: 'Elements/Editable/Bookmarks ✅',
   ...formStoryWrapperTemplate,
 };
-
-// TODO - napisać testy
 
 const baseItems = [
   { value: 1, title: 'General Information' },
@@ -47,7 +53,16 @@ const createSchema = (options = {}) =>
   }) as Schema;
 
 export const Standard: Story = {
-  play: async () => {},
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    const canvas = within(context.canvasElement);
+    baseItems.forEach((item) => {
+      expect(canvas.getByText(item.title)).toBeInTheDocument();
+    });
+  },
   args: {
     formModel: {},
     schema: createSchema(),
@@ -55,7 +70,34 @@ export const Standard: Story = {
 };
 
 export const PrependIcons: Story = {
-  play: async () => {},
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    const canvas = within(context.canvasElement);
+    const expectedIcons = [
+      'mdi-cog',
+      'mdi-leaf',
+      'mdi-file-document',
+      'mdi-factory',
+      'mdi-truck',
+      'mdi-warehouse',
+      'mdi-trash-can',
+      'mdi-sprout',
+      'mdi-file-document-outline',
+      'mdi-information',
+      'mdi-email',
+      'mdi-paperclip',
+      'mdi-check-circle',
+    ];
+    expectedIcons.forEach((icon, index) => {
+      const tabElement = canvas.getByTestId(`bookmark-icon-${index}`);
+      const iconElement = tabElement.querySelector('.v-icon');
+      expect(iconElement).toBeInTheDocument();
+      expect(iconElement).toHaveClass(icon);
+    });
+  },
   args: {
     formModel: {},
     schema: createSchema({
@@ -81,8 +123,26 @@ export const PrependIcons: Story = {
   },
 };
 
+
+
 export const BgColorAndColor: Story = {
-  play: async () => {},
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+
+    const canvas = within(context.canvasElement);
+
+    // 1. tło v-tabs – jak masz już zrobione
+    const tablist = canvas.getByRole('tablist');
+    expect(tablist).toHaveStyle({ backgroundColor: 'rgb(240, 240, 240)' });
+
+    // 2. kolor tekstu na pierwszym tabu (wewnątrz v-slide-group__content)
+    const [firstTab] = canvas.getAllByRole('tab');
+    expect(firstTab).toBeInTheDocument();
+    expect(firstTab).toHaveStyle({ color: 'rgb(238, 170, 221)' });
+  },
   args: {
     formModel: {},
     schema: createSchema({
@@ -94,8 +154,20 @@ export const BgColorAndColor: Story = {
   },
 };
 
+
+
+
+
 export const Vertical: Story = {
-  play: async () => {},
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    const canvas = within(context.canvasElement);
+    const bookmark = canvas.getByTestId('bookmarks');
+    expect(bookmark).toHaveClass('v-tabs--vertical');
+  },
   args: {
     formModel: {},
     schema: createSchema({
@@ -111,11 +183,14 @@ export const Vertical: Story = {
 };
 
 export const ValidationInHiddenParts = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
-    const Submit = canvas.getByText('Validate');
-    await userEvent.click(Submit, { delay: 100 });
+    const submitButton = canvas.getByText('Validate');
+    await userEvent.click(submitButton, { delay: 100 });
     await expect(
       canvas.getByText('The number provided is incorrect. (Ex: 421 321 621)'),
     ).toBeInTheDocument();

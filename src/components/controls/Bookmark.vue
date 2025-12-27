@@ -4,14 +4,15 @@
     :class="[bindClass(schema), requiredInputClass]"
     :stacked="schema?.stacked ?? false"
     center-active
+    data-testid="bookmarks"
     v-bind="{ ...defaultProps }"
   >
     <v-tab
       v-for="(item, index) in data"
       :key="index"
+      :data-testid="`bookmark-icon-${index}`"
       :prepend-icon="item.icon"
       :value="returnObject ? item : item[value]"
-      class="v-tab"
     >
       {{ item[title] }}
     </v-tab>
@@ -77,7 +78,7 @@ onMounted(async () => {
 <style lang="css" scoped>
 :deep(.v-tab) {
   text-transform: none;
-/*  font-size: 0.8rem;
+  /*  font-size: 0.8rem;
   min-width: unset;
   padding: 4px 8px;
   height: auto !important;

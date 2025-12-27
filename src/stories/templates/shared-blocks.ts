@@ -3,6 +3,9 @@ import FormStoryWrapper from '../../../.storybook/components/FormStoryWrapper.vu
 export const formStoryWrapperTemplate = {
   component: FormStoryWrapper,
   args: {
+    signals: {
+      formIsReady: false
+    },
     formModel: {},
     schema: {},
     options: {
@@ -12,4 +15,9 @@ export const formStoryWrapperTemplate = {
       },
     },
   },
+  parameters: {
+    /*docs: {
+      story: { autoplay: true },
+    },*/
+  }
 };

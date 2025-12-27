@@ -14,7 +14,7 @@ const config: StorybookConfig = {
     name: '@storybook/vue3-vite',
     options: {},
   },
-  docs: {},
+  //docs: {},
   async viteFinal(config) {
     // Merge custom configuration into the default config
     return mergeConfig(config, {
