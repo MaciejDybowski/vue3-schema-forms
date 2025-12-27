@@ -1,38 +1,23 @@
 // @ts-nocheck
 import { expect } from 'storybook/test';
-
+import { userEvent, within, waitFor } from 'storybook/test';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { userEvent, within } from 'storybook/test';
-
-
-
-
 
 export default {
   title: 'Features/Built-in expressions',
   ...formStoryWrapperTemplate,
 };
 
-/**
- * #### Performing expression based on form fields
- * `expression: string` - an expression b ased on form fields. This expression uses predefined functions built-in the forms engine. The list will be shown below
- *
- * ##### This expression uses predefined functions built into the forms engine. The list will be shown below
- * * FIND_OLDEST_DATE(variable, array.path)
- * * FIND_EARLIEST_DATE(variable, array.path)
- * * CALC_DATE_DIFF_RETURN_DAY(date1, date2)
- * * CALC_DATE_DIFF_RETURN_HOURS(date1, date2)
- * * CALC_DATE_DIFF_RETURN_MINUTES(date1, date2)
- * * JSONATA(jsonataExpression)
- *
- * The expressions are currently available only in the `text-field` / `number-field` component
- */
 export const example1: Story = {
   name: 'Example 1: Usage of date calculation functions',
-  play: async (context) => {
-    await new Promise((resolve) => setTimeout(resolve, 100));
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
 
-    await expect(context.args.formModel).toEqual({
+    // Assert initial values after expressions are calculated
+    expect(context.args.formModel).toEqual({
       stages: [
         {
           simpleDate: '2025-05-08T12:32:21.000+02:00',
@@ -66,7 +51,6 @@ export const example1: Story = {
           simpleDate: '2025-05-03T04:34:12.000+02:00',
         },
       ],
-
       stages2: [
         {
           simpleDate: '2025-05-14T08:23:10.000+02:00',
@@ -156,9 +140,14 @@ export const example1: Story = {
 
 export const UseJSONataFunctions: Story = {
   name: 'Example 2: JSONata function',
-  play: async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     await new Promise((resolve) => setTimeout(resolve, 100));
-    await expect(context.args.formModel).toEqual({
+    // Assert initial values after JSONata expressions are calculated
+    expect(context.args.formModel).toEqual({
       documentItems: [
         {
           costType: {
@@ -243,28 +232,28 @@ export const UseJSONataFunctions: Story = {
 
 export const SwitchAkceptacjaZarzadu: Story = {
   name: 'Example 3: Switch z JSONata calculation',
-  play: async ({ canvasElement }) => {
+  play: async ({ context, mount, canvasElement }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+
     const canvas = within(canvasElement);
 
-    // znajdź pole "Kwota zaliczki"
+    // Find and interact with the "Kwota zaliczki" field
     const textField = await canvas.findByLabelText('Kwota zaliczki');
 
-    // wpisz 150000 znak po znaku
+    // Enter 150000 and check switch state
     await userEvent.clear(textField);
     await userEvent.type(textField, '150000', { delay: 100 });
-
-    // poczekaj aż kalkulacja się zaktualizuje
     await new Promise((r) => setTimeout(r, 300));
-    await expect(await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu'))
-      .toBeChecked();
+    expect(await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu')).toBeChecked();
 
-    // teraz wpisz 50000
+    // Enter 50000 and check switch state
     await userEvent.clear(textField);
     await userEvent.type(textField, '50000', { delay: 100 });
-
     await new Promise((r) => setTimeout(r, 300));
-    await expect(await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu'))
-      .not.toBeChecked();
+    expect(await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu')).not.toBeChecked();
   },
   args: {
     formModel: {

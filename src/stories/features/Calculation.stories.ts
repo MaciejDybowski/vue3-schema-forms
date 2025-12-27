@@ -1,10 +1,24 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+
+
 
 import { Schema } from '../../types/schema/Schema';
 import { Layout, SchemaTextField } from '../../types/schema/elements';
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -208,7 +222,11 @@ export const calculationInDuplicatedSchema: Story = {
 
 export const SUM_function: Story = {
   name: 'Case: $sum(path.to.values)',
-  play: async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     await new Promise((r) => setTimeout(r, 100));
     await expect(context.args.formModel).toEqual({
       data: {

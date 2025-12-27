@@ -35,7 +35,7 @@
         @click:close="removeValue(item.raw)"
       >
         <span>
-          {{ item[title] }}
+          {{ mapTitle(item.raw) }}
         </span>
       </v-chip>
     </template>
@@ -150,16 +150,26 @@ const {
   loadItemChips,
 } = useDictionary();
 
-function mapSubtitle(item: any) {
-  if(item == null){ // TODO why sometimes item is null??
-    return ""
+function mapTitle(item: any) {
+  if (item == null) {
+    // TODO why sometimes item is null??
+    return '';
   }
-  return description.value ? item[description.value] : null
+  return title.value ? item[title.value] : null;
+}
+
+function mapSubtitle(item: any) {
+  if (item == null) {
+    // TODO why sometimes item is null??
+    return '';
+  }
+  return description.value ? item[description.value] : null;
 }
 
 function singleOptionAutoSelectFunction() {
   const selectSingleOptionLogic = () => {
     if (data.value.length !== 1 || !singleOptionAutoSelect.value || loadCounter.value > 1) return;
+    console.debug('data', data.value);
     const selectedValue = returnObject.value ? data.value[0] : data.value[0][title.value];
 
     if (JSON.stringify(localModel.value) !== JSON.stringify(selectedValue)) {
@@ -189,7 +199,7 @@ watch(dependencyWasChanged, () => {
 const internalStateIsSet = ref(false);
 
 function fillInModelIfMultiple() {
-  if (isArray(localModel.value)) {
+  if (isArray(localModel.value) && localModel.value.length > 0) {
     if (returnObject.value) {
       data.value.push(...localModel.value);
     } else {
@@ -214,11 +224,17 @@ onMounted(async () => {
   await bindRules(props.schema);
   await bindProps(props.schema);
 
-  if (localModel.value) {
-    fillInModelIfMultiple();
-  } else if (typeof localModel.value == 'object') {
+  fillInModelIfMultiple();
+
+  if (
+    typeof localModel.value == 'object' &&
+    localModel.value !== null &&
+    Object.keys(localModel.value).length > 0
+  ) {
     data.value.push(localModel.value);
-  } else {
+  }
+
+  if (typeof localModel.value == 'string') {
     await resolveIfLocalModelHasDependencies();
     if (!fieldProps.value.readonly) {
       query.value = localModel.value;

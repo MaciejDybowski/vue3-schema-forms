@@ -35,44 +35,41 @@
         :title="t('dictionary.noData')"
       />
     </template>
-    <template
-      v-if="description !== null && description !== ''"
-      #item="{ item, props }"
-    >
+    <template #item="{ item, props }">
+      <template v-if="loadItemChips(item.raw).length > 0">
+        <v-list-item
+          :subtitle="mapSubtitle(item.raw)"
+          v-bind="props"
+        >
+          <template #append>
+            <div v-if="loadItemChips.length > 0">
+              <dictionary-item-chip
+                v-for="element in loadItemChips(item.raw)"
+                :key="element.id"
+                :element="element"
+                v-bind="$attrs"
+                variant="flat"
+              />
+            </div>
+          </template>
+        </v-list-item>
+      </template>
+
       <v-list-item
-        :subtitle="item.raw[description]"
-        :title="item.title"
+        v-else
+        :subtitle="mapSubtitle(item.raw)"
         v-bind="props"
       >
       </v-list-item>
     </template>
 
-    <template
-      v-if="loadItemChips.length > 0"
-      #item="{ item, props }"
-    >
-      <v-list-item
-        :subtitle="item.raw[description]"
-        :title="item.title"
-        v-bind="props"
-      >
-        <template #append>
-          <div v-if="loadItemChips.length > 0">
-            <dictionary-item-chip
-              v-for="element in loadItemChips(item.raw)"
-              :key="element.id"
-              :element="element"
-              v-bind="$attrs"
-              variant="flat"
-            />
-          </div>
-        </template>
-      </v-list-item>
-    </template>
+
   </dictionary-base>
 </template>
 
 <script lang="ts" setup>
+import { isArray } from 'lodash';
+
 import { computed, onMounted, ref, watch } from 'vue';
 
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
@@ -91,7 +88,6 @@ import { useDictionary } from '@/core/composables/useDictionary';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineDictionaryField } from '@/types/engine/controls';
-import { isArray } from "lodash";
 
 const props = defineProps<{
   schema: EngineDictionaryField;
@@ -139,6 +135,14 @@ const {
   dependencyWasChanged,
   loadItemChips,
 } = useDictionary();
+
+function mapSubtitle(item: any) {
+  if (item == null) {
+    // TODO why sometimes item is null??
+    return '';
+  }
+  return description.value ? item[description.value] : null;
+}
 
 function singleOptionAutoSelectFunction() {
   const selectSingleOptionLogic = () => {
@@ -189,7 +193,6 @@ function fillInLocalModelWithValue() {
   });
 }
 
-
 onMounted(async () => {
   internalStateIsSet.value = false;
   await initState(props.schema);
@@ -201,7 +204,8 @@ onMounted(async () => {
     fillInModelIfMultiple();
   } else if (typeof localModel.value == 'object') {
     data.value.push(localModel.value);
-  } else {
+  }
+  if (typeof localModel.value === 'string') {
     await resolveIfLocalModelHasDependencies();
     if (!fieldProps.value.readonly) {
       query.value = localModel.value;

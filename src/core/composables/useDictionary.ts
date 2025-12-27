@@ -259,7 +259,7 @@ export function useDictionary() {
   }
 
   function loadItemChips(item: any): DictionaryItemChip[] {
-    if(item == null) return [];
+    if (item == null) return [];
     if ('labels' in item) {
       // array ['labelId', 'labelId2']
       if (Array.isArray(item.labels)) {

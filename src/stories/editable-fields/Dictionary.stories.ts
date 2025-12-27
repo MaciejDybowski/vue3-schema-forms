@@ -1,12 +1,28 @@
 // @ts-nocheck
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { PointerEventsCheckLevel } from '@testing-library/user-event';
 
 import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { CURRENCIES_REQUEST, MOCK_REQUEST_CURRENCY, RESPONSE_DICTIONARY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { getVuetifyInput, playWrapper, waitForMountedAsync, waitForVuetifyInputReady } from './utils';
+import {
+  getVuetifyInput,
+  playWrapper,
+  waitForMountedAsync,
+  waitForVuetifyInputReady,
+} from './utils';
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -669,29 +685,24 @@ export const ConditionalValueFilter: Story = {
 
 export const RequiredDict: Story = {
   name: 'Validation: required',
-  play: playWrapper(async (context) => {
+  play: async ({ canvasElement, context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+
     const canvas = within(context.canvasElement);
-
-    // znajdź label 'Currency' i prawdziwy input Vuetify
-    const labels = await canvas.findAllByText('Currency');
-    const labelEl = labels[labels.length - 1];
-    const input = await getVuetifyInput(labelEl)
-
-    await waitForVuetifyInputReady(input);
-    await userEvent.click(input, { pointerEventsCheck: 0, delay: 100 });
-    const items = await waitFor(() =>
-      Array.from(document.getElementsByClassName('v-list-item')).filter(
-        (el) => el.textContent?.trim()
-      )
-    );
-
-    await userEvent.click(items[0] as HTMLElement, { delay: 100 });
-
-
-
+    const select = canvas.getByLabelText('Currency');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[0], { delay: 200 });
 
     const Submit = canvas.getByText('Validate');
-    await userEvent.click(Submit, { delay: 100 });
+    await userEvent.click(Submit);
 
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
     await expect(context.args.formModel).toEqual({
@@ -700,7 +711,7 @@ export const RequiredDict: Story = {
         label: 'US Dollar',
       },
     });
-  }),
+  },
   args: {
     formModel: {},
     schema: {
@@ -770,7 +781,6 @@ export const ReadOnlyWithValue: Story = {
 export const ReadOnlyRequiredWithValue: Story = {
   name: 'Case: readonly with value and required',
   play: playWrapper(async (context) => {
-
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText('Validate');
