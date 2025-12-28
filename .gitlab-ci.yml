@@ -53,7 +53,7 @@ build-storybook:
 # Run Vitest Storybook tests
 storybook-test:
   stage: storybook-tests
-  image: docker.tecna.pl/node:lts
+  image: mcr.microsoft.com/playwright:v1.41.0-focal  # gotowy obraz z Node i Playwright
   dependencies:
     - storybook-npm-install
     - build-storybook
@@ -67,6 +67,10 @@ storybook-test:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: manual
       allow_failure: true
+  only:
+    - master
+    - stable
+    - lab
 
 
 docker-push-storybook:
