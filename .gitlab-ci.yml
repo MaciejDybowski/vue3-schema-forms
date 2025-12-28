@@ -53,13 +53,15 @@ build-storybook:
 # Run Vitest Storybook tests
 storybook-test:
   stage: storybook-tests
-  image: mcr.microsoft.com/playwright:v1.41.0-focal  # gotowy obraz z Node i Playwright
+  # Obraz Playwright z Node >=20.19, wszystkie przeglądarki już zainstalowane
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
   dependencies:
     - storybook-npm-install
     - build-storybook
   variables:
     TZ: "Europe/Warsaw"
   script:
+    - npm ci
     - npm run vitest-storybook
 #  rules:
 #    - if: '$CI_COMMIT_REF_NAME == "stable"'
