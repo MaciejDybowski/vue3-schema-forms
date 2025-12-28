@@ -60,7 +60,7 @@ storybook-test:
   variables:
     TZ: "Europe/Warsaw"
   script:
-    - npm run vitest-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
+    - npm run vitest-storybook
   rules:
     - if: '$CI_COMMIT_REF_NAME == "stable"'
       when: always
@@ -71,18 +71,27 @@ storybook-test:
 
 docker-push-storybook:
   stage: containerize
-  image: docker.tecna.pl/docker
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.1-debug
+    entrypoint: [""]
   dependencies:
     - build-storybook
   before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD ${DOWNSTREAM_REPO}
-    - docker login -u $UPSTREAM_REPO_USER -p $UPSTREAM_REPO_PASSWORD ${UPSTREAM_REPO}
+    # Konfiguracja autoryzacji do rejestrów
+    - >
+      echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}, 
+      \"$UPSTREAM_REPO\":{\"username\":\"$UPSTREAM_REPO_USER\",\"password\":\"$UPSTREAM_REPO_PASSWORD\"}}}" 
+      > /kaniko/.docker/config.json
   script:
-    - docker build -f Dockerfile.storybook --build-arg "NEXUS3_URL=${UPSTREAM_REPO}" -t ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook .
-    - docker push ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
+    - >
+      /kaniko/executor --context $CI_PROJECT_DIR 
+      --dockerfile $CI_PROJECT_DIR/Dockerfile.storybook
+      --build-arg NEXUS3_URL=${UPSTREAM_REPO}
+      --destination ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
   only:
     - stable
     - master
+
 
 docker-deploy-dev-storybook:
   stage: deploy
@@ -111,7 +120,6 @@ docker-deploy-dev-storybook:
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
-
 
 aurea-forms-publish-stable:
   image: docker.tecna.pl/node:lts
