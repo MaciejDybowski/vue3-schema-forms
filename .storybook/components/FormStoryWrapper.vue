@@ -77,7 +77,6 @@ const mySchemaForm = ref();
 
 function catchSignalFormIsReady() {
   Object.assign(toRaw(signals), {formIsReady: true});
-  console.debug(`[vue-schema-forms] - signal about ready was sent.`);
 }
 
 function handleAction(properties) {

@@ -15,6 +15,8 @@ export default {
   title: 'Development Area',
   component: FormStoryWrapper,
   args: {
+    emittedObject: {},
+    signals: {},
     formModel: {},
     schema: {},
     options: {

@@ -11,6 +11,7 @@ variables:
   GROUP_NAME: $CI_PROJECT_NAMESPACE
   APP_NAME: $CI_PROJECT_NAME
 
+
 stages:
   - publish
   - storybook-tests
@@ -19,19 +20,19 @@ stages:
   - containerize
   - deploy
 
-  #- trigger_dependencies
 
+
+# Run Vitest Storybook tests
 storybook-test:
-  image: mcr.microsoft.com/playwright:v1.52.0-noble
   stage: storybook-tests
+  image: docker.tecna.pl/node:lts
+  dependencies:
+    - storybook-npm-install
+    - build-storybook
   variables:
     TZ: "Europe/Warsaw"
   script:
-    - npm ci
-    - npm run build-storybook
-    - npx serve storybook-static -l 6006 &
-    - sleep 15
-    - npm run test-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
+    - npm run vitest-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
   rules:
     - if: '$CI_COMMIT_REF_NAME == "stable"'
       when: always
@@ -39,6 +40,7 @@ storybook-test:
       when: manual
       allow_failure: true
 
+# Install dependencies
 storybook-npm-install:
   stage: storybook-prepare
   image: docker.tecna.pl/node:lts
@@ -46,15 +48,15 @@ storybook-npm-install:
     - npm config set registry https://${NPM_PROXY}
     - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
     - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
-    - npm install
+    - npm ci
   artifacts:
     paths:
       - node_modules/
     expire_in: 1 week
-  only:
-    - stable
-    - master
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "master"'
 
+# Build Storybook
 build-storybook:
   stage: storybook-build
   image: docker.tecna.pl/node:lts
@@ -65,9 +67,8 @@ build-storybook:
   artifacts:
     paths:
       - storybook-static
-  only:
-    - stable
-    - master
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "master"'
 
 docker-push-storybook:
   stage: containerize
