@@ -25,7 +25,7 @@ const preview: Preview = {
     }
   },
 
-  tags: ['autodocs'],
+  tags: ['!autodocs'],
 };
 
 setup((app) => {
