@@ -1,18 +1,12 @@
 // @ts-nocheck
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { PointerEventsCheckLevel } from '@testing-library/user-event';
 
 import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { CURRENCIES_REQUEST, MOCK_REQUEST_CURRENCY, RESPONSE_DICTIONARY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import {
-  getVuetifyInput,
-  playWrapper,
-  waitForMountedAsync,
-  waitForVuetifyInputReady,
-} from './utils';
+import { playWrapper, waitForMountedAsync } from './utils';
 
 
 

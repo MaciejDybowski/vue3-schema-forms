@@ -51,7 +51,7 @@ function showMessage(options: any) {
 
 const phoneInputProps = {
   'country-icon-mode': 'sprite',
-  countryLabel: t('address.country'),
+
   'guess-country': true,
   'include-countries': ['pl', 'ru', 'tr', 'de', 'gb', 'fr', 'it', 'es', 'ua', 'ro', 'nl'],
 };

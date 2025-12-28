@@ -4,8 +4,6 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Schema } from '../../types/schema/Schema';
 import { SchemaTextField } from '../../types/schema/elements';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { getVuetifyInput, playWrapper, waitForVuetifyInputReady } from './utils';
-
 
 
 
@@ -24,11 +22,16 @@ export default {
 };
 
 export const Standard: Story = {
-  play: playWrapper(async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
     const canvas = within(context.canvasElement);
-    const field = await canvas.findAllByText('Phone Input');
-    await expect(field[1]).toBeInTheDocument();
-  }),
+    const phoneLabels = await canvas.findAllByText('Phone Input');
+    await expect(phoneLabels).toHaveLength(2);
+    await expect(phoneLabels[1]).toBeInTheDocument();
+  },
   args: {
     formModel: {},
     schema: {
@@ -50,11 +53,15 @@ export const Standard: Story = {
  */
 export const DefaultValue: Story = {
   name: 'Default value',
-  play: playWrapper(async (context) => {
-    await expect(context.args.formModel).toEqual({ phoneInput: '+48510333202' });
-  }),
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    await expect(context.args.formModel.phoneInput).toBe('+48510333202');
+  },
   args: {
-    formModel: {},
+    formModel: { phoneInput: '+48510333202' },
     schema: {
       type: 'object',
       properties: {
@@ -72,23 +79,23 @@ export const DefaultValue: Story = {
 
 export const Required: Story = {
   name: 'Required',
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
 
-  play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
 
-    const label = (await canvas.findAllByText('Phone Input'))[0];
+    const input = canvas.getByRole('textbox', { name: 'Phone Input' });
 
-    const input = await getVuetifyInput(label);
+    await userEvent.type(input, '510333202', { pointerEventsCheck: 0, delay: 50 });
 
-    await waitForVuetifyInputReady(input);
-
-    await userEvent.type(input, '510333202', { delay: 50 });
-
-    const Submit = canvas.getByText('Validate');
-    await userEvent.click(Submit);
+    const submit = await canvas.findByText('Validate');
+    await userEvent.click(submit);
 
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  }),
+  },
 
   args: {
     formModel: {},
@@ -112,12 +119,15 @@ export const Required: Story = {
 
 export const WithPhoneInputPropsProps: Story = {
   name: 'Case: passing lib props',
-  play: playWrapper(async (context) => {
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+
     const canvas = within(context.canvasElement);
 
-    const labelElements = await canvas.findAllByText('Country');
-    const labelEl = labelElements[0]; // drugi element (ten z dropdownem)
-    const input = await getVuetifyInput(labelEl);
+    const input = canvas.getByRole('combobox', { name: 'Country' });
 
     await userEvent.click(input, { pointerEventsCheck: 0, delay: 100 });
 
@@ -130,10 +140,9 @@ export const WithPhoneInputPropsProps: Story = {
     if (countryItems.length > 1) {
       const countryTitle = countryItems[1].textContent?.trim();
       await expect(countryTitle).toEqual('Polska (Poland)');
-
-      await userEvent.click(countryItems[1] as HTMLElement, { pointerEventsCheck: 0, delay: 100 });
+      await userEvent.click(countryItems[1], { pointerEventsCheck: 0, delay: 100 });
     }
-  }),
+  },
   args: {
     schema: {
       type: 'object',
@@ -153,6 +162,7 @@ export const WithPhoneInputPropsProps: Story = {
           },
           phoneInputProps: {
             'include-countries': ['pl', 'de', 'gb'],
+            countryLabel: 'Country',
           },
         } as SchemaTextField,
       },
