@@ -14,9 +14,9 @@ variables:
 
 stages:
   - publish
-  - storybook-tests
   - storybook-prepare
   - storybook-build
+  - storybook-tests
   - containerize
   - deploy
 
