@@ -59,7 +59,7 @@
             <v-time-picker
               v-model="timeValue"
               format="24hr"
-              @update:model-value="timePick"
+              @update:model-value="(val) => timePick(val as string)"
             >
             </v-time-picker>
           </v-tabs-window-item>

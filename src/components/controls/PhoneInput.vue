@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { MessageOptions, VPhoneInput } from 'v-phone-input';
+import { VPhoneInput } from 'v-phone-input';
 import 'v-phone-input/dist/v-phone-input.css';
 import 'world-flags-sprite/stylesheets/flags32.css';
 

@@ -47,7 +47,7 @@
         class="overflow-y-auto"
         handle=".handle"
         style="max-height: 350px"
-        @update:modelValue="(newItems) => emit('update:selectedItems', newItems)"
+        @update:modelValue="(newItems:any) => emit('update:selectedItems', newItems)"
       >
         <template #item="{ element }">
           <v-list-item
@@ -79,7 +79,7 @@
 <script lang="ts" setup>
 import draggable from 'vuedraggable';
 
-import { defineEmits, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 import { useLocale } from '@/core/composables';
 

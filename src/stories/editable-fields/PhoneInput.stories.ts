@@ -17,7 +17,7 @@ import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 
 export default {
-  title: 'Elements/Editable/Phone',
+  title: 'Elements/Editable/Phone ✅',
   ...formStoryWrapperTemplate,
 };
 
