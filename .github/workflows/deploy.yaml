@@ -43,9 +43,8 @@ jobs:
       - name: Build Storybook
         run: npm run build-storybook
 
-      #- name: Copy MSW to root
-      #  run: cp storybook-static/mockServiceWorker.js storybook-static-root/
-
+      - name: Copy MSW to root
+        run: cp storybook-static/mockServiceWorker.js storybook-static-root/mockServiceWorker.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
