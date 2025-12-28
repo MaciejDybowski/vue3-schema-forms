@@ -20,26 +20,6 @@ stages:
   - containerize
   - deploy
 
-
-
-# Run Vitest Storybook tests
-storybook-test:
-  stage: storybook-tests
-  image: docker.tecna.pl/node:lts
-  dependencies:
-    - storybook-npm-install
-    - build-storybook
-  variables:
-    TZ: "Europe/Warsaw"
-  script:
-    - npm run vitest-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "stable"'
-      when: always
-    - if: '$CI_COMMIT_REF_NAME == "master"'
-      when: manual
-      allow_failure: true
-
 # Install dependencies
 storybook-npm-install:
   stage: storybook-prepare
@@ -69,6 +49,25 @@ build-storybook:
       - storybook-static
   rules:
     - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "master"'
+
+# Run Vitest Storybook tests
+storybook-test:
+  stage: storybook-tests
+  image: docker.tecna.pl/node:lts
+  dependencies:
+    - storybook-npm-install
+    - build-storybook
+  variables:
+    TZ: "Europe/Warsaw"
+  script:
+    - npm run vitest-storybook -- --maxWorkers=2 --testTimeout=30000 --ci --failOnConsole
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable"'
+      when: always
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      when: manual
+      allow_failure: true
+
 
 docker-push-storybook:
   stage: containerize
