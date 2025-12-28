@@ -61,12 +61,12 @@ storybook-test:
     TZ: "Europe/Warsaw"
   script:
     - npm run vitest-storybook
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "stable"'
-      when: always
-    - if: '$CI_COMMIT_REF_NAME == "master"'
-      when: manual
-      allow_failure: true
+#  rules:
+#    - if: '$CI_COMMIT_REF_NAME == "stable"'
+#      when: always
+#    - if: '$CI_COMMIT_REF_NAME == "master"'
+#      when: manual
+#      allow_failure: true
   only:
     - master
     - stable
