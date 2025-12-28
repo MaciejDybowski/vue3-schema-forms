@@ -38,7 +38,7 @@ jobs:
         run: npm install
 
       - name: Initialize MSW
-        run: npx msw init ./static --save --url /mockServiceWorker.js
+        run: npx msw init ./static --save
 
       - name: Build Storybook
         run: npm run build-storybook
