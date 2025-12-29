@@ -132,8 +132,10 @@ import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceRes
 import { useNumber } from '@/core/composables/useNumber';
 import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
 import type { HeaderEditableObject, TableHeader } from '@/types/shared/Source';
+import { useResolveVariables } from "@/core/composables";
+import { EngineField } from "@/types/engine/EngineField";
 
-const props = defineProps<{ header: TableHeader; items: HeaderEditableObject[]; row: object }>();
+const props = defineProps<{ header: TableHeader; items: HeaderEditableObject[]; row: object, schema: EngineField, rowIndex: number }>();
 const emit = defineEmits<{
   (e: 'update:field', val: any): void;
   (e: 'refresh:table'): void;
@@ -141,6 +143,7 @@ const emit = defineEmits<{
 
 const attrs = useAttrs();
 const { formattedNumber } = useNumber();
+const { resolve, fillPath } = useResolveVariables();
 
 async function updateValue(e: any, item: HeaderEditableObject) {
   const rules = rulesMap.value[item.valueMapping] || [];
@@ -246,9 +249,21 @@ function getItemsForSelect(valueMapping: string, row: any) {
   return get(row, path, []);
 }
 
-function getItemsUrlForDictionary(valueMapping: string) {
+async function getItemsUrlForDictionary(valueMapping: string): Promise<string> {
   const split = valueMapping.split(':');
-  return split[1];
+
+  const modifiedField = {
+    ...props.schema,
+    index: props.rowIndex,
+    path: props.schema.key,
+  }
+
+  console.debug(`Index pola = ${props.rowIndex}`)
+
+  const endpoint = await resolve(modifiedField as any , split[1], true, getItemTitle(valueMapping));
+
+
+  return endpoint.resolvedText
 }
 
 /* Dla wyrażen jsonata bo z racji ze to generuje w petli to nie podepne funckji asynchronicznej w template */
@@ -330,7 +345,7 @@ const debounced = {
 
 async function loadDataForDictionary(item: any, addQuery: boolean = false) {
   try {
-    const url = getItemsUrlForDictionary(item.valueMapping);
+    const url = await getItemsUrlForDictionary(item.valueMapping);
     paginationOptions.value.resetPage();
     const response = await axios.get(url, {
       params: {
@@ -348,7 +363,7 @@ async function loadDataForDictionary(item: any, addQuery: boolean = false) {
 
 async function loadMoreRecordsForDictionary(item: any, addQuery: boolean = false) {
   try {
-    const url = getItemsUrlForDictionary(item.valueMapping);
+    const url = await getItemsUrlForDictionary(item.valueMapping);
     const response = await axios.get(url, {
       params: {
         page: paginationOptions.value.getPage() + 1,
@@ -366,7 +381,7 @@ async function loadMoreRecordsForDictionary(item: any, addQuery: boolean = false
 
 async function updateSearch(val: string, item: any, index: number) {
   if (getValue(item.valueMapping, index) != val) {
-    debounced.load(item, true);
+    debounced.load(item,true);
   }
 }
 

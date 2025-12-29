@@ -1,11 +1,16 @@
 // @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
-
-
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 import { Schema } from '../types/schema/Schema';
-import { MOCK_CALENDARS, TABLE_PAGE_WITHOUT_AGGREGATES, UPDATE_TABLE_ROW } from './mock-responses';
+import { MOCK_CALENDARS, TABLE_PAGE_WITHOUT_AGGREGATES, UPDATE_TABLE_ROW, WOJEWODZTWA } from "./mock-responses";
+
+
+
+
+
+
+
 
 
 
@@ -214,19 +219,21 @@ export const TableCrud: Story = {
   },
   parameters: {
     msw: {
-      handlers: [...TABLE_PAGE_WITHOUT_AGGREGATES , ...UPDATE_TABLE_ROW],
+      handlers: [...TABLE_PAGE_WITHOUT_AGGREGATES, ...UPDATE_TABLE_ROW],
     },
   },
 };
 
-
 const generateTableData = (rows: number) =>
   Array.from({ length: rows }, (_, i) => ({
+    wojewodztwo: null,
+    powiat: null,
+    grmina: null,
     name: `Product ${i + 1}`,
     location: `Location ${Math.ceil(Math.random() * 5)}`,
     height: parseFloat((Math.random() * 10 + 1).toFixed(2)),
-    base: `Base ${Math.ceil(Math.random() * 3)}`,
-    volume: `${(Math.random() * 100).toFixed(2)} L`,
+    /*base: `Base ${Math.ceil(Math.random() * 3)}`,
+    volume: `${(Math.random() * 100).toFixed(2)} L`,*/
   }));
 
 const tableBase = (bookmarkValue: number) => ({
@@ -250,18 +257,64 @@ const tableBase = (bookmarkValue: number) => ({
     ],
     headers: [
       {
+        title: 'Wojewodztwo',
+        key: 'wojewodztwo-collection',
+        type: 'COLLECTION',
+        editable: [
+          {
+            key: 'wojewodztwo',
+            valueMapping: 'wojewodztwo:/api/dictionaries?feature-id=wojewodztwa1&lm=nazwa&vm=symbol:label:id:true',
+            type: 'DICTIONARY',
+          },
+        ],
+        properties: { minWidth: '250px', maxWidth: '250px'},
+      },
+      {
+        title: 'Powiat',
+        key: 'powiat-collection',
+        type: 'COLLECTION',
+        editable: [
+          {
+            key: 'powiat',
+            valueMapping: 'powiat:/api/dictionaries?feature-id=powiaty1&lm=nazwa&vm=symbol&filter=symbol%3D%3D{tableOne[].wojewodztwo.id}*:label:id:true',
+            type: 'DICTIONARY',
+          },
+        ],
+        properties: { minWidth: '250px', maxWidth: '250px'},
+      },
+      {
+        title: 'Gmina',
+        key: 'grmina-collection',
+        type: 'COLLECTION',
+        editable: [
+          {
+            key: 'grmina',
+            valueMapping: 'grmina',
+            type: 'DICTIONARY',
+          },
+        ],
+        properties: { minWidth: '250px', maxWidth: '250px'},
+      },
+      {
         title: 'Name',
-        key: 'name',
-        valueMapping: 'name',
-        type: 'TEXT',
+        key: 'name-collection',
+        type: 'COLLECTION',
+        editable: [
+          {
+            key: 'name',
+            valueMapping: 'name',
+            type: 'TEXT',
+          },
+        ],
+        properties: { minWidth: '150px', maxWidth: '150px'},
       },
       {
         title: 'Location Collection',
         key: 'location-collection',
+        type: 'COLLECTION',
         editable: [
           {
             type: 'TEXT',
-            title: 'Location',
             key: 'location',
             valueMapping: 'location',
           },
@@ -271,30 +324,41 @@ const tableBase = (bookmarkValue: number) => ({
           maxWidth: '200px',
           width: '100px',
         },
-        type: 'COLLECTION',
       },
       {
         title: 'Height',
-        key: 'height',
-        valueMapping: 'height',
-        type: 'NUMBER',
+        key: 'height-collection',
+        type: 'COLLECTION',
+        editable: [
+          {
+            key: 'height',
+            valueMapping: 'height',
+            type: 'NUMBER',
+          },
+        ],
+        properties: { minWidth: '150px', maxWidth: '150px'},
       },
-      {
+     /* {
         title: 'Base',
-        key: 'base',
-        valueMapping: 'base',
-        type: 'TEXT',
+        key: 'base-collection',
+        type: 'COLLECTION',
+        editable: [
+          {
+            key: 'base',
+            valueMapping: 'base',
+            type: 'TEXT',
+          },
+        ],
       },
       {
         title: 'Volume',
         key: 'volume',
         valueMapping: 'volume',
         type: 'TEXT',
-      },
+      },*/
     ],
   },
 });
-
 
 export const HighPerformance: Story = {
   play: async (context) => {},
@@ -348,7 +412,7 @@ export const HighPerformance: Story = {
   },
   parameters: {
     msw: {
-      handlers: [...TABLE_PAGE_WITHOUT_AGGREGATES , ...UPDATE_TABLE_ROW],
+      handlers: [...TABLE_PAGE_WITHOUT_AGGREGATES, ...UPDATE_TABLE_ROW, ...WOJEWODZTWA],
     },
   },
 };

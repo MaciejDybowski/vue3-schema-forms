@@ -48,7 +48,7 @@ const aggregates = ref(null);
 const { resolve, fillPath } = useResolveVariables();
 
 async function loadData(params: TableFetchOptions) {
-  if(localModel.value){
+  if (localModel.value) {
     items.value = localModel.value;
     itemsTotalElements.value = localModel.value.length;
   }
@@ -59,8 +59,8 @@ async function loadData(params: TableFetchOptions) {
 }
 
 async function updateRow(value: any, index: number, headerKey: string, row: any) {
-  //row[headerKey] = value;
-  items.value[index] = { ...row };
+  console.debug(value, index, headerKey, row)
+  items.value[index] = { ...row, [headerKey.split(":")[0]]: value };
   localModel.value = items.value;
 }
 

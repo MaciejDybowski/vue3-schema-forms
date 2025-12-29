@@ -23,7 +23,18 @@ const config: StorybookConfig = {
         exclude: ['node_modules/.cache/storybook'],
       },
       server: {
-        proxy: {},
+        proxy: {
+          '/auth': {
+            target: "https://aureadev.tecna.pl/",
+            changeOrigin: true,
+            secure: false,
+          },
+          '/api': {
+            target: "https://aureadev.tecna.pl/",
+            changeOrigin: true,
+            secure: false,
+          },
+        },
       },
     });
   },

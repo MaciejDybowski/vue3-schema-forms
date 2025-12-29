@@ -14,6 +14,8 @@
           (event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })
         "
         @refresh:table="proxyRefreshTable"
+        :schema="schema"
+        :row-index="itemIndex"
       />
 
       <table-cell
@@ -42,6 +44,8 @@
       @update:field="
         (event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })
       "
+      :schema="schema"
+      :row-index="itemIndex"
     />
 
     <table-action-menu-wrapper
@@ -66,12 +70,15 @@ import TableCell from '@/components/controls/table/TableCell.vue';
 import TableEditableCellGroup from '@/components/controls/table/TableEditableCellGroup.vue';
 
 import { TableHeader, TableHeaderAction } from '@/types/shared/Source';
+import { EngineField } from "@/types/engine/EngineField";
 
 const props = defineProps<{
   header: TableHeader;
   item: any;
   fieldProps: any;
   actions: Record<string, string>;
+  schema: EngineField,
+  itemIndex: number;
 }>();
 
 const emit = defineEmits<{

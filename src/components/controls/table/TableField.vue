@@ -128,6 +128,8 @@
           @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
           @run-table-action-logic="(event) => runTableActionLogic(event, index)"
           @refresh:table="refreshTableEvent"
+          :schema="schema"
+          :item-index="index"
         />
       </template>
 
@@ -208,7 +210,7 @@
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
 import jsonata from 'jsonata';
-import { cloneDeep, debounce } from 'lodash';
+import { cloneDeep, debounce, isArray } from 'lodash';
 import set from 'lodash/set';
 import { useTheme } from 'vuetify';
 
@@ -510,7 +512,13 @@ async function runTableBtnLogic(btn: TableButton) {
       if (btn.config.code == 'add') {
         const newItem: Record<string, any> = {};
         props.schema.source.headers.forEach((header) => {
-          newItem[header.key] = null;
+          if (header.type == 'COLLECTION' && isArray(header.editable)) {
+            header.editable.forEach((subHeader: any) => {
+              newItem[subHeader.key] = null;
+            });
+          } else {
+            newItem[header.key] = null;
+          }
         });
         emit('btnModeInternalAddRecord', newItem);
       }
@@ -650,6 +658,7 @@ function showToast(message: string) {
 }
 
 const filteredButtons = ref<TableButton[]>([]);
+
 async function filteredButtonsFunction() {
   const tempActions = await Promise.all(
     buttons.value?.map(async (button: TableButton) => {

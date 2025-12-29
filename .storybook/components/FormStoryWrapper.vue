@@ -52,11 +52,12 @@ import { debounce } from 'lodash';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
-import { onMounted, ref, toRaw, watch } from 'vue';
+import { onBeforeMount, onMounted, ref, toRaw, watch } from "vue";
 
 import { Schema } from '@/types/schema/Schema.d';
 
 import VueSchemaForms from '../../src/components/engine/VueSchemaForms.vue';
+import { fetchToken } from "../plugins/keycloak";
 
 const snackbar = ref(false);
 const { schema, options, formModel, emittedObject, signals } = defineProps<{
@@ -134,6 +135,15 @@ function contextCopy() {
 onMounted(() => {
   model.value = formModel;
   loading.value = false;
+});
+
+onBeforeMount(async () => {
+  loading.value = true;
+  await fetchToken("tecna")
+
+
+  await new Promise((r) => setTimeout(r, 200));
+
 });
 </script>
 
