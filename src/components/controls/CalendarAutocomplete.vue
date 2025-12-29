@@ -1,5 +1,5 @@
 <template>
-  <v-autocomplete
+  <dictionary-base
     v-model="localModel"
     :auto-select-first="false"
     :class="bindClass(schema) + requiredInputClass"
@@ -43,7 +43,7 @@
         </span>
       </div>
     </template>
-  </v-autocomplete>
+  </dictionary-base>
 </template>
 
 <script lang="ts" setup>
@@ -51,6 +51,7 @@ import axios from 'axios';
 
 import { computed, onMounted, ref } from 'vue';
 
+import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 import { BuiltInTranslationLanguages } from '@/components/controls/dictionary/DictionaryItemChip.vue';
 
 import {
@@ -97,7 +98,13 @@ async function loadData() {
     loading.value = true;
     const url = schema.source.url;
     const response = await axios.get(url);
-    data.value = response.data;
+    const rawResponse = response.data;
+    data.value = rawResponse.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      color: item.color,
+      type: item.type,
+    }));
   } catch (e) {
     console.error(e);
   } finally {
