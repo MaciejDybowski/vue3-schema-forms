@@ -2,7 +2,8 @@ name: Build & Deploy Storybook
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - master
   workflow_dispatch:
 
 permissions:
@@ -10,42 +11,49 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
+
+      - name: Initialize MSW
+        run: npx msw init .storybook/static --save --url /mockServiceWorker.js
 
       - name: Build Storybook
         run: npm run build-storybook
 
+      - name: Copy MSW to root
+        run: cp storybook-static/mockServiceWorker.js storybook-static-root/mockServiceWorker.js
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Storybook artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
         with:
-          path: storybook-static
+          path: 'storybook-static'
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deploy
+        name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
