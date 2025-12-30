@@ -128,6 +128,8 @@
           @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
           @run-table-action-logic="(event) => runTableActionLogic(event, index)"
           @refresh:table="refreshTableEvent"
+          :schema="schema"
+          :itemIndex="index"
         />
       </template>
 
