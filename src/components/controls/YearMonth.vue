@@ -63,7 +63,14 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, useAttrs, watch } from 'vue';
 
-import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
+import {
+  useClass,
+  useFormModel,
+  useLabel,
+  useLocale,
+  useProps,
+  useRules,
+} from '@/core/composables';
 import { EngineDateField } from '@/types/engine/controls';
 
 const props = defineProps<{
@@ -71,6 +78,7 @@ const props = defineProps<{
   model: object;
 }>();
 
+const { locale } = useLocale();
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
@@ -106,20 +114,50 @@ function formatIso(year: number, month: number) {
   return `${year}-${String(month).padStart(2, '0')}`;
 }
 
+function normalize(value: string) {
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z]/g, '');
+}
+
+function buildMonthMap(locale: string): Record<string, number> {
+  const map: Record<string, number> = {};
+
+  const formatter = new Intl.DateTimeFormat(locale, {
+    month: 'short',
+  });
+
+  for (let i = 0; i < 12; i++) {
+    const short = formatter.format(new Date(2020, i, 1));
+    const key = normalize(short).slice(0, 3);
+
+    map[key] = i;
+  }
+
+  return map;
+}
+
+const monthMapCache = new Map<string, Record<string, number>>();
+
+function getMonthMap(locale: string) {
+  if (!monthMapCache.has(locale)) {
+    monthMapCache.set(locale, buildMonthMap(locale));
+  }
+
+  return monthMapCache.get(locale)!;
+}
+
+function resolveMonthIndex(monthText: string, locale: string) {
+  const key = normalize(monthText).slice(0, 3);
+  return getMonthMap(locale)[key] ?? null;
+}
+
 function savePickerValue(monthText: string, yearText: string) {
   const year = Number(yearText);
   if (Number.isNaN(year)) return;
-
-  let monthIndex: number | null = null;
-
-  if (pickerValue.value) {
-    monthIndex = pickerValue.value.getMonth();
-  } else {
-    const testDate = new Date(`${monthText} 1, ${year}`);
-    if (!Number.isNaN(testDate.getTime())) {
-      monthIndex = testDate.getMonth();
-    }
-  }
+  const monthIndex = resolveMonthIndex(monthText, locale.value);
 
   if (monthIndex === null) return;
 
@@ -127,8 +165,8 @@ function savePickerValue(monthText: string, yearText: string) {
 
   pickerValue.value = new Date(year, monthIndex, 1);
   localModel.value = formatIso(year, month);
-
   inputValue.value = formatDisplay({ year, month });
+
   pickerModel.value = false;
 }
 
