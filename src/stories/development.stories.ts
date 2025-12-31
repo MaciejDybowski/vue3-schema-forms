@@ -3,7 +3,12 @@ import { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 import { Schema } from '../types/schema/Schema';
-import { MOCK_CALENDARS, TABLE_PAGE_WITHOUT_AGGREGATES, UPDATE_TABLE_ROW, WOJEWODZTWA } from "./mock-responses";
+import {
+  MOCK_CALENDARS,
+  TABLE_PAGE_WITHOUT_AGGREGATES,
+  UPDATE_TABLE_ROW,
+  WOJEWODZTWA,
+} from './mock-responses';
 
 
 
@@ -262,12 +267,35 @@ const tableBase = (bookmarkValue: number) => ({
         type: 'COLLECTION',
         editable: [
           {
+            label: 'Województwo',
             key: 'wojewodztwo',
-            valueMapping: 'wojewodztwo:/api/dictionaries?feature-id=wojewodztwa1&lm=nazwa&vm=symbol:label:id:true',
+            valueMapping:
+              'wojewodztwo:/api/dictionaries?feature-id=wojewodztwa1&lm=nazwa&vm=symbol:label:id:true',
             type: 'DICTIONARY',
+            onChange: {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'powiat', // zaleznosci w wierszu
+                  value: null,
+                },
+                {
+                  path: 'gmina',
+                  value: null,
+                },
+              ],
+            },
           },
         ],
-        properties: { minWidth: '250px', maxWidth: '250px'},
+        properties: {
+          sortable: false,
+          minWidth: '250px',
+          width: '250px',
+          maxWidth: '250px',
+          cellProps: {
+            style: 'padding-top: 8px; padding-bottom: 8px',
+          },
+        },
       },
       {
         title: 'Powiat',
@@ -276,24 +304,53 @@ const tableBase = (bookmarkValue: number) => ({
         editable: [
           {
             key: 'powiat',
-            valueMapping: 'powiat:/api/dictionaries?feature-id=powiaty1&lm=nazwa&vm=symbol&filter=symbol%3D%3D{tableOne[].wojewodztwo.id}*:label:id:true',
+            label: 'Powiat',
+            valueMapping:
+              'powiat:/api/dictionaries?feature-id=powiaty1&lm=nazwa&vm=symbol&filter=symbol%3D%3D{tableOne[].wojewodztwo.id}*:label:id:true',
             type: 'DICTIONARY',
+            onChange: {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'gmina',
+                  value: null,
+                },
+              ],
+            },
           },
         ],
-        properties: { minWidth: '250px', maxWidth: '250px'},
+        properties: {
+          sortable: false,
+          minWidth: '250px',
+          width: '250px',
+          maxWidth: '250px',
+          cellProps: {
+            style: 'padding-top: 8px; padding-bottom: 8px',
+          },
+        },
       },
       {
         title: 'Gmina',
-        key: 'grmina-collection',
+        key: 'gmina-collection',
         type: 'COLLECTION',
         editable: [
           {
-            key: 'grmina',
-            valueMapping: 'grmina',
+            label: "Gmina",
+            key: 'gmina',
+            valueMapping:
+              'gmina:/api/dictionaries?feature-id=gminy1&lm=nazwa&vm=symbol&filter=symbol%3D%3D{tableOne[].powiat.id}*:label:id:true',
             type: 'DICTIONARY',
           },
         ],
-        properties: { minWidth: '250px', maxWidth: '250px'},
+        properties: {
+          sortable: false,
+          minWidth: '250px',
+          width: '250px',
+          maxWidth: '250px',
+          cellProps: {
+            style: 'padding-top: 8px; padding-bottom: 8px',
+          },
+        },
       },
       {
         title: 'Name',
@@ -306,7 +363,7 @@ const tableBase = (bookmarkValue: number) => ({
             type: 'TEXT',
           },
         ],
-        properties: { minWidth: '150px', maxWidth: '150px'},
+        properties: { minWidth: '150px', maxWidth: '150px' },
       },
       {
         title: 'Location Collection',
@@ -336,9 +393,9 @@ const tableBase = (bookmarkValue: number) => ({
             type: 'NUMBER',
           },
         ],
-        properties: { minWidth: '150px', maxWidth: '150px'},
+        properties: { minWidth: '150px', maxWidth: '150px' },
       },
-     /* {
+      /* {
         title: 'Base',
         key: 'base-collection',
         type: 'COLLECTION',

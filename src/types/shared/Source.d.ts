@@ -1,4 +1,5 @@
 import { ResponseReference } from "@/types/shared/ResponseReference";
+import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
 
 export interface Source {
   title?: string;
@@ -36,6 +37,7 @@ export interface HeaderEditableObject {
   validations?: any[];
   condition?: string;
   readonly: ? string;
+  onChange?: EventHandlerDefinition
 }
 
 export interface TableHeaderAction {

@@ -111,7 +111,7 @@
       @click="loadDataForDictionary(item)"
       @loadMoreRecords="loadMoreRecordsForDictionary(item)"
       @keyup.enter="(e: any) => e.target.blur()"
-      @update:model-value="(e: any) => emitData(e, item)"
+      @update:model-value="(e: any) => onDictionarySelect(e, item)"
       @update:search="(e: string) => updateSearch(e, item, index)"
     />
   </div>
@@ -123,21 +123,27 @@ import jsonata from 'jsonata';
 import { debounce } from 'lodash';
 import get from 'lodash/get';
 
-import { computed, onMounted, ref, useAttrs, watch, watchEffect } from 'vue';
+import { computed, nextTick, onMounted, ref, useAttrs, watch, watchEffect } from 'vue';
 
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 import { Pagination } from '@/components/controls/dictionary/Pagination';
 import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
 
+import { useResolveVariables } from '@/core/composables';
 import { useNumber } from '@/core/composables/useNumber';
+import { EngineField } from '@/types/engine/EngineField';
 import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
 import type { HeaderEditableObject, TableHeader } from '@/types/shared/Source';
-import { useResolveVariables } from "@/core/composables";
-import { EngineField } from "@/types/engine/EngineField";
 
-const props = defineProps<{ header: TableHeader; items: HeaderEditableObject[]; row: object, schema: EngineField, rowIndex: number }>();
+const props = defineProps<{
+  header: TableHeader;
+  items: HeaderEditableObject[];
+  row: object;
+  schema: EngineField;
+  rowIndex: number;
+}>();
 const emit = defineEmits<{
-  (e: 'update:field', val: any): void;
+  (e: 'update:field', val: { value: any; header: HeaderEditableObject }): void;
   (e: 'refresh:table'): void;
 }>();
 
@@ -167,31 +173,10 @@ async function updateValue(e: any, item: HeaderEditableObject) {
   if (isValid) {
     emit('update:field', {
       value: inputValue,
-      valueMapping: item.valueMapping,
+      header: item,
     });
   }
 }
-
-function getPrecision(valueMapping: string, index: number) {
-  // invoicePrice:0:NUMBER:2
-  const split = valueMapping.split(':');
-  const formatterProps = split.length == 4 ? split[3] : (null as any);
-
-  let decimalPlaces = 2;
-  if (isNaN(formatterProps)) {
-    decimalPlaces = get(props.row, formatterProps, 2);
-  } else {
-    decimalPlaces = formatterProps;
-  }
-  return decimalPlaces;
-}
-
-/*function getValue(valueMapping: string, index: number) {
-  // invoicePrice:0:NUMBER:2
-  const split = valueMapping.split(":");
-  let variable = split[0];
-  return get(props.row, variable, null);
-}*/
 
 function getValue(valueMapping: string, index: number) {
   // invoicePrice:0:NUMBER:2
@@ -239,8 +224,8 @@ function getReturnObjectFlag(valueMapping: string): boolean {
 }
 
 // TODO - przytrzymywanie tutaj strzałek nie działa bo jest aktualizacja całego wiersza i robi się jakiś breakdown/lag
-function emitData(e: any, item: any) {
-  emit('update:field', { value: e, valueMapping: item.valueMapping });
+function emitData(e: any, item: HeaderEditableObject) {
+  emit('update:field', { value: e, header: item });
 }
 
 function getItemsForSelect(valueMapping: string, row: any) {
@@ -249,21 +234,27 @@ function getItemsForSelect(valueMapping: string, row: any) {
   return get(row, path, []);
 }
 
-async function getItemsUrlForDictionary(valueMapping: string): Promise<string> {
+async function getItemsUrlForDictionary(
+  valueMapping: string,
+): Promise<{ resolvedText: string; allVariablesResolved: boolean }> {
   const split = valueMapping.split(':');
 
   const modifiedField = {
     ...props.schema,
     index: props.rowIndex,
     path: props.schema.key,
+  };
+
+  //console.debug(`Index pola = ${props.rowIndex}`)
+
+  const endpoint = await resolve(modifiedField as any, split[1], true, getItemTitle(valueMapping));
+
+  if (!endpoint.allVariablesResolved) {
+    dictData.value = [];
+    paginationOptions.value.setTotalElements(0);
   }
 
-  console.debug(`Index pola = ${props.rowIndex}`)
-
-  const endpoint = await resolve(modifiedField as any , split[1], true, getItemTitle(valueMapping));
-
-
-  return endpoint.resolvedText
+  return endpoint;
 }
 
 /* Dla wyrażen jsonata bo z racji ze to generuje w petli to nie podepne funckji asynchronicznej w template */
@@ -342,16 +333,49 @@ const query = ref();
 const debounced = {
   load: debounce(loadDataForDictionary, 200),
 };
+const isSelecting = ref(false);
+function onDictionarySelect(e: any, item: HeaderEditableObject) {
+  isSelecting.value = true;
+
+  emit('update:field', {
+    value: e,
+    header: item,
+  });
+
+  // v-autocomplete zaraz ustawi search → ignorujemy ten tick
+  nextTick(() => {
+    isSelecting.value = false;
+  });
+}
+
+async function updateSearch(val: string, item: any, index: number) {
+  if (isSelecting.value) return; // po wyborze
+  if (!val) return; // pusty input
+
+  const currentValue = getValue(item.valueMapping, index);
+  const returnObject = getReturnObjectFlag(item.valueMapping);
+
+  if (returnObject) {
+    const titleKey = getItemTitle(item.valueMapping);
+    if (currentValue && currentValue[titleKey] === val) return;
+  } else {
+    if (currentValue === val) return;
+  }
+
+  debounced.load(item, true);
+}
 
 async function loadDataForDictionary(item: any, addQuery: boolean = false) {
   try {
-    const url = await getItemsUrlForDictionary(item.valueMapping);
+    const endpoint = await getItemsUrlForDictionary(item.valueMapping);
+    if (!endpoint.allVariablesResolved) return;
+
     paginationOptions.value.resetPage();
-    const response = await axios.get(url, {
+    const response = await axios.get(endpoint.resolvedText, {
       params: {
         page: paginationOptions.value.getPage(),
         size: paginationOptions.value.getItemsPerPage(),
-        query: addQuery ? query.value : null,
+        query: addQuery ? query.value : undefined,
       },
     });
     dictData.value = response.data.content;
@@ -363,8 +387,8 @@ async function loadDataForDictionary(item: any, addQuery: boolean = false) {
 
 async function loadMoreRecordsForDictionary(item: any, addQuery: boolean = false) {
   try {
-    const url = await getItemsUrlForDictionary(item.valueMapping);
-    const response = await axios.get(url, {
+    const endpoint = await getItemsUrlForDictionary(item.valueMapping);
+    const response = await axios.get(endpoint.resolvedText, {
       params: {
         page: paginationOptions.value.getPage() + 1,
         size: paginationOptions.value.getItemsPerPage(),
@@ -376,12 +400,6 @@ async function loadMoreRecordsForDictionary(item: any, addQuery: boolean = false
     paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
   } catch (e) {
     console.error(e);
-  }
-}
-
-async function updateSearch(val: string, item: any, index: number) {
-  if (getValue(item.valueMapping, index) != val) {
-    debounced.load(item,true);
   }
 }
 

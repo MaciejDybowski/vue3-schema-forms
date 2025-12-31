@@ -27,6 +27,7 @@ import { useResolveVariables } from '@/core/composables';
 import { variableRegexp } from '@/core/engine/utils';
 import { toast } from '@/main';
 import { EngineTableField } from '@/types/engine/EngineTableField';
+import { HeaderEditableObject } from '@/types/shared/Source';
 
 const { schema } = defineProps<{
   schema: EngineTableField;
@@ -78,17 +79,17 @@ function mapTotalElements(data: any) {
   return data.page.totalElements;
 }
 
-async function updateRow(value: any, index: number, headerKey: string, row: any) {
-  headerKey = headerKey.split(':')[0];
+async function updateRow(value: any, header: HeaderEditableObject, rowData: any, rowIndex:number) {
+  const headerKey = header.valueMapping.split(':')[0];
 
   try {
     const payload: Record<string, any> = {};
     payload[headerKey] = value;
 
-    const updateRowURL = await createUpdateRowURL(row);
+    const updateRowURL = await createUpdateRowURL(rowData);
     //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
     const response = await axios.post(updateRowURL, payload);
-    items.value[index] = response.data.content;
+    items.value[rowIndex] = response.data.content;
 
     if (aggregates.value != null) {
       aggregates.value = response.data.aggregates;

@@ -70,8 +70,7 @@ export const vueSchemaFromControls: Components = {
   /*  "image-preview": ImagePreview,*/
   image: Image,
   'fields-group': GroupOfFields,
-  'table-view': TableViewField,
-  'table-view-api': TableView,
+  'table-view': TableView,
   'table-internal': TableInternal,
   'user-input': UserInput,
   markdown: Markdown,

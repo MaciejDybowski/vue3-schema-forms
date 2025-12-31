@@ -3,6 +3,7 @@
     v-if="header.type == 'TEXT' && shouldRender"
     v-bind="attrs"
     @click="isConnectionWithActions ? callAction() : () => {}"
+    style="cursor: pointer"
   >
     <span v-html="htmlContent" />
   </div>

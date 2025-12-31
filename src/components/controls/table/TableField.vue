@@ -125,11 +125,13 @@
           :field-props="fieldProps"
           :header="header"
           :item="item"
-          @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
+          :item-index="index"
+          :schema="schema"
+          @update-row="
+            (event) => debounced.updateRow(event.value, event.header, event.rowData, index)
+          "
           @run-table-action-logic="(event) => runTableActionLogic(event, index)"
           @refresh:table="refreshTableEvent"
-          :schema="schema"
-          :item-index="index"
         />
       </template>
 
@@ -229,7 +231,12 @@ import { toast } from '@/main';
 import { EngineTableField } from '@/types/engine/EngineTableField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { Schema } from '@/types/schema/Schema';
-import { TableButton, TableHeader, TableHeaderAction } from '@/types/shared/Source';
+import {
+  HeaderEditableObject,
+  TableButton,
+  TableHeader,
+  TableHeaderAction,
+} from '@/types/shared/Source';
 
 const actionHandlerEventBus = useEventBus<string>('form-action');
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
@@ -265,7 +272,12 @@ const props = defineProps<{
   items: any[];
   itemsTotalElements: number;
   loadData: (params: TableFetchOptions) => Promise<void>;
-  updateRow: (value: any, index: number, headerKey: string, row: any) => Promise<void>;
+  updateRow: (
+    value: any,
+    header: HeaderEditableObject,
+    rowData: any,
+    rowIndex: number,
+  ) => Promise<void>;
   tableActionPopupUpdate: (actionPopup: any) => Promise<void>;
   loading: boolean;
   aggregates: any;

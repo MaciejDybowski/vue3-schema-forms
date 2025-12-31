@@ -9,13 +9,13 @@
         :header="collectionItem"
         :items="collectionItem.editable as any"
         :row="item"
+        :row-index="itemIndex"
+        :schema="schema"
         v-bind="fieldProps"
         @update:field="
-          (event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })
+          (event) => emit('updateRow', { value: event.value, header: event.header, rowData: item })
         "
         @refresh:table="proxyRefreshTable"
-        :schema="schema"
-        :row-index="itemIndex"
       />
 
       <table-cell
@@ -39,13 +39,13 @@
       :header="header"
       :items="header.editable"
       :row="item"
+      :row-index="itemIndex"
+      :schema="schema"
       v-bind="fieldProps"
       @refresh:table="proxyRefreshTable"
       @update:field="
-        (event) => emit('updateRow', { value: event.value, path: event.valueMapping, item })
+        (event) => emit('updateRow', { value: event.value, header: event.header, rowData: item })
       "
-      :schema="schema"
-      :row-index="itemIndex"
     />
 
     <table-action-menu-wrapper
@@ -69,20 +69,20 @@ import TableActionMenuWrapper from '@/components/controls/table/TableActionMenuW
 import TableCell from '@/components/controls/table/TableCell.vue';
 import TableEditableCellGroup from '@/components/controls/table/TableEditableCellGroup.vue';
 
-import { TableHeader, TableHeaderAction } from '@/types/shared/Source';
-import { EngineField } from "@/types/engine/EngineField";
+import { EngineField } from '@/types/engine/EngineField';
+import { HeaderEditableObject, TableHeader, TableHeaderAction } from '@/types/shared/Source';
 
 const props = defineProps<{
   header: TableHeader;
   item: any;
   fieldProps: any;
   actions: Record<string, string>;
-  schema: EngineField,
+  schema: EngineField;
   itemIndex: number;
 }>();
 
 const emit = defineEmits<{
-  (e: 'updateRow', payload: { value: string; path: string; item: any }): void;
+  (e: 'updateRow', payload: { value: string; header: HeaderEditableObject; rowData: any }): void;
   (e: 'runTableActionLogic', payload: { action: TableHeaderAction; item: object }): void;
   (e: 'refresh:table'): void;
 }>();

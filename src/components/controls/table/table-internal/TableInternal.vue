@@ -24,6 +24,8 @@ import { TableFetchOptions } from '@/components/controls/table/table-types';
 import { useFormModel, useResolveVariables } from '@/core/composables';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineTableField } from '@/types/engine/EngineTableField';
+import { EventVariable } from '@/types/shared/EventHandlerDefinition';
+import { HeaderEditableObject } from '@/types/shared/Source';
 
 const { getValue, setValue } = useFormModel();
 
@@ -58,9 +60,19 @@ async function loadData(params: TableFetchOptions) {
   loading.value = false;
 }
 
-async function updateRow(value: any, index: number, headerKey: string, row: any) {
-  console.debug(value, index, headerKey, row)
-  items.value[index] = { ...row, [headerKey.split(":")[0]]: value };
+async function updateRow(value: any, header: HeaderEditableObject, rowData: any, rowIndex: number) {
+  /* console.debug(`Index = ${index}, newValue = `, value);
+  console.debug(`row = `, row);
+  console.debug(`headerDefinition = `, tableHeader);*/
+  const tempRow = { ...rowData, [header.valueMapping.split(':')[0]]: value };
+
+  if (header.onChange) {
+    header.onChange.variables?.forEach((variable: EventVariable) => {
+      tempRow[variable.path] = variable.value;
+    });
+  }
+  items.value[rowIndex] = { ...tempRow };
+
   localModel.value = items.value;
 }
 

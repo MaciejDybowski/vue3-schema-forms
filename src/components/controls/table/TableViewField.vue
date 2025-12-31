@@ -125,11 +125,13 @@
           :field-props="fieldProps"
           :header="header"
           :item="item"
-          @update-row="(event) => debounced.updateRow(event.value, index, event.path, item)"
+          :itemIndex="index"
+          :schema="schema"
+          @update-row="
+            (event) => debounced.updateRow(event.value, event.header, event.rowData, index)
+          "
           @run-table-action-logic="(event) => runTableActionLogic(event, index)"
           @refresh:table="refreshTableEvent"
-          :schema="schema"
-          :itemIndex="index"
         />
       </template>
 
@@ -232,7 +234,12 @@ import { toast } from '@/main';
 import { EngineTableField } from '@/types/engine/EngineTableField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { Schema } from '@/types/schema/Schema';
-import { TableButton, TableHeader, TableHeaderAction } from '@/types/shared/Source';
+import {
+  HeaderEditableObject,
+  TableButton,
+  TableHeader,
+  TableHeaderAction,
+} from '@/types/shared/Source';
 
 const actionHandlerEventBus = useEventBus<string>('form-action');
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
@@ -557,7 +564,7 @@ async function runTableBtnLogic(btn: TableButton) {
       actionPopup.show = true;
       break;
     case 'internal':
-      if(btn.config.code == "add"){
+      if (btn.config.code == 'add') {
         const newItem: Record<string, any> = {};
         props.schema.source.headers.forEach((header) => {
           newItem[header.key] = null;
@@ -712,19 +719,18 @@ async function createUpdateRowURL(item: any) {
   return updateRowURL;
 }
 
-async function updateRow(value: any, index: number, headerKey: string, row: any) {
-  const isDefinedRefreshCode = headerKey.split(':').length > 4;
-
-  headerKey = headerKey.split(':')[0];
+async function updateRow(value: any, header: HeaderEditableObject, rowData: any, rowIndex: number) {
+  const isDefinedRefreshCode = header.valueMapping.split(':').length > 4;
+  const headerKey = header.valueMapping.split(':')[0];
 
   try {
     const payload: Record<string, any> = {};
     payload[headerKey] = value;
 
-    const updateRowURL = await createUpdateRowURL(row);
+    const updateRowURL = await createUpdateRowURL(rowData);
     //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
     const response = await axios.post(updateRowURL, payload);
-    items.value[index] = response.data.content;
+    items.value[rowIndex] = response.data.content;
 
     if (aggregates.value != null) {
       aggregates.value = response.data.aggregates;
