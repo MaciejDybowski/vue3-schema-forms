@@ -46,8 +46,9 @@
           </v-tab>
         </v-tabs>
         <v-tabs-window v-model="activeTabRef">
-          <v-tabs-window-item :value="0">
+          <v-tabs-window-item value="0">
             <v-date-picker
+              :first-day-of-week="1"
               v-model="pickerValue"
               :max="isFutureDateAvailable ? undefined : currentDate.toISOString()"
               :min="isPastDateAvailable ? undefined : currentDate.toISOString()"
@@ -55,7 +56,7 @@
               @update:model-value="datePick"
             />
           </v-tabs-window-item>
-          <v-tabs-window-item :value="1">
+          <v-tabs-window-item value="1">
             <v-time-picker
               v-model="timeValue"
               format="24hr"
@@ -119,7 +120,7 @@ onMounted(async () => {
 const currentDate = new Date();
 currentDate.setHours(0, 0, 0, 0);
 
-const activeTabRef = ref(0);
+const activeTabRef = ref<string>("0")
 
 const pickerModel = ref(false);
 const inputValue = ref('');
@@ -176,7 +177,7 @@ function datePick(val: Date) {
     } else {
       localModel.value = date.format(modelFormat);
     }
-    activeTabRef.value = 1;
+    activeTabRef.value = "1";
   }
 }
 
@@ -305,5 +306,13 @@ function isDateInFuture(val: string) {
 :deep(.v-date-picker-month__day .v-btn) {
   height: 32px;
   width: 32px;
+}
+
+:deep(.v-time-picker-controls){
+  margin-bottom: 0px!important;
+  margin-top: 4px;
+}
+:deep(.v-time-picker-controls__field-label){
+  display: none;
 }
 </style>
