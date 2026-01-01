@@ -8,6 +8,8 @@
     :schema="schema"
     :table-action-popup-update="tableActionPopupUpdate"
     :update-row="updateRow"
+    @btnModeInternalRemoveRecord="removeRow"
+    @btn-mode-internal-duplicate-record="duplicateRecord"
     @btn-mode-internal-add-record="(payload) => items.push(payload)"
   />
 </template>
@@ -100,6 +102,16 @@ async function tableActionPopupUpdate(actionPopup: any) {
   const updateRowURL = await createUpdateRowURL(actionPopup.item);
   const response = await axios.post(updateRowURL, payload);
   items.value[actionPopup.itemIndex] = response.data.content;
+}
+
+async function removeRow(payload: { index: number }) {
+  items.value = items.value.filter((i, idx) => idx !== payload.index);
+  localModel.value = items.value;
+}
+
+async function duplicateRecord(payload: { index: number, rowData: any }) {
+  items.value.splice(payload.index+1, 0, payload.rowData);
+  localModel.value = items.value;
 }
 </script>
 

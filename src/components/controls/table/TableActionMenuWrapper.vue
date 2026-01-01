@@ -1,5 +1,6 @@
 <template>
   <table-action-menu
+    v-if="header.mode == 'menu' || header.mode == undefined"
     :disabled="attrs.readonly == true"
     :show="true"
     icon="mdi-dots-vertical"
@@ -31,6 +32,36 @@
       </v-list-item>
     </v-list>
   </table-action-menu>
+
+  <template v-else-if="header?.mode == 'inline'">
+    <div class="d-flex">
+      <template v-if="filteredActions.length > 0">
+        <v-tooltip
+          v-for="action in filteredActions"
+          :key="action.title+''"
+          :disabled="!action.title"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              :disabled="action.disabled as boolean"
+              :icon="action.icon"
+              class="px-0"
+              flat
+              rounded
+              size="small"
+              v-bind="props"
+              @click="emit('runTableActionLogic', { action: action, item: item })"
+            />
+          </template>
+          <span>{{ action.title }}</span>
+        </v-tooltip>
+      </template>
+
+      <template v-else>
+        <span>{{ t('noActions') }}</span>
+      </template>
+    </div>
+  </template>
 </template>
 
 <script lang="ts" setup>

@@ -353,36 +353,6 @@ const tableBase = (bookmarkValue: number) => ({
         },
       },
       {
-        title: 'Name',
-        key: 'name-collection',
-        type: 'COLLECTION',
-        editable: [
-          {
-            key: 'name',
-            valueMapping: 'name',
-            type: 'TEXT',
-          },
-        ],
-        properties: { minWidth: '150px', maxWidth: '150px' },
-      },
-      {
-        title: 'Location Collection',
-        key: 'location-collection',
-        type: 'COLLECTION',
-        editable: [
-          {
-            type: 'TEXT',
-            key: 'location',
-            valueMapping: 'location',
-          },
-        ],
-        properties: {
-          minWidth: '200px',
-          maxWidth: '200px',
-          width: '100px',
-        },
-      },
-      {
         title: 'Height',
         key: 'height-collection',
         type: 'COLLECTION',
@@ -393,26 +363,40 @@ const tableBase = (bookmarkValue: number) => ({
             type: 'NUMBER',
           },
         ],
-        properties: { minWidth: '150px', maxWidth: '150px' },
       },
-      /* {
-        title: 'Base',
-        key: 'base-collection',
-        type: 'COLLECTION',
-        editable: [
+      {
+        title: 'Jsonata expression',
+        key: 'nameAndLocation',
+        valueMapping:
+          '<b>Height + 4 = </b>{(height+4)}',
+        type: 'TEXT',
+
+      },
+      {
+        title: 'Actions',
+        key: 'actions',
+        properties: {
+          mode: 'inline',
+        },
+        actions: [
           {
-            key: 'base',
-            valueMapping: 'base',
-            type: 'TEXT',
+            title: 'Delete',
+            icon: 'mdi-delete-outline',
+            mode: 'internal',
+            config: {
+              code: 'delete',
+            },
+          },
+          {
+            title: 'Duplicate',
+            icon: 'mdi-content-copy',
+            mode: 'internal',
+            config: {
+              code: 'duplicate',
+            },
           },
         ],
       },
-      {
-        title: 'Volume',
-        key: 'volume',
-        valueMapping: 'volume',
-        type: 'TEXT',
-      },*/
     ],
   },
 });

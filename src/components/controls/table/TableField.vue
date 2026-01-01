@@ -295,6 +295,8 @@ const loadingLocal = computed({
 const emit = defineEmits<{
   (e: 'update:loading', value: boolean): void;
   (e: 'btnModeInternalAddRecord', payload: any): void;
+  (e: 'btnModeInternalRemoveRecord', payload: any): void;
+  (e: 'btnModeInternalDuplicateRecord', payload: { index: number, rowData: any }): void;
 }>();
 
 const theme = useTheme();
@@ -581,6 +583,14 @@ async function runTableActionLogic(
       actionPopup.itemIndex = index;
       actionPopup.acceptFunction = props.tableActionPopupUpdate;
       actionPopup.show = true;
+      break;
+    case 'internal':
+      if (payload.action.config.code == 'delete') {
+        emit('btnModeInternalRemoveRecord', { index });
+      }
+      if (payload.action.config.code == 'duplicate') {
+        emit('btnModeInternalDuplicateRecord', { index: index, rowData: payload.item });
+      }
       break;
     default:
       console.warn('unknown action mode');
