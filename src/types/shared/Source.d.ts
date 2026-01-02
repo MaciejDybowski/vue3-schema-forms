@@ -27,6 +27,8 @@ export interface TableHeader {
   items?: TableHeader[];
   footerMapping?: string;
   condition?: string;
+  // for destructure properties object, used for actions menu mode = menu/inline
+  [key: string]: any
 }
 
 export interface HeaderEditableObject {
