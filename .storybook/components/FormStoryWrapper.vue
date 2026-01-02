@@ -139,7 +139,7 @@ onMounted(() => {
 
 onBeforeMount(async () => {
   loading.value = true;
-  await fetchToken("tecna")
+  //await fetchToken("tecna")
 
 
   await new Promise((r) => setTimeout(r, 200));

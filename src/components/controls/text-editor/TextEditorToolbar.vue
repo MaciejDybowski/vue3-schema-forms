@@ -6,7 +6,7 @@
     justify="start"
   >
     <text-editor-toolbar-button
-      v-for="btn in buttons"
+      v-for="btn in filteredButtons"
       :key="btn.name"
       :active="btn.isActive(editor, showSource)"
       :icon="btn.icon"
@@ -20,12 +20,14 @@
 import { useI18n } from 'vue-i18n';
 
 import TextEditorToolbarButton from '@/components/controls/text-editor/TextEditorToolbarButton.vue';
+import { computed } from "vue";
 
 const { t } = useI18n();
 
-const { editor, showSource } = defineProps<{
+const { editor, showSource, editorFeatures } = defineProps<{
   editor: any;
   showSource?: boolean;
+  editorFeatures?: string[];
 }>();
 
 const buttons = [
@@ -149,6 +151,14 @@ const buttons = [
     isActive: (_editor: any, showSource?: boolean) => !!showSource,
   },
 ];
+
+const filteredButtons = computed(() => {
+  if (editorFeatures && editorFeatures.length > 0) {
+    return buttons.filter((btn) => editorFeatures!.includes(btn.name));
+  }
+  return buttons;
+});
+
 </script>
 
 <style lang="scss" scoped>

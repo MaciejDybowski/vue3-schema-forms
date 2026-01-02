@@ -15,6 +15,7 @@
             cols="12"
           >
             <text-editor-toolbar
+              :editorFeatures="schema.editorFeatures"
               :editor="editor"
               :show-source="showSource"
             />

@@ -33,6 +33,23 @@ export const Standard: Story = {
   },
 };
 
+export const ReducedOptions: Story = {
+  play: async (context) => {},
+  args: {
+    schema: {
+      type: 'object',
+      properties: {
+        textEditor: {
+          editorFeatures: ["bold", "italic"],
+          layout: {
+            component: 'text-editor',
+          },
+        },
+      },
+    },
+  },
+};
+
 export const WithDefault: Story = {
   name: 'Default value',
   play: async (context) => {},

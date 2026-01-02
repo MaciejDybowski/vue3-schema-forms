@@ -34,6 +34,7 @@ export interface EngineExpansionPanels extends EngineField {
 }
 
 export interface EngineTextEditorField extends EngineField {
+  editorFeatures: string[]
   contentType: "markdown" | "html" | "json";
 }
 
