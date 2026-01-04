@@ -45,6 +45,70 @@ export default {
 
 type Story = StoryObj<typeof FormStoryWrapper>;
 
+export const GroupReadonly: Story = {
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        fieldsGroup609: {
+          layout: {
+            component: 'fields-group',
+            schema: {
+              type: 'object',
+              properties: {
+                button629: {
+                  label: 'Kliknij mnie',
+                  layout: {
+                    component: 'button',
+                    cols: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6, xxl: 6 },
+                    fillRow: true,
+                  },
+                  mode: 'action',
+                  config: {},
+                },
+                switch533: {
+                  label: 'Item-switch533',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'switch',
+                  },
+                },
+                textField836: {
+                  label: 'Item-textField836',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'text-field',
+                  },
+                },
+                textField050: {
+                  label: 'Item-textField050',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'text-field',
+                  },
+                },
+                switch366: {
+                  label: 'Item-switch366',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'switch',
+                  },
+                },
+              },
+            },
+            props: { readonly: true },
+          },
+        },
+      },
+    },
+  },
+};
+
 export const CalendarAutocomplete: Story = {
   play: async (context) => {},
   args: {
@@ -335,7 +399,7 @@ const tableBase = (bookmarkValue: number) => ({
         type: 'COLLECTION',
         editable: [
           {
-            label: "Gmina",
+            label: 'Gmina',
             key: 'gmina',
             valueMapping:
               'gmina:/api/dictionaries?feature-id=gminy1&lm=nazwa&vm=symbol&filter=symbol%3D%3D{tableOne[].powiat.id}*:label:id:true',
@@ -367,10 +431,8 @@ const tableBase = (bookmarkValue: number) => ({
       {
         title: 'Jsonata expression',
         key: 'nameAndLocation',
-        valueMapping:
-          '<b>Height + 4 = </b>{(height+4)}',
+        valueMapping: '<b>Height + 4 = </b>{(height+4)}',
         type: 'TEXT',
-
       },
       {
         title: 'Actions',
