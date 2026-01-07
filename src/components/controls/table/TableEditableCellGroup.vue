@@ -69,7 +69,7 @@
       :clearable="!shouldReadonlyMap[item.valueMapping]"
       :item-title="getItemTitle(item.valueMapping)"
       :item-value="getItemValue(item.valueMapping)"
-      :items="getItemsForSelect(item.valueMapping, row)"
+      :items="getItemsForSelect(item, row)"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
       :return-object="getReturnObjectFlag(item.valueMapping)"
@@ -228,9 +228,13 @@ function emitData(e: any, item: HeaderEditableObject) {
   emit('update:field', { value: e, header: item });
 }
 
-function getItemsForSelect(valueMapping: string, row: any) {
-  const split = valueMapping.split(':');
+function getItemsForSelect(item: any, row: any) {
+  const split = item.valueMapping.split(':');
   let path = split[1];
+  if (path == 'source') {
+    return item.source || [];
+  }
+
   return get(row, path, []);
 }
 

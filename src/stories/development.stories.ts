@@ -417,6 +417,33 @@ const tableBase = (bookmarkValue: number) => ({
         },
       },
       {
+        title: 'SimpleSelect',
+        key: 'simpleselect-collection',
+        type: 'COLLECTION',
+        editable: [
+          {
+            label: 'Select',
+            key: 'simpleGmina',
+            valueMapping: 'simpleGmina:source:label:id:true',
+            type: 'SELECT',
+            source: [
+              { id: 1, label: 'Gmina 1' },
+              { id: 2, label: 'Gmina 2' },
+              { id: 3, label: 'Gmina 3' },
+            ],
+          },
+        ],
+        properties: {
+          sortable: false,
+          minWidth: '250px',
+          width: '250px',
+          maxWidth: '250px',
+          cellProps: {
+            style: 'padding-top: 8px; padding-bottom: 8px',
+          },
+        },
+      },
+      {
         title: 'Height',
         key: 'height-collection',
         type: 'COLLECTION',
