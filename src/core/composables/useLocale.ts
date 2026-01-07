@@ -52,6 +52,7 @@ export function useLocale() {
           selectedItemsCount: 'No selected items | Selected {el} item | Selected {el} items',
           enableRowActions: 'Selection mode',
           disableRowActions: 'Single mode',
+          of:"of",
         },
         schedulerGrid: {
           person: 'Person',
@@ -112,6 +113,7 @@ export function useLocale() {
           disableRowActions: 'Tryb pojedynczy',
           selectedItemsCount:
             'Brak zaznaczonych elementów | Zaznaczono {el} element | Zaznaczono {el} elementy | Zaznaczono {el} elementów',
+          of:"z"
         },
         schedulerGrid: {
           person: 'Osoba',

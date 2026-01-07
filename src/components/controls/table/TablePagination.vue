@@ -63,7 +63,7 @@
         ></v-btn>
       </div>
     </div>
-    <span class="item-info">{{ startItem }} - {{ endItem }} of {{ totalItems }}</span>
+    <span class="item-info">{{ startItem }} - {{ endItem }} {{t('tableField.of')}} {{ totalItems }}</span>
   </div>
 </template>
 
@@ -105,6 +105,7 @@ const startItem = computed(() => {
 });
 const endItem = computed(() => Math.min(page.value * itemsPerPage.value, totalItems.value));
 </script>
+
 
 <style scoped>
 .footer {
