@@ -231,8 +231,8 @@ function emitData(e: any, item: HeaderEditableObject) {
 function getItemsForSelect(item: any, row: any) {
   const split = item.valueMapping.split(':');
   let path = split[1];
-  if (path == 'source') {
-    return item.source || [];
+  if (item[path] !== undefined && Array.isArray(item[path])) {
+    return item[path] || [];
   }
 
   return get(row, path, []);
