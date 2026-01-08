@@ -1,34 +1,37 @@
 <template>
   <div
-    v-if="header.type == 'TEXT' && shouldRender"
+    v-if="header.type === 'TEXT' && shouldRender"
+    :style="{
+      cursor: isConnectionWithActions ? 'pointer' : 'default',
+      background: backgroundColor,
+    }"
     v-bind="attrs"
-    @click="isConnectionWithActions ? callAction() : () => {}"
-    style="cursor: pointer"
+    @click="onClick"
   >
     <span v-html="htmlContent" />
   </div>
 
-  <div v-if="header.type == `ICON`">
-    <v-icon v-if="extractValueByPath(header.valueMapping) !== null"
-      >{{ extractValueByPath(header.valueMapping) }}
+  <div v-if="header.type === 'ICON'">
+    <v-icon v-if="extractValueByPath(header.valueMapping) !== null">
+      {{ extractValueByPath(header.valueMapping) }}
     </v-icon>
   </div>
 
   <div
-    v-if="header.type == 'NUMBER'"
+    v-if="header.type === 'NUMBER'"
     class="text-right"
   >
     {{ numberContent }}
   </div>
 
   <v-img
-    v-if="header.type == 'IMAGE' && allVariablesResolved"
+    v-if="header.type === 'IMAGE' && allVariablesResolved"
     :src="urlPath"
     cover
   />
 
   <div
-    v-if="header.type == 'ALERT'"
+    v-if="header.type === 'ALERT'"
     class="table-cell-alert-type"
   >
     <v-tooltip
@@ -41,6 +44,7 @@
           <v-icon v-bind="props"> mdi-information-outline</v-icon>
         </div>
       </template>
+
       <div
         v-for="(alert, index) in item[header.valueMapping]"
         :key="index"
@@ -50,7 +54,6 @@
           :color="alertColors[alert.type]"
           :icon="alertIcons[alert.type]"
           class="mr-1"
-          v-bind="props"
         />
         <span>{{ alert.message }}</span>
       </div>
@@ -63,43 +66,65 @@ import { useEventBus } from '@vueuse/core';
 import jsonata from 'jsonata';
 import get from 'lodash/get';
 
-import { computed, onMounted, ref, useAttrs, watchEffect } from 'vue';
+import { computed, ref, useAttrs, watch } from 'vue';
 
 import { useNumber } from '@/core/composables/useNumber';
 import { variableRegexp } from '@/core/engine/utils';
 import { TableHeader } from '@/types/shared/Source';
-
-const alertIcons: Record<string, string> = {
-  warning: 'mdi-alert',
-  info: 'mdi-information',
-  error: 'mdi-alert-circle',
-};
-
-const alertColors: Record<string, string> = {
-  warning: 'orange',
-  info: 'blue',
-  error: 'red',
-};
 
 const props = defineProps<{
   header: TableHeader;
   item: Record<string, any>;
   actions: Record<string, string>;
 }>();
-const backgroundColor = ref('transparent');
 
 const attrs = useAttrs();
 const { formattedNumber } = useNumber();
 const actionHandlerEventBus = useEventBus<string>('form-action');
+
 const htmlContent = ref<string>('');
 const urlPath = ref('');
 const allVariablesResolved = ref(true);
+const backgroundColor = ref('transparent');
+const shouldRender = ref(true);
+
+const isConnectionWithActions = ref(false);
+const actionVariable = ref('');
+const actionCode = ref('');
+
+// cache kompilacji jsonata
+const exprCache = new Map<string, any>();
+function compileExpr(expr?: string | null) {
+  if (!expr) return null;
+  let c = exprCache.get(expr);
+  if (!c) {
+    c = jsonata(expr);
+    exprCache.set(expr, c);
+  }
+  return c;
+}
+async function evalExpr(expr?: string | null, model: any = {}) {
+  const c = compileExpr(expr ?? '');
+
+  if (!c) return null;
+  return await c.evaluate(model);
+}
+
+const alertIcons: Record<string, string> = {
+  warning: 'mdi-alert',
+  info: 'mdi-information',
+  error: 'mdi-alert-circle',
+};
+const alertColors: Record<string, string> = {
+  warning: 'orange',
+  info: 'blue',
+  error: 'red',
+};
 
 const numberContent = computed(() => {
   const properties = props.header.properties;
-  const minPrecision = properties && properties.minPrecision ? properties.minPrecision : 0;
-  const maxPrecision = properties && properties.maxPrecision ? properties.maxPrecision : 2;
-
+  const minPrecision = properties?.minPrecision ?? 0;
+  const maxPrecision = properties?.maxPrecision ?? 2;
   return formattedNumber(
     extractValueByPath(props.header.valueMapping),
     'decimal',
@@ -108,95 +133,24 @@ const numberContent = computed(() => {
   );
 });
 
-const isConnectionWithActions = ref<boolean>(false);
-
-const actionVariable = ref('');
-const actionCode = ref('');
-
+function extractValueByPath(path: string) {
+  return get(props.item, path, null);
+}
+function wrapIntoSpanWithLinkClass(value: string) {
+  return `<span class='link'>${value}</span>`;
+}
+function setActionConnection(variable: string) {
+  isConnectionWithActions.value = true;
+  actionVariable.value = variable;
+  actionCode.value = props.actions[variable];
+}
 function callAction() {
-  //console.debug(`Action is enable on ${actionVariable.value} with action code ${actionCode.value}`);
-
-  let payloadObject = {
-    code: props.actions[actionVariable.value],
-    body: props.item,
-  };
-
-  actionHandlerEventBus.emit('form-action', payloadObject);
-  //console.debug("Action payload", payloadObject);
+  if (!isConnectionWithActions.value) return;
+  const payload = { code: props.actions[actionVariable.value], body: props.item };
+  actionHandlerEventBus.emit('form-action', payload);
 }
-
-async function mapImageParams() {
-  let url = props.header.valueMapping;
-  const arrayOfVariables = props.header.valueMapping.match(variableRegexp);
-  if (!!arrayOfVariables) {
-    await Promise.all(
-      arrayOfVariables.map(async (wrappedVariable) => {
-        const unwrapped = wrappedVariable.slice(1, -1);
-
-        const split = unwrapped.split(':');
-        let variable = split[0];
-        const defaultValue = split.length === 2 ? split[1] : null;
-        const model = props.item;
-
-        const nata = jsonata(variable);
-        let value = await nata.evaluate(model);
-        if (
-          (value == null && defaultValue !== null) ||
-          (value == '' && value != 0) ||
-          value == undefined
-        ) {
-          value = defaultValue;
-        }
-        if (value == null) {
-          allVariablesResolved.value = false;
-        }
-        url = url.replace(`{${unwrapped}}`, value);
-      }),
-    );
-  }
-  return url;
-}
-
-async function simpleResolveVariable() {
-  htmlContent.value = props.header.valueMapping;
-  const arrayOfVariables = props.header.valueMapping.match(variableRegexp);
-  if (!!arrayOfVariables) {
-    await Promise.all(
-      arrayOfVariables.map(async (wrappedVariable) => {
-        const unwrapped = wrappedVariable.slice(1, -1);
-
-        const split = unwrapped.split(':');
-        let variable = split[0];
-        const defaultValue = split.length >= 2 ? split[1] : null;
-        const typeOfValue = split.length >= 3 ? split[2] : null;
-        const formatterProps = split.length == 4 ? split[3] : (null as any);
-
-        const model = props.item;
-
-        const nata = jsonata(variable);
-        let value = await nata.evaluate(model);
-
-        if (typeOfValue == 'NUMBER') {
-          let decimalPlaces = 4;
-          if (isNaN(formatterProps)) {
-            decimalPlaces = get(model, formatterProps, 2);
-          } else {
-            decimalPlaces = formatterProps;
-          }
-          value = formattedNumber(value, 'decimal', decimalPlaces, decimalPlaces);
-        }
-
-        if (
-          (value == null && defaultValue !== null) ||
-          (value == '' && value != 0) ||
-          value == undefined
-        ) {
-          value = defaultValue;
-        }
-        checkConnectionWithActions(unwrapped, 'replace', value);
-      }),
-    );
-  }
+function onClick() {
+  if (isConnectionWithActions.value) callAction();
 }
 
 function checkConnectionWithActions(
@@ -205,103 +159,138 @@ function checkConnectionWithActions(
   value: any = null,
 ) {
   if (unwrapped in props.actions) {
-    isConnectionWithActions.value = true;
-    actionVariable.value = unwrapped;
-    actionCode.value = props.actions[unwrapped];
-
-    switch (mode) {
-      case 'assign':
-        htmlContent.value = wrapIntoSpanWithLinkClass(
-          extractValueByPath(props.header.valueMapping),
-        );
-        break;
-      case 'replace':
-        htmlContent.value = htmlContent.value.replace(
-          `{${unwrapped}}`,
-          wrapIntoSpanWithLinkClass(value),
-        );
-        break;
+    setActionConnection(unwrapped);
+    if (mode === 'assign') {
+      htmlContent.value = wrapIntoSpanWithLinkClass(extractValueByPath(props.header.valueMapping));
+    } else {
+      htmlContent.value = htmlContent.value.replace(
+        `{${unwrapped}}`,
+        wrapIntoSpanWithLinkClass(value),
+      );
     }
   } else {
-    switch (mode) {
-      case 'assign':
-        htmlContent.value = extractValueByPath(props.header.valueMapping);
-        break;
-      case 'replace':
-        htmlContent.value = htmlContent.value.replace(`{${unwrapped}}`, value);
-        break;
+    if (mode === 'assign') {
+      htmlContent.value = extractValueByPath(props.header.valueMapping);
+    } else {
+      htmlContent.value = htmlContent.value.replace(`{${unwrapped}}`, value);
     }
   }
 }
 
-function wrapIntoSpanWithLinkClass(value: string) {
-  return `<span class='link'>${value}</span>`;
+async function simpleResolveVariable() {
+  htmlContent.value = props.header.valueMapping;
+  allVariablesResolved.value = true;
+  const vars = props.header.valueMapping.match(variableRegexp);
+  if (!vars) return;
+  await Promise.all(
+    vars.map(async (wrapped) => {
+      const unwrapped = wrapped.slice(1, -1);
+      const parts = unwrapped.split(':');
+      const variable = parts[0];
+      const defaultValue = parts.length >= 2 ? parts[1] : null;
+      const typeOfValue = parts.length >= 3 ? parts[2] : null;
+      const formatterProps = parts.length === 4 ? parts[3] : null;
+
+      let value = await evalExpr(variable, props.item);
+      if (typeOfValue === 'NUMBER') {
+        let decimalPlaces = 4;
+        if (isNaN(Number(formatterProps))) {
+          decimalPlaces = get(props.item, formatterProps, 2);
+        } else {
+          decimalPlaces = Number(formatterProps);
+        }
+        value = formattedNumber(value, 'decimal', decimalPlaces, decimalPlaces);
+      }
+
+      if (
+        (value == null && defaultValue !== null) ||
+        (value === '' && value != 0) ||
+        value === undefined
+      ) {
+        value = defaultValue;
+      }
+      if (value == null) allVariablesResolved.value = false;
+      checkConnectionWithActions(unwrapped, 'replace', value);
+    }),
+  );
 }
 
-function extractValueByPath(path: string) {
-  return get(props.item, path, null);
+async function mapImageParams() {
+  let url = props.header.valueMapping;
+  allVariablesResolved.value = true;
+  const vars = props.header.valueMapping.match(variableRegexp);
+  if (!vars) return url;
+  await Promise.all(
+    vars.map(async (wrapped) => {
+      const unwrapped = wrapped.slice(1, -1);
+      const parts = unwrapped.split(':');
+      const variable = parts[0];
+      const defaultValue = parts.length === 2 ? parts[1] : null;
+      let value = await evalExpr(variable, props.item);
+      if (
+        (value == null && defaultValue !== null) ||
+        (value === '' && value != 0) ||
+        value === undefined
+      ) {
+        value = defaultValue;
+      }
+      if (value == null) allVariablesResolved.value = false;
+      url = url.replace(`{${unwrapped}}`, value);
+    }),
+  );
+  return url;
 }
 
 async function getBackgroundColor(header: TableHeader, item: any) {
-  if (header.color) {
-    const mergedModel = {
-      header: header,
-      ...item,
-    };
-    const nata = jsonata(header.color);
-    const result = await nata.evaluate(mergedModel);
-    if (result) {
-      return result;
-    }
-  }
-  return 'transparent';
+  if (!header?.color) return 'transparent';
+  const merged = { header, ...item };
+  const res = await evalExpr(header.color, merged);
+  return res ?? 'transparent';
 }
 
-const shouldRender = ref(true);
-
-onMounted(async () => {
-  backgroundColor.value = await getBackgroundColor(props.header, props.item);
-  switch (props.header.type) {
-    case 'TEXT':
-      if (props.header.valueMapping.match(variableRegexp)) {
-        await simpleResolveVariable();
-      } else if (Object.keys(props.actions).length > 0) {
-        checkConnectionWithActions(props.header.valueMapping);
-      } else {
-        htmlContent.value = get(props.item, props.header.valueMapping, props.header.valueMapping);
-      }
-
-      if (props.header.condition) {
-        const nata = jsonata(props.header.condition);
-        shouldRender.value = await nata.evaluate(props.item);
-      }
-
-      break;
-    case 'IMAGE':
-      urlPath.value = await mapImageParams();
+async function prepareTextCell() {
+  allVariablesResolved.value = true;
+  if (props.header.valueMapping.match(variableRegexp)) {
+    await simpleResolveVariable();
+  } else if (Object.keys(props.actions || {}).length > 0) {
+    checkConnectionWithActions(props.header.valueMapping);
+  } else {
+    htmlContent.value = get(props.item, props.header.valueMapping, props.header.valueMapping);
   }
-});
 
-// TODO - czy nie ma lepszego sposobu na zachowanie reaktywności??
-watchEffect(async () => {
-  switch (props.header.type) {
-    case 'TEXT':
-      if (props.header.valueMapping.match(variableRegexp)) {
-        await simpleResolveVariable();
-      } else if (Object.keys(props.actions).length > 0) {
-        checkConnectionWithActions(props.header.valueMapping);
-      } else {
-        htmlContent.value = get(props.item, props.header.valueMapping, props.header.valueMapping);
-      }
-
-      if (props.header.condition) {
-        const nata = jsonata(props.header.condition);
-        shouldRender.value = await nata.evaluate(props.item);
-      }
-
-      break;
+  if (props.header.condition) {
+    const cond = compileExpr(props.header.condition);
+    shouldRender.value = !!(cond ? await cond.evaluate(props.item) : true);
+  } else {
+    shouldRender.value = true;
   }
-});
+}
+
+watch(
+  [
+    () => props.header.type,
+    () => props.header.valueMapping,
+    () => props.header.condition,
+    () => props.header.color,
+    () => props.actions,
+    () => props.item,
+  ],
+  async () => {
+    backgroundColor.value = await getBackgroundColor(props.header, props.item);
+
+    switch (props.header.type) {
+      case 'TEXT':
+        await prepareTextCell();
+        break;
+      case 'IMAGE':
+        urlPath.value = await mapImageParams();
+        break;
+      default:
+        break;
+    }
+  },
+  { immediate: true, deep: true },
+);
 </script>
 
 <style lang="scss">
@@ -310,7 +299,6 @@ watchEffect(async () => {
   text-decoration-thickness: from-font;
   text-decoration-style: dotted;
 }
-
 .link:hover {
   text-decoration-style: solid;
 }

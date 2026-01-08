@@ -454,12 +454,30 @@ const tableBase = (bookmarkValue: number) => ({
             type: 'NUMBER',
           },
         ],
+        properties: {
+          sortable: false,
+          minWidth: '100px',
+          width: '100px',
+          maxWidth: '100px',
+          cellProps: {
+            style: 'padding-top: 8px; padding-bottom: 8px',
+          },
+        },
       },
       {
         title: 'Jsonata expression',
         key: 'nameAndLocation',
-        valueMapping: '<b>Height + 4 = </b>{(height+4)}',
+        valueMapping: '<b>Height</b>{height?height:0+4}',
         type: 'TEXT',
+        properties: {
+          sortable: false,
+          minWidth: '200px',
+          width: '200px',
+          maxWidth: '200px',
+          cellProps: {
+            style: 'padding-top: 8px; padding-bottom: 8px',
+          },
+        },
       },
       {
         title: 'Actions',
