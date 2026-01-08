@@ -189,7 +189,7 @@ async function simpleResolveVariable() {
       const variable = parts[0];
       const defaultValue = parts.length >= 2 ? parts[1] : null;
       const typeOfValue = parts.length >= 3 ? parts[2] : null;
-      const formatterProps = parts.length === 4 ? parts[3] : null;
+      const formatterProps = (parts.length === 4 ? parts[3] : null) as any;
 
       let value = await evalExpr(variable, props.item);
       if (typeOfValue === 'NUMBER') {

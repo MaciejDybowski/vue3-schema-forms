@@ -36,11 +36,19 @@ const computedOptions = computed(() => {
     return props.schema.options;
   }
 
-  const newOptions: any = { ...props.schema.options };
+  const originalOptions:any = props.schema.options || {};
+  const newOptions: any = {};
 
-  Object.keys(layoutProps).forEach((key) => {
+  // Skopiuj każdy zagnieżdżony obiekt, aby nie mutować oryginalnych (mogą być non-extensible)
+  Object.keys(originalOptions).forEach((key) => {
+    const opt = originalOptions[key] || {};
+    newOptions[key] = { ...opt };
+  });
+
+  // Teraz bezpiecznie ustawiaj layoutProps na skopiowanych obiektach
+  Object.keys(layoutProps).forEach((lpKey) => {
     Object.keys(newOptions).forEach((newOptionsKey) => {
-      newOptions[newOptionsKey][key] = layoutProps[key];
+      newOptions[newOptionsKey][lpKey] = layoutProps[lpKey];
     });
   });
 
