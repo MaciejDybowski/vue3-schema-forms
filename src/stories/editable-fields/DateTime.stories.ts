@@ -109,7 +109,7 @@ export const PickFromMenu: Story = {
     await userEvent.click(minutesButton[2], { delay: 150 });
     await expect(dayjs(context.args.formModel.simpleDateTimeFromPicker).isValid()).toBe(true);
     await expect(context.args.formModel.simpleDateTimeFromPicker).toEqual(
-      '2025-12-02T00:00:00.000+01:00',
+      '2025-12-31T11:56:00.000+01:00',
     );
     await userEvent.click(icon[0]);
   }),
