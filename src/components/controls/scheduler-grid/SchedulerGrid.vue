@@ -4,7 +4,10 @@
     class="scheduler-card"
     elevation="2"
   >
-    <v-card-item class="bg-surface py-3 border-b">
+    <v-card-item
+      v-if="schema.showLabel != undefined ? schema.showLabel : true"
+      class="bg-surface py-3 border-b"
+    >
       <v-card-title class="text-h6 font-weight-bold text-uppercase text-center">
         {{ label }}
       </v-card-title>
@@ -17,7 +20,10 @@
       <table class="roster-grid">
         <thead>
           <tr>
-            <th class="sticky-col name-header-cell bg-surface text-high-emphasis">
+            <th
+              v-if="schema.showUserColumn != undefined ? schema.showUserColumn : true"
+              class="sticky-col name-header-cell bg-surface text-high-emphasis"
+            >
               <span class="text-subtitle-2 font-weight-bold">{{ t('schedulerGrid.person') }}</span>
             </th>
             <th
@@ -31,11 +37,14 @@
         </thead>
         <tbody>
           <tr
-            v-for="employeeSchedule in localModel"
+            v-for="employeeSchedule in localModelWrapper"
             :key="employeeSchedule.user.id"
             class="employee-row"
           >
-            <td class="sticky-col bg-surface name-cell">
+            <td
+              v-if="schema.showUserColumn != undefined ? schema.showUserColumn : true"
+              class="sticky-col bg-surface name-cell"
+            >
               <div class="text-body-2 font-weight-medium text-high-emphasis text-no-wrap px-3">
                 {{ employeeSchedule.user.lastName }} {{ employeeSchedule.user.firstName }}
               </div>
@@ -169,6 +178,7 @@
 </template>
 
 <script lang="ts" setup>
+import axios from 'axios';
 import { useTheme } from 'vuetify';
 
 import { computed, onMounted, reactive, ref } from 'vue';
@@ -198,6 +208,24 @@ const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { label, bindLabel } = useLabel(schema);
 const { t } = useLocale();
+const items = ref<EmployeeSchedule[]>([]);
+
+const localModelWrapper = computed({
+  get(): EmployeeSchedule[] | null {
+    if (schema.source && schema.source.url) {
+      return items.value;
+    } else {
+      return getValue(model, schema);
+    }
+  },
+  set(val: EmployeeSchedule[]) {
+    if (schema.source && schema.source.url) {
+      return null;
+    } else {
+      localModel.value = val;
+    }
+  },
+});
 
 const localModel = computed({
   get(): EmployeeSchedule[] | null {
@@ -296,6 +324,16 @@ const getStatusLabel = (statusKey: string): string => {
 onMounted(async () => {
   await bindLabel(schema);
   await bindProps(schema);
+
+  if (schema.source && schema.source.url) {
+    fieldProps.value.readonly = true;
+    try {
+      const response = await axios.get(schema.source.url);
+      items.value = response.data;
+    } catch (error) {
+      console.error('Failed to load scheduler data:', error);
+    }
+  }
 });
 </script>
 
