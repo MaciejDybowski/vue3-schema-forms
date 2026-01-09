@@ -126,20 +126,21 @@ aurea-forms-publish:
     - npm run build
     - echo "Publishing to Nexus..."
     - npm run publish:nexus
+    - export FORM_VERSION=$(node -p "require('./package.json').version")
+    - echo "Published version: $FORM_VERSION"
 
 
 aurea-dashboards:
   stage: triggers
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "master"'
   trigger:
     project: aurea/aurea-dashboard-frontend
     branch: master
     strategy: depend
   variables:
+    UPDATED_AUREA_FORMS_VERSION: "$FORM_VERSION"
     UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
-    UPSTREAM_BRANCH: "$CI_COMMIT_REF_NAME"
     UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
+
 
 
 
