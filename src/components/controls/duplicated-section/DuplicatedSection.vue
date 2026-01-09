@@ -12,7 +12,10 @@
         @start="drag = true"
       >
         <template #item="{ element, index }">
-          <duplicated-section-item :show-divider="isShowDivider && index <= nodes.length - 2">
+          <duplicated-section-item
+            v-if="rowVisibility[index]"
+            :show-divider="isShowDivider && index <= nodes.length - 2"
+          >
             <template #box="{ isHovering }">
               <draggable-icon
                 v-if="isEditable && showSectionElements"
@@ -34,9 +37,8 @@
         </template>
       </draggable>
     </v-col>
-    <v-col>
+    <v-col v-if="isEditable && showSectionElements">
       <v-btn
-        v-if="isEditable && showSectionElements"
         :id="getAddBtnMode === 'feature' ? 'addBtnRef' : 'addBtn'"
         color="primary"
         prepend-icon="mdi-plus"
@@ -80,12 +82,13 @@
 
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
+import jsonata from 'jsonata';
 import { cloneDeep, isArray, isEqual } from 'lodash';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import draggable from 'vuedraggable';
 
-import { Ref, computed, onMounted, ref } from 'vue';
+import { Ref, computed, onMounted, ref, watch } from 'vue';
 
 import { useFormModel, useLocale, useProps } from '@/core/composables';
 import { useGeneratorCache } from '@/core/composables/useGeneratorCache';
@@ -231,6 +234,9 @@ let isEditable: Ref<boolean> = ref(
   'editable' in props.schema ? (props.schema.editable as boolean) : true,
 );
 const showSectionElements = computed(() => {
+  if (duplicatedSectionOptions.value && duplicatedSectionOptions.value.rowVisibilityCondition) {
+    return false;
+  }
   if (isEditable.value) {
     return 'showElements' in props.schema ? (props.schema.showElements as boolean) : true;
   } else {
@@ -608,12 +614,62 @@ function mapPropertiesIfDefault(
   return itemsWithDefault;
 }
 
+const rowVisibility = ref<boolean[]>([]);
+
+function syncRowVisibility() {
+  while (rowVisibility.value.length < localModel.value.length) {
+    rowVisibility.value.push(true); // domyślnie widoczne
+  }
+  while (rowVisibility.value.length > localModel.value.length) {
+    rowVisibility.value.pop();
+  }
+}
+
+async function evaluateRowVisibilityForIndex(index: number, rowModel: any) {
+  try {
+    const condition = duplicatedSectionOptions.value?.['rowVisibilityCondition'];
+    if (!condition) {
+      rowVisibility.value[index] = true;
+      return;
+    }
+
+    const nata = jsonata(condition);
+    const result = nata.evaluate(rowModel);
+
+    if (result && typeof (result as any).then === 'function') {
+      const resolved = await result;
+      rowVisibility.value[index] = Boolean(resolved);
+    } else {
+      rowVisibility.value[index] = Boolean(result);
+    }
+  } catch (e) {
+    console.warn('evaluateRowVisibilityForIndex error', e);
+    rowVisibility.value[index] = true;
+  }
+}
+
+function evaluateAllRows() {
+  syncRowVisibility();
+  for (let i = 0; i < localModel.value.length; i++) {
+    evaluateRowVisibilityForIndex(i, localModel.value[i]);
+  }
+}
+
+watch(
+  [localModel, duplicatedSectionOptions],
+  () => {
+    evaluateAllRows();
+  },
+  { deep: true },
+);
+
 onMounted(async () => {
   init();
   await bindProps(props.schema);
   if (isEditable.value) {
     isEditable.value = !fieldProps.value.readonly;
   }
+  evaluateAllRows();
 });
 </script>
 

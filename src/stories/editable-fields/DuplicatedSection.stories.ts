@@ -1047,3 +1047,63 @@ export const DependenciesBetweenDuplicatedSections = {
     },
   },
 };
+
+
+
+export const defineConditionToDisplayRows: Story = {
+  name: 'Case: define condition to display rows',
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+
+    // upewnij się, że model został zainicjalizowany zgodnie z args
+    await waitFor(() =>
+      expect(context.args.formModel).toEqual({
+        items: [
+          { product: 'Product 1', showRow: true },
+          { product: 'Product 2', showRow: false },
+          { product: 'Product 3', showRow: false },
+        ],
+      })
+    );
+
+    // sprawdź, że w UI jest dokładnie jedno pole "Product" i jego wartość to "Product 1"
+    await waitFor(() => {
+      const inputs = canvas.queryAllByLabelText('Product');
+      expect(inputs.length).toEqual(1);
+      expect((inputs[0] as HTMLInputElement).value).toEqual('Product 1');
+    });
+  },
+  args: {
+    formModel: {
+      items: [
+        { product: 'Product 1', showRow: true },
+        { product: 'Product 2', showRow: false },
+        { product: 'Product 3', showRow: false },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        items: {
+
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                product: {
+                  label: 'Product',
+                  layout: { component: 'text-field', cols: 12 },
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add',
+              rowVisibilityCondition: '$boolean(showRow=true)',
+            },
+            cols: 6,
+          },
+        },
+      },
+    },
+  },
+};

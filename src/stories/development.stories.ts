@@ -45,6 +45,42 @@ export default {
 
 type Story = StoryObj<typeof FormStoryWrapper>;
 
+export const variableToDisplayRowInDuplicatedSection: Story = {
+  args: {
+    formModel: {
+      items: [
+        { product: 'Product 1', showRow: true },
+        { product: 'Product 2', showRow: false },
+        { product: 'Product 3', showRow: false },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        items: {
+
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                product: {
+                  label: 'Product',
+                  layout: { component: 'text-field', cols: 12 },
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add',
+              rowVisibilityCondition: '$boolean(showRow=true)',
+            },
+            cols: 6,
+          },
+        },
+      },
+    },
+  },
+};
+
 export const GroupReadonly: Story = {
   args: {
     formModel: {},
