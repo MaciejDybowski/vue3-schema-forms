@@ -135,10 +135,10 @@ aurea-dashboards:
     project: aurea/aurea-dashboard-frontend
     branch: master
     strategy: depend
-    variables:
-      UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
-      UPSTREAM_BRANCH: "$CI_COMMIT_REF_NAME"
-      UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
+  variables:
+    UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
+    UPSTREAM_BRANCH: "$CI_COMMIT_REF_NAME"
+    UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
 
 
 
