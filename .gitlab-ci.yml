@@ -126,7 +126,7 @@ aurea-forms-publish:
     - npm run build
     - echo "Publishing to Nexus..."
     - npm run publish:nexus
-    - FORM_VERSION=$(node -p 'require("./package.json").version')
+    - FORM_VERSION=$(node -p "require('./package.json').version")
     - echo "Published version: $FORM_VERSION"
     - echo "FORM_VERSION=$FORM_VERSION" > version.env
   artifacts:
