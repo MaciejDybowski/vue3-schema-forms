@@ -34,7 +34,7 @@ storybook-npm-install:
       - node_modules/
     expire_in: 1 week
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "master"'
+    - if: '$CI_COMMIT_REF_NAME == "stable"'
 
 # Build Storybook
 build-storybook:
@@ -48,7 +48,7 @@ build-storybook:
     paths:
       - storybook-static
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "master"'
+    - if: '$CI_COMMIT_REF_NAME == "stable"'
 
 storybook-test:
   stage: storybook-tests
@@ -61,23 +61,15 @@ storybook-test:
   script:
     - npm ci
     - npm run vitest-storybook
-#  rules:
-#    - if: '$CI_COMMIT_REF_NAME == "stable"'
-#      when: always
-#    - if: '$CI_COMMIT_REF_NAME == "master"'
-#      when: manual
-#      allow_failure: true
-  only:
-    - master
-    - stable
-    - lab
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable"'
 
 
 docker-push-storybook:
   stage: containerize
   image:
     name: gcr.io/kaniko-project/executor:v1.9.1-debug
-    entrypoint: [""]
+    entrypoint: [ "" ]
   dependencies:
     - build-storybook
   before_script:
@@ -94,7 +86,6 @@ docker-push-storybook:
       --destination ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
   only:
     - stable
-    - master
 
 
 docker-deploy-dev-storybook:
@@ -112,7 +103,6 @@ docker-deploy-dev-storybook:
       - $REGISTRY_URL == "registry.tecna.pl"
     refs:
       - stable
-      - master
   before_script:
     - apk update && apk add openssh-client bash rsync
     - eval $(ssh-agent -s)
@@ -125,44 +115,30 @@ docker-deploy-dev-storybook:
   script:
     - ssh ${USER}@${ENVIRONMENT} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${DOWNSTREAM_REPO}; cd ${ENV_REPO_PATH}; docker compose pull ${APP_NAME}; docker compose up -d ${APP_NAME}"
 
-aurea-forms-publish-stable:
-  image: docker.tecna.pl/node:lts
-  stage: publish
-  script:
-    - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
-    - npm install
-    - npm run build
-    - npm run publish:nexus --tag stable
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "stable"'
-      when: always
 
-aurea-forms-publish-master:
+aurea-forms-publish:
   image: docker.tecna.pl/node:lts
   stage: publish
   script:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - npm install
     - npm run build
-    - echo "Publishing without tag (master branch)"
+    - echo "Publishing to Nexus..."
     - npm run publish:nexus
+
+
+aurea-dashboards:
+  stage: publish
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
-      when: always
-
-
-#aurea-dashboards:
-#  stage: trigger_dependencies
-#  trigger:
-#    project: aurea/aurea-dashboard-frontend
-#    branch: master
-#    strategy: depend
-#  variables:
-#    SOURCE_PROJECT: $CI_PROJECT_NAME
-#  rules:
-#    - if: '$CI_COMMIT_REF_NAME == "master" || $CI_COMMIT_REF_NAME == "stable"'
-#      when: always
-
+  trigger:
+    project: aurea/aurea-dashboard-frontend
+    branch: master
+    strategy: depend
+    variables:
+      UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
+      UPSTREAM_BRANCH: "$CI_COMMIT_REF_NAME"
+      UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
 
 
 
