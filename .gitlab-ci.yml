@@ -19,6 +19,7 @@ stages:
   - storybook-tests
   - containerize
   - deploy
+  - triggers
 
 # Install dependencies
 storybook-npm-install:
@@ -128,7 +129,7 @@ aurea-forms-publish:
 
 
 aurea-dashboards:
-  stage: publish
+  stage: triggers
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
   trigger:
