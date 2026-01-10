@@ -57,7 +57,7 @@ storybook-push:
     name: gcr.io/kaniko-project/executor:v1.9.1-debug
     entrypoint: [ "" ]
   dependencies:
-    - build-storybook
+    - storybook-build
   before_script:
     - >
       echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}, 
