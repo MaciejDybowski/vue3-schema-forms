@@ -14,49 +14,34 @@ variables:
 
 stages:
   - publish
-  - storybook-prepare
   - storybook-build
   - storybook-tests
-  - containerize
-  - deploy
-  - triggers
+  - storybook-push
+  - storybook-deploy
+  - update-projects
 
-# Install dependencies
-storybook-npm-install:
-  stage: storybook-prepare
+storybook-build:
+  stage: storybook-build
   image: docker.tecna.pl/node:lts
   script:
     - npm config set registry https://${NPM_PROXY}
     - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
     - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
     - npm ci
-  artifacts:
-    paths:
-      - node_modules/
-    expire_in: 1 week
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "stable"'
-
-# Build Storybook
-build-storybook:
-  stage: storybook-build
-  image: docker.tecna.pl/node:lts
-  dependencies:
-    - storybook-npm-install
-  script:
     - npm run build-storybook
   artifacts:
     paths:
       - storybook-static
+    expire_in: 1 week
   rules:
     - if: '$CI_COMMIT_REF_NAME == "stable"'
 
-storybook-test:
+
+storybook-tests:
   stage: storybook-tests
   image: mcr.microsoft.com/playwright:v1.57.0-noble
   dependencies:
-    - storybook-npm-install
-    - build-storybook
+    - storybook-build
   variables:
     TZ: "Europe/Warsaw"
   script:
@@ -66,15 +51,14 @@ storybook-test:
     - if: '$CI_COMMIT_REF_NAME == "stable"'
 
 
-docker-push-storybook:
-  stage: containerize
+storybook-push:
+  stage: storybook-push
   image:
     name: gcr.io/kaniko-project/executor:v1.9.1-debug
     entrypoint: [ "" ]
   dependencies:
     - build-storybook
   before_script:
-    # Konfiguracja autoryzacji do rejestrów
     - >
       echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}, 
       \"$UPSTREAM_REPO\":{\"username\":\"$UPSTREAM_REPO_USER\",\"password\":\"$UPSTREAM_REPO_PASSWORD\"}}}" 
@@ -89,8 +73,8 @@ docker-push-storybook:
     - stable
 
 
-docker-deploy-dev-storybook:
-  stage: deploy
+storybook-deploy:
+  stage: storybook-deploy
   image: ${UPSTREAM_REPO}/alpine:latest
   variables:
     SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY_AUREADEV}
@@ -124,7 +108,6 @@ aurea-forms-publish:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
     - npm install
     - npm run build
-    - echo "Publishing to Nexus..."
     - npm run publish:nexus
     - ./get-version.sh
   artifacts:
@@ -135,7 +118,7 @@ aurea-forms-publish:
 
 
 aurea-dashboards:
-  stage: triggers
+  stage: update-projects
   trigger:
     project: aurea/aurea-dashboard-frontend
     branch: master
@@ -146,9 +129,8 @@ aurea-dashboards:
     UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
     RUN_UPDATE_FORMS: "true"
 
-
 aurea-forms-builder:
-  stage: triggers
+  stage: update-projects
   trigger:
     project: aurea/aurea-runtime/aurea-forms-builder
     branch: master
