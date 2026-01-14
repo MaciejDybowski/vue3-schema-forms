@@ -296,7 +296,12 @@ async function computeShouldReadonly(items: HeaderEditableObject[]) {
     } else {
       newMap[item.valueMapping] = false;
     }
+    const rootReadonly = props.schema.options.fieldProps.readonly;
+    if (rootReadonly !== undefined) {
+      newMap[item.valueMapping] = rootReadonly;
+    }
   }
+
   shouldReadonlyMap.value = newMap;
 }
 
