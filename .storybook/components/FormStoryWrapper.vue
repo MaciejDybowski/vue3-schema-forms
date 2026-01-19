@@ -21,7 +21,7 @@
             :default-form-actions="true"
             :options="options"
             :schema="schema"
-            :validation-behaviour="validationBehaviour != null ? validationBehaviour : 'combined'"
+            :validation-behaviour="validationBehaviour != null ? validationBehaviour : 'messages'"
             @is-form-ready="catchSignalFormIsReady"
             @call-action="handleAction"
           />

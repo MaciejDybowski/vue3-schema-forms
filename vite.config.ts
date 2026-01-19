@@ -56,6 +56,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      // Włącz runtime compiler Vue, potrzebny do dynamicznej kompilacji szablonów
+      vue: 'vue/dist/vue.esm-bundler.js',
       '@': path.resolve(__dirname, 'src'),
       immer: path.resolve(__dirname, 'node_modules/immer/dist/immer.cjs.production.min.js'),
     },

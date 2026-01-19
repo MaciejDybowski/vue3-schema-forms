@@ -1,14 +1,48 @@
 // @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
+
+
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 import { Schema } from '../types/schema/Schema';
-import {
-  MOCK_CALENDARS,
-  TABLE_PAGE_WITHOUT_AGGREGATES,
-  UPDATE_TABLE_ROW,
-  WOJEWODZTWA,
-} from './mock-responses';
+import { MOCK_CALENDARS, TABLE_PAGE_WITHOUT_AGGREGATES, UPDATE_TABLE_ROW, WOJEWODZTWA } from './mock-responses';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -45,6 +79,73 @@ export default {
 
 type Story = StoryObj<typeof FormStoryWrapper>;
 
+export const validatorExample: Story = {
+  args: {
+    formModel: {
+      pesel: '7006279334',
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        pesel: {
+          label: 'PESEL',
+          layout: {
+            component: 'text-field',
+            cols: 6,
+          },
+        },
+        validator: {
+          layout: {
+            component: 'validator',
+            cols: 12,
+          },
+          rulesForAll: [
+            {
+              name: 'pesel-validation',
+              type: 'internal', // external | internal
+              rule: `pesel="test"`,
+              blocker: true, // true | false
+              visualization: 'PESEL jest nieprawidłowy', // message to display
+            },
+            {
+              name: 'test-validation',
+              type: 'internal',
+              rule: `pesel="70062793341"`,
+              blocker: false,
+              visualization: `
+                  <v-card class="my-4" outlined>
+                    <v-card-title>
+                      <v-icon left>mdi-eye-check</v-icon>
+                      Walidator PESEL
+                      <v-spacer />
+                      <v-chip v-if="ruleResults['test-validation']" color="success" small>Spełnione</v-chip>
+                      <v-chip v-else color="error" small>Nie spełnione</v-chip>
+                    </v-card-title>
+                  
+                    <v-card-text>
+                      <div v-if="ruleResults['test-validation']">
+                        <v-alert type="success" dense class="mb-2">
+                          Walidacja przeszła pomyślnie: <strong>{{ ruleResults['test-validation'] }}</strong>
+                        </v-alert>
+                        <v-progress-linear color="success" height="6" indeterminate></v-progress-linear>
+                      </div>
+                  
+                      <div v-else>
+                        <v-alert type="warning" dense class="mb-2">
+                          PESEL nieprawidłowy. Sprawdź format i cyfry kontrolne.
+                        </v-alert>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+               `,
+            },
+          ],
+        },
+      },
+    },
+  },
+};
+
 export const variableToDisplayRowInDuplicatedSection: Story = {
   args: {
     formModel: {
@@ -58,7 +159,6 @@ export const variableToDisplayRowInDuplicatedSection: Story = {
       type: 'object',
       properties: {
         items: {
-
           layout: {
             component: 'duplicated-section',
             schema: {
