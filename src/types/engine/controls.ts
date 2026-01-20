@@ -11,6 +11,11 @@ export interface EngineExpansionPanel {
   schema: Schema;
 }
 
+export interface EnginePESELField extends EngineField {
+  checkSumValidation?: 'warning' | 'error';
+  adultsValidation?: 'warning' | 'error';
+}
+
 export interface EngineTextField extends EngineField {
   calculation?: string;
   expression?: string;

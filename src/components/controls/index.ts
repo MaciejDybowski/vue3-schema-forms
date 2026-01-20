@@ -23,6 +23,7 @@ import Divider from './Divider.vue';
 import ExpansionPanels from './ExpansionPanels.vue';
 import Location from './Location.vue';
 import NumberField from './NumberField.vue';
+import PESELField from './PESELField.vue';
 import PhoneInput from './PhoneInput.vue';
 import RadioButton from './RadioButton.vue';
 import Select from './Select.vue';
@@ -66,6 +67,7 @@ export const vueSchemaFromControls: Components = {
   button: ButtonField,
   switch: Switch,
   'number-field': NumberField,
+  'pesel-field': PESELField,
   divider: Divider,
   /*  "image-preview": ImagePreview,*/
   image: Image,
