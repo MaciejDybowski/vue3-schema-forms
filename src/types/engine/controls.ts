@@ -16,6 +16,10 @@ export interface EnginePESELField extends EngineField {
   adultsValidation?: 'warning' | 'error';
 }
 
+export interface EngineNIPField extends EngineField {
+  checkSumValidation?: 'warning' | 'error';
+}
+
 export interface EngineTextField extends EngineField {
   calculation?: string;
   expression?: string;

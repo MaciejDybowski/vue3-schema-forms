@@ -58,7 +58,7 @@ import { waitForMountedAsync } from './utils';
 
 
 export default {
-  title: 'Elements/Editable/PESELField',
+  title: 'Elements/Editable/PESEL Field',
   ...formStoryWrapperTemplate,
 };
 

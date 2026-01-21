@@ -60,6 +60,10 @@ export function useLocale() {
           invalidDate: 'PESEL contains an invalid birth date.',
           notAdult: 'Person must be at least 18 years old.',
         },
+        nip: {
+          invalidFormat: 'Invalid NIP/VAT ID format.',
+          invalidChecksum: 'Invalid NIP/VAT ID checksum.',
+        },
         schedulerGrid: {
           person: 'Person',
           clickToEdit: 'Click to edit',
@@ -127,6 +131,10 @@ export function useLocale() {
           invalidDate: 'Numer PESEL zawiera nieprawidłową datę urodzenia.',
           notAdult: 'Osoba musi być pełnoletnia (minimum 18 lat).',
         },
+        nip: {
+          invalidFormat: 'Nieprawidłowy format numeru NIP/VAT ID.',
+          invalidChecksum: 'Nieprawidłowa suma kontrolna numeru NIP/VAT ID.',
+        },
         schedulerGrid: {
           person: 'Osoba',
           clickToEdit: 'Naciśnij aby edytować.',
@@ -193,6 +201,10 @@ export function useLocale() {
           invalidDate: 'PESEL enthält ein ungültiges Geburtsdatum.',
           notAdult: 'Person muss mindestens 18 Jahre alt sein.',
         },
+        nip: {
+          invalidFormat: 'Ungültiges NIP/USt-IdNr. Format.',
+          invalidChecksum: 'Ungültige NIP/USt-IdNr. Prüfsumme.',
+        },
       },
       ru: {
         noActions: 'Нет доступных действий.',
@@ -250,6 +262,10 @@ export function useLocale() {
           invalidChecksum: 'Неверная контрольная сумма PESEL.',
           invalidDate: 'PESEL содержит неверную дату рождения.',
           notAdult: 'Человеку должно быть не менее 18 лет.',
+        },
+        nip: {
+          invalidFormat: 'Неверный формат NIP/VAT ID.',
+          invalidChecksum: 'Неверная контрольная сумма NIP/VAT ID.',
         },
       },
       es: {
@@ -309,6 +325,10 @@ export function useLocale() {
           invalidDate: 'PESEL contiene una fecha de nacimiento inválida.',
           notAdult: 'La persona debe tener al menos 18 años.',
         },
+        nip: {
+          invalidFormat: 'Formato de NIP/NIF-IVA inválido.',
+          invalidChecksum: 'Suma de control NIP/NIF-IVA inválida.',
+        },
       },
       fr: {
         noActions: 'Aucune action disponible.',
@@ -366,6 +386,10 @@ export function useLocale() {
           invalidChecksum: 'Somme de contrôle PESEL invalide.',
           invalidDate: 'Le PESEL contient une date de naissance invalide.',
           notAdult: 'La personne doit avoir au moins 18 ans.',
+        },
+        nip: {
+          invalidFormat: 'Format NIP/TVA invalide.',
+          invalidChecksum: 'Somme de contrôle NIP/TVA invalide.',
         },
       },
     },

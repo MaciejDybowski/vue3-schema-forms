@@ -260,7 +260,7 @@ onMounted(async () => {
 });
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .text-warning {
   color: rgb(var(--v-theme-warning));
 }

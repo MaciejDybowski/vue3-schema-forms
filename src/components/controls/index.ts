@@ -11,7 +11,6 @@ import YearMonth from '@/components/controls/YearMonth.vue';
 import YearPicker from '@/components/controls/YearPicker.vue';
 import GroupOfFields from '@/components/controls/fields-group/FieldsGroup.vue';
 import GroupInput from '@/components/controls/group-input/GroupInput.vue';
-import TableViewField from '@/components/controls/table/TableViewField.vue';
 import TextEditor from '@/components/controls/text-editor/TextEditor.vue';
 import UserInput from '@/components/controls/user-input/UserInput.vue';
 
@@ -22,6 +21,7 @@ import CheckboxButton from './CheckboxButton.vue';
 import Divider from './Divider.vue';
 import ExpansionPanels from './ExpansionPanels.vue';
 import Location from './Location.vue';
+import NIPField from './NIPField.vue';
 import NumberField from './NumberField.vue';
 import PESELField from './PESELField.vue';
 import PhoneInput from './PhoneInput.vue';
@@ -41,10 +41,8 @@ import DuplicatedSection from './duplicated-section/DuplicatedSection.vue';
 import Markdown from './markdown/Markdown.vue';
 import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
 import SchedulerGrid from './scheduler-grid/SchedulerGrid.vue';
-import TableView from './table/table-view/TableView.vue'
 import TableInternal from './table/table-internal/TableInternal.vue';
-
-
+import TableView from './table/table-view/TableView.vue';
 
 
 export const vueSchemaFromControls: Components = {
@@ -68,6 +66,7 @@ export const vueSchemaFromControls: Components = {
   switch: Switch,
   'number-field': NumberField,
   'pesel-field': PESELField,
+  'nip-field': NIPField,
   divider: Divider,
   /*  "image-preview": ImagePreview,*/
   image: Image,
