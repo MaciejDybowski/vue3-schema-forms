@@ -92,6 +92,7 @@ export interface EngineDataViewerField extends EngineField {
   calculation?: string;
   valueMapping?: string;
   source?: SimpleSource | DictionarySource;
+  isCopyEnabled?: boolean;
 }
 
 export interface EngineStaticField extends EngineField {
