@@ -11,7 +11,7 @@
     </div>
     <template v-if="schema.isCopyEnabled">
       <v-icon
-        size="24"
+        opacity="0.6"
         class="mx-2"
         icon="mdi-content-copy"
         @click="contentCopyToClipboard"
