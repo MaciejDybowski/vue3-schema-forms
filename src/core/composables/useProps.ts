@@ -81,6 +81,12 @@ export function useProps() {
         };
         break;
       }
+      case 'validation-messages-viewer': {
+        props.value = {
+          ...schema.layout?.props,
+        };
+        break;
+      }
       case 'avatar': {
         props.value = {
           ...schema.layout?.props,

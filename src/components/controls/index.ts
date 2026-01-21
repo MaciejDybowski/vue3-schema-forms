@@ -7,6 +7,7 @@ import Image from '@/components/controls/Image.vue';
 import KeyValueList from '@/components/controls/KeyValueList.vue';
 import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue';
 import TextSwitchField from '@/components/controls/TextSwitchField.vue';
+import ValidationMessagesViewer from '@/components/controls/ValidationMessagesViewer.vue';
 import YearMonth from '@/components/controls/YearMonth.vue';
 import YearPicker from '@/components/controls/YearPicker.vue';
 import GroupOfFields from '@/components/controls/fields-group/FieldsGroup.vue';
@@ -88,4 +89,5 @@ export const vueSchemaFromControls: Components = {
   'scheduler-grid': SchedulerGrid,
   'calendar-autocomplete': CalendarAutocomplete,
   'year-month': YearMonth,
+  'validation-messages-viewer': ValidationMessagesViewer,
 };

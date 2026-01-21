@@ -45,35 +45,31 @@ export default {
 
 type Story = StoryObj<typeof FormStoryWrapper>;
 
-export const variableToDisplayRowInDuplicatedSection: Story = {
+export const newValidationViewer: Story = {
   args: {
     formModel: {
-      items: [
-        { product: 'Product 1', showRow: true },
-        { product: 'Product 2', showRow: false },
-        { product: 'Product 3', showRow: false },
+      komunikaty: [
+        {
+          code: 'DUPLICATE_NIP',
+          message: 'Znaleziono 2 rekordów z tym samym NIP. Użyto rekordu id_kontrahenta=84.',
+          severity: 'warning',
+        },
+        {
+          code: 'TEST',
+          message: 'Dostawca nie jest płatnikiem VAT.',
+          severity: 'error',
+        },
       ],
     },
     schema: {
       type: 'object',
       properties: {
-        items: {
-
+        komunikaty: {
           layout: {
-            component: 'duplicated-section',
-            schema: {
-              properties: {
-                product: {
-                  label: 'Product',
-                  layout: { component: 'text-field', cols: 12 },
-                },
-              },
+            component: 'validation-messages-viewer',
+            props: {
+              variant: 'outlined',
             },
-            options: {
-              addBtnText: 'Add',
-              rowVisibilityCondition: '$boolean(showRow=true)',
-            },
-            cols: 6,
           },
         },
       },

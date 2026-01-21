@@ -23,4 +23,7 @@ export type SchemaComponent =
   | 'image'
   | 'divider'
   | 'table-view'
-  | 'alert';
+  | 'alert'
+  | 'pesel-field'
+  | 'nip-field'
+  | 'validation-messages-viewer';
