@@ -256,7 +256,7 @@ async function validate(option?: ValidationFromBehaviour) {
       alertElement.classList.contains('v-alert') && alertElement.classList.contains('text-error');
     const alertText = alertElement.textContent;
 
-    if (isError && option == 'messages') {
+    if (isError && (option == 'messages' || option == 'combined')) {
       preValid = false;
       errorMessages.value.push({
         id: Math.random().toString(16).slice(2),
@@ -265,7 +265,7 @@ async function validate(option?: ValidationFromBehaviour) {
       });
     }
 
-    if (isError && option == 'scroll') {
+    if (isError && (option == 'scroll' || option == 'combined')) {
       preValid = false;
       const alert = document.getElementById(alertElement?.id + '');
       if (alert)
