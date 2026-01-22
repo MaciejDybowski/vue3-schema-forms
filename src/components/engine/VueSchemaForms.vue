@@ -281,36 +281,36 @@ async function validate(option?: ValidationFromBehaviour) {
   formValid.value = valid && preValid;
 
   if (!option) {
-    return { valid };
+    return { valid: formValid.value };
   }
   if (formValid.value) {
     errorMessages.value = [];
   }
 
-  if (!valid && option === 'scroll') {
+  if (!formValid.value && option === 'scroll') {
     prepareScrollToFirstInvalidField();
-    return { valid };
+    return { valid: formValid.value };
   }
 
-  if (!valid && option === 'messages') {
+  if (!formValid.value && option === 'messages') {
     prepareArrayOfValidationMessages();
-    return { valid, messages: errorMessages.value };
+    return { valid: formValid.value, messages: errorMessages.value };
   }
 
-  if (!valid && option === 'combined') {
+  if (!formValid.value && option === 'combined') {
     prepareScrollToFirstInvalidField();
     prepareArrayOfValidationMessages();
-    return { valid, messages: errorMessages.value };
+    return { valid: formValid.value, messages: errorMessages.value };
   }
 
-  if (valid && option === 'messages') {
-    return { valid, messages: [] };
+  if (formValid.value && option === 'messages') {
+    return { valid: formValid.value, messages: [] };
   }
-  if (valid && option === 'scroll') {
-    return { valid };
+  if (formValid.value && option === 'scroll') {
+    return { valid: formValid.value };
   }
-  if (valid && option === 'combined') {
-    return { valid, messages: [] };
+  if (formValid.value && option === 'combined') {
+    return { valid: formValid.value, messages: [] };
   }
 }
 
@@ -380,7 +380,7 @@ function findInputLabel(inputEl: HTMLElement): string | null {
 
 function prepareArrayOfValidationMessages() {
   let arr: ValidationFromItem[] = Array.from(formRef.value[formId].items);
-  errorMessages.value = arr
+  const filtered = arr
     .filter((item: ValidationFromItem) => !item.isValid)
     .map((item: ValidationFromItem) => {
       const element: Ref<any> = ref(document.getElementById(item.id as string));
@@ -392,6 +392,8 @@ function prepareArrayOfValidationMessages() {
       } as ValidationFromError;
     })
     .filter((item) => item.messages);
+
+  errorMessages.value.push(...filtered);
 }
 
 function reset() {
