@@ -85,6 +85,7 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
 import { EngineDateField } from '@/types/engine/controls';
 
 import dayjs from './dayjs';
@@ -99,6 +100,7 @@ const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
 const { dateTimeFormat } = useDateFormat();
+const { onChange } = useEventHandler();
 
 const attrs = useAttrs();
 
@@ -120,7 +122,7 @@ onMounted(async () => {
 const currentDate = new Date();
 currentDate.setHours(0, 0, 0, 0);
 
-const activeTabRef = ref<string>("0")
+const activeTabRef = ref<string>('0');
 
 const pickerModel = ref(false);
 const inputValue = ref('');
@@ -167,6 +169,7 @@ function dateTyping(val: string) {
     localModel.value = date.format(modelFormat);
   }
   //}
+  onChange(props.schema, props.model);
 }
 
 function datePick(val: Date) {
@@ -177,7 +180,7 @@ function datePick(val: Date) {
     } else {
       localModel.value = date.format(modelFormat);
     }
-    activeTabRef.value = "1";
+    activeTabRef.value = '1';
   }
 }
 
@@ -308,11 +311,11 @@ function isDateInFuture(val: string) {
   width: 32px;
 }
 
-:deep(.v-time-picker-controls){
-  margin-bottom: 0px!important;
+:deep(.v-time-picker-controls) {
+  margin-bottom: 0px !important;
   margin-top: 4px;
 }
-:deep(.v-time-picker-controls__field-label){
+:deep(.v-time-picker-controls__field-label) {
   display: none;
 }
 </style>
