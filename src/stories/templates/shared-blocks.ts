@@ -6,6 +6,7 @@ export const formStoryWrapperTemplate = {
     signals: {
       formIsReady: false
     },
+    validationBehaviour: "combined",
     formModel: {},
     schema: {},
     options: {
