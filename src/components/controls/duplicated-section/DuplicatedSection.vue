@@ -91,6 +91,7 @@ import draggable from 'vuedraggable';
 import { Ref, computed, onMounted, ref, watch } from 'vue';
 
 import { useFormModel, useLocale, useProps } from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
 import { useGeneratorCache } from '@/core/composables/useGeneratorCache';
 import { duplicatedSectionBatchAddComponent } from '@/main';
 import { VueDragable } from '@/types/VueDragable';
@@ -106,6 +107,7 @@ import DraggableIcon from './DraggableIcon.vue';
 import DuplicatedSectionItem from './DuplicatedSectionItem.vue';
 
 const cache = useGeneratorCache();
+const { onChange } = useEventHandler();
 
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -274,6 +276,8 @@ function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
 
   set(localModel.value[indexOfArray], event.key, event.value);
   setValue(localModel.value, props.schema, indexOfArray);
+
+  onChange(props.schema, props.model);
 }
 
 /*
@@ -298,7 +302,7 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
       nodes.value.splice(index + 1, 0, getClearNode.value);
       localModel.value.splice(index + 1, 0, getClearModel.value);
       setValue(localModel.value, props.schema, index);
-      return;
+      break;
     case 'delete':
       nodes.value = nodes.value
         .filter((item, i) => i !== index)
@@ -316,7 +320,7 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
           return item;
         });
       setValue(localModel.value, props.schema, index);
-      return;
+      break;
     case 'copyBelow':
       nodes.value.splice(index + 1, 0, getClearNode.value);
       let copiedModel = ref(cloneDeep(localModel.value[index]));
@@ -333,10 +337,11 @@ function handleDraggableContextAction(actionId: 'delete' | 'addBelow' | string, 
       }
 
       setValue(localModel.value, props.schema, index);
-      return;
+      break;
     default:
       console.error('Unknown action');
   }
+  onChange(props.schema, props.model);
 }
 
 const getClearNode = computed((): Schema => {
@@ -383,6 +388,8 @@ function runDuplicatedSectionButtonLogic(init = false): void {
   if (ordinalNumberInModel) {
     setValue(localModel.value, props.schema, nodes.value.length - 1);
   }
+
+  onChange(props.schema, props.model);
 }
 
 function addNewModelToDuplicatedSectionWhenCopyBtnMode(init = false) {
