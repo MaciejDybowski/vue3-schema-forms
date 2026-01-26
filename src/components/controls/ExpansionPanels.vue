@@ -41,6 +41,7 @@
 
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
+import { cloneDeep } from 'lodash';
 
 import { computed, onMounted, ref } from 'vue';
 
@@ -49,6 +50,8 @@ import FormRoot from '@/components/engine/FormRoot.vue';
 import { useFormModel, useResolveVariables } from '@/core/composables';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineExpansionPanel, EngineExpansionPanels } from '@/types/engine/controls';
+import { Schema } from '@/types/schema/Schema';
+import { SchemaField } from '@/types/schema/SchemaField';
 
 const { model, schema } = defineProps<{
   schema: EngineExpansionPanels;
@@ -63,7 +66,93 @@ function updateModel(payload: any) {
   setValue(payload.value, { key: payload.key, on: schema.on } as any);
 }
 
-const panelSchemas = computed(() => schema.panels.map((p) => p.schema));
+/**
+ * Funkcja przekazująca path i index do p.schema.properties z uwzględnieniem zagnieżdżeń.
+ * Obsługuje zagnieżdżone struktury:
+ * - properties (obiekty zagnieżdżone)
+ * - layout.schema (fields-group, duplicated-section, section, address)
+ * - layout.component === 'duplicated-section' (wymaga specjalnego traktowania path)
+ */
+function wrapPropertiesWithPathAndIndex(
+  properties: Record<string, SchemaField>,
+  path: string,
+  index: number,
+): Record<string, SchemaField> {
+  for (const [key, value] of Object.entries(properties)) {
+    const hasNestedProperties = value.properties !== undefined;
+    const hasLayoutSchema = value.layout?.schema?.properties !== undefined;
+    const isDuplicatedSection = value.layout?.component === 'duplicated-section';
+    const isFieldsGroup = value.layout?.component === 'fields-group';
+
+    // Przypisz path i index do bieżącego pola
+    value.path = path;
+    value.index = index;
+
+    // Jeśli pole ma zagnieżdżone properties (obiekt)
+    if (hasNestedProperties) {
+      wrapPropertiesWithPathAndIndex(
+        value.properties as Record<string, SchemaField>,
+        path,
+        index,
+      );
+    }
+
+    // Jeśli pole ma layout.schema (fields-group, duplicated-section, section, address)
+    if (hasLayoutSchema) {
+      if (isDuplicatedSection) {
+        // Dla duplicated-section budujemy nową ścieżkę z kluczem i []
+        const newPath = path ? `${path}[${index}].${key}[]` : `${key}[]`;
+        value.path = newPath;
+        value.index = index;
+        wrapPropertiesWithPathAndIndex(
+          value.layout!.schema!.properties as Record<string, SchemaField>,
+          newPath,
+          index,
+        );
+      } else if (isFieldsGroup) {
+        // Dla fields-group jest przeźroczysty - przekazujemy ten sam path i index
+        wrapPropertiesWithPathAndIndex(
+          value.layout!.schema!.properties as Record<string, SchemaField>,
+          path,
+          index,
+        );
+      } else {
+        // Dla innych komponentów z layout.schema (section, address, expansion-panels)
+        wrapPropertiesWithPathAndIndex(
+          value.layout!.schema!.properties as Record<string, SchemaField>,
+          path,
+          index,
+        );
+      }
+    }
+  }
+
+  return properties;
+}
+
+/**
+ * Tworzy kopię schematu panelu z przekazanym path i index do wszystkich pól
+ */
+function createPanelSchemaWithContext(panelSchema: Schema, path: string, index: number): Schema {
+  const clonedSchema = cloneDeep(panelSchema);
+
+  if (clonedSchema.properties) {
+    wrapPropertiesWithPathAndIndex(clonedSchema.properties, path, index);
+  }
+  return clonedSchema;
+}
+
+const panelSchemas = computed(() =>
+  schema.panels.map((p) => {
+    if ('path' in schema && 'index' in schema && schema.path !== undefined && schema.index !== undefined) {
+      console.debug("HERE")
+      return createPanelSchemaWithContext(p.schema, schema.path, schema.index);
+    }
+    console.debug(p.schema)
+    return p.schema;
+  }),
+);
+
 const panelTitles = ref<any[]>([]);
 
 onMounted(() => {
