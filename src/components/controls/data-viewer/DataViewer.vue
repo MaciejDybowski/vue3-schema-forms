@@ -1,12 +1,30 @@
 <template>
-  <div :class="bindClass(schema) + 'data-viewer-text d-flex flex-column'">
-    <label class="v-label v-field-label--floating">
-      {{ label }}
-    </label>
-    <div
-      class="v-field__input"
-      v-html="localModelForValueMapping ? localModelForValueMapping : localModel"
-    />
+  <div class="d-flex align-center">
+    <div :class="bindClass(schema) + 'data-viewer-text d-flex flex-column'">
+      <label class="v-label v-field-label--floating">
+        {{ label }}
+      </label>
+      <div
+        class="v-field__input"
+        v-html="localModelForValueMapping ? localModelForValueMapping : localModel"
+      />
+    </div>
+    <template v-if="schema.isCopyEnabled">
+      <v-icon
+        opacity="0.6"
+        class="mx-2"
+        icon="mdi-content-copy"
+        @click="contentCopyToClipboard"
+      />
+
+      <v-snackbar
+        v-model="snackbar"
+        :timeout="1000"
+        color="success"
+        variant="tonal"
+        >{{ t('valueCopied') }}
+      </v-snackbar>
+    </template>
   </div>
 </template>
 
@@ -143,6 +161,23 @@ if (isValueMapping) {
       localModelForValueMapping.value = result != 'null' ? result : t('emptyValue');
     }
   });
+}
+
+const snackbar = ref(false);
+function contentCopyToClipboard() {
+  if (!navigator.clipboard) {
+    console.error('Clipboard API not available');
+    return;
+  }
+  const textToCopy = localModel.value;
+  navigator.clipboard
+    .writeText(textToCopy as string)
+    .then(() => {
+      snackbar.value = true;
+    })
+    .catch((err) => {
+      console.error('Failed to copy to clipboard:', err);
+    });
 }
 
 onMounted(async () => {

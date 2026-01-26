@@ -11,6 +11,19 @@ export interface EngineExpansionPanel {
   schema: Schema;
 }
 
+export interface EnginePESELField extends EngineField {
+  checkSumValidation?: 'warning' | 'error';
+  adultsValidation?: 'warning' | 'error';
+}
+
+export interface EngineNIPField extends EngineField {
+  checkSumValidation?: 'warning' | 'error';
+}
+
+export interface ValidationMessageViewer extends EngineField{
+
+}
+
 export interface EngineTextField extends EngineField {
   calculation?: string;
   expression?: string;
@@ -79,6 +92,7 @@ export interface EngineDataViewerField extends EngineField {
   calculation?: string;
   valueMapping?: string;
   source?: SimpleSource | DictionarySource;
+  isCopyEnabled?: boolean;
 }
 
 export interface EngineStaticField extends EngineField {

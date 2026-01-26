@@ -62,6 +62,7 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
 import { EngineDateField } from '@/types/engine/controls';
 
 import dayjs from './dayjs';
@@ -75,6 +76,7 @@ const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
 const { dateFormat } = useDateFormat();
 const attrs = useAttrs();
+const { onChange } = useEventHandler();
 
 const localModel = computed({
   get(): string | null {
@@ -136,6 +138,7 @@ function dateTyping(val: string) {
       localModel.value = date.format(modelFormat);
     }
   }
+  onChange(props.schema, props.model);
 }
 
 function datePick(val: Date) {

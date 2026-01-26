@@ -7,11 +7,11 @@ import Image from '@/components/controls/Image.vue';
 import KeyValueList from '@/components/controls/KeyValueList.vue';
 import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue';
 import TextSwitchField from '@/components/controls/TextSwitchField.vue';
+import ValidationMessagesViewer from '@/components/controls/ValidationMessagesViewer.vue';
 import YearMonth from '@/components/controls/YearMonth.vue';
 import YearPicker from '@/components/controls/YearPicker.vue';
 import GroupOfFields from '@/components/controls/fields-group/FieldsGroup.vue';
 import GroupInput from '@/components/controls/group-input/GroupInput.vue';
-import TableViewField from '@/components/controls/table/TableViewField.vue';
 import TextEditor from '@/components/controls/text-editor/TextEditor.vue';
 import UserInput from '@/components/controls/user-input/UserInput.vue';
 
@@ -22,7 +22,9 @@ import CheckboxButton from './CheckboxButton.vue';
 import Divider from './Divider.vue';
 import ExpansionPanels from './ExpansionPanels.vue';
 import Location from './Location.vue';
+import NIPField from './NIPField.vue';
 import NumberField from './NumberField.vue';
+import PESELField from './PESELField.vue';
 import PhoneInput from './PhoneInput.vue';
 import RadioButton from './RadioButton.vue';
 import Select from './Select.vue';
@@ -40,11 +42,8 @@ import DuplicatedSection from './duplicated-section/DuplicatedSection.vue';
 import Markdown from './markdown/Markdown.vue';
 import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
 import SchedulerGrid from './scheduler-grid/SchedulerGrid.vue';
-import TableView from './table/table-view/TableView.vue'
 import TableInternal from './table/table-internal/TableInternal.vue';
-import Validator from '@/components/controls/Validator.vue';
-
-
+import TableView from './table/table-view/TableView.vue';
 
 
 export const vueSchemaFromControls: Components = {
@@ -67,6 +66,8 @@ export const vueSchemaFromControls: Components = {
   button: ButtonField,
   switch: Switch,
   'number-field': NumberField,
+  'pesel-field': PESELField,
+  'nip-field': NIPField,
   divider: Divider,
   /*  "image-preview": ImagePreview,*/
   image: Image,
@@ -88,5 +89,5 @@ export const vueSchemaFromControls: Components = {
   'scheduler-grid': SchedulerGrid,
   'calendar-autocomplete': CalendarAutocomplete,
   'year-month': YearMonth,
-  "validator": Validator
+  'validation-messages-viewer': ValidationMessagesViewer,
 };

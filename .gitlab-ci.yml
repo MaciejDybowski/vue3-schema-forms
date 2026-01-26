@@ -117,29 +117,29 @@ aurea-forms-publish:
 
 
 
-aurea-dashboards:
-  stage: update-projects
-  trigger:
-    project: aurea/aurea-dashboard-frontend
-    branch: master
-    strategy: depend
-  variables:
-    UPDATED_AUREA_FORMS_VERSION: "$FORM_VERSION"
-    UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
-    UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
-    RUN_UPDATE_FORMS: "true"
+#aurea-dashboards:
+#  stage: update-projects
+#  trigger:
+#    project: aurea/aurea-dashboard-frontend
+#    branch: master
+#    strategy: depend
+#  variables:
+#    UPDATED_AUREA_FORMS_VERSION: "$FORM_VERSION"
+#    UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
+#    UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
+#    RUN_UPDATE_FORMS: "true"
 
-aurea-forms-builder:
-  stage: update-projects
-  trigger:
-    project: aurea/aurea-runtime/aurea-forms-builder
-    branch: master
-    strategy: depend
-  variables:
-    UPDATED_AUREA_FORMS_VERSION: "$FORM_VERSION"
-    UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
-    UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
-    RUN_UPDATE_FORMS: "true"
+#aurea-forms-builder:
+#  stage: update-projects
+#  trigger:
+#    project: aurea/aurea-runtime/aurea-forms-builder
+#    branch: master
+#    strategy: depend
+#  variables:
+#    UPDATED_AUREA_FORMS_VERSION: "$FORM_VERSION"
+#    UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
+#    UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
+#    RUN_UPDATE_FORMS: "true"
 
 
 

@@ -1,11 +1,41 @@
 // @ts-nocheck
 import { expect, within } from 'storybook/test';
 
+
+
 import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default {
   title: 'Elements/Editable/Data viewer',
@@ -39,6 +69,35 @@ export const Standard: Story = {
           },
         },
         plainText: {
+          label: 'Read value from model [text]',
+          layout: {
+            component: 'data-viewer',
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const ContentCopy: Story = {
+  name: 'Case: enable copy value to clipboard',
+  args: {
+    formModel: {
+      plainText: 'This is plain text',
+    },
+    schema: {
+      properties: {
+        description: {
+          content:
+            'Reading the value of a field where we have a key match in the model and the value is plain text',
+          type: 'text',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        plainText: {
+          isCopyEnabled: true,
           label: 'Read value from model [text]',
           layout: {
             component: 'data-viewer',

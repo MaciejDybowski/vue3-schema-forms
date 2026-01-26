@@ -169,7 +169,6 @@ function mapSubtitle(item: any) {
 function singleOptionAutoSelectFunction() {
   const selectSingleOptionLogic = () => {
     if (data.value.length !== 1 || !singleOptionAutoSelect.value || loadCounter.value > 1) return;
-    console.debug('data', data.value);
     const selectedValue = returnObject.value ? data.value[0] : data.value[0][title.value];
 
     if (JSON.stringify(localModel.value) !== JSON.stringify(selectedValue)) {

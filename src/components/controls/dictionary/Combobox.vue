@@ -62,8 +62,6 @@
       >
       </v-list-item>
     </template>
-
-
   </dictionary-base>
 </template>
 
@@ -153,6 +151,7 @@ function singleOptionAutoSelectFunction() {
       localModel.value = selectedValue;
     }
   };
+
   selectSingleOptionLogic();
   watch(data, selectSingleOptionLogic, { deep: true, immediate: true });
 }
@@ -197,23 +196,30 @@ onMounted(async () => {
   internalStateIsSet.value = false;
   await initState(props.schema);
   await bindLabel(props.schema);
-  await bindProps(props.schema);
   await bindRules(props.schema);
+  await bindProps(props.schema);
 
-  if (localModel.value) {
-    fillInModelIfMultiple();
-  } else if (typeof localModel.value == 'object') {
+  fillInModelIfMultiple();
+
+  if (
+    typeof localModel.value == 'object' &&
+    localModel.value !== null &&
+    Object.keys(localModel.value).length > 0
+  ) {
     data.value.push(localModel.value);
   }
-  if (typeof localModel.value === 'string') {
+
+  if (typeof localModel.value == 'string') {
     await resolveIfLocalModelHasDependencies();
     if (!fieldProps.value.readonly) {
       query.value = localModel.value;
       queryBlocker.value = true;
     }
   }
+
   singleOptionAutoSelectFunction();
   internalStateIsSet.value = true;
+  //console.debug(`[vue-mounted] => items.size = ${data.value.length}, localModel = ${localModel.value}, query = ${query.value}`);
 });
 
 async function fetchDictionaryData() {

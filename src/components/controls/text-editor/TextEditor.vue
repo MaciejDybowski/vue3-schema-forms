@@ -4,6 +4,7 @@
       v-model="localModel"
       :rules="!fieldProps.readonly ? rules : []"
       v-bind="fieldProps"
+      @update:model-value="onChange(schema, model)"
     >
       <template #default>
         <v-row
@@ -61,11 +62,13 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TextEditorToolbar from '@/components/controls/text-editor/TextEditorToolbar.vue';
 
 import { useFormModel, useProps, useRules } from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
 import { EngineTextEditorField } from '@/types/engine/controls';
 
 const { bindRules, rules, requiredInputClass } = useRules();
 const { getValue, setValue } = useFormModel();
 const { bindProps, fieldProps } = useProps();
+const { onChange } = useEventHandler();
 const { schema, model } = defineProps<{
   schema: EngineTextEditorField;
   model: object;
