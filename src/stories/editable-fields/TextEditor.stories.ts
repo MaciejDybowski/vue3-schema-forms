@@ -2,7 +2,18 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
+import { waitForMountedAsync } from './utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -140,6 +151,54 @@ export const RequiredAncCounter: Story = {
             props: {
               counter: '20',
             },
+          },
+        },
+      },
+      required: ['textEditor'],
+    } as Schema,
+  },
+};
+
+
+
+export const OnChangeEvents: Story = {
+  name: 'OnChangeEvents',
+  play: async ({ canvasElement, args }) => {
+    await waitForMountedAsync();
+
+    let editor: HTMLElement | null = null;
+    await waitFor(() => {
+      editor = getTextEditor(canvasElement);
+      if (!editor) throw new Error('TextEditor not found yet');
+    });
+
+    await userEvent.type(editor!, 'Test content', { delay: 100 });
+    await new Promise((r) => setTimeout(r, 1000));
+
+    await expect(args.formModel).toEqual({ textEditor: '<p>Test content</p>', fieldB: null });
+  },
+  args: {
+    formModel: {
+      fieldB: 'Test',
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        textEditor: {
+          layout: {
+            component: 'text-editor',
+            props: {
+              counter: '20',
+            },
+          },
+          onChange: {
+            mode: 'change-model',
+            variables: [
+              {
+                path: 'fieldB',
+                value: null,
+              },
+            ],
           },
         },
       },

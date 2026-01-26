@@ -4,7 +4,6 @@
       v-model="localModel"
       :rules="!fieldProps.readonly ? rules : []"
       v-bind="fieldProps"
-      @update:model-value="onChange(schema, model)"
     >
       <template #default>
         <v-row
@@ -169,6 +168,7 @@ watch(
     if (!isUpdatingFromEditor.value && editor.value && editor.value?.getHTML() !== newValue) {
       editor.value.commands.setContent(newValue);
     }
+    onChange(schema, model);
   },
 );
 
