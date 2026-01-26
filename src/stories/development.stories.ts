@@ -1,22 +1,14 @@
 // @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
-
-
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 import { Schema } from '../types/schema/Schema';
-import { MOCK_CALENDARS, TABLE_PAGE_WITHOUT_AGGREGATES, UPDATE_TABLE_ROW, WOJEWODZTWA } from './mock-responses';
-
-
-
-
-
-
-
-
-
-
-
+import {
+  MOCK_CALENDARS,
+  TABLE_PAGE_WITHOUT_AGGREGATES,
+  UPDATE_TABLE_ROW,
+  WOJEWODZTWA,
+} from './mock-responses';
 
 
 
@@ -56,229 +48,29 @@ type Story = StoryObj<typeof FormStoryWrapper>;
 export const newValidationViewer: Story = {
   args: {
     formModel: {
-      invoice: {
-        ksefNumber: '7732000919-20260120-0100E00D827D-61',
-        issueDate: '2026-01-20',
-        number: 'TEST1',
-        createInKsefAt: '2026-01-20T18:16:42.119881200Z',
-      },
-      flowNumber: 'FK-00009',
-      supplier: {
-        countrySymbol: 'PL',
-        supplierId: 12,
-        phone: null,
-        vatId: '7732000919',
-        name: 'ROBERT WASZKOWSKI Tecna',
-        addressLine1: 'ul. Wikingów 11',
-        addressLine2: '03-030 WARSZAWA',
-        supplierCode: 12,
-        email: null,
-      },
-      supplierMessages: [],
-      documentDuplicate: false,
-      registryStepDecision: 'ok',
-      documentDescription: 'test',
-      accountingStepDecision: 'ok',
-      accountingDate: '2026-01-21',
-      invoiceDataMessages: [
+      walidacje: [
         {
-          severity: 'error',
-          code: 'NOT_FOUND',
-          message: 'Nie znaleziono pasującego dokumentu zakupowego w Wapro.',
+          code: 'KOWR_WIERSZ_NIEUZUPELNIONY_${index + 1}',
+          message: "Wiersz ${index + 1} w sekcji 'Przechowywanie surowca' nie został poprawnie uzupełniony.",
+          severity: 'warning',
         },
       ],
     },
     schema: {
       type: 'object',
       properties: {
-        infoMessage: {
-          memorable: true,
-          content:
-            '<div class="w-100">\n  <div class="text-body-2">\n    W tym kroku dokonujesz <span class="font-weight-medium">księgowania faktury</span> na podstawie danych z procesu\n    oraz podglądu dokumentu. Przed zakończeniem upewnij się, że ujęcie jest wykonane we właściwym miejscu\n    (<span class="font-weight-medium">rejestr / okres</span>) i że wynik księgowania jest zgodny z fakturą.\n  </div>\n\n  <div class="mt-3 text-subtitle-2 font-weight-medium">\n    Co sprawdzić przed zatwierdzeniem\n  </div>\n\n  <div class="mt-2 d-flex flex-column ga-2 text-body-2">\n    <div class="d-flex align-start">\n      <span class="me-2 text-medium-emphasis">•</span>\n      <div>\n        <span class="font-weight-medium">Zgodność danych:</span>\n        numer KSeF, kontrahent, kwoty i VAT względem podglądu dokumentu.\n      </div>\n    </div>\n\n    <div class="d-flex align-start">\n      <span class="me-2 text-medium-emphasis">•</span>\n      <div>\n        <span class="font-weight-medium">Rejestr i okres:</span>\n        czy faktura trafia do właściwego rejestru oraz właściwego okresu rozliczeniowego.\n      </div>\n    </div>\n\n    <div class="d-flex align-start">\n      <span class="me-2 text-medium-emphasis">•</span>\n      <div>\n        <span class="font-weight-medium">Duplikat:</span>\n        jeżeli potwierdzasz duplikat, ustaw <span class="font-weight-medium">„Czy duplikat?”</span> na <span class="font-weight-medium">Tak</span>.\n      </div>\n    </div>\n  </div>\n\n  <div class="mt-4 text-subtitle-2 font-weight-medium">\n    Jak uzupełnić formularz\n  </div>\n\n  <div class="mt-2 d-flex flex-column ga-2 text-body-2">\n    <div class="d-flex align-start">\n      <span class="me-2 text-medium-emphasis">1.</span>\n      <div>\n        Wybierz <span class="font-weight-medium">Decyzję dotyczącą księgowania dokumentu</span>.\n      </div>\n    </div>\n\n    <div class="d-flex align-start">\n      <span class="me-2 text-medium-emphasis">2.</span>\n      <div>\n        Przy decyzji <span class="font-weight-medium">OK – zaksięgowano</span> uzupełnij\n        <span class="font-weight-medium">Datę księgowania</span> oraz <span class="font-weight-medium">Opis dokumentu</span>\n        (pola wymagane).\n      </div>\n    </div>\n\n    <div class="d-flex align-start">\n      <span class="me-2 text-medium-emphasis">3.</span>\n      <div>\n        Jeżeli wybierasz <span class="font-weight-medium">Błędna rejestracja</span>, proces wróci do kroku\n        <span class="font-weight-medium">Rejestracja</span> w celu korekty decyzji i uzupełnienia uzasadnienia.\n      </div>\n    </div>\n  </div>\n\n  <div class="mt-4 text-caption text-medium-emphasis">\n    Uwaga: wybierając <span class="font-weight-medium">Błędna rejestracja</span>, opisz w kroku rejestracji przyczynę\n    wprost (co poprawić lub dlaczego dokument powinien zostać odrzucony), aby uniknąć ponownych niejasności.\n  </div>\n</div>',
-          layout: {
-            component: 'alert',
-            props: {
-              variant: 'tonal',
-              type: null,
-              density: 'default',
-            },
-            fillRow: true,
-          },
-        },
-        invoiceInfo: {
-          content:
-            '<div class="w-100 rounded border bg-surface pa-4 elevation-1">\n  <div class="d-flex flex-wrap align-start ga-4">\n    <div class="flex-grow-1">\n      <!-- 1. linia: numer faktury -->\n      <div class="text-subtitle-1 font-weight-medium text-truncate">\n        Faktura nr {invoice.number:-}\n      </div>\n\n      <!-- daty: jedna pod drugą -->\n      <div class="text-body-2 mt-2">\n        <div>\n          <span class="text-medium-emphasis">Data otrzymania / wpływu:</span>\n          <span class="ms-1">{invoice.acquisitionDate:-}</span>\n        </div>\n        <div class="mt-1">\n          <span class="text-medium-emphasis">Data wystawienia:</span>\n          <span class="ms-1">{invoice.issueDate:-}</span>\n        </div>\n      </div>\n    </div>\n\n    <!-- Prawa sekcja -->\n    <div class="ms-auto w-100 w-sm-auto text-left text-sm-right">\n      <div class="d-inline-flex align-center rounded-pill bg-surface-variant text-on-surface-variant px-3 py-1 text-no-wrap">\n        <span class="text-caption">Nr obiegu</span>\n        <span class="text-body-2 font-weight-medium ms-2">{flowNumber:-}</span>\n      </div>\n    </div>\n  </div>\n</div>\n',
-          layout: {
-            tag: 'p',
-            component: 'static-content',
-          },
-        },
-        invoice: {
-          properties: {
-            ksefNumber: {
-              label: 'Numer KSeF',
-              layout: {
-                component: 'data-viewer',
-              },
-              isCopyEnabled: true,
-            },
-          },
-        },
-        supplierInfo: {
-          content:
-            '<div class="w-100 rounded border bg-surface pa-4 elevation-1">\n  <div class="d-flex flex-wrap align-start ga-4">\n    <div class="flex-grow-1">\n      <div class="text-subtitle-1 font-weight-medium text-truncate">\n        {supplier.name:-}\n      </div>\n\n      <div class="text-body-2 text-medium-emphasis">\n        {supplier.addressLine1:-}\n      </div>\n      <div class="text-body-2 text-medium-emphasis">\n        {supplier.addressLine2:-}\n      </div>\n\n      <div class="text-body-2 mt-2 d-flex flex-wrap align-center ga-2">\n        <span>\n          <span class="text-medium-emphasis">NIP:</span>\n          <span class="font-weight-bold ms-1">{supplier.vatId:-}</span>\n        </span>\n\n        <span class="text-medium-emphasis">•</span>\n        <span>\n          <span class="text-medium-emphasis">Email:</span>\n          <span class="ms-1">{supplier.email:-}</span>\n        </span>\n\n        <span class="text-medium-emphasis">•</span>\n        <span>\n          <span class="text-medium-emphasis">Telefon:</span>\n          <span class="ms-1">{supplier.phone:-}</span>\n        </span>\n      </div>\n    </div>\n\n    <!-- Prawa sekcja: na XS pełna szerokość i pod spodem -->\n    <div class="ms-auto w-100 w-sm-auto text-left text-sm-right">\n      <div class="d-inline-flex align-center rounded-pill bg-surface-variant text-on-surface-variant px-3 py-1 text-no-wrap">\n        <span class="text-caption">Kod</span>\n        <span class="text-body-2 font-weight-medium ms-2">{supplier.supplierCode:-}</span>\n      </div>\n\n      <div class="text-subtitle-2 font-weight-bold mt-2">\n        Dostawca\n      </div>\n    </div>\n  </div>\n</div>',
-          layout: {
-            tag: 'p',
-            component: 'static-content',
-          },
-        },
-        btnCheckSupplier: {
-          label: 'Sprawdź ponownie dostawcę',
+        walidacje: { layout: { component: 'validation-messages-viewer' } },
+        button061: {
+          label: 'Kliknij mnie',
           layout: {
             component: 'button',
-            cols: {
-              xs: 6,
-              sm: 6,
-              md: 6,
-              lg: 6,
-              xl: 6,
-              xxl: 6,
-            },
+            cols: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6, xxl: 6 },
             fillRow: true,
           },
           mode: 'action',
-          config: {
-            code: 'callScript',
-            params: {
-              script: 'btnCheckInvoiceSupplier',
-            },
-          },
-        },
-        supplierMessages: {
-          layout: {
-            component: 'validation-messages-viewer',
-            props: {
-              variant: 'tonal',
-              density: 'compact',
-            },
-          },
-        },
-        documentDuplicate: {
-          label: 'Czy duplikat?',
-          layout: {
-            fillRow: true,
-            component: 'radio-button',
-            props: {
-              inline: true,
-            },
-          },
-          source: {
-            items: [
-              {
-                value: false,
-                title: 'Nie',
-              },
-              {
-                value: true,
-                title: 'Tak',
-              },
-            ],
-          },
-          defaultValue: false,
-          validations: [],
-        },
-        documentDescription: {
-          label: 'Opis dokumentu',
-          layout: {
-            fillRow: true,
-            component: 'text-area',
-          },
-          validations: [
-            {
-              name: 'conditional-required',
-              rule: 'accountingStepDecision="ok"',
-              message: '',
-            },
-          ],
-        },
-        accountingStepDecision: {
-          label: 'Decyzja dotycząca księgowania dokumentu',
-          layout: {
-            fillRow: true,
-            component: 'radio-button',
-            props: {
-              inline: true,
-            },
-          },
-          source: {
-            items: [
-              {
-                value: 'ok',
-                title: 'OK - zaksięgowano',
-              },
-              {
-                value: 'blednaRejestracja',
-                title: 'Błędna rejestracja',
-              },
-            ],
-          },
-        },
-        accountingDate: {
-          label: 'Data księgowania',
-          layout: {
-            cols: {
-              xs: 12,
-              sm: 6,
-              md: 6,
-              lg: 4,
-              xl: 4,
-              xxl: 4,
-            },
-            fillRow: true,
-            component: 'date-picker',
-          },
-          validations: [
-            {
-              name: 'conditional-required',
-              rule: 'accountingStepDecision="ok"',
-              message: null,
-            },
-          ],
-        },
-        btnCheckIvoiceData: {
-          label: 'Sprawdź dokument zakupowy',
-          layout: {
-            component: 'button',
-            cols: {
-              xs: 6,
-              sm: 6,
-              md: 6,
-              lg: 6,
-              xl: 6,
-              xxl: 6,
-            },
-            fillRow: true,
-          },
-          mode: 'action',
-          config: {
-            code: 'callScript',
-            params: {
-              script: 'btnCheckInvoiceData',
-            },
-            waitForSaveState: true,
-          },
-        },
-        invoiceDataMessages: {
-          layout: {
-            component: 'validation-messages-viewer',
-            props: {
-              variant: 'tonal',
-              density: 'compact',
-            },
-          },
+          config: { code: 'callScript', params: { script: 'walidacjeWnioskuOWpis' } },
         },
       },
-      required: ['documentDuplicate', 'accountingStepDecision'],
     },
   },
 };

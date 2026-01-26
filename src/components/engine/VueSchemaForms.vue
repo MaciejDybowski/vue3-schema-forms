@@ -26,7 +26,7 @@
 
 <script lang="ts" setup>
 import { useEventBus } from '@vueuse/core';
-import { debounce, merge } from 'lodash';
+import { debounce, isArray, mergeWith } from 'lodash';
 import set from 'lodash/set';
 import { useI18n } from 'vue-i18n';
 
@@ -122,7 +122,15 @@ function flushPendingEvents() {
 async function actionCallback() {
   await new Promise((r) => setTimeout(r, 100));
   // previous version invokes loop in calcs, probably due to destroyed reference by using {...obj} instruction
-  localModel.value = merge(localModel.value, model.value);
+
+  const customMergeArray = (objValue: any, srcValue: any) => {
+    if (isArray(objValue)) {
+      return srcValue;
+    }
+  };
+
+  localModel.value = mergeWith(localModel.value, model.value, customMergeArray);
+  console.debug('localModel.value', localModel.value);
   await new Promise((r) => setTimeout(r, 100));
   form.updateFormModel(localModel.value);
 
@@ -251,11 +259,9 @@ async function validate(option?: ValidationFromBehaviour) {
 
   // Alert error block validation !
   const alertElements = document.querySelectorAll('[role="alert"]');
-  console.debug(alertElements)
   alertElements.forEach((alertElement) => {
     const isError =
       alertElement.classList.contains('v-alert') && alertElement.classList.contains('text-error');
-    console.debug(isError)
     const alertText = alertElement.textContent;
 
     if (isError && (option == 'messages' || option == 'combined')) {
