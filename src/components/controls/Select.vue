@@ -10,7 +10,7 @@
     :items="data"
     :loading="loading"
     :return-object="returnObject as any"
-    @change="onChange(schema, model)"
+    @update:model-value="onChange(schema, model)"
     :multiple="multiple"
   ></v-select>
 </template>

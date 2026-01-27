@@ -2,12 +2,46 @@
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+
+
 import { EngineSourceField } from '../../types/engine/controls';
 import { Schema } from '../../types/schema/Schema';
 import { SimpleSource } from '../../types/schema/elements';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { playWrapper, waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -351,6 +385,150 @@ export const GetOptionsFromAPI: Story = {
   parameters: {
     msw: {
       handlers: MOCK_REQUEST_CURRENCY,
+    },
+  },
+};
+
+export const onChangeCopyValue: Story = {
+  name: 'Case: Copy values into other fields',
+  play: playWrapper(async (context) => {
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText('Wybierz dostawcę');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+
+    // Select second supplier (TechSupply)
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[1], { delay: 200 });
+
+    // Verify that all fields were populated correctly from selected supplier
+    await waitFor(() => {
+      expect(context.args.formModel).toEqual({
+        supplier: {
+          id: 2,
+          name: 'TechSupply Sp. z o.o.',
+          nip: '9876543210',
+          email: 'kontakt@techsupply.pl',
+          phone: '+48 22 987 65 43',
+          city: 'Kraków',
+        },
+        supplierName: 'TechSupply Sp. z o.o.',
+        supplierNip: '9876543210',
+        supplierEmail: 'kontakt@techsupply.pl',
+        supplierPhone: '+48 22 987 65 43',
+        supplierCity: 'Kraków',
+      });
+    });
+
+    // Verify input fields contain correct values
+    expect(canvas.getByLabelText('Nazwa dostawcy')).toHaveValue('TechSupply Sp. z o.o.');
+    expect(canvas.getByLabelText('NIP')).toHaveValue('9876543210');
+    expect(canvas.getByLabelText('Email')).toHaveValue('kontakt@techsupply.pl');
+    expect(canvas.getByLabelText('Telefon')).toHaveValue('+48 22 987 65 43');
+    expect(canvas.getByLabelText('Miasto')).toHaveValue('Kraków');
+  }),
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        supplier: {
+          label: 'Wybierz dostawcę',
+          layout: {
+            cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
+            fillRow: true,
+            component: 'select',
+          },
+          source: {
+            items: [
+              {
+                id: 1,
+                name: 'ABC Logistics Sp. z o.o.',
+                nip: '1234567890',
+                email: 'biuro@abclogistics.pl',
+                phone: '+48 22 123 45 67',
+                city: 'Warszawa',
+              },
+              {
+                id: 2,
+                name: 'TechSupply Sp. z o.o.',
+                nip: '9876543210',
+                email: 'kontakt@techsupply.pl',
+                phone: '+48 22 987 65 43',
+                city: 'Kraków',
+              },
+              {
+                id: 3,
+                name: 'EuroTrans S.A.',
+                nip: '5556667778',
+                email: 'info@eurotrans.eu',
+                phone: '+48 12 555 66 77',
+                city: 'Gdańsk',
+              },
+              {
+                id: 4,
+                name: 'ProMaterial Hurt',
+                nip: '1112223334',
+                email: 'zamowienia@promaterial.pl',
+                phone: '+48 61 111 22 33',
+                city: 'Poznań',
+              },
+            ],
+            title: 'name',
+            value: 'id',
+            returnObject: true,
+          },
+          onChange: {
+            mode: 'change-model',
+            variables: [
+              { path: 'supplierName', value: '{supplier.name}' },
+              { path: 'supplierNip', value: '{supplier.nip}' },
+              { path: 'supplierEmail', value: '{supplier.email}' },
+              { path: 'supplierPhone', value: '{supplier.phone}' },
+              { path: 'supplierCity', value: '{supplier.city}' },
+            ],
+          },
+        },
+        supplierName: {
+          label: 'Nazwa dostawcy',
+          layout: {
+            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+            component: 'text-field',
+          },
+        },
+        supplierNip: {
+          label: 'NIP',
+          layout: {
+            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+            component: 'text-field',
+          },
+        },
+        supplierEmail: {
+          label: 'Email',
+          layout: {
+            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+            component: 'text-field',
+          },
+        },
+        supplierPhone: {
+          label: 'Telefon',
+          layout: {
+            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+            component: 'text-field',
+          },
+        },
+        supplierCity: {
+          label: 'Miasto',
+          layout: {
+            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+            component: 'text-field',
+          },
+        },
+      },
     },
   },
 };

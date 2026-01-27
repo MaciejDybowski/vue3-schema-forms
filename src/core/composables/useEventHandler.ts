@@ -37,7 +37,7 @@ export function useEventHandler() {
         await actionMode(eventDefinition, field, model);
         break;
       case 'change-model':
-        changeMode(eventDefinition, field, model);
+        await changeMode(eventDefinition, field, model);
         break;
       case 'emit-event':
         emitEvent(eventDefinition, field, model);
@@ -47,14 +47,27 @@ export function useEventHandler() {
     }
   }
 
-  function changeMode(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
-    eventDefinition.variables?.forEach((variable) => {
-      const event: NodeUpdateEvent = {
-        key: variable.path,
-        value: variable.value,
-      };
-      field.on.input(event);
-    });
+  async function changeMode(
+    eventDefinition: EventHandlerDefinition,
+    field: EngineField,
+    model: object,
+  ) {
+    if (!eventDefinition.variables?.length) return;
+
+    const events = await Promise.all(
+      eventDefinition.variables.map(async (variable) => {
+        const value = variableRegexp.test(variable.value)
+          ? (await resolve(field, variable.value)).resolvedText
+          : variable.value;
+
+        return {
+          key: variable.path,
+          value,
+        } as NodeUpdateEvent;
+      }),
+    );
+
+    events.forEach((event) => field.on.input(event));
   }
 
   function emitEvent(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
