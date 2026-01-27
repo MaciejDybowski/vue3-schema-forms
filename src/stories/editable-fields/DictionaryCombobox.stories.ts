@@ -1,14 +1,88 @@
 // @ts-nocheck
 import { HttpResponse, http } from 'msw';
+import { Story } from 'storybook/dist/csf';
+import { expect, userEvent, within } from 'storybook/test';
+import { waitFor } from 'storybook/test';
+
+
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { Story } from 'storybook/dist/csf';
-import { waitForMountedAsync } from './utils';
-import { expect, userEvent, within } from 'storybook/test';
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
-import { waitFor } from 'storybook/test';
+import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default {
   title: 'Elements/Editable/Dictionary [combobox]',
@@ -141,9 +215,9 @@ export const MultipleValues: Story = {
     const items = document.getElementsByClassName('v-list-item');
     const first = items[0];
     await expect(first.textContent).toEqual('Afganithe-best');
-    await userEvent.click(items[0], { delay: 200 });
-    await userEvent.click(items[1], { delay: 200 });
-    await userEvent.click(items[2], { delay: 200 });
+    await userEvent.click(items[0], { pointerEventsCheck: 0, delay: 200 });
+    await userEvent.click(items[1], { pointerEventsCheck: 0, delay: 200 });
+    await userEvent.click(items[2], { pointerEventsCheck: 0, delay: 200 });
     await expect(context.args.formModel).toEqual({
       currency: [
         {
@@ -209,9 +283,9 @@ export const MultipleValuesWithLimit: Story = {
     const items = document.getElementsByClassName('v-list-item');
     const first = items[0];
     await expect(first.textContent).toEqual('Afganithe-best');
-    await userEvent.click(items[0], { delay: 200 });
-    await userEvent.click(items[1], { delay: 200 });
-    await userEvent.click(items[2], { delay: 200 });
+    await userEvent.click(items[0], { pointerEventsCheck: 0, delay: 200 });
+    await userEvent.click(items[1], { pointerEventsCheck: 0, delay: 200 });
+    await userEvent.click(items[2], { pointerEventsCheck: 0, delay: 200 });
     await expect(context.args.formModel).toEqual({
       currency: [
         {
@@ -271,7 +345,7 @@ export const WithDescription: Story = {
     const items = document.getElementsByClassName('v-list-item');
     const first = items[0];
     await expect(first.textContent).toEqual('AfganiAfganithe-best');
-    await userEvent.click(items[0], { delay: 200 });
+    await userEvent.click(items[0], { pointerEventsCheck: 0, delay: 200 });
     await expect(context.args.formModel).toEqual({
       currency: { id: 'AFN', label: 'Afgani', digitsAfterDecimal: '2', labels: 'the-best' },
     });
