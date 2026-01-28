@@ -13,4 +13,5 @@ export interface EventHandlerDefinition {
 export interface EventVariable {
   path: string;
   value: string;
+  if?:string
 }

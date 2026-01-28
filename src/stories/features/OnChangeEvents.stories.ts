@@ -16,6 +16,91 @@ export default {
   ...formStoryWrapperTemplate,
 };
 
+export const ConditionalOnChangeCopyValue: Story = {
+  name: 'Case: copy value only when condition is met',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    // Select the dropdown
+    const select = canvas.getByLabelText('Select');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    // Wait for the dropdown list to appear
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+
+    // Select "Option 2" (value: 2) - condition should NOT be met
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[1], { delay: 200 }); // Option 2
+
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Verify that 'smart' field was NOT updated because condition (value=1) is not met
+    await expect(context.args.formModel.smart).toBeUndefined();
+
+    // Now select "Option 1" (value: 1) - condition SHOULD be met
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+
+    const itemsAgain = document.getElementsByClassName('v-list-item');
+    await userEvent.click(itemsAgain[0], { delay: 200 }); // Option 1
+
+    await new Promise((r) => setTimeout(r, 1200));
+
+    // Verify that 'smart' field WAS updated because condition (value=1) is met
+    await expect(context.args.formModel.smart).toBe('Option 1');
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        testSlownik: {
+          label: 'Select',
+          layout: {
+            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+            fillRow: true,
+            component: 'select',
+          },
+          source: {
+            items: [
+              { value: 1, title: 'Option 1' },
+              { value: 2, title: 'Option 2' },
+              { value: 3, title: 'Option 3' },
+            ],
+            returnObject: true,
+          },
+          onChange: {
+            mode: 'change-model',
+            variables: [
+              {
+                path: 'smart',
+                value: '{testSlownik.title}',
+                if: 'testSlownik.value=1',
+              },
+            ],
+          },
+        },
+        smart: {
+          label: 'Sth field',
+          layout: {
+            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+            fillRow: true,
+            component: 'text-field',
+          },
+        },
+      },
+    },
+  },
+};
+
 export const CallActionWithParametersAndRequestBody: Story = {
   name: 'Case: form action will be send after value change',
   play: async (context) => {},

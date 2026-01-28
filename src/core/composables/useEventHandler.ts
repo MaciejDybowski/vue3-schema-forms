@@ -1,4 +1,5 @@
 import { useEventBus } from '@vueuse/core';
+import jsonata from 'jsonata';
 import { debounce } from 'lodash';
 
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
@@ -9,6 +10,10 @@ import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
 
 type EntryKey = string;
 type EntryValue = any;
+
+interface NodeConditionalUpdateEvent extends NodeUpdateEvent {
+  toExecute: boolean;
+}
 
 export function useEventHandler() {
   const { resolve } = useResolveVariables();
@@ -56,6 +61,11 @@ export function useEventHandler() {
 
     const events = await Promise.all(
       eventDefinition.variables.map(async (variable) => {
+        let toExecute = true;
+        if (variable.if) {
+          toExecute = await jsonata(variable.if).evaluate(model);
+        }
+
         const value = variableRegexp.test(variable.value)
           ? (await resolve(field, variable.value)).resolvedText
           : variable.value;
@@ -63,11 +73,12 @@ export function useEventHandler() {
         return {
           key: variable.path,
           value,
-        } as NodeUpdateEvent;
+          toExecute,
+        } as NodeConditionalUpdateEvent;
       }),
     );
 
-    events.forEach((event) => field.on.input(event));
+    events.filter((it) => it.toExecute).forEach((event) => field.on.input(event));
   }
 
   function emitEvent(eventDefinition: EventHandlerDefinition, field: EngineField, model: object) {
