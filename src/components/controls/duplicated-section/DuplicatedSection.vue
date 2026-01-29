@@ -159,8 +159,6 @@ vueSchemaFormEventBus.on(async (event, payload) => {
     get(props.model, props.schema.key, showFirstInitRow ? [{}] : []),
   );
   const actualModel = JSON.stringify(localModel.value);
-  console.debug(modelFromProps, actualModel);
-  console.debug(modelFromProps !== actualModel)
   if (
     (payload == 'action-callback' ||
       // -> tabela w sekcji powielanej z agregatami wywoływała ten event i za każdym razem się przeładowywałą od nowa
@@ -168,7 +166,6 @@ vueSchemaFormEventBus.on(async (event, payload) => {
       payload == 'table-aggregates') &&
     modelFromProps !== actualModel
   ) {
-    console.debug("Here and call init")
     init();
   }
 
