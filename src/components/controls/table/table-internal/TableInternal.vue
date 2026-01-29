@@ -10,7 +10,7 @@
     :update-row="updateRow"
     @btnModeInternalRemoveRecord="removeRow"
     @btn-mode-internal-duplicate-record="duplicateRecord"
-    @btn-mode-internal-add-record="(payload) => items.push(payload)"
+    @btn-mode-internal-add-record="(payload) => addRecord(payload)"
   />
 </template>
 
@@ -24,11 +24,13 @@ import TableField from '@/components/controls/table/TableField.vue';
 import { TableFetchOptions } from '@/components/controls/table/table-types';
 
 import { useFormModel, useResolveVariables } from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineTableField } from '@/types/engine/EngineTableField';
 import { EventVariable } from '@/types/shared/EventHandlerDefinition';
 import { HeaderEditableObject } from '@/types/shared/Source';
 
+const { onChange } = useEventHandler();
 const { getValue, setValue } = useFormModel();
 
 const { schema, model } = defineProps<{
@@ -76,6 +78,7 @@ async function updateRow(value: any, header: HeaderEditableObject, rowData: any,
   items.value[rowIndex] = { ...tempRow };
 
   localModel.value = items.value;
+  await onChange(schema, model);
 }
 
 async function createUpdateRowURL(item: any) {
@@ -107,11 +110,18 @@ async function tableActionPopupUpdate(actionPopup: any) {
 async function removeRow(payload: { index: number }) {
   items.value = items.value.filter((i, idx) => idx !== payload.index);
   localModel.value = items.value;
+  await onChange(schema, model);
 }
 
-async function duplicateRecord(payload: { index: number, rowData: any }) {
-  items.value.splice(payload.index+1, 0, payload.rowData);
+async function duplicateRecord(payload: { index: number; rowData: any }) {
+  items.value.splice(payload.index + 1, 0, payload.rowData);
   localModel.value = items.value;
+  await onChange(schema, model);
+}
+
+async function addRecord(payload: any) {
+  items.value.push(payload);
+  await onChange(schema, model);
 }
 </script>
 
