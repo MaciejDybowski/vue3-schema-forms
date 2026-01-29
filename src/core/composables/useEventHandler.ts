@@ -64,6 +64,9 @@ export function useEventHandler() {
         let toExecute = true;
         if (variable.if) {
           toExecute = await jsonata(variable.if).evaluate(model);
+          console.debug(
+            `[vue-schema-forms] - toExecute: ${toExecute}, expression is ${variable.if}`,
+          );
         }
 
         const value = variableRegexp.test(variable.value)
