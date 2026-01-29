@@ -1,5 +1,6 @@
 <template>
   <v-expansion-panels
+    v-model="openPanels"
     elevation="0"
     flat
     multiple
@@ -7,7 +8,7 @@
   >
     <v-expansion-panel
       v-for="(panel, index) in schema.panels"
-      :key="index"
+      :key="getPanelId(panel, index)"
     >
       <v-expansion-panel-title v-if="panelTitles[index]">
         <v-icon
@@ -40,10 +41,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useEventBus } from '@vueuse/core';
+import { useEventBus, useLocalStorage } from '@vueuse/core';
 import { cloneDeep } from 'lodash';
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import FormRoot from '@/components/engine/FormRoot.vue';
 
@@ -61,6 +62,25 @@ const { model, schema } = defineProps<{
 const { setValue } = useFormModel();
 const { resolve } = useResolveVariables();
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
+
+function generatePanelsId(): string {
+  const schemaKey = schema.key || '';
+  const path = 'path' in schema ? schema.path : '';
+  const panelTitlesHash = schema.panels.map(p => p.title).join('|');
+  return `expansion-panels-${schemaKey}-${path}-${panelTitlesHash}`.replace(/\s+/g, '_');
+}
+
+function getPanelId(panel: EngineExpansionPanel, index: number): string {
+  return `${panelsId}-panel-${index}-${panel.title}`.replace(/\s+/g, '_');
+}
+const panelsId = generatePanelsId();
+const storedPanelState = useLocalStorage<number[]>(`${panelsId}-state`, []);
+const openPanels = ref<number[]>(storedPanelState.value);
+
+watch(openPanels, (newValue) => {
+  storedPanelState.value = newValue;
+}, { deep: true });
+
 
 function updateModel(payload: any) {
   setValue(payload.value, { key: payload.key, on: schema.on } as any);
@@ -145,10 +165,8 @@ function createPanelSchemaWithContext(panelSchema: Schema, path: string, index: 
 const panelSchemas = computed(() =>
   schema.panels.map((p) => {
     if ('path' in schema && 'index' in schema && schema.path !== undefined && schema.index !== undefined) {
-      console.debug("HERE")
       return createPanelSchemaWithContext(p.schema, schema.path, schema.index);
     }
-    console.debug(p.schema)
     return p.schema;
   }),
 );
