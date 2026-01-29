@@ -130,7 +130,6 @@ async function actionCallback() {
   };
 
   localModel.value = mergeWith(localModel.value, model.value, customMergeArray);
-  console.debug('localModel.value', localModel.value);
   await new Promise((r) => setTimeout(r, 100));
   form.updateFormModel(localModel.value);
 
