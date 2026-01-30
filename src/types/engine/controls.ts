@@ -42,6 +42,7 @@ export interface EngineSchedulerGrid extends EngineField{
   legend: LegendItem[]
   showLabel?: boolean
   showUserColumn?:boolean
+  pulsateInterval?:number
   source?: {url:string}
 }
 

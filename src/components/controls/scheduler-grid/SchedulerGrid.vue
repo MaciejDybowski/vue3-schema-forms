@@ -94,7 +94,9 @@
                 v-if="scheduleDay.note"
                 class="note-indicator"
               >
-                <span class="note-indicator-dot-ringring"></span>
+                <span class="note-indicator-dot-ringring" :style="{
+                  animationDuration: schema.pulsateInterval ? schema.pulsateInterval + 's' : '2s',
+                  }"></span>
                 <span class="note-indicator-dot"></span>
                 <span class="note-indicator-label">
                   {{ t('schedulerGrid.noteIndicator') }}
@@ -475,7 +477,7 @@ thead th.sticky-col {
   border: 2px solid rgb(var(--v-theme-primary));
   border-radius: 30px;
   animation: pulsate 2s cubic-bezier(0.4, 0.0, 0.2, 1);
-  animation-iteration-count: infinite; 
+  animation-iteration-count: infinite;
   opacity: 0.0;
 }
 
