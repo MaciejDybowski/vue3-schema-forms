@@ -65,20 +65,43 @@
                 location="top"
                 open-delay="500"
               >
-                <span class="text-caption">
-                  {{ t('schedulerGrid.clickToEdit') }}<br />
-                  <strong>{{ scheduleDay.date }}</strong
-                  >: {{ getStatusLabel(scheduleDay.status) }}
-                </span>
+                <div class="status-tooltip text-caption">
+                  <div
+                    v-if="!fieldProps.readonly"
+                    class="status-tooltip-row status-tooltip-hint"
+                  >
+                    {{ t('schedulerGrid.clickToEdit') }}
+                  </div>
+                  <div class="status-tooltip-row">
+                    <strong>{{ scheduleDay.date }}</strong
+                    >: {{ getStatusLabel(scheduleDay.status) }}
+                  </div>
+                  <div
+                    v-if="scheduleDay.note"
+                    class="status-tooltip-note"
+                  >
+                    <div class="status-tooltip-note-title">
+                      {{ t('schedulerGrid.noteIndicator') }}
+                    </div>
+                    <div class="status-tooltip-note-text">
+                      {{ scheduleDay.note }}
+                    </div>
+                  </div>
+                </div>
               </v-tooltip>
 
-              <span
+              <div
                 v-if="scheduleDay.note"
-                class="text-caption font-weight-black d-flex align-center justify-center h-100"
-                style="line-height: 1; font-size: 0.65rem !important"
+                class="note-indicator"
               >
-                {{ scheduleDay.note }}
-              </span>
+                <span class="note-indicator-dot-ringring" :style="{
+                  animationDuration: schema.pulsateInterval ? schema.pulsateInterval + 's' : '2s',
+                  }"></span>
+                <span class="note-indicator-dot"></span>
+                <span class="note-indicator-label">
+                  {{ t('schedulerGrid.noteIndicator') }}
+                </span>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -382,11 +405,85 @@ thead th.sticky-col {
   width: 40px;
   min-width: 40px;
   height: 44px;
-
+  position: relative;
+  text-align: center;
   transition: background-color 0.2s ease;
 }
 .status-cell:hover {
   filter: brightness(0.95);
   box-shadow: inset 0 0 0 2px rgba(var(--v-theme-primary), 0.5); /* Hover effect */
+}
+
+.status-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 240px;
+}
+
+.status-tooltip-note {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid;
+}
+
+.status-tooltip-note-title {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+}
+
+.status-tooltip-note-text {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.note-indicator {
+  font-size: 0.42rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 5px 2px;
+}
+
+.note-indicator-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: rgb(var(--v-theme-primary));
+}
+
+.note-indicator-label {
+  font-size: 0.6rem;
+}
+
+.status-cell:hover .note-indicator {
+  transform: translateY(-1px);
+}
+
+.note-indicator-dot-ringring {
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  top: calc(60% - 7px);
+  left: calc(50% - 7px);
+  border: 2px solid rgb(var(--v-theme-primary));
+  border-radius: 30px;
+  animation: pulsate 2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  animation-iteration-count: infinite;
+  opacity: 0.0;
+}
+
+@keyframes pulsate {
+    0% {transform: scale(0.6); opacity: 0.0;}
+    50% {opacity: 0.6;}
+    100% {transform: scale(1); opacity: 0.0;}
 }
 </style>
