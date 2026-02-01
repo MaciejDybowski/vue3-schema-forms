@@ -10,6 +10,7 @@
     readonly
     v-bind="{ ...attrs, ...fieldProps }"
     @click="openPicker"
+    @click:clear="localModel=null"
   />
 
   <v-menu
@@ -22,7 +23,7 @@
     offset="5"
     scrim="transparent"
   >
-    <v-card width="330px">
+    <v-card width="330px" @mousedown.prevent>
       <v-date-picker
         v-model="pickerValue"
         hide-header
