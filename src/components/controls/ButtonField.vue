@@ -174,6 +174,16 @@ async function runBtnLogic() {
         },
       };
 
+      if (shouldWaitForSaveState && !formCurrentSaveState.value) {
+        if (schema.config.emit) {
+          payloadObject.callback = () => {
+            actionHandlerEventBus.emit('form-action', schema.config.emit);
+          };
+        }
+        caller.value = () => actionHandlerEventBus.emit('form-action', payloadObject);
+        return;
+      }
+
       if (schema.config.emit) {
         payloadObject.callback = () => {
           actionHandlerEventBus.emit('form-action', schema.config.emit);
