@@ -41,23 +41,6 @@ import { playWrapper, waitForMountedAsync } from './utils';
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export default {
   title: 'Elements/Editable/Select',
   ...formStoryWrapperTemplate,
@@ -408,7 +391,7 @@ export const onChangeCopyValue: Story = {
     // Verify that all fields were populated correctly from selected supplier
     await waitFor(() => {
       expect(context.args.formModel).toEqual({
-        supplier: {
+        supplierSelect: {
           id: 2,
           name: 'TechSupply Sp. z o.o.',
           nip: '9876543210',
@@ -416,11 +399,13 @@ export const onChangeCopyValue: Story = {
           phone: '+48 22 987 65 43',
           city: 'Kraków',
         },
-        supplierName: 'TechSupply Sp. z o.o.',
-        supplierNip: '9876543210',
-        supplierEmail: 'kontakt@techsupply.pl',
-        supplierPhone: '+48 22 987 65 43',
-        supplierCity: 'Kraków',
+        supplier: {
+          name: 'TechSupply Sp. z o.o.',
+          nip: '9876543210',
+          email: 'kontakt@techsupply.pl',
+          phone: '+48 22 987 65 43',
+          city: 'Kraków',
+        },
       });
     });
 
@@ -436,7 +421,7 @@ export const onChangeCopyValue: Story = {
     schema: {
       type: 'object',
       properties: {
-        supplier: {
+        supplierSelect: {
           label: 'Wybierz dostawcę',
           layout: {
             cols: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12, xxl: 12 },
@@ -485,47 +470,51 @@ export const onChangeCopyValue: Story = {
           onChange: {
             mode: 'change-model',
             variables: [
-              { path: 'supplierName', value: '{supplier.name}' },
-              { path: 'supplierNip', value: '{supplier.nip}' },
-              { path: 'supplierEmail', value: '{supplier.email}' },
-              { path: 'supplierPhone', value: '{supplier.phone}' },
-              { path: 'supplierCity', value: '{supplier.city}' },
+              { path: 'supplier.name', value: '{supplierSelect.name}' },
+              { path: 'supplier.nip', value: '{supplierSelect.nip}' },
+              { path: 'supplier.email', value: '{supplierSelect.email}' },
+              { path: 'supplier.phone', value: '{supplierSelect.phone}' },
+              { path: 'supplier.city', value: '{supplierSelect.city}' },
             ],
           },
         },
-        supplierName: {
-          label: 'Nazwa dostawcy',
-          layout: {
-            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-            component: 'text-field',
-          },
-        },
-        supplierNip: {
-          label: 'NIP',
-          layout: {
-            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-            component: 'text-field',
-          },
-        },
-        supplierEmail: {
-          label: 'Email',
-          layout: {
-            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-            component: 'text-field',
-          },
-        },
-        supplierPhone: {
-          label: 'Telefon',
-          layout: {
-            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-            component: 'text-field',
-          },
-        },
-        supplierCity: {
-          label: 'Miasto',
-          layout: {
-            cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
-            component: 'text-field',
+        supplier: {
+          properties: {
+            name: {
+              label: 'Nazwa dostawcy',
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: 'text-field',
+              },
+            },
+            nip: {
+              label: 'NIP',
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: 'text-field',
+              },
+            },
+            email: {
+              label: 'Email',
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: 'text-field',
+              },
+            },
+            phone: {
+              label: 'Telefon',
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: 'text-field',
+              },
+            },
+            city: {
+              label: 'Miasto',
+              layout: {
+                cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                component: 'text-field',
+              },
+            },
           },
         },
       },
