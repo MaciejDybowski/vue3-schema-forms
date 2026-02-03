@@ -19,7 +19,7 @@ export function useEventHandler() {
   const { resolve } = useResolveVariables();
 
   const debounced = {
-    onChange: debounce(onChangeDebounced, 1000),
+    onChange: debounce(onChangeDebounced, 400),
   };
 
   async function onChange(field: EngineField, model: object) {
@@ -70,6 +70,7 @@ export function useEventHandler() {
           ? (await resolve(field, variable.value)).resolvedText
           : variable.value;
 
+        console.debug(`${field.key}, condition=${variable.if},isReadyToExecute=${toExecute}`);
         return {
           key: variable.path,
           value,
