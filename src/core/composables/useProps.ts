@@ -29,9 +29,9 @@ export function useProps() {
       case 'text-field':
         props.value = {
           ...defaultTextFieldProperties,
-          ...schema.options?.fieldProps,
           ...schema.options?.textFieldProps,
           ...schema.layout?.props,
+          ...schema.options?.fieldProps,
         };
         if ((schema as EngineTextField).calculation) {
           props.value.readonly = true;
@@ -40,39 +40,39 @@ export function useProps() {
       case 'radio-button':
         props.value = {
           ...defaultRadioProps,
-          ...schema.options?.fieldProps,
           ...schema.options?.radioButtonProps,
           ...schema.layout?.props,
+          ...schema.options?.fieldProps,
         };
         break;
       case 'checkbox':
         props.value = {
           ...defaultCheckboxProperties,
-          ...schema.options?.fieldProps,
           ...schema.options?.checkboxProps,
           ...schema.layout?.props,
+          ...schema.options?.fieldProps,
         };
         break;
       case 'text-area':
         props.value = {
           ...defaultTextAreaProps,
-          ...schema.options?.fieldProps,
           ...schema.options?.textAreaProps,
           ...schema.layout?.props,
+          ...schema.options?.fieldProps,
         };
         break;
       case 'select':
         props.value = {
           ...defaultSelectProps,
-          ...schema.options?.fieldProps,
           ...schema.options?.selectProps,
           ...schema.layout?.props,
+          ...schema.options?.fieldProps,
         };
         break;
       case 'button':
         props.value = {
-          ...schema.options?.buttonProps,
           ...schema.layout?.props,
+          ...schema.options?.buttonProps,
         };
         break;
       case 'static-content': {
@@ -101,15 +101,15 @@ export function useProps() {
       case 'user-input':
         props.value = {
           'hide-details': 'auto',
-          ...schema.options?.fieldProps,
           ...schema.layout?.props,
+          ...schema.options?.fieldProps,
         };
         break;
       default:
         props.value = {
           'hide-details': 'auto',
-          ...schema.options?.fieldProps,
           ...schema.layout?.props,
+          ...schema.options?.fieldProps,
         };
       //console.warn('component is not recognized - used default props');
     }
