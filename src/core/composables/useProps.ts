@@ -29,9 +29,9 @@ export function useProps() {
       case 'text-field':
         props.value = {
           ...defaultTextFieldProperties,
+          ...schema.options?.fieldProps,
           ...schema.options?.textFieldProps,
           ...schema.layout?.props,
-          ...schema.options?.fieldProps,
         };
         if ((schema as EngineTextField).calculation) {
           props.value.readonly = true;
@@ -40,39 +40,39 @@ export function useProps() {
       case 'radio-button':
         props.value = {
           ...defaultRadioProps,
+          ...schema.options?.fieldProps,
           ...schema.options?.radioButtonProps,
           ...schema.layout?.props,
-          ...schema.options?.fieldProps,
         };
         break;
       case 'checkbox':
         props.value = {
           ...defaultCheckboxProperties,
+          ...schema.options?.fieldProps,
           ...schema.options?.checkboxProps,
           ...schema.layout?.props,
-          ...schema.options?.fieldProps,
         };
         break;
       case 'text-area':
         props.value = {
           ...defaultTextAreaProps,
+          ...schema.options?.fieldProps,
           ...schema.options?.textAreaProps,
           ...schema.layout?.props,
-          ...schema.options?.fieldProps,
         };
         break;
       case 'select':
         props.value = {
           ...defaultSelectProps,
+          ...schema.options?.fieldProps,
           ...schema.options?.selectProps,
           ...schema.layout?.props,
-          ...schema.options?.fieldProps,
         };
         break;
       case 'button':
         props.value = {
-          ...schema.layout?.props,
           ...schema.options?.buttonProps,
+          ...schema.layout?.props,
         };
         break;
       case 'static-content': {
@@ -100,22 +100,26 @@ export function useProps() {
         break;
       case 'user-input':
         props.value = {
+          ...schema.options?.fieldProps,
           'hide-details': 'auto',
           ...schema.layout?.props,
-          ...schema.options?.fieldProps,
         };
         break;
       default:
         props.value = {
+          ...schema.options?.fieldProps,
           'hide-details': 'auto',
           ...schema.layout?.props,
-          ...schema.options?.fieldProps,
         };
-      //console.warn('component is not recognized - used default props');
     }
-
+    overrideReadonlyPropIfExistsInFieldProps(schema);
     propsClone.value = cloneDeep(props.value);
+    await resolveExpressionsInPropsAndRunListener(schema);
+    //console.debug(`[props] - ${schema.key}, index=${schema.index}, props=`, props.value);
+    return props;
+  }
 
+  async function resolveExpressionsInPropsAndRunListener(schema: EngineField) {
     for (let [key, value] of Object.entries(props.value)) {
       if (typeof value === 'string' && value.includes('nata(')) {
         await resolveJSONataExpression(key, props.value, schema);
@@ -128,9 +132,6 @@ export function useProps() {
         vueSchemaFormEventBus.on(() => propsValueMappingListener(key, schema));
       }
     }
-
-    //console.debug(`[props] - ${schema.key}, index=${schema.index}, props=`, props.value);
-    return props;
   }
 
   async function propsValueMappingListener(keyToResolve: string, schema: EngineField) {
@@ -143,6 +144,18 @@ export function useProps() {
       console.debug(
         `[vue-schema-forms] [PropsValueMappingListener] => key=[${keyToResolve}], value=[${obj.resolvedText}]`,
       );
+  }
+
+  /*
+    Readonly in fieldProps should have global effect on form field and when individual field has this props as expression it must be overridden
+   */
+  function overrideReadonlyPropIfExistsInFieldProps(schema: EngineField) {
+    if (
+      schema.options.fieldProps?.readonly == true &&
+      typeof schema.layout.props?.readonly == 'string'
+    ) {
+      props.value.readonly = true;
+    }
   }
 
   return { bindProps: bindProps, fieldProps: props };

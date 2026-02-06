@@ -147,7 +147,7 @@ sequenceDiagram
 
 Field props priorities:
 
-> Defaults → Field Props → Input Type Props → Layout-specific Props
+> Defaults → Field Props  → Input Type Props → Layout-specific Props 
 
 Default values:
 
