@@ -30,6 +30,7 @@ jobs:
       - name: Build
         run: npm run build
 
-
       - name: Publish to npm
-        run: npm publish --provenance --access public
+        env:
+          NPM_CONFIG_PROVENANCE: true
+        run: npm publish --access public
