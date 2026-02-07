@@ -1,5 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
+export const basePath = typeof window !== 'undefined' && window.location.hostname.includes('github.io') ? '/vue3-schema-forms' : '';
+
 <Meta title="Changelog" />
 
 ### 0.4.85
@@ -8,7 +10,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 ### 0.4.84
 - it is possible to define `disableValidationWhenHidden` property and disable validation for hidden fields [Example](/story/features-validations--use-disable-validation-when-hidden)
 
-![Something went wrond](public/sthww.png)
+<img src={`${basePath}/sthww.png`} alt="Something went wrong" />
 
 ### 2.0.12
 - add dependencies between two or more duplicated sections. It is based on `sourcePath` and for update trigger is defined `updateTriggers` array with syntax `keyToVariable:comparatorAttribure`

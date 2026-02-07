@@ -1,10 +1,12 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
+export const basePath = typeof window !== 'undefined' && window.location.hostname.includes('github.io') ? '/vue3-schema-forms' : '';
+
 <Meta title="Homepage" />
 
 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
   <picture>
-    <img src="/public/logo-white.png" alt="Vue3 Schema Forms Logo" style={{ width: '340px' }} />
+    <img src={`${basePath}/logo-white.png`} alt="Vue3 Schema Forms Logo" style={{ width: '340px' }} />
   </picture>
 
   <div style={{ textAlign: 'left', maxWidth: '500px' }}>
