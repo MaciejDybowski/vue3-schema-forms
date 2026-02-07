@@ -1,15 +1,14 @@
 // @ts-nocheck
 import { expect, userEvent, within } from 'storybook/test';
-
 import dayjs from '../../components/controls/date/dayjs';
 import { Schema } from '../../types/schema/Schema';
 import { SchemaDateField } from '../../types/schema/elements';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { mockDateForBrowser } from '../utils';
 import { playWrapper, waitForMountedAsync } from './utils';
 
-
-
-
+// Mock date for consistent testing
+const MOCK_DATE = new Date('2026-02-14T12:00:00.000+01:00');
 
 export default {
   title: 'Elements/Editable/DateTime',
@@ -20,7 +19,7 @@ export const Standard: Story = {
   play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('DateTime');
-    await userEvent.type(field, '01/29/2024 14:30:00 AM', {delay: 100});
+    await userEvent.type(field, '01/29/2024 14:30:00 AM', { delay: 100 });
     await expect(context.args.formModel.simpleDate).toEqual('2024-01-29T02:30:00.000+01:00');
   }),
   args: {
@@ -92,6 +91,9 @@ export const ReadOnly: Story = {
 
 export const PickFromMenu: Story = {
   name: 'Case: pick datetime from menu',
+  beforeEach: () => {
+    mockDateForBrowser(MOCK_DATE);
+  },
   play: playWrapper(async (context) => {
     const canvas = within(context.canvasElement);
     const icon = document.getElementsByClassName('mdi-calendar');
@@ -109,7 +111,7 @@ export const PickFromMenu: Story = {
     await userEvent.click(minutesButton[2], { delay: 150 });
     await expect(dayjs(context.args.formModel.simpleDateTimeFromPicker).isValid()).toBe(true);
     await expect(context.args.formModel.simpleDateTimeFromPicker).toEqual(
-      '2025-12-31T11:56:00.000+01:00',
+      '2026-01-28T11:56:00.000+01:00',
     );
     await userEvent.click(icon[0]);
   }),
