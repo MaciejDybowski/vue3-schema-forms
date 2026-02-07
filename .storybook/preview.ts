@@ -34,8 +34,15 @@ setup((app) => {
   app.use(i18n);
 });
 
+// Determine base path for GitHub Pages deployment
+const isGitHubPages = window.location.hostname.includes('github.io');
+const basePath = isGitHubPages ? '/vue3-schema-forms/' : '/';
+
 initialize({
   onUnhandledRequest: 'bypass', // 👈 suppresses the warning
+  serviceWorker: {
+    url: `${basePath}mockServiceWorker.js`,
+  },
 });
 
 export const loaders = [mswLoader];

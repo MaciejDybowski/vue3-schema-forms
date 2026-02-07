@@ -16,6 +16,12 @@ const config: StorybookConfig = {
   },
   //docs: {},
   async viteFinal(config) {
+    // Set base path for GitHub Pages
+    const isProduction = process.env.STORYBOOK === 'true';
+    if (isProduction) {
+      config.base = '/vue3-schema-forms/';
+    }
+
     // Merge custom configuration into the default config
     return mergeConfig(config, {
       optimizeDeps: {
