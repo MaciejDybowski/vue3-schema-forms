@@ -9,6 +9,7 @@
     v-else
     :model="model"
     :schema="schema"
+    :validationsDisabled="validationsDisabled"
   />
 </template>
 
@@ -23,6 +24,7 @@ import { EngineTextSwitchFieldField } from '@/types/engine/controls';
 const { schema, model } = defineProps<{
   schema: EngineTextSwitchFieldField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { getValue } = useFormModel();
