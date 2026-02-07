@@ -1,12 +1,13 @@
 <template>
   <v-col
     v-if="shouldRender"
-    v-show="!shouldHide && shouldRender"
+    v-show="shouldShow"
     :class="[layoutCssClass, schema.layout.cellClass]"
     :cols="cols"
   >
     <component
       :is="`node-${schema.layout.component}`"
+      :validationsDisabled="shouldDisableRulesWhenFieldIsHidden"
       :model="model"
       :schema="schema"
     />
@@ -33,6 +34,14 @@ const props = defineProps<{
 const { shouldRender, shouldRenderField } = useConditionalRendering();
 const { shouldHide, shouldHideField } = useConditionalHide();
 const { cols, isOffsetExist, offset, fillRow } = useSchemaCols(props.schema);
+
+const shouldShow = computed(() => {
+  return !shouldHide.value && shouldRender.value;
+});
+
+const shouldDisableRulesWhenFieldIsHidden = computed(() => {
+  return (!shouldShow.value && props.schema.layout.disableValidationWhenHidden) || false;
+});
 
 const layoutCssClass = computed(() => {
   let cssString = '';

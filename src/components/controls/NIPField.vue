@@ -5,7 +5,7 @@
     :hint="warningHint"
     :label="label"
     :persistent-hint="!!warningHint"
-    :rules="!fieldProps.readonly ? nipRules : []"
+    :rules="activeRules"
     maxlength="14"
     v-bind="fieldProps"
     @update:model-value="onNipChange"
@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, toRef, watch } from 'vue';
 
 import {
   useClass,
@@ -30,12 +30,14 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { EngineNIPField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineNIPField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { t } = useLocale();
@@ -109,7 +111,7 @@ function validateDE(number: string): boolean {
 function validateFR(number: string): boolean {
   if (!/^\d{11}$/.test(number)) return true; // inne formaty FR nie mają check digit
   const total = parseInt(number.substring(2), 10);
-  const check = ((total * 100 + 12) % 97);
+  const check = (total * 100 + 12) % 97;
   return check === parseInt(number.substring(0, 2), 10);
 }
 
@@ -161,7 +163,12 @@ function validateGB(number: string): boolean {
   const no = parseInt(number.slice(0, 7), 10);
 
   // Stary algorytm (numery przed 2010)
-  if (cd === checkDigits && no < 9990001 && (no < 100000 || no > 999999) && (no < 9490001 || no > 9700000)) {
+  if (
+    cd === checkDigits &&
+    no < 9990001 &&
+    (no < 100000 || no > 999999) &&
+    (no < 9490001 || no > 9700000)
+  ) {
     return true;
   }
 
@@ -256,10 +263,10 @@ watch(
  * Reguły walidacji dla pola NIP/VAT ID
  */
 const nipRules = computed(() => {
-  const baseRules = [...rules.value];
+  const extraRules = [];
 
   // Walidacja formatu
-  baseRules.push((value: string) => {
+  extraRules.push((value: string) => {
     if (!value || value === '') return true;
     if (!validateVatFormat(value)) {
       return t('nip.invalidFormat');
@@ -269,7 +276,7 @@ const nipRules = computed(() => {
 
   // Walidacja sumy kontrolnej jako error (blokująca)
   if (props.schema.checkSumValidation === 'error') {
-    baseRules.push((value: string) => {
+    extraRules.push((value: string) => {
       if (!value || value === '' || !validateVatFormat(value)) return true;
       if (!validateVatChecksum(value)) {
         return t('nip.invalidChecksum');
@@ -278,7 +285,7 @@ const nipRules = computed(() => {
     });
   }
 
-  return baseRules;
+  return extraRules;
 });
 
 function onNipChange(value: string | number) {
@@ -291,6 +298,13 @@ function onNipChange(value: string | number) {
   }
   onChange(props.schema, props.model);
 }
+
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+  extraRules: nipRules.value,
+});
 
 onMounted(async () => {
   await bindLabel(props.schema);

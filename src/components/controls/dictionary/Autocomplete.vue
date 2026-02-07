@@ -15,7 +15,7 @@
     :no-filter="true"
     :options="paginationOptions"
     :return-object="returnObject as any"
-    :rules="!fieldProps.readonly ? rules : []"
+    :rules="activeRules"
     component="v-autocomplete"
     v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
     @click="fetchDictionaryData"
@@ -84,7 +84,7 @@
 <script lang="ts" setup>
 import { isArray } from 'lodash';
 
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, toRef, watch } from 'vue';
 
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 import DictionaryItemChip from '@/components/controls/dictionary/DictionaryItemChip.vue';
@@ -98,6 +98,7 @@ import {
   useResolveVariables,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useDictionary } from '@/core/composables/useDictionary';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
@@ -106,6 +107,7 @@ import { EngineDictionaryField } from '@/types/engine/controls';
 const props = defineProps<{
   schema: EngineDictionaryField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 const { t } = useLocale();
 const { label, bindLabel } = useLabel(props.schema);
@@ -115,6 +117,11 @@ const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+});
 
 const localModelCurrent = computed(() =>
   localModel.value ? (returnObject.value ? localModel.value[title.value] : localModel.value) : null,

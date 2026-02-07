@@ -3,7 +3,7 @@
     v-model="localModel"
     :label="label"
     v-bind="fieldProps"
-    :rules="!fieldProps.readonly ? rules : []"
+    :rules="activeRules"
     :class="bindClass(schema) + requiredInputClass"
     v-if="!loading"
   >
@@ -25,9 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
-
-import { RadioField } from '@/types/engine/controls';
+import { computed, onMounted, toRef, watch } from 'vue';
 
 import {
   useClass,
@@ -37,16 +35,20 @@ import {
   useRules,
   useSource,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
+import { RadioField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: RadioField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 const { label, bindLabel } = useLabel(props.schema);
 const { bindProps, fieldProps } = useProps();
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
+
 const initValue: boolean = props.schema.initValue !== undefined ? props.schema.initValue : true;
 
 const localModel = computed({
@@ -71,6 +73,11 @@ const localModel = computed({
 });
 
 const { bindRules, rules, requiredInputClass } = useRules();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+});
 
 watch(loading, () => {
   if (data.value.length === 0) {

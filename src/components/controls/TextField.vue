@@ -4,7 +4,7 @@
       v-model="localModel"
       :class="bindClass(schema) + requiredInputClass"
       :label="label"
-      :rules="!fieldProps.readonly ? rules : []"
+      :rules="activeRules"
       v-bind="fieldProps"
       @update:model-value="onChange(schema, model)"
     />
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, toRef } from 'vue';
 
 import {
   useClass,
@@ -24,6 +24,7 @@ import {
   useResolveVariables,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineTextField } from '@/types/engine/controls';
@@ -31,6 +32,7 @@ import { EngineTextField } from '@/types/engine/controls';
 const props = defineProps<{
   schema: EngineTextField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { resolve } = useResolveVariables();
@@ -43,6 +45,12 @@ const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
 const { fillPath } = useResolveVariables();
+
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+});
 
 const localModel = computed({
   get(): string | number {
@@ -96,7 +104,7 @@ onMounted(async () => {
   await bindRules(props.schema);
   await bindProps(props.schema);
   await runExpressionIfExist();
-  await runDependencyExpressionIfExist()
+  await runDependencyExpressionIfExist();
 });
 </script>
 

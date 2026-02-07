@@ -7,7 +7,7 @@
       v-model="selectedLang"
       :class="[bindClass(schema), requiredInputClass, 'v-phone-input__country__input']"
       :items="languages"
-      :rules="!fieldProps.readonly ? rules : []"
+      :rules="activeRules"
       item-title="name"
       item-value="code"
       label="Lang"
@@ -34,7 +34,7 @@
       v-model="safeLocalModel[countryCode]"
       :class="bindClass(schema) + requiredInputClass"
       :label="label"
-      :rules="!fieldProps.readonly ? rules : []"
+      :rules="activeRules"
       v-bind="fieldProps"
     />
   </div>
@@ -44,7 +44,7 @@
 import 'v-phone-input/dist/v-phone-input.css';
 import 'world-flags-sprite/stylesheets/flags32.css';
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
 import {
   useClass,
@@ -54,12 +54,14 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { AvailableLanguage } from '@/types/engine/AvailableLanguage';
 import { EngineMultiLanguageField } from '@/types/engine/MultiLanguageField';
 
-const { schema, model } = defineProps<{
+const { schema, model, validationsDisabled } = defineProps<{
   schema: EngineMultiLanguageField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { bindClass } = useClass();
@@ -68,6 +70,11 @@ const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
 const { getValue, setValue } = useFormModel();
 const { locale } = useLocale();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => validationsDisabled),
+  rules,
+});
 
 /**
  * For builder purpose to generate field without initiated form model

@@ -7,7 +7,7 @@
     :no-filter="true"
     item-title="formatted_address"
     :return-object="true"
-    :rules="!fieldProps.readonly ? rules : []"
+    :rules="activeRules"
     :class="bindClass(schema) + requiredInputClass"
     v-bind="fieldProps"
   >
@@ -18,8 +18,9 @@
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { debounce } from 'lodash';
 
-import { Ref, computed, onMounted, ref } from 'vue';
+import { Ref, computed, onMounted, ref, toRef } from 'vue';
 
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { EngineLocationField } from '@/types/engine/controls';
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from '../../core/composables';
@@ -46,6 +47,7 @@ interface Location {
 const props = defineProps<{
   schema: EngineLocationField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { label, bindLabel } = useLabel(props.schema);
@@ -53,6 +55,11 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+});
 
 const localModel = computed({
   get(): Location | null {

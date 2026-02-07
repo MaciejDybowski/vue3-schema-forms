@@ -5,7 +5,7 @@
     :class="bindClass(schema) + requiredInputClass"
     :color="primaryWhite"
     :label="label"
-    :rules="!fieldProps.readonly ? rules : []"
+    :rules="activeRules"
     class="px-2"
     v-bind="fieldProps"
     @update:model-value="valueHasChanged"
@@ -16,7 +16,7 @@
 import { useTheme } from 'vuetify';
 import { VSwitch } from 'vuetify/components';
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
 import {
   useCalculation,
@@ -26,13 +26,15 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { EngineSwitchField } from '@/types/engine/controls';
 
-const { schema, model } = defineProps<{
+const { schema, model, validationsDisabled } = defineProps<{
   schema: EngineSwitchField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const mode = schema.mode ? schema.mode : 'none';
@@ -44,6 +46,11 @@ const { getValue, setValue } = useFormModel();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
 const { onChange } = useEventHandler();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => validationsDisabled),
+  rules,
+});
 
 const theme = useTheme();
 

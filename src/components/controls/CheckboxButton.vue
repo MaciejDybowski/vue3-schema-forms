@@ -19,7 +19,7 @@
           :disabled="disabled(fieldProps.disabled, option.disabled)"
           :hide-details="index == data.length - 1 ? 'auto' : true"
           :label="option[title]"
-          :rules="!fieldProps.readonly ? rules : []"
+          :rules="activeRules"
           :value="option[value]"
           v-bind="fieldProps"
         >
@@ -36,8 +36,9 @@
 import { useEventBus } from '@vueuse/core';
 import jsonata from 'jsonata';
 
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, toRef } from 'vue';
 
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { EngineSourceField } from '@/types/engine/controls';
 
@@ -53,6 +54,7 @@ import {
 const props = defineProps<{
   schema: EngineSourceField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { label, bindLabel } = useLabel(props.schema);
@@ -62,6 +64,11 @@ const { bindProps, fieldProps } = useProps();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const form = useInjectedFormModel();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+});
 
 const localModel = computed({
   get(): string | number {

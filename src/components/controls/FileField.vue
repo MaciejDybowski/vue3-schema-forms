@@ -6,7 +6,7 @@
     :hint="availableExt.length > 0 ? t('availableExtRule', { ext: availableExtensionsString }) : ''"
     :label="label"
     :persistent-hint="availableExt.length > 0"
-    :rules="!fieldProps.readonly ? rules : []"
+    :rules="activeRules"
     chips
     prepend-icon=""
     prepend-inner-icon="mdi-file"
@@ -36,7 +36,7 @@
 import { useEventBus } from '@vueuse/core';
 import axios from 'axios';
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
 import {
   useClass,
@@ -46,6 +46,7 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { toast } from '@/main';
 import { EngineFileField } from '@/types/engine/controls';
 
@@ -56,9 +57,10 @@ interface FileInfo extends File {
   type: string;
 }
 
-const { schema, model } = defineProps<{
+const { schema, model, validationsDisabled } = defineProps<{
   schema: EngineFileField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { t } = useLocale();
@@ -67,6 +69,11 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { label, bindLabel } = useLabel(schema);
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => validationsDisabled),
+  rules,
+});
 
 const maxFileSize = ref(schema.fileMaxSize || null);
 const availableExt = ref(
@@ -262,16 +269,6 @@ function formatSize(size: number | null): string {
   if (size >= 1024 * 1024) return `${(size / 1024 / 1024).toFixed(1)} MB`;
   return `${(size / 1024).toFixed(1)} KB`;
 }
-
-/*watch(
-  () => localModel.value,
-  () => {
-    if (localModel.value && Object.keys(localModel.value).length === 0) {
-      localModel.value = null;
-      lastLocalModel.value = null;
-    }
-  }
-);*/
 
 onMounted(async () => {
   if (localModel.value && Object.keys(localModel.value).length === 0) {

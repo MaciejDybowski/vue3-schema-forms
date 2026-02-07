@@ -2,7 +2,7 @@
   <div v-if="editor && !editorLoading">
     <v-input
       v-model="localModel"
-      :rules="!fieldProps.readonly ? rules : []"
+      :rules="activeRules"
       v-bind="fieldProps"
     >
       <template #default>
@@ -56,11 +56,12 @@ import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
 
 import TextEditorToolbar from '@/components/controls/text-editor/TextEditorToolbar.vue';
 
 import { useFormModel, useProps, useRules } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { EngineTextEditorField } from '@/types/engine/controls';
 
@@ -68,10 +69,16 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { getValue, setValue } = useFormModel();
 const { bindProps, fieldProps } = useProps();
 const { onChange } = useEventHandler();
-const { schema, model } = defineProps<{
+const { schema, model, validationsDisabled } = defineProps<{
   schema: EngineTextEditorField;
   model: object;
+  validationsDisabled: boolean;
 }>();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => validationsDisabled),
+  rules,
+});
 
 const isUpdatingFromEditor = ref(false);
 const editorLoading = ref(true);

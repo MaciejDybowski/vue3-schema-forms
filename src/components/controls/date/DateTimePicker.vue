@@ -7,7 +7,7 @@
     :focused="isInputFocused || pickerModel"
     :label="label"
     :placeholder="dateTimeFormat.toLocaleLowerCase()"
-    :rules="!fieldProps.readonly ? dateRules : []"
+    :rules="activeRules"
     v-bind="{ ...attrs, ...fieldProps }"
     @update:focused="(val) => (isInputFocused = val)"
     @update:model-value="dateTyping"
@@ -74,7 +74,7 @@
 import { toNumber } from 'lodash';
 import { MaskOptions } from 'maska';
 
-import { computed, onMounted, ref, useAttrs, watch } from 'vue';
+import { computed, onMounted, ref, toRef, useAttrs, watch } from 'vue';
 
 import {
   useClass,
@@ -85,6 +85,7 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { EngineDateField } from '@/types/engine/controls';
 
@@ -93,7 +94,11 @@ import dayjs from './dayjs';
 const inputFieldRef = ref<any>();
 
 const { locale, t } = useLocale();
-const props = defineProps<{ schema: EngineDateField; model: object }>();
+const props = defineProps<{
+  schema: EngineDateField;
+  model: object;
+  validationsDisabled: boolean;
+}>();
 const { label, bindLabel } = useLabel(props.schema);
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
@@ -259,7 +264,14 @@ const dateRules = computed(() => {
   if (!isFutureDateAvailable) {
     rulesArray.push(isDateInFuture);
   }
-  return [...rulesArray, ...rules.value];
+  return [...rulesArray];
+});
+
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+  extraRules: dateRules,
 });
 
 function isValidDate(val: string) {

@@ -12,7 +12,7 @@
           :label="label"
           :model-value="formattedSelection"
           :readonly="true"
-          :rules="!fieldProps.readonly ? rules : []"
+          :rules="activeRules"
           v-bind="{ ...props, ...fieldProps }"
           @click="menu = true"
         />
@@ -33,7 +33,7 @@
       v-if="schema.variant == 'list'"
       v-model="localModel"
       :class="bindClass(schema) + requiredInputClass"
-      :rules="!fieldProps.readonly ? rules : []"
+      :rules="activeRules"
     >
       <template #default>
         <div class="d-flex flex-column">
@@ -61,7 +61,7 @@
 import axios from 'axios';
 import get from 'lodash/get';
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
 import OrderedMultiselectLists from '@/components/controls/ordered-multi-select/OrderedMultiselectLists.vue';
 
@@ -73,6 +73,7 @@ import {
   useResolveVariables,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { EngineOrderedMultiSelect } from '@/types/engine/controls';
 
 const { resolve } = useResolveVariables();
@@ -83,11 +84,17 @@ const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 
-const { schema, model } = defineProps<{
+const { schema, model, validationsDisabled } = defineProps<{
   schema: EngineOrderedMultiSelect;
   model: object;
+  validationsDisabled: boolean;
 }>();
 const { label, bindLabel } = useLabel(schema);
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => validationsDisabled),
+  rules,
+});
 
 const localModel = computed({
   get(): any[] {

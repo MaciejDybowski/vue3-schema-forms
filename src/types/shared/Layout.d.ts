@@ -13,6 +13,7 @@ export interface Layout {
   fillRow?: boolean;
   offset?: Offset;
   hide?: boolean | string;
+  disableValidationWhenHidden?: boolean;
 
   // duplicated-section && section && address
   schema?: Schema;

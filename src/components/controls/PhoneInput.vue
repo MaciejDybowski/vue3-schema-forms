@@ -6,8 +6,7 @@
     :invalid-message="(options: any) => showMessage(options)"
     :label="label"
     :phone-props="fieldPropsMerged"
-    :rules="!fieldProps.readonly ? rules : []"
-
+    :rules="activeRules"
     v-bind="fieldPropsMerged"
   >
   </v-phone-input>
@@ -18,7 +17,7 @@ import { VPhoneInput } from 'v-phone-input';
 import 'v-phone-input/dist/v-phone-input.css';
 import 'world-flags-sprite/stylesheets/flags32.css';
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
 import {
   useClass,
@@ -28,11 +27,13 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { EnginePhoneField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EnginePhoneField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { label, bindLabel } = useLabel(props.schema);
@@ -41,6 +42,11 @@ const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { t } = useLocale();
 const { getValue, setValue } = useFormModel();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+});
 
 function showMessage(options: any) {
   if (options.country.iso2.toLowerCase() == 'pl') {
@@ -59,13 +65,12 @@ const phoneInputProps = {
 const propsRef = ref({});
 const fieldPropsMerged = computed(() => {
   propsRef.value = {
-    countryLabel: () => "",
+    countryLabel: () => '',
     ...fieldProps.value,
     ...phoneInputProps,
     ...props.schema.phoneInputProps,
     id: props.schema.key,
     country: 'pl',
-
   };
   return propsRef.value;
 });

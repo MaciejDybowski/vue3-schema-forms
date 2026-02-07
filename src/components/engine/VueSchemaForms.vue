@@ -261,7 +261,6 @@ async function validate(option?: ValidationFromBehaviour) {
   alertElements.forEach((alertElement) => {
     const isError =
       alertElement.classList.contains('v-alert') && (alertElement.classList.contains('text-error') || alertElement.classList.contains('bg-error'));
-    console.debug(isError);
     const alertText = alertElement.textContent;
 
     if (isError && (option == 'messages' || option == 'combined')) {
@@ -288,7 +287,6 @@ async function validate(option?: ValidationFromBehaviour) {
   const { valid } = await formRef.value[formId].validate();
   formValid.value = valid && preValid;
 
-  console.debug(formValid.value);
 
   if (!option) {
     return { valid: formValid.value };

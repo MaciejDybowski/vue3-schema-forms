@@ -3,7 +3,7 @@
     v-model="localModel"
     :label="label"
     v-bind="fieldProps"
-    :rules="!fieldProps.readonly ? rules : []"
+    :rules="activeRules"
     :class="bindClass(schema) + requiredInputClass"
     :item-title="title"
     :item-value="value"
@@ -16,8 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, toRef } from 'vue';
 
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { EngineSourceField } from '@/types/engine/controls';
 
@@ -33,6 +34,7 @@ import {
 const props = defineProps<{
   schema: EngineSourceField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 const { label, bindLabel } = useLabel(props.schema);
 const { title, value, loading, data, returnObject, multiple } = useSource(props.schema.source);
@@ -41,6 +43,11 @@ const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+});
 
 const localModel = computed({
   get(): any {

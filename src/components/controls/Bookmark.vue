@@ -1,7 +1,7 @@
 <template>
   <v-tabs
     v-model="localModel"
-    :class="[bindClass(schema), requiredInputClass]"
+    :class="[bindClass(schema)]"
     :stacked="schema?.stacked ?? false"
     center-active
     data-testid="bookmarks"
@@ -36,7 +36,6 @@ const { schema, model } = defineProps<{
 
 const { title, value, loading, data, returnObject } = useSource(schema.source);
 const { bindProps, fieldProps } = useProps();
-const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
@@ -70,7 +69,6 @@ const localModel = computed({
 });
 
 onMounted(async () => {
-  await bindRules(schema);
   await bindProps(schema);
 });
 </script>

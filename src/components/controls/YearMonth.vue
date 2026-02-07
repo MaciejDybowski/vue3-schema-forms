@@ -6,11 +6,11 @@
     :clearable="!fieldProps.readonly"
     :focused="pickerModel"
     :label="label"
-    :rules="!fieldProps.readonly ? rules : []"
+    :rules="activeRules"
     readonly
     v-bind="{ ...attrs, ...fieldProps }"
     @click="openPicker"
-    @click:clear="localModel=null"
+    @click:clear="localModel = null"
   />
 
   <v-menu
@@ -23,7 +23,10 @@
     offset="5"
     scrim="transparent"
   >
-    <v-card width="330px" @mousedown.prevent>
+    <v-card
+      width="330px"
+      @mousedown.prevent
+    >
       <v-date-picker
         v-model="pickerValue"
         hide-header
@@ -62,7 +65,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, useAttrs, watch } from 'vue';
+import { computed, onMounted, ref, toRef, useAttrs, watch } from 'vue';
 
 import {
   useClass,
@@ -72,11 +75,13 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { EngineDateField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EngineDateField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { locale } = useLocale();
@@ -86,6 +91,11 @@ const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const attrs = useAttrs();
 const { bindRules, rules, requiredInputClass } = useRules();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+});
 
 const pickerModel = ref(false);
 const inputFieldRef = ref<HTMLElement | null>(null);

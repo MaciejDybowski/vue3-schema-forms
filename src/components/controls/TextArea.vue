@@ -2,27 +2,34 @@
   <v-textarea
     v-model="localModel"
     :label="label"
-    :rules="!fieldProps.readonly ? rules : []"
+    :rules="activeRules"
     v-bind="fieldProps"
     :class="bindClass(schema) + requiredInputClass"
   />
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, toRef } from 'vue';
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { EngineField } from '@/types/engine/EngineField';
 
 const props = defineProps<{
   schema: EngineField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 const { label, bindLabel } = useLabel(props.schema);
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+});
 
 const localModel = computed({
   get(): string {

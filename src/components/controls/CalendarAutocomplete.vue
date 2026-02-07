@@ -9,7 +9,7 @@
     :label="label"
     :loading="loading"
     :return-object="returnObject as any"
-    :rules="!fieldProps.readonly ? rules : []"
+    :rules="activeRules"
     component="v-autocomplete"
     v-bind="{ ...fieldProps, clearable: !fieldProps.readonly }"
     @click="fetchDictionaryData"
@@ -49,7 +49,7 @@
 <script lang="ts" setup>
 import axios from 'axios';
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 import { BuiltInTranslationLanguages } from '@/components/controls/dictionary/DictionaryItemChip.vue';
@@ -63,11 +63,13 @@ import {
   useRules,
   useSource,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { EngineDictionaryField } from '@/types/engine/controls';
 
-const { schema, model } = defineProps<{
+const { schema, model, validationsDisabled } = defineProps<{
   schema: EngineDictionaryField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { bindClass } = useClass();
@@ -77,6 +79,11 @@ const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
 const { locale } = useLocale();
 const { title, value, loading, data, returnObject, multiple } = useSource(schema.source);
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => validationsDisabled),
+  rules,
+});
 
 const localModel = computed({
   get(): any {

@@ -5,7 +5,7 @@
     :hint="warningHint"
     :label="label"
     :persistent-hint="!!warningHint"
-    :rules="!fieldProps.readonly ? peselRules : []"
+    :rules="activeRules"
     maxlength="11"
     v-bind="fieldProps"
     @update:model-value="onPeselChange"
@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, toRef, watch } from 'vue';
 
 import {
   useClass,
@@ -30,12 +30,14 @@ import {
   useProps,
   useRules,
 } from '@/core/composables';
+import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { EnginePESELField } from '@/types/engine/controls';
 
 const props = defineProps<{
   schema: EnginePESELField;
   model: object;
+  validationsDisabled: boolean;
 }>();
 
 const { t } = useLocale();
@@ -197,10 +199,10 @@ watch(
  * Reguły walidacji dla pola PESEL
  */
 const peselRules = computed(() => {
-  const baseRules = [...rules.value];
+  const extraRules = [];
 
   // Walidacja formatu
-  baseRules.push((value: string) => {
+  extraRules.push((value: string) => {
     if (!value || value === '') return true;
     if (!validatePeselFormat(value)) {
       return t('pesel.invalidFormat');
@@ -210,7 +212,7 @@ const peselRules = computed(() => {
 
   // Walidacja sumy kontrolnej jako error (blokująca) - gdy checkSumValidation === 'error'
   if (props.schema.checkSumValidation === 'error') {
-    baseRules.push((value: string) => {
+    extraRules.push((value: string) => {
       if (!value || value === '' || !validatePeselFormat(value)) return true;
       if (!validatePeselChecksum(value)) {
         return t('pesel.invalidChecksum');
@@ -220,7 +222,7 @@ const peselRules = computed(() => {
   }
 
   // Walidacja prawidłowej daty urodzenia
-  baseRules.push((value: string) => {
+  extraRules.push((value: string) => {
     if (!value || value === '' || !validatePeselFormat(value)) return true;
     if (!extractBirthDateFromPesel(value)) {
       return t('pesel.invalidDate');
@@ -230,7 +232,7 @@ const peselRules = computed(() => {
 
   // Walidacja pełnoletności jako error (blokująca) - gdy adultsValidation === 'error'
   if (props.schema.adultsValidation === 'error') {
-    baseRules.push((value: string) => {
+    extraRules.push((value: string) => {
       if (!value || value === '' || !validatePeselChecksum(value)) return true;
       if (!isAdult(value)) {
         return t('pesel.notAdult');
@@ -239,7 +241,7 @@ const peselRules = computed(() => {
     });
   }
 
-  return baseRules;
+  return extraRules;
 });
 
 function onPeselChange(value: string | number) {
@@ -252,6 +254,13 @@ function onPeselChange(value: string | number) {
   }
   onChange(props.schema, props.model);
 }
+
+const { activeRules } = useActiveRules({
+  fieldProps,
+  validationsDisabled: toRef(() => props.validationsDisabled),
+  rules,
+  extraRules: peselRules.value,
+});
 
 onMounted(async () => {
   await bindLabel(props.schema);
