@@ -2,10 +2,55 @@
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+
+
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField } from '../../types/schema/elements';
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -539,6 +584,72 @@ export const JsonataDateCompare: Story = {
           ],
         },
       },
+    },
+  },
+};
+
+
+export const useDisableValidationWhenHidden: Story = {
+  name: "Example: disableValidationWhenHidden property",
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText('This is an error message')).toBeInTheDocument();
+
+    const switchField = canvas.getByLabelText('Change it!');
+    await userEvent.click(switchField, { delay: 200 });
+
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
+
+    const textField = canvas.getByLabelText('Text field');
+    await userEvent.type(textField, 'Some value', { delay: 100 });
+
+    await userEvent.click(Submit, { delay: 200 });
+    await expect(canvas.getByText('This is an error message')).toBeInTheDocument();
+  },
+  args: {
+    formModel: {
+      switch: false,
+      validationMessages: [
+        {
+          code: 'ERR001',
+          message: 'This is an error message',
+          severity: 'error',
+        },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        switch: {
+          label: 'Change it!',
+          layout: {
+            component: 'switch',
+          },
+        },
+        validationMessages: {
+          layout: {
+            component: 'validation-messages-viewer',
+            hide: `nata(switch=false)`,
+            props: {
+              variant: 'tonal',
+            },
+          },
+        },
+        textField: {
+          label: 'Text field',
+          layout: {
+            component: 'text-field',
+            hide: `nata(switch=false)`,
+            disableValidationWhenHidden: true,
+          },
+        },
+      },
+      required: ['textField'],
     },
   },
 };
