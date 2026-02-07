@@ -2,12 +2,30 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Homepage" />
 
-# Vue3 Schema Forms 🚀
+<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+  <picture>
+    <img src="/public/logo-white.png" alt="Vue3 Schema Forms Logo" style={{ width: '340px' }} />
+  </picture>
 
-> **Dynamic JSON Schema-powered forms for Vue 3 + Vuetify.**
+  <div style={{ textAlign: 'left', maxWidth: '500px' }}>
+    <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', marginTop: 0 }}>Vue3 Schema Forms</h1>
 
-Easily build dynamic, user-friendly, and customizable forms using JSON Schema, powered by [Vue 3](https://vuejs.org/)
-and [Vuetify 3](https://next.vuetifyjs.com/).
+    <p style={{ fontSize: '1.25rem', color: '#666', fontWeight: 'bold', marginBottom: '1rem' }}>
+      Dynamic JSON Schema-powered forms for Vue 3 + Vuetify.
+    </p>
+
+    <p style={{ lineHeight: '1.6', marginBottom: '1rem' }}>
+      Easily build dynamic, user-friendly, and customizable forms using JSON Schema,
+      powered by <a href="https://vuejs.org/">Vue 3</a> and <a href="https://next.vuetifyjs.com/">Vuetify 3</a>.
+    </p>
+
+    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <img src="https://img.shields.io/npm/v/vue3-schema-forms.svg" alt="npm version" />
+      <img src="https://img.shields.io/npm/dm/vue3-schema-forms.svg" alt="npm downloads" />
+      <img src="https://img.shields.io/npm/l/vue3-schema-forms.svg" alt="license" />
+    </div>
+  </div>
+</div>
 
 Inspired by [vuetify-jsonschema-form](https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/).
 
@@ -15,9 +33,8 @@ Inspired by [vuetify-jsonschema-form](https://koumoul-dev.github.io/vuetify-json
 
 ## 📚 Documentation
 
-- **Storybook (live preview):** [View Demo](https://aureadev.tecna.pl/storybook)
-- **Changelog:** [See latest changes](https://aureadev.tecna.pl/storybook/?path=/docs/changelog--docs)
-- **Wiki Docs** [Wiki](https://wiki.aurea.software/pl/projektowanie/silnik-formularzy)
+- **Storybook (live preview):** [View Demo](https://maciejdybowski.github.io/vue3-schema-forms/)
+- **Changelog:** [See latest changes](https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs)
 
 ---
 
@@ -30,7 +47,7 @@ npm install vue3-schema-forms
 > **Peer dependencies required:**
 
 ```bash
-npm install vue@3.4.14 vuetify@3.5.1 axios@1.6.5 dayjs@1.11.10 vue-i18n@9 vuedraggable@next
+npm install vue@^3.5.20 vuetify@3.8.1 axios@^1.7.2 dayjs@^1.11.11 vue-i18n@^9.13.1 vuedraggable@^4.1.0
 ```
 
 > **Optional for SFC i18n support:**
@@ -248,7 +265,10 @@ sequenceDiagram
 
 Field props priorities:
 
-> Defaults → Field Props → Input Type Props → Layout-specific Props
+> Defaults → Field Props  → Input Type Props → Layout-specific Props
+
+The proposed solution to control the entire form and determine whether it should be read-only or editable is to use `fieldProps.readonly`.
+If `if`/`hide` expressions are used, it will be overwritten as an exception.
 
 Default values:
 
@@ -274,7 +294,7 @@ Default values:
   <tr>
     <td><code>textAreaProps</code></td>
     <td>object</td>
-    <td><code>&#123; rows: 3, hide-details: 'auto', auto-grow: true &#125;</code></td>
+    <td><code>&#123; rows: 3, hide-details: false, auto-grow: true &#125;</code></td>
   </tr>
   <tr>
     <td><code>radioButtonProps</code></td>
@@ -289,7 +309,7 @@ Default values:
   <tr>
     <td><code>selectProps</code></td>
     <td>object</td>
-    <td><code>&#123; hide-details: 'auto' &#125;</code></td>
+    <td><code>&#123; hide-details: false &#125;</code></td>
   </tr>
   <tr>
     <td><code>buttonProps</code></td>
@@ -385,9 +405,24 @@ listeners:
     <td>Waits for model changes</td>
   </tr>
   <tr>
+    <td>Expressions</td>
+    <td><code>30ms</code></td>
+    <td>Waits for model changes</td>
+  </tr>
+  <tr>
     <td>Visibility (<code>if</code> / <code>hide</code>)</td>
     <td><code>50ms</code></td>
     <td>Triggers after all other logic</td>
+  </tr>
+  <tr>
+    <td>ExpansionPanels</td>
+    <td><code>110ms</code></td>
+    <td>For resolve variables in titles</td>
+  </tr>
+  <tr>
+    <td>Static content</td>
+    <td><code>110ms</code></td>
+    <td>Waits for model changes</td>
   </tr>
   </tbody>
 </table>
@@ -515,7 +550,7 @@ flowchart TB
 2. Install development dependencies: ```npm install```
 3. Run the tests: ```npm test```
 4. Run the storybook: ```npm run storybook```
-5. Run storybook tests: ```npm run test-storybook```
+5. Run storybook tests: ```npm run vitest-storybook```
 
 ## Contributing
 

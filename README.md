@@ -1,9 +1,32 @@
-# Vue3 Schema Forms 🚀
+<p>
+  <picture>
+    <img src="/public/logo-dark.png" alt="Vue3 Schema Forms Logo" width="340" align="left" hspace="20" />
+  </picture>
+</p>
 
-> **Dynamic JSON Schema-powered forms for Vue 3 + Vuetify.**
+<h1>Vue3 Schema Forms 🚀</h1>
 
-Easily build dynamic, user-friendly, and customizable forms using JSON Schema, powered by [Vue 3](https://vuejs.org/)
-and [Vuetify 3](https://next.vuetifyjs.com/).
+<p><strong>Dynamic JSON Schema-powered forms for Vue 3 + Vuetify.</strong></p>
+
+<p>
+  Easily build dynamic, user-friendly, and customizable forms using JSON Schema,
+  powered by <a href="https://vuejs.org/">Vue 3</a> and <a href="https://next.vuetifyjs.com/">Vuetify 3</a>.
+</p>
+
+<p>
+  <a href="https://www.npmjs.com/package/vue3-schema-forms"><img src="https://img.shields.io/npm/v/vue3-schema-forms.svg" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/vue3-schema-forms"><img src="https://img.shields.io/npm/dm/vue3-schema-forms.svg" alt="npm downloads" /></a>
+  <a href="https://github.com/maciejdybowski/vue3-schema-forms/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/vue3-schema-forms.svg" alt="license" /></a>
+</p>
+
+<p>
+  <a href="https://maciejdybowski.github.io/vue3-schema-forms/">📖 Documentation</a> •
+  <a href="https://maciejdybowski.github.io/vue3-schema-forms/?path=/docs/changelog--docs">📋 Changelog</a> •
+  <a href="#%EF%B8%8F-installation">⚙️ Installation</a> •
+  <a href="#-quick-usage">🚀 Quick Start</a>
+</p>
+
+<br clear="left"/>
 
 Inspired by [vuetify-jsonschema-form](https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/).
 
@@ -149,6 +172,9 @@ Field props priorities:
 
 > Defaults → Field Props  → Input Type Props → Layout-specific Props 
 
+The proposed solution to control the entire form and determine whether it should be read-only or editable is to use `fieldProps.readonly`.
+If `if`/`hide` expressions are used, it will be overwritten as an exception.
+
 Default values:
 
 | Name               | Type   | Default                                                        |
@@ -168,7 +194,7 @@ Default values:
 
 | Name          | Description                                                                                                                                                                                                                                                                                    |
 |---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `formActions` | Customize form actions (submit, reset, validate). Default implementation provided. You can override it and use exposed validation functions. [Example](https://maciejdybowski.github.io/vue3-schema-forms/?path=/story/forms-features-validations--add-custom-submit-with-built-in-validation) |
+| `formActions` | Customize form actions (submit, reset, validate). Default implementation provided. You can override it and use exposed validation functions. [Example](https://maciejdybowski.github.io/vue3-schema-forms/?path=/story/features-validations-behaviour--add-custom-submit-with-built-in-validation) |
 
 ---
 
@@ -203,12 +229,15 @@ const actionHandlerEventBus = useEventBus<string>("form-action");
 To avoid race conditions and ensure correct evaluation order, we introduce small delays when triggering certain
 listeners:
 
-| Feature                    | Delay  | Purpose                          |
-|----------------------------|--------|----------------------------------|
-| Calculations               | `5ms`  | Ensures fresh model values       |
-| Prop updates               | `10ms` | Waits for model + calc to settle |
-| Decimal places             | `10ms` | Waits for model changes          |
-| Visibility (`if` / `hide`) | `50ms` | Triggers after all other logic   |
+| Feature                    | Delay   | Purpose                          |
+|----------------------------|---------|----------------------------------|
+| Calculations               | `5ms`   | Ensures fresh model values       |
+| Prop updates               | `10ms`  | Waits for model + calc to settle |
+| Decimal places             | `10ms`  | Waits for model changes          |
+| Expressions                | `30ms`  | Waits for model changes          |
+| Visibility (`if` / `hide`) | `50ms`  | Triggers after all other logic   |
+| ExpansionPanels            | `110ms` | For resolve variables in titles  |
+| Static content             | `110ms` | Waits for model changes  |
 
 This staging guarantees that dependent logic (e.g., showing/hiding fields) reacts only after all inputs and computed
 values have been finalized.
@@ -314,7 +343,7 @@ flowchart TB
 2. Install development dependencies: ```npm install```
 3. Run the tests: ```npm test```
 4. Run the storybook: ```npm run storybook```
-5. Run storybook tests: ```npm run test-storybook```
+5. Run storybook tests: ```npm run vitest-storybook```
 
 ## Contributing
 

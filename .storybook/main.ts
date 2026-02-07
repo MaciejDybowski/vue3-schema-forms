@@ -14,6 +14,32 @@ const config: StorybookConfig = {
     name: '@storybook/vue3-vite',
     options: {},
   },
+  managerHead: (head: string) => `
+    ${head}
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <style>
+      .sidebar-header a[title] img {
+        max-width: 210px !important;
+        max-height: 80px !important;
+        width: auto !important;
+        object-fit: contain !important;
+      }
+      
+      /* Wycentrowanie przycisku settings względem logo */
+      .sidebar-header {
+        display: flex !important;
+        align-items: center !important;
+      }
+      
+      .sidebar-header > button {
+        margin-top: 5px !important;
+      }
+    </style>
+  `,
+  previewHead: (head: string) => `
+    ${head}
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  `,
   //docs: {},
   async viteFinal(config) {
     // Set base path for GitHub Pages
