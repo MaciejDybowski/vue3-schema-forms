@@ -1,10 +1,24 @@
 // @ts-nocheck
 import { Story } from 'storybook/dist/csf';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+
+
 
 import { GROUP_INPUT_MOCKS } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -232,15 +246,17 @@ export const TriggerEvent: Story = {
             url: '/mocks/groups',
             itemsPerPage: 20,
           },
-          onChange: {
-            mode: 'change-model',
-            variables: [
-              {
-                path: 'fieldB',
-                value: null,
-              },
-            ],
-          },
+          onChange: [
+            {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'fieldB',
+                  value: null,
+                },
+              ],
+            },
+          ],
         },
       },
     },

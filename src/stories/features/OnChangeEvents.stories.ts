@@ -2,10 +2,145 @@
 import { Story } from 'storybook/dist/csf';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
+
+
 import { DictionarySource } from '../../types/shared/Source';
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { CURRENCIES_REQUEST } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -77,16 +212,18 @@ export const ConditionalOnChangeCopyValue: Story = {
             ],
             returnObject: true,
           },
-          onChange: {
-            mode: 'change-model',
-            variables: [
-              {
-                path: 'smart',
-                value: '{testSlownik.title}',
-                if: 'testSlownik.value=1',
-              },
-            ],
-          },
+          onChange: [
+            {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'smart',
+                  value: '{testSlownik.title}',
+                  if: 'testSlownik.value=1',
+                },
+              ],
+            },
+          ],
         },
         smart: {
           label: 'Sth field',
@@ -129,17 +266,19 @@ export const CallActionWithParametersAndRequestBody: Story = {
           layout: {
             component: 'text-field',
           },
-          onChange: {
-            mode: 'action',
-            code: 'callScript',
-            params: {
-              script: 'checkIfDuplicate',
+          onChange: [
+            {
+              mode: 'action',
+              code: 'callScript',
+              params: {
+                script: 'checkIfDuplicate',
+              },
+              body: {
+                number: '{supplier.number}',
+                invoiceNumber: '{invoice.number}',
+              },
             },
-            body: {
-              number: '{supplier.number}',
-              invoiceNumber: '{invoice.number}',
-            },
-          },
+          ],
         },
       },
     },
@@ -171,15 +310,17 @@ export const ResetValueOnChange: Story = {
           layout: {
             component: 'text-field',
           },
-          onChange: {
-            mode: 'change-model',
-            variables: [
-              {
-                path: 'fieldB',
-                value: null,
-              },
-            ],
-          },
+          onChange: [
+            {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'fieldB',
+                  value: null,
+                },
+              ],
+            },
+          ],
         },
         fieldB: {
           label: 'Field B',
@@ -229,15 +370,17 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
                   layout: {
                     component: 'text-field',
                   },
-                  onChange: {
-                    mode: 'change-model',
-                    variables: [
-                      {
-                        path: 'fieldB',
-                        value: null,
-                      },
-                    ],
-                  },
+                  onChange: [
+                    {
+                      mode: 'change-model',
+                      variables: [
+                        {
+                          path: 'fieldB',
+                          value: null,
+                        },
+                      ],
+                    },
+                  ],
                 },
                 fieldB: {
                   label: 'Field B',
@@ -312,15 +455,17 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
                     title: 'label',
                     value: 'id',
                   } as DictionarySource,
-                  onChange: {
-                    mode: 'change-model',
-                    variables: [
-                      {
-                        path: 'fieldB',
-                        value: null,
-                      },
-                    ],
-                  },
+                  onChange: [
+                    {
+                      mode: 'change-model',
+                      variables: [
+                        {
+                          path: 'fieldB',
+                          value: null,
+                        },
+                      ],
+                    },
+                  ],
                 } as SchemaSourceField,
                 fieldB: {
                   label: 'Field B',
@@ -342,3 +487,105 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
     },
   },
 };
+
+
+
+export const ChangeModelAndAction: Story = {
+  name: 'Change-model then action',
+  play: async (context) => {
+
+
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    const source = canvas.getByLabelText('Source');
+    await userEvent.type(source, 'Hello', { delay: 50 });
+
+    // debounce in handler is 400ms in implementation — wait a bit more
+    await new Promise((r) => setTimeout(r, 700));
+
+    // after onChange handlers run, target should be updated by change-model handler
+    await expect(context.args.formModel.target).toBe('Hello');
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        source: {
+          label: 'Source',
+          layout: { component: 'text-field' },
+          onChange: [
+            {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'target',
+                  value: '{source}',
+                },
+              ],
+            },
+            {
+              mode: 'action',
+              code: 'logToHost',
+              params: {
+                message: '{source}',
+              },
+            },
+          ],
+        },
+        target: {
+          label: 'Target',
+          layout: { component: 'text-field' },
+        },
+      },
+    },
+  },
+};
+
+export const EmitEventAndConditionalReset: Story = {
+  name: 'Emit event and conditional reset',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    const source = canvas.getByLabelText('Trigger');
+    await userEvent.type(source, 'reset', { delay: 50 });
+    await new Promise((r) => setTimeout(r, 700));
+
+    await expect(context.args.formModel.target).toBeNull();
+  },
+  args: {
+    formModel: { target: 'initial' },
+    schema: {
+      type: 'object',
+      properties: {
+        trigger: {
+          label: 'Trigger',
+          layout: { component: 'text-field' },
+          onChange: [
+            {
+              mode: 'emit-event',
+              eventSignal: 'source-changed',
+            },
+            {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'target',
+                  value: null,
+                  if: "trigger='reset'",
+                },
+              ],
+            },
+          ],
+        },
+        target: {
+          label: 'Target',
+          layout: { component: 'text-field' },
+        },
+      },
+    },
+  },
+};
+

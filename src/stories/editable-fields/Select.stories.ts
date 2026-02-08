@@ -41,6 +41,23 @@ import { playWrapper, waitForMountedAsync } from './utils';
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default {
   title: 'Elements/Editable/Select',
   ...formStoryWrapperTemplate,
@@ -467,16 +484,18 @@ export const onChangeCopyValue: Story = {
             value: 'id',
             returnObject: true,
           },
-          onChange: {
-            mode: 'change-model',
-            variables: [
-              { path: 'supplier.name', value: '{supplierSelect.name}' },
-              { path: 'supplier.nip', value: '{supplierSelect.nip}' },
-              { path: 'supplier.email', value: '{supplierSelect.email}' },
-              { path: 'supplier.phone', value: '{supplierSelect.phone}' },
-              { path: 'supplier.city', value: '{supplierSelect.city}' },
-            ],
-          },
+          onChange: [
+            {
+              mode: 'change-model',
+              variables: [
+                { path: 'supplier.name', value: '{supplierSelect.name}' },
+                { path: 'supplier.nip', value: '{supplierSelect.nip}' },
+                { path: 'supplier.email', value: '{supplierSelect.email}' },
+                { path: 'supplier.phone', value: '{supplierSelect.phone}' },
+                { path: 'supplier.city', value: '{supplierSelect.city}' },
+              ],
+            },
+          ],
         },
         supplier: {
           properties: {

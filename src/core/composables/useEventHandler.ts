@@ -19,7 +19,7 @@ export function useEventHandler() {
   const { resolve } = useResolveVariables();
 
   const debounced = {
-    onChange: debounce(onChangeDebounced, 400),
+    onChange: debounce(processAllOnChangeEvents, 400),
   };
 
   async function onChange(field: EngineField, model: object) {
@@ -28,8 +28,19 @@ export function useEventHandler() {
     }
   }
 
-  async function onChangeDebounced(field: EngineField, model: object) {
-    let eventDefinition: EventHandlerDefinition = field.onChange as EventHandlerDefinition;
+  async function processAllOnChangeEvents(field: EngineField, model: object) {
+    const events = field.onChange;
+    if (!events || events.length === 0) return;
+    await Promise.all(
+      events.map((eventDefinition) => onChangeDebounced(field, model, eventDefinition)),
+    );
+  }
+
+  async function onChangeDebounced(
+    field: EngineField,
+    model: object,
+    eventDefinition: EventHandlerDefinition,
+  ) {
     if (eventDefinition.mode == 'request') {
       await requestMode(eventDefinition, field, model);
     }

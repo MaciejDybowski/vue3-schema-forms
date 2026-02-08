@@ -31,7 +31,7 @@ export interface EngineField {
   aggregates?: object;
 
   //events
-  onChange?: EventHandlerDefinition;
+  onChange?: EventHandlerDefinition[];
 
   //switch
   mode?: string;

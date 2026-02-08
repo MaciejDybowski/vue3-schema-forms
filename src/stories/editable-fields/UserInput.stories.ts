@@ -2,9 +2,23 @@
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+
+
 import { USER_INPUT_MOCKS } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -237,15 +251,17 @@ export const TriggerEvent: Story = {
             url: '/mocks/users',
             itemsPerPage: 20,
           },
-          onChange: {
-            mode: 'change-model',
-            variables: [
-              {
-                path: 'fieldB',
-                value: null,
-              },
-            ],
-          },
+          onChange: [
+            {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'fieldB',
+                  value: null,
+                },
+              ],
+            },
+          ],
         },
       },
     },

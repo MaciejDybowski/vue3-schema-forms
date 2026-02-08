@@ -1,9 +1,22 @@
 // @ts-nocheck
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+
+
 import { Schema } from '../../types/schema/Schema';
-import { waitForMountedAsync } from './utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -191,15 +204,17 @@ export const OnChangeEvents: Story = {
               counter: '20',
             },
           },
-          onChange: {
-            mode: 'change-model',
-            variables: [
-              {
-                path: 'fieldB',
-                value: null,
-              },
-            ],
-          },
+          onChange: [
+            {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'fieldB',
+                  value: null,
+                },
+              ],
+            },
+          ],
         },
       },
       required: ['textEditor'],

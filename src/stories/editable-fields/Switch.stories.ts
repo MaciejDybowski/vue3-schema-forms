@@ -1,9 +1,35 @@
 // @ts-nocheck
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+
+
 import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -113,31 +139,35 @@ export const TriggerEvent: Story = {
             component: 'switch',
           },
 
-          onChange: {
-            mode: 'change-model',
-            variables: [
-              {
-                path: 'fieldB',
-                value: null,
-              },
-            ],
-          },
+          onChange: [
+            {
+              mode: 'change-model',
+              variables: [
+                {
+                  path: 'fieldB',
+                  value: null,
+                },
+              ],
+            },
+          ],
         },
         switch2: {
           label: 'Call script on change',
           layout: {
             component: 'switch',
           },
-          onChange: {
-            mode: 'action',
-            code: 'callScript',
-            params: {
-              script: 'scriptA',
+          onChange: [
+            {
+              mode: 'action',
+              code: 'callScript',
+              params: {
+                script: 'scriptA',
+              },
+              body: {
+                fieldA: '{fieldA}',
+              },
             },
-            body: {
-              fieldA: '{fieldA}',
-            },
-          },
+          ],
         },
       },
     } as Schema,
