@@ -35,9 +35,6 @@
     "name": "Maciej Dybowski"
   },
   "license": "MIT",
-  "publishConfig": {
-    "provenance": true
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/MaciejDybowski/vue3-schema-forms.git"
