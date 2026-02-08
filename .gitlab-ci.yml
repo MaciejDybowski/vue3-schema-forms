@@ -109,10 +109,10 @@ aurea-forms-publish:
     - npm install
     - npm run build
     - npm run publish:nexus
-    - ./get-version.sh
-  artifacts:
-    reports:
-      dotenv: version.env
+  #  - ./get-version.sh
+  #artifacts:
+  #  reports:
+  #    dotenv: version.env
 
 
 
