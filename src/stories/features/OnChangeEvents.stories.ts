@@ -455,7 +455,7 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
                     title: 'label',
                     value: 'id',
                   } as DictionarySource,
-                  onChange: [
+                  onChange:
                     {
                       mode: 'change-model',
                       variables: [
@@ -465,7 +465,6 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
                         },
                       ],
                     },
-                  ],
                 } as SchemaSourceField,
                 fieldB: {
                   label: 'Field B',

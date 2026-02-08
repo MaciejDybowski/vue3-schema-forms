@@ -1,12 +1,44 @@
 import { useEventBus } from '@vueuse/core';
 import jsonata from 'jsonata';
-import { debounce } from 'lodash';
+import { debounce, isArray } from 'lodash';
+
+
 
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 type EntryKey = string;
 type EntryValue = any;
@@ -30,11 +62,19 @@ export function useEventHandler() {
 
   async function processAllOnChangeEvents(field: EngineField, model: object) {
     const events = field.onChange;
-    if (!events || events.length === 0) return;
-    await Promise.all(
-      events.map((eventDefinition) => onChangeDebounced(field, model, eventDefinition)),
-    );
+
+    if (!events) return;
+
+    if (Array.isArray(events)) {
+      if (events.length === 0) return;
+      await Promise.all(
+        events.map((eventDefinition) => onChangeDebounced(field, model, eventDefinition)),
+      );
+    } else if (typeof events === 'object') {
+      await onChangeDebounced(field, model, events as EventHandlerDefinition);
+    }
   }
+
 
   async function onChangeDebounced(
     field: EngineField,

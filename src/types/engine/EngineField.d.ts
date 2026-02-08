@@ -3,6 +3,24 @@ import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
 import { Layout } from '@/types/shared/Layout';
 import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export interface EngineField {
   key: string;
   options: EngineOptions;
@@ -31,7 +49,7 @@ export interface EngineField {
   aggregates?: object;
 
   //events
-  onChange?: EventHandlerDefinition[];
+  onChange?: EventHandlerDefinition[] | EventHandlerDefinition; // depracated EventHandlerDefinition;
 
   //switch
   mode?: string;
@@ -40,9 +58,9 @@ export interface EngineField {
   config?: any;
   // key-value-list && duplicated-section
   sourcePath?: string;
-  updateTriggers?: Array<string>
+  updateTriggers?: Array<string>;
 
   // dependencies
-  dependency?: string,
-  dependencyTriggers?: Array<string>,
+  dependency?: string;
+  dependencyTriggers?: Array<string>;
 }
