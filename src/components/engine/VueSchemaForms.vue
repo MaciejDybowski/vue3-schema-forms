@@ -35,6 +35,7 @@ import { Ref, getCurrentInstance, onBeforeMount, onMounted, ref, watch } from 'v
 import { vueSchemaFromControls } from '@/components/controls';
 
 import { provideGeneratorCache } from '@/core/composables/useGeneratorCache';
+import { useSilentValidation } from '@/core/composables/useSilentValidation';
 import { provideFormModel } from '@/core/state/useFormModelProvider';
 import { FormExternalAction } from '@/types/engine/FormExternalAction';
 import { FormModel } from '@/types/engine/FormModel';
@@ -59,9 +60,6 @@ for (const [name, comp] of Object.entries(vueSchemaFromControls)) {
   }
 }
 // end register-components
-
-// render tests
-const { result, stopMeasure } = usePerformanceAPI();
 
 onBeforeMount(() => {
   provideGeneratorCache();
@@ -99,6 +97,11 @@ const formId: string = Math.random().toString().slice(2, 5);
 const formRef = ref<Record<string, any>>({});
 const formValid = ref(false);
 const errorMessages: Ref<Array<ValidationFromError>> = ref([]);
+const { silentValidate } = useSilentValidation({
+  formRef,
+  formId,
+  findInputLabel,
+});
 
 const formReadySignalSent = ref(false);
 
@@ -226,7 +229,6 @@ function cleanJson(obj: any): any {
         .replace(/\s*\(\s*/g, '(')
         .replace(/\s*\)\s*/g, ')');
     }
-    // Dla innych stringów zwróć bez zmian
     return obj;
   } else if (Array.isArray(obj)) {
     return obj.map(cleanJson);
@@ -248,7 +250,6 @@ onMounted(async () => {
 
   //console.debug('[vue-schema-forms] => Resolved', resolvedSchema.value);
   await loadResolvedSchema();
-  stopMeasure();
   debounced.formIsReady(800)();
 });
 
@@ -260,7 +261,9 @@ async function validate(option?: ValidationFromBehaviour) {
   const alertElements = document.querySelectorAll('[role="alert"]');
   alertElements.forEach((alertElement) => {
     const isError =
-      alertElement.classList.contains('v-alert') && (alertElement.classList.contains('text-error') || alertElement.classList.contains('bg-error'));
+      alertElement.classList.contains('v-alert') &&
+      (alertElement.classList.contains('text-error') ||
+        alertElement.classList.contains('bg-error'));
     const alertText = alertElement.textContent;
 
     if (isError && (option == 'messages' || option == 'combined')) {
@@ -286,7 +289,6 @@ async function validate(option?: ValidationFromBehaviour) {
 
   const { valid } = await formRef.value[formId].validate();
   formValid.value = valid && preValid;
-
 
   if (!option) {
     return { valid: formValid.value };
@@ -425,6 +427,7 @@ defineExpose({
   reset,
   resetValidation,
   formDataWasSaved,
+  silentValidate,
 });
 </script>
 

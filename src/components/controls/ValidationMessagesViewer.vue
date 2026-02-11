@@ -1,12 +1,13 @@
 <template>
   <template
-    v-if="!validationsDisabled"
     v-for="messageDefinition in localModel"
+    v-if="!validationsDisabled"
     :key="messageDefinition.code"
   >
     <v-alert
-      v-bind="{ ...fieldProps, type: messageDefinition.severity }"
+      :id="messageDefinition.code"
       class="mb-2"
+      v-bind="{ ...fieldProps, type: messageDefinition.severity }"
     >
       {{ messageDefinition.message }}
     </v-alert>
@@ -17,6 +18,7 @@
 import { ComputedRef, computed, onMounted } from 'vue';
 
 import { useFormModel, useProps } from '@/core/composables';
+import { ValidationMessage } from '@/types/engine/ValidationMessage';
 import { ValidationMessageViewer } from '@/types/engine/controls';
 
 const { schema, model } = defineProps<{
@@ -28,18 +30,24 @@ const { schema, model } = defineProps<{
 const { getValue } = useFormModel();
 const { bindProps, fieldProps } = useProps();
 
-interface ValidationMessage {
-  code: string;
-  message: string;
-  severity: 'error' | 'warning' | 'info';
-  inputId?: string;
-}
-
 const localModel: ComputedRef<ValidationMessage[] | null> = computed(() => getValue(model, schema));
 
 onMounted(async () => {
   await bindProps(schema);
 });
+
+function generateId(input: string): string {
+  return (
+    input
+      .toLowerCase()
+      .trim()
+      .split(/[\s_-]+/)
+      .filter(Boolean)
+      .map((part) => part.slice(0, 3))
+      .join('')
+      .slice(0, 10)
+  );
+}
 </script>
 
 <style lang="css" scoped></style>

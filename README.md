@@ -134,8 +134,9 @@ createApp(App)
 | `isFormReady` | `void`   | —       | Signal for Parent component when form is ready to ex. watch for model                                                                                                                            |
 | `callAction`  | `object` | —       | `payload: { code: string; body: Record<any, any>; params: Record<any, any>, payload: Function<Void> }`<br/>Object for execute external actions / logic which is not connected directly with form |
 
-
-There are many possibilities to integrate actions with external sources. It is possible to call an API to refresh the form or perform recalculations, depending on the action definition. A callback function is added by default, but it can be overridden if needed. 
+There are many possibilities to integrate actions with external sources. It is possible to call an API to refresh the
+form or perform recalculations, depending on the action definition. A callback function is added by default, but it can
+be overridden if needed.
 
 ```mermaid
 sequenceDiagram
@@ -157,12 +158,13 @@ sequenceDiagram
 
 ## 📋 Exposed
 
-| Name               | Type       | Default | Description                                                  |
-|--------------------|------------|---------|--------------------------------------------------------------|
-| `validate`         | `function` | —       | For validation by `ref`                                      |
-| `reset`            | `function` | —       | For reset whole form by `ref`                                |
-| `resetValidation`  | `function` | —       | For reset validation by `ref`                                |
-| `formDataWasSaved` | `boolean`  | —       | For provide to form information about external state of form |
+| Name               | Type             | Default | Description                                                             |
+|--------------------|------------------|---------|-------------------------------------------------------------------------|
+| `validate`         | `function`       | —       | For validation by `ref`                                                 |
+| `reset`            | `function`       | —       | For reset whole form by `ref`                                           |
+| `resetValidation`  | `function`       | —       | For reset validation by `ref`                                           |
+| `formDataWasSaved` | `boolean`        | —       | For provide to form information about external state of form            |
+| `silentValidate`   | `async function` | —       | For provide information about form state without trigger UI validations |
 
 ---
 
@@ -170,9 +172,10 @@ sequenceDiagram
 
 Field props priorities:
 
-> Defaults → Field Props  → Input Type Props → Layout-specific Props 
+> Defaults → Field Props → Input Type Props → Layout-specific Props
 
-The proposed solution to control the entire form and determine whether it should be read-only or editable is to use `fieldProps.readonly`.
+The proposed solution to control the entire form and determine whether it should be read-only or editable is to use
+`fieldProps.readonly`.
 If `if`/`hide` expressions are used, it will be overwritten as an exception.
 
 Default values:
@@ -180,7 +183,7 @@ Default values:
 | Name               | Type   | Default                                                        |
 |--------------------|--------|----------------------------------------------------------------|
 | `fieldProps`       | object | `-`                                                            |
-| `textFieldProps`   | object | `{ hide-details: 'auto' }`                                      |
+| `textFieldProps`   | object | `{ hide-details: 'auto' }`                                     |
 | `textAreaProps`    | object | `{ rows: 3, hide-details: false, auto-grow: true }`            |
 | `radioButtonProps` | object | `{ density: 'compact', hide-details: 'auto' }`                 |
 | `checkboxProps`    | object | `{ density: 'compact', hide-details: 'auto', multiple: true }` |
@@ -192,8 +195,8 @@ Default values:
 
 ## 🎯 Slots
 
-| Name          | Description                                                                                                                                                                                                                                                                                    |
-|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Name          | Description                                                                                                                                                                                                                                                                                        |
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `formActions` | Customize form actions (submit, reset, validate). Default implementation provided. You can override it and use exposed validation functions. [Example](https://maciejdybowski.github.io/vue3-schema-forms/?path=/story/features-validations-behaviour--add-custom-submit-with-built-in-validation) |
 
 ---
@@ -237,7 +240,7 @@ listeners:
 | Expressions                | `30ms`  | Waits for model changes          |
 | Visibility (`if` / `hide`) | `50ms`  | Triggers after all other logic   |
 | ExpansionPanels            | `110ms` | For resolve variables in titles  |
-| Static content             | `110ms` | Waits for model changes  |
+| Static content             | `110ms` | Waits for model changes          |
 
 This staging guarantees that dependent logic (e.g., showing/hiding fields) reacts only after all inputs and computed
 values have been finalized.
@@ -288,8 +291,8 @@ flowchart TB
 Flattened key notation allows representing nested fields in a simple, dot-notated structure.
 
 The diagram below visualizes how a form tree is structured in VueSchemaForms:  
-starting from the root (`VRoot`), it branches into nodes (`VNode`) representing fields like `someField` and nested ones such as `nestedData.field`.
-
+starting from the root (`VRoot`), it branches into nodes (`VNode`) representing fields like `someField` and nested ones
+such as `nestedData.field`.
 
 ```json
 {

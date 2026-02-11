@@ -3,6 +3,7 @@
     v-if="resolvedContent.allVariablesResolved"
     :class="bindClass(schema)"
     v-bind="fieldProps"
+    :id="schema.key"
   >
     <div v-if="memorable">
       <div
