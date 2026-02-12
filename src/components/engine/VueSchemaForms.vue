@@ -46,7 +46,6 @@ import { ValidationFromItem } from '@/types/engine/ValidationFromItem';
 import { Schema } from '@/types/schema/Schema';
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
 
-import usePerformanceAPI from '../../core/composables/usePerformanceAPI';
 import { resolveSchemaWithLocale } from '../../core/engine/utils';
 import { logger } from '../../main';
 import FormRoot from './FormRoot.vue';
@@ -169,7 +168,7 @@ function formIsReady() {
   }
 }
 
-function updateModel(event: NodeUpdateEvent) {
+async function updateModel(event: NodeUpdateEvent) {
   debounced.formIsReady().cancel();
   set(localModel.value, event.key, event.value);
   form.updateFormModel(localModel.value);
@@ -188,6 +187,10 @@ function updateModel(event: NodeUpdateEvent) {
 
   vueSchemaFormEventBus.emit('model-changed', event);
   debounced.formIsReady()();
+
+  /*await new Promise((r) => setTimeout(r, 500));
+  const result = await silentValidate();
+  console.debug(result);*/
 }
 
 function emitUpdateEvent() {
@@ -261,6 +264,7 @@ async function validate(option?: ValidationFromBehaviour) {
   const alertElements = document.querySelectorAll('[role="alert"]');
   alertElements.forEach((alertElement) => {
     const isError =
+      alertElement.classList.contains('include-in-validation') &&
       alertElement.classList.contains('v-alert') &&
       (alertElement.classList.contains('text-error') ||
         alertElement.classList.contains('bg-error'));

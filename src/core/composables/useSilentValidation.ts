@@ -88,11 +88,18 @@ export function useSilentValidation(options: SilentValidationOptions) {
     const alertElements = document.querySelectorAll('[role="alert"]');
 
     alertElements.forEach((el) => {
-      if (!el.classList.contains('v-alert')) return;
+      if (
+        !el.classList.contains("include-in-validation") ||
+        !el.classList.contains('v-alert') ||
+        (el as HTMLElement).offsetParent === null ||
+        window.getComputedStyle(el).display === 'none' ||
+        window.getComputedStyle(el).visibility === 'hidden'
+      )
+        return;
 
       const severity = resolveAlertSeverity(el);
       const text = el.textContent?.trim();
-
+      if (severity == 'info') return;
       if (!text) return;
 
       messages.push({
@@ -132,7 +139,6 @@ export function useSilentValidation(options: SilentValidationOptions) {
 
     return messages;
   }
-
 
   function resolveAlertSeverity(element: Element): Severity {
     if (element.classList.contains('text-error') || element.classList.contains('bg-error')) {

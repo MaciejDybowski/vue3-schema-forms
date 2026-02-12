@@ -1,7 +1,7 @@
 <template>
   <v-alert
     v-if="resolvedContent.allVariablesResolved"
-    :class="bindClass(schema)"
+    :class="[bindClass(schema), `${schema.includeInValidation ? 'include-in-validation' : ''}`]"
     v-bind="fieldProps"
     :id="schema.key"
   >
@@ -11,7 +11,6 @@
         class="d-flex align-center justify-space-between ma-0 pa-0"
       >
         <div
-
           class="one-liner flex-grow-1"
           v-html="resolvedContent.resolvedText"
         />
@@ -29,7 +28,7 @@
       </div>
 
       <!-- Rozwijana część z animacją -->
-      <v-expand-transition class="pt-0" >
+      <v-expand-transition class="pt-0">
         <div v-if="expanded">
           <div
             class="flex-grow-1"
@@ -135,7 +134,6 @@ const userProperties = computed(() => {
 
 <style lang="scss" scoped>
 .one-liner {
-
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

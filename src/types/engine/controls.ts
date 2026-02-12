@@ -1,12 +1,18 @@
 import { EngineField } from '@/types/engine/EngineField';
-import { LocationResult } from '@/types/shared/LocationResult';
-import { AvatarSource, DictionarySource, SimpleSource, Source, UserInputSource } from '@/types/shared/Source';
 import { Schema } from '@/types/schema/Schema';
+import { LocationResult } from '@/types/shared/LocationResult';
+import {
+  AvatarSource,
+  DictionarySource,
+  SimpleSource,
+  Source,
+  UserInputSource,
+} from '@/types/shared/Source';
 
 export interface EngineExpansionPanel {
   titleIcon?: string;
   titleIconSize?: number;
-  titleCssDecorator?:string;
+  titleCssDecorator?: string;
   title: string;
   schema: Schema;
 }
@@ -20,9 +26,7 @@ export interface EngineNIPField extends EngineField {
   checkSumValidation?: 'warning' | 'error';
 }
 
-export interface ValidationMessageViewer extends EngineField{
-
-}
+export interface ValidationMessageViewer extends EngineField {}
 
 export interface EngineTextField extends EngineField {
   calculation?: string;
@@ -38,12 +42,12 @@ type LegendItem = {
   };
 };
 
-export interface EngineSchedulerGrid extends EngineField{
-  legend: LegendItem[]
-  showLabel?: boolean
-  showUserColumn?:boolean
-  pulsateInterval?:number
-  source?: {url:string}
+export interface EngineSchedulerGrid extends EngineField {
+  legend: LegendItem[];
+  showLabel?: boolean;
+  showUserColumn?: boolean;
+  pulsateInterval?: number;
+  source?: { url: string };
 }
 
 export interface EngineExpansionPanels extends EngineField {
@@ -51,8 +55,8 @@ export interface EngineExpansionPanels extends EngineField {
 }
 
 export interface EngineTextEditorField extends EngineField {
-  editorFeatures: string[]
-  contentType: "markdown" | "html" | "json";
+  editorFeatures: string[];
+  contentType: 'markdown' | 'html' | 'json';
 }
 
 export interface EngineFileField extends EngineField {
@@ -103,6 +107,7 @@ export interface EngineStaticField extends EngineField {
 export interface EngineAlertField extends EngineField {
   content: string;
   memorable?: boolean;
+  includeInValidation?: boolean;
 }
 
 export interface EngineDuplicatedSection extends EngineField {
@@ -117,9 +122,9 @@ export interface EngineBookmarkField extends EngineField {
   source: Source;
   stacked?: boolean;
   color?: string;
-  "bg-color"?: string;
-  direction?: "vertical" | "horizontal";
-  "slider-color"?: string;
+  'bg-color'?: string;
+  direction?: 'vertical' | 'horizontal';
+  'slider-color'?: string;
 }
 
 export interface RadioField extends EngineSourceField {
@@ -142,7 +147,7 @@ export interface EngineDictionaryField extends EngineField {
 }
 
 export interface EngineOrderedMultiSelect extends EngineDictionaryField {
-  variant: "list" | "combobox";
+  variant: 'list' | 'combobox';
   source: DictionarySource;
 }
 
@@ -150,9 +155,7 @@ export interface EngineUserField extends EngineField {
   source: UserInputSource;
 }
 
-export interface EngineGroupField extends EngineUserField {
-
-}
+export interface EngineGroupField extends EngineUserField {}
 
 export interface EngineLocationField extends EngineField {
   results: LocationResult;

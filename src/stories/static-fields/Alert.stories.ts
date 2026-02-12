@@ -1,8 +1,32 @@
 // @ts-nocheck
 import { expect, userEvent, within } from 'storybook/test';
 
+
+
 import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default {
   title: 'Elements/Static/Alert',
@@ -96,7 +120,38 @@ export const Error: Story = {
     await expect(canvas.getByText('Alert')).toBeInTheDocument();
   },
   args: {
-    validationBehaviour: "messages",
+    validationBehaviour: 'messages',
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        alert: {
+          content: 'Lorem ipsum...',
+          includeInValidation: true,
+          layout: {
+            component: 'alert',
+            props: {
+              type: 'error',
+              variant: 'outlined',
+            },
+          },
+        },
+      } as any,
+    },
+  },
+};
+
+export const ErrorWithoutTakePartInValidation: Story = {
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync();
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
+    const Submit = canvas.getByText('Validate');
+    await userEvent.click(Submit);
+    await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
+  },
+  args: {
+    validationBehaviour: 'messages',
     formModel: {},
     schema: {
       type: 'object',

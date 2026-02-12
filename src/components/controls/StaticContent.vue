@@ -2,7 +2,7 @@
   <component
     :is="schema.layout.tag"
     v-if="resolvedContent.allVariablesResolved"
-    :id="schema.layout.tag == 'v-alert' ? 'alert' : ''"
+    :id="schema.layout.tag"
     :class="bindClass(schema)"
     v-bind="fieldProps"
   >

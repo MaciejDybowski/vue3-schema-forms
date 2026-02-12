@@ -356,9 +356,9 @@ export const AlertErrorConnectionWithValidation: Story = {
       properties: {
         alert: {
           content: 'Error message!',
+          includeInValidation: true,
           layout: {
-            component: 'static-content',
-            tag: 'v-alert',
+            component: 'alert',
             props: {
               type: 'error',
               variant: 'outlined',
