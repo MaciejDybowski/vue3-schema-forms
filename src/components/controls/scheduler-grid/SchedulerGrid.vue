@@ -94,9 +94,12 @@
                 v-if="scheduleDay.note"
                 class="note-indicator"
               >
-                <span class="note-indicator-dot-ringring" :style="{
-                  animationDuration: schema.pulsateInterval ? schema.pulsateInterval + 's' : '2s',
-                  }"></span>
+                <span
+                  class="note-indicator-dot-ringring"
+                  :style="{
+                    animationDuration: schema.pulsateInterval ? schema.pulsateInterval + 's' : '2s',
+                  }"
+                ></span>
                 <span class="note-indicator-dot"></span>
                 <span class="note-indicator-label">
                   {{ t('schedulerGrid.noteIndicator') }}
@@ -206,7 +209,13 @@ import { useTheme } from 'vuetify';
 
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { useFormModel, useLabel, useLocale, useProps } from '@/core/composables';
+import {
+  useFormModel,
+  useLabel,
+  useLocale,
+  useProps,
+  useResolveVariables,
+} from '@/core/composables';
 import { User } from '@/types/engine/User';
 import { EngineSchedulerGrid } from '@/types/engine/controls';
 
@@ -232,6 +241,7 @@ const { getValue, setValue } = useFormModel();
 const { label, bindLabel } = useLabel(schema);
 const { t } = useLocale();
 const items = ref<EmployeeSchedule[]>([]);
+const { resolve } = useResolveVariables();
 
 const localModelWrapper = computed({
   get(): EmployeeSchedule[] | null {
@@ -351,7 +361,8 @@ onMounted(async () => {
   if (schema.source && schema.source.url) {
     fieldProps.value.readonly = true;
     try {
-      const response = await axios.get(schema.source.url);
+      const { resolvedText, allVariablesResolved } = await resolve(schema, schema.source.url, true);
+      const response = await axios.get(resolvedText);
       items.value = response.data;
     } catch (error) {
       console.error('Failed to load scheduler data:', error);
@@ -476,14 +487,22 @@ thead th.sticky-col {
   left: calc(50% - 7px);
   border: 2px solid rgb(var(--v-theme-primary));
   border-radius: 30px;
-  animation: pulsate 2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  animation: pulsate 2s cubic-bezier(0.4, 0, 0.2, 1);
   animation-iteration-count: infinite;
-  opacity: 0.0;
+  opacity: 0;
 }
 
 @keyframes pulsate {
-    0% {transform: scale(0.6); opacity: 0.0;}
-    50% {opacity: 0.6;}
-    100% {transform: scale(1); opacity: 0.0;}
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
 }
 </style>
