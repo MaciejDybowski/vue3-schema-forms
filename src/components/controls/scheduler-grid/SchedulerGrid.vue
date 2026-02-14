@@ -94,16 +94,7 @@
                 v-if="scheduleDay.note"
                 class="note-indicator"
               >
-                <span
-                  class="note-indicator-dot-ringring"
-                  :style="{
-                    animationDuration: schema.pulsateInterval ? schema.pulsateInterval + 's' : '2s',
-                  }"
-                ></span>
-                <span class="note-indicator-dot"></span>
-                <span class="note-indicator-label">
-                  {{ t('schedulerGrid.noteIndicator') }}
-                </span>
+                <span class="mdi mdi-note-outline note-indicator-icon"></span>
               </div>
             </td>
           </tr>
@@ -451,58 +442,22 @@ thead th.sticky-col {
 }
 
 .note-indicator {
-  font-size: 0.42rem;
-  line-height: 1;
-  transition: transform 0.2s ease;
-  position: relative;
   width: 100%;
   height: 100%;
-  padding: 5px 2px;
-}
-
-.note-indicator-dot {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 999px;
-  background: rgb(var(--v-theme-primary));
-}
-
-.note-indicator-label {
-  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
 }
 
 .status-cell:hover .note-indicator {
   transform: translateY(-1px);
 }
 
-.note-indicator-dot-ringring {
-  position: absolute;
-  height: 14px;
-  width: 14px;
-  top: calc(60% - 7px);
-  left: calc(50% - 7px);
-  border: 2px solid rgb(var(--v-theme-primary));
-  border-radius: 30px;
-  animation: pulsate 2s cubic-bezier(0.4, 0, 0.2, 1);
-  animation-iteration-count: infinite;
-  opacity: 0;
-}
-
-@keyframes pulsate {
-  0% {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0;
-  }
+.note-indicator-icon {
+  font-size: 1rem;
+  line-height: 1;
+  color: currentColor;
+  opacity: 0.8;
 }
 </style>
