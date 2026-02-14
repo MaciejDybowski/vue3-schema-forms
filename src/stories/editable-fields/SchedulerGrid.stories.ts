@@ -41,7 +41,6 @@ export const Standard: Story = {
           layout: {
             component: 'scheduler-grid',
           },
-          pulsateInterval: 2,
           legend: [
             {
               statusKey: 'PRESENT',
@@ -190,7 +189,6 @@ export const WithModel: Story = {
           layout: {
             component: 'scheduler-grid',
           },
-          pulsateInterval: 2,
           legend: [
             {
               statusKey: 'PRESENT',
@@ -349,7 +347,6 @@ export const Readonly: Story = {
           layout: {
             component: 'scheduler-grid',
           },
-          pulsateInterval: 2,
           legend: [
             {
               statusKey: 'PRESENT',
@@ -465,7 +462,6 @@ export const Customization: Story = {
           layout: {
             component: 'scheduler-grid',
           },
-          pulsateInterval: 2,
           legend: [
             {
               statusKey: 'PRESENT',
@@ -538,7 +534,6 @@ export const SourceAPI: Story = {
           source: {
             url: '/mocks/scheduler-grid-data',
           },
-          pulsateInterval: 2,
           legend: [
             {
               statusKey: 'PRESENT',
