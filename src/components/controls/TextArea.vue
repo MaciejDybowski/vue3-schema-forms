@@ -5,6 +5,7 @@
     :rules="activeRules"
     v-bind="fieldProps"
     :class="bindClass(schema) + requiredInputClass"
+    @update:model-value="onChange(schema, model)"
   />
 </template>
 
@@ -14,6 +15,7 @@ import { computed, onMounted, toRef } from 'vue';
 import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
 import { useActiveRules } from '@/core/composables/useActiveRules';
 import { EngineField } from '@/types/engine/EngineField';
+import { useEventHandler } from '@/core/composables/useEventHandler';
 
 const props = defineProps<{
   schema: EngineField;
@@ -30,6 +32,7 @@ const { activeRules } = useActiveRules({
   validationsDisabled: toRef(() => props.validationsDisabled),
   rules,
 });
+const { onChange } = useEventHandler();
 
 const localModel = computed({
   get(): string {
