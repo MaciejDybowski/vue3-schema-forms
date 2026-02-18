@@ -297,7 +297,7 @@ async function computeShouldReadonly(items: HeaderEditableObject[]) {
       newMap[item.valueMapping] = false;
     }
     const rootReadonly = props.schema.options.fieldProps.readonly;
-    if (rootReadonly !== undefined) {
+    if (rootReadonly !== undefined && rootReadonly === true) {
       newMap[item.valueMapping] = rootReadonly;
     }
   }
@@ -418,6 +418,7 @@ const boundAttrsMap = computed(() => {
       readonly: !!shouldReadonlyMap.value[item.valueMapping] || rootReadonly,
     };
   }
+  console.debug("here", map)
   return map;
 });
 
