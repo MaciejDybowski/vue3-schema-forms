@@ -418,7 +418,6 @@ const boundAttrsMap = computed(() => {
       readonly: !!shouldReadonlyMap.value[item.valueMapping] || rootReadonly,
     };
   }
-  console.debug("here", map)
   return map;
 });
 
