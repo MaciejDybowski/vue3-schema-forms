@@ -1,13 +1,16 @@
 import { EngineField } from '@/types/engine/EngineField';
 import { Schema } from '@/types/schema/Schema';
 import { LocationResult } from '@/types/shared/LocationResult';
-import {
-  AvatarSource,
-  DictionarySource,
-  SimpleSource,
-  Source,
-  UserInputSource,
-} from '@/types/shared/Source';
+import { AvatarSource, DictionarySource, SimpleSource, Source, UserInputSource } from '@/types/shared/Source';
+
+
+
+
+
+
+
+
+
 
 export interface EngineExpansionPanel {
   titleIcon?: string;
@@ -27,6 +30,10 @@ export interface EngineNIPField extends EngineField {
 }
 
 export interface ValidationMessageViewer extends EngineField {}
+
+export interface EngineCardComponent extends EngineField {
+  title?: string;
+}
 
 export interface EngineTextField extends EngineField {
   calculation?: string;

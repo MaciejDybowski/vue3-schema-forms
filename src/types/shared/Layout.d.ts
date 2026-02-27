@@ -26,4 +26,7 @@ export interface Layout {
 
   // to adjust <v-col> component
   cellClass?: string;
+
+  // for decorate card wrapper
+  cardProps?: Record<string, any>;
 }

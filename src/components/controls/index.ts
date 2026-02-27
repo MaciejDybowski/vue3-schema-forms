@@ -44,6 +44,7 @@ import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
 import SchedulerGrid from './scheduler-grid/SchedulerGrid.vue';
 import TableInternal from './table/table-internal/TableInternal.vue';
 import TableView from './table/table-view/TableView.vue';
+import Card from './card/Card.vue';
 
 
 export const vueSchemaFromControls: Components = {
@@ -90,4 +91,5 @@ export const vueSchemaFromControls: Components = {
   'calendar-autocomplete': CalendarAutocomplete,
   'year-month': YearMonth,
   'validation-messages-viewer': ValidationMessagesViewer,
+  'card': Card
 };
