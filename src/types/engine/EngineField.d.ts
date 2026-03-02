@@ -47,5 +47,5 @@ export interface EngineField {
   dependencyTriggers?: Array<string>;
 
   // validation messages
-  disableValidationWhenHidden: boolean;
+  disableValidationWhenHidden?: boolean;
 }
