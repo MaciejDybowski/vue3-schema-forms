@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Story } from 'storybook/dist/csf';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { waitForMountedAsync } from '../editable-fields/utils';
@@ -127,4 +127,64 @@ export const InfoDoesNotBlockForm: Story = {
     } as Schema,
   },
 };
+
+export const DisableValidationWhenHidden: Story = {
+  name: 'Disable validation when hidden - error message should not block form validation',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+
+    // Initially the validationMessages field is hidden - form should not be blocked
+    const submitButton = canvas.getByText('Validate');
+    await userEvent.click(submitButton, { delay: 200 });
+
+    // Error message viewer is hidden and disableValidationWhenHidden is true - no "Alert" in summary
+    await expect(canvas.queryByText('Alert')).not.toBeInTheDocument();
+
+    // Show the validation messages viewer by toggling the switch
+    const switchField = canvas.getByLabelText('Show messages');
+    await userEvent.click(switchField, { delay: 200 });
+
+    await waitFor(() => expect(canvas.getByText('This is an error message')).toBeInTheDocument());
+
+    // Now the field is visible - form should be blocked by the error severity message
+    await userEvent.click(submitButton, { delay: 200 });
+    await expect(canvas.getByText('Alert')).toBeInTheDocument();
+  },
+  args: {
+    validationBehaviour: 'messages',
+    formModel: {
+      showMessages: false,
+      validationMessages: [
+        {
+          code: 'ERR001',
+          message: 'This is an error message',
+          severity: 'error',
+        },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        showMessages: {
+          label: 'Show messages',
+          layout: {
+            component: 'switch',
+          },
+        },
+        validationMessages: {
+          disableValidationWhenHidden: true,
+          layout: {
+            component: 'validation-messages-viewer',
+            hide: 'nata(showMessages=false)',
+            props: {
+              variant: 'tonal',
+            },
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
 

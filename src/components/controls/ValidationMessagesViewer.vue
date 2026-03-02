@@ -1,17 +1,18 @@
 <template>
-  <template
-    v-for="messageDefinition in localModel"
-    v-if="!validationsDisabled"
-    :key="messageDefinition.code"
-  >
-    <v-alert
-      :id="messageDefinition.code"
-      :class="['mb-4', `${includeInValidation(messageDefinition.severity)}`]"
-      v-bind="{ ...fieldProps, type: messageDefinition.severity }"
+  <div v-if="!validationsDisabled">
+    <template
+      v-for="messageDefinition in localModel"
+      :key="messageDefinition.code"
     >
-      {{ messageDefinition.message }}
-    </v-alert>
-  </template>
+      <v-alert
+        :id="messageDefinition.code"
+        :class="['mb-4', `${includeInValidation(messageDefinition.severity)}`]"
+        v-bind="{ ...fieldProps, type: messageDefinition.severity }"
+      >
+        {{ messageDefinition.message }}
+      </v-alert>
+    </template>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -21,7 +22,7 @@ import { useFormModel, useProps } from '@/core/composables';
 import { Severity, ValidationMessage } from '@/types/engine/ValidationMessage';
 import { ValidationMessageViewer } from '@/types/engine/controls';
 
-const { schema, model } = defineProps<{
+const { schema, model, validationsDisabled } = defineProps<{
   schema: ValidationMessageViewer;
   model: object;
   validationsDisabled: boolean;

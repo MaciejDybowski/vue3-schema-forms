@@ -1,7 +1,29 @@
 // @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
+
+
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1510,7 +1532,9 @@ export const Table1: Story = {
           label: 'item3686Clone',
         },
         validationMessages: {
+          disableValidationWhenHidden: true,
           layout: {
+            hide: "nata(item2!='1' or $not($exists(item2)))",
             component: 'validation-messages-viewer',
             props: { variant: 'outlined', density: 'compact' },
           },

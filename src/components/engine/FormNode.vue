@@ -40,7 +40,7 @@ const shouldShow = computed(() => {
 });
 
 const shouldDisableRulesWhenFieldIsHidden = computed(() => {
-  return (!shouldShow.value && props.schema.layout.disableValidationWhenHidden) || false;
+  return (!shouldShow.value && props.schema.disableValidationWhenHidden) || false;
 });
 
 const layoutCssClass = computed(() => {

@@ -3,24 +3,6 @@ import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
 import { Layout } from '@/types/shared/Layout';
 import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export interface EngineField {
   key: string;
   options: EngineOptions;
@@ -63,4 +45,7 @@ export interface EngineField {
   // dependencies
   dependency?: string;
   dependencyTriggers?: Array<string>;
+
+  // validation messages
+  disableValidationWhenHidden: boolean;
 }

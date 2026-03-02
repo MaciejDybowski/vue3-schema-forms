@@ -90,10 +90,7 @@ export function useSilentValidation(options: SilentValidationOptions) {
     alertElements.forEach((el) => {
       if (
         !el.classList.contains("include-in-validation") ||
-        !el.classList.contains('v-alert') ||
-        (el as HTMLElement).offsetParent === null ||
-        window.getComputedStyle(el).display === 'none' ||
-        window.getComputedStyle(el).visibility === 'hidden'
+        !el.classList.contains('v-alert')
       )
         return;
 
