@@ -11,35 +11,6 @@ import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 type EntryKey = string;
 type EntryValue = any;
 
@@ -117,11 +88,13 @@ export function useEventHandler() {
           toExecute = await jsonata(variable.if).evaluate(model);
         }
 
-        const value = variableRegexp.test(variable.value)
+        const rawValue = variableRegexp.test(variable.value)
           ? (await resolve(field, variable.value)).resolvedText
           : variable.value;
 
-        console.debug(`${field.key}, condition=${variable.if},isReadyToExecute=${toExecute}`);
+        const value: any = rawValue === 'null' ? null : rawValue;
+
+        console.debug(`${field.key}, condition=${variable.if},isReadyToExecute=${toExecute}, new value = ${value}`);
         return {
           key: variable.path,
           value,
