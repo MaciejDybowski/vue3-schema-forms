@@ -25,6 +25,7 @@ import Location from './Location.vue';
 import NIPField from './NIPField.vue';
 import NumberField from './NumberField.vue';
 import PESELField from './PESELField.vue';
+import REGONField from './REGONField.vue';
 import PhoneInput from './PhoneInput.vue';
 import RadioButton from './RadioButton.vue';
 import Select from './Select.vue';
@@ -69,6 +70,7 @@ export const vueSchemaFromControls: Components = {
   'number-field': NumberField,
   'pesel-field': PESELField,
   'nip-field': NIPField,
+  'regon-field': REGONField,
   divider: Divider,
   /*  "image-preview": ImagePreview,*/
   image: Image,

@@ -64,6 +64,10 @@ export function useLocale() {
           invalidFormat: 'Invalid NIP/VAT ID format.',
           invalidChecksum: 'Invalid NIP/VAT ID checksum.',
         },
+        regon: {
+          invalidFormat: 'REGON number must contain exactly 9 or 14 digits.',
+          invalidChecksum: 'Invalid REGON checksum.',
+        },
         schedulerGrid: {
           person: 'Person',
           clickToEdit: 'Click to edit',
@@ -136,6 +140,10 @@ export function useLocale() {
           invalidFormat: 'Nieprawidłowy format numeru NIP/VAT ID.',
           invalidChecksum: 'Nieprawidłowa suma kontrolna numeru NIP/VAT ID.',
         },
+        regon: {
+          invalidFormat: 'Numer REGON musi składać się z dokładnie 9 lub 14 cyfr.',
+          invalidChecksum: 'Nieprawidłowa suma kontrolna numeru REGON.',
+        },
         schedulerGrid: {
           person: 'Osoba',
           clickToEdit: 'Naciśnij aby edytować.',
@@ -206,6 +214,10 @@ export function useLocale() {
         nip: {
           invalidFormat: 'Ungültiges NIP/USt-IdNr. Format.',
           invalidChecksum: 'Ungültige NIP/USt-IdNr. Prüfsumme.',
+        },
+        regon: {
+          invalidFormat: 'REGON-Nummer muss genau 9 oder 14 Ziffern enthalten.',
+          invalidChecksum: 'Ungültige REGON-Prüfsumme.',
         },
         schedulerGrid: {
           person: 'Person',
@@ -278,6 +290,10 @@ export function useLocale() {
           invalidFormat: 'Неверный формат NIP/VAT ID.',
           invalidChecksum: 'Неверная контрольная сумма NIP/VAT ID.',
         },
+        regon: {
+          invalidFormat: 'Номер REGON должен содержать ровно 9 или 14 цифр.',
+          invalidChecksum: 'Неверная контрольная сумма REGON.',
+        },
         schedulerGrid: {
           person: 'Человек',
           clickToEdit: 'Нажмите, чтобы редактировать',
@@ -349,6 +365,10 @@ export function useLocale() {
           invalidFormat: 'Formato de NIP/NIF-IVA inválido.',
           invalidChecksum: 'Suma de control NIP/NIF-IVA inválida.',
         },
+        regon: {
+          invalidFormat: 'El número REGON debe contener exactamente 9 o 14 dígitos.',
+          invalidChecksum: 'Suma de control REGON inválida.',
+        },
         schedulerGrid: {
           person: 'Persona',
           clickToEdit: 'Haga clic para editar',
@@ -419,6 +439,10 @@ export function useLocale() {
         nip: {
           invalidFormat: 'Format NIP/TVA invalide.',
           invalidChecksum: 'Somme de contrôle NIP/TVA invalide.',
+        },
+        regon: {
+          invalidFormat: 'Le numéro REGON doit contenir exactement 9 ou 14 chiffres.',
+          invalidChecksum: 'Somme de contrôle REGON invalide.',
         },
         schedulerGrid: {
           person: 'Personne',

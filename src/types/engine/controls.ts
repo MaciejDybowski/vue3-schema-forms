@@ -29,6 +29,10 @@ export interface EngineNIPField extends EngineField {
   checkSumValidation?: 'warning' | 'error';
 }
 
+export interface EngineREGONField extends EngineField {
+  checkSumValidation?: 'warning' | 'error';
+}
+
 export interface ValidationMessageViewer extends EngineField {}
 
 export interface EngineCardComponent extends EngineField {
