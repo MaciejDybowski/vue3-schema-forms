@@ -8,6 +8,20 @@ import { HttpResponse, http } from 'msw';
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const MOCK_FOR_FILE_INPUT_ERROR = [
   http.post(
     '/api/v1/features/unknown-feature-id/files?dataId={dataId}&temporary=false',
@@ -66,6 +80,7 @@ export const generatePageData = (page, size) => {
       { title: 'Height:20', value: 20, description: 'Combined: height 20' },
       { title: 'Height:30', value: 30, description: 'Combined: height 30' },
     ],
+    enabled: (Math.floor(Math.random() * 100) + 10)> 50
   }));
 
   return data.slice(startIndex, endIndex);
@@ -114,6 +129,7 @@ export const UPDATE_TABLE_ROW = [
           { title: 'Height:20', value: 20, description: 'Combined: height 20' },
           { title: 'Height:30', value: 30, description: 'Combined: height 30' },
         ],
+        enabled: (Math.floor(Math.random() * 100) + 10) > 50,
       },
       aggregates: {
         height: Math.floor(Math.random() * 9999),

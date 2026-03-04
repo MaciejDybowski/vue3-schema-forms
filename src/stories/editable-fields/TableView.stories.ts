@@ -1,16 +1,100 @@
 // @ts-nocheck
 import { HttpResponse, http } from 'msw';
 
+
+
 import { Schema } from '../../types/schema/Schema';
-import {
-  RESPONSE_DICTIONARY,
-  TABLE_PAGE_WITHOUT_AGGREGATES,
-  TABLE_PAGE_WITHOUT_AGGREGATES_ZERO,
-  TABLE_PAGE_WITH_AGGREGATES,
-  UPDATE_TABLE_ROW,
-  generatePageData,
-} from '../mock-responses';
+import { RESPONSE_DICTIONARY, TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITHOUT_AGGREGATES_ZERO, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW, generatePageData } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default {
   title: 'Elements/Editable/TableView',
@@ -1369,6 +1453,78 @@ export const TextEditableField: Story = {
                   },
                 ],
                 properties: { minWidth: '200px', maxWidth: '200px', width: '100px' },
+                key: 'height-collection',
+                type: 'COLLECTION',
+              },
+              {
+                title: 'Height',
+                key: 'height',
+                valueMapping: 'height',
+                type: 'TEXT',
+              },
+              {
+                title: 'Base',
+                key: 'base',
+                valueMapping: 'base',
+                type: 'TEXT',
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
+    },
+  },
+};
+
+export const BooleanEditableField: Story = {
+  name: 'Boolean field: Text',
+  play: async (context) => {},
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        span: {
+          content: '',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: 'table-view',
+          },
+          source: {
+            data: '/mock-data/table-view-mock',
+            headers: [
+              {
+                title: 'Id',
+                key: 'id',
+                valueMapping: 'dataId',
+                type: 'TEXT',
+              },
+              {
+                title: 'Boolean representation',
+                key: 'location-collection',
+                editable: [
+                  {
+                    type: 'BOOLEAN',
+                    title: 'Enabled',
+                    key: 'enabled',
+                    valueMapping: 'enabled',
+                  },
+                ],
+                properties: {
+                  minWidth: '200px',
+                  maxWidth: '200px',
+                  width: '100px',
+                },
                 key: 'height-collection',
                 type: 'COLLECTION',
               },

@@ -94,9 +94,9 @@
       @update:model-value="handlersMap[item.valueMapping]?.dictionarySelect"
       @update:search="handlersMap[item.valueMapping]?.updateSearch"
     >
-      <template #item="{ item:internal, props }">
+      <template #item="{ item: internal, props }">
         <v-list-item
-          v-if="getItemSubtitle(item.valueMapping)!=null"
+          v-if="getItemSubtitle(item.valueMapping) != null"
           :subtitle="getItemSubtitleValue(item.valueMapping, internal.raw)"
           v-bind="props"
         >
@@ -108,6 +108,18 @@
         </v-list-item>
       </template>
     </dictionary-base>
+
+    <v-checkbox
+      v-if="item.type === 'BOOLEAN' && shouldRenderMap[item.valueMapping]"
+      :class="item.class"
+      :style="[item.label ? '' : 'justify-items: center']"
+      :label="item.label"
+      :model-value="getValue(item.valueMapping, index)"
+      :rules="rulesMap[item.valueMapping]"
+      v-bind="boundAttrsMap[item.valueMapping]"
+      @input="handlersMap[item.valueMapping]?.input"
+    >
+    </v-checkbox>
   </div>
 </template>
 
@@ -169,7 +181,7 @@ async function updateValue(e: any, item: HeaderEditableObject) {
   if (isValid) {
     emit('update:field', {
       value: inputValue,
-      header: item
+      header: item,
     });
   }
 }
@@ -202,7 +214,7 @@ watch(
   (len) => {
     showFormattedNumber.value = new Array(len).fill(true);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 function getItemTitle(valueMapping: string) {
@@ -247,14 +259,14 @@ function getItemsForSelect(item: any, row: any) {
 }
 
 async function getItemsUrlForDictionary(
-  valueMapping: string
+  valueMapping: string,
 ): Promise<{ resolvedText: string; allVariablesResolved: boolean }> {
   const split = valueMapping.split(':');
 
   const modifiedField = {
     ...props.schema,
     index: props.rowIndex,
-    path: props.schema.key
+    path: props.schema.key,
   };
 
   const endpoint = await resolve(modifiedField as any, split[1], true, getItemTitle(valueMapping));
@@ -283,7 +295,7 @@ async function computeRulesForField(items: HeaderEditableObject[]) {
 
         const tempRow = {
           ...props.row,
-          [item.valueMapping]: value
+          [item.valueMapping]: value,
         };
         const conditionResult = await nata.evaluate(tempRow);
 
@@ -347,7 +359,7 @@ const dictData = ref<any[]>([]);
 const paginationOptions = ref(new Pagination(50));
 const query = ref<string | undefined>();
 const debounced = {
-  load: debounce(loadDataForDictionary, 200)
+  load: debounce(loadDataForDictionary, 200),
 };
 const isSelecting = ref(false);
 
@@ -356,7 +368,7 @@ function onDictionarySelect(e: any, item: HeaderEditableObject) {
 
   emit('update:field', {
     value: e,
-    header: item
+    header: item,
   });
 
   nextTick(() => {
@@ -391,8 +403,8 @@ async function loadDataForDictionary(item: any, addQuery: boolean = false) {
       params: {
         page: paginationOptions.value.getPage(),
         size: paginationOptions.value.getItemsPerPage(),
-        query: addQuery ? query.value : undefined
-      }
+        query: addQuery ? query.value : undefined,
+      },
     });
     dictData.value = response.data.content;
     paginationOptions.value.setTotalElements(mapSliceTotalElements(response.data));
@@ -408,8 +420,8 @@ async function loadMoreRecordsForDictionary(item: any, addQuery: boolean = false
       params: {
         page: paginationOptions.value.getPage() + 1,
         size: paginationOptions.value.getItemsPerPage(),
-        query: addQuery ? query.value : null
-      }
+        query: addQuery ? query.value : null,
+      },
     });
     paginationOptions.value.nextPage();
     dictData.value = dictData.value.concat(response.data.content);
@@ -440,7 +452,7 @@ const boundAttrsMap = computed(() => {
     map[item.valueMapping] = {
       ...(attrs as Record<string, any>),
       density: 'compact',
-      readonly: !!shouldReadonlyMap.value[item.valueMapping] || rootReadonly
+      readonly: !!shouldReadonlyMap.value[item.valueMapping] || rootReadonly,
     };
   }
   return map;
@@ -474,7 +486,7 @@ const handlersMap = computed(() => {
       loadMore: () => loadMoreRecordsForDictionary(item),
       focusIn: () => (showFormattedNumber.value[index] = false),
       focusOut: () => focusOut(index, item),
-      keyupEnter: (e: any) => e?.target?.blur?.()
+      keyupEnter: (e: any) => e?.target?.blur?.(),
     };
   });
 
@@ -495,7 +507,7 @@ onMounted(async () => {
         await computeShouldRender(props.items);
         await computeRulesForField(props.items);
       },
-      { deep: true }
+      { deep: true },
     );
   }
 });
