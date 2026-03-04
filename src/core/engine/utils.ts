@@ -14,7 +14,14 @@ export async function resolveSchemaWithLocale(
 ): Promise<Schema> {
   const schema = cloneDeep(originalSchema);
 
-  if (options) {
+  if (options?.nestedFormsPath) {
+    const nestedFormsPathTemplate = resolveNestedFormsPathTemplate(options.nestedFormsPath);
+    if (nestedFormsPathTemplate) {
+      resolveNestedFormsRefs(schema, nestedFormsPathTemplate, (options.context as Record<string, any>) ?? {});
+    }
+  }
+
+  if (options?.i18n) {
     const resolvedTranslations = await jsonSchemaResolver.resolve(options.i18n, { baseUri });
     schema.i18n = { ...schema.i18n, ...resolvedTranslations.result };
   }
@@ -33,6 +40,69 @@ export async function resolveSchemaWithLocale(
   }
 
   return resolved.result as Schema;
+}
+
+/**
+ * Extracts the URL template string from nestedFormsPath option.
+ * Supports both plain string and { $ref: '...' } object forms.
+ */
+function resolveNestedFormsPathTemplate(nestedFormsPath: string | { $ref: string }): string | null {
+  if (typeof nestedFormsPath === 'string') {
+    return nestedFormsPath;
+  }
+  if (typeof nestedFormsPath === 'object' && nestedFormsPath.$ref) {
+    return nestedFormsPath.$ref;
+  }
+  return null;
+}
+
+/**
+ * Walks the schema and replaces every { $ref: '#/nestedFormsPath', '0': ..., '1': ... }
+ * with a resolved $ref URL built from the template and the numeric params.
+ *
+ * Param value syntax:
+ *  - '{context.project.id:default}' – dot-path resolved from options.context, fallback to default
+ *  - 'staticValue'                  – used as-is
+ */
+function resolveNestedFormsRefs(obj: any, template: string, context: Record<string, any>): void {
+  function resolveParam(param: string): string {
+    const match = param.match(/^\{([^:}]+)(?::([^}]*))?}$/);
+    if (match) {
+      const [, path, defaultVal = ''] = match;
+      const value = path
+        .split('.')
+        .reduce((acc: any, key) => (acc != null ? acc[key] : undefined), context);
+      return value != null ? String(value) : defaultVal;
+    }
+    return param;
+  }
+
+  if (Array.isArray(obj)) {
+    obj.forEach((item) => resolveNestedFormsRefs(item, template, context));
+  } else if (typeof obj === 'object' && obj !== null) {
+    if (obj.$ref === '#/nestedFormsPath') {
+      const params: Record<number, string> = {};
+      Object.keys(obj)
+        .filter((k) => !isNaN(Number(k)))
+        .forEach((k) => {
+          params[Number(k)] = resolveParam(obj[k]);
+        });
+
+      let resolvedUrl = template;
+      for (const index in params) {
+        resolvedUrl = resolvedUrl.replace(`{${index}}`, params[Number(index)]);
+      }
+
+      obj.$ref = resolvedUrl;
+      for (const index in params) {
+        delete obj[index];
+      }
+    } else {
+      for (const key in obj) {
+        resolveNestedFormsRefs(obj[key], template, context);
+      }
+    }
+  }
 }
 
 function resolveRefsAndReplace(schema: any) {
@@ -108,6 +178,5 @@ export function adjustColorForDarkMode(hex: string) {
   g = Math.round(g * 0.8 + 128 * 0.2);
   b = Math.round(b * 0.8 + 128 * 0.2);
   const toHex = (c: any) => c.toString(16).padStart(2, '0');
-  console.debug(`#${toHex(r)}${toHex(g)}${toHex(b)}`)
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
