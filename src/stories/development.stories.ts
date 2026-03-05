@@ -79,10 +79,9 @@ export const TableOne: Story = {
     schema: {
       type: 'object',
       properties: {
-        nestedBlock: {
-          $ref: '#/nestedFormsPath',
-          '0': '{context.project.id:1}',
-          '1': 'test',
+        formularzWariantA: {
+          $ref: '#/options/nestedFormsPath',
+          '0': 'test',
         },
 
         firstName: {
@@ -108,8 +107,9 @@ export const TableOne: Story = {
       i18n: {
         $ref: '../json-mock/translations',
       },
+      otherVariable: "TEST",
       nestedFormsPath: {
-        $ref: '../json-mock/{0}/form-schema?formName={1}',
+        $ref: '../json-mock/1/form-schema?formName={0}',
       },
     },
   },

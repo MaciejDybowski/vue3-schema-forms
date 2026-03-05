@@ -7,18 +7,19 @@ import { SchemaOptions } from '@/types/schema/SchemaOptions';
 
 export const variableRegexp: RegExp = new RegExp('{.*?}', 'g');
 
+type ExtendedSchemaForResolver = Schema & {
+  options?: SchemaOptions;
+};
+
 export async function resolveSchemaWithLocale(
   originalSchema: Schema,
   locale: string,
-  options?: SchemaOptions,
+  options?: SchemaOptions
 ): Promise<Schema> {
-  const schema = cloneDeep(originalSchema);
+  const schema: ExtendedSchemaForResolver = cloneDeep(originalSchema);
 
-  if (options?.nestedFormsPath) {
-    const nestedFormsPathTemplate = resolveNestedFormsPathTemplate(options.nestedFormsPath);
-    if (nestedFormsPathTemplate) {
-      resolveNestedFormsRefs(schema, nestedFormsPathTemplate, (options.context as Record<string, any>) ?? {});
-    }
+  if (options) {
+    schema.options = options;
   }
 
   if (options?.i18n) {
@@ -39,70 +40,11 @@ export async function resolveSchemaWithLocale(
     return resolveSchemaWithLocale(resolved.result as Schema, localeWithoutCountry);
   }
 
-  return resolved.result as Schema;
-}
+  const schemaFinal = cloneDeep(resolved.result);
+  delete schemaFinal.i18n;
+  delete schemaFinal.options;
 
-/**
- * Extracts the URL template string from nestedFormsPath option.
- * Supports both plain string and { $ref: '...' } object forms.
- */
-function resolveNestedFormsPathTemplate(nestedFormsPath: string | { $ref: string }): string | null {
-  if (typeof nestedFormsPath === 'string') {
-    return nestedFormsPath;
-  }
-  if (typeof nestedFormsPath === 'object' && nestedFormsPath.$ref) {
-    return nestedFormsPath.$ref;
-  }
-  return null;
-}
-
-/**
- * Walks the schema and replaces every { $ref: '#/nestedFormsPath', '0': ..., '1': ... }
- * with a resolved $ref URL built from the template and the numeric params.
- *
- * Param value syntax:
- *  - '{context.project.id:default}' – dot-path resolved from options.context, fallback to default
- *  - 'staticValue'                  – used as-is
- */
-function resolveNestedFormsRefs(obj: any, template: string, context: Record<string, any>): void {
-  function resolveParam(param: string): string {
-    const match = param.match(/^\{([^:}]+)(?::([^}]*))?}$/);
-    if (match) {
-      const [, path, defaultVal = ''] = match;
-      const value = path
-        .split('.')
-        .reduce((acc: any, key) => (acc != null ? acc[key] : undefined), context);
-      return value != null ? String(value) : defaultVal;
-    }
-    return param;
-  }
-
-  if (Array.isArray(obj)) {
-    obj.forEach((item) => resolveNestedFormsRefs(item, template, context));
-  } else if (typeof obj === 'object' && obj !== null) {
-    if (obj.$ref === '#/nestedFormsPath') {
-      const params: Record<number, string> = {};
-      Object.keys(obj)
-        .filter((k) => !isNaN(Number(k)))
-        .forEach((k) => {
-          params[Number(k)] = resolveParam(obj[k]);
-        });
-
-      let resolvedUrl = template;
-      for (const index in params) {
-        resolvedUrl = resolvedUrl.replace(`{${index}}`, params[Number(index)]);
-      }
-
-      obj.$ref = resolvedUrl;
-      for (const index in params) {
-        delete obj[index];
-      }
-    } else {
-      for (const key in obj) {
-        resolveNestedFormsRefs(obj[key], template, context);
-      }
-    }
-  }
+  return schemaFinal;
 }
 
 function resolveRefsAndReplace(schema: any) {
