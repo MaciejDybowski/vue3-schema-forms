@@ -82,6 +82,7 @@ export const TableOne: Story = {
         formularzWariantA: {
           $ref: '#/options/nestedFormsPath',
           '0': 'test',
+          flatStructure: true,
         },
 
         firstName: {

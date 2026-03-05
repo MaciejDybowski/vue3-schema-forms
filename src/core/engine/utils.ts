@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash';
 
 import { jsonSchemaResolver } from '@/core/engine/jsonSchemaResolver';
+import { collectNestedFormsPathKeys, flattenNestedFormsPathNodes, stripFlatStructureFlag } from '@/core/engine/resolveJsonSchemaUtils';
 import { baseUri } from '@/main';
 import { Schema } from '@/types/schema/Schema';
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
@@ -29,6 +30,10 @@ export async function resolveSchemaWithLocale(
 
   resolveRefsAndReplace(schema);
 
+  // Zapamiętaj klucze które były nestedFormsPath $ref z flatStructure – po resolve zostaną spłaszczone
+  const nestedFormsPathKeys = collectNestedFormsPathKeys(schema.properties ?? {}, options ?? {});
+  stripFlatStructureFlag(schema.properties ?? {}, options ?? {});
+
   let languages = originalSchema.i18n ? Object.keys(originalSchema.i18n) : [];
   let localeWithoutCountry = languages.includes(locale) ? locale : locale.split('-')[0];
 
@@ -44,8 +49,12 @@ export async function resolveSchemaWithLocale(
   delete schemaFinal.i18n;
   delete schemaFinal.options;
 
+  // Spłaszcz nestedFormsPath nodes – usuń placeholder, wstrzyknij .properties na bieżący poziom
+  flattenNestedFormsPathNodes(schemaFinal.properties ?? {}, nestedFormsPathKeys);
+
   return schemaFinal;
 }
+
 
 function resolveRefsAndReplace(schema: any) {
   function getDeepValue(obj: any, path: string[]): any {
