@@ -53,7 +53,13 @@
             <td
               v-for="scheduleDay in employeeSchedule.schedule"
               :key="scheduleDay.day"
-              :class="['status-cell', 'text-center', !fieldProps.readonly ? 'cursor-pointer' : '']"
+              :class="[
+                'status-cell',
+                'text-center',
+                isSameAsPrevDay(scheduleDay) ? 'status-cell--same-as-prev' : '',
+                isModifiedDay(scheduleDay) ? 'status-cell--modified' : '',
+                !fieldProps.readonly ? 'cursor-pointer' : '',
+              ]"
               :style="{
                 backgroundColor: getStatusColor(scheduleDay.status),
                 color: getTextColor(scheduleDay.status),
@@ -77,6 +83,24 @@
                     >: {{ getStatusLabel(scheduleDay.status) }}
                   </div>
                   <div
+                    v-if="hasPreviousData(scheduleDay) && isModifiedDay(scheduleDay)"
+                    class="status-tooltip-prev"
+                  >
+                    <div class="status-tooltip-prev-title">
+                      {{ previousDataLabel }}
+                    </div>
+                    <div class="status-tooltip-prev-row">
+                      <span class="status-tooltip-prev-label">{{ t('schedulerGrid.status') }}:</span>
+                      <span>{{ getStatusLabel(scheduleDay.prevData?.status) }}</span>
+                    </div>
+                    <div class="status-tooltip-prev-row">
+                      <span class="status-tooltip-prev-label">
+                        {{ t('schedulerGrid.noteIndicator') }}:
+                      </span>
+                      <span>{{ getNoteLabel(scheduleDay.prevData?.note) }}</span>
+                    </div>
+                  </div>
+                  <div
                     v-if="scheduleDay.note"
                     class="status-tooltip-note"
                   >
@@ -89,6 +113,12 @@
                   </div>
                 </div>
               </v-tooltip>
+
+              <span
+                v-if="isModifiedDay(scheduleDay)"
+                class="mdi mdi-exclamation-thick change-indicator"
+                :title="modifiedDataLabel"
+              ></span>
 
               <div
                 v-if="scheduleDay.note"
@@ -107,7 +137,7 @@
     <div class="bg-surface pa-4">
       <div class="d-flex flex-wrap justify-center gap-4">
         <div
-          v-for="item in schema.legend"
+          v-for="item in localizedLegend"
           :key="item.statusKey"
           class="d-flex align-center mr-6 mb-2"
         >
@@ -144,7 +174,7 @@
         <v-card-text class="pt-4 px-4">
           <v-select
             v-model="editDialogState.status"
-            :items="schema.legend"
+            :items="localizedLegend"
             :label="t('schedulerGrid.status')"
             class="mb-4"
             item-title="label"
@@ -215,6 +245,11 @@ interface ScheduleDay {
   date: string;
   status: string;
   note?: string;
+  sameAsPrev?: boolean;
+  prevData?: {
+    status?: string;
+    note?: string | null;
+  };
 }
 
 interface EmployeeSchedule {
@@ -323,8 +358,26 @@ const updateScheduleCell = ({
   const scheduleDay = employeeSchedule.schedule.find((d) => d.day === day);
   if (!scheduleDay) return;
 
-  scheduleDay.status = status ?? scheduleDay.status;
-  scheduleDay.note = note ?? '';
+  const previousStatus = scheduleDay.status;
+  const previousNote = scheduleDay.note ?? '';
+  const nextStatus = status ?? scheduleDay.status;
+  const nextNote = note ?? '';
+  const hasChanged = nextStatus !== scheduleDay.status || nextNote !== (scheduleDay.note ?? '');
+
+  scheduleDay.status = nextStatus;
+  scheduleDay.note = nextNote;
+
+  if (scheduleDay.prevData) {
+    const prevStatus = scheduleDay.prevData.status ?? '';
+    const prevNote = scheduleDay.prevData.note ?? '';
+    scheduleDay.sameAsPrev = nextStatus === prevStatus && nextNote === prevNote;
+  } else if (hasChanged) {
+    scheduleDay.prevData = {
+      status: previousStatus,
+      note: previousNote,
+    };
+    scheduleDay.sameAsPrev = false;
+  }
 };
 
 const getStatusColor = (statusKey: string): string => {
@@ -340,10 +393,50 @@ const getTextColor = (statusKey: string): string => {
   return statusKey === 'WEEKEND' ? '#666' : '#FFFFFF';
 };
 
-const getStatusLabel = (statusKey: string): string => {
+const getStatusLabel = (statusKey?: string | null): string => {
+  if (!statusKey) {
+    return t('emptyValue');
+  }
+  const translatedStatus = getOptionalTranslation(`schedulerGrid.statusLabels.${statusKey}`, '');
+  if (translatedStatus) {
+    return translatedStatus;
+  }
   const item = schema.legend.find((l) => l.statusKey === statusKey);
   return item ? item.label : statusKey;
 };
+
+const getOptionalTranslation = (key: string, fallback: string): string => {
+  const translated = t(key);
+  return translated === key ? fallback : translated;
+};
+
+const previousDataLabel = computed(() =>
+  getOptionalTranslation('schedulerGrid.previousData', 'Previous data'),
+);
+
+const modifiedDataLabel = computed(() =>
+  getOptionalTranslation('schedulerGrid.modifiedData', 'Modified data'),
+);
+
+const localizedLegend = computed(() =>
+  schema.legend.map((item) => ({
+    ...item,
+    label: getStatusLabel(item.statusKey),
+  })),
+);
+
+const getNoteLabel = (note?: string | null): string => {
+  const trimmed = note?.trim();
+  return trimmed ? trimmed : getOptionalTranslation('schedulerGrid.noNote', t('emptyValue'));
+};
+
+const isSameAsPrevDay = (scheduleDay: ScheduleDay): boolean => scheduleDay.sameAsPrev === true;
+
+const hasPreviousData = (scheduleDay: ScheduleDay): boolean => Boolean(scheduleDay.prevData);
+
+const isModifiedDay = (scheduleDay: ScheduleDay): boolean =>
+  scheduleDay.sameAsPrev === false ||
+  (hasPreviousData(scheduleDay) && scheduleDay.sameAsPrev !== true);
 
 onMounted(async () => {
   await bindLabel(schema);
@@ -416,11 +509,47 @@ thead th.sticky-col {
   box-shadow: inset 0 0 0 2px rgba(var(--v-theme-primary), 0.5); /* Hover effect */
 }
 
+.status-cell--same-as-prev {
+  opacity: 0.4;
+  filter: grayscale(0.35) saturate(0.55);
+}
+
+.status-cell--same-as-prev:hover {
+  filter: grayscale(0.35) saturate(0.55);
+  box-shadow: none;
+}
+
+.status-cell--modified {
+  z-index: 2;
+}
+
 .status-tooltip {
   display: flex;
   flex-direction: column;
   gap: 2px;
   max-width: 240px;
+}
+
+.status-tooltip-prev {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed;
+}
+
+.status-tooltip-prev-title {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+}
+
+.status-tooltip-prev-row {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  display: flex;
+  gap: 4px;
+}
+
+.status-tooltip-prev-label {
+  min-width: 44px;
 }
 
 .status-tooltip-note {
@@ -454,10 +583,31 @@ thead th.sticky-col {
   transform: translateY(-1px);
 }
 
+.status-cell--same-as-prev:hover .note-indicator {
+  transform: none;
+}
+
 .note-indicator-icon {
   font-size: 1rem;
   line-height: 1;
   color: currentColor;
   opacity: 0.8;
+}
+
+.change-indicator {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  line-height: 1;
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+  box-shadow: 0 0 0 1px rgba(var(--v-theme-surface), 0.8);
 }
 </style>
