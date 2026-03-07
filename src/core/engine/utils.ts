@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 
 import { jsonSchemaResolver } from '@/core/engine/jsonSchemaResolver';
 import { collectNestedFormsPathKeys, flattenNestedFormsPathNodes, stripFlatStructureFlag } from '@/core/engine/resolveJsonSchemaUtils';
-import { baseUri } from '@/main';
+import { baseUri, logger } from '@/main';
 import { Schema } from '@/types/schema/Schema';
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
 
@@ -18,6 +18,10 @@ export async function resolveSchemaWithLocale(
   options?: SchemaOptions
 ): Promise<Schema> {
   const schema: ExtendedSchemaForResolver = cloneDeep(originalSchema);
+
+  if (logger.resolvedSchemaLogger) {
+    console.debug(`[Vue Schema Forms] => Resolved Schema, dane wejściowe:`, schema, options);
+  }
 
   if (options) {
     schema.options = options;
@@ -52,6 +56,10 @@ export async function resolveSchemaWithLocale(
   // Spłaszcz nestedFormsPath nodes – usuń placeholder, wstrzyknij .properties na bieżący poziom
   flattenNestedFormsPathNodes(schemaFinal.properties ?? {}, nestedFormsPathKeys);
 
+
+  if(logger.resolvedSchemaLogger){
+    console.debug(`[Vue Schema Forms] => Resolved Schema`, schemaFinal)
+  }
   return schemaFinal;
 }
 
@@ -80,6 +88,39 @@ function resolveRefsAndReplace(schema: any) {
       for (const key in obj) {
         if (typeof obj[key] === 'object') {
           walk(obj[key]);
+        }
+      }
+
+      // Obsługa $ref wskazujących na options (np. '#/options/nestedFormsPath')
+      // – wstawia parametry numeryczne {0}, {1} itd. w docelowy URL z options
+      if (obj.$ref && obj.$ref.startsWith('#/options/') && schema.options) {
+        const optionKey = obj.$ref.slice('#/options/'.length);
+        const optionValue = schema.options[optionKey];
+
+        if (optionValue && optionValue.$ref) {
+          // Zbierz parametry numeryczne z bieżącego węzła
+          const replacements: Record<number, string> = {};
+          Object.keys(obj)
+            .filter((k) => !isNaN(Number(k)))
+            .forEach((k) => {
+              replacements[Number(k)] = obj[k];
+            });
+
+          if (Object.keys(replacements).length > 0) {
+            // Podstaw parametry w URL z options
+            let resolvedRef = optionValue.$ref;
+            for (const index in replacements) {
+              resolvedRef = resolvedRef.replace(`{${index}}`, replacements[Number(index)]);
+            }
+
+            // Zastąp $ref na bezpośredni URL z podmienionymi parametrami
+            obj.$ref = resolvedRef;
+
+            // Usuń parametry numeryczne – zostały już wstawione
+            for (const index in replacements) {
+              delete obj[index];
+            }
+          }
         }
       }
 

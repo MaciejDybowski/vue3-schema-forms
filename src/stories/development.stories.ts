@@ -2,7 +2,67 @@
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 import { HttpResponse, http } from 'msw';
 
+
+
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -58,19 +118,22 @@ const JSON_TRANSLATIONS_BLOCK = [
 ];
 
 const JSON_FORM_BLOCK = [
-  http.get('/json-mock/1/form-schema', async (req, res, ctx) => {
-    return HttpResponse.json({
-      type: 'object',
-      properties: {
-        test: {
-          label: 'test',
-          layout: {
-            component: 'text-field',
+  http.get(
+    '/json-mock/1/form-schema?formName=/folder1/formularz_waritant_a',
+    async (req, res, ctx) => {
+      return HttpResponse.json({
+        type: 'object',
+        properties: {
+          test: {
+            label: 'test',
+            layout: {
+              component: 'text-field',
+            },
           },
         },
-      },
-    });
-  }),
+      });
+    },
+  ),
 ];
 
 export const TableOne: Story = {
@@ -79,9 +142,9 @@ export const TableOne: Story = {
     schema: {
       type: 'object',
       properties: {
-        formularzWariantA: {
+        formA: {
+          '0': '/folder1/formularz_waritant_a',
           $ref: '#/options/nestedFormsPath',
-          '0': 'test',
           flatStructure: true,
         },
 
@@ -108,7 +171,7 @@ export const TableOne: Story = {
       i18n: {
         $ref: '../json-mock/translations',
       },
-      otherVariable: "TEST",
+      otherVariable: 'TEST',
       nestedFormsPath: {
         $ref: '../json-mock/1/form-schema?formName={0}',
       },
@@ -117,6 +180,90 @@ export const TableOne: Story = {
   parameters: {
     msw: {
       handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK],
+    },
+  },
+};
+
+const JSON_FORM_BLOCK_2 = [
+  http.get('/api/projects/mon-testy/forms?path=child-form', async (req, res, ctx) => {
+    return HttpResponse.json({
+      type: 'object',
+      properties: {
+        test: {
+          label: 'test sssss',
+          layout: {
+            component: 'text-field',
+          },
+        },
+      },
+    });
+  }),
+];
+
+export const table2: Story = {
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        fieldA: {
+          label: 'fieldA',
+          layout: {
+            cols: {
+              xs: 12,
+              sm: 6,
+              md: 6,
+              lg: 4,
+              xl: 4,
+              xxl: 4,
+            },
+            fillRow: true,
+            component: 'text-field',
+          },
+          onChange: [],
+        },
+        blokA: {
+          '0': 'child-form',
+          $ref: '#/options/nestedFormsPath',
+        },
+        fieldB: {
+          label: 'fieldB',
+          layout: {
+            cols: {
+              xs: 12,
+              sm: 6,
+              md: 6,
+              lg: 4,
+              xl: 4,
+              xxl: 4,
+            },
+            fillRow: true,
+            component: 'text-field',
+          },
+          onChange: [],
+        },
+      },
+    },
+    options: {
+      fieldProps: {
+        variant: 'outlined',
+        density: 'compact',
+        color: 'primary',
+        readonly: false,
+      },
+      buttonProps: {
+        size: 'small',
+        variant: 'flat',
+        rounded: '',
+      },
+      nestedFormsPath: {
+        $ref: ' ../api/projects/mon-testy/forms?path={0}',
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...JSON_FORM_BLOCK_2],
     },
   },
 };

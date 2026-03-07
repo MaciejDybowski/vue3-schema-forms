@@ -21,6 +21,7 @@ export let logger = {
   duplicatedSchemaWatchLogger: false,
   eventEmitterListener: false,
   registerComponentLogger: false,
+  resolvedSchemaLogger: false,
 };
 
 export let toast = null;
@@ -39,6 +40,7 @@ export type VueSchemaLoggers = {
   duplicatedSchemaWatchLogger?: boolean;
   eventEmitterListener?: boolean;
   registerComponentLogger?: boolean;
+  resolvedSchemaLogger?: boolean;
 };
 
 export type VueSchemaForms = {
