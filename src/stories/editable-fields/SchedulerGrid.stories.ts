@@ -505,6 +505,261 @@ export const Customization: Story = {
   },
 };
 
+const modifiedDataLegend = [
+  {
+    statusKey: 'PRESENT',
+    label: 'In Office',
+    colors: { light: '#C8E6C9', dark: '#1B5E20' },
+  },
+  {
+    statusKey: 'WFH',
+    label: 'Work From Home',
+    colors: { light: '#BBDEFB', dark: '#0D47A1' },
+  },
+  {
+    statusKey: 'PTO',
+    label: 'Paid Time Off',
+    colors: { light: '#FFE082', dark: '#E65100' },
+  },
+  {
+    statusKey: 'SICK',
+    label: 'Sick Leave',
+    colors: { light: '#FFCDD2', dark: '#B71C1C' },
+  },
+  {
+    statusKey: 'WEEKEND',
+    label: 'Weekend',
+    colors: { light: '#EEEEEE', dark: '#121212' },
+  },
+  {
+    statusKey: 'HOLIDAY',
+    label: 'Public Holiday',
+    colors: { light: '#E1BEE7', dark: '#4A148C' },
+  },
+  {
+    statusKey: 'HALF_DAY',
+    label: 'Part Time',
+    colors: { light: '#FFCC80', dark: '#BF360C' },
+  },
+];
+
+const toDecemberDate = (day) => `2025-12-${String(day).padStart(2, '0')}`;
+
+const buildScheduleWithModifications = (baseStatuses, modifiedDays, baseNotes = {}) =>
+  baseStatuses.map((baseStatus, index) => {
+    const day = index + 1;
+    const modified = modifiedDays[day];
+    const note = modified?.note ?? baseNotes[day];
+
+    return {
+      day,
+      date: toDecemberDate(day),
+      status: modified?.status ?? baseStatus,
+      ...(note ? { note } : {}),
+      sameAsPrev: !modified,
+      ...(modified?.prevData ? { prevData: modified.prevData } : {}),
+    };
+  });
+
+const liamBaseStatuses = [
+  'PRESENT',
+  'PRESENT',
+  'PRESENT',
+  'WFH',
+  'WFH',
+  'WEEKEND',
+  'WEEKEND',
+  'PRESENT',
+  'PRESENT',
+  'PRESENT',
+  'WFH',
+  'WFH',
+  'WEEKEND',
+  'WEEKEND',
+  'PRESENT',
+  'PRESENT',
+  'PRESENT',
+  'WFH',
+  'WFH',
+  'WEEKEND',
+  'WEEKEND',
+  'PTO',
+  'PTO',
+  'PTO',
+  'HOLIDAY',
+  'HOLIDAY',
+  'WEEKEND',
+  'WEEKEND',
+  'PTO',
+  'PTO',
+  'PTO',
+];
+
+const oliviaBaseStatuses = [
+  'WFH',
+  'WFH',
+  'PRESENT',
+  'PRESENT',
+  'PRESENT',
+  'WEEKEND',
+  'WEEKEND',
+  'WFH',
+  'SICK',
+  'SICK',
+  'WFH',
+  'PRESENT',
+  'WEEKEND',
+  'WEEKEND',
+  'PRESENT',
+  'PRESENT',
+  'PRESENT',
+  'PRESENT',
+  'PTO',
+  'WEEKEND',
+  'WEEKEND',
+  'PRESENT',
+  'PRESENT',
+  'PTO',
+  'HOLIDAY',
+  'HOLIDAY',
+  'WEEKEND',
+  'WEEKEND',
+  'WFH',
+  'WFH',
+  'PTO',
+];
+
+const liamModifiedDays = {
+  3: { status: 'WFH', note: 'po 12:00', prevData: { status: 'PRESENT', note: 'po 12:00' } },
+  5: { status: 'HALF_DAY', note: '8:00-12:00', prevData: { status: 'WFH', note: '' } },
+  10: { status: 'SICK', note: 'L4', prevData: { status: 'PRESENT', note: '' } },
+  15: { status: 'PRESENT', note: 'dyzur do 18:00', prevData: { status: 'PRESENT', note: '' } },
+  22: { status: 'PRESENT', note: '', prevData: { status: 'PTO', note: '' } },
+  29: { status: 'WFH', note: '', prevData: { status: 'PTO', note: '' } },
+};
+
+const oliviaModifiedDays = {
+  3: { status: 'PRESENT', note: 'powrot do biura', prevData: { status: 'WFH', note: '' } },
+  8: { status: 'SICK', note: 'L4', prevData: { status: 'WFH', note: '' } },
+  15: { status: 'HALF_DAY', note: '8-15', prevData: { status: 'PRESENT', note: '8-15' } },
+  19: { status: 'PRESENT', note: '', prevData: { status: 'PTO', note: '' } },
+  24: { status: 'WFH', note: 'po 12:00', prevData: { status: 'PTO', note: '' } },
+  30: { status: 'PTO', note: 'urlop okolicznosciowy', prevData: { status: 'WFH', note: '' } },
+};
+
+const createModifiedDataModel = () => [
+  {
+    user: {
+      id: 'emp_001',
+      firstName: 'Liam',
+      lastName: 'Johnson',
+    },
+    schedule: buildScheduleWithModifications(liamBaseStatuses, liamModifiedDays, {
+      2: 'bez zmian',
+    }),
+  },
+  {
+    user: {
+      id: 'emp_002',
+      firstName: 'Olivia',
+      lastName: 'Smith',
+      department: 'Engineering',
+    },
+    schedule: buildScheduleWithModifications(oliviaBaseStatuses, oliviaModifiedDays, {
+      11: 'bez zmian',
+    }),
+  },
+];
+
+export const WithModifiedData: Story = {
+  name: 'With Modified Data',
+  play: async (context) => {
+    const canvas = within(context.canvasElement);
+    const canvasEl = context.canvasElement;
+    await waitFor(() => {
+      expect(canvas.queryByText('Johnson Liam')).toBeTruthy();
+      expect(canvas.queryByText('Smith Olivia')).toBeTruthy();
+
+      const dayHeaders = canvasEl.querySelectorAll('.day-header-cell');
+      const fadedCells = canvasEl.querySelectorAll('.status-cell.status-cell--same-as-prev');
+      const changedCells = canvasEl.querySelectorAll('.status-cell:not(.status-cell--same-as-prev)');
+      const changeIndicators = canvasEl.querySelectorAll('.change-indicator');
+      const mutedNoteIcons = canvasEl.querySelectorAll(
+        '.status-cell--same-as-prev .note-indicator-icon',
+      );
+
+      expect(dayHeaders.length).toBe(31);
+      expect(fadedCells.length).toBeGreaterThan(0);
+      expect(changedCells.length).toBeGreaterThan(0);
+      expect(changeIndicators.length).toBeGreaterThan(0);
+      expect(mutedNoteIcons.length).toBeGreaterThan(0);
+    });
+  },
+  args: {
+    formModel: {
+      month: 'December',
+      year: '2025',
+      schedulerGrid: createModifiedDataModel(),
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        schedulerGrid: {
+          label: '{month:-} {year:-}',
+          layout: {
+            component: 'scheduler-grid',
+          },
+          legend: modifiedDataLegend,
+        },
+      },
+    },
+  },
+};
+
+export const WithModifiedDataReadonly: Story = {
+  name: 'With Modified Data - Readonly',
+  play: async (context) => {
+    const canvasEl = context.canvasElement;
+    await waitFor(() => {
+      const dayHeaders = canvasEl.querySelectorAll('.day-header-cell');
+      const fadedCells = canvasEl.querySelectorAll('.status-cell.status-cell--same-as-prev');
+      const clickableCells = canvasEl.querySelectorAll('.status-cell.cursor-pointer');
+      const changeIndicators = canvasEl.querySelectorAll('.change-indicator');
+
+      expect(dayHeaders.length).toBe(31);
+      expect(fadedCells.length).toBeGreaterThan(0);
+      expect(clickableCells.length).toBe(0);
+      expect(changeIndicators.length).toBeGreaterThan(0);
+    });
+  },
+  args: {
+    formModel: {
+      month: 'December',
+      year: '2025',
+      schedulerGrid: createModifiedDataModel(),
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        schedulerGrid: {
+          label: '{month:-} {year:-}',
+          layout: {
+            component: 'scheduler-grid',
+          },
+          legend: modifiedDataLegend,
+        },
+      },
+    },
+    options: {
+      fieldProps: {
+        readonly: true,
+        variant: 'outlined',
+        density: 'compact',
+      },
+    },
+  },
+};
+
 export const SourceAPI: Story = {
   play: async (context) => {
     const canvas = within(context.canvasElement);
