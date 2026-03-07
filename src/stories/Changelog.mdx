@@ -4,6 +4,13 @@ export const basePath = typeof window !== 'undefined' && window.location.hostnam
 
 <Meta title="Changelog" />
 
+### 0.5.0
+- SchedulerGrid: add support for `sameAsPrev` + `prevData` to highlight modified days and de-emphasize unchanged days
+- SchedulerGrid: add modified-day corner indicator and tooltip section with previous status/note values
+- SchedulerGrid: localize status labels by `statusKey` via `useLocale` (legend, tooltip, edit select)
+- Storybook: add `With Modified Data` and `With Modified Data - Readonly` scenarios (31-day datasets)
+- improvements on JSON resolver with params
+
 ### 0.4.99
 - It is possible to define reference for nested blocks of form
 
