@@ -4,18 +4,6 @@ import { expect, waitFor, within } from 'storybook/test';
 import { SCHEDULER_GRID_MOCKS } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
-
-
-
-
-
-
-
-
-
-
-
-
 export default {
   title: 'Elements/Editable/SchedulerGrid',
   ...formStoryWrapperTemplate,
@@ -682,7 +670,9 @@ export const WithModifiedData: Story = {
 
       const dayHeaders = canvasEl.querySelectorAll('.day-header-cell');
       const fadedCells = canvasEl.querySelectorAll('.status-cell.status-cell--same-as-prev');
-      const changedCells = canvasEl.querySelectorAll('.status-cell:not(.status-cell--same-as-prev)');
+      const changedCells = canvasEl.querySelectorAll(
+        '.status-cell:not(.status-cell--same-as-prev)',
+      );
       const changeIndicators = canvasEl.querySelectorAll('.change-indicator');
       const mutedNoteIcons = canvasEl.querySelectorAll(
         '.status-cell--same-as-prev .note-indicator-icon',
@@ -755,6 +745,315 @@ export const WithModifiedDataReadonly: Story = {
         readonly: true,
         variant: 'outlined',
         density: 'compact',
+      },
+    },
+  },
+};
+
+const selectedRangeScheduleLiam = [
+  { day: 5, date: '2026-05-05', status: 'PRESENT' },
+  { day: 6, date: '2026-05-06', status: 'WFH' },
+  { day: 7, date: '2026-05-07', status: 'PRESENT' },
+  { day: 8, date: '2026-05-08', status: 'PRESENT', note: '8:00-16:00' },
+  { day: 9, date: '2026-05-09', status: 'WEEKEND' },
+  { day: 10, date: '2026-05-10', status: 'WEEKEND' },
+];
+
+const selectedRangeScheduleOlivia = [
+  { day: 5, date: '2026-05-05', status: 'WFH' },
+  { day: 6, date: '2026-05-06', status: 'WFH' },
+  { day: 7, date: '2026-05-07', status: 'PRESENT' },
+  { day: 8, date: '2026-05-08', status: 'HALF_DAY' },
+  { day: 9, date: '2026-05-09', status: 'WEEKEND' },
+  { day: 10, date: '2026-05-10', status: 'WEEKEND' },
+];
+
+const mixedGroupScheduleLiam = [
+  { day: 7, date: '2026-01-07', group: 'Styczen', status: 'PRESENT' },
+  { day: 19, date: '2026-01-19', group: 'Styczen', status: 'WFH' },
+  { day: 31, date: '2026-01-31', group: 'Styczen', status: 'WEEKEND' },
+  { day: 2, date: '2026-02-02', group: 'Luty', status: 'PRESENT' },
+  { day: 5, date: '2026-02-05', group: 'Luty', status: 'PTO' },
+  { day: 8, date: '2026-02-08', group: 'Luty', status: 'WEEKEND' },
+  { day: 11, date: '2026-02-11', group: 'Luty', status: 'WFH' },
+  { day: 14, date: '2026-02-14', group: 'Luty', status: 'WEEKEND' },
+];
+
+const mixedGroupScheduleOlivia = [
+  { day: 7, date: '2026-01-07', group: 'Styczen', status: 'WFH' },
+  { day: 19, date: '2026-01-19', group: 'Styczen', status: 'PRESENT' },
+  { day: 31, date: '2026-01-31', group: 'Styczen', status: 'WEEKEND' },
+  { day: 2, date: '2026-02-02', group: 'Luty', status: 'PRESENT' },
+  { day: 5, date: '2026-02-05', group: 'Luty', status: 'SICK' },
+  { day: 8, date: '2026-02-08', group: 'Luty', status: 'WEEKEND' },
+  { day: 11, date: '2026-02-11', group: 'Luty', status: 'PRESENT' },
+  { day: 14, date: '2026-02-14', group: 'Luty', status: 'WEEKEND' },
+];
+
+const mixedGroupModifiedScheduleLiam = [
+  { day: 7, date: '2026-01-07', group: 'Styczen', status: 'PRESENT', sameAsPrev: true },
+  {
+    day: 19,
+    date: '2026-01-19',
+    group: 'Styczen',
+    status: 'WFH',
+    note: 'spotkanie 10:00',
+    sameAsPrev: false,
+    prevData: { status: 'PRESENT', note: '' },
+  },
+  { day: 31, date: '2026-01-31', group: 'Styczen', status: 'WEEKEND', sameAsPrev: true },
+  {
+    day: 2,
+    date: '2026-02-02',
+    group: 'Luty',
+    status: 'PRESENT',
+    sameAsPrev: false,
+    prevData: { status: 'WFH', note: '' },
+  },
+  { day: 5, date: '2026-02-05', group: 'Luty', status: 'PTO', sameAsPrev: true },
+  { day: 8, date: '2026-02-08', group: 'Luty', status: 'WEEKEND', sameAsPrev: true },
+  { day: 11, date: '2026-02-11', group: 'Luty', status: 'WFH', sameAsPrev: true },
+  { day: 14, date: '2026-02-14', group: 'Luty', status: 'WEEKEND', sameAsPrev: true },
+];
+
+const mixedGroupModifiedScheduleOlivia = [
+  { day: 7, date: '2026-01-07', group: 'Styczen', status: 'WFH', sameAsPrev: true },
+  { day: 19, date: '2026-01-19', group: 'Styczen', status: 'PRESENT', sameAsPrev: true },
+  { day: 31, date: '2026-01-31', group: 'Styczen', status: 'WEEKEND', sameAsPrev: true },
+  {
+    day: 2,
+    date: '2026-02-02',
+    group: 'Luty',
+    status: 'PRESENT',
+    sameAsPrev: false,
+    prevData: { status: 'WFH', note: '' },
+  },
+  {
+    day: 5,
+    date: '2026-02-05',
+    group: 'Luty',
+    status: 'SICK',
+    note: 'L4',
+    sameAsPrev: false,
+    prevData: { status: 'PRESENT', note: '' },
+  },
+  { day: 8, date: '2026-02-08', group: 'Luty', status: 'WEEKEND', sameAsPrev: true },
+  { day: 11, date: '2026-02-11', group: 'Luty', status: 'PRESENT', sameAsPrev: true },
+  { day: 14, date: '2026-02-14', group: 'Luty', status: 'WEEKEND', sameAsPrev: true },
+];
+
+export const WithSelectedRange: Story = {
+  name: 'With Selected Range',
+  play: async (context) => {
+    const canvasEl = context.canvasElement;
+
+    await waitFor(() => {
+      const dayHeaders = Array.from(canvasEl.querySelectorAll('.day-header-cell'));
+      const compactHeaders = canvasEl.querySelectorAll('.day-header-cell--compact');
+      const groupHeaders = canvasEl.querySelectorAll('.group-header-cell');
+
+      expect(dayHeaders.length).toBe(6);
+      expect(dayHeaders[0].textContent?.trim()).toBe('5');
+      expect(dayHeaders[5].textContent?.trim()).toBe('10');
+      expect(groupHeaders.length).toBe(1);
+      expect(groupHeaders[0].textContent?.includes('May 2026')).toBeTruthy();
+      expect(compactHeaders.length).toBeGreaterThan(0);
+    });
+  },
+  args: {
+    formModel: {
+      dateFrom: '2026-05-05',
+      dateTo: '2026-05-10',
+      schedulerGrid: [
+        {
+          user: {
+            id: 'emp_001',
+            firstName: 'Liam',
+            lastName: 'Johnson',
+          },
+          schedule: selectedRangeScheduleLiam,
+        },
+        {
+          user: {
+            id: 'emp_002',
+            firstName: 'Olivia',
+            lastName: 'Smith',
+          },
+          schedule: selectedRangeScheduleOlivia,
+        },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        schedulerGrid: {
+          label: '{dateFrom:-} - {dateTo:-}',
+          layout: {
+            component: 'scheduler-grid',
+          },
+          legend: modifiedDataLegend,
+        },
+      },
+    },
+  },
+};
+
+export const WithGroupedDays: Story = {
+  name: 'With Grouped Days',
+  play: async (context) => {
+    const canvasEl = context.canvasElement;
+
+    await waitFor(() => {
+      const dayHeaders = Array.from(canvasEl.querySelectorAll('.day-header-cell'));
+      const groupHeaders = Array.from(canvasEl.querySelectorAll('.group-header-cell'));
+
+      expect(dayHeaders.length).toBe(8);
+      expect(dayHeaders[0].textContent?.trim()).toBe('7');
+      expect(dayHeaders[1].textContent?.trim()).toBe('19');
+      expect(dayHeaders[2].textContent?.trim()).toBe('31');
+      expect(groupHeaders.length).toBe(2);
+      expect(groupHeaders[0].textContent?.includes('Styczen')).toBeTruthy();
+      expect(groupHeaders[1].textContent?.includes('Luty')).toBeTruthy();
+    });
+  },
+  args: {
+    formModel: {
+      schedulerGrid: [
+        {
+          user: {
+            id: 'emp_001',
+            firstName: 'Liam',
+            lastName: 'Johnson',
+          },
+          schedule: mixedGroupScheduleLiam,
+        },
+        {
+          user: {
+            id: 'emp_002',
+            firstName: 'Olivia',
+            lastName: 'Smith',
+          },
+          schedule: mixedGroupScheduleOlivia,
+        },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        schedulerGrid: {
+          label: 'Custom grouped days',
+          layout: {
+            component: 'scheduler-grid',
+          },
+          legend: modifiedDataLegend,
+        },
+      },
+    },
+  },
+};
+
+export const WithGroupedDaysHidden: Story = {
+  name: 'With Grouped Days - Hidden Groups',
+  play: async (context) => {
+    const canvasEl = context.canvasElement;
+
+    await waitFor(() => {
+      const dayHeaders = canvasEl.querySelectorAll('.day-header-cell');
+      const groupHeaders = canvasEl.querySelectorAll('.group-header-cell');
+
+      expect(dayHeaders.length).toBe(8);
+      expect(groupHeaders.length).toBe(0);
+    });
+  },
+  args: {
+    formModel: {
+      schedulerGrid: [
+        {
+          user: {
+            id: 'emp_001',
+            firstName: 'Liam',
+            lastName: 'Johnson',
+          },
+          schedule: mixedGroupScheduleLiam,
+        },
+        {
+          user: {
+            id: 'emp_002',
+            firstName: 'Olivia',
+            lastName: 'Smith',
+          },
+          schedule: mixedGroupScheduleOlivia,
+        },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        schedulerGrid: {
+          label: 'Custom grouped days',
+          showGroupHeaders: false,
+          layout: {
+            component: 'scheduler-grid',
+          },
+          legend: modifiedDataLegend,
+        },
+      },
+    },
+  },
+};
+
+export const CustomizedWithGroupsAndModifiedData: Story = {
+  name: 'Customization - Groups + Modified Data',
+  play: async (context) => {
+    const canvasEl = context.canvasElement;
+
+    await waitFor(() => {
+      const nameHeaders = canvasEl.querySelectorAll('.name-header-cell');
+      const groupHeaders = canvasEl.querySelectorAll('.group-header-cell');
+      const dayHeaders = canvasEl.querySelectorAll('.day-header-cell');
+      const changedCells = canvasEl.querySelectorAll('.status-cell--modified');
+      const fadedCells = canvasEl.querySelectorAll('.status-cell--same-as-prev');
+
+      expect(nameHeaders.length).toBe(0);
+      expect(groupHeaders.length).toBe(2);
+      expect(dayHeaders.length).toBe(8);
+      expect(changedCells.length).toBeGreaterThan(0);
+      expect(fadedCells.length).toBeGreaterThan(0);
+    });
+  },
+  args: {
+    formModel: {
+      schedulerGrid: [
+        {
+          user: {
+            id: 'emp_001',
+            firstName: 'Liam',
+            lastName: 'Johnson',
+          },
+          schedule: mixedGroupModifiedScheduleLiam,
+        },
+        {
+          user: {
+            id: 'emp_002',
+            firstName: 'Olivia',
+            lastName: 'Smith',
+          },
+          schedule: mixedGroupModifiedScheduleOlivia,
+        },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        schedulerGrid: {
+          label: 'Combined customization view',
+          showLabel: false,
+          showUserColumn: false,
+          layout: {
+            component: 'scheduler-grid',
+          },
+          legend: modifiedDataLegend,
+        },
       },
     },
   },

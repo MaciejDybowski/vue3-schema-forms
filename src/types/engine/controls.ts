@@ -1,16 +1,13 @@
 import { EngineField } from '@/types/engine/EngineField';
 import { Schema } from '@/types/schema/Schema';
 import { LocationResult } from '@/types/shared/LocationResult';
-import { AvatarSource, DictionarySource, SimpleSource, Source, UserInputSource } from '@/types/shared/Source';
-
-
-
-
-
-
-
-
-
+import {
+  AvatarSource,
+  DictionarySource,
+  SimpleSource,
+  Source,
+  UserInputSource,
+} from '@/types/shared/Source';
 
 export interface EngineExpansionPanel {
   titleIcon?: string;
@@ -57,6 +54,7 @@ export interface EngineSchedulerGrid extends EngineField {
   legend: LegendItem[];
   showLabel?: boolean;
   showUserColumn?: boolean;
+  showGroupHeaders?: boolean;
   source?: { url: string };
 }
 

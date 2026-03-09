@@ -4,6 +4,14 @@ export const basePath = typeof window !== 'undefined' && window.location.hostnam
 
 <Meta title="Changelog" />
 
+### 0.5.2
+- SchedulerGrid: render day headers from provided schedule order (instead of fixed `1..N`) with backward compatibility for month/year context
+- SchedulerGrid: add optional day grouping via `group` and new schema flag `showGroupHeaders`
+- SchedulerGrid: support selected/custom day subsets (including non-contiguous and cross-month groups)
+- SchedulerGrid: compact columns for weekends without business data to reduce visual noise
+- SchedulerGrid: improve modified-day indicator layering so corner marker remains visible over neighboring cells on hover
+- Storybook: add `With Selected Range`, `With Grouped Days`, `With Grouped Days - Hidden Groups`, and `Customization - Groups + Modified Data`
+
 ### 0.5.0
 - SchedulerGrid: add support for `sameAsPrev` + `prevData` to highlight modified days and de-emphasize unchanged days
 - SchedulerGrid: add modified-day corner indicator and tooltip section with previous status/note values

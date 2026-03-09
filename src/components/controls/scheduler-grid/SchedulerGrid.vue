@@ -19,6 +19,22 @@
     >
       <table class="roster-grid">
         <thead>
+          <tr v-if="showGroupHeaders && groupedDayHeaders.length">
+            <th
+              v-if="schema.showUserColumn != undefined ? schema.showUserColumn : true"
+              class="sticky-col name-header-cell group-header-placeholder bg-surface"
+            ></th>
+            <th
+              v-for="(groupHeader, groupIndex) in groupedDayHeaders"
+              :key="`group-${groupHeader.label}-${groupIndex}`"
+              :colspan="groupHeader.count"
+              class="group-header-cell bg-surface text-center"
+            >
+              <span class="text-caption font-weight-bold text-medium-emphasis text-no-wrap">
+                {{ groupHeader.label }}
+              </span>
+            </th>
+          </tr>
           <tr>
             <th
               v-if="schema.showUserColumn != undefined ? schema.showUserColumn : true"
@@ -27,11 +43,18 @@
               <span class="text-subtitle-2 font-weight-bold">{{ t('schedulerGrid.person') }}</span>
             </th>
             <th
-              v-for="day in daysInMonth"
-              :key="day"
-              class="day-header-cell bg-surface text-center"
+              v-for="(headerDay, dayIndex) in headerDays"
+              :key="`day-header-${headerDay.date}-${dayIndex}`"
+              :class="[
+                'day-header-cell',
+                'bg-surface',
+                'text-center',
+                compactDayColumns[dayIndex] ? 'day-header-cell--compact' : '',
+              ]"
             >
-              <span class="text-caption font-weight-bold text-medium-emphasis">{{ day }}</span>
+              <span class="text-caption font-weight-bold text-medium-emphasis">
+                {{ getDayHeaderLabel(headerDay, dayIndex) }}
+              </span>
             </th>
           </tr>
         </thead>
@@ -51,11 +74,12 @@
             </td>
 
             <td
-              v-for="scheduleDay in employeeSchedule.schedule"
-              :key="scheduleDay.day"
+              v-for="(scheduleDay, dayIndex) in employeeSchedule.schedule"
+              :key="`${scheduleDay.date}-${dayIndex}`"
               :class="[
                 'status-cell',
                 'text-center',
+                compactDayColumns[dayIndex] ? 'status-cell--compact' : '',
                 isSameAsPrevDay(scheduleDay) ? 'status-cell--same-as-prev' : '',
                 isModifiedDay(scheduleDay) ? 'status-cell--modified' : '',
                 !fieldProps.readonly ? 'cursor-pointer' : '',
@@ -64,7 +88,7 @@
                 backgroundColor: getStatusColor(scheduleDay.status),
                 color: getTextColor(scheduleDay.status),
               }"
-              @click="openEditDialog(employeeSchedule.user, scheduleDay)"
+              @click="openEditDialog(employeeSchedule.user, scheduleDay, dayIndex)"
             >
               <v-tooltip
                 activator="parent"
@@ -90,7 +114,9 @@
                       {{ previousDataLabel }}
                     </div>
                     <div class="status-tooltip-prev-row">
-                      <span class="status-tooltip-prev-label">{{ t('schedulerGrid.status') }}:</span>
+                      <span class="status-tooltip-prev-label"
+                        >{{ t('schedulerGrid.status') }}:</span
+                      >
                       <span>{{ getStatusLabel(scheduleDay.prevData?.status) }}</span>
                     </div>
                     <div class="status-tooltip-prev-row">
@@ -241,10 +267,11 @@ import { User } from '@/types/engine/User';
 import { EngineSchedulerGrid } from '@/types/engine/controls';
 
 interface ScheduleDay {
-  day: number;
-  date: string;
-  status: string;
-  note?: string;
+  day?: number;
+  date?: string;
+  status?: string;
+  group?: string;
+  note?: string | null;
   sameAsPrev?: boolean;
   prevData?: {
     status?: string;
@@ -255,6 +282,11 @@ interface ScheduleDay {
 interface EmployeeSchedule {
   user: User;
   schedule: ScheduleDay[];
+}
+
+interface GroupHeader {
+  label: string;
+  count: number;
 }
 
 const { model, schema } = defineProps<{
@@ -298,40 +330,165 @@ const localModel = computed({
 const theme = useTheme();
 const isDarkTheme = computed(() => theme.global.current.value.dark);
 
-const daysInMonth = computed(() =>
-  localModel.value ? localModel.value[0]?.schedule.length || 31 : 31,
+const hasMonthAndYearContext = computed(() => {
+  const modelRecord = model as Record<string, unknown>;
+  return Boolean(modelRecord?.month && modelRecord?.year);
+});
+
+const visibleSchedules = computed<EmployeeSchedule[]>(() => localModelWrapper.value ?? []);
+
+const sourceScheduleDays = computed<ScheduleDay[]>(() => visibleSchedules.value[0]?.schedule ?? []);
+
+const getFallbackHeaderDays = (): ScheduleDay[] =>
+  Array.from({ length: 31 }, (_, index) => ({
+    day: index + 1,
+    date: '',
+    status: '',
+  }));
+
+const headerDays = computed<ScheduleDay[]>(() => {
+  if (sourceScheduleDays.value.length > 0) {
+    return sourceScheduleDays.value;
+  }
+
+  if (hasMonthAndYearContext.value) {
+    return getFallbackHeaderDays();
+  }
+
+  return [];
+});
+
+const showGroupHeaders = computed(() => {
+  const shouldShow = schema.showGroupHeaders != undefined ? schema.showGroupHeaders : true;
+  if (!shouldShow) {
+    return false;
+  }
+
+  return headerDays.value.some((day) => Boolean(day.group?.trim()));
+});
+
+const groupedDayHeaders = computed<GroupHeader[]>(() => {
+  if (!showGroupHeaders.value || !headerDays.value.length) {
+    return [];
+  }
+
+  return headerDays.value.reduce<GroupHeader[]>((groups, day) => {
+    const label = day.group?.trim() || '\u00A0';
+    const lastGroup = groups[groups.length - 1];
+    if (lastGroup && lastGroup.label === label) {
+      lastGroup.count += 1;
+    } else {
+      groups.push({ label, count: 1 });
+    }
+    return groups;
+  }, []);
+});
+
+const parseIsoDateParts = (date?: string): { year: number; month: number; day: number } | null => {
+  if (!date) {
+    return null;
+  }
+
+  const match = date.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) {
+    return null;
+  }
+
+  return {
+    year: Number(match[1]),
+    month: Number(match[2]),
+    day: Number(match[3]),
+  };
+};
+
+const isWeekendDate = (date?: string): boolean => {
+  const dateParts = parseIsoDateParts(date);
+  if (!dateParts) {
+    return false;
+  }
+
+  const dayOfWeek = new Date(
+    Date.UTC(dateParts.year, dateParts.month - 1, dateParts.day),
+  ).getUTCDay();
+  return dayOfWeek === 0 || dayOfWeek === 6;
+};
+
+const isWeekendWithoutBusinessData = (scheduleDay?: ScheduleDay): boolean => {
+  if (!scheduleDay) {
+    return false;
+  }
+
+  const status = (scheduleDay.status ?? '').toUpperCase();
+  const hasNote = Boolean(scheduleDay.note?.trim());
+  const hasPreviousData = Boolean(scheduleDay.prevData);
+  const isMarkedAsChanged = scheduleDay.sameAsPrev === false || hasPreviousData;
+  const isWeekend = status === 'WEEKEND' || (status === '' && isWeekendDate(scheduleDay.date));
+
+  return isWeekend && !hasNote && !isMarkedAsChanged;
+};
+
+const compactDayColumns = computed<boolean[]>(() =>
+  headerDays.value.map((_, dayIndex) => {
+    const columnDays = visibleSchedules.value
+      .map((employeeSchedule) => employeeSchedule.schedule[dayIndex])
+      .filter((day): day is ScheduleDay => Boolean(day));
+
+    if (columnDays.length === 0) {
+      return false;
+    }
+
+    return columnDays.every((day) => isWeekendWithoutBusinessData(day));
+  }),
 );
+
+const getDayHeaderLabel = (scheduleDay: ScheduleDay, fallbackIndex: number): string => {
+  if (typeof scheduleDay.day === 'number') {
+    return String(scheduleDay.day);
+  }
+
+  const dateParts = parseIsoDateParts(scheduleDay.date);
+  if (dateParts) {
+    return String(dateParts.day);
+  }
+
+  return String(fallbackIndex + 1);
+};
+
 const isDialogOpen = ref(false);
 
 const editDialogState = reactive<{
   employee: User | null;
   day: ScheduleDay | null;
+  dayIndex: number | null;
   status: string | null;
   note: string | null;
 }>({
   employee: null,
   day: null,
+  dayIndex: null,
   status: null,
   note: null,
 });
 
-const openEditDialog = (employee: User, day: ScheduleDay) => {
+const openEditDialog = (employee: User, day: ScheduleDay, dayIndex: number) => {
   if (fieldProps.value.readonly) {
     return;
   }
   editDialogState.employee = employee;
   editDialogState.day = day;
-  editDialogState.status = day.status;
+  editDialogState.dayIndex = dayIndex;
+  editDialogState.status = day.status ?? null;
   editDialogState.note = day.note ?? '';
   isDialogOpen.value = true;
 };
 
 const saveChanges = () => {
-  if (!editDialogState.employee || !editDialogState.day) return;
+  if (!editDialogState.employee || !editDialogState.day || editDialogState.dayIndex === null)
+    return;
 
   updateScheduleCell({
     employeeId: editDialogState.employee.id,
-    day: editDialogState.day.day,
+    dayIndex: editDialogState.dayIndex,
     status: editDialogState.status,
     note: editDialogState.note,
   });
@@ -341,12 +498,12 @@ const saveChanges = () => {
 
 const updateScheduleCell = ({
   employeeId,
-  day,
+  dayIndex,
   status,
   note,
 }: {
   employeeId: number | string;
-  day: number;
+  dayIndex: number;
   status: string | null;
   note: string | null;
 }) => {
@@ -355,10 +512,10 @@ const updateScheduleCell = ({
   const employeeSchedule = localModel.value.find((e) => e.user.id === employeeId);
   if (!employeeSchedule) return;
 
-  const scheduleDay = employeeSchedule.schedule.find((d) => d.day === day);
+  const scheduleDay = employeeSchedule.schedule[dayIndex];
   if (!scheduleDay) return;
 
-  const previousStatus = scheduleDay.status;
+  const previousStatus = scheduleDay.status ?? '';
   const previousNote = scheduleDay.note ?? '';
   const nextStatus = status ?? scheduleDay.status;
   const nextNote = note ?? '';
@@ -380,7 +537,10 @@ const updateScheduleCell = ({
   }
 };
 
-const getStatusColor = (statusKey: string): string => {
+const getStatusColor = (statusKey?: string | null): string => {
+  if (!statusKey) {
+    return isDarkTheme.value ? '#333' : '#fff';
+  }
   const mode = isDarkTheme.value ? 'dark' : 'light';
   return (
     schema.legend.find((it) => it.statusKey === statusKey)?.colors[mode] ??
@@ -388,7 +548,7 @@ const getStatusColor = (statusKey: string): string => {
   );
 };
 
-const getTextColor = (statusKey: string): string => {
+const getTextColor = (statusKey?: string | null): string => {
   if (!isDarkTheme.value) return 'rgba(0,0,0,0.87)';
   return statusKey === 'WEEKEND' ? '#666' : '#FFFFFF';
 };
@@ -445,7 +605,7 @@ onMounted(async () => {
   if (schema.source && schema.source.url) {
     fieldProps.value.readonly = true;
     try {
-      const { resolvedText, allVariablesResolved } = await resolve(schema, schema.source.url, true);
+      const { resolvedText } = await resolve(schema, schema.source.url, true);
       const response = await axios.get(resolvedText);
       items.value = response.data;
     } catch (error) {
@@ -488,10 +648,28 @@ thead th.sticky-col {
   min-width: 180px;
   height: 48px;
 }
+
+.group-header-placeholder {
+  height: 30px;
+}
+
+.group-header-cell {
+  min-width: 40px;
+  height: 30px;
+  padding: 0 6px;
+  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+}
+
 .day-header-cell {
   min-width: 40px;
   height: 48px;
 }
+
+.day-header-cell--compact {
+  min-width: 24px;
+  width: 24px;
+}
+
 .name-cell {
   height: 44px;
 }
@@ -501,12 +679,19 @@ thead th.sticky-col {
   min-width: 40px;
   height: 44px;
   position: relative;
+  overflow: visible;
   text-align: center;
   transition: background-color 0.2s ease;
 }
+
+.status-cell--compact {
+  width: 24px;
+  min-width: 24px;
+}
 .status-cell:hover {
-  filter: brightness(0.95);
-  box-shadow: inset 0 0 0 2px rgba(var(--v-theme-primary), 0.5); /* Hover effect */
+  box-shadow:
+    inset 0 0 0 2px rgba(var(--v-theme-primary), 0.5),
+    inset 0 0 0 999px rgba(0, 0, 0, 0.04); /* Hover effect without stacking context */
 }
 
 .status-cell--same-as-prev {
@@ -517,10 +702,6 @@ thead th.sticky-col {
 .status-cell--same-as-prev:hover {
   filter: grayscale(0.35) saturate(0.55);
   box-shadow: none;
-}
-
-.status-cell--modified {
-  z-index: 2;
 }
 
 .status-tooltip {
@@ -609,5 +790,6 @@ thead th.sticky-col {
   background: rgb(var(--v-theme-primary));
   color: rgb(var(--v-theme-on-primary));
   box-shadow: 0 0 0 1px rgba(var(--v-theme-surface), 0.8);
+  z-index: 1000;
 }
 </style>
