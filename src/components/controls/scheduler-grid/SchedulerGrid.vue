@@ -356,6 +356,19 @@ const getFallbackHeaderDays = (): ScheduleDay[] =>
     status: '',
   }));
 
+const getDateSortValue = (date?: string): number | null => {
+  if (!date) {
+    return null;
+  }
+
+  const match = date.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) {
+    return null;
+  }
+
+  return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+};
+
 const getScheduleDayKey = (scheduleDay: ScheduleDay, fallbackIndex: number): string => {
   const date = scheduleDay.date?.trim();
   if (date) {
@@ -390,6 +403,44 @@ const headerDays = computed<ScheduleDay[]>(() => {
   });
 
   if (mergedHeaderDays.length > 0) {
+    const sortableHeaderDays = mergedHeaderDays.map((scheduleDay, firstSeenIndex) => ({
+      scheduleDay,
+      firstSeenIndex,
+      dateSort: getDateSortValue(scheduleDay.date),
+      daySort: typeof scheduleDay.day === 'number' ? scheduleDay.day : null,
+    }));
+
+    const hasCompleteDateRange = sortableHeaderDays.every(
+      (headerDay) => headerDay.dateSort !== null,
+    );
+    if (hasCompleteDateRange) {
+      return sortableHeaderDays
+        .slice()
+        .sort((a, b) => {
+          if (a.dateSort === b.dateSort) {
+            return a.firstSeenIndex - b.firstSeenIndex;
+          }
+          return (a.dateSort ?? 0) - (b.dateSort ?? 0);
+        })
+        .map((headerDay) => headerDay.scheduleDay);
+    }
+
+    const hasAnyGroup = sortableHeaderDays.some((headerDay) =>
+      Boolean(headerDay.scheduleDay.group?.trim()),
+    );
+    const hasCompleteDayRange = sortableHeaderDays.every((headerDay) => headerDay.daySort !== null);
+    if (hasCompleteDayRange && !hasAnyGroup) {
+      return sortableHeaderDays
+        .slice()
+        .sort((a, b) => {
+          if (a.daySort === b.daySort) {
+            return a.firstSeenIndex - b.firstSeenIndex;
+          }
+          return (a.daySort ?? 0) - (b.daySort ?? 0);
+        })
+        .map((headerDay) => headerDay.scheduleDay);
+    }
+
     return mergedHeaderDays;
   }
 

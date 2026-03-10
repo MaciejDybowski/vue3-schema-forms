@@ -858,6 +858,20 @@ const subsetScheduleDay4To10 = [
   { day: 10, date: toDecemberDate(10), status: 'SICK' },
 ];
 
+const buildRangeSchedule = (startDay, endDay, statusKey) =>
+  Array.from({ length: endDay - startDay + 1 }, (_, index) => {
+    const day = startDay + index;
+    return {
+      day,
+      date: toDecemberDate(day),
+      status: statusKey,
+    };
+  });
+
+const rangeScheduleDay4To10 = buildRangeSchedule(4, 10, 'PRESENT');
+const rangeScheduleDay3To7 = buildRangeSchedule(3, 7, 'WFH');
+const rangeScheduleDay9To12 = buildRangeSchedule(9, 12, 'PTO');
+
 export const WithSelectedRange: Story = {
   name: 'With Selected Range',
   play: async (context) => {
@@ -1126,6 +1140,82 @@ export const EmptyFirstUserWithMixedRanges: Story = {
             lastName: 'Brown',
           },
           schedule: subsetScheduleDay4To10,
+        },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        schedulerGrid: {
+          label: '{month:-} {year:-}',
+          layout: {
+            component: 'scheduler-grid',
+          },
+          legend: modifiedDataLegend,
+        },
+      },
+    },
+  },
+};
+
+export const MixedRangesSortedHeaders: Story = {
+  name: 'Mixed Ranges - Sorted Headers',
+  play: async (context) => {
+    const canvasEl = context.canvasElement;
+
+    await waitFor(() => {
+      const rows = canvasEl.querySelectorAll('tbody tr');
+      const dayHeaders = Array.from(canvasEl.querySelectorAll('.day-header-cell')).map((header) =>
+        header.textContent?.trim(),
+      );
+
+      const firstRangeRowCells = rows[0].querySelectorAll('.status-cell');
+      const secondRangeRowCells = rows[1].querySelectorAll('.status-cell');
+      const thirdRangeRowCells = rows[2].querySelectorAll('.status-cell');
+
+      expect(rows.length).toBe(3);
+      expect(dayHeaders).toEqual(['3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
+
+      expect(firstRangeRowCells.length).toBe(10);
+      expect((firstRangeRowCells[0] as HTMLElement).style.backgroundColor).toBe('');
+      expect((firstRangeRowCells[1] as HTMLElement).style.backgroundColor).not.toBe('');
+
+      expect((secondRangeRowCells[0] as HTMLElement).style.backgroundColor).not.toBe('');
+      expect((secondRangeRowCells[5] as HTMLElement).style.backgroundColor).toBe('');
+
+      expect((thirdRangeRowCells[5] as HTMLElement).style.backgroundColor).toBe('');
+      expect((thirdRangeRowCells[6] as HTMLElement).style.backgroundColor).not.toBe('');
+      expect((thirdRangeRowCells[9] as HTMLElement).style.backgroundColor).not.toBe('');
+    });
+  },
+  args: {
+    formModel: {
+      month: 'December',
+      year: '2025',
+      schedulerGrid: [
+        {
+          user: {
+            id: 'emp_range_1',
+            firstName: 'Liam',
+            lastName: 'Johnson',
+          },
+          schedule: rangeScheduleDay4To10,
+        },
+        {
+          user: {
+            id: 'emp_range_2',
+            firstName: 'Olivia',
+            lastName: 'Smith',
+          },
+          schedule: rangeScheduleDay3To7,
+        },
+        {
+          user: {
+            id: 'emp_range_3',
+            firstName: 'Noah',
+            lastName: 'Brown',
+          },
+          schedule: rangeScheduleDay9To12,
         },
       ],
     },
