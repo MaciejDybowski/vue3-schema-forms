@@ -4,6 +4,11 @@ export const basePath = typeof window !== 'undefined' && window.location.hostnam
 
 <Meta title="Changelog" />
 
+### 0.5.4
+- SchedulerGrid: fix header generation when first user has empty `schedule` (headers are now resolved from all provided schedules)
+- SchedulerGrid: fix cell alignment between users with different day ranges by matching entries using day keys (`date` / `day` + optional `group`) instead of raw array index
+- Storybook: add regression scenario `Empty First User + Mixed Ranges`
+
 ### 0.5.2
 - SchedulerGrid: render day headers from provided schedule order (instead of fixed `1..N`) with backward compatibility for month/year context
 - SchedulerGrid: add optional day grouping via `group` and new schema flag `showGroupHeaders`

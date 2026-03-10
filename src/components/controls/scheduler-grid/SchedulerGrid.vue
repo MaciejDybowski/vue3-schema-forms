@@ -44,7 +44,7 @@
             </th>
             <th
               v-for="(headerDay, dayIndex) in headerDays"
-              :key="`day-header-${headerDay.date}-${dayIndex}`"
+              :key="`day-header-${headerDayKeys[dayIndex] ?? dayIndex}`"
               :class="[
                 'day-header-cell',
                 'bg-surface',
@@ -60,7 +60,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="employeeSchedule in localModelWrapper"
+            v-for="employeeSchedule in alignedSchedules"
             :key="employeeSchedule.user.id"
             class="employee-row"
           >
@@ -74,23 +74,31 @@
             </td>
 
             <td
-              v-for="(scheduleDay, dayIndex) in employeeSchedule.schedule"
-              :key="`${scheduleDay.date}-${dayIndex}`"
+              v-for="(scheduleDay, dayIndex) in employeeSchedule.alignedSchedule"
+              :key="`${employeeSchedule.user.id}-${headerDayKeys[dayIndex] ?? dayIndex}`"
               :class="[
                 'status-cell',
                 'text-center',
                 compactDayColumns[dayIndex] ? 'status-cell--compact' : '',
-                isSameAsPrevDay(scheduleDay) ? 'status-cell--same-as-prev' : '',
-                isModifiedDay(scheduleDay) ? 'status-cell--modified' : '',
-                !fieldProps.readonly ? 'cursor-pointer' : '',
+                scheduleDay && isSameAsPrevDay(scheduleDay) ? 'status-cell--same-as-prev' : '',
+                scheduleDay && isModifiedDay(scheduleDay) ? 'status-cell--modified' : '',
+                scheduleDay && !fieldProps.readonly ? 'cursor-pointer' : '',
               ]"
-              :style="{
-                backgroundColor: getStatusColor(scheduleDay.status),
-                color: getTextColor(scheduleDay.status),
-              }"
-              @click="openEditDialog(employeeSchedule.user, scheduleDay, dayIndex)"
+              :style="
+                scheduleDay
+                  ? {
+                      backgroundColor: getStatusColor(scheduleDay.status),
+                      color: getTextColor(scheduleDay.status),
+                    }
+                  : {}
+              "
+              @click="
+                scheduleDay &&
+                openEditDialog(employeeSchedule.user, scheduleDay, headerDayKeys[dayIndex] ?? '')
+              "
             >
               <v-tooltip
+                v-if="scheduleDay"
                 activator="parent"
                 location="top"
                 open-delay="500"
@@ -141,13 +149,13 @@
               </v-tooltip>
 
               <span
-                v-if="isModifiedDay(scheduleDay)"
+                v-if="scheduleDay && isModifiedDay(scheduleDay)"
                 class="mdi mdi-exclamation-thick change-indicator"
                 :title="modifiedDataLabel"
               ></span>
 
               <div
-                v-if="scheduleDay.note"
+                v-if="scheduleDay && scheduleDay.note"
                 class="note-indicator"
               >
                 <span class="mdi mdi-note-outline note-indicator-icon"></span>
@@ -284,6 +292,10 @@ interface EmployeeSchedule {
   schedule: ScheduleDay[];
 }
 
+interface AlignedEmployeeSchedule extends EmployeeSchedule {
+  alignedSchedule: Array<ScheduleDay | null>;
+}
+
 interface GroupHeader {
   label: string;
   count: number;
@@ -337,8 +349,6 @@ const hasMonthAndYearContext = computed(() => {
 
 const visibleSchedules = computed<EmployeeSchedule[]>(() => localModelWrapper.value ?? []);
 
-const sourceScheduleDays = computed<ScheduleDay[]>(() => visibleSchedules.value[0]?.schedule ?? []);
-
 const getFallbackHeaderDays = (): ScheduleDay[] =>
   Array.from({ length: 31 }, (_, index) => ({
     day: index + 1,
@@ -346,9 +356,41 @@ const getFallbackHeaderDays = (): ScheduleDay[] =>
     status: '',
   }));
 
+const getScheduleDayKey = (scheduleDay: ScheduleDay, fallbackIndex: number): string => {
+  const date = scheduleDay.date?.trim();
+  if (date) {
+    return `date:${date}`;
+  }
+
+  const group = scheduleDay.group?.trim() ?? '';
+  if (typeof scheduleDay.day === 'number') {
+    return group ? `group:${group}|day:${scheduleDay.day}` : `day:${scheduleDay.day}`;
+  }
+
+  if (group) {
+    return `group:${group}|index:${fallbackIndex}`;
+  }
+
+  return `index:${fallbackIndex}`;
+};
+
 const headerDays = computed<ScheduleDay[]>(() => {
-  if (sourceScheduleDays.value.length > 0) {
-    return sourceScheduleDays.value;
+  const mergedHeaderDays: ScheduleDay[] = [];
+  const seenHeaderKeys = new Set<string>();
+
+  visibleSchedules.value.forEach((employeeSchedule) => {
+    employeeSchedule.schedule.forEach((scheduleDay, dayIndex) => {
+      const dayKey = getScheduleDayKey(scheduleDay, dayIndex);
+      if (seenHeaderKeys.has(dayKey)) {
+        return;
+      }
+      seenHeaderKeys.add(dayKey);
+      mergedHeaderDays.push(scheduleDay);
+    });
+  });
+
+  if (mergedHeaderDays.length > 0) {
+    return mergedHeaderDays;
   }
 
   if (hasMonthAndYearContext.value) {
@@ -357,6 +399,27 @@ const headerDays = computed<ScheduleDay[]>(() => {
 
   return [];
 });
+
+const headerDayKeys = computed<string[]>(() =>
+  headerDays.value.map((headerDay, dayIndex) => getScheduleDayKey(headerDay, dayIndex)),
+);
+
+const alignedSchedules = computed<AlignedEmployeeSchedule[]>(() =>
+  visibleSchedules.value.map((employeeSchedule) => {
+    const scheduleByKey = new Map<string, ScheduleDay>();
+
+    employeeSchedule.schedule.forEach((scheduleDay, dayIndex) => {
+      scheduleByKey.set(getScheduleDayKey(scheduleDay, dayIndex), scheduleDay);
+    });
+
+    return {
+      ...employeeSchedule,
+      alignedSchedule: headerDayKeys.value.map(
+        (headerDayKey) => scheduleByKey.get(headerDayKey) ?? null,
+      ),
+    };
+  }),
+);
 
 const showGroupHeaders = computed(() => {
   const shouldShow = schema.showGroupHeaders != undefined ? schema.showGroupHeaders : true;
@@ -428,9 +491,9 @@ const isWeekendWithoutBusinessData = (scheduleDay?: ScheduleDay): boolean => {
 };
 
 const compactDayColumns = computed<boolean[]>(() =>
-  headerDays.value.map((_, dayIndex) => {
-    const columnDays = visibleSchedules.value
-      .map((employeeSchedule) => employeeSchedule.schedule[dayIndex])
+  headerDayKeys.value.map((_, dayIndex) => {
+    const columnDays = alignedSchedules.value
+      .map((employeeSchedule) => employeeSchedule.alignedSchedule[dayIndex])
       .filter((day): day is ScheduleDay => Boolean(day));
 
     if (columnDays.length === 0) {
@@ -459,36 +522,35 @@ const isDialogOpen = ref(false);
 const editDialogState = reactive<{
   employee: User | null;
   day: ScheduleDay | null;
-  dayIndex: number | null;
+  dayKey: string | null;
   status: string | null;
   note: string | null;
 }>({
   employee: null,
   day: null,
-  dayIndex: null,
+  dayKey: null,
   status: null,
   note: null,
 });
 
-const openEditDialog = (employee: User, day: ScheduleDay, dayIndex: number) => {
+const openEditDialog = (employee: User, day: ScheduleDay, dayKey: string) => {
   if (fieldProps.value.readonly) {
     return;
   }
   editDialogState.employee = employee;
   editDialogState.day = day;
-  editDialogState.dayIndex = dayIndex;
+  editDialogState.dayKey = dayKey;
   editDialogState.status = day.status ?? null;
   editDialogState.note = day.note ?? '';
   isDialogOpen.value = true;
 };
 
 const saveChanges = () => {
-  if (!editDialogState.employee || !editDialogState.day || editDialogState.dayIndex === null)
-    return;
+  if (!editDialogState.employee || !editDialogState.day || !editDialogState.dayKey) return;
 
   updateScheduleCell({
     employeeId: editDialogState.employee.id,
-    dayIndex: editDialogState.dayIndex,
+    dayKey: editDialogState.dayKey,
     status: editDialogState.status,
     note: editDialogState.note,
   });
@@ -498,12 +560,12 @@ const saveChanges = () => {
 
 const updateScheduleCell = ({
   employeeId,
-  dayIndex,
+  dayKey,
   status,
   note,
 }: {
   employeeId: number | string;
-  dayIndex: number;
+  dayKey: string;
   status: string | null;
   note: string | null;
 }) => {
@@ -511,6 +573,11 @@ const updateScheduleCell = ({
 
   const employeeSchedule = localModel.value.find((e) => e.user.id === employeeId);
   if (!employeeSchedule) return;
+
+  const dayIndex = employeeSchedule.schedule.findIndex(
+    (scheduleDay, index) => getScheduleDayKey(scheduleDay, index) === dayKey,
+  );
+  if (dayIndex === -1) return;
 
   const scheduleDay = employeeSchedule.schedule[dayIndex];
   if (!scheduleDay) return;
