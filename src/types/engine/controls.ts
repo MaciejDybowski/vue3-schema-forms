@@ -15,6 +15,7 @@ export interface EngineExpansionPanel {
   titleCssDecorator?: string;
   title: string;
   schema: Schema;
+  openByDefault?: boolean;
 }
 
 export interface EnginePESELField extends EngineField {

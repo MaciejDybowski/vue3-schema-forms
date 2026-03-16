@@ -75,7 +75,30 @@ function getPanelId(panel: EngineExpansionPanel, index: number): string {
 }
 const panelsId = generatePanelsId();
 const storedPanelState = useLocalStorage<number[]>(`${panelsId}-state`, []);
-const openPanels = ref<number[]>(storedPanelState.value);
+
+function resolveInitialOpenPanels(): number[] {
+  const maxIndex = schema.panels.length - 1;
+  const sanitizedStoredState = Array.from(new Set(storedPanelState.value))
+    .filter((panelIndex) => Number.isInteger(panelIndex) && panelIndex >= 0 && panelIndex <= maxIndex);
+  const storedStateSet = new Set(sanitizedStoredState);
+
+  return schema.panels.reduce<number[]>((result, panel, index) => {
+    if (typeof panel.openByDefault === 'boolean') {
+      if (panel.openByDefault) {
+        result.push(index);
+      }
+      return result;
+    }
+
+    if (storedStateSet.has(index)) {
+      result.push(index);
+    }
+
+    return result;
+  }, []);
+}
+
+const openPanels = ref<number[]>(resolveInitialOpenPanels());
 
 watch(openPanels, (newValue) => {
   storedPanelState.value = newValue;
