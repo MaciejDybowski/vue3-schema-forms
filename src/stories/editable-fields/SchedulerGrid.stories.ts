@@ -48,7 +48,7 @@ export const Standard: Story = {
             {
               statusKey: 'SICK',
               label: 'Sick Leave',
-              colors: { light: '#FFCDD2', dark: '#B71C1C' },
+              colors: { light: '#EF9A9A', dark: '#B71C1C' },
             },
             {
               statusKey: 'WEEKEND',
@@ -63,7 +63,7 @@ export const Standard: Story = {
             {
               statusKey: 'HALF_DAY',
               label: 'Part Time',
-              colors: { light: '#FFCC80', dark: '#BF360C' },
+              colors: { light: '#B08968', dark: '#5D4037' },
             },
           ],
         },
@@ -196,7 +196,7 @@ export const WithModel: Story = {
             {
               statusKey: 'SICK',
               label: 'Sick Leave',
-              colors: { light: '#FFCDD2', dark: '#B71C1C' },
+              colors: { light: '#EF9A9A', dark: '#B71C1C' },
             },
             {
               statusKey: 'WEEKEND',
@@ -211,7 +211,7 @@ export const WithModel: Story = {
             {
               statusKey: 'HALF_DAY',
               label: 'Part Time',
-              colors: { light: '#FFCC80', dark: '#BF360C' },
+              colors: { light: '#B08968', dark: '#5D4037' },
             },
           ],
         },
@@ -354,7 +354,7 @@ export const Readonly: Story = {
             {
               statusKey: 'SICK',
               label: 'Sick Leave',
-              colors: { light: '#FFCDD2', dark: '#B71C1C' },
+              colors: { light: '#EF9A9A', dark: '#B71C1C' },
             },
             {
               statusKey: 'WEEKEND',
@@ -369,7 +369,7 @@ export const Readonly: Story = {
             {
               statusKey: 'HALF_DAY',
               label: 'Part Time',
-              colors: { light: '#FFCC80', dark: '#BF360C' },
+              colors: { light: '#B08968', dark: '#5D4037' },
             },
           ],
         },
@@ -469,7 +469,7 @@ export const Customization: Story = {
             {
               statusKey: 'SICK',
               label: 'Sick Leave',
-              colors: { light: '#FFCDD2', dark: '#B71C1C' },
+              colors: { light: '#EF9A9A', dark: '#B71C1C' },
             },
             {
               statusKey: 'WEEKEND',
@@ -484,7 +484,7 @@ export const Customization: Story = {
             {
               statusKey: 'HALF_DAY',
               label: 'Part Time',
-              colors: { light: '#FFCC80', dark: '#BF360C' },
+              colors: { light: '#B08968', dark: '#5D4037' },
             },
           ],
         },
@@ -512,7 +512,7 @@ const modifiedDataLegend = [
   {
     statusKey: 'SICK',
     label: 'Sick Leave',
-    colors: { light: '#FFCDD2', dark: '#B71C1C' },
+    colors: { light: '#EF9A9A', dark: '#B71C1C' },
   },
   {
     statusKey: 'WEEKEND',
@@ -527,7 +527,7 @@ const modifiedDataLegend = [
   {
     statusKey: 'HALF_DAY',
     label: 'Part Time',
-    colors: { light: '#FFCC80', dark: '#BF360C' },
+    colors: { light: '#B08968', dark: '#5D4037' },
   },
 ];
 
@@ -1282,7 +1282,7 @@ export const SourceAPI: Story = {
             {
               statusKey: 'SICK',
               label: 'Sick Leave',
-              colors: { light: '#FFCDD2', dark: '#B71C1C' },
+              colors: { light: '#EF9A9A', dark: '#B71C1C' },
             },
             {
               statusKey: 'WEEKEND',
@@ -1297,7 +1297,7 @@ export const SourceAPI: Story = {
             {
               statusKey: 'HALF_DAY',
               label: 'Part Time',
-              colors: { light: '#FFCC80', dark: '#BF360C' },
+              colors: { light: '#B08968', dark: '#5D4037' },
             },
           ],
         },
