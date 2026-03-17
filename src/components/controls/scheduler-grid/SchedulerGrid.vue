@@ -633,26 +633,11 @@ const updateScheduleCell = ({
   const scheduleDay = employeeSchedule.schedule[dayIndex];
   if (!scheduleDay) return;
 
-  const previousStatus = scheduleDay.status ?? '';
-  const previousNote = scheduleDay.note ?? '';
   const nextStatus = status ?? scheduleDay.status;
   const nextNote = note ?? '';
-  const hasChanged = nextStatus !== scheduleDay.status || nextNote !== (scheduleDay.note ?? '');
 
   scheduleDay.status = nextStatus;
   scheduleDay.note = nextNote;
-
-  if (scheduleDay.prevData) {
-    const prevStatus = scheduleDay.prevData.status ?? '';
-    const prevNote = scheduleDay.prevData.note ?? '';
-    scheduleDay.sameAsPrev = nextStatus === prevStatus && nextNote === prevNote;
-  } else if (hasChanged) {
-    scheduleDay.prevData = {
-      status: previousStatus,
-      note: previousNote,
-    };
-    scheduleDay.sameAsPrev = false;
-  }
 };
 
 const getStatusColor = (statusKey?: string | null): string => {
