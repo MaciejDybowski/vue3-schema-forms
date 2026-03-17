@@ -1,0 +1,167 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+export const basePath = typeof window !== 'undefined' && window.location.hostname.includes('github.io') ? '/vue3-schema-forms' : '';
+
+
+<Meta title="Docs/Form Blocks" />
+
+## Zagnieżdżone bloki formularza (Nested Form Blocks)
+
+Biblioteka umożliwia ładowanie fragmentów formularza z zewnętrznych schematów i wstawianie ich w aktualną strukturę formularza. Dzięki temu można budować modularne formularze, które są reużywalne i ładowane dynamicznie z API.
+
+> Dostępne tylko w ramach obsługi zadania
+
+Mechanizm działa poprzez:
+
+-   `$ref` wskazujący endpoint API (stały url w opcjach formularza)
+-   placeholdery `{0}`, `{1}`. Za zerowy parametr odpowiada builder/deploy gdzie wstawia `uriName` projektu, parametr {1} ustawia użytkownik wybierając formularz
+-   opcję `flatStructure`, która decyduje o strukturze danych w modelu
+    formularza. - pozwala na opakowanie całego formularza pod `kluczem` pola lub połączy swoją strukturę z formularzem głównym.
+
+# Konfiguracja formularza
+
+Zagnieżdżony formularz definiuje się jako pole w `properties`.
+
+``` ts
+schema: {
+  type: 'object',
+  properties: {
+    fieldA: {
+      label: 'fieldA',
+      layout: {
+        component: 'text-field',
+      },
+    },
+
+    blokA: {
+      '0': 'child-form',
+      $ref: '#/options/nestedFormsPath',
+      flatStructure: true,
+    },
+
+    fieldB: {
+      label: 'fieldB',
+      layout: {
+        component: 'text-field',
+      },
+    },
+  },
+}
+```
+
+# Konfiguracja ścieżki w opcjach API
+
+Endpoint do pobierania formularza definiuje się w `options`.
+
+``` ts
+options: {
+  nestedFormsPath: {
+    $ref: '../api/projects/your-project-from-modeler/forms?path={0}',
+  },
+}
+```
+
+
+Placeholder `{0}` zostanie zastąpiony wartością z pola co wskazuje na pełną ścieżke do formularza z Modelera:
+
+``` ts
+blokA: {
+  '0': 'child-form',
+}
+```
+
+W rezultacie zostanie wykonany request:
+
+    GET /api/projects/your-project-from-modeler/forms?path=child-form
+
+Inne przykłady
+
+    GET /api/projects/your-project-from-modeler/forms?path=formularze/child-form-1
+    GET /api/projects/your-project-from-modeler/forms?path=formularze/proces1/start
+
+
+## flatStructure: false (domyślne)
+
+Zagnieżdżony formularz jest przechowywany **pod kluczem pola**.
+
+### Schemat
+
+``` ts
+blokA: {
+  '0': 'child-form',
+  $ref: '#/options/nestedFormsPath',
+}
+```
+
+### Model formularza
+
+``` json
+{
+  "fieldA": "valueA",
+  "blokA": {
+    "test": "valueFromNestedForm"
+  },
+  "fieldB": "valueB"
+}
+```
+
+Struktura nested formularza pozostaje **zagnieżdżona w obiekcie
+`blokA`**.
+
+## flatStructure: true
+
+Pola z formularza zagnieżdżonego są **scalane z główną strukturą
+formularza**.
+
+### Schemat
+
+``` ts
+blokA: {
+  '0': 'child-form',
+  $ref: '#/options/nestedFormsPath',
+  flatStructure: true,
+}
+```
+
+### Model formularza
+
+``` json
+{
+  "fieldA": "valueA",
+  "test": "valueFromNestedForm",
+  "fieldB": "valueB"
+}
+```
+
+Pole `test` z formularza zagnieżdżonego trafia bezpośrednio do głównego
+modelu.
+
+# Kolejność renderowania
+
+Blok formularza renderowany jest **w miejscu deklaracji w
+`properties`**.
+
+``` ts
+properties: {
+  fieldA: {...},
+
+  blokA: {...},   // tutaj pojawi się nested form
+
+  fieldB: {...},
+}
+```
+
+W UI kolejność będzie:
+
+    fieldA
+    test (z child-form)
+    fieldB
+
+
+# Zalety nested forms
+✔ możliwość **dzielenia dużych formularzy na moduły**\
+✔ **dynamiczne ładowanie formularzy z API**\
+✔ **reużywalność schematów**\
+
+### Zalecenia
+Do sterowania warunkami wyświetlania/wariantami zaleca się stworzyć sekcję techniczną w modelu danych zadania poza biznesową częścią formularza i za pomocą takich zmiennych sterować zagnieżdzonymi formularzami.

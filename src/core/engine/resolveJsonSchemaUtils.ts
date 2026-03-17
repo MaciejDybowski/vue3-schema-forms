@@ -50,6 +50,7 @@ export function flattenNestedFormsPathNodes(
   properties: Record<string, any>,
   keys: Set<string>,
   parentPath = '',
+  parentNode?: { required?: string[] },
 ): void {
   const needsRebuild = Object.keys(properties).some((key) => {
     const fullPath = parentPath ? `${parentPath}.${key}` : key;
@@ -62,8 +63,34 @@ export function flattenNestedFormsPathNodes(
     for (const key of Object.keys(properties)) {
       const fullPath = parentPath ? `${parentPath}.${key}` : key;
       if (keys.has(fullPath)) {
-        const nestedProperties: Record<string, any> = properties[key]?.properties ?? {};
+        const nestedNode = properties[key] ?? {};
+        const nestedProperties: Record<string, any> = nestedNode.properties ?? {};
         Object.assign(rebuilt, nestedProperties);
+
+        let parentRequired = Array.isArray(parentNode?.required) ? parentNode.required : undefined;
+
+        if (Array.isArray(parentRequired)) {
+          // Placeholder znika po flatten, więc nie może zostać wymaganym polem parenta.
+          const placeholderIndex = parentRequired.indexOf(key);
+          if (placeholderIndex >= 0) {
+            parentRequired.splice(placeholderIndex, 1);
+          }
+        }
+
+        if (Array.isArray(nestedNode.required) && nestedNode.required.length > 0) {
+          if (!Array.isArray(parentRequired) && parentNode) {
+            parentNode.required = [];
+            parentRequired = parentNode.required;
+          }
+
+          if (Array.isArray(parentRequired)) {
+            for (const nestedRequiredKey of nestedNode.required) {
+              if (!parentRequired.includes(nestedRequiredKey)) {
+                parentRequired.push(nestedRequiredKey);
+              }
+            }
+          }
+        }
       } else {
         rebuilt[key] = properties[key];
       }
@@ -77,7 +104,7 @@ export function flattenNestedFormsPathNodes(
   for (const key of Object.keys(properties)) {
     const fullPath = parentPath ? `${parentPath}.${key}` : key;
     if (!keys.has(fullPath) && properties[key]?.properties) {
-      flattenNestedFormsPathNodes(properties[key].properties, keys, fullPath);
+      flattenNestedFormsPathNodes(properties[key].properties, keys, fullPath, properties[key]);
     }
   }
 }

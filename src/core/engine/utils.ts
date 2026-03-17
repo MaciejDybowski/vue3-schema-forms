@@ -32,11 +32,12 @@ export async function resolveSchemaWithLocale(
     schema.i18n = { ...schema.i18n, ...resolvedTranslations.result };
   }
 
-  resolveRefsAndReplace(schema);
-
-  // Zapamiętaj klucze które były nestedFormsPath $ref z flatStructure – po resolve zostaną spłaszczone
+  // Zapamiętaj klucze nested forms przed podmianą `#/options/...` na URL,
+  // bo po resolveRefsAndReplace nie da się ich już wykryć przez isOptionsRef.
   const nestedFormsPathKeys = collectNestedFormsPathKeys(schema.properties ?? {}, options ?? {});
   stripFlatStructureFlag(schema.properties ?? {}, options ?? {});
+
+  resolveRefsAndReplace(schema);
 
   let languages = originalSchema.i18n ? Object.keys(originalSchema.i18n) : [];
   let localeWithoutCountry = languages.includes(locale) ? locale : locale.split('-')[0];
@@ -54,7 +55,7 @@ export async function resolveSchemaWithLocale(
   delete schemaFinal.options;
 
   // Spłaszcz nestedFormsPath nodes – usuń placeholder, wstrzyknij .properties na bieżący poziom
-  flattenNestedFormsPathNodes(schemaFinal.properties ?? {}, nestedFormsPathKeys);
+  flattenNestedFormsPathNodes(schemaFinal.properties ?? {}, nestedFormsPathKeys, '', schemaFinal);
 
 
   if(logger.resolvedSchemaLogger){
@@ -108,13 +109,13 @@ function resolveRefsAndReplace(schema: any) {
 
           if (Object.keys(replacements).length > 0) {
             // Podstaw parametry w URL z options
-            let resolvedRef = optionValue.$ref;
+            let resolvedRef = optionValue.$ref.trim();
             for (const index in replacements) {
               resolvedRef = resolvedRef.replace(`{${index}}`, replacements[Number(index)]);
             }
 
             // Zastąp $ref na bezpośredni URL z podmienionymi parametrami
-            obj.$ref = resolvedRef;
+            obj.$ref = resolvedRef.trim();
 
             // Usuń parametry numeryczne – zostały już wstawione
             for (const index in replacements) {
