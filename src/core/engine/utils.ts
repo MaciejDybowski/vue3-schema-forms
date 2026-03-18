@@ -1,7 +1,12 @@
 import { cloneDeep } from 'lodash';
 
 import { jsonSchemaResolver } from '@/core/engine/jsonSchemaResolver';
-import { collectNestedFormsPathKeys, flattenNestedFormsPathNodes, stripFlatStructureFlag } from '@/core/engine/resolveJsonSchemaUtils';
+import {
+  collectNestedFormsPathKeys,
+  flattenNestedFormsPathNodes,
+  resolveOptionsRefTemplate,
+  stripFlatStructureFlag,
+} from '@/core/engine/resolveJsonSchemaUtils';
 import { baseUri, logger } from '@/main';
 import { Schema } from '@/types/schema/Schema';
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
@@ -66,6 +71,8 @@ export async function resolveSchemaWithLocale(
 
 
 function resolveRefsAndReplace(schema: any) {
+  const optionsRefPrefix = '#/options/';
+
   function getDeepValue(obj: any, path: string[]): any {
     return path.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
   }
@@ -82,6 +89,18 @@ function resolveRefsAndReplace(schema: any) {
   // Głęboka kopia, żeby nie modyfikować zamrożonego obiektu
   const i18nCopy = cloneDeep(schema.i18n);
 
+  function collectNumericReplacements(node: Record<string, any>): Record<number, string> {
+    const replacements: Record<number, string> = {};
+
+    Object.keys(node)
+      .filter((k) => !isNaN(Number(k)))
+      .forEach((k) => {
+        replacements[Number(k)] = node[k];
+      });
+
+    return replacements;
+  }
+
   function walk(obj: any) {
     if (Array.isArray(obj)) {
       obj.forEach((item) => walk(item));
@@ -94,34 +113,27 @@ function resolveRefsAndReplace(schema: any) {
 
       // Obsługa $ref wskazujących na options (np. '#/options/nestedFormsPath')
       // – wstawia parametry numeryczne {0}, {1} itd. w docelowy URL z options
-      if (obj.$ref && obj.$ref.startsWith('#/options/') && schema.options) {
-        const optionKey = obj.$ref.slice('#/options/'.length);
-        const optionValue = schema.options[optionKey];
+      if (typeof obj.$ref === 'string' && obj.$ref.startsWith(optionsRefPrefix) && schema.options) {
+        const optionKey = obj.$ref.slice(optionsRefPrefix.length);
+        const refTemplate = resolveOptionsRefTemplate(schema.options, optionKey);
 
-        if (optionValue && optionValue.$ref) {
-          // Zbierz parametry numeryczne z bieżącego węzła
-          const replacements: Record<number, string> = {};
-          Object.keys(obj)
-            .filter((k) => !isNaN(Number(k)))
-            .forEach((k) => {
-              replacements[Number(k)] = obj[k];
-            });
+        if (refTemplate) {
+          const replacements = collectNumericReplacements(obj);
+          let resolvedRef = refTemplate;
 
-          if (Object.keys(replacements).length > 0) {
-            // Podstaw parametry w URL z options
-            let resolvedRef = optionValue.$ref.trim();
-            for (const index in replacements) {
-              resolvedRef = resolvedRef.replace(`{${index}}`, replacements[Number(index)]);
-            }
-
-            // Zastąp $ref na bezpośredni URL z podmienionymi parametrami
-            obj.$ref = resolvedRef.trim();
-
-            // Usuń parametry numeryczne – zostały już wstawione
-            for (const index in replacements) {
-              delete obj[index];
-            }
+          for (const index in replacements) {
+            resolvedRef = resolvedRef.replace(`{${index}}`, replacements[Number(index)]);
           }
+
+          // Zastąp $ref na bezpośredni URL z podmienionymi parametrami
+          obj.$ref = resolvedRef;
+
+          // Usuń parametry numeryczne – zostały już wstawione
+          for (const index in replacements) {
+            delete obj[index];
+          }
+        } else if (logger.resolvedSchemaLogger) {
+          console.debug(`[Vue Schema Forms] => Niepoprawna definicja options.${optionKey} dla $ref`, schema.options?.[optionKey]);
         }
       }
 
@@ -129,12 +141,7 @@ function resolveRefsAndReplace(schema: any) {
         const refPath = obj.$ref.split('/~$locale~/')[1];
         const pathParts = refPath.split('/');
 
-        const replacements: Record<number, string> = {};
-        Object.keys(obj)
-          .filter((k) => !isNaN(Number(k)))
-          .forEach((k) => {
-            replacements[Number(k)] = obj[k];
-          });
+        const replacements = collectNumericReplacements(obj);
 
         if (Object.keys(replacements).length > 0) {
           for (const locale in i18nCopy) {

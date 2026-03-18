@@ -1,9 +1,30 @@
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
 
+const OPTIONS_REF_PREFIX = '#/options/';
+
+export function resolveOptionsRefTemplate(options: SchemaOptions, key: string): string | undefined {
+  const optionValue = (options as Record<string, unknown>)?.[key];
+
+  if (typeof optionValue === 'string') {
+    const normalized = optionValue.trim();
+    return normalized.length > 0 ? normalized : undefined;
+  }
+
+  if (optionValue && typeof optionValue === 'object') {
+    const nestedRef = (optionValue as { $ref?: unknown }).$ref;
+    if (typeof nestedRef === 'string') {
+      const normalized = nestedRef.trim();
+      return normalized.length > 0 ? normalized : undefined;
+    }
+  }
+
+  return undefined;
+}
+
 export function isOptionsRef(value: any, options: SchemaOptions): boolean {
-  if (!value?.$ref?.startsWith('#/options/')) return false;
-  const key = value.$ref.slice('#/options/'.length);
-  return key in options;
+  if (typeof value?.$ref !== 'string' || !value.$ref.startsWith(OPTIONS_REF_PREFIX)) return false;
+  const key = value.$ref.slice(OPTIONS_REF_PREFIX.length);
+  return resolveOptionsRefTemplate(options, key) !== undefined;
 }
 
 /**

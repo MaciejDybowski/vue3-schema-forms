@@ -26,54 +26,6 @@ import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export default {
   title: 'Development Area',
   component: FormStoryWrapper,
@@ -172,9 +124,7 @@ export const TableOne: Story = {
         $ref: '../json-mock/translations',
       },
       otherVariable: 'TEST',
-      nestedFormsPath: {
-        $ref: '../json-mock/1/form-schema?formName={0}',
-      },
+      nestedFormsPath: '../json-mock/1/form-schema?formName={0}',
     },
   },
   parameters: {
@@ -190,12 +140,13 @@ const JSON_FORM_BLOCK_2 = [
       type: 'object',
       properties: {
         test: {
-          label: 'test sssss',
+          label: 'Required input',
           layout: {
             component: 'text-field',
           },
         },
       },
+      required: ['test'],
     });
   }),
 ];
@@ -225,6 +176,7 @@ export const table2: Story = {
         blokA: {
           '0': 'child-form',
           $ref: '#/options/nestedFormsPath',
+          flatStructure: true,
         },
         fieldB: {
           label: 'fieldB',
@@ -256,9 +208,7 @@ export const table2: Story = {
         variant: 'flat',
         rounded: '',
       },
-      nestedFormsPath: {
-        $ref: ' ../api/projects/mon-testy/forms?path={0}',
-      },
+      nestedFormsPath: ' ../api/projects/mon-testy/forms?path={0}',
     },
   },
   parameters: {
