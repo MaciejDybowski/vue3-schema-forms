@@ -23,6 +23,7 @@ export type SchemaComponent =
   | 'image'
   | 'divider'
   | 'table-view'
+  | 'table-internal'
   | 'alert'
   | 'pesel-field'
   | 'nip-field'

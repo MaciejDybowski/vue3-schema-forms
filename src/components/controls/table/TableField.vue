@@ -502,8 +502,14 @@ async function runTableBtnLogic(btn: TableButton) {
       let payloadObject = {
         code: btn.config.code,
         body: body,
-        params: { ...btnConfigWithoutCode },
-      };
+        params: { ...btnConfigWithoutCode }
+      } as any;
+
+      if (props.schema.layout.component == 'table-internal') {
+        payloadObject.mode = 'internal';
+        payloadObject.fieldKey = props.schema.key
+      }
+
       actionHandlerEventBus.emit('form-action', payloadObject);
       break;
     case 'form-and-action':
