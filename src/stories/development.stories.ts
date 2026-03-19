@@ -2,19 +2,7 @@
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 import { HttpResponse, http } from 'msw';
 
-
-
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -216,4 +204,96 @@ export const table2: Story = {
       handlers: [...JSON_FORM_BLOCK_2],
     },
   },
+};
+
+export const table3: Story = {
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        field: {
+          label: "Field 1",
+          layout: {
+            component: "text-field"
+          }
+        },
+        items: {
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              type: 'object',
+              properties: {
+                item1: {
+                  label: 'item1',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'text-field',
+                  },
+                  onChange: [],
+                },
+                item2: {
+                  label: 'item2',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'text-field',
+                  },
+                  onChange: [],
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add element',
+              showDivider: false,
+              ordinalNumberInModel: false,
+              showFirstInitRow: true,
+            },
+          },
+          editable: 'field="test"',
+          showElements: true,
+          onChange: [],
+        },
+        files: {
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              type: 'object',
+              properties: {
+                file1: {
+                  label: 'file1',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'text-field',
+                  },
+                  onChange: [],
+                },
+                file2: {
+                  label: 'file2',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'text-field',
+                  },
+                  onChange: [],
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add element',
+              showDivider: false,
+              ordinalNumberInModel: false,
+              showFirstInitRow: true,
+            },
+          },
+          editable: true,
+          showElements: 'field="1"',
+          onChange: [],
+        },
+      },
+    },
+  },
+  parameters: {},
 };

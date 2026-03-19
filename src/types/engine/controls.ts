@@ -120,7 +120,8 @@ export interface EngineAlertField extends EngineField {
 }
 
 export interface EngineDuplicatedSection extends EngineField {
-  editable?: boolean;
+  editable?: boolean | string;
+  showElements?: boolean | string;
 }
 
 export interface EngineSourceField extends EngineField {

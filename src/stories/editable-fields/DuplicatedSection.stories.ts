@@ -1107,3 +1107,139 @@ export const defineConditionToDisplayRows: Story = {
     },
   },
 };
+
+export const ConditionalEditableByJsonata: Story = {
+  name: 'Case: conditional editable (JSONata)',
+  play: playWrapper(async (context) => {
+    const canvas = within(context.canvasElement);
+
+    await waitFor(() => {
+      expect(context.args.formModel).toEqual({
+        sectionEditable: false,
+        items: [{ product: 'Locked item' }],
+      });
+    });
+
+    const input = (await canvas.findByLabelText('Product')) as HTMLInputElement;
+    await expect(input).toHaveAttribute('readonly');
+    await expect(canvas.queryByRole('button', { name: 'Add item' })).not.toBeInTheDocument();
+
+    await userEvent.click(await canvas.findByLabelText('Section editable'), { delay: 150 });
+
+    await waitFor(() => {
+      expect(context.args.formModel.sectionEditable).toEqual(true);
+      expect(canvas.getByRole('button', { name: 'Add item' })).toBeInTheDocument();
+    });
+
+    const editableInput = (await canvas.findByLabelText('Product')) as HTMLInputElement;
+    await waitFor(() => {
+      expect(editableInput.hasAttribute('readonly')).toEqual(false);
+    });
+
+    await userEvent.type(editableInput, ' updated', { delay: 50 });
+
+    await waitFor(() => {
+      expect(context.args.formModel.items[0].product).toContain('updated');
+    });
+  }),
+  args: {
+    formModel: {
+      sectionEditable: false,
+      items: [{ product: 'Locked item' }],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        sectionEditable: {
+          label: 'Section editable',
+          layout: {
+            component: 'switch',
+          },
+        },
+        items: {
+          editable: '$boolean(sectionEditable=true)',
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                product: {
+                  label: 'Product',
+                  layout: { component: 'text-field', cols: 12 },
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add item',
+            },
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const ConditionalShowElementsByJsonata: Story = {
+  name: 'Case: conditional showElements (JSONata)',
+  play: playWrapper(async (context) => {
+    const canvas = within(context.canvasElement);
+
+    await waitFor(() => {
+      expect(context.args.formModel).toEqual({
+        showControls: false,
+        items: [{ product: 'Visible row' }],
+      });
+    });
+
+    await expect(canvas.getByLabelText('Product')).toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: 'Add row' })).not.toBeInTheDocument();
+
+    await userEvent.click(await canvas.findByLabelText('Show section controls'), { delay: 150 });
+
+    await waitFor(() => {
+      expect(context.args.formModel.showControls).toEqual(true);
+      expect(canvas.getByRole('button', { name: 'Add row' })).toBeInTheDocument();
+    });
+
+    await userEvent.click(await canvas.findByRole('button', { name: 'Add row' }), { delay: 200 });
+
+    await waitFor(() => {
+      expect(context.args.formModel.items.length).toEqual(2);
+    });
+  }),
+  args: {
+    formModel: {
+      showControls: false,
+      items: [{ product: 'Visible row' }],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        showControls: {
+          label: 'Show section controls',
+          layout: {
+            component: 'switch',
+          },
+        },
+        items: {
+          editable: true,
+          showElements: '$boolean(showControls=true)',
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              properties: {
+                product: {
+                  label: 'Product',
+                  layout: { component: 'text-field', cols: 12 },
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add row',
+            },
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
