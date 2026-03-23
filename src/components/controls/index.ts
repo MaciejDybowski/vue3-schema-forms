@@ -46,6 +46,7 @@ import SchedulerGrid from './scheduler-grid/SchedulerGrid.vue';
 import TableInternal from './table/table-internal/TableInternal.vue';
 import TableView from './table/table-view/TableView.vue';
 import Card from './card/Card.vue';
+import ColorPicker from '@/components/controls/ColorPicker.vue';
 
 
 export const vueSchemaFromControls: Components = {
@@ -93,5 +94,6 @@ export const vueSchemaFromControls: Components = {
   'calendar-autocomplete': CalendarAutocomplete,
   'year-month': YearMonth,
   'validation-messages-viewer': ValidationMessagesViewer,
-  'card': Card
+  'card': Card,
+  'color-picker': ColorPicker
 };
