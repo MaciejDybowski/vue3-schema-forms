@@ -22,6 +22,7 @@
                 :show="isHovering ? isHovering : false"
               />
               <form-root
+                :key="`duplicated-form-root-${index}-${isEditable}`"
                 :model="localModel[index]"
                 :options="computedOptions"
                 :schema="element as Schema"
@@ -170,6 +171,8 @@ vueSchemaFormEventBus.on(async (event, payload) => {
   }
 
   await resolveDependenciesBetweenTwoDuplicatedSections(payload);
+  await evaluateEditable();
+  await evaluateShowSectionElements();
 });
 
 async function resolveDependenciesBetweenTwoDuplicatedSections(payload: NodeUpdateEvent) {
@@ -231,19 +234,73 @@ async function resolveDependenciesBetweenTwoDuplicatedSections(payload: NodeUpda
   }
 }
 
-let isEditable: Ref<boolean> = ref(
-  'editable' in props.schema ? (props.schema.editable as boolean) : true,
-);
-const showSectionElements = computed(() => {
+let isEditable: Ref<boolean> = ref(true);
+const showSectionElements = ref(true);
+
+async function evaluateEditable() {
+  let resolvedEditable = true;
+
+  if ('editable' in props.schema) {
+    const editable = props.schema.editable as boolean | string;
+
+    if (typeof editable === 'boolean') {
+      resolvedEditable = editable;
+    } else {
+      const editableExpression = editable?.trim();
+      if (editableExpression) {
+        try {
+          const nata = jsonata(editableExpression);
+          const result = await nata.evaluate(props.model);
+          resolvedEditable = Boolean(result);
+        } catch (e) {
+          console.warn('evaluateEditable error', e);
+          resolvedEditable = true;
+        }
+      }
+    }
+  }
+
+  // readonly from options always wins over dynamic editable expression.
+  isEditable.value = resolvedEditable && !Boolean(fieldProps.value.readonly);
+  console.debug("isEditable", isEditable.value);
+}
+
+async function evaluateShowSectionElements() {
   if (duplicatedSectionOptions.value && duplicatedSectionOptions.value.rowVisibilityCondition) {
-    return false;
+    showSectionElements.value = false;
+    return;
   }
-  if (isEditable.value) {
-    return 'showElements' in props.schema ? (props.schema.showElements as boolean) : true;
-  } else {
-    return false;
+
+  if (!isEditable.value) {
+    showSectionElements.value = false;
+    return;
   }
-});
+
+  if (!('showElements' in props.schema)) {
+    showSectionElements.value = true;
+    return;
+  }
+
+  const showElements = props.schema.showElements as boolean | string;
+
+  if (typeof showElements === 'boolean') {
+    showSectionElements.value = showElements;
+    return;
+  }
+
+  if (showElements.trim().length > 0) {
+    try {
+      const nata = jsonata(showElements);
+      const result = await nata.evaluate(props.model);
+      showSectionElements.value = Boolean(result);
+      return;
+    } catch (e) {
+      console.warn('evaluateShowSectionElements error', e);
+    }
+  }
+
+  showSectionElements.value = true;
+}
 
 const ordinalNumberInModel: boolean =
   duplicatedSectionOptions.value !== undefined &&
@@ -265,6 +322,7 @@ const computedOptions = computed(() => {
     }
     options.fieldProps['readonly'] = true;
   }
+  console.debug("optionsReadonly",options.fieldProps.readonly)
   return options;
 });
 
@@ -672,10 +730,10 @@ watch(
 onMounted(async () => {
   init();
   await bindProps(props.schema);
-  if (isEditable.value) {
-    isEditable.value = !fieldProps.value.readonly;
-  }
+
   evaluateAllRows();
+  await evaluateEditable();
+  await evaluateShowSectionElements();
 });
 </script>
 
