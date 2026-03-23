@@ -31,7 +31,7 @@
       >
         <form-root
           :model="model"
-          :options="schema.options"
+          :options="computedOptions"
           :schema="panelSchemas[index]"
           @update:model="updateModel"
         />
@@ -62,6 +62,22 @@ const { model, schema } = defineProps<{
 const { setValue } = useFormModel();
 const { resolve } = useResolveVariables();
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
+
+const computedOptions = computed(() => {
+  const defaultOptions = schema.options || {};
+  const layoutProps = schema.layout?.props;
+
+  if (!layoutProps || Object.keys(layoutProps).length === 0) {
+    return defaultOptions;
+  }
+  if(layoutProps.readonly) {
+    return { ...defaultOptions,
+    fieldProps: {
+      ...defaultOptions.fieldProps,
+      readonly: true,
+    }};
+  }
+})
 
 function generatePanelsId(): string {
   const schemaKey = schema.key || '';

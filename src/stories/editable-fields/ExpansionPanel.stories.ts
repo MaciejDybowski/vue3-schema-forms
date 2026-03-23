@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { playWrapper } from './utils';
@@ -138,4 +138,57 @@ export const OpenByDefaultMixed: Story = {
       },
     },
   },
+};
+
+
+
+
+
+
+export const TableOne: Story = {
+  name: "Readonly - expansion panel",
+  play: playWrapper(async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const panelButton = await canvas.findByRole('button', { name: 'Tytuł sekcji' });
+
+    if (panelButton.getAttribute('aria-expanded') !== 'true') {
+      await userEvent.click(panelButton);
+    }
+
+    await expect(panelButton).toHaveAttribute('aria-expanded', 'true');
+
+    const textField = await canvas.findByRole('textbox', { name: 'Item-textField937' });
+    await expect(textField).toHaveAttribute('readonly');
+  }),
+  args: {
+    formModel: {},
+    schema: {
+      'type': 'object',
+      'properties': {
+        'expansionPanels518': {
+          'layout': {
+            'component': 'expansion-panels',
+            'props': { 'readonly': true }
+          },
+          'panels': [{
+            'title': 'Tytuł sekcji',
+            'titleIcon': 'mdi-home',
+            'titleIconSize': 20,
+            'schema': {
+              'properties': {
+                'textField937': {
+                  'label': 'Item-textField937',
+                  'layout': {
+                    'cols': { 'xs': 12, 'sm': 6, 'md': 6, 'lg': 4, 'xl': 4, 'xxl': 4 },
+                    'fillRow': true,
+                    'component': 'text-field'
+                  }
+                }
+              }
+            }
+          }]
+        }
+      }
+    }
+  }
 };
