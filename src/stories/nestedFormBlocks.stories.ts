@@ -81,7 +81,7 @@ const JSON_FORM_BLOCK = [
       return HttpResponse.json({
         type: 'object',
         properties: {
-          example2A: {
+          example2a: {
             label: 'Example 2A First level',
             layout: { component: 'text-field', cols: 6, fillRow: true }
           },
@@ -91,7 +91,6 @@ const JSON_FORM_BLOCK = [
             flatStructure: true
           },
         },
-        required: ['example2A']
       });
     }
 
@@ -100,11 +99,11 @@ const JSON_FORM_BLOCK = [
         type: 'object',
         properties: {
           example2a2: {
-            label: 'Field 2A-2 Second level (required)',
+            label: 'Example 2A Second level (required)',
             layout: { component: 'text-field', cols: 6, fillRow: true }
           }
         },
-        example2a2: ['example2a2']
+        required: ['example2a2']
       });
     }
 
@@ -342,6 +341,27 @@ export const Example2A: Story = {
   name: 'Example 2A: 2 levels of nesting, flatStructure = true',
   play: async (context) => {
     await waitForMountedAsync(50);
+
+    const canvas = within(context.canvasElement);
+
+    const nestedField = canvas.getByLabelText('Example 2A First level');
+    const nestedField2ndLevel = canvas.getByLabelText('Example 2A Second level (required)');
+    const firstName = canvas.getByLabelText('First name');
+
+    const submitButton = canvas.getByText('Validate');
+    await userEvent.click(submitButton, { delay: 120 });
+    await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
+
+    await userEvent.type(nestedField, 'Flat B', { delay: 80 });
+    await userEvent.type(nestedField2ndLevel, 'Flat B', { delay: 80 });
+    await userEvent.type(firstName, 'Kasia', { delay: 80 });
+
+    await expect(context.args.formModel).toEqual({
+      example2a: 'Flat B',
+      example2a2: 'Flat B',
+      firstName: 'Kasia'
+    });
+    await expect(context.args.formModel.formA).toBeUndefined();
   },
   args: {
     formModel: {},

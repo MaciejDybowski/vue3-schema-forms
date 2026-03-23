@@ -15,6 +15,9 @@ export async function waitForMountedAsync(ms = 10) {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/*
+DEPRACATED
+ */
 export function playWrapper(playFn: PlayFunction): PlayFunction {
   return async (context) => {
     await waitForMountedAsync(); // czekamy przed rozpoczęciem play

@@ -4,6 +4,8 @@ import { jsonSchemaResolver } from '@/core/engine/jsonSchemaResolver';
 import {
   collectNestedFormsPathKeys,
   flattenNestedFormsPathNodes,
+  hasOptionsRefs,
+  MAX_NESTED_FORM_DEPTH,
   resolveOptionsRefTemplate,
   stripFlatStructureFlag,
 } from '@/core/engine/resolveJsonSchemaUtils';
@@ -17,12 +19,20 @@ type ExtendedSchemaForResolver = Schema & {
   options?: SchemaOptions;
 };
 
+function resolveLocaleToken(schema: any, locale: string) {
+  return JSON.parse(JSON.stringify(schema).replaceAll('~$locale~', locale));
+}
+
+function hasLocaleRefPlaceholders(schema: any): boolean {
+  return JSON.stringify(schema).includes('/~$locale~/');
+}
+
 export async function resolveSchemaWithLocale(
   originalSchema: Schema,
   locale: string,
   options?: SchemaOptions
 ): Promise<Schema> {
-  const schema: ExtendedSchemaForResolver = cloneDeep(originalSchema);
+  let schema: ExtendedSchemaForResolver = cloneDeep(originalSchema);
 
   if (logger.resolvedSchemaLogger) {
     console.debug(`[Vue Schema Forms] => Resolved Schema, dane wejściowe:`, schema, options);
@@ -37,38 +47,43 @@ export async function resolveSchemaWithLocale(
     schema.i18n = { ...schema.i18n, ...resolvedTranslations.result };
   }
 
-  // Zapamiętaj klucze nested forms przed podmianą `#/options/...` na URL,
-  // bo po resolveRefsAndReplace nie da się ich już wykryć przez isOptionsRef.
-  const nestedFormsPathKeys = collectNestedFormsPathKeys(schema.properties ?? {}, options ?? {});
-  stripFlatStructureFlag(schema.properties ?? {}, options ?? {});
+  const availableLanguages = schema.i18n ? Object.keys(schema.i18n) : [];
+  const localeWithoutCountry = availableLanguages.includes(locale) ? locale : locale.split('-')[0];
 
-  resolveRefsAndReplace(schema);
+  for (let currentDepth = 0; currentDepth < MAX_NESTED_FORM_DEPTH; currentDepth += 1) {
+    const nestedFormsPathKeys = collectNestedFormsPathKeys(schema.properties ?? {}, options ?? {}, '', MAX_NESTED_FORM_DEPTH);
+    stripFlatStructureFlag(schema.properties ?? {}, options ?? {}, MAX_NESTED_FORM_DEPTH);
 
-  let languages = originalSchema.i18n ? Object.keys(originalSchema.i18n) : [];
-  let localeWithoutCountry = languages.includes(locale) ? locale : locale.split('-')[0];
+    resolveRefsAndReplace(schema);
 
-  const temp = JSON.parse(JSON.stringify(schema).replaceAll('~$locale~', localeWithoutCountry));
-  let resolved: any = await jsonSchemaResolver.resolve(temp, { baseUri });
+    const schemaForResolve = resolveLocaleToken(schema, localeWithoutCountry);
+    const resolved = await jsonSchemaResolver.resolve(schemaForResolve, { baseUri });
+    schema = cloneDeep(resolved.result);
 
-  const stillHasRef = JSON.stringify(resolved.result).includes('/~$locale~/');
-  if (stillHasRef) {
-    return resolveSchemaWithLocale(resolved.result as Schema, localeWithoutCountry);
+    flattenNestedFormsPathNodes(schema.properties ?? {}, nestedFormsPathKeys, '', schema, MAX_NESTED_FORM_DEPTH);
+
+    const hasMoreOptionsRefs = hasOptionsRefs(schema.properties ?? {}, options ?? {}, MAX_NESTED_FORM_DEPTH);
+    const hasMoreLocaleRefs = hasLocaleRefPlaceholders(schema);
+
+    if (!hasMoreOptionsRefs && !hasMoreLocaleRefs) {
+      break;
+    }
+
+    if (currentDepth === MAX_NESTED_FORM_DEPTH - 1 && logger.resolvedSchemaLogger) {
+      console.debug(
+        `[Vue Schema Forms] => Osiągnięto limit ${MAX_NESTED_FORM_DEPTH} poziomów dla nested form blocks.`,
+      );
+    }
   }
 
-  const schemaFinal = cloneDeep(resolved.result);
-  delete schemaFinal.i18n;
-  delete schemaFinal.options;
+  delete schema.i18n;
+  delete schema.options;
 
-  // Spłaszcz nestedFormsPath nodes – usuń placeholder, wstrzyknij .properties na bieżący poziom
-  flattenNestedFormsPathNodes(schemaFinal.properties ?? {}, nestedFormsPathKeys, '', schemaFinal);
-
-
-  if(logger.resolvedSchemaLogger){
-    console.debug(`[Vue Schema Forms] => Resolved Schema`, schemaFinal)
+  if (logger.resolvedSchemaLogger) {
+    console.debug(`[Vue Schema Forms] => Resolved Schema`, schema);
   }
-  return schemaFinal;
+  return schema;
 }
-
 
 function resolveRefsAndReplace(schema: any) {
   const optionsRefPrefix = '#/options/';
