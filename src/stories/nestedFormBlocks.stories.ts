@@ -77,6 +77,37 @@ const JSON_FORM_BLOCK = [
       });
     }
 
+    if (formName === '/folder1/example2a') {
+      return HttpResponse.json({
+        type: 'object',
+        properties: {
+          example2A: {
+            label: 'Example 2A First level',
+            layout: { component: 'text-field', cols: 6, fillRow: true }
+          },
+          formB: {
+            '0': '/folder1/example2a-2',
+            $ref: '#/options/nestedFormsPath',
+            flatStructure: true
+          },
+        },
+        required: ['example2A']
+      });
+    }
+
+    if (formName === '/folder1/example2a-2') {
+      return HttpResponse.json({
+        type: 'object',
+        properties: {
+          example2a2: {
+            label: 'Field 2A-2 Second level (required)',
+            layout: { component: 'text-field', cols: 6, fillRow: true }
+          }
+        },
+        example2a2: ['example2a2']
+      });
+    }
+
     return new HttpResponse(null, { status: 404 });
   })
 ];
@@ -254,7 +285,6 @@ export const Example1C: Story = {
   }
 };
 
-
 export const Example1D: Story = {
   name: 'Example 1D: Nested block, flatStructure and required fields (translation included)',
   play: async (context) => {
@@ -284,6 +314,42 @@ export const Example1D: Story = {
       properties: {
         formA: {
           '0': '/folder1/example1b',
+          $ref: '#/options/nestedFormsPath',
+          flatStructure: true
+        },
+
+        firstName: {
+          label: { $ref: '#/i18n/~$locale~/firstName' },
+          layout: {
+            component: 'text-field',
+            cols: 6,
+            fillRow: true
+          }
+        }
+      }
+    },
+    options: options
+  },
+  parameters: {
+    msw: {
+      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK]
+    }
+  }
+};
+
+
+export const Example2A: Story = {
+  name: 'Example 2A: 2 levels of nesting, flatStructure = true',
+  play: async (context) => {
+    await waitForMountedAsync(50);
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        formA: {
+          '0': '/folder1/example2a',
           $ref: '#/options/nestedFormsPath',
           flatStructure: true
         },
