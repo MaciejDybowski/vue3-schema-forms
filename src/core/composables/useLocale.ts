@@ -1,5 +1,23 @@
 import { useI18n } from 'vue-i18n';
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export function useLocale() {
   const { t, locale } = useI18n({
     messages: {
@@ -40,6 +58,8 @@ export function useLocale() {
         },
         dictionary: {
           noData: 'No data available.',
+          warningAboutEffectiveLimit:
+            'Dictionary returned more options than limit ({effectiveLimit}). Narrow the source or use autocomplete/combobox.',
         },
         multiOrderedList: {
           available: 'Available',
@@ -52,7 +72,7 @@ export function useLocale() {
           selectedItemsCount: 'No selected items | Selected {el} item | Selected {el} items',
           enableRowActions: 'Selection mode',
           disableRowActions: 'Single mode',
-          of:"of",
+          of: 'of',
         },
         pesel: {
           invalidFormat: 'PESEL must contain exactly 11 digits.',
@@ -127,6 +147,7 @@ export function useLocale() {
         },
         dictionary: {
           noData: 'Brak danych.',
+          warningAboutEffectiveLimit: 'Słownik zwrócił więcej wyników niż dopuszczalna liczba ({effectiveLimit}). Zawęź zakres wyszukiwania lub skorzystaj z autouzupełniania/listy rozwijanej.',
         },
         multiOrderedList: {
           available: 'Dostępne',
@@ -140,7 +161,7 @@ export function useLocale() {
           disableRowActions: 'Tryb pojedynczy',
           selectedItemsCount:
             'Brak zaznaczonych elementów | Zaznaczono {el} element | Zaznaczono {el} elementy | Zaznaczono {el} elementów',
-          of:"z"
+          of: 'z',
         },
         pesel: {
           invalidFormat: 'Numer PESEL musi składać się z dokładnie 11 cyfr.',

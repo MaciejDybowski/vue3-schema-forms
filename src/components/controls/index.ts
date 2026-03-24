@@ -29,6 +29,7 @@ import REGONField from './REGONField.vue';
 import PhoneInput from './PhoneInput.vue';
 import RadioButton from './RadioButton.vue';
 import Select from './Select.vue';
+import SingleOrMultiChoiceDictionary from './SingleOrMultiChoiceDictionary.vue';
 import StaticContent from './StaticContent.vue';
 import Switch from './Switch.vue';
 import TextArea from './TextArea.vue';
@@ -57,6 +58,7 @@ export const vueSchemaFromControls: Components = {
   checkbox: CheckboxButton,
   'text-area': TextArea,
   select: Select,
+  'single-or-multi-choice-dictionary': SingleOrMultiChoiceDictionary,
   'data-viewer': DataViewer,
   dictionary: Autocomplete,
   combobox: Combobox,

@@ -9,6 +9,7 @@ export type SchemaComponent =
   | 'select'
   | 'editable-section'
   | 'dictionary'
+  | 'single-or-multi-choice-dictionary'
   | 'date-picker'
   | 'date-time-picker'
   | 'phone'

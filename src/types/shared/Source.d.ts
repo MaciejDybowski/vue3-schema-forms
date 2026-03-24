@@ -100,6 +100,8 @@ export interface DictionarySource extends Source {
   singleOptionAutoSelect?: boolean;
   multiple?: boolean;
   maxSelection?: number;
+  // Max liczba opcji do pobrania i renderowania w kontrolkach radio/checkbox.
+  choiceOptionsLimit?: number;
 }
 
 export interface UserInputSource {
