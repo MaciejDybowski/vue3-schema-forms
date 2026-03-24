@@ -2,9 +2,65 @@
 import { PointerEventsCheckLevel } from '@testing-library/user-event';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+
+
 import { Schema } from '../../types/schema/Schema';
 import { BTN_MOCK } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -463,3 +519,139 @@ export const APICallWaitForSave: Story = {
     },
   },
 };
+
+
+export const Redirect: Story = {
+  name: 'Mode: Redirect',
+  args: {
+    formModel: {
+      designs: [
+        {
+          designReference: {
+            id: '221012cf-0b62-4548-857c-61d2f8dc7035',
+            description: '',
+            label: 'Design 1',
+          },
+        },
+      ],
+    },
+    emittedObject: {},
+    schema: {
+      type: 'object',
+      properties: {
+        projectDesignsGroup: {
+          layout: {
+            component: 'fields-group',
+            schema: {
+              type: 'object',
+              properties: {
+                designsAndGraphicsTitle: {
+                  content: 'Designs & Graphics',
+                  layout: { tag: 'h2', component: 'static-content' },
+                },
+                designsAndGraphicsAlert: {
+                  memorable: false,
+                  content:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+                  layout: { component: 'alert' },
+                },
+                designs: {
+                  layout: {
+                    component: 'duplicated-section',
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        designReference: {
+                          label: 'Design',
+                          layout: {
+                            cols: { xs: 12, sm: 6, md: 6, lg: 8, xl: 8, xxl: 8 },
+                            component: 'dictionary',
+                          },
+                          source: {
+                            url: '/api/dictionaries?feature-id=design-repository&lm=name&vm=dataId',
+                            title: 'label',
+                            value: 'id',
+                            description: 'description',
+                            returnObject: true,
+                            lazy: true,
+                            singleOptionAutoSelect: true,
+                            multiple: false,
+                            maxSelection: 0,
+                          },
+                          onChange: [],
+                        },
+                        redirectToDesignBtn: {
+                          label: 'Go to design',
+                          layout: {
+                            component: 'button',
+                            cols: { xs: 6, sm: 6, md: 6, lg: 2, xl: 2, xxl: 2 },
+                            if: 'nata(designs[].designReference!=null)',
+                          },
+                          mode: 'redirect',
+                          config: {
+                            params: {
+                              menuFeatureId: 'design-details',
+                              dataId: '{designs[].designReference.id}',
+                            },
+                          },
+                        },
+                        addNewDesignBtn: {
+                          label: 'Add new design',
+                          layout: {
+                            component: 'button',
+                            cols: { xs: 6, sm: 6, md: 6, lg: 2, xl: 2, xxl: 2 },
+                            fillRow: true,
+                            if: 'nata(designs[].designReference=null)',
+                          },
+                          mode: 'action',
+                          config: {},
+                        },
+                        regManDesignDecision: {
+                          label: 'Decision',
+                          layout: {
+                            cols: { xs: 12, sm: 6, md: 6, lg: 6, xl: 6, xxl: 6 },
+                            fillRow: true,
+                            component: 'radio-button',
+                            props: { inline: true },
+                            if: "nata(processStep = 'CMPL')",
+                          },
+                          source: {
+                            items: [
+                              { value: 'ok', title: 'Ok' },
+                              { value: 'notBad', title: 'Not bad' },
+                              { value: 'bad', title: 'Bad' },
+                            ],
+                            returnObject: true,
+                          },
+                          onChange: [],
+                        },
+                      },
+                      required: ['regManDesignDecision'],
+                    },
+                    options: {
+                      addBtnText: 'Add element',
+                      showDivider: false,
+                      ordinalNumberInModel: false,
+                      showFirstInitRow: true,
+                    },
+                  },
+                  editable: true,
+                  showElements: true,
+                  onChange: [],
+                },
+              },
+            },
+            options: { showDivider: false, addBtnText: 'Add' },
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: BTN_MOCK,
+    },
+  },
+};
+
+

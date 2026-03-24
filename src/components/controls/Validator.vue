@@ -86,7 +86,6 @@ const debounced = {
 async function evaluateRule(def: any, key: string) {
   try {
     const expr = jsonata(def.rule);
-    console.debug(def.rule, model, await expr.evaluate(model));
     ruleResults.value[key] = await expr.evaluate(model);
   } catch (e) {
     ruleResults.value[key] = { error: (e as Error).message };
@@ -114,7 +113,6 @@ onMounted(() => {
 watch(
   () => model,
   () => {
-    console.debug('here');
     debounced.recalculate();
   },
   { deep: true },

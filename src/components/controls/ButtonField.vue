@@ -233,6 +233,40 @@ async function runBtnLogic() {
       await apiCallMode();
 
       break;
+    case 'redirect': {
+      const resolveRedirectValue = async (value: unknown): Promise<unknown> => {
+        if (typeof value === 'string' && new RegExp(variableRegexp).test(value)) {
+          const { resolvedText, allVariablesResolved } = await resolve(schema, value);
+          return allVariablesResolved ? resolvedText : null;
+        }
+
+        if (Array.isArray(value)) {
+          return Promise.all(value.map((item) => resolveRedirectValue(item)));
+        }
+
+        if (value && typeof value === 'object') {
+          const nestedEntries = Object.entries(value as Record<string, unknown>);
+          const resolvedNestedEntries = await Promise.all(
+            nestedEntries.map(async ([key, nestedValue]) => {
+              const resolvedNestedValue = await resolveRedirectValue(nestedValue);
+              return [key, resolvedNestedValue] as const;
+            }),
+          );
+
+          return Object.fromEntries(resolvedNestedEntries);
+        }
+
+        return value;
+      };
+
+      const paramsObject = await resolveRedirectValue(schema.config.params ?? {});
+      const payloadObject = {
+        mode: schema.mode,
+        params: paramsObject
+      }
+      actionHandlerEventBus.emit('form-action', payloadObject);
+      break;
+    }
   }
 }
 

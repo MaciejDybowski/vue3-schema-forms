@@ -262,7 +262,6 @@ async function evaluateEditable() {
 
   // readonly from options always wins over dynamic editable expression.
   isEditable.value = resolvedEditable && !Boolean(fieldProps.value.readonly);
-  console.debug("isEditable", isEditable.value);
 }
 
 async function evaluateShowSectionElements() {
@@ -322,7 +321,6 @@ const computedOptions = computed(() => {
     }
     options.fieldProps['readonly'] = true;
   }
-  console.debug("optionsReadonly",options.fieldProps.readonly)
   return options;
 });
 
