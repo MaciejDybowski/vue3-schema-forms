@@ -117,7 +117,7 @@
       :model-value="getValue(item.valueMapping, index)"
       :rules="rulesMap[item.valueMapping]"
       v-bind="boundAttrsMap[item.valueMapping]"
-      @input="handlersMap[item.valueMapping]?.input"
+      @update:model-value="handlersMap[item.valueMapping]?.input"
     >
     </v-checkbox>
   </div>
