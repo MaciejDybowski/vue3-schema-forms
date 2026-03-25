@@ -120,6 +120,29 @@
       @update:model-value="handlersMap[item.valueMapping]?.input"
     >
     </v-checkbox>
+
+    <date-picker
+      v-if="item.type === 'DATE' && shouldRenderMap[item.valueMapping]"
+      :model="props.row"
+      :schema="{
+        key: item.valueMapping.split(':')[0],
+        type: 'date',
+        label: item.label,
+        layout: { props: {}, component: 'date-picker' },
+        options: {
+          fieldProps: {
+            ...boundAttrsMap[item.valueMapping],
+            label: item.label,
+            rules: rulesMap[item.valueMapping]
+          }
+        },
+        on: {
+          input: (e: any) => handlersMap[item.valueMapping]?.selectUpdate?.(e.value)
+        }
+      } as any"
+      :validations-disabled="false"
+      @keyup.enter="handlersMap[item.valueMapping]?.keyupEnter"
+    />
   </div>
 </template>
 
@@ -134,6 +157,7 @@ import { computed, nextTick, onMounted, ref, useAttrs, watch } from 'vue';
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 import { Pagination } from '@/components/controls/dictionary/Pagination';
 import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
+import DatePicker from '@/components/controls/date/DatePicker.vue';
 
 import { useResolveVariables } from '@/core/composables';
 import { useNumber } from '@/core/composables/useNumber';
