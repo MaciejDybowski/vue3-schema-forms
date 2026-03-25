@@ -1,15 +1,13 @@
 import { useEventBus } from '@vueuse/core';
 import jsonata from 'jsonata';
-import { debounce, isArray } from 'lodash';
-
-
+import { debounce } from 'lodash';
 
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { variableRegexp } from '@/core/engine/utils';
+import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
-
 
 type EntryKey = string;
 type EntryValue = any;
@@ -19,7 +17,8 @@ interface NodeConditionalUpdateEvent extends NodeUpdateEvent {
 }
 
 export function useEventHandler() {
-  const { resolve } = useResolveVariables();
+  const { resolve, fillPath } = useResolveVariables();
+  const form = useInjectedFormModel();
 
   const debounced = {
     onChange: debounce(processAllOnChangeEvents, 400),
@@ -45,7 +44,6 @@ export function useEventHandler() {
       await onChangeDebounced(field, model, events as EventHandlerDefinition);
     }
   }
-
 
   async function onChangeDebounced(
     field: EngineField,
@@ -81,11 +79,15 @@ export function useEventHandler() {
   ) {
     if (!eventDefinition.variables?.length) return;
 
+    const modelGlobal = form.getFormModelForResolve.value;
+
     const events = await Promise.all(
       eventDefinition.variables.map(async (variable) => {
         let toExecute = true;
         if (variable.if) {
-          toExecute = await jsonata(variable.if).evaluate(model);
+          const fulfilledPath =
+            field.path != undefined ? fillPath(field.path, field.index, variable.if) : variable.if;
+          toExecute = await jsonata(fulfilledPath).evaluate(modelGlobal);
         }
 
         const rawValue = variableRegexp.test(variable.value)
@@ -94,9 +96,19 @@ export function useEventHandler() {
 
         const value: any = rawValue === 'null' ? null : rawValue;
 
-        console.debug(`${field.key}, condition=${variable.if},isReadyToExecute=${toExecute}, new value = ${value}`);
+        /*console.debug(
+          `${field.key}, condition=${variable.if},isReadyToExecute=${toExecute}, new value = ${value}`,
+        );*/
+
+        const resolvedPath =
+          field.path !== undefined
+            ? variable.path.startsWith(field.path)
+              ? variable.path.slice(field.path.length + 1)
+              : variable.path
+            : variable.path;
+
         return {
-          key: variable.path,
+          key: resolvedPath,
           value,
           toExecute,
         } as NodeConditionalUpdateEvent;

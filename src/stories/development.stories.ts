@@ -1,7 +1,26 @@
 // @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
+
+
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 export default {
@@ -15,51 +34,79 @@ export default {
     options: {
       fieldProps: {
         variant: 'outlined',
-        density: 'compact'
+        density: 'compact',
       },
       buttonProps: {
         size: 'small',
         variant: 'elevated',
-        rounded: ''
-      }
-    }
-  }
+        rounded: '',
+      },
+    },
+  },
 } satisfies Meta<typeof FormStoryWrapper>;
 
 type Story = StoryObj<typeof FormStoryWrapper>;
-
 
 export const TableOne: Story = {
   args: {
     formModel: {},
     schema: {
-      'type': 'object',
-      'properties': {
-        'expansionPanels518': {
-          'layout': {
-            'component': 'expansion-panels',
-            'props': { 'readonly': true }
+      type: 'object',
+      properties: {
+        items: {
+          layout: {
+            component: 'duplicated-section',
+            schema: {
+              type: 'object',
+              properties: {
+                switch: {
+                  label: 'Switch',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'switch',
+                  },
+                  onChange: [
+                    {
+                      type: 'onChange',
+                      mode: 'change-model',
+                      variables: [{ path: 'items[].number', value: 0, if: 'items[].switch=true' }],
+                    },
+                  ],
+                },
+                number: {
+                  label: 'Number',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'number-field',
+                  },
+                  type: 'int',
+                },
+                numberTemp: {
+                  label: 'Number temp',
+                  layout: {
+                    cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                    fillRow: true,
+                    component: 'number-field',
+                  },
+                  type: 'int',
+                  onChange: [],
+                },
+              },
+            },
+            options: {
+              addBtnText: 'Add element',
+              showDivider: false,
+              ordinalNumberInModel: false,
+              showFirstInitRow: true,
+            },
           },
-          'panels': [{
-            'title': 'Tytuł sekcji',
-            'titleIcon': 'mdi-home',
-            'titleIconSize': 20,
-            'schema': {
-              'properties': {
-                'textField937': {
-                  'label': 'Item-textField937',
-                  'layout': {
-                    'cols': { 'xs': 12, 'sm': 6, 'md': 6, 'lg': 4, 'xl': 4, 'xxl': 4 },
-                    'fillRow': true,
-                    'component': 'text-field'
-                  }
-                }
-              }
-            }
-          }]
-        }
-      }
-    }
-  }
+          editable: true,
+          showElements: true,
+          onChange: [],
+        },
+      },
+    },
+  },
 };
-
