@@ -35,11 +35,7 @@
 
     <v-text-field
       v-if="item.type === 'NUMBER' && shouldRenderMap[item.valueMapping]"
-      :class="[
-        (item.validations && item.validations.length > 0) || props.items.length <= 1
-          ? `content-right ${item.class}`
-          : `pb-4 content-right ${item.class}`,
-      ]"
+      :class="['content-right', item.class]"
       :label="item.label"
       :model-value="getValue(item.valueMapping, index)"
       :rules="rulesMap[item.valueMapping]"
@@ -124,22 +120,24 @@
     <date-picker
       v-if="item.type === 'DATE' && shouldRenderMap[item.valueMapping]"
       :model="props.row"
-      :schema="{
-        key: item.valueMapping.split(':')[0],
-        type: 'date',
-        label: item.label,
-        layout: { props: {}, component: 'date-picker' },
-        options: {
-          fieldProps: {
-            ...boundAttrsMap[item.valueMapping],
-            label: item.label,
-            rules: rulesMap[item.valueMapping]
-          }
-        },
-        on: {
-          input: (e: any) => handlersMap[item.valueMapping]?.selectUpdate?.(e.value)
-        }
-      } as any"
+      :schema="
+        {
+          key: item.valueMapping.split(':')[0],
+          type: 'date',
+          label: item.label,
+          layout: { props: {}, component: 'date-picker' },
+          options: {
+            fieldProps: {
+              ...boundAttrsMap[item.valueMapping],
+              label: item.label,
+              rules: rulesMap[item.valueMapping],
+            },
+          },
+          on: {
+            input: (e: any) => handlersMap[item.valueMapping]?.selectUpdate?.(e.value),
+          },
+        } as any
+      "
       :validations-disabled="false"
       @keyup.enter="handlersMap[item.valueMapping]?.keyupEnter"
     />
@@ -154,10 +152,10 @@ import get from 'lodash/get';
 
 import { computed, nextTick, onMounted, ref, useAttrs, watch } from 'vue';
 
+import DatePicker from '@/components/controls/date/DatePicker.vue';
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 import { Pagination } from '@/components/controls/dictionary/Pagination';
 import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
-import DatePicker from '@/components/controls/date/DatePicker.vue';
 
 import { useResolveVariables } from '@/core/composables';
 import { useNumber } from '@/core/composables/useNumber';
