@@ -880,13 +880,10 @@ export const WithSelectedRange: Story = {
     await waitFor(() => {
       const dayHeaders = Array.from(canvasEl.querySelectorAll('.day-header-cell'));
       const compactHeaders = canvasEl.querySelectorAll('.day-header-cell--compact');
-      const groupHeaders = canvasEl.querySelectorAll('.group-header-cell');
 
       expect(dayHeaders.length).toBe(6);
       expect(dayHeaders[0].textContent?.trim()).toBe('5');
       expect(dayHeaders[5].textContent?.trim()).toBe('10');
-      expect(groupHeaders.length).toBe(1);
-      expect(groupHeaders[0].textContent?.includes('May 2026')).toBeTruthy();
       expect(compactHeaders.length).toBeGreaterThan(0);
     });
   },

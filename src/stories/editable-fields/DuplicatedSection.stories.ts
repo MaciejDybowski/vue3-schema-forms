@@ -1,11 +1,101 @@
 // @ts-nocheck
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+
+
 import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { playWrapper, waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1203,7 +1293,22 @@ export const ConditionalShowElementsByJsonata: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'Add row' }), { delay: 200 });
 
     await waitFor(() => {
+      expect(canvas.queryAllByLabelText('Product').length).toEqual(2);
+    });
+
+    await waitFor(() => {
+      expect(context.canvasElement.getElementsByClassName('duplicated-section-item').length).toEqual(2);
+    });
+
+    const sections = context.canvasElement.getElementsByClassName('duplicated-section-item');
+    const secondSection = within(sections[1] as HTMLElement);
+    const secondProductInput = (await secondSection.findByLabelText('Product')) as HTMLInputElement;
+    await userEvent.click(secondProductInput, { delay: 100 });
+    await userEvent.type(secondProductInput, ' updated', { delay: 50 });
+
+    await waitFor(() => {
       expect(context.args.formModel.items.length).toEqual(2);
+      expect(context.args.formModel.items[1].product).toContain('updated');
     });
   }),
   args: {

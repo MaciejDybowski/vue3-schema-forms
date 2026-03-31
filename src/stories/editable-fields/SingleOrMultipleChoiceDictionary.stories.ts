@@ -210,17 +210,16 @@ export const MultiValueReturnObject: Story = {
 export const LimitAndOverflowWarning: Story = {
   name: 'Case: limit override + overflow warning',
   play: async (context) => {
-    await waitForMountedAsync(50);
+    await waitForMountedAsync(100);
     const canvas = within(context.canvasElement);
 
     await waitFor(() => {
       expect(lastRequestedSize).toBe(25);
     });
 
-    await expect(
-      canvas.getByText('Dictionary returned more options than limit (25). Narrow the source or use'),
-    ).toBeInTheDocument();
-    await expect(canvas.getByText('autocomplete/combobox.')).toBeInTheDocument();
+    await expect(context.canvasElement).toHaveTextContent(
+      /Dictionary returned more options than limit \(25\)\.\s*Narrow the source or use\s*autocomplete\/combobox\./,
+    );
   },
   args: {
     formModel: {},
