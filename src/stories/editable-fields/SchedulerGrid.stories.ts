@@ -14,6 +14,7 @@ export const Standard: Story = {
     const canvas = within(context.canvasElement);
     await waitFor(() => {
       expect(canvas.getByText('December 2025')).toBeTruthy();
+      expect(canvas.getByText('Unavailable')).toBeTruthy();
     });
   },
   args: {
@@ -65,6 +66,11 @@ export const Standard: Story = {
               label: 'Part Time',
               colors: { light: '#B08968', dark: '#5D4037' },
             },
+            {
+              statusKey: 'UNAVAILABLE',
+              label: 'Unavailable',
+              colors: { light: '#80CBC4', dark: '#00695C' },
+            },
           ],
         },
       },
@@ -110,7 +116,7 @@ export const WithModel: Story = {
             { day: 15, date: '2025-12-15', status: 'PRESENT' },
             { day: 16, date: '2025-12-16', status: 'PRESENT' },
             { day: 17, date: '2025-12-17', status: 'PRESENT' },
-            { day: 18, date: '2025-12-18', status: 'WFH' },
+            { day: 18, date: '2025-12-18', status: 'UNAVAILABLE' },
             { day: 19, date: '2025-12-19', status: 'WFH' },
             { day: 20, date: '2025-12-20', status: 'WEEKEND' },
             { day: 21, date: '2025-12-21', status: 'WEEKEND' },
@@ -155,7 +161,7 @@ export const WithModel: Story = {
             { day: 19, date: '2025-12-19', status: 'PTO' },
             { day: 20, date: '2025-12-20', status: 'WEEKEND' },
             { day: 21, date: '2025-12-21', status: 'WEEKEND' },
-            { day: 22, date: '2025-12-22', status: 'PRESENT' },
+            { day: 22, date: '2025-12-22', status: 'UNAVAILABLE' },
             { day: 23, date: '2025-12-23', status: 'PRESENT' },
             { day: 24, date: '2025-12-24', status: 'PTO' },
             { day: 25, date: '2025-12-25', status: 'HOLIDAY' },
@@ -212,6 +218,11 @@ export const WithModel: Story = {
               statusKey: 'HALF_DAY',
               label: 'Part Time',
               colors: { light: '#B08968', dark: '#5D4037' },
+            },
+            {
+              statusKey: 'UNAVAILABLE',
+              label: 'Unavailable',
+              colors: { light: '#80CBC4', dark: '#00695C' },
             },
           ],
         },
@@ -268,7 +279,7 @@ export const Readonly: Story = {
             { day: 15, date: '2025-12-15', status: 'PRESENT' },
             { day: 16, date: '2025-12-16', status: 'PRESENT' },
             { day: 17, date: '2025-12-17', status: 'PRESENT' },
-            { day: 18, date: '2025-12-18', status: 'WFH' },
+            { day: 18, date: '2025-12-18', status: 'UNAVAILABLE' },
             { day: 19, date: '2025-12-19', status: 'WFH' },
             { day: 20, date: '2025-12-20', status: 'WEEKEND' },
             { day: 21, date: '2025-12-21', status: 'WEEKEND' },
@@ -313,7 +324,7 @@ export const Readonly: Story = {
             { day: 19, date: '2025-12-19', status: 'PTO' },
             { day: 20, date: '2025-12-20', status: 'WEEKEND' },
             { day: 21, date: '2025-12-21', status: 'WEEKEND' },
-            { day: 22, date: '2025-12-22', status: 'PRESENT' },
+            { day: 22, date: '2025-12-22', status: 'UNAVAILABLE' },
             { day: 23, date: '2025-12-23', status: 'PRESENT' },
             { day: 24, date: '2025-12-24', status: 'PTO' },
             { day: 25, date: '2025-12-25', status: 'HOLIDAY' },
@@ -371,6 +382,11 @@ export const Readonly: Story = {
               label: 'Part Time',
               colors: { light: '#B08968', dark: '#5D4037' },
             },
+            {
+              statusKey: 'UNAVAILABLE',
+              label: 'Unavailable',
+              colors: { light: '#80CBC4', dark: '#00695C' },
+            },
           ],
         },
       },
@@ -422,7 +438,7 @@ export const Customization: Story = {
             { day: 15, date: '2025-12-15', status: 'PRESENT' },
             { day: 16, date: '2025-12-16', status: 'PRESENT' },
             { day: 17, date: '2025-12-17', status: 'PRESENT' },
-            { day: 18, date: '2025-12-18', status: 'WFH' },
+            { day: 18, date: '2025-12-18', status: 'UNAVAILABLE' },
             { day: 19, date: '2025-12-19', status: 'WFH' },
             { day: 20, date: '2025-12-20', status: 'WEEKEND' },
             { day: 21, date: '2025-12-21', status: 'WEEKEND' },
@@ -486,6 +502,11 @@ export const Customization: Story = {
               label: 'Part Time',
               colors: { light: '#B08968', dark: '#5D4037' },
             },
+            {
+              statusKey: 'UNAVAILABLE',
+              label: 'Unavailable',
+              colors: { light: '#80CBC4', dark: '#00695C' },
+            },
           ],
         },
       },
@@ -529,6 +550,11 @@ const modifiedDataLegend = [
     label: 'Part Time',
     colors: { light: '#B08968', dark: '#5D4037' },
   },
+  {
+    statusKey: 'UNAVAILABLE',
+    label: 'Unavailable',
+    colors: { light: '#80CBC4', dark: '#00695C' },
+  },
 ];
 
 const toDecemberDate = (day) => `2025-12-${String(day).padStart(2, '0')}`;
@@ -553,11 +579,11 @@ const liamBaseStatuses = [
   'PRESENT',
   'PRESENT',
   'PRESENT',
-  'WFH',
+  'UNAVAILABLE',
   'WFH',
   'WEEKEND',
   'WEEKEND',
-  'PRESENT',
+  'UNAVAILABLE',
   'PRESENT',
   'PRESENT',
   'WFH',
@@ -623,7 +649,7 @@ const liamModifiedDays = {
   10: { status: 'SICK', note: 'L4', prevData: { status: 'PRESENT', note: '' } },
   15: { status: 'PRESENT', note: 'dyzur do 18:00', prevData: { status: 'PRESENT', note: '' } },
   22: { status: 'PRESENT', note: '', prevData: { status: 'PTO', note: '' } },
-  29: { status: 'WFH', note: '', prevData: { status: 'PTO', note: '' } },
+  29: { status: 'UNAVAILABLE', note: '', prevData: { status: 'PTO', note: '' } },
 };
 
 const oliviaModifiedDays = {
@@ -631,7 +657,11 @@ const oliviaModifiedDays = {
   8: { status: 'SICK', note: 'L4', prevData: { status: 'WFH', note: '' } },
   15: { status: 'HALF_DAY', note: '8-15', prevData: { status: 'PRESENT', note: '8-15' } },
   19: { status: 'PRESENT', note: '', prevData: { status: 'PTO', note: '' } },
-  24: { status: 'WFH', note: 'po 12:00', prevData: { status: 'PTO', note: '' } },
+  24: {
+    status: 'UNAVAILABLE',
+    note: 'brak dyspozycyjnosci',
+    prevData: { status: 'PTO', note: '' },
+  },
   30: { status: 'PTO', note: 'urlop okolicznosciowy', prevData: { status: 'WFH', note: '' } },
 };
 
@@ -753,7 +783,7 @@ export const WithModifiedDataReadonly: Story = {
 const selectedRangeScheduleLiam = [
   { day: 5, date: '2026-05-05', status: 'PRESENT' },
   { day: 6, date: '2026-05-06', status: 'WFH' },
-  { day: 7, date: '2026-05-07', status: 'PRESENT' },
+  { day: 7, date: '2026-05-07', status: 'UNAVAILABLE' },
   { day: 8, date: '2026-05-08', status: 'PRESENT', note: '8:00-16:00' },
   { day: 9, date: '2026-05-09', status: 'WEEKEND' },
   { day: 10, date: '2026-05-10', status: 'WEEKEND' },
@@ -761,7 +791,7 @@ const selectedRangeScheduleLiam = [
 
 const selectedRangeScheduleOlivia = [
   { day: 5, date: '2026-05-05', status: 'WFH' },
-  { day: 6, date: '2026-05-06', status: 'WFH' },
+  { day: 6, date: '2026-05-06', status: 'UNAVAILABLE' },
   { day: 7, date: '2026-05-07', status: 'PRESENT' },
   { day: 8, date: '2026-05-08', status: 'HALF_DAY' },
   { day: 9, date: '2026-05-09', status: 'WEEKEND' },
@@ -775,13 +805,13 @@ const mixedGroupScheduleLiam = [
   { day: 2, date: '2026-02-02', group: 'Luty', status: 'PRESENT' },
   { day: 5, date: '2026-02-05', group: 'Luty', status: 'PTO' },
   { day: 8, date: '2026-02-08', group: 'Luty', status: 'WEEKEND' },
-  { day: 11, date: '2026-02-11', group: 'Luty', status: 'WFH' },
+  { day: 11, date: '2026-02-11', group: 'Luty', status: 'UNAVAILABLE' },
   { day: 14, date: '2026-02-14', group: 'Luty', status: 'WEEKEND' },
 ];
 
 const mixedGroupScheduleOlivia = [
   { day: 7, date: '2026-01-07', group: 'Styczen', status: 'WFH' },
-  { day: 19, date: '2026-01-19', group: 'Styczen', status: 'PRESENT' },
+  { day: 19, date: '2026-01-19', group: 'Styczen', status: 'UNAVAILABLE' },
   { day: 31, date: '2026-01-31', group: 'Styczen', status: 'WEEKEND' },
   { day: 2, date: '2026-02-02', group: 'Luty', status: 'PRESENT' },
   { day: 5, date: '2026-02-05', group: 'Luty', status: 'SICK' },
@@ -806,19 +836,19 @@ const mixedGroupModifiedScheduleLiam = [
     day: 2,
     date: '2026-02-02',
     group: 'Luty',
-    status: 'PRESENT',
+    status: 'UNAVAILABLE',
     sameAsPrev: false,
     prevData: { status: 'WFH', note: '' },
   },
   { day: 5, date: '2026-02-05', group: 'Luty', status: 'PTO', sameAsPrev: true },
   { day: 8, date: '2026-02-08', group: 'Luty', status: 'WEEKEND', sameAsPrev: true },
-  { day: 11, date: '2026-02-11', group: 'Luty', status: 'WFH', sameAsPrev: true },
+  { day: 11, date: '2026-02-11', group: 'Luty', status: 'UNAVAILABLE', sameAsPrev: true },
   { day: 14, date: '2026-02-14', group: 'Luty', status: 'WEEKEND', sameAsPrev: true },
 ];
 
 const mixedGroupModifiedScheduleOlivia = [
   { day: 7, date: '2026-01-07', group: 'Styczen', status: 'WFH', sameAsPrev: true },
-  { day: 19, date: '2026-01-19', group: 'Styczen', status: 'PRESENT', sameAsPrev: true },
+  { day: 19, date: '2026-01-19', group: 'Styczen', status: 'UNAVAILABLE', sameAsPrev: true },
   { day: 31, date: '2026-01-31', group: 'Styczen', status: 'WEEKEND', sameAsPrev: true },
   {
     day: 2,
@@ -832,13 +862,13 @@ const mixedGroupModifiedScheduleOlivia = [
     day: 5,
     date: '2026-02-05',
     group: 'Luty',
-    status: 'SICK',
-    note: 'L4',
+    status: 'UNAVAILABLE',
+    note: 'brak dyspozycyjnosci',
     sameAsPrev: false,
     prevData: { status: 'PRESENT', note: '' },
   },
   { day: 8, date: '2026-02-08', group: 'Luty', status: 'WEEKEND', sameAsPrev: true },
-  { day: 11, date: '2026-02-11', group: 'Luty', status: 'PRESENT', sameAsPrev: true },
+  { day: 11, date: '2026-02-11', group: 'Luty', status: 'UNAVAILABLE', sameAsPrev: true },
   { day: 14, date: '2026-02-14', group: 'Luty', status: 'WEEKEND', sameAsPrev: true },
 ];
 
@@ -855,7 +885,7 @@ const subsetScheduleDay4To10 = [
   { day: 7, date: toDecemberDate(7), status: 'WEEKEND' },
   { day: 8, date: toDecemberDate(8), status: 'PRESENT' },
   { day: 9, date: toDecemberDate(9), status: 'SICK' },
-  { day: 10, date: toDecemberDate(10), status: 'SICK' },
+  { day: 10, date: toDecemberDate(10), status: 'UNAVAILABLE' },
 ];
 
 const buildRangeSchedule = (startDay, endDay, statusKey) =>
@@ -870,7 +900,7 @@ const buildRangeSchedule = (startDay, endDay, statusKey) =>
 
 const rangeScheduleDay4To10 = buildRangeSchedule(4, 10, 'PRESENT');
 const rangeScheduleDay3To7 = buildRangeSchedule(3, 7, 'WFH');
-const rangeScheduleDay9To12 = buildRangeSchedule(9, 12, 'PTO');
+const rangeScheduleDay9To12 = buildRangeSchedule(9, 12, 'UNAVAILABLE');
 
 export const WithSelectedRange: Story = {
   name: 'With Selected Range',
@@ -1295,6 +1325,11 @@ export const SourceAPI: Story = {
               statusKey: 'HALF_DAY',
               label: 'Part Time',
               colors: { light: '#B08968', dark: '#5D4037' },
+            },
+            {
+              statusKey: 'UNAVAILABLE',
+              label: 'Unavailable',
+              colors: { light: '#80CBC4', dark: '#00695C' },
             },
           ],
         },
