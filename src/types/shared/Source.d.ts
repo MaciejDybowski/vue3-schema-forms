@@ -7,8 +7,7 @@ export interface Source {
   returnObject?: boolean;
 }
 
-export type SourcePath = string;
-export type SourceDefinition = Source | SourcePath;
+export type SourceDefinition = SimpleSource;
 
 export interface TableSource {
   headers: TableHeader[];
@@ -90,7 +89,7 @@ export interface AvatarSource {
 
 export interface SimpleSource extends Source {
   url?: string;
-  items?: Array<any>;
+  items?: Array<any> | string;
   multiple?:boolean
 }
 

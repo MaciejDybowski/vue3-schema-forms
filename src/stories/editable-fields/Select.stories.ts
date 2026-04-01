@@ -578,7 +578,9 @@ export const SourceFromModelPath: Story = {
           layout: {
             component: 'select',
           },
-          source: 'dictionaries.countries',
+          source: {
+            items: 'dictionaries.countries',
+          },
         } as EngineSourceField,
       },
     } as Schema,

@@ -366,7 +366,9 @@ export const SourceFromModelPath: Story = {
           layout: {
             component: 'checkbox',
           },
-          source: 'dictionaries.countries',
+          source: {
+            items: 'dictionaries.countries',
+          },
         },
       },
     },

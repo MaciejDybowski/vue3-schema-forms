@@ -20,7 +20,7 @@ describe('useSource', () => {
     vi.restoreAllMocks();
   });
 
-  it('reads options from model when source is path string', async () => {
+  it('reads options from model when source.items is path string', async () => {
     model.value = {
       dictionaries: {
         countries: [
@@ -30,7 +30,7 @@ describe('useSource', () => {
       },
     };
 
-    const { data } = useSource('dictionaries.countries');
+    const { data } = useSource({ items: 'dictionaries.countries' });
 
     expect(data.value).toHaveLength(2);
     expect(data.value[0].value).toBe('PL');
@@ -48,7 +48,7 @@ describe('useSource', () => {
     expect(data.value[0].value).toBe('CZ');
   });
 
-  it('keeps backward compatibility for source.items', () => {
+  it('loads options from source.items array', () => {
     const { data, loading } = useSource({
       items: [{ title: 'Aktywny', value: 'ACTIVE' }],
     });
