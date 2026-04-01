@@ -1,7 +1,31 @@
 // @ts-nocheck
-import { expect, userEvent, within, waitFor } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+
+
+
+import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import {MOCK_REQUEST_CURRENCY} from "../mock-responses"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default {
   title: 'Elements/Editable/Checkbox ✅',
   ...formStoryWrapperTemplate,
@@ -311,3 +335,41 @@ export const SimpleValidation: Story = {
     },
   },
 };
+
+export const SourceFromModelPath: Story = {
+  name: 'Case: Source from model path',
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    const canvas = within(context.canvasElement);
+    const option2 = canvas.getByLabelText('Option 2');
+    await userEvent.click(option2, { delay: 200 });
+    await expect(context.args.formModel['checkboxSourceFromPath']).toEqual([2]);
+  },
+  args: {
+    formModel: {
+      dictionaries: {
+        countries: [
+          { value: 1, title: 'Option 1' },
+          { value: 2, title: 'Option 2' },
+          { value: 3, title: 'Option 3' },
+        ],
+      },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        checkboxSourceFromPath: {
+          label: 'Choose option',
+          layout: {
+            component: 'checkbox',
+          },
+          source: 'dictionaries.countries',
+        },
+      },
+    },
+  },
+};
+

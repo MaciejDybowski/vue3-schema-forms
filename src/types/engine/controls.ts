@@ -5,7 +5,7 @@ import {
   AvatarSource,
   DictionarySource,
   SimpleSource,
-  Source,
+  SourceDefinition,
   UserInputSource,
 } from '@/types/shared/Source';
 
@@ -125,11 +125,11 @@ export interface EngineDuplicatedSection extends EngineField {
 }
 
 export interface EngineSourceField extends EngineField {
-  source: Source;
+  source: SourceDefinition;
 }
 
 export interface EngineBookmarkField extends EngineField {
-  source: Source;
+  source: SourceDefinition;
   stacked?: boolean;
   color?: string;
   'bg-color'?: string;

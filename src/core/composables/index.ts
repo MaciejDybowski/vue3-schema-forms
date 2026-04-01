@@ -8,6 +8,7 @@ export { useProps } from './useProps';
 
 export { useRules } from './useRules';
 export { useSource } from './useSource';
+export { useSourceFromModelPath } from './useSourceFromModelPath';
 export { useFormModel } from './useFormModel';
 export { useDateFormat } from './useDateFormat';
 export { useResolveVariables } from './useResolveVariables';

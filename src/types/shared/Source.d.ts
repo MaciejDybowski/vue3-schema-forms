@@ -7,6 +7,9 @@ export interface Source {
   returnObject?: boolean;
 }
 
+export type SourcePath = string;
+export type SourceDefinition = Source | SourcePath;
+
 export interface TableSource {
   headers: TableHeader[];
   showSelect?: boolean;

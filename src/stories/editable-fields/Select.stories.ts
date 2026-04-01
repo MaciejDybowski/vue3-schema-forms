@@ -540,3 +540,47 @@ export const onChangeCopyValue: Story = {
     },
   },
 };
+
+export const SourceFromModelPath: Story = {
+  name: 'Case: Source from model path',
+  play: playWrapper(async (context) => {
+    const canvas = within(context.canvasElement);
+    const select = canvas.getByLabelText('Select from model path');
+    await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
+
+    await waitFor(() => {
+      const items = document.querySelectorAll('.v-list-item');
+      expect(items.length).toBeGreaterThan(0);
+    });
+
+    const items = document.getElementsByClassName('v-list-item');
+    await userEvent.click(items[1], { delay: 200 });
+
+    await waitFor(() => {
+      expect(context.args.formModel.selectFromModelPath).toEqual(2);
+    });
+  }),
+  args: {
+    formModel: {
+      dictionaries: {
+        countries: [
+          { value: 1, title: 'Polska' },
+          { value: 2, title: 'Niemcy' },
+          { value: 3, title: 'Czechy' },
+        ],
+      },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        selectFromModelPath: {
+          label: 'Select from model path',
+          layout: {
+            component: 'select',
+          },
+          source: 'dictionaries.countries',
+        } as EngineSourceField,
+      },
+    } as Schema,
+  },
+};

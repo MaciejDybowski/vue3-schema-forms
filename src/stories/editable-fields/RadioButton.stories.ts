@@ -1,12 +1,44 @@
 // @ts-nocheck
 import { expect, userEvent, within } from 'storybook/test';
 
+
+
 import { EngineSourceField } from '../../types/engine/controls';
 import { Schema } from '../../types/schema/Schema';
 import { Source } from '../../types/schema/elements';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 import { playWrapper, waitForMountedAsync } from './utils';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default {
   title: 'Elements/Editable/RadioButton',
@@ -330,3 +362,39 @@ export const GetOptionsFromAPI: Story = {
     },
   },
 };
+
+export const SourceFromModelPath: Story = {
+  name: 'Case: Source from model path',
+  play: async (context) => {
+    await waitForMountedAsync(100);
+    const canvas = within(context.canvasElement);
+    await expect(context.args.formModel['radioButtonSourceFromPath']).toEqual(1);
+    const option2 = canvas.getByLabelText('Option 2');
+    await userEvent.click(option2, { delay: 200 });
+    await expect(context.args.formModel['radioButtonSourceFromPath']).toEqual(2);
+  },
+  args: {
+    formModel: {
+      dictionaries: {
+        countries: [
+          { value: 1, title: 'Option 1' },
+          { value: 2, title: 'Option 2' },
+          { value: 3, title: 'Option 3' },
+        ],
+      },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        radioButtonSourceFromPath: {
+          label: 'Choose option',
+          layout: {
+            component: 'radio-button',
+          },
+          source: 'dictionaries.countries',
+        } as EngineSourceField,
+      },
+    } as Schema,
+  },
+};
+
