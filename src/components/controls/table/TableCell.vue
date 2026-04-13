@@ -110,6 +110,58 @@ async function evalExpr(expr?: string | null, model: any = {}) {
   return await c.evaluate(model);
 }
 
+function splitByTopLevelColon(value: string) {
+  const parts: string[] = [];
+  let current = '';
+  let parenDepth = 0;
+  let inSingleQuote = false;
+  let inDoubleQuote = false;
+
+  for (let i = 0; i < value.length; i += 1) {
+    const char = value[i];
+    const previousChar = i > 0 ? value[i - 1] : '';
+
+    if (char === "'" && !inDoubleQuote && previousChar !== '\\') {
+      inSingleQuote = !inSingleQuote;
+      current += char;
+      continue;
+    }
+
+    if (char === '"' && !inSingleQuote && previousChar !== '\\') {
+      inDoubleQuote = !inDoubleQuote;
+      current += char;
+      continue;
+    }
+
+    if (!inSingleQuote && !inDoubleQuote) {
+      if (char === '(') parenDepth += 1;
+      if (char === ')') parenDepth = Math.max(0, parenDepth - 1);
+
+      if (char === ':' && parenDepth === 0) {
+        parts.push(current);
+        current = '';
+        continue;
+      }
+    }
+
+    current += char;
+  }
+
+  parts.push(current);
+  return parts;
+}
+
+function isNataExpression(value: string) {
+  const trimmed = value.trim();
+  return trimmed.startsWith('nata(') && trimmed.endsWith(')');
+}
+
+function normalizeExpression(value: string) {
+  const trimmed = value.trim();
+  if (!isNataExpression(trimmed)) return trimmed;
+  return trimmed.slice(5, -1);
+}
+
 const alertIcons: Record<string, string> = {
   warning: 'mdi-alert',
   info: 'mdi-information',
@@ -185,13 +237,19 @@ async function simpleResolveVariable() {
   await Promise.all(
     vars.map(async (wrapped) => {
       const unwrapped = wrapped.slice(1, -1);
-      const parts = unwrapped.split(':');
+      const parts = splitByTopLevelColon(unwrapped);
       const variable = parts[0];
       const defaultValue = parts.length >= 2 ? parts[1] : null;
       const typeOfValue = parts.length >= 3 ? parts[2] : null;
       const formatterProps = (parts.length === 4 ? parts[3] : null) as any;
 
-      let value = await evalExpr(variable, props.item);
+      let value = null;
+      try {
+        value = await evalExpr(normalizeExpression(variable), props.item);
+      } catch {
+        value = null;
+      }
+
       if (typeOfValue === 'NUMBER') {
         let decimalPlaces = 4;
         if (isNaN(Number(formatterProps))) {
