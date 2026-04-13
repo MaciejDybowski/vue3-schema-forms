@@ -1,7 +1,7 @@
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
 
 const OPTIONS_REF_PREFIX = '#/options/';
-export const MAX_NESTED_FORM_DEPTH = 50;
+export const MAX_NESTED_FORM_DEPTH = 5;
 
 export function resolveOptionsRefTemplate(options: SchemaOptions, key: string): string | undefined {
   const optionValue = (options as Record<string, unknown>)?.[key];
@@ -34,22 +34,32 @@ export function hasOptionsRefs(
   maxDepth = MAX_NESTED_FORM_DEPTH,
   depth = 0,
 ): boolean {
-  if (depth > maxDepth) return false;
+  const visited = new WeakSet<object>();
 
-  for (const value of Object.values(properties)) {
-    if (isOptionsRef(value, options)) return true;
-    if (value?.properties && hasOptionsRefs(value.properties, options, maxDepth, depth + 1)) {
-      return true;
+  function scan(node: unknown, currentDepth: number): boolean {
+    if (currentDepth > maxDepth || !node || typeof node !== 'object') return false;
+
+    const objectNode = node as Record<string, unknown>;
+    if (visited.has(objectNode)) return false;
+    visited.add(objectNode);
+
+    if (isOptionsRef(objectNode, options)) return true;
+
+    if (Array.isArray(objectNode)) {
+      for (const item of objectNode) {
+        if (scan(item, currentDepth + 1)) return true;
+      }
+      return false;
     }
-    if (
-      value?.layout?.schema?.properties &&
-      hasOptionsRefs(value.layout.schema.properties, options, maxDepth, depth + 1)
-    ) {
-      return true;
+
+    for (const value of Object.values(objectNode)) {
+      if (scan(value, currentDepth + 1)) return true;
     }
+
+    return false;
   }
 
-  return false;
+  return scan(properties, depth);
 }
 
 /**
