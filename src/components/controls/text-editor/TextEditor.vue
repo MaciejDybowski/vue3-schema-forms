@@ -65,9 +65,9 @@
 </template>
 
 <script lang="ts" setup>
-import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
+import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
 import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
@@ -86,6 +86,14 @@ import { EngineTextEditorField } from '@/types/engine/controls';
 interface UploadedFileResponse {
   fileId: string;
 }
+
+interface UploadedFileResult {
+  fileId: string;
+  contentUrl: string;
+}
+
+const IMAGE_PREVIEW_SRC_TEMPLATE =
+  '/api/v1/features/{menuFeatureId}/images/{imageId}/1SD123!@#jaosdijas?Workspace-Id={workspaceId}&dataId={dataId}&width={width}&height={height}&lastModifiedAt={lastModifiedAt}';
 
 const { bindRules, rules, requiredInputClass } = useRules();
 const { getValue, setValue } = useFormModel();
@@ -306,6 +314,35 @@ function resolveFeatureId(): string {
   return String(schema.options?.context?.menuFeatureId || 'unknown-feature-id');
 }
 
+function resolveWorkspaceId(): string {
+  return String(schema.options?.context?.workspaceId || 'pricing');
+}
+
+function resolveImageDimensions(): { width: string; height: string } {
+  const width =
+    (schema.layout?.props?.width as string | number | undefined) ||
+    (schema.options?.context?.imageWidth as string | number | undefined) ||
+    100;
+  const height =
+    (schema.layout?.props?.height as string | number | undefined) ||
+    (schema.options?.context?.imageHeight as string | number | undefined) ||
+    100;
+
+  return {
+    width: String(width),
+    height: String(height),
+  };
+}
+
+function resolveImageSign(): string {
+  return String(
+    getValueByPath(model, 'product.imageSignature') ||
+      getValueByPath(model, 'product.mainImage.sign') ||
+      getValueByPath(model, 'product.mainImage.imageSignature') ||
+      '',
+  );
+}
+
 function clearInputValue(input: HTMLInputElement | null) {
   if (input) {
     input.value = '';
@@ -333,7 +370,7 @@ function validateSelectedFile(file: File, isImage: boolean): boolean {
   return true;
 }
 
-async function uploadFile(file: File): Promise<string> {
+async function uploadFile(file: File): Promise<UploadedFileResult> {
   const entityId = currentEntityId();
   const resolvedUrl = uploadFileUrl
     .replace('{menuFeatureId}', resolveFeatureId())
@@ -344,7 +381,62 @@ async function uploadFile(file: File): Promise<string> {
   const response = await axios.post<UploadedFileResponse>(resolvedUrl, formData);
 
   const [baseUrl, queryString] = resolvedUrl.split('?');
-  return `${baseUrl}/${response.data.fileId}/content${queryString ? `?${queryString}` : ''}`;
+  return {
+    fileId: response.data.fileId,
+    contentUrl: `${baseUrl}/${response.data.fileId}/content${queryString ? `?${queryString}` : ''}`,
+  };
+}
+
+function getValueByPath(source: unknown, path: string): unknown {
+  if (!source || !path) {
+    return undefined;
+  }
+
+  return path.split('.').reduce((acc: any, segment: string) => {
+    if (acc == null) {
+      return undefined;
+    }
+    return acc[segment];
+  }, source);
+}
+
+function hasUnresolvedTemplateTokens(value: string): boolean {
+  return /\{[^{}]+\}/.test(value);
+}
+
+function buildImagePreviewUrl(fileId: string, fallbackUrl: string): string {
+  const entityId = currentEntityId();
+  const dimensions = resolveImageDimensions();
+  const dataIdFromModel = getValueByPath(model, 'product.mainImage.dataId');
+  const dataId = String(dataIdFromModel || entityId || '');
+  const runtimeValues: Record<string, string> = {
+    dataId,
+    id: String(entityId || ''),
+    menuFeatureId: resolveFeatureId(),
+    workspaceId: resolveWorkspaceId(),
+    imageId: fileId,
+    sign: resolveImageSign(),
+    width: dimensions.width,
+    height: dimensions.height,
+    lastModifiedAt: String(getValueByPath(model, 'product.mainImage.lastModifiedAt') || ''),
+  };
+
+  const resolvedTemplate = IMAGE_PREVIEW_SRC_TEMPLATE.replace(/\{([^{}]+)\}/g, (_, rawToken) => {
+    const token = String(rawToken).trim();
+    const runtimeValue = runtimeValues[token];
+    if (runtimeValue !== undefined) {
+      return runtimeValue;
+    }
+
+    const modelValue = getValueByPath(model, token);
+    if (modelValue === undefined || modelValue === null || modelValue === '') {
+      return `{${token}}`;
+    }
+
+    return String(modelValue);
+  });
+
+  return hasUnresolvedTemplateTokens(resolvedTemplate) ? fallbackUrl : resolvedTemplate;
 }
 
 function insertImageToEditor(url: string, alt: string) {
@@ -397,8 +489,9 @@ async function onImageFileSelected(event: Event) {
     if (!validateSelectedFile(file, true)) {
       return;
     }
-    const url = await uploadFile(file);
-    insertImageToEditor(url, file.name);
+    const uploadedFile = await uploadFile(file);
+    const imagePreviewUrl = buildImagePreviewUrl(uploadedFile.fileId, uploadedFile.contentUrl);
+    insertImageToEditor(imagePreviewUrl, file.name);
   } catch (error: any) {
     console.error('Error uploading image:', error);
     showToastError(error?.message || 'Nie udalo sie przeslac obrazu');
@@ -418,8 +511,8 @@ async function onAttachmentFileSelected(event: Event) {
     if (!validateSelectedFile(file, false)) {
       return;
     }
-    const url = await uploadFile(file);
-    insertFileToEditor(url, file.name);
+    const uploadedFile = await uploadFile(file);
+    insertFileToEditor(uploadedFile.contentUrl, file.name);
   } catch (error: any) {
     console.error('Error uploading file:', error);
     showToastError(error?.message || 'Nie udalo sie przeslac pliku');

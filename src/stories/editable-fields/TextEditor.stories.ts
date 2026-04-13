@@ -43,8 +43,22 @@ function getTextEditor(canvas: HTMLElement) {
 }
 
 const TEXT_EDITOR_UPLOAD_MOCK = [
-  http.post('/api/v1/features/unknown-feature-id/files', async () => {
+  http.post('/api/v1/features/:menuFeatureId/files', async () => {
     return HttpResponse.json({ fileId: 'text-editor-file-id' });
+  }),
+];
+
+const TEXT_EDITOR_IMAGE_PREVIEW_MOCK = [
+  http.get('/api/v1/features/:menuFeatureId/images/:imageId/:sign', async ({ params }) => {
+    const imageId = String(params.imageId || 'unknown-id');
+    const sign = String(params.sign || 'unknown-sign');
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="420" height="160"><rect width="100%" height="100%" fill="#e8eef9"/><text x="20" y="80" font-size="18" fill="#2a3f5f">Preview ${imageId}/${sign}</text></svg>`;
+
+    return new HttpResponse(svg, {
+      headers: {
+        'Content-Type': 'image/svg+xml',
+      },
+    });
   }),
 ];
 
@@ -249,7 +263,16 @@ export const HtmlWithImageAndFileButtons: Story = {
     await expect(canvasElement.querySelector('.mdi-paperclip')).toBeInTheDocument();
   },
   args: {
-    formModel: {},
+    formModel: {
+      product: {
+        mainImage: {
+          id: 'text-editor-file-id',
+          dataId: 'product-data-001',
+          lastModifiedAt: '2026-04-13T12:00:00.000Z',
+          sign: 'sig-001',
+        },
+      },
+    },
     schema: {
       type: 'object',
       properties: {
@@ -261,6 +284,16 @@ export const HtmlWithImageAndFileButtons: Story = {
           fileMaxSize: 10,
           layout: {
             component: 'text-editor',
+            props: {
+              width: '320',
+              height: '180',
+            },
+          },
+          options: {
+            context: {
+              workspaceId: 'pricing',
+              menuFeatureId: 'products',
+            },
           },
         },
       },
@@ -268,7 +301,7 @@ export const HtmlWithImageAndFileButtons: Story = {
   },
   parameters: {
     msw: {
-      handlers: [...TEXT_EDITOR_UPLOAD_MOCK],
+      handlers: [...TEXT_EDITOR_UPLOAD_MOCK, ...TEXT_EDITOR_IMAGE_PREVIEW_MOCK],
     },
   },
 };
@@ -277,6 +310,14 @@ export const MarkdownUploadMode: Story = {
   args: {
     formModel: {
       textEditor: 'Początkowy tekst',
+      product: {
+        mainImage: {
+          id: 'text-editor-file-id',
+          dataId: 'product-data-002',
+          lastModifiedAt: '2026-04-13T12:00:00.000Z',
+          sign: 'sig-002',
+        },
+      },
     },
     schema: {
       type: 'object',
@@ -289,6 +330,16 @@ export const MarkdownUploadMode: Story = {
           imageAvailableExtensions: 'png,jpg',
           layout: {
             component: 'text-editor',
+            props: {
+              width: '320',
+              height: '180',
+            },
+          },
+          options: {
+            context: {
+              workspaceId: 'pricing',
+              menuFeatureId: 'products',
+            },
           },
         },
       },
@@ -296,7 +347,7 @@ export const MarkdownUploadMode: Story = {
   },
   parameters: {
     msw: {
-      handlers: [...TEXT_EDITOR_UPLOAD_MOCK],
+      handlers: [...TEXT_EDITOR_UPLOAD_MOCK, ...TEXT_EDITOR_IMAGE_PREVIEW_MOCK],
     },
   },
 };
