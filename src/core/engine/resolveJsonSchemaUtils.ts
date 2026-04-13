@@ -1,7 +1,7 @@
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
 
 const OPTIONS_REF_PREFIX = '#/options/';
-export const MAX_NESTED_FORM_DEPTH = 5;
+export const MAX_NESTED_FORM_DEPTH = 50;
 
 export function resolveOptionsRefTemplate(options: SchemaOptions, key: string): string | undefined {
   const optionValue = (options as Record<string, unknown>)?.[key];
@@ -41,6 +41,12 @@ export function hasOptionsRefs(
     if (value?.properties && hasOptionsRefs(value.properties, options, maxDepth, depth + 1)) {
       return true;
     }
+    if (
+      value?.layout?.schema?.properties &&
+      hasOptionsRefs(value.layout.schema.properties, options, maxDepth, depth + 1)
+    ) {
+      return true;
+    }
   }
 
   return false;
@@ -64,6 +70,10 @@ export function stripFlatStructureFlag(
 
     if (value?.properties) {
       stripFlatStructureFlag(value.properties, options, maxDepth, depth + 1);
+    }
+
+    if (value?.layout?.schema?.properties) {
+      stripFlatStructureFlag(value.layout.schema.properties, options, maxDepth, depth + 1);
     }
   }
 }
@@ -92,6 +102,12 @@ export function collectNestedFormsPathKeys(
 
     if (value?.properties) {
       collectNestedFormsPathKeys(value.properties, options, fullPath, maxDepth, depth + 1).forEach((k) =>
+        keys.add(k),
+      );
+    }
+
+    if (value?.layout?.schema?.properties) {
+      collectNestedFormsPathKeys(value.layout.schema.properties, options, fullPath, maxDepth, depth + 1).forEach((k) =>
         keys.add(k),
       );
     }
@@ -167,8 +183,23 @@ export function flattenNestedFormsPathNodes(
 
   for (const key of Object.keys(properties)) {
     const fullPath = parentPath ? `${parentPath}.${key}` : key;
-    if (!keys.has(fullPath) && properties[key]?.properties) {
+    if (keys.has(fullPath)) {
+      continue;
+    }
+
+    if (properties[key]?.properties) {
       flattenNestedFormsPathNodes(properties[key].properties, keys, fullPath, properties[key], maxDepth, depth + 1);
+    }
+
+    if (properties[key]?.layout?.schema?.properties) {
+      flattenNestedFormsPathNodes(
+        properties[key].layout.schema.properties,
+        keys,
+        fullPath,
+        properties[key].layout.schema,
+        maxDepth,
+        depth + 1,
+      );
     }
   }
 }

@@ -101,6 +101,21 @@ const schemaByPath: Record<string, any> = {
     },
     required: ['level6'],
   },
+  'layout-level-1': {
+    type: 'object',
+    properties: {
+      fromLayoutLevel1: { label: 'fromLayoutLevel1', layout: { component: 'text-field' } },
+      nestedLayoutLevel2: { '0': 'layout-level-2', $ref: '#/options/nestedFormsPath', flatStructure: true },
+    },
+    required: ['fromLayoutLevel1'],
+  },
+  'layout-level-2': {
+    type: 'object',
+    properties: {
+      fromLayoutLevel2: { label: 'fromLayoutLevel2', layout: { component: 'text-field' } },
+    },
+    required: ['fromLayoutLevel2'],
+  },
 };
 
 function cloneValue<T>(value: T): T {
@@ -270,6 +285,45 @@ describe('Zagnieżdzone formularze:', () => {
     expect(Object.keys(resolved.properties ?? {})).toEqual(['level1Field', 'level2Field']);
     expect(resolved.properties?.level2Block).toBeUndefined();
     expect(resolved.required).toEqual(['level1Field', 'level2Field']);
+  });
+
+  it('rozwiązuje nested forms w layout.schema.properties na wielu poziomach', async () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        wrapper: {
+          layout: {
+            component: 'fields-group',
+            schema: {
+              type: 'object',
+              required: ['nestedLayoutLevel1'],
+              properties: {
+                nestedLayoutLevel1: {
+                  '0': 'layout-level-1',
+                  $ref: '#/options/nestedFormsPath',
+                  flatStructure: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const options = {
+      nestedFormsPath: {
+        $ref: '/api/forms?path={0}',
+      },
+    };
+
+    const resolved = await resolveSchemaWithLocale(schema as any, 'pl', options as any);
+
+    const layoutProps = resolved.properties?.wrapper?.layout?.schema?.properties ?? {};
+    expect(layoutProps.nestedLayoutLevel1).toBeUndefined();
+    expect(layoutProps.nestedLayoutLevel2).toBeUndefined();
+    expect(layoutProps.fromLayoutLevel1).toBeDefined();
+    expect(layoutProps.fromLayoutLevel2).toBeDefined();
+    expect(resolved.properties?.wrapper?.layout?.schema?.required).toEqual(['fromLayoutLevel1', 'fromLayoutLevel2']);
   });
 
   it('zatrzymuje rozwijanie nested blocków po 5 poziomach', async () => {
