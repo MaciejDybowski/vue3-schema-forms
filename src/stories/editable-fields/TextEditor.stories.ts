@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { HttpResponse, http } from 'msw';
 
 
 
@@ -40,6 +41,24 @@ export default {
 function getTextEditor(canvas: HTMLElement) {
   return canvas.querySelector('[contenteditable="true"]') as HTMLElement;
 }
+
+const TEXT_EDITOR_UPLOAD_MOCK = [
+  http.post('/api/v1/features/unknown-feature-id/files', async () => {
+    return HttpResponse.json({ fileId: 'text-editor-file-id' });
+  }),
+];
+
+const TEXT_EDITOR_UPLOAD_MOCK_ERROR = [
+  http.post('/api/v1/features/unknown-feature-id/files', async () => {
+    return HttpResponse.json(
+      {
+        message: 'Conflict: upload error',
+        error: 'CONFLICT',
+      },
+      { status: 409 },
+    );
+  }),
+];
 
 export const Standard: Story = {
   play: async (context) => {},
@@ -221,3 +240,89 @@ export const OnChangeEvents: Story = {
     } as Schema,
   },
 };
+
+export const HtmlWithImageAndFileButtons: Story = {
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync();
+
+    await expect(canvasElement.querySelector('.mdi-image-plus')).toBeInTheDocument();
+    await expect(canvasElement.querySelector('.mdi-paperclip')).toBeInTheDocument();
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        textEditor: {
+          label: 'Opis',
+          editorFeatures: ['bold', 'italic', 'insertImage', 'insertFile', 'source'],
+          fileAvailableExtensions: 'pdf,docx,txt',
+          imageAvailableExtensions: 'png,jpg,jpeg,webp',
+          fileMaxSize: 10,
+          layout: {
+            component: 'text-editor',
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...TEXT_EDITOR_UPLOAD_MOCK],
+    },
+  },
+};
+
+export const MarkdownUploadMode: Story = {
+  args: {
+    formModel: {
+      textEditor: 'Początkowy tekst',
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        textEditor: {
+          label: 'Opis markdown',
+          contentType: 'markdown',
+          editorFeatures: ['insertImage', 'insertFile', 'source'],
+          fileAvailableExtensions: 'pdf,txt',
+          imageAvailableExtensions: 'png,jpg',
+          layout: {
+            component: 'text-editor',
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...TEXT_EDITOR_UPLOAD_MOCK],
+    },
+  },
+};
+
+export const UploadErrorScenario: Story = {
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        textEditor: {
+          label: 'Opis',
+          editorFeatures: ['insertImage', 'insertFile'],
+          fileAvailableExtensions: 'pdf',
+          imageAvailableExtensions: 'png',
+          layout: {
+            component: 'text-editor',
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...TEXT_EDITOR_UPLOAD_MOCK_ERROR],
+    },
+  },
+};
+

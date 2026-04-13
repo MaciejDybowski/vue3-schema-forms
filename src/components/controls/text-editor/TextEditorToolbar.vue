@@ -92,6 +92,22 @@ const buttons = [
     isActive: (editor: any) => editor.isActive('blockquote'),
   },
   {
+    name: 'insertImage',
+    icon: 'image-plus',
+    action: (editor: any) => {
+      editor.emit('insert-image');
+    },
+    isActive: () => false,
+  },
+  {
+    name: 'insertFile',
+    icon: 'paperclip',
+    action: (editor: any) => {
+      editor.emit('insert-file');
+    },
+    isActive: () => false,
+  },
+  {
     name: 'insertTable',
     icon: 'table',
     action: (editor: any) => {
@@ -194,6 +210,8 @@ const filteredButtons = computed(() => {
     "orderedList": "Ordered List",
     "code": "Code",
     "blockquote": "Blockquote",
+    "insertImage": "Insert image",
+    "insertFile": "Insert file",
     "source": "Source code",
     "insertTable": "Insert table",
     "addColumnBefore": "Add column before",
@@ -215,6 +233,8 @@ const filteredButtons = computed(() => {
     "orderedList": "Lista numerowana",
     "code": "Kod",
     "blockquote": "Cytat",
+    "insertImage": "Wstaw obraz",
+    "insertFile": "Wstaw plik",
     "source": "Kod źródłowy",
     "insertTable": "Wstaw tabelę",
     "addColumnBefore": "Dodaj kolumnę przed",

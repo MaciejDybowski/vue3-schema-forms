@@ -66,6 +66,12 @@ export interface EngineExpansionPanels extends EngineField {
 export interface EngineTextEditorField extends EngineField {
   editorFeatures: string[];
   contentType: 'markdown' | 'html' | 'json';
+  url?: string;
+  idQueryParamName?: string;
+  fileLabel?: string;
+  fileMaxSize?: number;
+  fileAvailableExtensions?: string;
+  imageAvailableExtensions?: string;
 }
 
 export interface EngineFileField extends EngineField {

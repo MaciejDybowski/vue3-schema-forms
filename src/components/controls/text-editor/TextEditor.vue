@@ -47,14 +47,31 @@
         </v-row>
       </template>
     </v-input>
+    <input
+      ref="imageInput"
+      :accept="imageAccept"
+      style="display: none"
+      type="file"
+      @change="onImageFileSelected"
+    />
+    <input
+      ref="attachmentInput"
+      :accept="fileAccept"
+      style="display: none"
+      type="file"
+      @change="onAttachmentFileSelected"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
 import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
+import axios from 'axios';
 
 import { computed, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
 
@@ -63,7 +80,12 @@ import TextEditorToolbar from '@/components/controls/text-editor/TextEditorToolb
 import { useFormModel, useProps, useRules } from '@/core/composables';
 import { useActiveRules } from '@/core/composables/useActiveRules';
 import { useEventHandler } from '@/core/composables/useEventHandler';
+import { toast } from '@/main';
 import { EngineTextEditorField } from '@/types/engine/controls';
+
+interface UploadedFileResponse {
+  fileId: string;
+}
 
 const { bindRules, rules, requiredInputClass } = useRules();
 const { getValue, setValue } = useFormModel();
@@ -84,8 +106,17 @@ const isUpdatingFromEditor = ref(false);
 const editorLoading = ref(true);
 const showSource = ref(false);
 const sourceContent = ref('');
+const imageInput = ref<HTMLInputElement | null>(null);
+const attachmentInput = ref<HTMLInputElement | null>(null);
 
 const contentType = schema.contentType || 'html';
+const idReference = schema.idQueryParamName || 'id';
+const uploadFileUrl =
+  schema.url ||
+  `/api/v1/features/{menuFeatureId}/files?dataId={dataId}&temporary=false&filePath=${schema.key}`;
+
+const imageAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(true)));
+const fileAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(false)));
 
 const localModel = computed({
   get(): string | null {
@@ -140,6 +171,10 @@ const editor = useEditor({
   },
   extensions: [
     StarterKit.configure({}),
+    Link.configure({
+      openOnClick: true,
+    }),
+    Image,
     Markdown,
     Table.configure({
       resizable: true,
@@ -221,12 +256,177 @@ onMounted(async () => {
     }
   });
 
+  editor.value?.on('insert-image' as any, () => {
+    if (fieldProps.value.readonly) {
+      return;
+    }
+    imageInput.value?.click();
+  });
+
+  editor.value?.on('insert-file' as any, () => {
+    if (fieldProps.value.readonly) {
+      return;
+    }
+    attachmentInput.value?.click();
+  });
+
   editorLoading.value = false;
 });
 
 onBeforeUnmount(() => {
   editor.value?.destroy();
 });
+
+function resolveAllowedExtensions(isImage: boolean): string[] {
+  const raw = isImage
+    ? schema.imageAvailableExtensions || 'png,jpg,jpeg,gif,webp,svg'
+    : schema.fileAvailableExtensions || schema.options?.context?.fileAvailableExtensions || '';
+
+  return raw
+    .split(',')
+    .map((ext: string) => ext.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function extensionsToAccept(extensions: string[]): string {
+  return extensions.map((ext) => (ext.startsWith('.') ? ext : `.${ext}`)).join(',');
+}
+
+function currentEntityId(): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return (
+    params.get('dataId') ||
+    params.get('taskId') ||
+    params.get('processId') ||
+    params.get(idReference)
+  );
+}
+
+function resolveFeatureId(): string {
+  return String(schema.options?.context?.menuFeatureId || 'unknown-feature-id');
+}
+
+function clearInputValue(input: HTMLInputElement | null) {
+  if (input) {
+    input.value = '';
+  }
+}
+
+function extractExtension(fileName: string): string {
+  return fileName.split('.').pop()?.toLowerCase() || '';
+}
+
+function validateSelectedFile(file: File, isImage: boolean): boolean {
+  const allowedExt = resolveAllowedExtensions(isImage);
+  const fileExt = extractExtension(file.name);
+  if (allowedExt.length > 0 && fileExt && !allowedExt.includes(fileExt)) {
+    showToastError(`Niedozwolone rozszerzenie pliku: ${fileExt}`);
+    return false;
+  }
+
+  const maxFileSizeMb = schema.fileMaxSize;
+  if (maxFileSizeMb && file.size > maxFileSizeMb * 1024 * 1024) {
+    showToastError(`Plik przekracza maksymalny rozmiar ${maxFileSizeMb} MB`);
+    return false;
+  }
+
+  return true;
+}
+
+async function uploadFile(file: File): Promise<string> {
+  const entityId = currentEntityId();
+  const resolvedUrl = uploadFileUrl
+    .replace('{menuFeatureId}', resolveFeatureId())
+    .replace('{dataId}', String(entityId || ''));
+
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await axios.post<UploadedFileResponse>(resolvedUrl, formData);
+
+  const [baseUrl, queryString] = resolvedUrl.split('?');
+  return `${baseUrl}/${response.data.fileId}/content${queryString ? `?${queryString}` : ''}`;
+}
+
+function insertImageToEditor(url: string, alt: string) {
+  if (!editor.value) {
+    return;
+  }
+
+  switch (contentType) {
+    case 'markdown':
+      editor.value.chain().focus().insertContent(`![${alt}](${url})`).run();
+      break;
+    default:
+      editor.value.chain().focus().setImage({ src: url, alt }).run();
+  }
+}
+
+function insertFileToEditor(url: string, fileName: string) {
+  if (!editor.value) {
+    return;
+  }
+
+  switch (contentType) {
+    case 'markdown':
+      editor.value.chain().focus().insertContent(`[${fileName}](${url})`).run();
+      break;
+    default:
+      editor.value
+        .chain()
+        .focus()
+        .insertContent(`<a href="${url}" target="_blank" rel="noopener noreferrer">${fileName}</a>`)
+        .run();
+  }
+}
+
+function showToastError(message: string) {
+  if (toast != null) {
+    // @ts-ignore
+    toast.error(message);
+  }
+}
+
+async function onImageFileSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) {
+    return;
+  }
+
+  try {
+    if (!validateSelectedFile(file, true)) {
+      return;
+    }
+    const url = await uploadFile(file);
+    insertImageToEditor(url, file.name);
+  } catch (error: any) {
+    console.error('Error uploading image:', error);
+    showToastError(error?.message || 'Nie udalo sie przeslac obrazu');
+  } finally {
+    clearInputValue(input);
+  }
+}
+
+async function onAttachmentFileSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) {
+    return;
+  }
+
+  try {
+    if (!validateSelectedFile(file, false)) {
+      return;
+    }
+    const url = await uploadFile(file);
+    insertFileToEditor(url, file.name);
+  } catch (error: any) {
+    console.error('Error uploading file:', error);
+    showToastError(error?.message || 'Nie udalo sie przeslac pliku');
+  } finally {
+    clearInputValue(input);
+  }
+}
 </script>
 
 <style lang="scss" scoped>
