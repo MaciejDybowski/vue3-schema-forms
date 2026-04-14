@@ -44,7 +44,11 @@ function getTextEditor(canvas: HTMLElement) {
 
 const TEXT_EDITOR_UPLOAD_MOCK = [
   http.post('/api/v1/features/:menuFeatureId/files', async () => {
-    return HttpResponse.json({ fileId: 'text-editor-file-id' });
+    return HttpResponse.json({
+      fileId: 'text-editor-file-id',
+      dataId: 'product-data-001',
+      sign: 'text-editor-sign',
+    });
   }),
 ];
 

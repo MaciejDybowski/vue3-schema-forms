@@ -84,16 +84,22 @@ import { toast } from '@/main';
 import { EngineTextEditorField } from '@/types/engine/controls';
 
 interface UploadedFileResponse {
-  fileId: string;
+  fileId: string | number;
+  dataId?: string;
+  lastModifiedAt?: string;
+  sign?: string;
+  signature?: string;
+  signedToken?: string;
 }
 
 interface UploadedFileResult {
   fileId: string;
   contentUrl: string;
+  fileName: string;
+  dataId?: string;
+  lastModifiedAt?: string;
+  sign?: string;
 }
-
-const IMAGE_PREVIEW_SRC_TEMPLATE =
-  '/api/v1/features/{menuFeatureId}/images/{imageId}/1SD123!@#jaosdijas?Workspace-Id={workspaceId}&dataId={dataId}&width={width}&height={height}&lastModifiedAt={lastModifiedAt}';
 
 const { bindRules, rules, requiredInputClass } = useRules();
 const { getValue, setValue } = useFormModel();
@@ -120,8 +126,7 @@ const attachmentInput = ref<HTMLInputElement | null>(null);
 const contentType = schema.contentType || 'html';
 const idReference = schema.idQueryParamName || 'id';
 const uploadFileUrl =
-  schema.url ||
-  `/api/v1/features/{menuFeatureId}/files?dataId={dataId}&temporary=false&filePath=${schema.key}`;
+  schema.url || `/api/v1/features/{menuFeatureId}/files?dataId={dataId}&temporary=false`;
 
 const imageAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(true)));
 const fileAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(false)));
@@ -311,11 +316,17 @@ function currentEntityId(): string | null {
 }
 
 function resolveFeatureId(): string {
-  return String(schema.options?.context?.menuFeatureId || 'unknown-feature-id');
+  return String(schema.options?.context?.menuFeatureId || '');
 }
 
 function resolveWorkspaceId(): string {
-  return String(schema.options?.context?.workspaceId || 'pricing');
+  const fromContext = String(schema.options?.context?.workspaceId || '');
+  if (fromContext) {
+    return fromContext;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  return String(params.get('Workspace-Id') || params.get('workspaceId') || '');
 }
 
 function resolveImageDimensions(): { width: string; height: string } {
@@ -332,15 +343,6 @@ function resolveImageDimensions(): { width: string; height: string } {
     width: String(width),
     height: String(height),
   };
-}
-
-function resolveImageSign(): string {
-  return String(
-    getValueByPath(model, 'product.imageSignature') ||
-      getValueByPath(model, 'product.mainImage.sign') ||
-      getValueByPath(model, 'product.mainImage.imageSignature') ||
-      '',
-  );
 }
 
 function clearInputValue(input: HTMLInputElement | null) {
@@ -372,72 +374,80 @@ function validateSelectedFile(file: File, isImage: boolean): boolean {
 
 async function uploadFile(file: File): Promise<UploadedFileResult> {
   const entityId = currentEntityId();
-  const resolvedUrl = uploadFileUrl
+  const resolvedTemplate = uploadFileUrl
     .replace('{menuFeatureId}', resolveFeatureId())
     .replace('{dataId}', String(entityId || ''));
+
+  const [baseUrl, queryString] = resolvedTemplate.split('?');
+  const params = new URLSearchParams(queryString || '');
+  params.set('filePath', file.name);
+  const resolvedUrl = `${baseUrl}?${params.toString()}`;
 
   const formData = new FormData();
   formData.append('file', file);
   const response = await axios.post<UploadedFileResponse>(resolvedUrl, formData);
+  const responseFileId = String(response.data.fileId);
+  const contentUrl = `${baseUrl}/${encodePathSegment(responseFileId)}/content?${params.toString()}`;
 
-  const [baseUrl, queryString] = resolvedUrl.split('?');
   return {
-    fileId: response.data.fileId,
-    contentUrl: `${baseUrl}/${response.data.fileId}/content${queryString ? `?${queryString}` : ''}`,
+    fileId: responseFileId,
+    contentUrl,
+    fileName: file.name,
+    dataId: response.data.dataId,
+    lastModifiedAt: response.data.lastModifiedAt,
+    sign: response.data.sign || response.data.signature || response.data.signedToken,
   };
 }
 
-function getValueByPath(source: unknown, path: string): unknown {
-  if (!source || !path) {
-    return undefined;
+
+function encodePathSegment(value: string): string {
+  return encodeURIComponent(value);
+}
+
+async function buildImagePreviewUrl(uploadedFile: UploadedFileResult): Promise<string> {
+  const dimensions = resolveImageDimensions();
+  const dataId = String(uploadedFile.dataId || currentEntityId());
+  const imageId = String(uploadedFile.fileId || '');
+  const menuFeatureId = resolveFeatureId();
+  const workspaceId = resolveWorkspaceId();
+  const lastModifiedAt = uploadedFile.lastModifiedAt || '';
+  const sign = String(uploadedFile.sign || '');
+
+  if (!menuFeatureId || !workspaceId || !imageId || !sign) {
+    console.debug('[TextEditor] missing params for image sign', {
+      menuFeatureId,
+      workspaceId,
+      dataId,
+      imageId,
+      sign,
+      uploadedFile,
+    });
+    throw new Error('Brak poprawnego podpisu URL dla obrazu (backend nie zwrocil sign)');
   }
 
-  return path.split('.').reduce((acc: any, segment: string) => {
-    if (acc == null) {
-      return undefined;
-    }
-    return acc[segment];
-  }, source);
-}
-
-function hasUnresolvedTemplateTokens(value: string): boolean {
-  return /\{[^{}]+\}/.test(value);
-}
-
-function buildImagePreviewUrl(fileId: string, fallbackUrl: string): string {
-  const entityId = currentEntityId();
-  const dimensions = resolveImageDimensions();
-  const dataIdFromModel = getValueByPath(model, 'product.mainImage.dataId');
-  const dataId = String(dataIdFromModel || entityId || '');
-  const runtimeValues: Record<string, string> = {
+  console.debug('[TextEditor] buildImagePreviewUrl', {
+    fileName: uploadedFile.fileName,
+    sign,
+    imageId,
     dataId,
-    id: String(entityId || ''),
-    menuFeatureId: resolveFeatureId(),
-    workspaceId: resolveWorkspaceId(),
-    imageId: fileId,
-    sign: resolveImageSign(),
-    width: dimensions.width,
-    height: dimensions.height,
-    lastModifiedAt: String(getValueByPath(model, 'product.mainImage.lastModifiedAt') || ''),
-  };
-
-  const resolvedTemplate = IMAGE_PREVIEW_SRC_TEMPLATE.replace(/\{([^{}]+)\}/g, (_, rawToken) => {
-    const token = String(rawToken).trim();
-    const runtimeValue = runtimeValues[token];
-    if (runtimeValue !== undefined) {
-      return runtimeValue;
-    }
-
-    const modelValue = getValueByPath(model, token);
-    if (modelValue === undefined || modelValue === null || modelValue === '') {
-      return `{${token}}`;
-    }
-
-    return String(modelValue);
+    menuFeatureId,
+    workspaceId,
   });
 
-  return hasUnresolvedTemplateTokens(resolvedTemplate) ? fallbackUrl : resolvedTemplate;
+
+  const params = new URLSearchParams();
+  params.set('Workspace-Id', workspaceId);
+  // `dataId` może być pusty - backend mógł podpisać payload z pustą wartością.
+  params.set('dataId', dataId);
+  //params.set('width', dimensions.width);
+  //params.set('height', dimensions.height);
+  /*if (lastModifiedAt) {
+    params.set('lastModifiedAt', lastModifiedAt);
+  }*/
+
+  return `/api/v1/features/${encodePathSegment(menuFeatureId)}/images/${encodePathSegment(imageId)}/${encodePathSegment(sign)}?${params.toString()}`;
 }
+
 
 function insertImageToEditor(url: string, alt: string) {
   if (!editor.value) {
@@ -490,7 +500,7 @@ async function onImageFileSelected(event: Event) {
       return;
     }
     const uploadedFile = await uploadFile(file);
-    const imagePreviewUrl = buildImagePreviewUrl(uploadedFile.fileId, uploadedFile.contentUrl);
+    const imagePreviewUrl = await buildImagePreviewUrl(uploadedFile);
     insertImageToEditor(imagePreviewUrl, file.name);
   } catch (error: any) {
     console.error('Error uploading image:', error);
