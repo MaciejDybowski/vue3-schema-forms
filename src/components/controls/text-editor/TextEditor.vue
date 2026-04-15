@@ -87,9 +87,6 @@ interface UploadedFileResponse {
   fileId: string | number;
   dataId?: string;
   lastModifiedAt?: string;
-  sign?: string;
-  signature?: string;
-  signedToken?: string;
 }
 
 interface UploadedFileResult {
@@ -98,7 +95,6 @@ interface UploadedFileResult {
   fileName: string;
   dataId?: string;
   lastModifiedAt?: string;
-  sign?: string;
 }
 
 const { bindRules, rules, requiredInputClass } = useRules();
@@ -127,6 +123,7 @@ const contentType = schema.contentType || 'html';
 const idReference = schema.idQueryParamName || 'id';
 const uploadFileUrl =
   schema.url || `/api/v1/features/{menuFeatureId}/files?dataId={dataId}&temporary=false`;
+const imagePreviewUrlTemplate = '/api/v1/features/{menuFeatureId}/images/{imageId}/{sign}';
 
 const imageAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(true)));
 const fileAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(false)));
@@ -395,35 +392,98 @@ async function uploadFile(file: File): Promise<UploadedFileResult> {
     fileName: file.name,
     dataId: response.data.dataId,
     lastModifiedAt: response.data.lastModifiedAt,
-    sign: response.data.sign || response.data.signature || response.data.signedToken,
   };
 }
-
 
 function encodePathSegment(value: string): string {
   return encodeURIComponent(value);
 }
 
+function resolvePresignedSecret(): string {
+  const context = schema.options?.context as Record<string, unknown> | undefined;
+  const candidates = [
+    context?.presignedSecret,
+    context?.['aurea.presigned.secret'],
+    context?.aureaPresignedSecret,
+    context?.presigned_secret,
+    (import.meta as any)?.env?.VITE_AUREA_PRESIGNED_SECRET,
+  ];
+
+  const resolved = candidates.find((candidate) => String(candidate || '').trim().length > 0);
+  return String(resolved || '');
+}
+
+function toBase64Url(bytes: Uint8Array): string {
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+  }
+
+  // Java Base64.getUrlEncoder().encodeToString(...) zostawia padding '='.
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+async function generatePresignedSignature(
+  secretKey: string,
+  menuFeatureId: string,
+  imageId: string,
+  workspaceId: string,
+  dataId: string,
+): Promise<string> {
+  const payload = [menuFeatureId, imageId, workspaceId, dataId].join('|');
+  const encoder = new TextEncoder();
+  const importedKey = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secretKey),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+
+  const hmacBuffer = await crypto.subtle.sign('HMAC', importedKey, encoder.encode(payload));
+  const firstBase64Url = toBase64Url(new Uint8Array(hmacBuffer));
+  return toBase64Url(encoder.encode(firstBase64Url));
+}
+
 async function buildImagePreviewUrl(uploadedFile: UploadedFileResult): Promise<string> {
   const dimensions = resolveImageDimensions();
-  const dataId = String(uploadedFile.dataId || currentEntityId());
+  const dataId = String(uploadedFile.dataId || currentEntityId() || '');
   const imageId = String(uploadedFile.fileId || '');
   const menuFeatureId = resolveFeatureId();
   const workspaceId = resolveWorkspaceId();
-  const lastModifiedAt = uploadedFile.lastModifiedAt || '';
-  const sign = String(uploadedFile.sign || '');
+  const secretKey = 'jakiś_losowy_dlugi_ciag_znakow_i_trochę_bez_sensu_!!!!1111_aafdsfsrewhd';
 
-  if (!menuFeatureId || !workspaceId || !imageId || !sign) {
+  const lastModifiedAt = uploadedFile.lastModifiedAt || '';
+
+  const missing: string[] = [];
+  if (!menuFeatureId) missing.push('menuFeatureId');
+  if (!workspaceId) missing.push('workspaceId');
+  if (!imageId) missing.push('imageId');
+  if (!secretKey) missing.push('secretKey(presignedSecret|aurea.presigned.secret)');
+  if (missing.length > 0) {
     console.debug('[TextEditor] missing params for image sign', {
       menuFeatureId,
       workspaceId,
       dataId,
       imageId,
-      sign,
+      hasPresignedSecret: !!secretKey,
+      missing,
       uploadedFile,
+      contextKeys: Object.keys(
+        (schema.options?.context as Record<string, unknown> | undefined) || {},
+      ),
     });
-    throw new Error('Brak poprawnego podpisu URL dla obrazu (backend nie zwrocil sign)');
+    throw new Error(`Brak danych do wygenerowania podpisu URL obrazu: ${missing.join(', ')}`);
   }
+
+  const sign = await generatePresignedSignature(
+    secretKey,
+    menuFeatureId,
+    imageId,
+    workspaceId,
+    dataId,
+  );
 
   console.debug('[TextEditor] buildImagePreviewUrl', {
     fileName: uploadedFile.fileName,
@@ -434,20 +494,22 @@ async function buildImagePreviewUrl(uploadedFile: UploadedFileResult): Promise<s
     workspaceId,
   });
 
-
   const params = new URLSearchParams();
   params.set('Workspace-Id', workspaceId);
-  // `dataId` może być pusty - backend mógł podpisać payload z pustą wartością.
   params.set('dataId', dataId);
-  //params.set('width', dimensions.width);
-  //params.set('height', dimensions.height);
-  /*if (lastModifiedAt) {
+  params.set('width', dimensions.width);
+  params.set('height', dimensions.height);
+  if (lastModifiedAt) {
     params.set('lastModifiedAt', lastModifiedAt);
-  }*/
+  }
 
-  return `/api/v1/features/${encodePathSegment(menuFeatureId)}/images/${encodePathSegment(imageId)}/${encodePathSegment(sign)}?${params.toString()}`;
+  const path = imagePreviewUrlTemplate
+    .replace('{menuFeatureId}', encodePathSegment(menuFeatureId))
+    .replace('{imageId}', encodePathSegment(imageId))
+    .replace('{sign}', encodePathSegment(sign));
+
+  return `${path}?${params.toString()}`;
 }
-
 
 function insertImageToEditor(url: string, alt: string) {
   if (!editor.value) {
