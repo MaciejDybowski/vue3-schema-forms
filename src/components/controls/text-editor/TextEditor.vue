@@ -65,6 +65,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useEventBus } from '@vueuse/core';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
@@ -117,11 +118,14 @@ const attachmentInput = ref<HTMLInputElement | null>(null);
 const createdObjectUrls = new Set<string>();
 const objectUrlToContentUrl = new Map<string, string>();
 const contentUrlToObjectUrl = new Map<string, string>();
+const pendingDeleteFileIds = new Set<string>();
+const trackedFileIds = ref(new Set<string>());
 
 const contentType = schema.contentType || 'html';
 const idReference = schema.idQueryParamName || 'id';
 const uploadFileUrl =
   schema.url || `/api/v1/features/{menuFeatureId}/files?dataId={dataId}&temporary=false`;
+const actionHandlerEventBus = useEventBus<string>('form-action');
 
 const imageAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(true)));
 const fileAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(false)));
@@ -195,19 +199,28 @@ const editor = useEditor({
   content: localModel.value,
   onUpdate({ editor }) {
     isUpdatingFromEditor.value = true;
+    let nextModelValue: any;
     switch (contentType) {
       case 'markdown':
-        localModel.value = mapBlobUrlsToContentUrlsInString(editor.getMarkdown());
+        nextModelValue = mapBlobUrlsToContentUrlsInString(editor.getMarkdown());
+        localModel.value = nextModelValue;
         break;
       case 'html':
-        localModel.value = mapBlobUrlsToContentUrlsInString(editor.getHTML());
+        nextModelValue = mapBlobUrlsToContentUrlsInString(editor.getHTML());
+        localModel.value = nextModelValue;
         break;
       case 'json':
-        localModel.value = mapBlobUrlsToContentUrlsInJson(editor.getJSON());
+        nextModelValue = mapBlobUrlsToContentUrlsInJson(editor.getJSON());
+        localModel.value = nextModelValue;
         break;
       default:
         console.warn(`Unknown contentType = ${contentType}`);
     }
+
+    if (nextModelValue != null) {
+      void syncDeletedAttachments(nextModelValue);
+    }
+
     isUpdatingFromEditor.value = false;
   },
 });
@@ -310,6 +323,7 @@ onMounted(async () => {
   });
 
   await rehydrateImageBlobsFromModel();
+  trackedFileIds.value = extractReferencedFileIds(localModel.value);
 
   editorLoading.value = false;
 });
@@ -353,6 +367,10 @@ function resolveFeatureId(): string {
   return String(schema.options?.context?.menuFeatureId || '');
 }
 
+function refreshAttachments() {
+  actionHandlerEventBus.emit('form-action', { code: 'refresh-attachments' });
+}
+
 function clearInputValue(input: HTMLInputElement | null) {
   if (input) {
     input.value = '';
@@ -393,15 +411,19 @@ async function uploadFile(file: File): Promise<UploadedFileResult> {
 
   const formData = new FormData();
   formData.append('file', file);
-  const response = await axios.post<UploadedFileResponse>(resolvedUrl, formData);
-  const responseFileId = String(response.data.fileId);
-  const contentUrl = `${baseUrl}/${encodePathSegment(responseFileId)}/content?${params.toString()}`;
+  try {
+    const response = await axios.post<UploadedFileResponse>(resolvedUrl, formData);
+    const responseFileId = String(response.data.fileId);
+    const contentUrl = `${baseUrl}/${encodePathSegment(responseFileId)}/content?${params.toString()}`;
 
-  return {
-    fileId: responseFileId,
-    contentUrl,
-    fileName: file.name,
-  };
+    return {
+      fileId: responseFileId,
+      contentUrl,
+      fileName: file.name,
+    };
+  } finally {
+    refreshAttachments();
+  }
 }
 
 function encodePathSegment(value: string): string {
@@ -421,6 +443,149 @@ function isPersistedImageContentUrl(value: string): boolean {
 function normalizeContentUrl(value: string): string {
   const parsed = new URL(value, window.location.origin);
   return `${parsed.pathname}${parsed.search}`;
+}
+
+function parseFileIdFromContentUrl(value: string): string | null {
+  try {
+    const parsed = new URL(value, window.location.origin);
+    const match = parsed.pathname.match(/\/files\/([^/]+)\/content$/);
+    if (!match?.[1]) {
+      return null;
+    }
+    return decodeURIComponent(match[1]);
+  } catch (_error) {
+    return null;
+  }
+}
+
+function extractPersistedFileUrlsFromHtml(html: string): string[] {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  const values = new Set<string>();
+
+  doc.querySelectorAll('img[src], a[href]').forEach((node) => {
+    const attr = node.tagName.toLowerCase() === 'a' ? 'href' : 'src';
+    const value = node.getAttribute(attr) || '';
+    if (isPersistedImageContentUrl(value)) {
+      values.add(normalizeContentUrl(value));
+    }
+  });
+
+  return Array.from(values);
+}
+
+function extractPersistedFileUrlsFromMarkdown(markdown: string): string[] {
+  const values = new Set<string>();
+  const regex = /(?:!\[[^]]*]|\[[^]]*])\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+  let match = regex.exec(markdown);
+
+  while (match) {
+    const value = match[1] || '';
+    if (isPersistedImageContentUrl(value)) {
+      values.add(normalizeContentUrl(value));
+    }
+    match = regex.exec(markdown);
+  }
+
+  return Array.from(values);
+}
+
+function extractPersistedFileUrlsFromJson(node: any, values: Set<string>) {
+  if (Array.isArray(node)) {
+    for (const item of node) {
+      extractPersistedFileUrlsFromJson(item, values);
+    }
+    return;
+  }
+
+  if (!node || typeof node !== 'object') {
+    return;
+  }
+
+  for (const [key, value] of Object.entries(node)) {
+    const isUrlField = key === 'src' || key === 'href' || key === 'url';
+    if (isUrlField && typeof value === 'string' && isPersistedImageContentUrl(value)) {
+      values.add(normalizeContentUrl(value));
+      continue;
+    }
+    extractPersistedFileUrlsFromJson(value, values);
+  }
+}
+
+function extractReferencedFileIds(content: any): Set<string> {
+  if (content == null) {
+    return new Set<string>();
+  }
+
+  let urls: string[] = [];
+  if (contentType === 'html') {
+    urls = extractPersistedFileUrlsFromHtml(String(content));
+  } else if (contentType === 'markdown') {
+    urls = extractPersistedFileUrlsFromMarkdown(String(content));
+  } else if (contentType === 'json') {
+    const values = new Set<string>();
+    extractPersistedFileUrlsFromJson(content, values);
+    urls = Array.from(values);
+  }
+
+  const ids = new Set<string>();
+  for (const url of urls) {
+    const fileId = parseFileIdFromContentUrl(url);
+    if (fileId) {
+      ids.add(fileId);
+    }
+  }
+
+  return ids;
+}
+
+async function deleteFileById(fileId: string) {
+  if (!fileId || pendingDeleteFileIds.has(fileId)) {
+    return;
+  }
+
+  const menuFeatureId = resolveFeatureId();
+  if (!menuFeatureId) {
+    throw new Error('Brak menuFeatureId dla usuwania pliku');
+  }
+
+  const dataId = currentEntityId();
+  if (!dataId) {
+    throw new Error('Brak dataId dla usuwania pliku');
+  }
+
+  pendingDeleteFileIds.add(fileId);
+  const queryParams = new URLSearchParams();
+  queryParams.set('dataId', dataId);
+  const deleteUrl = `/api/v1/features/${encodePathSegment(menuFeatureId)}/files/${encodePathSegment(fileId)}?${queryParams.toString()}`;
+
+  try {
+    await axios.delete(deleteUrl);
+  } finally {
+    pendingDeleteFileIds.delete(fileId);
+    refreshAttachments();
+  }
+}
+
+async function syncDeletedAttachments(nextContent: any) {
+  const nextIds = extractReferencedFileIds(nextContent);
+  const removedIds = Array.from(trackedFileIds.value).filter((id) => !nextIds.has(id));
+
+  trackedFileIds.value = nextIds;
+  if (removedIds.length === 0) {
+    return;
+  }
+
+  await Promise.all(
+    removedIds.map(async (fileId) => {
+      try {
+        await deleteFileById(fileId);
+      } catch (error) {
+        console.error('Error deleting removed attachment:', error);
+        showToastError((error as any)?.message || 'Nie udalo sie usunac pliku');
+      }
+    }),
+  );
 }
 
 function mapBlobUrlsToContentUrlsInString(value: string): string {
@@ -463,7 +628,7 @@ function extractImageContentUrlsFromHtml(html: string): string[] {
 
 function extractImageContentUrlsFromMarkdown(markdown: string): string[] {
   const values = new Set<string>();
-  const regex = /!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+  const regex = /!\[[^]]*]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
   let match = regex.exec(markdown);
   while (match) {
     const url = match[1] || '';
@@ -545,9 +710,14 @@ async function toBlobObjectUrl(contentUrl: string): Promise<string> {
     return existing;
   }
 
-  const response = await axios.get<Blob>(normalizedUrl, {
-    responseType: 'blob',
-  });
+  let response: { data: Blob };
+  try {
+    response = await axios.get<Blob>(normalizedUrl, {
+      responseType: 'blob',
+    });
+  } finally {
+    refreshAttachments();
+  }
 
   const objectUrl = URL.createObjectURL(response.data);
   createdObjectUrls.add(objectUrl);
@@ -623,9 +793,14 @@ async function fetchImageBlobUrl(uploadedFile: UploadedFileResult): Promise<stri
   }
 
   const contentUrl = buildFileContentUrl(uploadedFile.fileId);
-  const response = await axios.get<Blob>(contentUrl, {
-    responseType: 'blob',
-  });
+  let response: { data: Blob };
+  try {
+    response = await axios.get<Blob>(contentUrl, {
+      responseType: 'blob',
+    });
+  } finally {
+    refreshAttachments();
+  }
 
   const objectUrl = URL.createObjectURL(response.data);
   createdObjectUrls.add(objectUrl);
