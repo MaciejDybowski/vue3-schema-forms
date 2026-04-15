@@ -33,6 +33,10 @@
                 <editor-content
                   :editor="editor"
                   class="vue-forms-text-editor"
+                  @click.capture="onEditorContentClickCapture"
+                  @auxclick.capture="onEditorContentClickCapture"
+                  @mousedown.capture="onEditorContentPointerCapture"
+                  @keydown.capture="onEditorContentKeydownCapture"
                 />
               </template>
               <template v-else>
@@ -94,6 +98,13 @@ interface UploadedFileResult {
   fileName: string;
 }
 
+interface ResolvedAttachmentTarget {
+  downloadUrl: string;
+  fallbackFileName?: string;
+}
+
+const ATTACHMENT_HASH_PREFIX = '#attachment-file=';
+
 const { bindRules, rules, requiredInputClass } = useRules();
 const { getValue, setValue } = useFormModel();
 const { bindProps, fieldProps } = useProps();
@@ -120,6 +131,7 @@ const objectUrlToContentUrl = new Map<string, string>();
 const contentUrlToObjectUrl = new Map<string, string>();
 const pendingDeleteFileIds = new Set<string>();
 const trackedFileIds = ref(new Set<string>());
+let editorDomElement: HTMLElement | null = null;
 
 const contentType = schema.contentType || 'html';
 const idReference = schema.idQueryParamName || 'id';
@@ -180,11 +192,19 @@ const editor = useEditor({
     attributes: {
       class: 'vue-forms-text-editor',
     },
+    handleDOMEvents: {
+      click: (_view, event) => {
+        return handleAttachmentLinkClick(event);
+      },
+    },
   },
   extensions: [
     StarterKit.configure({}),
     Link.configure({
-      openOnClick: true,
+      openOnClick: false,
+      HTMLAttributes: {
+        target: null,
+      },
     }),
     Image,
     Markdown,
@@ -325,10 +345,26 @@ onMounted(async () => {
   await rehydrateImageBlobsFromModel();
   trackedFileIds.value = extractReferencedFileIds(localModel.value);
 
+  editorDomElement = editor.value?.view?.dom || null;
+  if (editorDomElement) {
+    editorDomElement.addEventListener('mousedown', onNativeEditorClickCapture, true);
+    editorDomElement.addEventListener('click', onNativeEditorClickCapture, true);
+    editorDomElement.addEventListener('auxclick', onNativeEditorClickCapture, true);
+    editorDomElement.addEventListener('keydown', onNativeEditorKeydownCapture, true);
+  }
+
   editorLoading.value = false;
 });
 
 onBeforeUnmount(() => {
+  if (editorDomElement) {
+    editorDomElement.removeEventListener('mousedown', onNativeEditorClickCapture, true);
+    editorDomElement.removeEventListener('click', onNativeEditorClickCapture, true);
+    editorDomElement.removeEventListener('auxclick', onNativeEditorClickCapture, true);
+    editorDomElement.removeEventListener('keydown', onNativeEditorKeydownCapture, true);
+    editorDomElement = null;
+  }
+
   for (const objectUrl of createdObjectUrls) {
     URL.revokeObjectURL(objectUrl);
   }
@@ -446,15 +482,220 @@ function normalizeContentUrl(value: string): string {
 }
 
 function parseFileIdFromContentUrl(value: string): string | null {
+  const hashId = parseFileIdFromAttachmentHash(value);
+  if (hashId) {
+    return hashId;
+  }
+
+  const rawMatch = value.match(/\/files\/([^/?#]+)\/content(?:[?#]|$)/);
+  if (rawMatch?.[1]) {
+    return decodeUrlSegmentSafely(rawMatch[1]);
+  }
+
   try {
     const parsed = new URL(value, window.location.origin);
     const match = parsed.pathname.match(/\/files\/([^/]+)\/content$/);
     if (!match?.[1]) {
       return null;
     }
-    return decodeURIComponent(match[1]);
+    return decodeUrlSegmentSafely(match[1]);
+  } catch (_error) {
+    return parseFileIdFromAttachmentHash(value);
+  }
+}
+
+function decodeUrlSegmentSafely(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch (_error) {
+    return value;
+  }
+}
+
+function isAttachmentLinkCandidate(value: string): boolean {
+  if (!value) {
+    return false;
+  }
+
+  return value.includes('/files/') && value.includes('/content');
+}
+
+function parseFileIdFromAttachmentHash(value: string): string | null {
+  const normalized = value.startsWith('#') ? value : `#${value}`;
+  if (!normalized.startsWith(ATTACHMENT_HASH_PREFIX)) {
+    return null;
+  }
+
+  const encodedId = normalized.slice(ATTACHMENT_HASH_PREFIX.length);
+  if (!encodedId) {
+    return null;
+  }
+
+  try {
+    return decodeURIComponent(encodedId);
   } catch (_error) {
     return null;
+  }
+}
+
+function stopEventNavigation(event: Event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const immediateStop = (event as Event & { stopImmediatePropagation?: () => void })
+    .stopImmediatePropagation;
+  if (typeof immediateStop === 'function') {
+    immediateStop.call(event);
+  }
+}
+
+function escapeHtmlText(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function buildAttachmentHtml(url: string, fileName: string): string {
+  const safeLabel = escapeHtmlText(fileName);
+  const safeHref = escapeHtmlText(buildAttachmentHref(url));
+  return `<a href="${safeHref}" class="vue-forms-attachment-link" rel="noopener noreferrer">${safeLabel}</a>`;
+}
+
+function buildAttachmentHref(contentUrl: string): string {
+  const fileId = parseFileIdFromContentUrl(contentUrl);
+  if (!fileId) {
+    return contentUrl;
+  }
+  return `${ATTACHMENT_HASH_PREFIX}${encodeURIComponent(fileId)}`;
+}
+
+function handleAttachmentLinkClick(event: Event): boolean {
+  const alreadyHandled = (event as Event & { __attachmentHandled?: boolean }).__attachmentHandled;
+  if (alreadyHandled) {
+    return true;
+  }
+
+  const attachmentTarget = resolvePersistedAttachmentTarget(event);
+  if (!attachmentTarget) {
+    return false;
+  }
+
+  stopEventNavigation(event);
+  (event as Event & { __attachmentHandled?: boolean }).__attachmentHandled = true;
+
+  void downloadAttachmentViaAxios(
+    attachmentTarget.downloadUrl,
+    attachmentTarget.fallbackFileName,
+  );
+  return true;
+}
+
+function onEditorContentClickCapture(event: MouseEvent) {
+  handleAttachmentLinkClick(event);
+}
+
+function onEditorContentPointerCapture(event: MouseEvent) {
+  handleAttachmentLinkClick(event);
+}
+
+function onEditorContentKeydownCapture(event: KeyboardEvent) {
+  if (event.key === 'Enter') {
+    handleAttachmentLinkClick(event);
+  }
+}
+
+function onNativeEditorClickCapture(event: Event) {
+  handleAttachmentLinkClick(event);
+}
+
+function onNativeEditorKeydownCapture(event: Event) {
+  if (event instanceof KeyboardEvent && event.key === 'Enter') {
+    handleAttachmentLinkClick(event);
+  }
+}
+
+function resolvePersistedAttachmentTarget(event: Event): ResolvedAttachmentTarget | null {
+  const targetNode = event.target;
+  if (!(targetNode instanceof Node)) {
+    return null;
+  }
+
+  const element = targetNode instanceof Element ? targetNode : targetNode.parentElement;
+  if (!element) {
+    return null;
+  }
+
+  const link = element.closest('a[href]');
+  if (!(link instanceof HTMLAnchorElement)) {
+    return null;
+  }
+
+  const href = link.getAttribute('href') || link.href;
+  if (!isAttachmentLinkCandidate(href) && !parseFileIdFromAttachmentHash(href)) {
+    return null;
+  }
+
+  const fileId = parseFileIdFromContentUrl(href);
+  if (!fileId) {
+    return null;
+  }
+
+  link.removeAttribute('target');
+  link.target = '_self';
+
+  const downloadUrl = isPersistedImageContentUrl(href) ? href : buildFileContentUrl(fileId);
+  const fallbackFileName = link.textContent?.trim() || undefined;
+  return { downloadUrl, fallbackFileName };
+
+}
+
+function resolveFileNameFromContentUrl(url: string, fallback?: string): string {
+  try {
+    const parsed = new URL(url, window.location.origin);
+    const filePath = parsed.searchParams.get('filePath');
+    if (filePath && filePath.trim()) {
+      return filePath;
+    }
+  } catch (_error) {
+    // Fallback handled below.
+  }
+
+  if (fallback && fallback.trim()) {
+    return fallback.trim();
+  }
+
+  const fileId = parseFileIdFromContentUrl(url);
+  return fileId ? `attachment-${fileId}` : 'attachment';
+}
+
+function triggerBlobDownload(blob: Blob, fileName: string) {
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = objectUrl;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+}
+
+async function downloadAttachmentViaAxios(url: string, fallbackFileName?: string) {
+  const normalizedUrl = normalizeContentUrl(url);
+  try {
+    const response = await axios.get<Blob>(normalizedUrl, {
+      responseType: 'blob',
+    });
+
+    const fileName = resolveFileNameFromContentUrl(url, fallbackFileName);
+    triggerBlobDownload(response.data, fileName);
+  } catch (error: any) {
+    console.error('Error downloading attachment:', error);
+    showToastError(error?.message || 'Nie udalo sie pobrac pliku');
+  } finally {
+    refreshAttachments();
   }
 }
 
@@ -468,6 +709,10 @@ function extractPersistedFileUrlsFromHtml(html: string): string[] {
     const value = node.getAttribute(attr) || '';
     if (isPersistedImageContentUrl(value)) {
       values.add(normalizeContentUrl(value));
+      return;
+    }
+    if (parseFileIdFromContentUrl(value)) {
+      values.add(value);
     }
   });
 
@@ -483,6 +728,8 @@ function extractPersistedFileUrlsFromMarkdown(markdown: string): string[] {
     const value = match[1] || '';
     if (isPersistedImageContentUrl(value)) {
       values.add(normalizeContentUrl(value));
+    } else if (parseFileIdFromContentUrl(value)) {
+      values.add(value);
     }
     match = regex.exec(markdown);
   }
@@ -506,6 +753,10 @@ function extractPersistedFileUrlsFromJson(node: any, values: Set<string>) {
     const isUrlField = key === 'src' || key === 'href' || key === 'url';
     if (isUrlField && typeof value === 'string' && isPersistedImageContentUrl(value)) {
       values.add(normalizeContentUrl(value));
+      continue;
+    }
+    if (isUrlField && typeof value === 'string' && parseFileIdFromContentUrl(value)) {
+      values.add(value);
       continue;
     }
     extractPersistedFileUrlsFromJson(value, values);
@@ -844,7 +1095,7 @@ function insertFileToEditor(url: string, fileName: string) {
       editor.value
         .chain()
         .focus()
-        .insertContent(`<a href="${url}" target="_blank" rel="noopener noreferrer">${fileName}</a>`)
+        .insertContent(buildAttachmentHtml(url, fileName))
         .run();
   }
 }
@@ -970,6 +1221,12 @@ async function onAttachmentFileSelected(event: Event) {
   strong {
     font-weight: 600;
   }
+}
+
+:deep(.vue-forms-text-editor .vue-forms-attachment-link) {
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 :deep(.vue-forms-text-editor table) {
