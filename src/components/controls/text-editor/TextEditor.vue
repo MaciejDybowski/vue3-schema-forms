@@ -85,16 +85,12 @@ import { EngineTextEditorField } from '@/types/engine/controls';
 
 interface UploadedFileResponse {
   fileId: string | number;
-  dataId?: string;
-  lastModifiedAt?: string;
 }
 
 interface UploadedFileResult {
   fileId: string;
   contentUrl: string;
   fileName: string;
-  dataId?: string;
-  lastModifiedAt?: string;
 }
 
 const { bindRules, rules, requiredInputClass } = useRules();
@@ -118,12 +114,14 @@ const showSource = ref(false);
 const sourceContent = ref('');
 const imageInput = ref<HTMLInputElement | null>(null);
 const attachmentInput = ref<HTMLInputElement | null>(null);
+const createdObjectUrls = new Set<string>();
+const objectUrlToContentUrl = new Map<string, string>();
+const contentUrlToObjectUrl = new Map<string, string>();
 
 const contentType = schema.contentType || 'html';
 const idReference = schema.idQueryParamName || 'id';
 const uploadFileUrl =
   schema.url || `/api/v1/features/{menuFeatureId}/files?dataId={dataId}&temporary=false`;
-const imagePreviewUrlTemplate = '/api/v1/features/{menuFeatureId}/images/{imageId}/{sign}';
 
 const imageAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(true)));
 const fileAccept = computed(() => extensionsToAccept(resolveAllowedExtensions(false)));
@@ -199,13 +197,13 @@ const editor = useEditor({
     isUpdatingFromEditor.value = true;
     switch (contentType) {
       case 'markdown':
-        localModel.value = editor.getMarkdown();
+        localModel.value = mapBlobUrlsToContentUrlsInString(editor.getMarkdown());
         break;
       case 'html':
-        localModel.value = editor.getHTML();
+        localModel.value = mapBlobUrlsToContentUrlsInString(editor.getHTML());
         break;
       case 'json':
-        localModel.value = editor.getJSON();
+        localModel.value = mapBlobUrlsToContentUrlsInJson(editor.getJSON());
         break;
       default:
         console.warn(`Unknown contentType = ${contentType}`);
@@ -217,12 +215,43 @@ const editor = useEditor({
 watch(
   () => localModel.value,
   (newValue) => {
-    if (!isUpdatingFromEditor.value && editor.value && editor.value?.getHTML() !== newValue) {
+    if (
+      !isUpdatingFromEditor.value &&
+      editor.value &&
+      !isEditorContentSyncedWithModel(newValue)
+    ) {
       editor.value.commands.setContent(newValue);
     }
     onChange(schema, model);
   },
 );
+
+function getEditorContentMappedForModel(): any {
+  if (!editor.value) {
+    return null;
+  }
+
+  switch (contentType) {
+    case 'markdown':
+      return mapBlobUrlsToContentUrlsInString(editor.value.getMarkdown());
+    case 'html':
+      return mapBlobUrlsToContentUrlsInString(editor.value.getHTML());
+    case 'json':
+      return mapBlobUrlsToContentUrlsInJson(editor.value.getJSON());
+    default:
+      return editor.value.getHTML();
+  }
+}
+
+function isEditorContentSyncedWithModel(modelValue: any): boolean {
+  const editorMappedValue = getEditorContentMappedForModel();
+
+  if (contentType === 'json') {
+    return JSON.stringify(editorMappedValue) === JSON.stringify(modelValue);
+  }
+
+  return String(editorMappedValue ?? '') === String(modelValue ?? '');
+}
 
 onMounted(async () => {
   editorLoading.value = true;
@@ -280,10 +309,18 @@ onMounted(async () => {
     attachmentInput.value?.click();
   });
 
+  await rehydrateImageBlobsFromModel();
+
   editorLoading.value = false;
 });
 
 onBeforeUnmount(() => {
+  for (const objectUrl of createdObjectUrls) {
+    URL.revokeObjectURL(objectUrl);
+  }
+  createdObjectUrls.clear();
+  objectUrlToContentUrl.clear();
+  contentUrlToObjectUrl.clear();
   editor.value?.destroy();
 });
 
@@ -314,32 +351,6 @@ function currentEntityId(): string | null {
 
 function resolveFeatureId(): string {
   return String(schema.options?.context?.menuFeatureId || '');
-}
-
-function resolveWorkspaceId(): string {
-  const fromContext = String(schema.options?.context?.workspaceId || '');
-  if (fromContext) {
-    return fromContext;
-  }
-
-  const params = new URLSearchParams(window.location.search);
-  return String(params.get('Workspace-Id') || params.get('workspaceId') || '');
-}
-
-function resolveImageDimensions(): { width: string; height: string } {
-  const width =
-    (schema.layout?.props?.width as string | number | undefined) ||
-    (schema.options?.context?.imageWidth as string | number | undefined) ||
-    100;
-  const height =
-    (schema.layout?.props?.height as string | number | undefined) ||
-    (schema.options?.context?.imageHeight as string | number | undefined) ||
-    100;
-
-  return {
-    width: String(width),
-    height: String(height),
-  };
 }
 
 function clearInputValue(input: HTMLInputElement | null) {
@@ -390,8 +401,6 @@ async function uploadFile(file: File): Promise<UploadedFileResult> {
     fileId: responseFileId,
     contentUrl,
     fileName: file.name,
-    dataId: response.data.dataId,
-    lastModifiedAt: response.data.lastModifiedAt,
   };
 }
 
@@ -399,116 +408,238 @@ function encodePathSegment(value: string): string {
   return encodeURIComponent(value);
 }
 
-function resolvePresignedSecret(): string {
-  const context = schema.options?.context as Record<string, unknown> | undefined;
-  const candidates = [
-    context?.presignedSecret,
-    context?.['aurea.presigned.secret'],
-    context?.aureaPresignedSecret,
-    context?.presigned_secret,
-    (import.meta as any)?.env?.VITE_AUREA_PRESIGNED_SECRET,
-  ];
-
-  const resolved = candidates.find((candidate) => String(candidate || '').trim().length > 0);
-  return String(resolved || '');
+function isPersistedImageContentUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value, window.location.origin);
+    const path = parsed.pathname;
+    return path.includes('/api/v1/features/') && path.includes('/files/') && path.endsWith('/content');
+  } catch (_error) {
+    return false;
+  }
 }
 
-function toBase64Url(bytes: Uint8Array): string {
-  let binary = '';
-  const chunkSize = 0x8000;
-  for (let index = 0; index < bytes.length; index += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+function normalizeContentUrl(value: string): string {
+  const parsed = new URL(value, window.location.origin);
+  return `${parsed.pathname}${parsed.search}`;
+}
+
+function mapBlobUrlsToContentUrlsInString(value: string): string {
+  let mapped = value;
+  for (const [objectUrl, contentUrl] of objectUrlToContentUrl.entries()) {
+    mapped = mapped.split(objectUrl).join(contentUrl);
+  }
+  return mapped;
+}
+
+function mapBlobUrlsToContentUrlsInJson(node: any): any {
+  if (typeof node === 'string') {
+    return objectUrlToContentUrl.get(node) || node;
+  }
+  if (Array.isArray(node)) {
+    return node.map((item) => mapBlobUrlsToContentUrlsInJson(item));
+  }
+  if (node && typeof node === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(node)) {
+      result[key] = mapBlobUrlsToContentUrlsInJson(value);
+    }
+    return result;
+  }
+  return node;
+}
+
+function extractImageContentUrlsFromHtml(html: string): string[] {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  const values = new Set<string>();
+  doc.querySelectorAll('img[src]').forEach((node) => {
+    const src = node.getAttribute('src') || '';
+    if (isPersistedImageContentUrl(src)) {
+      values.add(normalizeContentUrl(src));
+    }
+  });
+  return Array.from(values);
+}
+
+function extractImageContentUrlsFromMarkdown(markdown: string): string[] {
+  const values = new Set<string>();
+  const regex = /!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+  let match = regex.exec(markdown);
+  while (match) {
+    const url = match[1] || '';
+    if (isPersistedImageContentUrl(url)) {
+      values.add(normalizeContentUrl(url));
+    }
+    match = regex.exec(markdown);
+  }
+  return Array.from(values);
+}
+
+function extractImageContentUrlsFromJson(node: any, values: Set<string>) {
+  if (Array.isArray(node)) {
+    for (const item of node) {
+      extractImageContentUrlsFromJson(item, values);
+    }
+    return;
   }
 
-  // Java Base64.getUrlEncoder().encodeToString(...) zostawia padding '='.
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_');
+  if (!node || typeof node !== 'object') {
+    return;
+  }
+
+  for (const [key, value] of Object.entries(node)) {
+    if (key === 'src' && typeof value === 'string' && isPersistedImageContentUrl(value)) {
+      values.add(normalizeContentUrl(value));
+      continue;
+    }
+    extractImageContentUrlsFromJson(value, values);
+  }
 }
 
-async function generatePresignedSignature(
-  secretKey: string,
-  menuFeatureId: string,
-  imageId: string,
-  workspaceId: string,
-  dataId: string,
-): Promise<string> {
-  const payload = [menuFeatureId, imageId, workspaceId, dataId].join('|');
-  const encoder = new TextEncoder();
-  const importedKey = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(secretKey),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
+function replaceImageContentUrlsInHtml(html: string, mapping: Map<string, string>): string {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  doc.querySelectorAll('img[src]').forEach((node) => {
+    const src = node.getAttribute('src') || '';
+    if (!isPersistedImageContentUrl(src)) {
+      return;
+    }
+    const mapped = mapping.get(normalizeContentUrl(src));
+    if (mapped) {
+      node.setAttribute('src', mapped);
+    }
+  });
+  return doc.body.innerHTML;
+}
+
+function replaceImageContentUrlsInMarkdown(markdown: string, mapping: Map<string, string>): string {
+  let replaced = markdown;
+  for (const [contentUrl, objectUrl] of mapping.entries()) {
+    replaced = replaced.split(contentUrl).join(objectUrl);
+  }
+  return replaced;
+}
+
+function replaceImageContentUrlsInJson(node: any, mapping: Map<string, string>): any {
+  if (Array.isArray(node)) {
+    return node.map((item) => replaceImageContentUrlsInJson(item, mapping));
+  }
+  if (node && typeof node === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(node)) {
+      if (key === 'src' && typeof value === 'string' && isPersistedImageContentUrl(value)) {
+        result[key] = mapping.get(normalizeContentUrl(value)) || value;
+      } else {
+        result[key] = replaceImageContentUrlsInJson(value, mapping);
+      }
+    }
+    return result;
+  }
+  return node;
+}
+
+async function toBlobObjectUrl(contentUrl: string): Promise<string> {
+  const normalizedUrl = normalizeContentUrl(contentUrl);
+  const existing = contentUrlToObjectUrl.get(normalizedUrl);
+  if (existing) {
+    return existing;
+  }
+
+  const response = await axios.get<Blob>(normalizedUrl, {
+    responseType: 'blob',
+  });
+
+  const objectUrl = URL.createObjectURL(response.data);
+  createdObjectUrls.add(objectUrl);
+  objectUrlToContentUrl.set(objectUrl, normalizedUrl);
+  contentUrlToObjectUrl.set(normalizedUrl, objectUrl);
+  return objectUrl;
+}
+
+async function rehydrateImageBlobsFromModel() {
+  if (!editor.value || localModel.value == null) {
+    return;
+  }
+
+  const currentContent = localModel.value as any;
+  let contentUrls: string[] = [];
+
+  if (contentType === 'html') {
+    contentUrls = extractImageContentUrlsFromHtml(String(currentContent));
+  } else if (contentType === 'markdown') {
+    contentUrls = extractImageContentUrlsFromMarkdown(String(currentContent));
+  } else if (contentType === 'json') {
+    const values = new Set<string>();
+    extractImageContentUrlsFromJson(currentContent, values);
+    contentUrls = Array.from(values);
+  }
+
+  if (contentUrls.length === 0) {
+    return;
+  }
+
+  const mapping = new Map<string, string>();
+  await Promise.all(
+    contentUrls.map(async (url) => {
+      const objectUrl = await toBlobObjectUrl(url);
+      mapping.set(normalizeContentUrl(url), objectUrl);
+    }),
   );
 
-  const hmacBuffer = await crypto.subtle.sign('HMAC', importedKey, encoder.encode(payload));
-  const firstBase64Url = toBase64Url(new Uint8Array(hmacBuffer));
-  return toBase64Url(encoder.encode(firstBase64Url));
+  let hydratedContent: any = currentContent;
+  if (contentType === 'html') {
+    hydratedContent = replaceImageContentUrlsInHtml(String(currentContent), mapping);
+  } else if (contentType === 'markdown') {
+    hydratedContent = replaceImageContentUrlsInMarkdown(String(currentContent), mapping);
+  } else if (contentType === 'json') {
+    hydratedContent = replaceImageContentUrlsInJson(currentContent, mapping);
+  }
+
+  isUpdatingFromEditor.value = true;
+  editor.value.commands.setContent(hydratedContent);
+  isUpdatingFromEditor.value = false;
 }
 
-async function buildImagePreviewUrl(uploadedFile: UploadedFileResult): Promise<string> {
-  const dimensions = resolveImageDimensions();
-  const dataId = String(uploadedFile.dataId || currentEntityId() || '');
-  const imageId = String(uploadedFile.fileId || '');
+function buildFileContentUrl(fileId: string): string {
   const menuFeatureId = resolveFeatureId();
-  const workspaceId = resolveWorkspaceId();
-  const secretKey = 'jakiś_losowy_dlugi_ciag_znakow_i_trochę_bez_sensu_!!!!1111_aafdsfsrewhd';
-
-  const lastModifiedAt = uploadedFile.lastModifiedAt || '';
-
-  const missing: string[] = [];
-  if (!menuFeatureId) missing.push('menuFeatureId');
-  if (!workspaceId) missing.push('workspaceId');
-  if (!imageId) missing.push('imageId');
-  if (!secretKey) missing.push('secretKey(presignedSecret|aurea.presigned.secret)');
-  if (missing.length > 0) {
-    console.debug('[TextEditor] missing params for image sign', {
-      menuFeatureId,
-      workspaceId,
-      dataId,
-      imageId,
-      hasPresignedSecret: !!secretKey,
-      missing,
-      uploadedFile,
-      contextKeys: Object.keys(
-        (schema.options?.context as Record<string, unknown> | undefined) || {},
-      ),
-    });
-    throw new Error(`Brak danych do wygenerowania podpisu URL obrazu: ${missing.join(', ')}`);
+  if (!menuFeatureId) {
+    throw new Error('Brak menuFeatureId dla pobierania obrazu');
   }
 
-  const sign = await generatePresignedSignature(
-    secretKey,
-    menuFeatureId,
-    imageId,
-    workspaceId,
-    dataId,
-  );
+  const dataId = currentEntityId();
+  if (!dataId) {
+    throw new Error('Brak dataId dla pobierania obrazu');
+  }
+
+  const queryParams = new URLSearchParams();
+  queryParams.set('dataId', dataId);
+
+  return `/api/v1/features/${encodePathSegment(menuFeatureId)}/files/${encodePathSegment(fileId)}/content?${queryParams.toString()}`;
+}
+
+async function fetchImageBlobUrl(uploadedFile: UploadedFileResult): Promise<string> {
+  if (!uploadedFile.fileId) {
+    throw new Error('Brak fileId po uploadzie obrazu');
+  }
+
+  const contentUrl = buildFileContentUrl(uploadedFile.fileId);
+  const response = await axios.get<Blob>(contentUrl, {
+    responseType: 'blob',
+  });
+
+  const objectUrl = URL.createObjectURL(response.data);
+  createdObjectUrls.add(objectUrl);
+  objectUrlToContentUrl.set(objectUrl, contentUrl);
+  contentUrlToObjectUrl.set(contentUrl, objectUrl);
 
   console.debug('[TextEditor] buildImagePreviewUrl', {
     fileName: uploadedFile.fileName,
-    sign,
-    imageId,
-    dataId,
-    menuFeatureId,
-    workspaceId,
+    imageId: uploadedFile.fileId,
+    contentUrl,
+    finalUrl: objectUrl,
   });
 
-  const params = new URLSearchParams();
-  params.set('Workspace-Id', workspaceId);
-  params.set('dataId', dataId);
-  params.set('width', dimensions.width);
-  params.set('height', dimensions.height);
-  if (lastModifiedAt) {
-    params.set('lastModifiedAt', lastModifiedAt);
-  }
-
-  const path = imagePreviewUrlTemplate
-    .replace('{menuFeatureId}', encodePathSegment(menuFeatureId))
-    .replace('{imageId}', encodePathSegment(imageId))
-    .replace('{sign}', encodePathSegment(sign));
-
-  return `${path}?${params.toString()}`;
+  return objectUrl;
 }
 
 function insertImageToEditor(url: string, alt: string) {
@@ -562,7 +693,7 @@ async function onImageFileSelected(event: Event) {
       return;
     }
     const uploadedFile = await uploadFile(file);
-    const imagePreviewUrl = await buildImagePreviewUrl(uploadedFile);
+    const imagePreviewUrl = await fetchImageBlobUrl(uploadedFile);
     insertImageToEditor(imagePreviewUrl, file.name);
   } catch (error: any) {
     console.error('Error uploading image:', error);
