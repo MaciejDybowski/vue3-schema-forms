@@ -85,6 +85,14 @@ export function stripFlatStructureFlag(
     if (value?.layout?.schema?.properties) {
       stripFlatStructureFlag(value.layout.schema.properties, options, maxDepth, depth + 1);
     }
+
+    if (Array.isArray(value?.panels)) {
+      value.panels.forEach((panel: any) => {
+        if (panel?.schema?.properties) {
+          stripFlatStructureFlag(panel.schema.properties, options, maxDepth, depth + 1);
+        }
+      });
+    }
   }
 }
 
@@ -120,6 +128,17 @@ export function collectNestedFormsPathKeys(
       collectNestedFormsPathKeys(value.layout.schema.properties, options, fullPath, maxDepth, depth + 1).forEach((k) =>
         keys.add(k),
       );
+    }
+
+    if (Array.isArray(value?.panels)) {
+      value.panels.forEach((panel: any, panelIndex: number) => {
+        if (panel?.schema?.properties) {
+          const panelPath = `${fullPath}.panels.${panelIndex}`;
+          collectNestedFormsPathKeys(panel.schema.properties, options, panelPath, maxDepth, depth + 1).forEach((k) =>
+            keys.add(k),
+          );
+        }
+      });
     }
   }
 
@@ -210,6 +229,22 @@ export function flattenNestedFormsPathNodes(
         maxDepth,
         depth + 1,
       );
+    }
+
+    if (Array.isArray(properties[key]?.panels)) {
+      properties[key].panels.forEach((panel: any, panelIndex: number) => {
+        if (panel?.schema?.properties) {
+          const panelPath = `${fullPath}.panels.${panelIndex}`;
+          flattenNestedFormsPathNodes(
+            panel.schema.properties,
+            keys,
+            panelPath,
+            panel.schema,
+            maxDepth,
+            depth + 1,
+          );
+        }
+      });
     }
   }
 }
