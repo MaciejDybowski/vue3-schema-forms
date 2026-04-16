@@ -116,6 +116,13 @@ const schemaByPath: Record<string, any> = {
     },
     required: ['fromLayoutLevel2'],
   },
+  'panel-child': {
+    type: 'object',
+    properties: {
+      fromPanelChild: { label: 'fromPanelChild', layout: { component: 'text-field' } },
+    },
+    required: ['fromPanelChild'],
+  },
 };
 
 function cloneValue<T>(value: T): T {
@@ -351,5 +358,87 @@ describe('Zagnieżdzone formularze:', () => {
     expect(resolved.properties?.level6).toBeUndefined();
     expect(resolved.properties?.block6).toBeDefined();
     expect(resolved.required).toEqual(['level1', 'level2', 'level3', 'level4', 'level5']);
+  });
+
+  it('spłaszcza nested form wewnątrz expansion-panels gdy flatStructure=true', async () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        retractableSection: {
+          layout: { component: 'expansion-panels' },
+          panels: [
+            {
+              title: 'Tytul sekcji',
+              schema: {
+                type: 'object',
+                required: ['nestedForm'],
+                properties: {
+                  nestedForm: {
+                    '0': 'panel-child',
+                    $ref: '#/options/nestedFormsPath',
+                    flatStructure: true,
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    const options = {
+      nestedFormsPath: {
+        $ref: '/api/forms?path={0}',
+      },
+    };
+
+    const resolved = await resolveSchemaWithLocale(schema as any, 'pl', options as any);
+    const retractableSection: any = resolved.properties?.retractableSection;
+    const panelProps = retractableSection?.panels?.[0]?.schema?.properties ?? {};
+
+    expect(panelProps.nestedForm).toBeUndefined();
+    expect(panelProps.fromPanelChild).toBeDefined();
+    expect(retractableSection?.panels?.[0]?.schema?.required).toEqual(['fromPanelChild']);
+  });
+
+  it('zachowuje nested form wewnątrz expansion-panels gdy flatStructure=false', async () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        retractableSection: {
+          layout: { component: 'expansion-panels' },
+          panels: [
+            {
+              title: 'Tytul sekcji',
+              schema: {
+                type: 'object',
+                required: ['nestedForm'],
+                properties: {
+                  nestedForm: {
+                    '0': 'panel-child',
+                    $ref: '#/options/nestedFormsPath',
+                    flatStructure: false,
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    const options = {
+      nestedFormsPath: {
+        $ref: '/api/forms?path={0}',
+      },
+    };
+
+    const resolved = await resolveSchemaWithLocale(schema as any, 'pl', options as any);
+    const retractableSection: any = resolved.properties?.retractableSection;
+    const panelProps = retractableSection?.panels?.[0]?.schema?.properties ?? {};
+
+    expect(panelProps.nestedForm).toBeDefined();
+    expect(panelProps.fromPanelChild).toBeUndefined();
+    expect(panelProps.nestedForm?.properties?.fromPanelChild).toBeDefined();
   });
 });
