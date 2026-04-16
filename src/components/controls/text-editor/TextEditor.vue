@@ -54,6 +54,7 @@
     <input
       ref="imageInput"
       :accept="imageAccept"
+      multiple
       style="display: none"
       type="file"
       @change="onImageFileSelected"
@@ -61,6 +62,7 @@
     <input
       ref="attachmentInput"
       :accept="fileAccept"
+      multiple
       style="display: none"
       type="file"
       @change="onAttachmentFileSelected"
@@ -101,6 +103,17 @@ interface UploadedFileResult {
 interface ResolvedAttachmentTarget {
   downloadUrl: string;
   fallbackFileName?: string;
+}
+
+interface UploadBatchFailure {
+  fileName: string;
+  message: string;
+}
+
+interface ProcessSelectedFilesOptions {
+  isImage: boolean;
+  uploadErrorFallback: string;
+  insertUploadedFile: (uploadedFile: UploadedFileResult, file: File) => Promise<void> | void;
 }
 
 const ATTACHMENT_HASH_PREFIX = '#attachment-file=';
@@ -417,21 +430,79 @@ function extractExtension(fileName: string): string {
   return fileName.split('.').pop()?.toLowerCase() || '';
 }
 
-function validateSelectedFile(file: File, isImage: boolean): boolean {
+function validateSelectedFile(file: File, isImage: boolean): string | null {
   const allowedExt = resolveAllowedExtensions(isImage);
   const fileExt = extractExtension(file.name);
   if (allowedExt.length > 0 && fileExt && !allowedExt.includes(fileExt)) {
-    showToastError(`Niedozwolone rozszerzenie pliku: ${fileExt}`);
-    return false;
+    return `Niedozwolone rozszerzenie pliku: ${fileExt}`;
   }
 
   const maxFileSizeMb = schema.fileMaxSize;
   if (maxFileSizeMb && file.size > maxFileSizeMb * 1024 * 1024) {
-    showToastError(`Plik przekracza maksymalny rozmiar ${maxFileSizeMb} MB`);
-    return false;
+    return `Plik przekracza maksymalny rozmiar ${maxFileSizeMb} MB`;
   }
 
-  return true;
+  return null;
+}
+
+function resolveUploadErrorMessage(error: unknown, fallback: string): string {
+  const message = (error as { message?: string })?.message;
+  if (typeof message === 'string' && message.trim()) {
+    return message;
+  }
+  return fallback;
+}
+
+function buildBatchUploadErrorMessage(
+  successCount: number,
+  totalCount: number,
+  failures: UploadBatchFailure[],
+): string {
+  if (failures.length === 0) {
+    return '';
+  }
+
+  const summary =
+    successCount > 0
+      ? `Przeslano ${successCount} z ${totalCount} plikow.`
+      : `Nie udalo sie przeslac ${failures.length} plikow.`;
+  const firstFailures = failures
+    .slice(0, 3)
+    .map((failure) => `${failure.fileName}: ${failure.message}`)
+    .join(' | ');
+  const remainingCount = failures.length - 3;
+  const suffix = remainingCount > 0 ? ` | +${remainingCount} kolejnych bledow.` : '';
+
+  return `${summary} Bledy: ${firstFailures}${suffix}`;
+}
+
+async function processSelectedFiles(files: File[], options: ProcessSelectedFilesOptions) {
+  let successCount = 0;
+  const failures: UploadBatchFailure[] = [];
+
+  for (const file of files) {
+    const validationMessage = validateSelectedFile(file, options.isImage);
+    if (validationMessage) {
+      failures.push({ fileName: file.name, message: validationMessage });
+      continue;
+    }
+
+    try {
+      const uploadedFile = await uploadFile(file);
+      await options.insertUploadedFile(uploadedFile, file);
+      successCount += 1;
+    } catch (error) {
+      console.error('Error uploading file in batch:', error);
+      failures.push({
+        fileName: file.name,
+        message: resolveUploadErrorMessage(error, options.uploadErrorFallback),
+      });
+    }
+  }
+
+  if (failures.length > 0) {
+    showToastError(buildBatchUploadErrorMessage(successCount, files.length, failures));
+  }
 }
 
 async function uploadFile(file: File): Promise<UploadedFileResult> {
@@ -1109,21 +1180,20 @@ function showToastError(message: string) {
 
 async function onImageFileSelected(event: Event) {
   const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) {
+  const files = Array.from(input.files || []);
+  if (files.length === 0) {
     return;
   }
 
   try {
-    if (!validateSelectedFile(file, true)) {
-      return;
-    }
-    const uploadedFile = await uploadFile(file);
-    const imagePreviewUrl = await fetchImageBlobUrl(uploadedFile);
-    insertImageToEditor(imagePreviewUrl, file.name);
-  } catch (error: any) {
-    console.error('Error uploading image:', error);
-    showToastError(error?.message || 'Nie udalo sie przeslac obrazu');
+    await processSelectedFiles(files, {
+      isImage: true,
+      uploadErrorFallback: 'Nie udalo sie przeslac obrazu',
+      insertUploadedFile: async (uploadedFile, file) => {
+        const imagePreviewUrl = await fetchImageBlobUrl(uploadedFile);
+        insertImageToEditor(imagePreviewUrl, file.name);
+      },
+    });
   } finally {
     clearInputValue(input);
   }
@@ -1131,20 +1201,19 @@ async function onImageFileSelected(event: Event) {
 
 async function onAttachmentFileSelected(event: Event) {
   const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) {
+  const files = Array.from(input.files || []);
+  if (files.length === 0) {
     return;
   }
 
   try {
-    if (!validateSelectedFile(file, false)) {
-      return;
-    }
-    const uploadedFile = await uploadFile(file);
-    insertFileToEditor(uploadedFile.contentUrl, file.name);
-  } catch (error: any) {
-    console.error('Error uploading file:', error);
-    showToastError(error?.message || 'Nie udalo sie przeslac pliku');
+    await processSelectedFiles(files, {
+      isImage: false,
+      uploadErrorFallback: 'Nie udalo sie przeslac pliku',
+      insertUploadedFile: (uploadedFile, file) => {
+        insertFileToEditor(uploadedFile.contentUrl, file.name);
+      },
+    });
   } finally {
     clearInputValue(input);
   }
