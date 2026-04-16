@@ -28,5 +28,5 @@ export type SchemaComponent =
   | 'alert'
   | 'pesel-field'
   | 'nip-field'
-  | 'download-file'
+  | 'proxy-service-caller'
   | 'validation-messages-viewer';

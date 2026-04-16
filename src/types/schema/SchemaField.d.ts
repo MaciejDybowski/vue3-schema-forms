@@ -53,7 +53,7 @@ export interface SchemaField {
   path?: string;
   index?: number;
 
-  // download-file
+  // proxy-service-caller, download-file (legacy)
   renderMode?: DownloadFileRenderMode;
   externalApi?: ExternalApiCaller;
   fileName?: string;

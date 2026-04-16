@@ -6,7 +6,7 @@ import { Schema } from '../../types/schema/Schema';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Download File',
+  title: 'Elements/Editable/Proxy Service Caller',
   ...formStoryWrapperTemplate,
 };
 
@@ -71,7 +71,7 @@ export const ButtonMode: Story = {
             },
           },
           layout: {
-            component: 'download-file',
+            component: 'proxy-service-caller',
           },
         },
       },
@@ -122,7 +122,7 @@ export const LinkMode: Story = {
             },
           },
           layout: {
-            component: 'download-file',
+            component: 'proxy-service-caller',
           },
         },
       },

@@ -75,6 +75,7 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
+      case 'proxy-service-caller':
       case 'download-file':
         props.value = {
           ...schema.options?.buttonProps,
