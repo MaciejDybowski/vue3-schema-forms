@@ -4,6 +4,26 @@ import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
 import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
 import { SourceDefinition } from '@/types/shared/Source';
 
+export type DownloadFileRenderMode = 'button' | 'card';
+
+export type ExternalApiMethod =
+  | 'GET'
+  | 'POST'
+  | 'PUT'
+  | 'PATCH'
+  | 'DELETE'
+  | 'HEAD'
+  | 'OPTIONS';
+
+export interface ExternalApiCaller {
+  serviceCode: string;
+  method: ExternalApiMethod;
+  endpoint: string;
+  body?: Record<string, any>;
+  query?: Record<string, any>;
+  params?: Record<string, any>;
+}
+
 export interface SchemaField {
   label?: string | { $ref: string };
   content?: string | { $ref: string };
@@ -32,4 +52,11 @@ export interface SchemaField {
   // duplicated section elements
   path?: string;
   index?: number;
+
+  // download-file
+  renderMode?: DownloadFileRenderMode;
+  externalApi?: ExternalApiCaller;
+  fileName?: string;
+  fileType?: string;
+  status?: 'ready' | 'generating' | 'expired';
 }

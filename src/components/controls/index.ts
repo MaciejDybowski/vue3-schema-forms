@@ -3,6 +3,7 @@ import Alert from '@/components/controls/Alert.vue';
 import Bookmark from '@/components/controls/Bookmark.vue';
 import CalendarAutocomplete from '@/components/controls/CalendarAutocomplete.vue';
 import FileField from '@/components/controls/FileField.vue';
+import DownloadFileField from '@/components/controls/DownloadFileField.vue';
 import Image from '@/components/controls/Image.vue';
 import KeyValueList from '@/components/controls/KeyValueList.vue';
 import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue';
@@ -89,6 +90,7 @@ export const vueSchemaFromControls: Components = {
   'year-picker': YearPicker,
   'text-switch-field': TextSwitchField,
   'file-field': FileField,
+  'download-file': DownloadFileField,
   bookmark: Bookmark,
   'expansion-panels': ExpansionPanels,
   'group-input': GroupInput,

@@ -1,5 +1,9 @@
 import { EngineField } from '@/types/engine/EngineField';
 import { Schema } from '@/types/schema/Schema';
+import {
+  DownloadFileRenderMode,
+  ExternalApiCaller,
+} from '@/types/schema/SchemaField';
 import { LocationResult } from '@/types/shared/LocationResult';
 import {
   AvatarSource,
@@ -80,6 +84,14 @@ export interface EngineFileField extends EngineField {
   fileLabel?: string;
   fileMaxSize?: number;
   fileAvailableExtensions?: string;
+}
+
+export interface EngineDownloadFileField extends EngineField {
+  renderMode?: DownloadFileRenderMode;
+  externalApi: ExternalApiCaller;
+  fileName?: string;
+  fileType?: string;
+  status?: 'ready' | 'generating' | 'expired';
 }
 
 export interface EngineTextSwitchFieldField extends EngineField {

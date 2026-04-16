@@ -75,6 +75,12 @@ export function useProps() {
           ...schema.layout?.props,
         };
         break;
+      case 'download-file':
+        props.value = {
+          ...schema.options?.buttonProps,
+          ...schema.layout?.props,
+        };
+        break;
       case 'static-content': {
         props.value = {
           ...schema.layout?.props,

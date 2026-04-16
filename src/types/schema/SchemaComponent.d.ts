@@ -28,4 +28,5 @@ export type SchemaComponent =
   | 'alert'
   | 'pesel-field'
   | 'nip-field'
+  | 'download-file'
   | 'validation-messages-viewer';
