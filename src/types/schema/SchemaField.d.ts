@@ -4,7 +4,7 @@ import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
 import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
 import { SourceDefinition } from '@/types/shared/Source';
 
-export type DownloadFileRenderMode = 'button' | 'card';
+export type DownloadFileRenderMode = 'button' | 'link';
 
 export type ExternalApiMethod =
   | 'GET'

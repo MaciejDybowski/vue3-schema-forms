@@ -1,58 +1,20 @@
 <template>
   <div>
-    <v-card
-      v-if="isCardMode"
-      class="pa-2"
-      variant="outlined"
+    <a
+      v-if="isLinkMode"
+      href="#"
+      role="button"
+      :class="bindClass(schema)"
+      :aria-disabled="isActionDisabled"
+      @click.prevent="runDownload"
     >
-      <v-card-title class="text-subtitle-1">{{ resolvedFileName }}</v-card-title>
-      <v-card-subtitle>{{ resolvedFileType }}</v-card-subtitle>
-
-      <v-card-text class="d-flex align-center ga-2 flex-wrap">
-        <v-chip
-          size="small"
-          :color="statusColor"
-          variant="tonal"
-        >
-          {{ statusText }}
-        </v-chip>
-
-        <v-chip
-          v-if="requestState === 'success'"
-          size="small"
-          color="success"
-          variant="tonal"
-        >
-          {{ t('downloaded') }}
-        </v-chip>
-      </v-card-text>
-
-      <v-card-actions>
-        <v-btn
-          :class="bindClass(schema)"
-          :disabled="isLoading || fieldProps.readonly"
-          :loading="isLoading"
-          color="primary"
-          v-bind="fieldProps"
-          @click="runDownload"
-        >
-          {{ actionLabel }}
-        </v-btn>
-
-        <v-btn
-          v-if="hasResultToRedownload"
-          variant="text"
-          @click="downloadPreparedResult"
-        >
-          {{ t('downloadAgain') }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+      {{ actionLabel }}
+    </a>
 
     <div v-else>
       <v-btn
         :class="bindClass(schema)"
-        :disabled="isLoading || fieldProps.readonly"
+        :disabled="isActionDisabled"
         :loading="isLoading"
         color="primary"
         v-bind="fieldProps"
@@ -60,42 +22,20 @@
       >
         {{ actionLabel }}
       </v-btn>
+    </div>
 
-      <div class="mt-2">
-        <v-chip
-          v-if="requestState === 'success'"
-          size="small"
-          color="success"
-          variant="tonal"
-        >
-          {{ t('downloaded') }}
-        </v-chip>
-
-        <v-chip
-          v-if="requestState === 'error'"
-          size="small"
-          color="error"
-          variant="tonal"
-        >
-          {{ errorMessage }}
-        </v-chip>
-
-        <v-btn
-          v-if="hasResultToRedownload"
-          class="ml-2"
-          size="small"
-          variant="text"
-          @click="downloadPreparedResult"
-        >
-          {{ t('downloadAgain') }}
-        </v-btn>
-      </div>
+    <div
+      v-if="requestState === 'error'"
+      class="mt-2 text-error"
+    >
+      {{ errorMessage }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useEventBus } from '@vueuse/core';
+import axios from 'axios';
+import jsonata from 'jsonata';
 
 import { computed, onMounted, ref } from 'vue';
 
@@ -106,7 +46,7 @@ import {
   useProps,
   useResolveVariables,
 } from '@/core/composables';
-import { variableRegexp } from '@/core/engine/utils';
+import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { EngineDownloadFileField } from '@/types/engine/controls';
 
 type RequestState = 'idle' | 'loading' | 'success' | 'error';
@@ -124,44 +64,30 @@ const { schema } = defineProps<{
   model: object;
 }>();
 
-const actionHandlerEventBus = useEventBus<string>('form-action');
-
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
 const { t } = useLocale();
-const { resolve } = useResolveVariables();
+const { fillPath } = useResolveVariables();
+const form = useInjectedFormModel();
 
 const requestState = ref<RequestState>('idle');
 const errorMessage = ref('');
-const preparedResult = ref<DownloadResult | null>(null);
 
 const isLoading = computed(() => requestState.value === 'loading');
-const isCardMode = computed(() => schema.renderMode === 'card');
-const hasResultToRedownload = computed(() => preparedResult.value != null);
-
-const resolvedFileName = computed(() => schema.fileName || t('defaultFileName'));
-const resolvedFileType = computed(() => schema.fileType || t('defaultFileType'));
+const isLinkMode = computed(() => String(schema.renderMode) === 'link');
+const isActionDisabled = computed(() => isLoading.value || !!fieldProps.value?.readonly);
 
 const actionLabel = computed(() => {
   if (requestState.value === 'loading') return t('loading');
-  if (requestState.value === 'success') return t('downloadAgain');
   return (label.value as string) || t('downloadFile');
 });
 
-const statusColor = computed(() => {
-  if (schema.status === 'generating') return 'warning';
-  if (schema.status === 'expired') return 'error';
-  return 'success';
-});
-
-const statusText = computed(() => {
-  if (schema.status === 'generating') return t('statusGenerating');
-  if (schema.status === 'expired') return t('statusExpired');
-  return t('statusReady');
-});
-
 async function runDownload() {
+  if (isActionDisabled.value) {
+    return;
+  }
+
   if (!schema.externalApi) {
     requestState.value = 'error';
     errorMessage.value = t('missingConfig');
@@ -172,13 +98,12 @@ async function runDownload() {
   errorMessage.value = '';
 
   try {
-    const payload = await buildPayload();
-    const response = await executeAction(payload);
+    const requestConfig = await buildRequestConfig();
+    const response = await axios.request(requestConfig);
     const result = await mapResponseToDownloadResult(response);
 
     if (result) {
-      preparedResult.value = result;
-      downloadResult(result);
+      await downloadResult(result);
     }
 
     requestState.value = 'success';
@@ -188,30 +113,10 @@ async function runDownload() {
   }
 }
 
-async function executeAction(payload: Record<string, any>) {
-  return new Promise<any>((resolveAction, rejectAction) => {
-    const timeout = setTimeout(() => {
-      rejectAction(new Error(t('requestTimeout')));
-    }, 30000);
-
-    actionHandlerEventBus.emit('form-action', {
-      ...payload,
-      callback: (result: any) => {
-        clearTimeout(timeout);
-        resolveAction(result);
-      },
-      errorCallback: (error: any) => {
-        clearTimeout(timeout);
-        rejectAction(error);
-      },
-    });
-  });
-}
-
-async function buildPayload() {
+async function buildRequestConfig(): Promise<import('axios').AxiosRequestConfig> {
   const externalApi = schema.externalApi;
 
-  const endpoint = await resolveVariableValue(externalApi.endpoint, true);
+  const endpoint = (await resolveAnyValue(externalApi.endpoint || '')) as string;
   const body = await resolveRecord(externalApi.body);
   const query = await resolveRecord(externalApi.query);
   const params = await resolveRecord(externalApi.params);
@@ -220,14 +125,27 @@ async function buildPayload() {
     throw new Error(t('missingServiceCode'));
   }
 
+  const serviceCode = encodeURIComponent(externalApi.serviceCode);
+  const normalizedEndpoint = endpoint ? normalizeEndpoint(endpoint) : '';
+
   return {
-    code: externalApi.serviceCode,
+    url: `/api/v1/services/${serviceCode}${normalizedEndpoint}`,
     method: externalApi.method,
-    endpoint,
-    body,
-    query,
-    params,
+    params: {
+      ...query,
+      ...params,
+    },
+    data: body,
+    responseType: 'blob' as const,
   };
+}
+
+function normalizeEndpoint(endpoint: string) {
+  if (endpoint.startsWith('/')) {
+    return endpoint;
+  }
+
+  return `/${endpoint}`;
 }
 
 async function resolveRecord(input: ApiParams) {
@@ -246,7 +164,7 @@ async function resolveRecord(input: ApiParams) {
 
 async function resolveAnyValue(value: any): Promise<any> {
   if (typeof value === 'string') {
-    return resolveVariableValue(value);
+    return resolveJsonataTemplate(value);
   }
 
   if (Array.isArray(value)) {
@@ -267,13 +185,35 @@ async function resolveAnyValue(value: any): Promise<any> {
   return value;
 }
 
-async function resolveVariableValue(value: string, forUrlPurpose = false) {
-  if (!new RegExp(variableRegexp).test(value)) {
-    return value;
+async function resolveJsonataTemplate(input: string): Promise<any> {
+  const templateMatches = [...input.matchAll(/\{([^{}]+)}/g)];
+
+  if (!templateMatches.length) {
+    return input;
   }
 
-  const { resolvedText } = await resolve(schema, value, forUrlPurpose);
+  const singleExpression = templateMatches.length === 1 && templateMatches[0][0] === input;
+  if (singleExpression) {
+    return evaluateJsonataExpression(templateMatches[0][1]);
+  }
+
+  let resolvedText = input;
+  for (const match of templateMatches) {
+    const value = await evaluateJsonataExpression(match[1]);
+    resolvedText = resolvedText.replace(match[0], value === undefined || value === null ? '' : String(value));
+  }
+
   return resolvedText;
+}
+
+async function evaluateJsonataExpression(expression: string) {
+  try {
+    const model = form.getFormModelForResolve.value;
+    const expressionWithPath = fillPath(schema.path, schema.index, expression.trim());
+    return await jsonata(expressionWithPath).evaluate(model);
+  } catch {
+    throw new Error(`${t('invalidExpression')}: {${expression}}`);
+  }
 }
 
 async function mapResponseToDownloadResult(response: any): Promise<DownloadResult | null> {
@@ -327,26 +267,16 @@ function createBlobResult(blob: Blob, fileName?: string): DownloadResult {
   };
 }
 
-function downloadPreparedResult() {
-  if (!preparedResult.value) return;
-  downloadResult(preparedResult.value);
-}
-
-function downloadResult(result: DownloadResult) {
+async function downloadResult(result: DownloadResult) {
   if (result.url) {
-    const anchor = document.createElement('a');
-    anchor.href = result.url;
-    anchor.download = result.fileName;
-    anchor.target = '_blank';
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
+    await downloadUrlResult(result.url, result.fileName, result.mimeType);
     return;
   }
 
   if (!result.blob) return;
 
-  const url = URL.createObjectURL(result.blob);
+  const blob = ensureMimeType(result.blob, result.mimeType);
+  const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
   anchor.download = result.fileName;
@@ -354,6 +284,44 @@ function downloadResult(result: DownloadResult) {
   anchor.click();
   document.body.removeChild(anchor);
   URL.revokeObjectURL(url);
+}
+
+async function downloadUrlResult(url: string, fileName: string, mimeType: string) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      fallbackToAnchorDownload(url, fileName);
+      return;
+    }
+
+    const blob = await response.blob();
+    await downloadResult({
+      blob,
+      fileName,
+      mimeType,
+    });
+  } catch {
+    fallbackToAnchorDownload(url, fileName);
+  }
+}
+
+function fallbackToAnchorDownload(url: string, fileName: string) {
+  // Fallback when remote URL blocks CORS fetch, still tries browser download flow.
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = fileName;
+  anchor.rel = 'noopener';
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+}
+
+function ensureMimeType(blob: Blob, mimeType: string) {
+  if (blob.type || !mimeType) {
+    return blob;
+  }
+
+  return blob.slice(0, blob.size, mimeType);
 }
 
 function base64ToBlob(base64: string, mimeType: string) {
@@ -381,32 +349,22 @@ onMounted(async () => {
 {
   "pl": {
     "downloadFile": "Pobierz plik",
-    "downloadAgain": "Pobierz ponownie",
-    "downloaded": "Pobrano",
     "loading": "Pobieranie...",
-    "statusReady": "ready",
-    "statusGenerating": "generating",
-    "statusExpired": "expired",
     "defaultFileName": "download",
     "defaultFileType": "Nieznany typ",
     "missingConfig": "Brak konfiguracji externalApi",
     "missingServiceCode": "Brak externalApi.serviceCode",
-    "requestTimeout": "Przekroczono czas oczekiwania na odpowiedz",
+    "invalidExpression": "Bledne wyrazenie JSONata",
     "genericError": "Nie udalo sie pobrac pliku"
   },
   "en": {
     "downloadFile": "Download file",
-    "downloadAgain": "Download again",
-    "downloaded": "Downloaded",
     "loading": "Downloading...",
-    "statusReady": "ready",
-    "statusGenerating": "generating",
-    "statusExpired": "expired",
     "defaultFileName": "download",
     "defaultFileType": "Unknown type",
     "missingConfig": "Missing externalApi config",
     "missingServiceCode": "Missing externalApi.serviceCode",
-    "requestTimeout": "Request timeout",
+    "invalidExpression": "Invalid JSONata expression",
     "genericError": "Could not download file"
   }
 }
