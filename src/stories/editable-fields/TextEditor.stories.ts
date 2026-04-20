@@ -165,6 +165,37 @@ export const SimpleValidation: Story = {
   },
 };
 
+export const RequiredMarker: Story = {
+  name: 'Required marker',
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync();
+
+    await waitFor(() => {
+      const requiredWrapper = canvasElement.querySelector('.required-input');
+      if (!requiredWrapper) {
+        throw new Error('Required marker wrapper not found');
+      }
+    });
+
+    await expect(canvasElement.querySelector('.required-input')).toBeInTheDocument();
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        textEditor: {
+          label: 'Opis',
+          layout: {
+            component: 'text-editor',
+          },
+        },
+      },
+      required: ['textEditor'],
+    } as Schema,
+  },
+};
+
 export const RequiredAncCounter: Story = {
   name: 'Counter',
   play: async ({ canvasElement }) => {
@@ -380,4 +411,3 @@ export const UploadErrorScenario: Story = {
     },
   },
 };
-

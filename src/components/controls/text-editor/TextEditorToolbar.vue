@@ -13,6 +13,12 @@
       :name="t(btn.name)"
       @click="btn.action(editor)"
     />
+    <span
+      :class="requiredInputClass"
+      class="editor-toolbar-required"
+    >
+      <span class="v-field-label"></span>
+    </span>
   </v-row>
 </template>
 
@@ -20,14 +26,15 @@
 import { useI18n } from 'vue-i18n';
 
 import TextEditorToolbarButton from '@/components/controls/text-editor/TextEditorToolbarButton.vue';
-import { computed } from "vue";
+import { computed } from 'vue';
 
 const { t } = useI18n();
 
-const { editor, showSource, editorFeatures } = defineProps<{
+const { editor, showSource, editorFeatures, requiredInputClass } = defineProps<{
   editor: any;
   showSource?: boolean;
   editorFeatures?: string[];
+  requiredInputClass?: string;
 }>();
 
 const buttons = [
@@ -181,6 +188,7 @@ const filteredButtons = computed(() => {
 .editor-toolbar {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
   margin-bottom: 0;
   padding: 6px 10px;
@@ -189,6 +197,12 @@ const filteredButtons = computed(() => {
   transition:
     border-color 0.25s ease,
     background-color 0.25s ease;
+}
+
+.editor-toolbar-required {
+  display: inline-flex;
+  align-items: center;
+  min-width: 8px;
 }
 
 .v-theme--dark .editor-toolbar {

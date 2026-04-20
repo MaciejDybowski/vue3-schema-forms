@@ -17,6 +17,7 @@
             <text-editor-toolbar
               :editorFeatures="schema.editorFeatures"
               :editor="editor"
+              :required-input-class="requiredInputClass"
               :show-source="showSource"
             />
           </v-col>
@@ -208,6 +209,9 @@ const editor = useEditor({
     handleDOMEvents: {
       click: (_view, event) => {
         return handleAttachmentLinkClick(event);
+      },
+      paste: (_view, event) => {
+        return handleImagePaste(event as ClipboardEvent);
       },
     },
   },
@@ -503,6 +507,95 @@ async function processSelectedFiles(files: File[], options: ProcessSelectedFiles
   if (failures.length > 0) {
     showToastError(buildBatchUploadErrorMessage(successCount, files.length, failures));
   }
+}
+
+function resolveClipboardImageExtension(file: File): string {
+  const mimeType = file.type?.toLowerCase() || '';
+  if (mimeType === 'image/jpeg') {
+    return 'jpg';
+  }
+
+  const slashIndex = mimeType.indexOf('/');
+  if (slashIndex >= 0 && mimeType.length > slashIndex + 1) {
+    return mimeType.slice(slashIndex + 1);
+  }
+
+  return 'png';
+}
+
+function resolveClipboardImageName(file: File): string {
+  const fileName = file.name?.trim() || '';
+  if (fileName) {
+    return fileName;
+  }
+
+  const extension = resolveClipboardImageExtension(file);
+  const timestamp = new Date().toISOString().replaceAll(':', '-');
+  return `screenshot-${timestamp}.${extension}`;
+}
+
+function cloneClipboardFileWithName(file: File): File {
+  const fileName = resolveClipboardImageName(file);
+  return new File([file], fileName, {
+    type: file.type || 'image/png',
+    lastModified: file.lastModified || Date.now(),
+  });
+}
+
+function extractClipboardImageFiles(event: ClipboardEvent): File[] {
+  const clipboardData = event.clipboardData;
+  if (!clipboardData) {
+    return [];
+  }
+
+  const imageFiles: File[] = [];
+
+  for (const file of Array.from(clipboardData.files || [])) {
+    if (file.type?.startsWith('image/')) {
+      imageFiles.push(cloneClipboardFileWithName(file));
+    }
+  }
+
+  if (imageFiles.length > 0) {
+    return imageFiles;
+  }
+
+  for (const item of Array.from(clipboardData.items || [])) {
+    if (!item.type?.startsWith('image/')) {
+      continue;
+    }
+    const file = item.getAsFile();
+    if (file) {
+      imageFiles.push(cloneClipboardFileWithName(file));
+    }
+  }
+
+  return imageFiles;
+}
+
+function handleImagePaste(event: ClipboardEvent): boolean {
+  if (fieldProps.value.readonly || showSource.value) {
+    return false;
+  }
+
+  const imageFiles = extractClipboardImageFiles(event);
+  if (imageFiles.length === 0) {
+    return false;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  void processSelectedFiles(imageFiles, {
+    isImage: true,
+    uploadErrorFallback: 'Nie udalo sie przeslac obrazu',
+    insertUploadedFile: async (uploadedFile, file) => {
+      const imagePreviewUrl = await fetchImageBlobUrl(uploadedFile);
+      insertImageToEditor(imagePreviewUrl, file.name);
+    },
+  });
+
+  return true;
 }
 
 async function uploadFile(file: File): Promise<UploadedFileResult> {
