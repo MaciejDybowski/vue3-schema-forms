@@ -87,9 +87,12 @@ async function updateRow(value: any, header: HeaderEditableObject, rowData: any,
     payload[headerKey] = value;
 
     const updateRowURL = await createUpdateRowURL(rowData);
-    //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
     const response = await axios.post(updateRowURL, payload);
-    items.value[rowIndex] = response.data.content;
+
+    // nie nadpisuj pola headerKey
+    const updatedRow = { ...response.data.content };
+    updatedRow[headerKey] = items.value[rowIndex]?.[headerKey];
+    items.value[rowIndex] = updatedRow;
 
     if (aggregates.value != null) {
       aggregates.value = response.data.aggregates;
