@@ -524,14 +524,33 @@ function resolveClipboardImageExtension(file: File): string {
 }
 
 function resolveClipboardImageName(file: File): string {
-  const fileName = file.name?.trim() || '';
-  if (fileName) {
-    return fileName;
-  }
+    const fileName = file.name?.trim() || '';
+    const extension = resolveClipboardImageExtension(file);
+    const timestamp = new Date().toISOString().replaceAll(':', '-');
 
-  const extension = resolveClipboardImageExtension(file);
-  const timestamp = new Date().toISOString().replaceAll(':', '-');
-  return `screenshot-${timestamp}.${extension}`;
+    // Domyślne nazwy plików generowane przez systemy operacyjne
+    const defaultNames = [
+      'image.png',
+      'image.jpg',
+      'image.jpeg',
+      'image.gif',
+      'image.webp',
+      'image.bmp',
+      'image.tiff',
+      'image.svg',
+    ];
+
+    function randomHash(length = 4) {
+      return Math.random().toString(36).substring(2, 2 + length);
+    }
+
+    if (fileName && defaultNames.includes(fileName.toLowerCase())) {
+      return `screenshot-${timestamp}-${randomHash(4)}.${extension}`;
+    }
+    if (fileName) {
+      return fileName;
+    }
+    return `screenshot-${timestamp}-${randomHash(4)}.${extension}`;
 }
 
 function cloneClipboardFileWithName(file: File): File {
