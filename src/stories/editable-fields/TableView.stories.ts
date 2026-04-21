@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { HttpResponse, http } from 'msw';
 
 
@@ -6,6 +7,7 @@ import { HttpResponse, http } from 'msw';
 import { Schema } from '../../types/schema/Schema';
 import { RESPONSE_DICTIONARY, TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITHOUT_AGGREGATES_ZERO, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW, generatePageData } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { waitForMountedAsync } from './utils';
 
 
 
@@ -100,6 +102,27 @@ export default {
   title: 'Elements/Editable/TableView',
   ...formStoryWrapperTemplate,
 };
+
+async function selectYearInTable(canvasElement: HTMLElement, label = 'Year') {
+  const canvas = within(canvasElement);
+  const yearInput = (await canvas.findAllByLabelText(label))[0] as HTMLElement;
+  await userEvent.click(yearInput, { pointerEventsCheck: 0, delay: 100 });
+
+  await waitFor(() => {
+    const items = document.querySelectorAll('.v-list-item');
+    expect(items.length).toBeGreaterThan(0);
+  });
+
+  const currentYear = String(new Date().getFullYear());
+  const items = Array.from(document.getElementsByClassName('v-list-item')) as HTMLElement[];
+  const matched = items.find((el) => el.textContent?.trim() === currentYear);
+  await userEvent.click(matched || items[0], { delay: 100 });
+
+  await waitFor(() => {
+    const selected = canvasElement.querySelector('input[aria-label="Year"]') as HTMLInputElement | null;
+    expect(selected?.value).toBeTruthy();
+  });
+}
 
 export const Standard: Story = {
   play: async (context) => {},
@@ -1605,6 +1628,145 @@ export const DateEditableField: Story = {
                 key: 'height',
                 valueMapping: 'height',
                 type: 'TEXT',
+              },
+              {
+                title: 'Base',
+                key: 'base',
+                valueMapping: 'base',
+                type: 'TEXT',
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
+    },
+  },
+};
+
+export const YearEditableField: Story = {
+  name: 'Editable field: Year',
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync();
+    await selectYearInTable(canvasElement, 'Year');
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        span: {
+          content: '',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: 'table-view',
+          },
+          source: {
+            data: '/mock-data/table-view-mock',
+            headers: [
+              {
+                title: 'Id',
+                key: 'id',
+                valueMapping: 'dataId',
+                type: 'TEXT',
+              },
+              {
+                title: 'Year collection',
+                key: 'year-collection',
+                editable: [
+                  {
+                    type: 'YEAR',
+                    title: 'Year',
+                    key: 'year',
+                    valueMapping: 'year',
+                  },
+                ],
+                properties: {
+                  minWidth: '200px',
+                  maxWidth: '200px',
+                  width: '100px',
+                },
+                type: 'COLLECTION',
+              },
+              {
+                title: 'Base',
+                key: 'base',
+                valueMapping: 'base',
+                type: 'TEXT',
+              },
+            ],
+          },
+        },
+      },
+    } as Schema,
+  },
+  parameters: {
+    msw: {
+      handlers: [...UPDATE_TABLE_ROW, ...TABLE_PAGE_WITH_AGGREGATES],
+    },
+  },
+};
+
+export const YearEditableReadonlyWithCondition: Story = {
+  name: 'Editable field: Year (readonly condition)',
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync();
+    const canvas = within(canvasElement);
+    const yearInput = (await canvas.findAllByLabelText('Year'))[0] as HTMLInputElement;
+    await expect(yearInput).toHaveAttribute('readonly');
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        span: {
+          content: '',
+          layout: {
+            component: 'static-content',
+            tag: 'span',
+          },
+        },
+        tableOfProducts: {
+          layout: {
+            component: 'table-view',
+          },
+          source: {
+            data: '/mock-data/table-view-mock',
+            headers: [
+              {
+                title: 'Id',
+                key: 'id',
+                valueMapping: 'dataId',
+                type: 'TEXT',
+              },
+              {
+                title: 'Year collection',
+                key: 'year-collection',
+                editable: [
+                  {
+                    type: 'YEAR',
+                    title: 'Year',
+                    key: 'year',
+                    valueMapping: 'year',
+                    readonly: 'base > 40',
+                  },
+                ],
+                properties: {
+                  minWidth: '200px',
+                  maxWidth: '200px',
+                  width: '100px',
+                },
+                type: 'COLLECTION',
               },
               {
                 title: 'Base',

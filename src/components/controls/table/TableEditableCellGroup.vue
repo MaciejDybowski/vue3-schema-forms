@@ -141,6 +141,33 @@
       :validations-disabled="false"
       @keyup.enter="handlersMap[item.valueMapping]?.keyupEnter"
     />
+
+    <year-picker
+      v-if="item.type === 'YEAR' && shouldRenderMap[item.valueMapping]"
+      :model="props.row"
+      :model-value="getValue(item.valueMapping, index)"
+      :schema="
+        {
+          key: item.valueMapping.split(':')[0],
+          type: 'text',
+          label: item.label,
+          layout: { props: {}, component: 'year-picker' },
+          options: {
+            fieldProps: {
+              ...boundAttrsMap[item.valueMapping],
+              label: item.label,
+              rules: rulesMap[item.valueMapping],
+            },
+          },
+          on: {
+            input: (e: any) => handlersMap[item.valueMapping]?.selectUpdate?.(e.value),
+          },
+        } as any
+      "
+      :validations-disabled="false"
+      @update:model-value="handlersMap[item.valueMapping]?.selectUpdate"
+      @keyup.enter="handlersMap[item.valueMapping]?.keyupEnter"
+    />
   </div>
 </template>
 
@@ -156,6 +183,7 @@ import DatePicker from '@/components/controls/date/DatePicker.vue';
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 import { Pagination } from '@/components/controls/dictionary/Pagination';
 import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
+import YearPicker from '@/components/controls/YearPicker.vue';
 
 import { useResolveVariables } from '@/core/composables';
 import { useNumber } from '@/core/composables/useNumber';

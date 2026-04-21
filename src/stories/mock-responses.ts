@@ -131,6 +131,7 @@ export const UPDATE_TABLE_ROW = [
         volume: (Math.random() * 0.01).toFixed(5), // 0.00001 - 0.01
         dataId: Number(id),
         date: randomDate().toISOString().slice(0, 10),
+        year: Math.floor(Math.random() * 2000) + 2030, // 5000 - 10000
         heightOptions: [
           { title: 'Height:10', value: 10, description: 'Combined: height 10' },
           { title: 'Height:20', value: 20, description: 'Combined: height 20' },

@@ -37,7 +37,7 @@ export interface HeaderEditableObject {
   label: string;
   valueMapping: string;
   class?: string;
-  type: "NUMBER" | "TEXT" | "TEXTAREA" | "SELECT" | "DICTIONARY" | "BOOLEAN" | "DATE";
+  type: "NUMBER" | "TEXT" | "TEXTAREA" | "SELECT" | "DICTIONARY" | "BOOLEAN" | "DATE" | "YEAR";
   validations?: any[];
   condition?: string;
   readonly: ? string;
