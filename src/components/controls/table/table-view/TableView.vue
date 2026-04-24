@@ -79,17 +79,42 @@ function mapTotalElements(data: any) {
   return data.page.totalElements;
 }
 
-async function updateRow(value: any, header: HeaderEditableObject, rowData: any, rowIndex:number) {
+const controllers = new Map<number, AbortController>();
+const pendingRequests = new Map<number, number>();
+let requestCounter = 0;
+
+async function updateRow(value: any, header: HeaderEditableObject, rowData: any, rowIndex: number) {
   const headerKey = header.valueMapping.split(':')[0];
+
+  items.value[rowIndex] = {
+    ...items.value[rowIndex],
+    [headerKey]: value,
+  };
+
+  controllers.get(rowIndex)?.abort();
+
+  const controller = new AbortController();
+  controllers.set(rowIndex, controller);
+
+  const requestId = ++requestCounter;
+  pendingRequests.set(rowIndex, requestId);
 
   try {
     const payload: Record<string, any> = {};
     payload[headerKey] = value;
 
     const updateRowURL = await createUpdateRowURL(rowData);
-    //console.debug(`Save new value by calling API endpoint ${updateRowURL} with payload`, payload);
-    const response = await axios.post(updateRowURL, payload);
-    items.value[rowIndex] = response.data.content;
+
+    const response = await axios.post(updateRowURL, payload, {
+      signal: controller.signal,
+    });
+
+
+    if (pendingRequests.get(rowIndex) !== requestId) return;
+    items.value[rowIndex] = {
+      ...items.value[rowIndex],
+      ...response.data.content,
+    };
 
     if (aggregates.value != null) {
       aggregates.value = response.data.aggregates;
@@ -97,10 +122,8 @@ async function updateRow(value: any, header: HeaderEditableObject, rowData: any,
       vueSchemaFormEventBus.emit('model-changed', 'table-aggregates');
     }
   } catch (e: any) {
-    if (toast != null) {
-      // debounced.showToast(e.response.data.message);
-      // TODO
-    }
+    // jeśli request został anulowany → ignoruj
+    if (e.name === 'CanceledError') return;
   }
 }
 
