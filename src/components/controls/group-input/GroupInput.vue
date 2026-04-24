@@ -33,7 +33,13 @@
         variant="outlined"
         @click:close="removeValue(item.raw)"
       >
-        <span>
+        <v-progress-circular
+          v-if="fetchingIds[item.raw.id]"
+          indeterminate
+          size="16"
+          width="2"
+        />
+        <span v-if="!fetchingIds[item.raw.id]">
           {{ item.raw.name }}
         </span>
       </v-chip>
@@ -98,7 +104,7 @@
 import { useEventBus } from '@vueuse/core';
 import { debounce } from 'lodash';
 
-import { computed, onMounted, ref, toRef, watch } from 'vue';
+import { computed, onMounted, reactive, ref, toRef, watch } from 'vue';
 
 import DictionaryBase from '@/components/controls/dictionary/DictionaryBase.vue';
 import DictionaryItemChip from '@/components/controls/dictionary/DictionaryItemChip.vue';
@@ -151,6 +157,7 @@ const {
   loadCounter,
   dependencyWasChanged,
   loadItemChips,
+  fetchItemById,
 } = useDictionary();
 
 const debounced = {
@@ -259,6 +266,56 @@ function makeInitials(item: any): string {
   return 'U';
 }
 
+const fetchingIds = reactive<Record<string | number, boolean>>({});
+
+async function fetchFullDataIfNeeded() {
+  const currentModel = localModel.value;
+  if (!currentModel) return;
+
+  const isOnlyId = (obj: any) =>
+    obj &&
+    typeof obj === 'object' &&
+    'id' in obj &&
+    Object.keys(obj).filter((k) => !k.startsWith('__')).length === 1;
+
+  if (Array.isArray(currentModel)) {
+    const updatedModel = [...currentModel];
+    let changed = false;
+    const fetchPromises = [];
+
+    for (let i = 0; i < updatedModel.length; i++) {
+      if (isOnlyId(updatedModel[i])) {
+        const id = updatedModel[i].id;
+        fetchingIds[id] = true;
+        fetchPromises.push(
+          fetchItemById(id).then((fullData) => {
+            if (fullData) {
+              updatedModel[i] = fullData;
+              changed = true;
+            }
+            delete fetchingIds[id];
+          }),
+        );
+      }
+    }
+    await Promise.all(fetchPromises);
+    if (changed) {
+      localModel.value = updatedModel;
+    }
+  } else if (isOnlyId(currentModel)) {
+    const id = currentModel.id;
+    fetchingIds[id] = true;
+    try {
+      const fullData = await fetchItemById(id);
+      if (fullData) {
+        localModel.value = fullData;
+      }
+    } finally {
+      delete fetchingIds[id];
+    }
+  }
+}
+
 function singleOptionAutoSelectFunction() {
   const selectSingleOptionLogic = () => {
     if (data.value.length !== 1 || !singleOptionAutoSelect.value || loadCounter.value > 1) return;
@@ -288,9 +345,20 @@ onMounted(async () => {
   await bindRules(props.schema);
   await bindProps(props.schema);
 
+  await fetchFullDataIfNeeded();
+
   await checkIfURLHasDependency(true);
   singleOptionAutoSelectFunction();
 });
+
+watch(
+  () => localModel.value,
+  async (newVal, oldVal) => {
+    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+      await fetchFullDataIfNeeded();
+    }
+  },
+);
 </script>
 
 <style lang="css" scoped></style>

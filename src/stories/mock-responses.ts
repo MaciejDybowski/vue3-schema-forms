@@ -1061,97 +1061,99 @@ export const MULTI_ORDERED_SELECT_MOCK = [
 
 export const USER_INPUT_MOCKS = [
   http.get('/mocks/users', ({ request, params }) => {
-    const urlParams = new URLSearchParams(request.url.split('?')[1]);
-    const filter = urlParams.get('filter');
+    const url = new URL(request.url);
+    const filter = url.searchParams.get('filter');
+    const filterValue = url.searchParams.get('filter-value');
+
+    const allUsers = [
+      {
+        id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+        email: 'alice@example.com',
+        firstName: 'Alice',
+        lastName: 'Smith',
+        username: 'asmith',
+        labels: 'the-best',
+      },
+      {
+        id: '2d6e0d79-5f5b-4c4f-b6e1-aaa2b38fba1f',
+        email: 'bob@example.com',
+        firstName: 'Bob',
+        lastName: 'Johnson',
+        username: 'bjohnson',
+        labels: 'the-least',
+      },
+      {
+        id: '3c4c0aef-b9ae-4d50-8e5e-b8b3df5c5e2f',
+        email: 'carol@example.com',
+        firstName: 'Carol',
+        lastName: 'Williams',
+        username: 'cwilliams',
+      },
+      {
+        id: '4aefc4a4-1ac4-4c6d-9de5-cb167a9b8f3b',
+        email: 'dave@example.com',
+        firstName: 'Dave',
+        lastName: 'Brown',
+        username: 'dbrown',
+      },
+      {
+        id: '5ba7e07c-d688-4ad5-89a4-2d5f9171099e',
+        email: 'eve@example.com',
+        firstName: 'Eve',
+        lastName: 'Jones',
+        username: 'ejones',
+      },
+      {
+        id: '6d3091de-c019-4b89-b18f-10b91f6e0c22',
+        email: 'frank@example.com',
+        firstName: 'Frank',
+        lastName: 'Garcia',
+        username: 'fgarcia',
+      },
+      {
+        id: '79ec7de5-4121-45fa-9c56-045cb989672e',
+        email: 'grace@example.com',
+        firstName: 'Grace',
+        lastName: 'Martinez',
+        username: 'gmartinez',
+      },
+      {
+        id: '81adf4b0-3d24-412d-bc8c-4162cfd4f1b2',
+        email: 'henry@example.com',
+        firstName: 'Henry',
+        lastName: 'Davis',
+        username: 'hdavis',
+      },
+      {
+        id: '9a1f4d3c-1e6f-4c39-9956-7f4f2f8b0e4a',
+        email: 'irene@example.com',
+        firstName: 'Irene',
+        lastName: 'Lopez',
+        username: 'ilopez',
+      },
+      {
+        id: 'a2c9b7e3-f7b1-4c64-8fa7-3a08db9d079e',
+        email: 'jack@example.com',
+        firstName: 'Jack',
+        lastName: 'Gonzalez',
+        username: 'jgonzalez',
+      },
+    ];
+
+    if (filterValue) {
+      return HttpResponse.json({
+        content: allUsers.filter((user) => user.id === filterValue),
+      });
+    }
+
     if (filter) {
       return HttpResponse.json({
-        content: [
-          {
-            id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
-            email: 'alice@example.com',
-            firstName: 'Alice',
-            lastName: 'Smith',
-            username: 'asmith',
-            labels: 'the-best',
-          },
-        ],
+        content: [allUsers[0]],
       });
     }
 
     return HttpResponse.json({
-      content: [
-        {
-          id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
-          email: 'alice@example.com',
-          firstName: 'Alice',
-          lastName: 'Smith',
-          username: 'asmith',
-          labels: 'the-best',
-        },
-        {
-          id: '2d6e0d79-5f5b-4c4f-b6e1-aaa2b38fba1f',
-          email: 'bob@example.com',
-          firstName: 'Bob',
-          lastName: 'Johnson',
-          username: 'bjohnson',
-        },
-        {
-          id: '3c4c0aef-b9ae-4d50-8e5e-b8b3df5c5e2f',
-          email: 'carol@example.com',
-          firstName: 'Carol',
-          lastName: 'Williams',
-          username: 'cwilliams',
-        },
-        {
-          id: '4aefc4a4-1ac4-4c6d-9de5-cb167a9b8f3b',
-          email: 'dave@example.com',
-          firstName: 'Dave',
-          lastName: 'Brown',
-          username: 'dbrown',
-        },
-        {
-          id: '5ba7e07c-d688-4ad5-89a4-2d5f9171099e',
-          email: 'eve@example.com',
-          firstName: 'Eve',
-          lastName: 'Jones',
-          username: 'ejones',
-        },
-        {
-          id: '6d3091de-c019-4b89-b18f-10b91f6e0c22',
-          email: 'frank@example.com',
-          firstName: 'Frank',
-          lastName: 'Garcia',
-          username: 'fgarcia',
-        },
-        {
-          id: '79ec7de5-4121-45fa-9c56-045cb989672e',
-          email: 'grace@example.com',
-          firstName: 'Grace',
-          lastName: 'Martinez',
-          username: 'gmartinez',
-        },
-        {
-          id: '81adf4b0-3d24-412d-bc8c-4162cfd4f1b2',
-          email: 'henry@example.com',
-          firstName: 'Henry',
-          lastName: 'Davis',
-          username: 'hdavis',
-        },
-        {
-          id: '9a1f4d3c-1e6f-4c39-9956-7f4f2f8b0e4a',
-          email: 'irene@example.com',
-          firstName: 'Irene',
-          lastName: 'Lopez',
-          username: 'ilopez',
-        },
-        {
-          id: 'a2c9b7e3-f7b1-4c64-8fa7-3a08db9d079e',
-          email: 'jack@example.com',
-          firstName: 'Jack',
-          lastName: 'Gonzalez',
-          username: 'jgonzalez',
-        },
-      ],
+      content: allUsers,
     });
   }),
   http.get('/api/v1/users/:id/avatar', ({ params, request }) => {
@@ -1192,35 +1194,40 @@ export const USER_INPUT_MOCKS = [
 
 export const GROUP_INPUT_MOCKS = [
   http.get('/mocks/groups', ({ request, params }) => {
-    const urlParams = new URLSearchParams(request.url.split('?')[1]);
-    const filter = urlParams.get('filter');
+    const url = new URL(request.url);
+    const filter = url.searchParams.get('filter');
+    const filterValue = url.searchParams.get('filter-value');
+
+    const allGroups = [
+      {
+        id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+        name: 'Testowa',
+        labels: 'the-best',
+      },
+      {
+        id: '2d6e0d79-5f5b-4c4f-b6e1-aaa2b38fba1f',
+        name: 'Administratorzy',
+      },
+      {
+        id: '3c4c0aef-b9ae-4d50-8e5e-b8b3df5c5e2f',
+        name: 'Użytkownicy',
+      },
+    ];
+
+    if (filterValue) {
+      return HttpResponse.json({
+        content: allGroups.filter((group) => group.id === filterValue),
+      });
+    }
+
     if (filter) {
       return HttpResponse.json({
-        content: [
-          {
-            id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
-            name: 'Testowa',
-          },
-        ],
+        content: [allGroups[0]],
       });
     }
 
     return HttpResponse.json({
-      content: [
-        {
-          id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
-          name: 'Testowa',
-          labels: 'the-best',
-        },
-        {
-          id: '2d6e0d79-5f5b-4c4f-b6e1-aaa2b38fba1f',
-          name: 'Administratorzy',
-        },
-        {
-          id: '3c4c0aef-b9ae-4d50-8e5e-b8b3df5c5e2f',
-          name: 'Użytkownicy',
-        },
-      ],
+      content: allGroups,
     });
   }),
   http.get('/api/v1/groups/:id/avatar', ({ params, request }) => {

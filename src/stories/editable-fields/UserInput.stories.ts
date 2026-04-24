@@ -272,3 +272,160 @@ export const TriggerEvent: Story = {
     },
   },
 };
+
+export const ModelWithOnlyId: Story = {
+  name: 'Case: model = { id: ... } (incomplete)',
+  play: async (context) => {
+    await waitForMountedAsync();
+    await waitFor(
+      () => {
+        expect(context.args.formModel.user).toEqual({
+          id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+          email: 'alice@example.com',
+          firstName: 'Alice',
+          lastName: 'Smith',
+          username: 'asmith',
+          labels: 'the-best',
+        });
+      },
+      { timeout: 5000 },
+    );
+  },
+  args: {
+    formModel: {
+      user: { id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56' },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        user: {
+          label: 'User',
+          layout: {
+            cols: 12,
+            component: 'user-input',
+          },
+          source: {
+            url: '/mocks/users',
+            itemsPerPage: 20,
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: USER_INPUT_MOCKS,
+    },
+  },
+};
+
+export const ModelWithOnlyIdArray: Story = {
+  name: 'Case: model = [{ id: ... }, { id: ... }] (incomplete array)',
+  play: async (context) => {
+    await waitForMountedAsync();
+    await waitFor(
+      () => {
+        expect(context.args.formModel.user).toEqual([
+          {
+            id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+            email: 'alice@example.com',
+            firstName: 'Alice',
+            lastName: 'Smith',
+            username: 'asmith',
+            labels: 'the-best',
+          },
+          {
+            id: '2d6e0d79-5f5b-4c4f-b6e1-aaa2b38fba1f',
+            email: 'bob@example.com',
+            firstName: 'Bob',
+            lastName: 'Johnson',
+            username: 'bjohnson',
+            labels: 'the-least',
+          },
+        ]);
+      },
+      { timeout: 5000 },
+    );
+  },
+  args: {
+    formModel: {
+      user: [
+        { id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56' },
+        { id: '2d6e0d79-5f5b-4c4f-b6e1-aaa2b38fba1f' },
+      ],
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        user: {
+          label: 'User',
+          layout: {
+            cols: 12,
+            component: 'user-input',
+            props: {
+              multiple: true,
+            },
+          },
+          source: {
+            url: '/mocks/users',
+            itemsPerPage: 20,
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: USER_INPUT_MOCKS,
+    },
+  },
+};
+
+export const ReadonlyModelWithOnlyId: Story = {
+  name: 'Case: model = { id: ... }, readonly = true',
+  play: async (context) => {
+    await waitForMountedAsync();
+    await waitFor(
+      () => {
+        expect(context.args.formModel.user).toEqual({
+          id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
+          email: 'alice@example.com',
+          firstName: 'Alice',
+          lastName: 'Smith',
+          username: 'asmith',
+          labels: 'the-best',
+        });
+      },
+      { timeout: 5000 },
+    );
+  },
+  args: {
+    formModel: {
+      user: { id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56' },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        user: {
+          label: 'User',
+          layout: {
+            cols: 12,
+            component: 'user-input',
+            props: {
+              readonly: true,
+            },
+          },
+          source: {
+            url: '/mocks/users',
+            itemsPerPage: 20,
+          },
+        },
+      },
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: USER_INPUT_MOCKS,
+    },
+  },
+};

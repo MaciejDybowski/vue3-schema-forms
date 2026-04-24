@@ -1,4 +1,4 @@
-import { useEventBus } from '@vueuse/core';
+ import { useEventBus } from '@vueuse/core';
 import axios from 'axios';
 import jsonata from 'jsonata';
 import { debounce } from 'lodash';
@@ -312,6 +312,25 @@ export function useDictionary() {
     }
   }
 
+  async function fetchItemById(id: string | number) {
+    if (endpoint.allVariablesResolved && endpoint.resolvedText !== '') {
+      let urlParts = endpoint.resolvedText.split('?');
+      let urlParams = new URLSearchParams(urlParts[1]);
+      urlParams.set('filter-value', id.toString());
+      const combinedUrl = `${urlParts[0]}?${urlParams.toString()}`;
+
+      try {
+        const response = await axios.get(combinedUrl);
+        const fetchedData = get(response.data, responseReference.data, []);
+        return fetchedData[0] || null;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    }
+    return null;
+  }
+
   return {
     loadItemChips,
     initState,
@@ -332,5 +351,6 @@ export function useDictionary() {
     dependencyWasChanged,
     multiple,
     maxSelection,
+    fetchItemById,
   };
 }
