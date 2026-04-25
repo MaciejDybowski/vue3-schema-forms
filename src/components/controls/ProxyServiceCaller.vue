@@ -49,6 +49,33 @@ import {
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { EngineDownloadFileField } from '@/types/engine/controls';
 
+const MIME_MAP: Record<string, string> = {
+  'application/pdf': 'pdf',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+  'application/vnd.ms-excel': 'xls',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  'application/msword': 'doc',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+  'application/vnd.ms-powerpoint': 'ppt',
+  'text/csv': 'csv',
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/gif': 'gif',
+  'image/webp': 'webp',
+  'image/svg+xml': 'svg',
+  'application/zip': 'zip',
+  'application/x-zip-compressed': 'zip',
+  'application/x-7z-compressed': '7z',
+  'application/x-rar-compressed': 'rar',
+  'application/json': 'json',
+  'text/plain': 'txt',
+  'application/xml': 'xml',
+  'text/xml': 'xml',
+  'text/html': 'html',
+  'audio/mpeg': 'mp3',
+  'video/mp4': 'mp4',
+};
+
 type RequestState = 'idle' | 'loading' | 'success' | 'error';
 type ApiParams = Record<string, any> | undefined;
 
@@ -221,49 +248,58 @@ async function mapResponseToDownloadResult(response: any): Promise<DownloadResul
     return null;
   }
 
+  const fileNameFromHeaders = getFileNameFromHeaders(response?.headers);
+
   if (response instanceof Blob) {
-    return createBlobResult(response, schema.fileName || t('defaultFileName'));
+    return createBlobResult(response, fileNameFromHeaders);
   }
 
   if (typeof response === 'string' && response.startsWith('http')) {
+    const mimeType = schema.fileType || 'application/octet-stream';
+    const name = schema.fileName || fileNameFromHeaders || t('defaultFileName');
     return {
       url: response,
-      fileName: schema.fileName || t('defaultFileName'),
-      mimeType: schema.fileType || 'application/octet-stream',
+      fileName: ensureExtension(name, mimeType),
+      mimeType,
     };
   }
 
   if (response?.blob instanceof Blob) {
-    return createBlobResult(response.blob, response.fileName || schema.fileName);
+    return createBlobResult(response.blob, response.fileName || fileNameFromHeaders);
   }
 
   if (response?.data instanceof Blob) {
-    return createBlobResult(response.data, response.fileName || schema.fileName);
+    return createBlobResult(response.data, response.fileName || fileNameFromHeaders);
   }
 
   if (response?.downloadUrl) {
+    const mimeType = response.mimeType || schema.fileType || 'application/octet-stream';
+    const name = schema.fileName || response.fileName || fileNameFromHeaders || t('defaultFileName');
     return {
       url: response.downloadUrl,
-      fileName: response.fileName || schema.fileName || t('defaultFileName'),
-      mimeType: response.mimeType || schema.fileType || 'application/octet-stream',
+      fileName: ensureExtension(name, mimeType),
+      mimeType,
     };
   }
 
-  const base64 = response?.base64 || response?.contentBase64;
+  const base64 = response?.base64 || response?.contentBase64 || response?.data?.base64 || response?.data?.contentBase64;
   if (typeof base64 === 'string' && base64.length > 0) {
-    const mimeType = response?.mimeType || schema.fileType || 'application/octet-stream';
+    const mimeType = response?.mimeType || response?.data?.mimeType || schema.fileType || 'application/octet-stream';
     const blob = base64ToBlob(base64, mimeType);
-    return createBlobResult(blob, response?.fileName || schema.fileName);
+    return createBlobResult(blob, response?.fileName || response?.data?.fileName || fileNameFromHeaders);
   }
 
   return null;
 }
 
 function createBlobResult(blob: Blob, fileName?: string): DownloadResult {
+  const mimeType = blob.type || schema.fileType || 'application/octet-stream';
+  const name = schema.fileName || fileName || t('defaultFileName');
+
   return {
     blob,
-    fileName: fileName || schema.fileName || t('defaultFileName'),
-    mimeType: blob.type || schema.fileType || 'application/octet-stream',
+    fileName: ensureExtension(name, mimeType),
+    mimeType,
   };
 }
 
@@ -335,6 +371,36 @@ function base64ToBlob(base64: string, mimeType: string) {
 
   const byteArray = new Uint8Array(byteNumbers);
   return new Blob([byteArray], { type: mimeType });
+}
+
+function getFileNameFromHeaders(headers: any): string {
+  if (!headers) return "file";
+  const contentDisposition = headers['content-disposition'] || headers['Content-Disposition'];
+  if (!contentDisposition) return "file";
+
+  const filenameStarMatch = contentDisposition.match(/filename\*=utf-8''([^;]+)/i);
+  if (filenameStarMatch && filenameStarMatch[1]) {
+    try {
+      return decodeURIComponent(filenameStarMatch[1]);
+    } catch {
+      return filenameStarMatch[1];
+    }
+  }
+
+  const filenameMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+  if (filenameMatch && filenameMatch[1]) {
+    return filenameMatch[1];
+  }
+
+  return "file";
+}
+
+function ensureExtension(fileName: string, mimeType: string): string {
+  if (!fileName || fileName.includes('.')) return fileName;
+
+  const cleanMime = mimeType.split(';')[0].trim().toLowerCase();
+  const extension = MIME_MAP[cleanMime];
+  return extension ? `${fileName}.${extension}` : fileName;
 }
 
 onMounted(async () => {
