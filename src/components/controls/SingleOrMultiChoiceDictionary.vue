@@ -17,7 +17,7 @@
       density="compact"
       class="mb-2"
     >
-      {{ t('dictionary.warningAboutEffectiveLimit', {effectiveLimit: effectiveLimit}) }}
+      {{ t('dictionary.warningAboutEffectiveLimit', { effectiveLimit: effectiveLimit }) }}
     </v-alert>
 
     <div v-if="!loading && multiple">
@@ -26,6 +26,7 @@
         :key="option[valueKey]"
       >
         <v-checkbox
+          :ref="index === data.length - 1 ? 'inputRef' : undefined"
           v-model="localModel"
           :disabled="disabled(fieldProps.disabled, option.disabled)"
           :hide-details="index === data.length - 1 ? 'auto' : true"
@@ -43,6 +44,7 @@
 
     <v-radio-group
       v-else-if="!loading"
+      ref="inputRef"
       v-model="localModel"
       :rules="activeRules"
       v-bind="fieldProps"
@@ -99,7 +101,7 @@ const DEFAULT_OPTIONS_LIMIT = 10;
 const MAX_OPTIONS_LIMIT = 100;
 
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();

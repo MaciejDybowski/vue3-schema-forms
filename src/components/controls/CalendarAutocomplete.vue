@@ -1,5 +1,6 @@
 <template>
   <dictionary-base
+    ref="inputRef"
     v-model="localModel"
     :auto-select-first="false"
     :class="bindClass(schema) + requiredInputClass"
@@ -73,7 +74,7 @@ const { schema, model, validationsDisabled } = defineProps<{
 }>();
 
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { getValue, setValue } = useFormModel();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);

@@ -66,6 +66,7 @@
     </v-row>
 
     <v-input
+      ref="inputRef"
       :model-value="selectedColor"
       :class="bindClass(schema) + requiredInputClass"
       :rules="activeRules"
@@ -93,7 +94,7 @@ const { schema, model, validationsDisabled } = defineProps<{
 const { t } = useI18n();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
 const { onChange } = useEventHandler();

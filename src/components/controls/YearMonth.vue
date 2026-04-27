@@ -90,7 +90,7 @@ const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const attrs = useAttrs();
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef: inputFieldRef } = useRules();
 const { activeRules } = useActiveRules({
   fieldProps,
   validationsDisabled: toRef(() => props.validationsDisabled),
@@ -98,7 +98,7 @@ const { activeRules } = useActiveRules({
 });
 
 const pickerModel = ref(false);
-const inputFieldRef = ref<HTMLElement | null>(null);
+
 const inputValue = ref('');
 const pickerValue = ref<Date | null>(null);
 

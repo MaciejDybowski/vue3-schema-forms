@@ -8,6 +8,7 @@
     >
       <template #activator="{ props }">
         <v-text-field
+          ref="inputRef"
           :class="bindClass(schema) + requiredInputClass"
           :label="label"
           :model-value="formattedSelection"
@@ -31,6 +32,7 @@
 
     <v-input
       v-if="schema.variant == 'list'"
+      ref="inputRef"
       v-model="localModel"
       :class="bindClass(schema) + requiredInputClass"
       :rules="activeRules"
@@ -81,7 +83,7 @@ const { resolve } = useResolveVariables();
 const menu = ref(false);
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { bindProps, fieldProps } = useProps();
 
 const { schema, model, validationsDisabled } = defineProps<{

@@ -15,6 +15,7 @@
         :key="option[value]"
       >
         <v-checkbox
+          :ref="index === data.length - 1 ? 'inputRef' : undefined"
           v-model="localModel"
           :disabled="disabled(fieldProps.disabled, option.disabled)"
           :hide-details="index == data.length - 1 ? 'auto' : true"
@@ -59,7 +60,7 @@ const props = defineProps<{
 
 const { label, bindLabel } = useLabel(props.schema);
 const { title, value, loading, data, returnObject } = useSource(props.schema.source);
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();

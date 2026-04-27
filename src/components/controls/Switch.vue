@@ -1,6 +1,6 @@
 <template>
   <v-switch
-    :ref="(el) => (formSwitch[switchId] = el)"
+    ref="inputRef"
     v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
     :color="primaryWhite"
@@ -43,7 +43,7 @@ const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
 const { getValue, setValue } = useFormModel();
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
 const { onChange } = useEventHandler();
 const { activeRules } = useActiveRules({

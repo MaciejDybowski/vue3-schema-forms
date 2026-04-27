@@ -1,6 +1,7 @@
 <template>
   <div v-if="editor && !editorLoading">
     <v-input
+      ref="inputRef"
       v-model="localModel"
       :rules="activeRules"
       v-bind="fieldProps"
@@ -72,13 +73,13 @@
 </template>
 
 <script lang="ts" setup>
-import { useEventBus } from '@vueuse/core';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
 import { Markdown } from '@tiptap/markdown';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
+import { useEventBus } from '@vueuse/core';
 import axios from 'axios';
 
 import { computed, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
@@ -119,7 +120,7 @@ interface ProcessSelectedFilesOptions {
 
 const ATTACHMENT_HASH_PREFIX = '#attachment-file=';
 
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { getValue, setValue } = useFormModel();
 const { bindProps, fieldProps } = useProps();
 const { onChange } = useEventHandler();
@@ -265,11 +266,7 @@ const editor = useEditor({
 watch(
   () => localModel.value,
   (newValue) => {
-    if (
-      !isUpdatingFromEditor.value &&
-      editor.value &&
-      !isEditorContentSyncedWithModel(newValue)
-    ) {
+    if (!isUpdatingFromEditor.value && editor.value && !isEditorContentSyncedWithModel(newValue)) {
       editor.value.commands.setContent(newValue);
     }
     onChange(schema, model);
@@ -524,33 +521,35 @@ function resolveClipboardImageExtension(file: File): string {
 }
 
 function resolveClipboardImageName(file: File): string {
-    const fileName = file.name?.trim() || '';
-    const extension = resolveClipboardImageExtension(file);
-    const timestamp = new Date().toISOString().replaceAll(':', '-');
+  const fileName = file.name?.trim() || '';
+  const extension = resolveClipboardImageExtension(file);
+  const timestamp = new Date().toISOString().replaceAll(':', '-');
 
-    // Domyślne nazwy plików generowane przez systemy operacyjne
-    const defaultNames = [
-      'image.png',
-      'image.jpg',
-      'image.jpeg',
-      'image.gif',
-      'image.webp',
-      'image.bmp',
-      'image.tiff',
-      'image.svg',
-    ];
+  // Domyślne nazwy plików generowane przez systemy operacyjne
+  const defaultNames = [
+    'image.png',
+    'image.jpg',
+    'image.jpeg',
+    'image.gif',
+    'image.webp',
+    'image.bmp',
+    'image.tiff',
+    'image.svg',
+  ];
 
-    function randomHash(length = 4) {
-      return Math.random().toString(36).substring(2, 2 + length);
-    }
+  function randomHash(length = 4) {
+    return Math.random()
+      .toString(36)
+      .substring(2, 2 + length);
+  }
 
-    if (fileName && defaultNames.includes(fileName.toLowerCase())) {
-      return `screenshot-${timestamp}-${randomHash(4)}.${extension}`;
-    }
-    if (fileName) {
-      return fileName;
-    }
+  if (fileName && defaultNames.includes(fileName.toLowerCase())) {
     return `screenshot-${timestamp}-${randomHash(4)}.${extension}`;
+  }
+  if (fileName) {
+    return fileName;
+  }
+  return `screenshot-${timestamp}-${randomHash(4)}.${extension}`;
 }
 
 function cloneClipboardFileWithName(file: File): File {
@@ -653,7 +652,9 @@ function isPersistedImageContentUrl(value: string): boolean {
   try {
     const parsed = new URL(value, window.location.origin);
     const path = parsed.pathname;
-    return path.includes('/api/v1/features/') && path.includes('/files/') && path.endsWith('/content');
+    return (
+      path.includes('/api/v1/features/') && path.includes('/files/') && path.endsWith('/content')
+    );
   } catch (_error) {
     return false;
   }
@@ -769,10 +770,7 @@ function handleAttachmentLinkClick(event: Event): boolean {
   stopEventNavigation(event);
   (event as Event & { __attachmentHandled?: boolean }).__attachmentHandled = true;
 
-  void downloadAttachmentViaAxios(
-    attachmentTarget.downloadUrl,
-    attachmentTarget.fallbackFileName,
-  );
+  void downloadAttachmentViaAxios(attachmentTarget.downloadUrl, attachmentTarget.fallbackFileName);
   return true;
 }
 
@@ -832,7 +830,6 @@ function resolvePersistedAttachmentTarget(event: Event): ResolvedAttachmentTarge
   const downloadUrl = isPersistedImageContentUrl(href) ? href : buildFileContentUrl(fileId);
   const fallbackFileName = link.textContent?.trim() || undefined;
   return { downloadUrl, fallbackFileName };
-
 }
 
 function resolveFileNameFromContentUrl(url: string, fallback?: string): string {
@@ -1275,11 +1272,7 @@ function insertFileToEditor(url: string, fileName: string) {
       editor.value.chain().focus().insertContent(`[${fileName}](${url})`).run();
       break;
     default:
-      editor.value
-        .chain()
-        .focus()
-        .insertContent(buildAttachmentHtml(url, fileName))
-        .run();
+      editor.value.chain().focus().insertContent(buildAttachmentHtml(url, fileName)).run();
   }
 }
 

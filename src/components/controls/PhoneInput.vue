@@ -1,5 +1,6 @@
 <template>
   <v-phone-input
+    ref="inputRef"
     v-model="localModel"
     :class="[bindClass(schema), requiredInputClass]"
     :country-props="fieldPropsMerged"
@@ -37,7 +38,7 @@ const props = defineProps<{
 }>();
 
 const { label, bindLabel } = useLabel(props.schema);
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { t } = useLocale();

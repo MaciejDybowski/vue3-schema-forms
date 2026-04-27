@@ -1,12 +1,14 @@
 <template>
   <div class="node-text-field">
     <v-text-field
+      ref="inputRef"
       v-model="localModel"
       :class="bindClass(schema) + requiredInputClass"
       :label="label"
       :rules="activeRules"
       v-bind="fieldProps"
       @update:model-value="onChange(schema, model)"
+      @blur="markUserInteracted"
     />
   </div>
 </template>
@@ -37,7 +39,7 @@ const props = defineProps<{
 
 const { resolve } = useResolveVariables();
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef, hasUserInteracted } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { resolveExpression } = useExpression();
 const { handleDependency } = useDependencies();
@@ -97,6 +99,10 @@ async function resolveIfLocalModelHasDependencies() {
     }
   }
 }
+
+const markUserInteracted = () => {
+  hasUserInteracted.value = true;
+};
 
 onMounted(async () => {
   await resolveIfLocalModelHasDependencies();

@@ -1,5 +1,6 @@
 <template>
   <v-select
+    ref="inputRef"
     v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
     :items="years"
@@ -29,7 +30,7 @@ const { schema, model, validationsDisabled } = defineProps<{
 }>();
 
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
 const { getValue, setValue } = useFormModel();

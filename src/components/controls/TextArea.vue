@@ -1,5 +1,6 @@
 <template>
   <v-textarea
+    ref="inputRef"
     v-model="localModel"
     :label="label"
     :rules="activeRules"
@@ -14,8 +15,8 @@ import { computed, onMounted, toRef } from 'vue';
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
 import { useActiveRules } from '@/core/composables/useActiveRules';
-import { EngineField } from '@/types/engine/EngineField';
 import { useEventHandler } from '@/core/composables/useEventHandler';
+import { EngineField } from '@/types/engine/EngineField';
 
 const props = defineProps<{
   schema: EngineField;
@@ -23,7 +24,7 @@ const props = defineProps<{
   validationsDisabled: boolean;
 }>();
 const { label, bindLabel } = useLabel(props.schema);
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();

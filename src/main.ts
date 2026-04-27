@@ -12,7 +12,7 @@ export * from './core/composables/useGeneratorCache';
 
 export declare type Components = Record<string, Component>;
 export let logger = {
-  formUpdateLogger: false,
+  formUpdateLogger: true,
   calculationListener: false,
   JSONataExpressionListener: false,
   propsValueMappingListener: false,

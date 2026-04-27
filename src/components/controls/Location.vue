@@ -1,5 +1,6 @@
 <template>
   <v-autocomplete
+    ref="inputRef"
     :label="label"
     v-model="localModel"
     :items="items"
@@ -51,7 +52,7 @@ const props = defineProps<{
 }>();
 
 const { label, bindLabel } = useLabel(props.schema);
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();

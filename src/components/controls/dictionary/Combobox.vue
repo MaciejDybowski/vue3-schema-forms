@@ -1,5 +1,6 @@
 <template>
   <dictionary-base
+    ref="inputRef"
     v-model="localModel"
     v-model:search="query"
     :auto-select-first="true"
@@ -96,7 +97,7 @@ const props = defineProps<{
 const { t } = useLocale();
 const { label, bindLabel } = useLabel(props.schema);
 const { fieldProps, bindProps } = useProps();
-const { bindRules, rules, requiredInputClass } = useRules();
+const { bindRules, rules, requiredInputClass, inputRef } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();
