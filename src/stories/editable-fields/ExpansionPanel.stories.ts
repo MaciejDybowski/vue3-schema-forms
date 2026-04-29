@@ -192,3 +192,131 @@ export const TableOne: Story = {
     }
   }
 };
+
+export const HideCondition: Story = {
+  play: playWrapper(async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+  
+    
+    // Toggle switch to hide panel
+    const switchInput = await canvas.findByLabelText('Pokaż ukryty panel');
+    await userEvent.click(switchInput, {delay: 600});
+    
+    // Panel B should disappear
+    await expect(canvas.queryByRole('button', { name: 'B' })).toBeInTheDocument();
+  
+
+  }),
+  args: {
+    formModel: { showPanel: false },
+    schema: {
+      type: 'object',
+      properties: {
+        showPanel: {
+          label: 'Pokaż ukryty panel',
+          layout: {
+            component: 'switch',
+          },
+        },
+        panelA: {
+          layout: {
+            component: 'expansion-panels',
+          },
+          panels: [
+            {
+              title: 'A',
+              schema: {
+                properties: {
+                  test: { label: 'Test', layout: { component: 'text-field' } },
+                },
+              },
+            },
+            {
+              title: 'B',
+              hideCondition: 'nata(showPanel = false)',
+              schema: {
+                properties: {
+                  test: { label: 'Test', layout: { component: 'text-field' } },
+                },
+              },
+            },
+            {
+              title: 'C',
+              schema: {
+                properties: {
+                  test: { label: 'Test', layout: { component: 'text-field' } },
+                },
+              },
+            }
+          ],
+        },
+      },
+    },
+  },
+};
+
+export const OpenCondition: Story = {
+  play: playWrapper(async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // Panel B should be closed initially
+    await expectPanelState(canvasElement, 'B', false);
+    
+    // Toggle switch to open panel
+    const switchInput = await canvas.findByLabelText('Otwórz panel automatycznie');
+    await userEvent.click(switchInput, {delay: 600});
+    
+    // Wait for animation/reactivity
+    await new Promise(r => setTimeout(r, 500));
+    
+    // Panel B should be expanded
+    await expectPanelState(canvasElement, 'B', true);
+  }),
+  args: {
+    formModel: { openPanel: false },
+    schema: {
+      type: 'object',
+      properties: {
+        openPanel: {
+          label: 'Otwórz panel automatycznie',
+          layout: {
+            component: 'switch',
+          },
+        },
+        panelA: {
+          layout: {
+            component: 'expansion-panels',
+          },
+          panels: [
+            {
+              title: 'A',
+
+              schema: {
+                properties: {
+                  test: { label: 'Test', layout: { component: 'text-field' } },
+                },
+              },
+            },
+            {
+              title: 'B',
+              openCondition: 'nata(openPanel = true)',
+              schema: {
+                properties: {
+                  test: { label: 'Test', layout: { component: 'text-field' } },
+                },
+              },
+            },        {
+              title: 'C',
+              schema: {
+                properties: {
+                  test: { label: 'Test', layout: { component: 'text-field' } },
+                },
+              },
+            },
+
+          ],
+        },
+      },
+    },
+  },
+};

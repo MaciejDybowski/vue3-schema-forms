@@ -7,8 +7,9 @@
     variant="accordion"
   >
     <v-expansion-panel
-      v-for="(panel, index) in schema.panels"
+      v-for="{ panel, index } in visiblePanels"
       :key="getPanelId(panel, index)"
+      :value="index"
     >
       <v-expansion-panel-title v-if="panelTitles[index]">
         <v-icon
@@ -30,7 +31,7 @@
         eager
       >
         <form-root
-          :model="model"
+          :model="props.model"
           :options="computedOptions"
           :schema="panelSchemas[index]"
           @update:model="updateModel"
@@ -43,8 +44,9 @@
 <script lang="ts" setup>
 import { useEventBus, useLocalStorage } from '@vueuse/core';
 import { cloneDeep } from 'lodash';
+import jsonata from 'jsonata';
 
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 import FormRoot from '@/components/engine/FormRoot.vue';
 
@@ -54,18 +56,18 @@ import { EngineExpansionPanel, EngineExpansionPanels } from '@/types/engine/cont
 import { Schema } from '@/types/schema/Schema';
 import { SchemaField } from '@/types/schema/SchemaField';
 
-const { model, schema } = defineProps<{
+const props = defineProps<{
   schema: EngineExpansionPanels;
   model: object;
 }>();
 
 const { setValue } = useFormModel();
-const { resolve } = useResolveVariables();
+const { resolve, fillPath } = useResolveVariables();
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
 const computedOptions = computed(() => {
-  const defaultOptions = schema.options || {};
-  const layoutProps = schema.layout?.props;
+  const defaultOptions = props.schema.options || {};
+  const layoutProps = props.schema.layout?.props;
 
   if (!layoutProps || Object.keys(layoutProps).length === 0) {
     return defaultOptions;
@@ -80,9 +82,9 @@ const computedOptions = computed(() => {
 })
 
 function generatePanelsId(): string {
-  const schemaKey = schema.key || '';
-  const path = 'path' in schema ? schema.path : '';
-  const panelTitlesHash = schema.panels.map(p => p.title).join('|');
+  const schemaKey = props.schema.key || '';
+  const path = 'path' in props.schema ? props.schema.path : '';
+  const panelTitlesHash = props.schema.panels.map(p => p.title).join('|');
   return `expansion-panels-${schemaKey}-${path}-${panelTitlesHash}`.replace(/\s+/g, '_');
 }
 
@@ -93,12 +95,12 @@ const panelsId = generatePanelsId();
 const storedPanelState = useLocalStorage<number[]>(`${panelsId}-state`, []);
 
 function resolveInitialOpenPanels(): number[] {
-  const maxIndex = schema.panels.length - 1;
+  const maxIndex = props.schema.panels.length - 1;
   const sanitizedStoredState = Array.from(new Set(storedPanelState.value))
     .filter((panelIndex) => Number.isInteger(panelIndex) && panelIndex >= 0 && panelIndex <= maxIndex);
   const storedStateSet = new Set(sanitizedStoredState);
 
-  return schema.panels.reduce<number[]>((result, panel, index) => {
+  return props.schema.panels.reduce<number[]>((result, panel, index) => {
     if (typeof panel.openByDefault === 'boolean') {
       if (panel.openByDefault) {
         result.push(index);
@@ -114,6 +116,71 @@ function resolveInitialOpenPanels(): number[] {
   }, []);
 }
 
+const jsonataCache = new Map<string, any>();
+
+const visiblePanels = ref<{ panel: EngineExpansionPanel; index: number }[]>(
+  props.schema.panels.map((panel, index) => ({ panel, index })),
+);
+
+async function evaluateCondition(condition: string): Promise<boolean> {
+  try {
+    let expression = condition.trim();
+    if (expression.startsWith('nata(') && expression.endsWith(')')) {
+      expression = expression.substring(5, expression.length - 1);
+    }
+    const filledExpression = fillPath(props.schema.path, props.schema.index, expression);
+
+    let compiled = jsonataCache.get(filledExpression);
+    if (!compiled) {
+      compiled = jsonata(filledExpression);
+      jsonataCache.set(filledExpression, compiled);
+    }
+
+    const result = await compiled.evaluate(props.model);
+    return !!result;
+  } catch (e) {
+    console.error('Error evaluating condition:', condition, e);
+    return false;
+  }
+}
+
+async function refreshConditions() {
+  const results = await Promise.all(
+    props.schema.panels.map(async (panel, i) => {
+      let isHidden = false;
+      if (panel.hideCondition) {
+        isHidden = await evaluateCondition(panel.hideCondition);
+      }
+
+      let shouldOpen = false;
+      if (panel.openCondition && !isHidden) {
+        shouldOpen = await evaluateCondition(panel.openCondition);
+      }
+
+      return { isHidden, shouldOpen, panel, index: i };
+    }),
+  );
+
+  const newVisiblePanels: { panel: EngineExpansionPanel; index: number }[] = [];
+  const currentOpenPanels = [...openPanels.value];
+  let openPanelsChanged = false;
+
+  results.forEach((res) => {
+    if (!res.isHidden) {
+      newVisiblePanels.push({ panel: res.panel, index: res.index });
+      if (res.shouldOpen && !currentOpenPanels.includes(res.index)) {
+        currentOpenPanels.push(res.index);
+        openPanelsChanged = true;
+      }
+    }
+  });
+
+  visiblePanels.value = newVisiblePanels;
+  if (openPanelsChanged) {
+    openPanels.value = currentOpenPanels;
+  }
+}
+
 const openPanels = ref<number[]>(resolveInitialOpenPanels());
 
 watch(openPanels, (newValue) => {
@@ -122,7 +189,7 @@ watch(openPanels, (newValue) => {
 
 
 function updateModel(payload: any) {
-  setValue(payload.value, { key: payload.key, on: schema.on } as any);
+  setValue(payload.value, { key: payload.key, on: props.schema.on } as any);
 }
 
 /**
@@ -202,9 +269,9 @@ function createPanelSchemaWithContext(panelSchema: Schema, path: string, index: 
 }
 
 const panelSchemas = computed(() =>
-  schema.panels.map((p) => {
-    if ('path' in schema && 'index' in schema && schema.path !== undefined && schema.index !== undefined) {
-      return createPanelSchemaWithContext(p.schema, schema.path, schema.index);
+  props.schema.panels.map((p) => {
+    if ('path' in props.schema && 'index' in props.schema && props.schema.path !== undefined && props.schema.index !== undefined) {
+      return createPanelSchemaWithContext(p.schema, props.schema.path, props.schema.index);
     }
     return p.schema;
   }),
@@ -212,29 +279,37 @@ const panelSchemas = computed(() =>
 
 const panelTitles = ref<any[]>([]);
 
-onMounted(() => {
-  panelTitles.value = schema.panels.map((p: EngineExpansionPanel) => ({
+onMounted(async () => {
+  panelTitles.value = props.schema.panels.map((p: EngineExpansionPanel) => ({
     resolvedText: p.title,
   }));
 
   Promise.all(
-    schema.panels.map(async (p: EngineExpansionPanel) => {
-      return await resolve(schema, p.title);
+    props.schema.panels.map(async (p: EngineExpansionPanel) => {
+      return await resolve(props.schema, p.title);
     }),
   ).then((resolved) => {
     panelTitles.value = resolved;
   });
 
-  const hasVariables = schema.panels.some((p) => p.title.match(variableRegexp));
+  const hasVariables = props.schema.panels.some((p) => p.title.match(variableRegexp));
 
-  if (hasVariables) {
-    const unsubscribe = vueSchemaFormEventBus.on(async () => {
+  let unsubscribe: (() => void) | undefined;
+  if (hasVariables || props.schema.panels.some((p) => p.hideCondition || p.openCondition)) {
+    unsubscribe = vueSchemaFormEventBus.on(async () => {
       await new Promise((r) => setTimeout(r, 110));
       panelTitles.value = await Promise.all(
-        schema.panels.map(async (p) => await resolve(schema, p.title)),
+        props.schema.panels.map(async (p) => await resolve(props.schema, p.title)),
       );
+      await refreshConditions();
     });
   }
+
+  await refreshConditions();
+
+  onUnmounted(() => {
+    if (unsubscribe) unsubscribe();
+  });
 });
 </script>
 

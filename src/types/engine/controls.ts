@@ -20,6 +20,8 @@ export interface EngineExpansionPanel {
   title: string;
   schema: Schema;
   openByDefault?: boolean;
+  openCondition?: string;
+  hideCondition?: string;
 }
 
 export interface EnginePESELField extends EngineField {
