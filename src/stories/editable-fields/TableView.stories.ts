@@ -1687,7 +1687,7 @@ export const YearEditableField: Story = {
                     type: 'YEAR',
                     title: 'Year',
                     key: 'year',
-                    valueMapping: 'year',
+                    valueMapping: 'year:[currentYear .. (currentYear + 10)]',
                   },
                 ],
                 properties: {
@@ -1757,7 +1757,7 @@ export const YearEditableReadonlyWithCondition: Story = {
                     type: 'YEAR',
                     title: 'Year',
                     key: 'year',
-                    valueMapping: 'year',
+                    valueMapping: 'year:[currentYear .. (currentYear + 10)]',
                     readonly: 'base > 40',
                   },
                 ],

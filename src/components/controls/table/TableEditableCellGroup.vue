@@ -152,10 +152,10 @@
           type: 'text',
           label: item.label,
           layout: { props: {}, component: 'year-picker' },
+          expression: getExpressionForYearPicker(item.valueMapping),
           options: {
             fieldProps: {
               ...boundAttrsMap[item.valueMapping],
-              label: item.label,
               rules: rulesMap[item.valueMapping],
             },
           },
@@ -292,6 +292,11 @@ function getItemSubtitleValue(valueMapping: string, item: any) {
   const split = valueMapping.split(':');
   if (split.length < 6) return null;
   return get(item, split[5], null);
+}
+
+function getExpressionForYearPicker(valueMapping: string) {
+  const split = valueMapping.split(':');
+  return split.length >= 1 ? split[1] : undefined;
 }
 
 function emitData(e: any, item: HeaderEditableObject) {
