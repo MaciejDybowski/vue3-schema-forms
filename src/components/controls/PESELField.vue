@@ -1,6 +1,5 @@
 <template>
   <v-text-field
-    ref="inputRef"
     v-model="localModel"
     :class="bindClass(schema) + requiredInputClass"
     :hint="warningHint"
@@ -43,7 +42,7 @@ const props = defineProps<{
 
 const { t } = useLocale();
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass, inputRef } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue } = useFormModel();

@@ -91,7 +91,7 @@ import { EngineDateField } from '@/types/engine/controls';
 
 import dayjs from './dayjs';
 
-
+const inputFieldRef = ref<any>();
 
 const { locale, t } = useLocale();
 const props = defineProps<{
@@ -100,7 +100,7 @@ const props = defineProps<{
   validationsDisabled: boolean;
 }>();
 const { label, bindLabel } = useLabel(props.schema);
-const { bindRules, rules, requiredInputClass, inputRef: inputFieldRef } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();

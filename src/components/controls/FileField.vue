@@ -1,6 +1,5 @@
 <template>
   <v-file-input
-    ref="inputRef"
     v-model="localModel"
     :accept="availableExtensionsString"
     :class="bindClass(schema) + requiredInputClass"
@@ -66,7 +65,7 @@ const { schema, model, validationsDisabled } = defineProps<{
 
 const { t } = useLocale();
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass, inputRef } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { label, bindLabel } = useLabel(schema);

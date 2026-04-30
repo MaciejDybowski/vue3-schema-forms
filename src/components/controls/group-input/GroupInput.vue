@@ -1,6 +1,5 @@
 <template>
   <dictionary-base
-    ref="inputRef"
     v-model="localModel"
     v-model:menu="menu"
     v-model:search="query"
@@ -136,7 +135,7 @@ const props = defineProps<{
 
 const { t } = useLocale();
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass, inputRef } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { onChange } = useEventHandler();
 const { label, bindLabel } = useLabel(props.schema);

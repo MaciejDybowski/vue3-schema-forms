@@ -51,7 +51,7 @@
 import { MaskOptions } from 'maska';
 import { vMaska } from 'maska/vue';
 
-import { computed, onBeforeUnmount, onMounted, ref, toRef, useAttrs, watch } from 'vue';
+import { computed, onMounted, ref, toRef, useAttrs, watch } from 'vue';
 
 import {
   useClass,
@@ -75,7 +75,7 @@ const props = defineProps<{
   validationsDisabled: boolean;
 }>();
 const { label, bindLabel } = useLabel(props.schema);
-const { bindRules, rules, requiredInputClass, inputRef: inputFieldRef } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
 const { getValue, setValue } = useFormModel();
 const { bindClass } = useClass();
@@ -101,6 +101,7 @@ onMounted(async () => {
 const currentDate = new Date();
 currentDate.setHours(0, 0, 0, 0);
 
+const inputFieldRef = ref<any>();
 const pickerModel = ref(false);
 const inputValue = ref('');
 const pickerValue = ref<Date>();

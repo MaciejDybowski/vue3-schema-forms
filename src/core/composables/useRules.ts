@@ -13,22 +13,15 @@ import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
 export function useRules() {
   const { t } = useLocale();
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
-  const rules: Ref<any[]> = ref([]);
-  const requiredInputClass = ref('');
-  const inputRef = ref<any>(null);
+  let rules: Ref<any[]> = ref([]);
+  let requiredInputClass = ref('');
   const { fillPath } = useResolveVariables();
   const form = useInjectedFormModel();
-  const suppressRequired = ref(false);
-  const hasUserInteracted = ref(false);
 
   async function bindRules(schema: EngineField) {
     if (schema.required) {
       requiredInputClass.value = ' required-input';
       rules.value.push((val: any) => {
-        // Don't validate required on initial state - only after user interaction
-        if (!hasUserInteracted.value) {
-          return true;
-        }
         const isValidArray = Array.isArray(val) && val.length > 0;
         const isValidPrimitive = val !== '' && val !== null && val !== undefined;
         if (!isValidArray && Array.isArray(val)) return t('required');
@@ -53,10 +46,14 @@ export function useRules() {
           vueSchemaFormEventBus.on(() => ruleListener(schema, ruleDefinition));
         } else if (ruleDefinition.rule) {
           resolveValidationFunctionWithJSONataRule(ruleDefinition, schema);
-          // listener for dynamic JSONata rules - re-validate when model changes
-          vueSchemaFormEventBus.on(() => {
-            triggerValidation();
-          });
+
+          /*vueSchemaFormEventBus.on((event, payload) => {
+            if (ruleDefinition.rule?.includes(payload.key)) {
+              resolveValidationFunctionWithJSONataRule(ruleDefinition, schema);
+              // @ts-ignore
+              inputFieldRef?.value.validate();
+            }
+          });*/
         } else if (ruleDefinition.regexp) {
           resolveValidationFunctionWithRegexp(ruleDefinition, schema);
         }
@@ -87,7 +84,7 @@ export function useRules() {
               );
             }
 
-            const model = form.getFormModelForResolve.value;
+            let model = form.getFormModelForResolve.value;
 
             const nata = jsonata(variablePathWithoutBrackets);
             let result = '';
@@ -128,7 +125,7 @@ export function useRules() {
         );
       }
 
-      const model = form.getFormModelForResolve.value;
+      let model = form.getFormModelForResolve.value;
       const nata = jsonata(ruleDefinition.rule as string);
 
       try {
@@ -146,42 +143,14 @@ export function useRules() {
     });
   }
 
-  const triggerValidation = async () => {
-    // Re-validate only if the field is already showing error messages.
-    // This allows clearing errors when rules change, but prevents showing new ones
-    // until the user interacts with the field or submits the form.
-    if (inputRef.value && inputRef.value.errorMessages?.length > 0) {
-      await inputRef.value.validate();
-    }
-  };
-
-  let lastConditionResult: boolean | null = null;
   async function ruleListener(schema: EngineField, ruleDefinition: SchemaSimpleValidation) {
     const model = form.getFormModelForResolve.value;
     const nata = jsonata(ruleDefinition.rule as string);
     const conditionResult = await nata.evaluate(model);
-
-    if (conditionResult !== lastConditionResult) {
-      if (conditionResult) {
-        requiredInputClass.value = ' required-input';
-      } else {
-        requiredInputClass.value = '';
-      }
-
-      if (lastConditionResult !== null) {
-        // If it was required and now it's not, clear errors immediately
-        if (conditionResult === false) {
-          // Reset validation state to clear any existing errors
-          inputRef.value?.resetValidation?.();
-          // Then validate to ensure clean state
-          await inputRef.value?.validate();
-        } else {
-          // If it just became required, suppress the next validation cycle
-          // to prevent the field from glowing red immediately.
-          suppressRequired.value = true;
-        }
-      }
-      lastConditionResult = conditionResult;
+    if (conditionResult) {
+      requiredInputClass.value = ' required-input';
+    } else {
+      requiredInputClass.value = '';
     }
   }
 
@@ -195,29 +164,16 @@ export function useRules() {
       const nata = jsonata(ruleDefinition.rule as string);
       const conditionResult = await nata.evaluate(model);
 
-      // If condition is false, field is not required - always valid
       if (!conditionResult) {
         schema.required = false;
-        suppressRequired.value = false;
         return true;
       }
 
-      // If suppressing validation on condition change, skip error
-      if (suppressRequired.value) {
-        suppressRequired.value = false;
-        return true;
-      }
-
-      // Mark that user has been validated against required rule
-      hasUserInteracted.value = true;
-
-      // Apply required validation logic for conditional-required field
       // zdublowane celowo w celu spełnienie interfjesu funkcji walidacyjnej zdefiniowanej przez vuetify
-      if ((currentValue || currentValue === false) && currentValue !== '') return true;
+      if ((currentValue || currentValue == false) && currentValue !== '') return true;
       return t('required');
     });
   }
 
-  return { bindRules, rules, requiredInputClass, inputRef, hasUserInteracted };
+  return { bindRules, rules, requiredInputClass };
 }
-
