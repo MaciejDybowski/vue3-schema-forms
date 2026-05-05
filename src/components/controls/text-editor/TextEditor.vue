@@ -73,7 +73,6 @@
 </template>
 
 <script lang="ts" setup>
-import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
 import { Markdown } from '@tiptap/markdown';
@@ -81,6 +80,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 import { useEventBus } from '@vueuse/core';
 import axios from 'axios';
+import ImageResize from 'tiptap-extension-resize-image';
 
 import { computed, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
 
@@ -224,7 +224,7 @@ const editor = useEditor({
         target: null,
       },
     }),
-    Image,
+    ImageResize.configure({}),
     Markdown,
     Table.configure({
       resizable: true,
@@ -1258,7 +1258,14 @@ function insertImageToEditor(url: string, alt: string) {
       editor.value.chain().focus().insertContent(`![${alt}](${url})`).run();
       break;
     default:
-      editor.value.chain().focus().setImage({ src: url, alt }).run();
+      editor.value
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'imageResize',
+          attrs: { src: url, alt },
+        })
+        .run();
   }
 }
 
@@ -1419,6 +1426,11 @@ async function onAttachmentFileSelected(event: Event) {
 :deep(.vue-forms-text-editor th) {
   background-color: rgba(var(--v-theme-primary), 0.05);
   font-weight: 600;
+}
+
+:deep(.vue-forms-text-editor img) {
+  max-width: 100%;
+  height: auto;
 }
 
 .v-theme--dark :deep(.vue-forms-text-editor) {

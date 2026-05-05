@@ -67,6 +67,7 @@
     "v-phone-input": "5.1.4",
     "vue-eslint-parser": "^10.2.0",
     "vue-json-pretty": "^2.4.0",
+    "tiptap-extension-resize-image": "^1.2.3",
     "world-flags-sprite": "^0.0.2"
   },
   "peerDependencies": {
