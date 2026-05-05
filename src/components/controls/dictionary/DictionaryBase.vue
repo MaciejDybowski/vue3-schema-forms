@@ -1,6 +1,5 @@
 <template>
   <component
-    ref="innerRef"
     :is="component"
     v-model="model"
     :multiple="multiple"
@@ -36,12 +35,11 @@ import { isArray } from 'lodash';
 import { computed, ref, useAttrs } from 'vue';
 
 import { Pagination } from './Pagination';
-
-type ComponentType = 'v-autocomplete' | 'v-combobox';
+type ComponentType = "v-autocomplete" | "v-combobox";
 const attrs = useAttrs();
 const props = withDefaults(
   defineProps<{
-    component: ComponentType;
+    component: ComponentType
     modelValue: any;
     lazy?: boolean;
     options?: Pagination;
@@ -49,7 +47,7 @@ const props = withDefaults(
     multiple?: boolean;
   }>(),
   {
-    component: 'v-autocomplete',
+    component: "v-autocomplete",
     lazy: false,
     multiple: false,
     maxSelection: 0,
@@ -85,13 +83,6 @@ function loadMore(isIntersecting: boolean) {
     emit('loadMoreRecords');
   }
 }
-const innerRef = ref<any>(null);
-
-defineExpose({
-  validate: () => innerRef.value?.validate(),
-  errors: computed(() => innerRef.value?.errors),
-  errorMessages: computed(() => innerRef.value?.errorMessages),
-});
 </script>
 
 <style lang="css" scoped></style>

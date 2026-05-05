@@ -1,6 +1,5 @@
 <template>
   <v-select
-    ref="inputRef"
     v-model="localModel"
     :label="label"
     v-bind="fieldProps"
@@ -40,7 +39,7 @@ const props = defineProps<{
 const { label, bindLabel } = useLabel(props.schema);
 const { title, value, loading, data, returnObject, multiple } = useSource(props.schema.source);
 const { bindProps, fieldProps } = useProps();
-const { bindRules, rules, requiredInputClass, inputRef } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { bindClass } = useClass();
 const { getValue, setValue } = useFormModel();
 const { onChange } = useEventHandler();

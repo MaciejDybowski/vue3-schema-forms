@@ -1,6 +1,5 @@
 <template>
   <v-radio-group
-    ref="inputRef"
     v-model="localModel"
     :label="label"
     v-bind="fieldProps"
@@ -73,7 +72,7 @@ const localModel = computed({
   },
 });
 
-const { bindRules, rules, requiredInputClass, inputRef } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { activeRules } = useActiveRules({
   fieldProps,
   validationsDisabled: toRef(() => props.validationsDisabled),

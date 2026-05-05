@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-text-field
-      ref="inputRef"
       v-if="!loading"
       :class="bindClass(schema) + requiredInputClass"
       :label="label"
@@ -73,7 +72,7 @@ const vueSchemaFormEventBus = useEventBus<string>('form-model');
 
 const { t } = useLocale();
 const { bindClass } = useClass();
-const { bindRules, rules, requiredInputClass, inputRef } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { fieldProps, bindProps } = useProps();
 const { resolveExpression } = useExpression();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
