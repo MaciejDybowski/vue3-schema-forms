@@ -1,7 +1,6 @@
 <template>
   <div v-if="editor && !editorLoading">
     <v-input
-      ref="inputRef"
       v-model="localModel"
       :rules="activeRules"
       v-bind="fieldProps"
@@ -120,7 +119,7 @@ interface ProcessSelectedFilesOptions {
 
 const ATTACHMENT_HASH_PREFIX = '#attachment-file=';
 
-const { bindRules, rules, requiredInputClass, inputRef } = useRules();
+const { bindRules, rules, requiredInputClass } = useRules();
 const { getValue, setValue } = useFormModel();
 const { bindProps, fieldProps } = useProps();
 const { onChange } = useEventHandler();
