@@ -187,7 +187,7 @@ function valueHasChanged(val: any) {
 }
 
 // DEFAULTS VALUES //
-const DEFAULT_URL = ref<string>('/api/v1/groups');
+const DEFAULT_URL = ref<string>('/api/workspaces/groups');
 
 const menu = ref(false);
 const showMenuItemsOnFocusIn = props.schema.source.showMenuItemsOnFocusIn
