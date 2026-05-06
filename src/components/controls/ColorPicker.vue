@@ -19,20 +19,42 @@
           :close-on-content-click="false"
         >
           <template #activator="{ props }">
-            <v-btn
-              :elevation="selectedColor ? 5 : 2"
-              icon
-              size="x-small"
-              :disabled="isReadonlyOrDisabled"
-              v-bind="props"
+            <v-badge
+              :model-value="!!selectedColor"
+              :content="`close`"
+              overlap
+              offset-y="-5"
+              offset-x="-5"
+              color="transparent"
+              class="badge-wrapper"
+              @mouseenter="showBadge = true"
+              @mouseleave="showBadge = false"
             >
-              <div class="color-rainbow">
+              <template #badge>
                 <div
-                  class="rainbow-circle"
-                  :style="selectedColor ? { background: selectedColor } : undefined"
-                ></div>
-              </div>
-            </v-btn>
+                  v-show="showBadge && selectedColor && !isReadonlyOrDisabled"
+                  class="close-badge"
+                  @click.stop="clearColor"
+                >
+                  <v-icon size="x-small">mdi-close</v-icon>
+                </div>
+              </template>
+
+              <v-btn
+                :elevation="selectedColor ? 5 : 2"
+                icon
+                size="x-small"
+                :disabled="isReadonlyOrDisabled"
+                v-bind="props"
+              >
+                <div class="color-rainbow">
+                  <div
+                    class="rainbow-circle"
+                    :style="selectedColor ? { background: selectedColor } : undefined"
+                  ></div>
+                </div>
+              </v-btn>
+            </v-badge>
           </template>
 
           <v-card flat>
@@ -100,12 +122,13 @@ const { onChange } = useEventHandler();
 const { activeRules } = useActiveRules({
   fieldProps,
   validationsDisabled: toRef(() => validationsDisabled),
-  rules,
+  rules
 });
 
 const colorMenu = ref(false);
-const colorPicker = ref<string>('#000000');
+const colorPicker = ref<string | null>('#000000');
 const advanceMode = ref(false);
+const showBadge = ref(false);
 
 const inputProps = computed(() => {
   const { palette, upperText: _upperText, ...rest } = fieldProps.value;
@@ -118,12 +141,19 @@ const selectedColor = computed({
   },
   set(val: string) {
     setValue(val, schema);
-  },
+  }
 });
 
 const isReadonlyOrDisabled = computed(() => {
   return !!fieldProps.value.readonly || !!fieldProps.value.disabled;
 });
+
+const clearColor = () => {
+  selectedColor.value = '';
+  colorPicker.value = null;
+  colorMenu.value = false;
+  onChange(schema, model);
+};
 
 watch(
   () => selectedColor.value,
@@ -132,7 +162,7 @@ watch(
       colorPicker.value = val;
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 watch(colorPicker, (val) => {
@@ -153,6 +183,29 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+.badge-wrapper {
+  :deep(.v-badge__badge) {
+    padding: 0 !important;
+  }
+}
+
+.close-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background-color: #ff5252;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #ff1744;
+  }
+}
+
 .color-rainbow {
   width: 32px;
   height: 32px;

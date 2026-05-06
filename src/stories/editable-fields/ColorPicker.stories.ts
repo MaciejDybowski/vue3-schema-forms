@@ -76,3 +76,28 @@ export const WithModel: Story = {
   },
 };
 
+export const Readonly: Story = {
+  play: async (context) => {
+
+  },
+  args: {
+    formModel: {
+      colorPrimary: '#FF5733',
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        colorPrimary: {
+          label: 'Color (Readonly)',
+          layout: {
+            component: 'color-picker',
+            props: {
+              readonly: true
+            }
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
