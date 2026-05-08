@@ -40,20 +40,39 @@
                 </div>
               </template>
 
-              <v-btn
-                :elevation="selectedColor ? 5 : 2"
-                icon
-                size="x-small"
-                :disabled="isReadonlyOrDisabled"
-                v-bind="props"
+              <v-tooltip
+                :text="t('pickColorTooltip')"
+                :disabled="!!selectedColor"
+                location="top"
               >
-                <div class="color-rainbow">
-                  <div
-                    class="rainbow-circle"
-                    :style="selectedColor ? { background: selectedColor } : undefined"
-                  ></div>
-                </div>
-              </v-btn>
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    :elevation="selectedColor ? 5 : 0"
+                    :variant="selectedColor ? 'elevated' : 'flat'"
+                    icon
+                    size="x-small"
+                    class="color-button"
+                    :disabled="isReadonlyOrDisabled"
+                    v-bind="mergeProps(props, tooltipProps)"
+                  >
+                    <div
+                      v-if="selectedColor"
+                      class="color-rainbow"
+                    >
+                      <div
+                        class="rainbow-circle"
+                        :style="{ background: selectedColor }"
+                      ></div>
+                    </div>
+                    <v-icon
+                      v-else
+                      size="22"
+                    >
+                      mdi-eyedropper-variant
+                    </v-icon>
+                  </v-btn>
+                </template>
+              </v-tooltip>
             </v-badge>
           </template>
 
@@ -99,7 +118,7 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n';
 
-import { computed, onMounted, ref, toRef, watch } from 'vue';
+import { computed, mergeProps, onMounted, ref, toRef, watch } from 'vue';
 
 import { useClass, useFormModel, useLabel, useProps, useRules } from '@/core/composables';
 import { useActiveRules } from '@/core/composables/useActiveRules';
@@ -212,6 +231,23 @@ onMounted(async () => {
   position: relative;
 }
 
+.color-button {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  padding: 0;
+  overflow: hidden;
+}
+
+.color-button :deep(.v-btn__content) {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .rainbow-circle {
   width: 100%;
   height: 100%;
@@ -233,19 +269,23 @@ onMounted(async () => {
 {
   "en": {
     "defaultUpperText": "Select color",
-    "advanceMode": "Advanced mode"
+    "advanceMode": "Advanced mode",
+    "pickColorTooltip": "Click to pick a color"
   },
   "pl": {
     "defaultUpperText": "Wskaz kolor",
-    "advanceMode": "Tryb zaawansowany"
+    "advanceMode": "Tryb zaawansowany",
+    "pickColorTooltip": "Kliknij aby wybrać kolor"
   },
   "ru": {
     "defaultUpperText": "Vyberite tsvet",
-    "advanceMode": "Rasshirennyy rezhim"
+    "advanceMode": "Rasshirennyy rezhim",
+    "pickColorTooltip": "Nazhmite, chtoby vybrat tsvet"
   },
   "de": {
     "defaultUpperText": "Wahlen Sie Farbe",
-    "advanceMode": "Erweiterter Modus"
+    "advanceMode": "Erweiterter Modus",
+    "pickColorTooltip": "Klicken, um eine Farbe auszuwahlen"
   }
 }
 </i18n>
