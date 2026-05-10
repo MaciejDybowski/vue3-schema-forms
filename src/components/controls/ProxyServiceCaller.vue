@@ -95,7 +95,7 @@ const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
 const { t } = useLocale();
-const { fillPath } = useResolveVariables();
+const { fillPath, resolve } = useResolveVariables();
 const form = useInjectedFormModel();
 
 const requestState = ref<RequestState>('idle');
@@ -236,7 +236,11 @@ async function resolveJsonataTemplate(input: string): Promise<any> {
 async function evaluateJsonataExpression(expression: string) {
   try {
     const model = form.getFormModelForResolve.value;
-    const expressionWithPath = fillPath(schema.path, schema.index, expression.trim());
+    let finalExpression = expression.trim();
+    if (finalExpression.startsWith('nata(') && finalExpression.endsWith(')')) {
+      finalExpression = finalExpression.slice(5, -1);
+    }
+    const expressionWithPath = fillPath(schema.path, schema.index, finalExpression);
     return await jsonata(expressionWithPath).evaluate(model);
   } catch {
     throw new Error(`${t('invalidExpression')}: {${expression}}`);
@@ -249,14 +253,19 @@ async function mapResponseToDownloadResult(response: any): Promise<DownloadResul
   }
 
   const fileNameFromHeaders = getFileNameFromHeaders(response?.headers);
+  const hasHeaderName = fileNameFromHeaders && fileNameFromHeaders !== 'file';
+
+  const { resolvedText: resolvedFileName } = schema.fileName
+    ? await resolve(schema, schema.fileName)
+    : { resolvedText: '' };
 
   if (response instanceof Blob) {
-    return createBlobResult(response, fileNameFromHeaders);
+    return createBlobResult(response, hasHeaderName ? fileNameFromHeaders : resolvedFileName || fileNameFromHeaders);
   }
 
   if (typeof response === 'string' && response.startsWith('http')) {
     const mimeType = schema.fileType || 'application/octet-stream';
-    const name = schema.fileName || fileNameFromHeaders || t('defaultFileName');
+    const name = (hasHeaderName ? fileNameFromHeaders : resolvedFileName || fileNameFromHeaders) || t('defaultFileName');
     return {
       url: response,
       fileName: ensureExtension(name, mimeType),
@@ -265,16 +274,16 @@ async function mapResponseToDownloadResult(response: any): Promise<DownloadResul
   }
 
   if (response?.blob instanceof Blob) {
-    return createBlobResult(response.blob, response.fileName || fileNameFromHeaders);
+    return createBlobResult(response.blob, hasHeaderName ? fileNameFromHeaders : resolvedFileName || response.fileName || fileNameFromHeaders);
   }
 
   if (response?.data instanceof Blob) {
-    return createBlobResult(response.data, response.fileName || fileNameFromHeaders);
+    return createBlobResult(response.data, hasHeaderName ? fileNameFromHeaders : resolvedFileName || response.fileName || fileNameFromHeaders);
   }
 
   if (response?.downloadUrl) {
     const mimeType = response.mimeType || schema.fileType || 'application/octet-stream';
-    const name = schema.fileName || response.fileName || fileNameFromHeaders || t('defaultFileName');
+    const name = (hasHeaderName ? fileNameFromHeaders : resolvedFileName || response.fileName || fileNameFromHeaders) || t('defaultFileName');
     return {
       url: response.downloadUrl,
       fileName: ensureExtension(name, mimeType),
@@ -286,7 +295,7 @@ async function mapResponseToDownloadResult(response: any): Promise<DownloadResul
   if (typeof base64 === 'string' && base64.length > 0) {
     const mimeType = response?.mimeType || response?.data?.mimeType || schema.fileType || 'application/octet-stream';
     const blob = base64ToBlob(base64, mimeType);
-    return createBlobResult(blob, response?.fileName || response?.data?.fileName || fileNameFromHeaders);
+    return createBlobResult(blob, hasHeaderName ? fileNameFromHeaders : resolvedFileName || response?.fileName || response?.data?.fileName || fileNameFromHeaders);
   }
 
   return null;
@@ -294,7 +303,7 @@ async function mapResponseToDownloadResult(response: any): Promise<DownloadResul
 
 function createBlobResult(blob: Blob, fileName?: string): DownloadResult {
   const mimeType = blob.type || schema.fileType || 'application/octet-stream';
-  const name = schema.fileName || fileName || t('defaultFileName');
+  const name = fileName || t('defaultFileName');
 
   return {
     blob,

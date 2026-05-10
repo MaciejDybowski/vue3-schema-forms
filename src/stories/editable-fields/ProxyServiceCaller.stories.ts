@@ -1,9 +1,34 @@
 // @ts-nocheck
-import { expect, waitFor, within } from 'storybook/test';
 import { HttpResponse, http } from 'msw';
+import { expect, waitFor, within } from 'storybook/test';
+
+
 
 import { Schema } from '../../types/schema/Schema';
+import { waitForMountedAsync } from '../editable-fields/utils';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default {
   title: 'Elements/Editable/Proxy Service Caller',
@@ -136,5 +161,178 @@ export const LinkMode: Story = {
     msw: {
       handlers: httpbinImageHandlers,
     },
+  },
+};
+
+export const Examples: Story = {
+  args: {
+    schema: {
+      type: 'object',
+      properties: {
+        downloadButton: {
+          label: 'Pobierz dokument (Przycisk)',
+          layout: {
+            component: 'proxy-service-caller',
+          },
+          externalApi: {
+            serviceCode: 'documents-service',
+            endpoint: '/download/123',
+            method: 'GET',
+          },
+          fileName: 'manual-name.pdf',
+        },
+        downloadLink: {
+          label: 'Pobierz dokument (Link)',
+          layout: {
+            component: 'proxy-service-caller',
+          },
+          renderMode: 'link',
+          externalApi: {
+            serviceCode: 'documents-service',
+            endpoint: '/download/123',
+            method: 'GET',
+          },
+          fileName: 'manual-link-name.pdf',
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const DynamicFileName: Story = {
+  name: 'Case: Dynamic Filename (Variables and JSONata)',
+  parameters: {
+    msw: {
+      handlers: [
+        http.get('/api/v1/services/documents-service/download', () => {
+          const blob = new Blob(['To jest zawartość mockowanego pliku PDF.'], { type: 'application/pdf' });
+          return new HttpResponse(blob, {
+            headers: {
+              'Content-Type': 'application/pdf',
+              'Content-Disposition': 'attachment;',
+            },
+          });
+        }),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await waitForMountedAsync(100);
+    const canvas = within(canvasElement);
+    // Note: Since runDownload is triggered on click, we mainly test if the component renders with labels
+    await expect(canvas.getByText('Pobierz FV_2024_001.pdf')).toBeInTheDocument();
+    await expect(canvas.getByText('Pobierz Zatwierdzona_FV_2024_001.pdf')).toBeInTheDocument();
+  },
+  args: {
+    formModel: {
+      data: {
+        docNumber: 'FV_2024_001',
+        isPaid: true,
+      },
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        variableName: {
+          label: 'Pobierz {data.docNumber}.pdf',
+          layout: {
+            component: 'proxy-service-caller',
+          },
+          externalApi: {
+            serviceCode: 'documents-service',
+            endpoint: '/download',
+            method: 'GET',
+          },
+          fileName: '{data.docNumber}.pdf',
+        },
+        jsonataName: {
+          label:
+            'Pobierz {nata(data.isPaid ? "Zatwierdzona_" & data.docNumber : "Draft_" & data.docNumber)}.pdf',
+          layout: {
+            component: 'proxy-service-caller',
+          },
+          externalApi: {
+            serviceCode: 'documents-service',
+            endpoint: '/download',
+            method: 'GET',
+          },
+          fileName:
+            '{nata(data.isPaid ? "Zatwierdzona_" & data.docNumber : "Draft_" & data.docNumber)}.pdf',
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const FileNamePriority: Story = {
+  name: 'Case: Filename Priority (Header vs Config)',
+  parameters: {
+    msw: {
+      handlers: [
+        http.get('/api/v1/services/documents-service/priority-test', () => {
+          const blob = new Blob(['To jest zawartość pliku, który powinien mieć nazwę z nagłówka.'], {
+            type: 'application/pdf',
+          });
+          return new HttpResponse(blob, {
+            headers: {
+              'Content-Type': 'application/pdf',
+              'Content-Disposition': 'attachment; filename="header-wins.pdf"',
+            },
+          });
+        }),
+      ],
+    },
+  },
+  args: {
+    schema: {
+      type: 'object',
+      properties: {
+        priorityTest: {
+          label: 'Pobierz (Nagłówek "header-wins.pdf" vs Config "config-name.pdf")',
+          layout: {
+            component: 'proxy-service-caller',
+          },
+          externalApi: {
+            serviceCode: 'documents-service',
+            endpoint: '/priority-test',
+            method: 'GET',
+          },
+          fileName: 'config-name.pdf',
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const States: Story = {
+  name: 'Case: Loading and Error States',
+  args: {
+    schema: {
+      type: 'object',
+      properties: {
+        missingConfig: {
+          label: 'Błędna konfiguracja',
+          layout: {
+            component: 'proxy-service-caller',
+          },
+          // missing externalApi
+        },
+        readonlyMode: {
+          label: 'Tylko do odczytu',
+
+          layout: {
+            component: 'proxy-service-caller',
+            props: {
+              readonly: true,
+            },
+          },
+          externalApi: {
+            serviceCode: 'service',
+            endpoint: '/test',
+            method: 'GET',
+          },
+        },
+      },
+    } as Schema,
   },
 };
