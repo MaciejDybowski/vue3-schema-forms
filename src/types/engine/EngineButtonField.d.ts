@@ -3,6 +3,8 @@ import { Schema } from '@/types/schema/Schema';
 
 export interface EngineButtonField extends EngineField {
   mode: string;
-  config: object & Record<string, any>;
+  config: {
+    target?: '_blank' | '_self' | '_parent' | '_top';
+  } & Record<string, any>;
   schema?: Schema;
 }

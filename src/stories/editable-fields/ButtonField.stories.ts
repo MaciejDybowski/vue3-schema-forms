@@ -654,4 +654,46 @@ export const Redirect: Story = {
   },
 };
 
+export const RedirectInNewTab: Story = {
+  name: 'Mode: Redirect in new tab',
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole('button', { name: 'Open in new tab' });
+    await expect(button).toBeInTheDocument();
+    await button.click();
+
+    await waitFor(() => {
+      expect(context.args.emittedObject.mode).toEqual('redirect');
+      expect(context.args.emittedObject.target).toEqual('_blank');
+      expect(context.args.emittedObject.params.url).toEqual('https://google.com');
+    });
+  },
+  args: {
+    formModel: {},
+    emittedObject: {},
+    schema: {
+      type: 'object',
+      properties: {
+        button: {
+          label: 'Open in new tab',
+          layout: {
+            component: 'button',
+          },
+          mode: 'redirect',
+          config: {
+            target: '_blank',
+            params: {
+              url: 'https://google.com',
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 

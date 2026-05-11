@@ -262,7 +262,8 @@ async function runBtnLogic() {
       const paramsObject = await resolveRedirectValue(schema.config.params ?? {});
       const payloadObject = {
         mode: schema.mode,
-        params: paramsObject
+        params: paramsObject,
+        target: schema.config.target,
       }
       actionHandlerEventBus.emit('form-action', payloadObject);
       break;

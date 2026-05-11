@@ -27,7 +27,6 @@
           >
             <v-field
               :active="!!localModel"
-              :disabled="fieldProps.readonly"
               v-bind="fieldProps"
             >
               <template v-if="!showSource">
