@@ -1,5 +1,5 @@
 <template>
-  <div class="editable-section d-flex">
+  <div class="editable-section d-flex" style="min-width: 0;">
     <v-btn
       class="editable"
       position="absolute"

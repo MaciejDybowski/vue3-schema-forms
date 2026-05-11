@@ -20,18 +20,22 @@
               <draggable-icon
                 v-if="isEditable && showSectionElements"
                 :show="isHovering ? isHovering : false"
+                style="flex-shrink: 0;"
               />
-              <form-root
-                :key="`duplicated-form-root-${index}-${isEditable}`"
-                :model="localModel[index]"
-                :options="computedOptions"
-                :schema="element as Schema"
-                @update:model="updateModel($event, index)"
-              />
+              <div style="flex: 1; min-width: 0;">
+                <form-root
+                  :key="`duplicated-form-root-${index}-${isEditable}`"
+                  :model="localModel[index]"
+                  :options="computedOptions"
+                  :schema="element as Schema"
+                  @update:model="updateModel($event, index)"
+                />
+              </div>
               <draggable-context-menu
                 v-if="isEditable && showSectionElements"
                 :show="isHovering ? isHovering : false"
                 @handle-action="handleDraggableContextAction($event, index)"
+                style="flex-shrink: 0;"
               />
             </template>
           </duplicated-section-item>

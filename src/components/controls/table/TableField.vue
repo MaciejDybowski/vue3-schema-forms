@@ -235,7 +235,7 @@ import {
   HeaderEditableObject,
   TableButton,
   TableHeader,
-  TableHeaderAction,
+  TableHeaderAction
 } from '@/types/shared/Source';
 
 const actionHandlerEventBus = useEventBus<string>('form-action');
@@ -276,7 +276,7 @@ const props = defineProps<{
     value: any,
     header: HeaderEditableObject,
     rowData: any,
-    rowIndex: number,
+    rowIndex: number
   ) => Promise<void>;
   tableActionPopupUpdate: (actionPopup: any) => Promise<void>;
   loading: boolean;
@@ -289,7 +289,7 @@ const loadingLocal = computed({
   },
   set(val: boolean) {
     emit('update:loading', val);
-  },
+  }
 });
 
 const emit = defineEmits<{
@@ -308,7 +308,7 @@ const { parse } = useVariableParser();
 const debounced = {
   load: debounce(loadDataWrapper, 200),
   updateRow: debounce(props.updateRow, 300),
-  showToast: debounce(showToast, 400),
+  showToast: debounce(showToast, 400)
 };
 
 const actions = props.schema.actions ? props.schema.actions : {};
@@ -336,13 +336,14 @@ const actionPopup = reactive<{
   options: props.schema.options,
   item: {},
   itemIndex: 0,
-  acceptFunction: () => {},
-  acceptText: t('save'),
+  acceptFunction: () => {
+  },
+  acceptText: t('save')
 });
 
 const tableButtonDefaultProps = {
   size: 'small',
-  color: 'primary',
+  color: 'primary'
 };
 
 const headers: ComputedRef<TableHeader[]> = computed(() => {
@@ -391,10 +392,10 @@ if (showSelect.value) {
                 console.error('Błąd w condition:', e, action);
                 return null;
               }
-            }),
+            })
           );
           return validCodes.filter((c): c is string => c !== null);
-        }),
+        })
       );
       const commonIds: string[] = actionsPerRow.reduce((acc, curr) => {
         const currSet = new Set(curr);
@@ -405,7 +406,7 @@ if (showSelect.value) {
       //@ts-ignore
       availableRowActions.value = commonActions;
     },
-    { deep: true },
+    { deep: true }
   );
 }
 
@@ -417,13 +418,13 @@ async function doRowsActions(action: TableHeaderAction) {
   const body = await Promise.all(
     selectedItems.value.map(async (item) => {
       return await createBodyObjectFromRow(action.config, item);
-    }),
+    })
   );
 
   let payloadObject = {
     code: action.code,
     body: body,
-    params: { ...actionConfigWithoutCode.params },
+    params: { ...actionConfigWithoutCode.params }
   };
   actionHandlerEventBus.emit('form-action', payloadObject);
 }
@@ -441,7 +442,7 @@ const buildHeader = (item: TableHeader): TableHeader => {
     properties,
     items,
     editable,
-    actions,
+    actions
   } = item;
   //@ts-ignore - builder purpose
   const titleRef = typeof title == 'string' ? title : '#' + title.$ref.split('/').pop();
@@ -454,11 +455,21 @@ const buildHeader = (item: TableHeader): TableHeader => {
     footerMapping,
     editable,
     items,
-    actions,
+    actions
   };
 
-  if (properties) {
-    Object.assign(header, properties);
+  let processedProperties = properties;
+
+  if (properties?.width != null) {
+    processedProperties = {
+      ...properties,
+      minWidth: properties.width,
+      maxWidth: properties.width
+    };
+  }
+
+  if (processedProperties) {
+    Object.assign(header, processedProperties);
   }
 
   return header;
@@ -475,7 +486,7 @@ const buttons: ComputedRef<TableButton[]> = computed(() => {
 const tableOptions = ref<TableOptions>({
   page: 1,
   sortBy: [],
-  itemsPerPage: 10,
+  itemsPerPage: 10
 });
 
 const fetchDataParams = computed<TableFetchOptions>(() => {
@@ -484,7 +495,7 @@ const fetchDataParams = computed<TableFetchOptions>(() => {
     size: tableOptions.value.itemsPerPage,
     sort: tableOptions.value.sortBy,
     filter: null,
-    query: null,
+    query: null
   };
 });
 
@@ -507,7 +518,7 @@ async function runTableBtnLogic(btn: TableButton) {
 
       if (props.schema.layout.component == 'table-internal') {
         payloadObject.mode = 'internal';
-        payloadObject.fieldKey = props.schema.key
+        payloadObject.fieldKey = props.schema.key;
       }
 
       actionHandlerEventBus.emit('form-action', payloadObject);
@@ -521,7 +532,7 @@ async function runTableBtnLogic(btn: TableButton) {
         let payloadObject = {
           code: btn.config.code,
           body: actionPopup.model,
-          params: { script: btn.config.script },
+          params: { script: btn.config.script }
         };
         actionHandlerEventBus.emit('form-action', payloadObject);
       };
@@ -550,7 +561,7 @@ async function runTableBtnLogic(btn: TableButton) {
 
 async function runTableActionLogic(
   payload: { action: TableHeaderAction; item: any },
-  index: number,
+  index: number
 ) {
   const action = payload.action;
   switch (action.mode) {
@@ -560,7 +571,7 @@ async function runTableActionLogic(
       const obj = {
         mode: 'action',
         body: action.config.body,
-        params: action.config.params,
+        params: action.config.params
       };
 
       let body = await createBodyObjectFromRow(obj as any, payload.item);
@@ -569,7 +580,7 @@ async function runTableActionLogic(
       let payloadObject = {
         code: action.code,
         body: body,
-        params: params,
+        params: params
       };
 
       actionHandlerEventBus.emit('form-action', payloadObject);
@@ -582,7 +593,7 @@ async function runTableActionLogic(
       set(
         actionPopup.model,
         action.modelReference ? action.modelReference : '',
-        payload.item[action.modelReference as string],
+        payload.item[action.modelReference as string]
       );
       actionPopup.schema = action.schema;
       actionPopup.item = payload.item;
@@ -629,7 +640,7 @@ async function createBodyObjectFromFormModel(btnBody: object | undefined) {
       } else {
         return [key, value];
       }
-    }),
+    })
   );
 
   resolvedEntries.forEach(([key, value]) => {
@@ -676,7 +687,7 @@ async function refreshTableEvent() {
   await new Promise((r) => setTimeout(r, 200));
   actionHandlerEventBus.emit('form-action', {
     code: 'instant-refresh-table',
-    callback: refreshTable,
+    callback: refreshTable
   });
 }
 
@@ -704,7 +715,7 @@ async function filteredButtonsFunction() {
       } else {
         return button;
       }
-    }) ?? [],
+    }) ?? []
   );
   return tempActions.filter((item) => item != null);
 }

@@ -1409,7 +1409,7 @@ export const SummaryAggregatesUpdate: Story = {
                   },
                 ],
                 footerMapping: '<b>Summary of:</b> {height}',
-                properties: { minWidth: '200px', maxWidth: '200px', width: '100px' },
+                properties: {  width: '200px' },
               },
               {
                 title: 'Base',
