@@ -15,6 +15,7 @@ export interface TableSource {
   idMapper?: string;
   data: string;
   buttons?: TableButton[];
+  rowVisibleCondition? :string
 }
 
 export interface TableHeader {

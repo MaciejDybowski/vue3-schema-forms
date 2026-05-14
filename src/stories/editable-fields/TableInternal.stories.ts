@@ -1,0 +1,400 @@
+// @ts-nocheck
+import { Meta, StoryObj } from '@storybook/vue3-vite';
+
+
+
+import FormStoryWrapper from '../../../.storybook/components/FormStoryWrapper.vue';
+import { Schema } from '../../types/schema/Schema';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export default {
+  title: 'Elements/Editable/TableInternal',
+  component: FormStoryWrapper,
+  args: {
+    emittedObject: {},
+    signals: {},
+    formModel: {},
+    schema: {},
+    options: {
+      fieldProps: {
+        variant: 'outlined',
+        density: 'compact',
+      },
+      buttonProps: {
+        size: 'small',
+        variant: 'elevated',
+        rounded: '',
+      },
+    },
+  },
+} satisfies Meta<typeof FormStoryWrapper>;
+
+type Story = StoryObj<typeof FormStoryWrapper>;
+
+const rows = [
+  {
+    id: 1,
+    name: 'Wheat contract',
+    status: 'ACTIVE',
+    active: true,
+    category: 'grain',
+    amount: 1200,
+    owner: { country: 'PL' },
+  },
+  {
+    id: 2,
+    name: 'Archived barley',
+    status: 'ARCHIVED',
+    active: false,
+    category: 'grain',
+    amount: 850,
+    owner: { country: 'PL' },
+  },
+  {
+    id: 3,
+    name: 'Rapeseed premium',
+    status: 'ACTIVE',
+    active: true,
+    category: 'oilseed',
+    amount: 2400,
+    owner: { country: 'DE' },
+  },
+  {
+    id: 4,
+    name: 'Draft corn',
+    status: 'DRAFT',
+    active: false,
+    category: 'grain',
+    amount: 400,
+    owner: { country: 'CZ' },
+  },
+  {
+    id: 5,
+    name: 'Sunflower active',
+    status: 'ACTIVE',
+    active: true,
+    category: 'oilseed',
+    amount: 980,
+    owner: { country: 'PL' },
+  },
+];
+
+const displayHeaders = [
+  {
+    title: 'Name',
+    key: 'name',
+    valueMapping: 'name',
+    type: 'TEXT',
+  },
+  {
+    title: 'Status',
+    key: 'status',
+    valueMapping: 'status',
+    type: 'TEXT',
+  },
+  {
+    title: 'Category',
+    key: 'category',
+    valueMapping: 'category',
+    type: 'TEXT',
+  },
+  {
+    title: 'Amount',
+    key: 'amount',
+    valueMapping: 'amount',
+    type: 'NUMBER',
+  },
+  {
+    title: 'Country',
+    key: 'country',
+    valueMapping: 'owner.country',
+    type: 'TEXT',
+  },
+];
+
+const editableHeaders = [
+  {
+    title: 'Name',
+    key: 'name',
+    valueMapping: 'name',
+    editable: [
+      {
+        label: 'Name',
+        key: 'name',
+        valueMapping: 'name',
+        type: 'TEXT',
+      },
+    ],
+  },
+  {
+    title: 'Status',
+    key: 'status',
+    valueMapping: 'status',
+    editable: [
+      {
+        label: 'Status',
+        key: 'status',
+        valueMapping: 'status',
+        type: 'SELECT',
+        source: [
+          { id: 'ACTIVE', label: 'ACTIVE' },
+          { id: 'DRAFT', label: 'DRAFT' },
+          { id: 'ARCHIVED', label: 'ARCHIVED' },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Amount',
+    key: 'amount',
+    valueMapping: 'amount',
+    editable: [
+      {
+        label: 'Amount',
+        key: 'amount',
+        valueMapping: 'amount',
+        type: 'NUMBER',
+      },
+    ],
+  },
+];
+
+const internalActionHeader = {
+  title: 'Actions',
+  key: 'actions',
+  mode: 'inline',
+  actions: [
+    {
+      title: 'Duplicate',
+      icon: 'mdi-content-copy',
+      mode: 'internal',
+      config: {
+        code: 'duplicate',
+      },
+    },
+    {
+      title: 'Delete',
+      icon: 'mdi-delete-outline',
+      mode: 'internal',
+      config: {
+        code: 'delete',
+      },
+      props: {
+        color: 'error',
+      },
+    },
+  ],
+};
+
+function tableSchema(rowVisibleCondition?: string, headers = displayHeaders): Schema {
+  return {
+    type: 'object',
+    properties: {
+      description: {
+        content: rowVisibleCondition
+          ? `Visible rows JSONata: ${rowVisibleCondition}`
+          : 'Internal table without row filtering',
+        layout: {
+          component: 'static-content',
+          tag: 'p',
+        },
+      },
+      contracts: {
+        layout: {
+          component: 'table-internal',
+        },
+        source: {
+          rowVisibleCondition,
+          headers,
+        },
+      },
+    },
+  } as Schema;
+}
+
+function model() {
+  return {
+    contracts: rows.map((row) => ({ ...row, owner: { ...row.owner } })),
+  };
+}
+
+export const Standard: Story = {
+  name: 'Standard: all rows',
+  args: {
+    formModel: model(),
+    schema: tableSchema(),
+  },
+};
+
+export const TwoTables: Story = {
+  name: 'Two tables from one key',
+  args: {
+    formModel: model(),
+    schema: {
+      properties: {
+        contracts: {
+          layout: {
+            component: 'table-internal',
+          },
+          source: {
+            headers: displayHeaders,
+            rowVisibleCondition: 'status="ARCHIVED"',
+          },
+        },
+        fieldsGroup: {
+          layout: {
+            component: 'fields-group',
+            schema: {
+              properties: {
+                contracts: {
+                  layout: {
+                    component: 'table-internal',
+                  },
+                  source: {
+                    headers: displayHeaders,
+                    rowVisibleCondition: 'active=true',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const ActiveRowsOnly: Story = {
+  name: 'Filter: active=true',
+  args: {
+    formModel: model(),
+    schema: tableSchema('active = true'),
+  },
+};
+
+export const ExcludeArchived: Story = {
+  name: 'Filter: status not archived',
+  args: {
+    formModel: model(),
+    schema: tableSchema('status != "ARCHIVED"'),
+  },
+};
+
+export const HighAmountRows: Story = {
+  name: 'Filter: amount >= 1000',
+  args: {
+    formModel: model(),
+    schema: tableSchema('amount >= 1000'),
+  },
+};
+
+export const NestedCountryRows: Story = {
+  name: 'Filter: nested owner.country',
+  args: {
+    formModel: model(),
+    schema: tableSchema('owner.country = "PL"'),
+  },
+};
+
+export const CombinedCondition: Story = {
+  name: 'Filter: combined condition',
+  args: {
+    formModel: model(),
+    schema: tableSchema('active = true and amount > 1000 and owner.country = "PL"'),
+  },
+};
+
+export const EditableRowsWithFilter: Story = {
+  name: 'Editable: row disappears after status change',
+  args: {
+    formModel: model(),
+    schema: tableSchema('status != "ARCHIVED"', editableHeaders),
+  },
+};
+
+export const InternalActionsWithHiddenRows: Story = {
+  name: 'Internal actions: filtered index mapping',
+  args: {
+    formModel: model(),
+    schema: tableSchema('active = true', [...displayHeaders, internalActionHeader]),
+  },
+};
