@@ -86,6 +86,18 @@ import { Schema } from '../../types/schema/Schema';
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 export default {
   title: 'Elements/Editable/TableInternal',
   component: FormStoryWrapper,
@@ -291,9 +303,42 @@ function tableSchema(rowVisibleCondition?: string, headers = displayHeaders): Sc
   } as Schema;
 }
 
+function tableWithSourceDataPathSchema(): Schema {
+  return {
+    type: 'object',
+    properties: {
+      description: {
+        content: 'Internal table reads rows from source.data path: contractData.items',
+        layout: {
+          component: 'static-content',
+          tag: 'p',
+        },
+      },
+      contractsTable: {
+        layout: {
+          component: 'table-internal',
+        },
+        source: {
+          data: 'contractData.items',
+          rowVisibleCondition: 'status != "ARCHIVED"',
+          headers: editableHeaders,
+        },
+      },
+    },
+  } as Schema;
+}
+
 function model() {
   return {
     contracts: rows.map((row) => ({ ...row, owner: { ...row.owner } })),
+  };
+}
+
+function nestedModel() {
+  return {
+    contractData: {
+      items: rows.map((row) => ({ ...row, owner: { ...row.owner } })),
+    },
   };
 }
 
@@ -305,8 +350,8 @@ export const Standard: Story = {
   },
 };
 
-export const TwoTables: Story = {
-  name: 'Two tables from one key',
+export const TwoTablesFieldsGroup: Story = {
+  name: 'Two tables from one key - fieldsGroup',
   args: {
     formModel: model(),
     schema: {
@@ -336,6 +381,37 @@ export const TwoTables: Story = {
                 },
               },
             },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const TwoTablesWithSourceDataPath: Story = {
+  name: 'Two tables from one key - source.data',
+  args: {
+    formModel: model(),
+    schema: {
+      properties: {
+        tableOne: {
+          layout: {
+            component: 'table-internal',
+          },
+          source: {
+            data: 'contracts',
+            headers: displayHeaders,
+            rowVisibleCondition: 'status="ARCHIVED"',
+          },
+        },
+        tableTwo: {
+          layout: {
+            component: 'table-internal',
+          },
+          source: {
+            data: 'contracts',
+            headers: displayHeaders,
+            rowVisibleCondition: 'active=true',
           },
         },
       },
@@ -396,5 +472,13 @@ export const InternalActionsWithHiddenRows: Story = {
   args: {
     formModel: model(),
     schema: tableSchema('active = true', [...displayHeaders, internalActionHeader]),
+  },
+};
+
+export const SourceDataPath: Story = {
+  name: 'Source data: model path',
+  args: {
+    formModel: nestedModel(),
+    schema: tableWithSourceDataPathSchema(),
   },
 };
