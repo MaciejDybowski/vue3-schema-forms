@@ -379,6 +379,113 @@ export const EmitActionObject: Story = {
   },
 };
 
+export const OnClickChangeModel: Story = {
+  name: 'Event: onClick change model',
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole('button', { name: 'Copy value on click' });
+    await expect(button).toBeInTheDocument();
+
+    await button.click();
+
+    await waitFor(() => {
+      expect(context.args.formModel.target).toEqual('Value from source');
+    });
+  },
+  args: {
+    formModel: {
+      source: 'Value from source',
+      target: 'Initial target value',
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        source: {
+          label: 'Source',
+          layout: {
+            component: 'text-field',
+          },
+        },
+        target: {
+          label: 'Target',
+          layout: {
+            component: 'text-field',
+          },
+        },
+        button: {
+          label: 'Copy value on click',
+          layout: {
+            component: 'button',
+          },
+          onClick: {
+            mode: 'change-model',
+            variables: [
+              {
+                path: 'target',
+                value: '{source}',
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+};
+
+export const OnClickEmitActionObject: Story = {
+  name: 'Event: onClick emit action object',
+  play: async ({ context, mount }) => {
+    await mount();
+    await waitFor(() => {
+      expect(context.args.signals.formIsReady).toBe(true);
+    });
+    const canvas = within(context.canvasElement);
+    const button = await canvas.findByRole('button', { name: 'Emit onClick action' });
+    await expect(button).toBeInTheDocument();
+
+    await button.click();
+
+    await waitFor(() => {
+      expect(context.args.emittedObject.code).toEqual('button_on_click');
+      expect(context.args.emittedObject.params.script).toEqual('onClickScript');
+      expect(context.args.emittedObject.body.source).toEqual('source-1');
+    });
+  },
+  args: {
+    formModel: {
+      source: 'source-1',
+    },
+    emittedObject: {},
+    schema: {
+      type: 'object',
+      properties: {
+        button: {
+          label: 'Emit onClick action',
+          layout: {
+            component: 'button',
+          },
+          onClick: [
+            {
+              mode: 'action',
+              code: 'button_on_click',
+              params: {
+                script: 'onClickScript',
+              },
+              body: {
+                source: '{source}',
+              },
+            },
+          ],
+        },
+      },
+    },
+  },
+};
+
 export const APICall: Story = {
   name: 'Mode: API call with emit event',
   play: async ({ context, mount }) => {
@@ -695,5 +802,4 @@ export const RedirectInNewTab: Story = {
     },
   },
 };
-
 

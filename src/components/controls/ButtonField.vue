@@ -6,7 +6,7 @@
       :disabled="loading || fieldProps.readonly"
       :loading="loading"
       v-bind="fieldProps"
-      @click="runBtnLogic"
+      @click="runClickLogic"
     >
       {{ label }}
     </v-btn>
@@ -67,6 +67,7 @@ import { useTheme } from 'vuetify';
 import { Ref, computed, onMounted, reactive, ref } from 'vue';
 
 import { useClass, useLabel, useLocale, useProps, useResolveVariables } from '@/core/composables';
+import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
 import { EngineButtonField } from '@/types/engine/EngineButtonField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
@@ -102,6 +103,7 @@ const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
 const { resolve } = useResolveVariables();
+const { onClick } = useEventHandler();
 
 const { t } = useLocale();
 const theme = useTheme();
@@ -159,6 +161,11 @@ async function saveDialogForm(isActive: Ref<boolean>) {
     popup.acceptFunction();
     isActive.value = false;
   }
+}
+
+async function runClickLogic() {
+  await onClick(schema, model);
+  await runBtnLogic();
 }
 
 async function runBtnLogic() {

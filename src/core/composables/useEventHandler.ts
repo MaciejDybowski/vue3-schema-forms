@@ -11,6 +11,7 @@ import { EventHandlerDefinition } from '@/types/shared/EventHandlerDefinition';
 
 type EntryKey = string;
 type EntryValue = any;
+type EventHandlerList = EventHandlerDefinition[] | EventHandlerDefinition | undefined;
 
 interface NodeConditionalUpdateEvent extends NodeUpdateEvent {
   toExecute: boolean;
@@ -30,22 +31,28 @@ export function useEventHandler() {
     }
   }
 
-  async function processAllOnChangeEvents(field: EngineField, model: object) {
-    const events = field.onChange;
+  async function onClick(field: EngineField, model: object) {
+    if ('onClick' in field) {
+      await processAllEvents(field, model, field.onClick);
+    }
+  }
 
+  async function processAllOnChangeEvents(field: EngineField, model: object) {
+    await processAllEvents(field, model, field.onChange);
+  }
+
+  async function processAllEvents(field: EngineField, model: object, events: EventHandlerList) {
     if (!events) return;
 
     if (Array.isArray(events)) {
       if (events.length === 0) return;
-      await Promise.all(
-        events.map((eventDefinition) => onChangeDebounced(field, model, eventDefinition)),
-      );
+      await Promise.all(events.map((eventDefinition) => processEvent(field, model, eventDefinition)));
     } else if (typeof events === 'object') {
-      await onChangeDebounced(field, model, events as EventHandlerDefinition);
+      await processEvent(field, model, events as EventHandlerDefinition);
     }
   }
 
-  async function onChangeDebounced(
+  async function processEvent(
     field: EngineField,
     model: object,
     eventDefinition: EventHandlerDefinition,
@@ -208,5 +215,5 @@ export function useEventHandler() {
     return params;
   }
 
-  return { onChange, createParamsObject, createBodyObject };
+  return { onChange, onClick, createParamsObject, createBodyObject };
 }

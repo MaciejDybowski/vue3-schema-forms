@@ -33,6 +33,7 @@ export interface EngineField {
 
   //events
   onChange?: EventHandlerDefinition[] | EventHandlerDefinition; // depracated EventHandlerDefinition;
+  onClick?: EventHandlerDefinition[] | EventHandlerDefinition;
 
   //switch
   mode?: string;
