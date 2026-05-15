@@ -42,7 +42,7 @@ const { resolve } = useResolveVariables();
 const jsonSchemaOfGroup = ref<any>(null);
 
 function updateModel(payload: any) {
-  setValue(payload.value, { key: payload.key, on: props.schema.on } as any);
+  setValue(payload.value, { key: payload.key, dataPath: payload.dataPath, on: props.schema.on } as any);
 }
 
 const computedOptions = computed(() => {

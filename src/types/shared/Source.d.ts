@@ -36,6 +36,7 @@ export interface TableHeader {
 
 export interface HeaderEditableObject {
   label: string;
+  title?: string;
   valueMapping: string;
   class?: string;
   type: "NUMBER" | "TEXT" | "TEXTAREA" | "SELECT" | "DICTIONARY" | "BOOLEAN" | "DATE" | "YEAR";

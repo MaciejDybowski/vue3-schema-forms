@@ -2,6 +2,7 @@ import { useEventBus } from '@vueuse/core';
 import jsonata from 'jsonata';
 import get from 'lodash/get';
 
+import { useFormModel } from '@/core/composables/useFormModel';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { EngineField } from '@/types/engine/EngineField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
@@ -10,6 +11,7 @@ import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 export function useDependencies() {
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const form = useInjectedFormModel();
+  const { getDataPath } = useFormModel();
 
   async function handleDependency(
     schema: EngineField,
@@ -43,11 +45,13 @@ export function useDependencies() {
       const nata = jsonata(dependency);
       const newValue = (await nata.evaluate(mergedModel)) || null;
 
-      const currentValue = get(model, key, null);
+      const dataPath = getDataPath(schema);
+      const currentValue = get(model, dataPath, null);
       if (newValue !== currentValue) {
         const updateEvent: NodeUpdateEvent = {
-          key,
+          key: dataPath,
           value: newValue,
+          dataPath: schema.dataPath ? dataPath : undefined,
         };
         schema.on.input(updateEvent);
       }

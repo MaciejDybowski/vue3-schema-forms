@@ -159,6 +159,7 @@ export const AutoSelect: Story = {
       user: {
         id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56',
         name: 'Testowa',
+        labels: 'the-best',
       },
     });
   },

@@ -77,7 +77,7 @@ const { fieldProps, bindProps } = useProps();
 const { resolveExpression } = useExpression();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
 const { label, bindLabel } = useLabel(props.schema);
-const { getValue, setValue } = useFormModel();
+const { getValue, setValue, getDataPath } = useFormModel();
 const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
 const showFormattedNumber = ref(true);
@@ -164,17 +164,19 @@ const isCalculationDefined = computed(() => {
 });
 
 const isValueFromModelAndNotChangedManually = computed(() => {
+  const dataPath = getDataPath(props.schema);
   return (
     !localModel.value ||
-    (localModel.value && !(`${props.schema.key}ManuallyChanged` in props.model))
+    (localModel.value && !(`${dataPath}ManuallyChanged` in props.model))
   );
 });
 
 const showIconForVisualizationOfManuallyChangedResult = computed(() => {
+  const dataPath = getDataPath(props.schema);
   return (
     calculationResultWasModified.value ||
-    (`${props.schema.key}ManuallyChanged` in props.model &&
-      props.model[`${props.schema.key}ManuallyChanged`] == true)
+    (`${dataPath}ManuallyChanged` in props.model &&
+      props.model[`${dataPath}ManuallyChanged`] == true)
   );
 });
 
@@ -182,13 +184,15 @@ function userTyping(val: any) {
   if (isCalculationDefined.value) {
     if (logger.calculationListener)
       console.debug(
-        `[vue-schema-forms] [CalculationListener], key=${props.schema.key}, index=${props.schema.index}, manualResult=${val}`,
+        `[vue-schema-forms] [CalculationListener], key=${getDataPath(props.schema)}, index=${props.schema.index}, manualResult=${val}`,
       );
     calculationResultWasModified.value = true;
     unsubscribeListener.value();
+    const dataPath = getDataPath(props.schema);
     const updateEvent: NodeUpdateEvent = {
-      key: `${props.schema.key}ManuallyChanged`,
+      key: `${dataPath}ManuallyChanged`,
       value: true,
+      dataPath: props.schema.dataPath ? `${dataPath}ManuallyChanged` : undefined,
     };
     props.schema.on.input(updateEvent);
   }
@@ -220,7 +224,7 @@ async function runExpressionIfExist() {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
     localModel.value = await resolveExpression(
       props.schema,
-      props.schema.key,
+      getDataPath(props.schema),
       expression,
       props.model,
     );

@@ -156,12 +156,12 @@ function closeAndAddBatch(isActive: Ref<boolean>) {
 
 const duplicatedSectionOptions = ref(props.schema.layout?.options as DuplicatedSectionOptions);
 
-const { getValue, setValue } = useFormModel();
+const { getValue, setValue, getDataPath } = useFormModel();
 
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
 vueSchemaFormEventBus.on(async (event, payload) => {
   const modelFromProps = JSON.stringify(
-    get(props.model, props.schema.key, showFirstInitRow ? [{}] : []),
+    getValue(props.model, props.schema, showFirstInitRow ? [{}] : []),
   );
   const actualModel = JSON.stringify(localModel.value);
   if (
@@ -180,7 +180,7 @@ vueSchemaFormEventBus.on(async (event, payload) => {
 });
 
 async function resolveDependenciesBetweenTwoDuplicatedSections(payload: NodeUpdateEvent) {
-  if (props.schema.sourcePath !== undefined && props.schema.key !== payload.key) {
+  if (props.schema.sourcePath !== undefined && getDataPath(props.schema) !== payload.key) {
     await new Promise((r) => setTimeout(r, 100));
     let source = props.schema.sourcePath;
     let sections: Record<any, any>[] = cloneDeep(get(props.model, source, []));
@@ -333,6 +333,12 @@ const duplicatedSectionEventBus = useEventBus<string>('form-duplicated-section')
 function updateModel(event: NodeUpdateEvent, indexOfArray: number) {
   informAboutUpdateSpecifiedFieldInDuplicatedSection(event, indexOfArray);
 
+  if (event.dataPath) {
+    props.schema.on.input(event);
+    onChange(props.schema, props.model);
+    return;
+  }
+
   set(localModel.value[indexOfArray], event.key, event.value);
   setValue(localModel.value, props.schema, indexOfArray);
 
@@ -349,9 +355,16 @@ function informAboutUpdateSpecifiedFieldInDuplicatedSection(
   event: NodeUpdateEvent,
   indexOfArray: number,
 ) {
-  //console.log('Update poszczególnego pola', `${props.schema.key}[${indexOfArray}].${event.key}`);
+  if (event.dataPath) {
+    duplicatedSectionEventBus.emit('form-duplicated-section', {
+      key: event.key,
+    });
+    return;
+  }
+
+  //console.log('Update poszczególnego pola', `${getDataPath(props.schema)}[${indexOfArray}].${event.key}`);
   duplicatedSectionEventBus.emit('form-duplicated-section', {
-    key: `${props.schema.key}[${indexOfArray}].${event.key}`,
+    key: `${getDataPath(props.schema)}[${indexOfArray}].${event.key}`,
   });
 }
 
@@ -556,7 +569,7 @@ function init(): void {
   let source = props.schema.sourcePath;
 
   let sections: Record<any, any>[] =
-    cloneDeep(get(props.model, source ? source : props.schema.key, [])) || []; //lodash error with default value = array
+    cloneDeep(source ? get(props.model, source, []) : getValue(props.model, props.schema, [])) || []; //lodash error with default value = array
   if (source) {
     setValue(sections, props.schema);
   }
@@ -564,6 +577,7 @@ function init(): void {
   if (sections.length === 0 && isArray(props.schema.defaultValue)) {
     sections = props.schema.defaultValue as Array<any>;
     isDefaultExist = true;
+    setValue(sections, props.schema);
   }
 
   if (sections.length > 0) {
@@ -609,7 +623,7 @@ function wrapPropertiesWithIndexAndPathOld(
       wrapPropertiesWithIndexAndPath(value.properties as any, index);
     } else if (value.layout?.schema && value.layout.component !== 'fields-group') {
       // dla grupy nie dodajemy klucza jest przeźroczysta
-      value['path'] = props.schema.key;
+      value['path'] = getDataPath(props.schema);
       value['index'] = index;
       wrapPropertiesWithIndexAndPath(value.layout.schema.properties as any, index, value);
     } else {
@@ -617,13 +631,13 @@ function wrapPropertiesWithIndexAndPathOld(
         if (props.schema.layout.schema) {
           // jesteśmy w sekcji powielanej i napotykamy sekcje powielana
           value['path'] =
-            props.schema['path'] + '[' + props.schema['index'] + '].' + props.schema.key + '[]';
+            props.schema['path'] + '[' + props.schema['index'] + '].' + getDataPath(props.schema) + '[]';
         } else {
           value['path'] =
-            props.schema['path'] + '[' + props.schema['index'] + '].' + props.schema.key;
+            props.schema['path'] + '[' + props.schema['index'] + '].' + getDataPath(props.schema);
         }
       } else {
-        value['path'] = props.schema.key + '[]';
+        value['path'] = getDataPath(props.schema) + '[]';
       }
       value['index'] = index;
     }
@@ -649,7 +663,7 @@ function wrapPropertiesWithIndexAndPath(
 
     if (isDuplicatedSection || isFieldGroup) {
       if (isDuplicatedSection) {
-        value['path'] = props.schema.key + '[]';
+        value['path'] = getDataPath(props.schema) + '[]';
         value['index'] = index;
       }
       // @ts-ignore
@@ -657,10 +671,14 @@ function wrapPropertiesWithIndexAndPath(
     }
 
     if (props.schema['path'] !== undefined && props.schema['index'] != undefined) {
-      const rootPath = props.schema.path?.replace('[]', '');
-      value['path'] = rootPath + '[' + props.schema['index'] + '].' + props.schema.key + '[]';
+      if (props.schema.dataPath) {
+        value['path'] = getDataPath(props.schema) + '[]';
+      } else {
+        const rootPath = props.schema.path?.replace('[]', '');
+        value['path'] = rootPath + '[' + props.schema['index'] + '].' + props.schema.key + '[]';
+      }
     } else {
-      value['path'] = props.schema.key + '[]';
+      value['path'] = getDataPath(props.schema) + '[]';
     }
 
     value['index'] = index;

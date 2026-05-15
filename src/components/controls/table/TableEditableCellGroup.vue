@@ -150,7 +150,7 @@
         {
           key: item.valueMapping.split(':')[0],
           type: 'text',
-          label: item.label,
+          label: item.label || item.title,
           layout: { props: {}, component: 'year-picker' },
           expression: getExpressionForYearPicker(item.valueMapping),
           options: {
@@ -165,6 +165,7 @@
         } as any
       "
       :validations-disabled="false"
+      v-bind="boundAttrsMap[item.valueMapping]"
       @update:model-value="handlersMap[item.valueMapping]?.selectUpdate"
       @keyup.enter="handlersMap[item.valueMapping]?.keyupEnter"
     />
@@ -185,7 +186,7 @@ import { Pagination } from '@/components/controls/dictionary/Pagination';
 import { mapSliceTotalElements } from '@/components/controls/dictionary/SliceResponse';
 import YearPicker from '@/components/controls/YearPicker.vue';
 
-import { useResolveVariables } from '@/core/composables';
+import { useFormModel, useResolveVariables } from '@/core/composables';
 import { useNumber } from '@/core/composables/useNumber';
 import { EngineField } from '@/types/engine/EngineField';
 import { SchemaSimpleValidation } from '@/types/shared/SchemaSimpleValidation';
@@ -206,6 +207,7 @@ const emit = defineEmits<{
 const attrs = useAttrs();
 const { formattedNumber } = useNumber();
 const { resolve } = useResolveVariables();
+const { getDataPath } = useFormModel();
 
 async function updateValue(e: any, item: HeaderEditableObject) {
   const rules = rulesMap.value[item.valueMapping] || [];
@@ -321,7 +323,7 @@ async function getItemsUrlForDictionary(
   const modifiedField = {
     ...props.schema,
     index: props.rowIndex,
-    path: props.schema.key,
+    path: getDataPath(props.schema),
   };
 
   const endpoint = await resolve(modifiedField as any, split[1], true, getItemTitle(valueMapping));

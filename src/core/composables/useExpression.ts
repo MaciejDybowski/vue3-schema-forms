@@ -4,6 +4,7 @@ import get from 'lodash/get';
 import { ref } from 'vue';
 
 import { useConditionalRendering } from '@/core/composables/useConditionalRendering';
+import { useFormModel } from '@/core/composables/useFormModel';
 import { useGeneratorCache } from '@/core/composables/useGeneratorCache';
 import { useNumber } from '@/core/composables/useNumber';
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
@@ -19,6 +20,7 @@ export function useExpression() {
   const cache = useGeneratorCache();
   const { roundTo } = useNumber();
   const { conditionalRenderBlocker } = useConditionalRendering();
+  const { getDataPath } = useFormModel();
 
   async function resolveExpression(
     schema: EngineField,
@@ -30,14 +32,15 @@ export function useExpression() {
     if (!functionName) return;
 
     const isGenerator = functionName.includes('_GENERATOR');
-    let currentValue = get(model, key, null);
+    const dataPath = getDataPath(schema);
+    let currentValue = get(model, dataPath, null);
 
-    if (cache.has(key) && currentValue == cache.get(key)) {
+    if (cache.has(dataPath) && currentValue == cache.get(dataPath)) {
       currentValue = null;
     }
 
     if (isGenerator) {
-      cache.set(key, currentValue);
+      cache.set(dataPath, currentValue);
     }
 
     if (isGenerator && currentValue != null) {
@@ -88,11 +91,13 @@ export function useExpression() {
       newValue = roundTo(newValue, schema.precision ? Number(schema.precision) : 0);
     }
 
-    const currentValue = get(model, key, null);
+    const dataPath = getDataPath(schema);
+    const currentValue = get(model, dataPath, null);
     if (newValue !== currentValue && newValue != undefined) {
       const updateEvent: NodeUpdateEvent = {
-        key,
+        key: dataPath,
         value: newValue,
+        dataPath: schema.dataPath ? dataPath : undefined,
       };
       schema.on.input(updateEvent);
     }

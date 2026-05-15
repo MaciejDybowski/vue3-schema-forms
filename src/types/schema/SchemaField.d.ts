@@ -25,6 +25,7 @@ export interface ExternalApiCaller {
 }
 
 export interface SchemaField {
+  dataPath?: string;
   label?: string | { $ref: string };
   content?: string | { $ref: string };
   default?: number | string | boolean | object | Array<any>;

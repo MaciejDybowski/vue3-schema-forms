@@ -6,6 +6,7 @@ import { ref } from 'vue';
 
 import { useConditionalRendering } from '@/core/composables/useConditionalRendering';
 import { useEventHandler } from '@/core/composables/useEventHandler';
+import { useFormModel } from '@/core/composables/useFormModel';
 import { useNumber } from '@/core/composables/useNumber';
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
@@ -20,6 +21,7 @@ export function useCalculation() {
   const unsubscribeListener = ref<Fn>(() => {});
   const calculationResultWasModified = ref(false);
   const { fillPath } = useResolveVariables();
+  const { getDataPath } = useFormModel();
   const form = useInjectedFormModel();
   const { conditionalRenderBlocker } = useConditionalRendering();
 
@@ -125,19 +127,21 @@ export function useCalculation() {
         break;
     }
 
-    const currentValue = get(model, field.key, null);
+    const dataPath = getDataPath(field);
+    const currentValue = get(model, dataPath, null);
 
     if (newValue !== currentValue) {
       if (
-        `${field.key}ManuallyChanged` in mergedModel &&
-        mergedModel[`${field.key}ManuallyChanged`] === true
+        `${dataPath}ManuallyChanged` in mergedModel &&
+        mergedModel[`${dataPath}ManuallyChanged`] === true
       ) {
         return;
       }
 
       const event: NodeUpdateEvent = {
-        key: field.key,
+        key: dataPath,
         value: newValue,
+        dataPath: field.dataPath ? dataPath : undefined,
       };
       field.on.input(event);
       await onChange(field, model);

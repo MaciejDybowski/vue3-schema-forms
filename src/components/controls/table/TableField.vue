@@ -224,7 +224,7 @@ import TablePagination from '@/components/controls/table/TablePagination.vue';
 import { TableFetchOptions, TableOptions } from '@/components/controls/table/table-types';
 import VueSchemaForms from '@/components/engine/VueSchemaForms.vue';
 
-import { useLocale, useProps, useResolveVariables } from '@/core/composables';
+import { useFormModel, useLocale, useProps, useResolveVariables } from '@/core/composables';
 import { useVariableParser } from '@/core/composables/useVariableParser';
 import { variableRegexp } from '@/core/engine/utils';
 import { toast } from '@/main';
@@ -241,6 +241,7 @@ import {
 const actionHandlerEventBus = useEventBus<string>('form-action');
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
 const duplicatedSectionEventBus = useEventBus<string>('form-duplicated-section');
+const { getDataPath } = useFormModel();
 
 duplicatedSectionEventBus.on(async (event: any, payload: NodeUpdateEvent) => {
   triggers.forEach((trigger) => {
@@ -518,7 +519,7 @@ async function runTableBtnLogic(btn: TableButton) {
 
       if (props.schema.layout.component == 'table-internal') {
         payloadObject.mode = 'internal';
-        payloadObject.fieldKey = props.schema.key;
+        payloadObject.fieldKey = getDataPath(props.schema);
       }
 
       actionHandlerEventBus.emit('form-action', payloadObject);

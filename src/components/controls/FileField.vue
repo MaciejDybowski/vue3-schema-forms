@@ -67,7 +67,7 @@ const { t } = useLocale();
 const { bindClass } = useClass();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { bindProps, fieldProps } = useProps();
-const { getValue, setValue } = useFormModel();
+const { getValue, setValue, getDataPath } = useFormModel();
 const { label, bindLabel } = useLabel(schema);
 const { activeRules } = useActiveRules({
   fieldProps,
@@ -106,7 +106,7 @@ const actionHandlerEventBus = useEventBus<string>('form-action');
 
 const uploadFileUrl = ref(
   schema.url ||
-    `/api/v1/features/{menuFeatureId}/files?dataId={dataId}&temporary=false&filePath=${schema.key}`,
+    `/api/v1/features/{menuFeatureId}/files?dataId={dataId}&temporary=false&filePath=${getDataPath(schema)}`,
 );
 const deleteFileUrl = ref(`/api/v1/features/{menuFeatureId}/files/{fileId}?dataId={dataId}`);
 

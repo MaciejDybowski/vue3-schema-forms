@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "vue3-schema-forms",
-  "version": "0.5.49",
+  "version": "0.5.50",
   "description": "Vue3 Schema Forms powered by Vuetify",
   "main": "dist/main.umd.js",
   "module": "dist/main.es.js",
@@ -23,6 +23,9 @@
     "test": "vitest",
     "publish:nexus": "npm publish --registry=https://nexus3.tecna.pl/repository/npm-private-releases",
     "vitest-storybook": "npx vitest --run --project=storybook --silent=passed-only --reporter=verbose",
+    "vitest-storybook:debug": "npx vitest --project=storybook --browser.headless=false --reporter=verbose",
+    "vitest-storybook:json": "npx vitest --run --project=storybook --reporter=json --outputFile=reports/vitest-storybook.json",
+    "vitest-storybook:junit": "npx vitest --run --project=storybook --reporter=junit --outputFile=reports/vitest-storybook.xml",
     "one-file-test": "npx vitest --run --project=storybook --silent=passed-only --reporter=verbose src/stories/editable-fields/ButtonField.stories.ts"
   },
   "keywords": [

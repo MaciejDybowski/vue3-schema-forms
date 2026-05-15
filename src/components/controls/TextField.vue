@@ -42,7 +42,7 @@ const { bindProps, fieldProps } = useProps();
 const { resolveExpression } = useExpression();
 const { handleDependency } = useDependencies();
 const { label, bindLabel } = useLabel(props.schema);
-const { getValue, setValue } = useFormModel();
+const { getValue, setValue, getDataPath } = useFormModel();
 const { onChange } = useEventHandler();
 const { fillPath } = useResolveVariables();
 
@@ -66,7 +66,7 @@ async function runExpressionIfExist() {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.expression);
     localModel.value = await resolveExpression(
       props.schema,
-      props.schema.key,
+      getDataPath(props.schema),
       expression,
       props.model,
     );
@@ -78,7 +78,7 @@ async function runDependencyExpressionIfExist() {
     const expression = fillPath(props.schema.path, props.schema.index, props.schema.dependency);
     localModel.value = await handleDependency(
       props.schema,
-      props.schema.key,
+      getDataPath(props.schema),
       expression,
       props.model,
     );

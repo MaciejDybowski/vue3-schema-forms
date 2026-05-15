@@ -42,7 +42,7 @@ const mode = schema.mode ? schema.mode : 'none';
 const { bindClass } = useClass();
 const { bindProps, fieldProps } = useProps();
 const { label, bindLabel } = useLabel(schema);
-const { getValue, setValue } = useFormModel();
+const { getValue, setValue, getDataPath } = useFormModel();
 const { bindRules, rules, requiredInputClass } = useRules();
 const { calculationFunc, unsubscribeListener, calculationResultWasModified } = useCalculation();
 const { onChange } = useEventHandler();
@@ -69,8 +69,9 @@ const isCalculationDefined = computed(() => {
 });
 
 const isValueFromModelAndNotChangedManually = computed(() => {
+  const dataPath = getDataPath(schema);
   return (
-    !localModel.value || (localModel.value && !(`${schema.key}ManuallyChanged` in (model as any)))
+    !localModel.value || (localModel.value && !(`${dataPath}ManuallyChanged` in (model as any)))
   );
 });
 
@@ -93,9 +94,11 @@ function onToggleByUser(val: any) {
     calculationResultWasModified.value = true;
     unsubscribeListener.value();
 
+    const dataPath = getDataPath(schema);
     const updateEvent: NodeUpdateEvent = {
-      key: `${schema.key}ManuallyChanged`,
+      key: `${dataPath}ManuallyChanged`,
       value: true,
+      dataPath: schema.dataPath ? `${dataPath}ManuallyChanged` : undefined,
     };
     schema.on.input(updateEvent);
   }

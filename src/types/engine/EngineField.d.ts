@@ -5,6 +5,7 @@ import { SchemaFieldType } from '@/types/shared/SchemaFieldType';
 
 export interface EngineField {
   key: string;
+  dataPath?: string;
   options: EngineOptions;
   on: {
     input: Function;

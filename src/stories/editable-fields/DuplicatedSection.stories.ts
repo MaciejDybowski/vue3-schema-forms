@@ -194,7 +194,9 @@ export const StandardWithRequired: Story = {
 export const WithDefaults: Story = {
   name: 'Default value',
   args: {
-    formModel: {},
+    formModel: {
+      invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
+    },
     schema: {
       type: 'object',
       properties: {
@@ -606,8 +608,10 @@ export const CopyBelowAction: Story = {
 export const DeleteAction: Story = {
   name: 'Test: Delete action',
   play: playWrapper(async (context) => {
-    await expect(context.args.formModel).toEqual({
-      invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
+    await waitFor(() => {
+      expect(context.args.formModel).toEqual({
+        invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
+      });
     });
 
     const duplicatedSections = document.getElementsByClassName('duplicated-section-item');
@@ -627,7 +631,9 @@ export const DeleteAction: Story = {
     });
   }),
   args: {
-    formModel: {},
+    formModel: {
+      invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
+    },
     schema: {
       type: 'object',
       properties: {
@@ -656,8 +662,10 @@ export const DeleteAction: Story = {
 export const AddBelowAction: Story = {
   name: 'Test: Add below action',
   play: playWrapper(async (context) => {
-    await expect(context.args.formModel).toEqual({
-      invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
+    await waitFor(() => {
+      expect(context.args.formModel).toEqual({
+        invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
+      });
     });
 
     let duplicatedSections = document.getElementsByClassName('duplicated-section-item');
@@ -682,7 +690,9 @@ export const AddBelowAction: Story = {
     });
   }),
   args: {
-    formModel: {},
+    formModel: {
+      invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
+    },
     schema: {
       type: 'object',
       properties: {
@@ -1347,4 +1357,3 @@ export const ConditionalShowElementsByJsonata: Story = {
     } as Schema,
   },
 };
-

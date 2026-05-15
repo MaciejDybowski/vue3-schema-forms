@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash';
 
 import { ref } from 'vue';
 
+import { useFormModel } from '@/core/composables/useFormModel';
 import { useResolveVariables } from '@/core/composables/useResolveVariables';
 import { useInjectedFormModel } from '@/core/state/useFormModelProvider';
 import { logger } from '@/main';
@@ -16,6 +17,7 @@ export function useConditionalRendering() {
   let lastValueOfShouldRender = ref(false);
   const vueSchemaFormEventBus = useEventBus<string>('form-model');
   const { fillPath } = useResolveVariables();
+  const { getDataPath } = useFormModel();
   const form = useInjectedFormModel();
 
   async function shouldRenderField(
@@ -88,8 +90,9 @@ export function useConditionalRendering() {
         resetModelValues(internalSchema, schema);
       } else {
         const event: NodeUpdateEvent = {
-          key: schema.key,
+          key: getDataPath(schema),
           value: null,
+          dataPath: schema.dataPath ? getDataPath(schema) : undefined,
         };
         schema.on.input(event);
       }
@@ -105,8 +108,9 @@ export function useConditionalRendering() {
         resetModelValues(field as any, formField);
       } else {
         const event: NodeUpdateEvent = {
-          key: key,
+          key: fillPath(formField.path, formField.index, field.dataPath || key),
           value: null,
+          dataPath: field.dataPath ? fillPath(formField.path, formField.index, field.dataPath) : undefined,
         };
         formField.on.input(event);
       }
