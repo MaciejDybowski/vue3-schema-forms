@@ -67,6 +67,8 @@ export function useNumber() {
   ) {
     if (value || value == 0) {
       value = Number(value);
+      if (!Number.isFinite(value)) return null;
+
       switch (type) {
         case 'decimal':
           return n(value, decimal(precisionMin, precisionMax) as any);
