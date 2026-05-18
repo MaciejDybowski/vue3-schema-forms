@@ -41,6 +41,7 @@
       :rules="rulesMap[item.valueMapping]"
       v-bind="boundAttrsMap[item.valueMapping]"
       width="100%"
+      @beforeinput="handlersMap[item.valueMapping]?.beforeInput"
       @focusin="handlersMap[item.valueMapping]?.focusIn"
       @focusout="handlersMap[item.valueMapping]?.focusOut"
       @input="handlersMap[item.valueMapping]?.input"
@@ -205,7 +206,7 @@ const emit = defineEmits<{
 }>();
 
 const attrs = useAttrs();
-const { formattedNumber } = useNumber();
+const { formattedNumber, preventInvalidNumberInput } = useNumber();
 const { resolve } = useResolveVariables();
 const { getDataPath } = useFormModel();
 
@@ -226,8 +227,9 @@ async function updateValue(e: any, item: HeaderEditableObject) {
 
   let inputValue = raw;
   if (item.type === 'NUMBER') {
-    let value = (inputValue + '').replaceAll(',', '.');
-    inputValue = parseFloat(value);
+    const value = (inputValue + '').replaceAll(',', '.').trim();
+    const parsedValue = value === '' ? null : Number(value);
+    inputValue = parsedValue != null && Number.isFinite(parsedValue) ? parsedValue : null;
   }
 
   if (isValid) {
@@ -245,6 +247,10 @@ function getValue(valueMapping: string, index: number) {
   const formatterProps = split.length == 4 ? split[3] : (null as any);
 
   let value: any = get(props.row, variable, null);
+
+  if (typeof value === 'number' && !Number.isFinite(value)) {
+    return null;
+  }
 
   if (typeOfValue === 'NUMBER' && showFormattedNumber.value[index]) {
     let decimalPlaces = 4;
@@ -528,6 +534,7 @@ const handlersMap = computed(() => {
       loadMore?: () => void;
       focusIn?: () => void;
       focusOut?: () => void;
+      beforeInput?: (e: InputEvent) => void;
       keyupEnter?: (e: any) => void;
     }
   > = {};
@@ -541,6 +548,7 @@ const handlersMap = computed(() => {
       updateSearch: (e: any) => updateSearch(e, item, index),
       load: () => loadDataForDictionary(item),
       loadMore: () => loadMoreRecordsForDictionary(item),
+      beforeInput: (e: InputEvent) => preventInvalidNumberInput(e),
       focusIn: () => (showFormattedNumber.value[index] = false),
       focusOut: () => focusOut(index, item),
       keyupEnter: (e: any) => e?.target?.blur?.(),

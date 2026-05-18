@@ -9,6 +9,7 @@
       v-bind="fieldProps"
       @focusin="focusin"
       @focusout="focusout"
+      @beforeinput="preventInvalidNumberInput($event, schema.type === 'int')"
       @update:model-value="userTyping"
       @click:append-inner="clickAppendInner"
     >
@@ -103,7 +104,7 @@ const formatType = (
 const roundOption: RoundOption =
   'roundOption' in props.schema ? (props.schema.roundOption as RoundOption) : 'round';
 
-const { roundTo, formattedNumber, cleanFormattedNumber } = useNumber();
+const { roundTo, formattedNumber, cleanFormattedNumber, preventInvalidNumberInput } = useNumber();
 
 const lastValue = ref<any>(null);
 
@@ -133,6 +134,10 @@ const localModel = computed({
     // Obsługa zmiennych z zależnościami
     if (value && typeof value == 'string' && value.match(variableRegexp)) {
       return value;
+    }
+
+    if (typeof value === 'number' && !Number.isFinite(value)) {
+      return null;
     }
 
     /* // Konwersja string na number
