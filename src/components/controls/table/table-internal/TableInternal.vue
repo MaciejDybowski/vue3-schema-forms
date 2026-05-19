@@ -41,27 +41,11 @@ const { schema, model } = defineProps<{
 
 const localModel = computed({
   get(): any[] {
-    if (sourceDataPath.value) {
-      return get(model, sourceDataPath.value, []);
-    }
-
     return getValue(model, schema);
   },
   set(val: any) {
-    if (sourceDataPath.value) {
-      schema.on.input({
-        key: sourceDataPath.value,
-        value: (val !== undefined || val === 0) && val !== '' ? val : null,
-      });
-      return;
-    }
-
     setValue(val, schema);
   },
-});
-
-const sourceDataPath = computed(() => {
-  return schema.source.data?.trim() ? schema.source.data : null;
 });
 
 const loading = ref(true);
