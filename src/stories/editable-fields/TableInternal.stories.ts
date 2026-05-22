@@ -303,23 +303,23 @@ function tableSchema(rowVisibleCondition?: string, headers = displayHeaders): Sc
   } as Schema;
 }
 
-function tableWithSourceDataPathSchema(): Schema {
+function tableWithDataPathSchema(): Schema {
   return {
     type: 'object',
     properties: {
       description: {
-        content: 'Internal table reads rows from source.data path: contractData.items',
+        content: 'Internal table reads rows from dataPath: contractData.items',
         layout: {
           component: 'static-content',
           tag: 'p',
         },
       },
       contractsTable: {
+        dataPath: 'contractData.items',
         layout: {
           component: 'table-internal',
         },
         source: {
-          data: 'contractData.items',
           rowVisibleCondition: 'status != "ARCHIVED"',
           headers: editableHeaders,
         },
@@ -388,28 +388,28 @@ export const TwoTablesFieldsGroup: Story = {
   },
 };
 
-export const TwoTablesWithSourceDataPath: Story = {
-  name: 'Two tables from one key - source.data',
+export const TwoTablesWithDataPath: Story = {
+  name: 'Two tables from one key - dataPath',
   args: {
     formModel: model(),
     schema: {
       properties: {
         tableOne: {
+          dataPath: 'contracts',
           layout: {
             component: 'table-internal',
           },
           source: {
-            data: 'contracts',
             headers: displayHeaders,
             rowVisibleCondition: 'status="ARCHIVED"',
           },
         },
         tableTwo: {
+          dataPath: 'contracts',
           layout: {
             component: 'table-internal',
           },
           source: {
-            data: 'contracts',
             headers: displayHeaders,
             rowVisibleCondition: 'active=true',
           },
@@ -475,10 +475,10 @@ export const InternalActionsWithHiddenRows: Story = {
   },
 };
 
-export const SourceDataPath: Story = {
-  name: 'Source data: model path',
+export const DataPath: Story = {
+  name: 'dataPath: model path',
   args: {
     formModel: nestedModel(),
-    schema: tableWithSourceDataPathSchema(),
+    schema: tableWithDataPathSchema(),
   },
 };

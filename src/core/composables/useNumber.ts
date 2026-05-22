@@ -67,6 +67,8 @@ export function useNumber() {
   ) {
     if (value || value == 0) {
       value = Number(value);
+      if (!Number.isFinite(value)) return null;
+
       switch (type) {
         case 'decimal':
           return n(value, decimal(precisionMin, precisionMax) as any);
@@ -127,5 +129,33 @@ export function useNumber() {
     return decimalSeparators[locale] || '.';
   }
 
-  return { roundTo, formattedNumber, formattedCurrency, cleanFormattedNumber };
+  function isValidNumberInput(value: string, integer = false): boolean {
+    const normalizedValue = value.replaceAll(',', '.');
+
+    if (integer) return /^-?\d*$/.test(normalizedValue);
+    return /^-?\d*(\.\d*)?$/.test(normalizedValue);
+  }
+
+  function preventInvalidNumberInput(event: InputEvent, integer = false) {
+    if (event.data == null) return;
+
+    const target = event.target as HTMLInputElement | null;
+    if (!target) return;
+
+    const selectionStart = target.selectionStart ?? target.value.length;
+    const selectionEnd = target.selectionEnd ?? target.value.length;
+    const nextValue = `${target.value.slice(0, selectionStart)}${event.data}${target.value.slice(selectionEnd)}`;
+
+    if (!isValidNumberInput(nextValue, integer)) {
+      event.preventDefault();
+    }
+  }
+
+  return {
+    roundTo,
+    formattedNumber,
+    formattedCurrency,
+    cleanFormattedNumber,
+    preventInvalidNumberInput,
+  };
 }
