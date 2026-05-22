@@ -278,6 +278,11 @@ const panelSchemas = computed(() =>
 );
 
 const panelTitles = ref<any[]>([]);
+let unsubscribe: (() => void) | undefined;
+
+onUnmounted(() => {
+  unsubscribe?.();
+});
 
 onMounted(async () => {
   panelTitles.value = props.schema.panels.map((p: EngineExpansionPanel) => ({
@@ -294,7 +299,6 @@ onMounted(async () => {
 
   const hasVariables = props.schema.panels.some((p) => p.title.match(variableRegexp));
 
-  let unsubscribe: (() => void) | undefined;
   if (hasVariables || props.schema.panels.some((p) => p.hideCondition || p.openCondition)) {
     unsubscribe = vueSchemaFormEventBus.on(async () => {
       await new Promise((r) => setTimeout(r, 110));
@@ -306,10 +310,6 @@ onMounted(async () => {
   }
 
   await refreshConditions();
-
-  onUnmounted(() => {
-    if (unsubscribe) unsubscribe();
-  });
 });
 </script>
 

@@ -20,7 +20,11 @@ type ExtendedSchemaForResolver = Schema & {
 };
 
 function resolveLocaleToken(schema: any, locale: string) {
-  return JSON.parse(JSON.stringify(schema).replaceAll('~$locale~', locale));
+  const serializedSchema = JSON.stringify(schema);
+  if (!serializedSchema.includes('~$locale~')) {
+    return schema;
+  }
+  return JSON.parse(serializedSchema.replaceAll('~$locale~', locale));
 }
 
 function hasLocaleRefPlaceholders(schema: any): boolean {
