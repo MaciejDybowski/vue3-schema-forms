@@ -21,7 +21,7 @@ export let logger = {
   duplicatedSchemaWatchLogger: false,
   eventEmitterListener: false,
   registerComponentLogger: false,
-  resolvedSchemaLogger: true,
+  resolvedSchemaLogger: false,
 };
 
 export let toast = null;
