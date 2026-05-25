@@ -18,6 +18,7 @@
 import axios from 'axios';
 import jsonata from 'jsonata';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 
 import { computed, ref } from 'vue';
 
@@ -54,60 +55,139 @@ const itemsTotalElements = ref(0);
 const aggregates = ref(null);
 const visibleRowIndexes = ref<number[]>([]);
 const { resolve, fillPath } = useResolveVariables();
+const lastFetchParams = ref<TableFetchOptions>({
+  page: 1,
+  size: 10,
+  sort: [],
+  filter: null,
+  query: null,
+});
 
 async function loadData(params: TableFetchOptions) {
-  await refreshVisibleItems();
+  loading.value = true;
+  lastFetchParams.value = params;
+  await refreshVisibleItems(params);
 
   aggregates.value = null; // TODO
 
   loading.value = false;
 }
 
-async function refreshVisibleItems() {
+async function refreshVisibleItems(params: TableFetchOptions = lastFetchParams.value) {
   const modelItems = localModel.value ?? [];
+  const filteredByItemsFilter = await applyItemsFilter(modelItems);
   const condition = schema.source.rowVisibleCondition;
+  let filteredItems = filteredByItemsFilter.items;
+  let filteredIndexes = filteredByItemsFilter.indexes;
 
-  if (!condition) {
-    items.value = modelItems;
-    visibleRowIndexes.value = modelItems.map((_, index) => index);
-    itemsTotalElements.value = modelItems.length;
-    return;
-  }
-
-  const filteredItems: any[] = [];
-  const filteredIndexes: number[] = [];
-  let nata;
-
-  try {
-    nata = jsonata(condition);
-  } catch (e) {
-    console.warn('compile rowVisibleCondition error', e);
-    items.value = modelItems;
-    visibleRowIndexes.value = modelItems.map((_, index) => index);
-    itemsTotalElements.value = modelItems.length;
-    return;
-  }
-
-  for (let index = 0; index < modelItems.length; index++) {
-    const item = modelItems[index];
+  if (condition) {
+    const rowVisibleItems: any[] = [];
+    const rowVisibleIndexes: number[] = [];
+    let nata;
 
     try {
-      const result = await nata.evaluate(item);
-
-      if (Boolean(result)) {
-        filteredItems.push(item);
-        filteredIndexes.push(index);
-      }
+      nata = jsonata(condition);
     } catch (e) {
-      console.warn('evaluate rowVisibleCondition error', e);
-      filteredItems.push(item);
-      filteredIndexes.push(index);
+      console.warn('compile rowVisibleCondition error', e);
+      paginateItems(filteredItems, filteredIndexes, params);
+      return;
     }
+
+    for (let index = 0; index < filteredItems.length; index++) {
+      const item = filteredItems[index];
+
+      try {
+        const result = await nata.evaluate(item);
+
+        if (Boolean(result)) {
+          rowVisibleItems.push(item);
+          rowVisibleIndexes.push(filteredIndexes[index]);
+        }
+      } catch (e) {
+        console.warn('evaluate rowVisibleCondition error', e);
+        rowVisibleItems.push(item);
+        rowVisibleIndexes.push(filteredIndexes[index]);
+      }
+    }
+
+    filteredItems = rowVisibleItems;
+    filteredIndexes = rowVisibleIndexes;
   }
 
-  items.value = filteredItems;
-  visibleRowIndexes.value = filteredIndexes;
+  paginateItems(filteredItems, filteredIndexes, params);
+}
+
+async function applyItemsFilter(modelItems: any[]) {
+  const itemsFilter = schema.source.itemsFilter;
+
+  if (!itemsFilter) {
+    return {
+      items: modelItems,
+      indexes: modelItems.map((_, index) => index),
+    };
+  }
+
+  try {
+    const resolvedFilter = await resolveItemsFilterExpression(itemsFilter);
+    const result = await jsonata(resolvedFilter).evaluate({ items: modelItems });
+    const filteredItems = Array.isArray(result) ? result : result == null ? [] : [result];
+
+    return {
+      items: filteredItems,
+      indexes: mapFilteredIndexes(modelItems, filteredItems),
+    };
+  } catch (e) {
+    console.warn('evaluate itemsFilter error', e);
+    return {
+      items: modelItems,
+      indexes: modelItems.map((_, index) => index),
+    };
+  }
+}
+
+async function resolveItemsFilterExpression(expression: string) {
+  const matches = expression.match(variableRegexp);
+
+  if (!matches) return expression;
+
+  let resolvedExpression = expression;
+
+  for await (const match of matches) {
+    let variable = match.slice(1, -1);
+    variable = fillPath(schema.path, schema.index, variable);
+
+    const value = await jsonata(variable).evaluate(model);
+    resolvedExpression = resolvedExpression.replace(match, JSON.stringify(value ?? null));
+  }
+
+  return resolvedExpression;
+}
+
+function mapFilteredIndexes(modelItems: any[], filteredItems: any[]) {
+  const usedIndexes = new Set<number>();
+  const idMapper = schema.source.idMapper;
+
+  return filteredItems.map((item, fallbackIndex) => {
+    const itemId = idMapper ? get(item, idMapper) : null;
+    const index = modelItems.findIndex((modelItem, modelIndex) => {
+      if (usedIndexes.has(modelIndex)) return false;
+      if (idMapper && itemId != null && get(modelItem, idMapper) === itemId) return true;
+      return isEqual(modelItem, item);
+    });
+
+    const resolvedIndex = index >= 0 ? index : fallbackIndex;
+    usedIndexes.add(resolvedIndex);
+    return resolvedIndex;
+  });
+}
+
+function paginateItems(filteredItems: any[], filteredIndexes: number[], params: TableFetchOptions) {
   itemsTotalElements.value = filteredItems.length;
+  const start = (params.page - 1) * params.size;
+  const end = start + params.size;
+
+  items.value = filteredItems.slice(start, end);
+  visibleRowIndexes.value = filteredIndexes.slice(start, end);
 }
 
 function getModelRowIndex(visibleIndex: number) {
