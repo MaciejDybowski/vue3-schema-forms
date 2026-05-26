@@ -206,10 +206,16 @@ async function updateRow(value: any, header: HeaderEditableObject, rowData: any,
     });
   }
 
-  const modelItems = [...(localModel.value ?? [])];
+  const modelItems = localModel.value ?? [];
   modelItems[getModelRowIndex(rowIndex)] = { ...tempRow };
   localModel.value = modelItems;
-  await refreshVisibleItems();
+
+  if (schema.source.itemsFilter || schema.source.rowVisibleCondition) {
+    await refreshVisibleItems();
+  } else {
+    items.value[rowIndex] = { ...tempRow };
+  }
+
   await onChange(schema, model);
 }
 
