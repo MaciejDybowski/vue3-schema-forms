@@ -174,6 +174,7 @@ export const FloatStandard4DecimalPlaces: Story = {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Number (float)');
     await userEvent.type(field, '1.34632', { delay: 300 });
+    await fireEvent.focusOut(field);
     await expect(context.args.formModel).toEqual({ numberFloat4: 1.3463 });
   },
   args: {
@@ -194,6 +195,42 @@ export const FloatStandard4DecimalPlaces: Story = {
   },
 };
 
+export const FloatPrecisionOnBlur: Story = {
+  name: 'Case: round precision on blur',
+  play: async (context) => {
+    await waitForMountedAsync();
+    const canvas = within(context.canvasElement);
+    const field = await canvas.getByLabelText('Number (float)');
+
+    await userEvent.type(field, '23.555555', { delay: 100 });
+    await expect(context.args.formModel).toEqual({ numberFloat4: 23.555555 });
+
+    await fireEvent.focusOut(field);
+    await expect(context.args.formModel).toEqual({ numberFloat4: 23.5556 });
+    await expect((field as HTMLInputElement).value).toMatch(/^23[,.]5556$/);
+
+    await fireEvent.focusIn(field);
+    await expect(field).toHaveValue('23.5556');
+  },
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        numberFloat4: {
+          label: 'Number (float)',
+          type: 'float',
+          precision: 4,
+          precisionMin: 2,
+          layout: {
+            component: 'number-field',
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
 export const DependencyDecimalPlaces: Story = {
   name: 'Case: change precision with dependency',
   play: async (context) => {
@@ -201,6 +238,7 @@ export const DependencyDecimalPlaces: Story = {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Number (float)');
     await userEvent.type(field, '1.34632', { delay: 300 });
+    await fireEvent.focusOut(field);
     await expect(context.args.formModel).toEqual({ decimalPlaces: 4, numberFloat4: 1.3463 });
   },
   args: {

@@ -94,16 +94,15 @@ export function useNumber() {
 
   function cleanFormattedNumber(numStr: string): string {
     const decimalSeparator = getDecimalSeparator(locale.value);
-    let cleaned = Number(numStr).toLocaleString(locale.value);
+    let cleaned = String(numStr).trim();
+    const hasDot = cleaned.includes('.');
+    const hasComma = cleaned.includes(',');
 
-    const allPossibleSeparators = [' ', '\u00A0', '.', ',', "'"];
-    const thousandSeparators = allPossibleSeparators.filter((sep) => sep !== decimalSeparator);
+    cleaned = cleaned.replace(/[\s\u00A0']/g, '');
 
-    for (const sep of thousandSeparators) {
-      if (sep !== decimalSeparator) {
-        const regex = new RegExp(sep.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
-        cleaned = cleaned.replace(regex, '');
-      }
+    if (hasDot && hasComma) {
+      const thousandSeparator = decimalSeparator === ',' ? '.' : ',';
+      cleaned = cleaned.replaceAll(thousandSeparator, '');
     }
 
     return cleaned;
