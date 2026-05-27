@@ -1,9 +1,6 @@
 import { EngineField } from '@/types/engine/EngineField';
 import { Schema } from '@/types/schema/Schema';
-import {
-  DownloadFileRenderMode,
-  ExternalApiCaller,
-} from '@/types/schema/SchemaField';
+import { DownloadFileRenderMode, ExternalApiCaller } from '@/types/schema/SchemaField';
 import { LocationResult } from '@/types/shared/LocationResult';
 import {
   AvatarSource,
@@ -86,6 +83,19 @@ export interface EngineFileField extends EngineField {
   fileLabel?: string;
   fileMaxSize?: number;
   fileAvailableExtensions?: string;
+}
+
+export interface EngineAttachmentImagePickerField extends EngineField {
+  source?: {
+    menuFeatureId?: string;
+    dataIdPath: string;
+  };
+  mode?: 'grid' | 'carousel';
+  selectionMode?: 'single' | 'multiple';
+  imageExtensions?: string;
+  showFolderTree?: boolean;
+  folderViewMode?: 'sidebar' | 'select';
+  folderSelectProps?: Record<string, any>;
 }
 
 export interface EngineDownloadFileField extends EngineField {

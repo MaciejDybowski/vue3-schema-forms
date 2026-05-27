@@ -1,12 +1,14 @@
 //@ts-nocheck
 import Alert from '@/components/controls/Alert.vue';
+import AttachmentImagePicker from '@/components/controls/AttachmentImagePicker.vue';
 import Bookmark from '@/components/controls/Bookmark.vue';
 import CalendarAutocomplete from '@/components/controls/CalendarAutocomplete.vue';
+import ColorPicker from '@/components/controls/ColorPicker.vue';
 import FileField from '@/components/controls/FileField.vue';
-import ProxyServiceCaller from '@/components/controls/ProxyServiceCaller.vue';
 import Image from '@/components/controls/Image.vue';
 import KeyValueList from '@/components/controls/KeyValueList.vue';
 import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue';
+import ProxyServiceCaller from '@/components/controls/ProxyServiceCaller.vue';
 import TextSwitchField from '@/components/controls/TextSwitchField.vue';
 import ValidationMessagesViewer from '@/components/controls/ValidationMessagesViewer.vue';
 import YearMonth from '@/components/controls/YearMonth.vue';
@@ -26,8 +28,8 @@ import Location from './Location.vue';
 import NIPField from './NIPField.vue';
 import NumberField from './NumberField.vue';
 import PESELField from './PESELField.vue';
-import REGONField from './REGONField.vue';
 import PhoneInput from './PhoneInput.vue';
+import REGONField from './REGONField.vue';
 import RadioButton from './RadioButton.vue';
 import Select from './Select.vue';
 import SingleOrMultiChoiceDictionary from './SingleOrMultiChoiceDictionary.vue';
@@ -36,6 +38,7 @@ import Switch from './Switch.vue';
 import TextArea from './TextArea.vue';
 import TextField from './TextField.vue';
 import Address from './address/Address.vue';
+import Card from './card/Card.vue';
 import DataViewer from './data-viewer/DataViewer.vue';
 import DatePicker from './date/DatePicker.vue';
 import DateTimePicker from './date/DateTimePicker.vue';
@@ -47,9 +50,6 @@ import OrderedMultiSelect from './ordered-multi-select/OrderedMultiSelect.vue';
 import SchedulerGrid from './scheduler-grid/SchedulerGrid.vue';
 import TableInternal from './table/table-internal/TableInternal.vue';
 import TableView from './table/table-view/TableView.vue';
-import Card from './card/Card.vue';
-import ColorPicker from '@/components/controls/ColorPicker.vue';
-
 
 export const vueSchemaFromControls: Components = {
   'text-editor': TextEditor,
@@ -86,6 +86,7 @@ export const vueSchemaFromControls: Components = {
   'ordered-multi-select': OrderedMultiSelect,
   'key-value-list': KeyValueList,
   alert: Alert,
+  'attachment-image-picker': AttachmentImagePicker,
   'multi-language-control': MultiLanguageControl,
   'year-picker': YearPicker,
   'text-switch-field': TextSwitchField,
@@ -98,6 +99,6 @@ export const vueSchemaFromControls: Components = {
   'calendar-autocomplete': CalendarAutocomplete,
   'year-month': YearMonth,
   'validation-messages-viewer': ValidationMessagesViewer,
-  'card': Card,
-  'color-picker': ColorPicker
+  card: Card,
+  'color-picker': ColorPicker,
 };
