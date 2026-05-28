@@ -19,8 +19,8 @@
             ref="mySchemaForm"
             v-model="model"
             :default-form-actions="true"
-            :options="options"
-            :schema="schema"
+            :options="plainOptions"
+            :schema="plainSchema"
             :validation-behaviour="validationBehaviour != null ? validationBehaviour : 'messages'"
             @is-form-ready="catchSignalFormIsReady"
             @call-action="handleAction"
@@ -48,11 +48,11 @@
 </template>
 
 <script lang="ts" setup>
-import { debounce } from 'lodash';
+import { cloneDeep, debounce } from 'lodash';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
-import { onBeforeMount, onMounted, ref, toRaw, watch } from "vue";
+import { markRaw, onBeforeMount, onMounted, ref, toRaw, watch } from "vue";
 
 import { Schema } from '@/types/schema/Schema.d';
 
@@ -73,6 +73,8 @@ const { schema, options, formModel, emittedObject, signals } = defineProps<{
 }>();
 
 const model = ref<any>(null);
+const plainSchema = markRaw(cloneDeep(toRaw(schema)));
+const plainOptions = markRaw(cloneDeep(toRaw(options)));
 
 const mySchemaForm = ref();
 

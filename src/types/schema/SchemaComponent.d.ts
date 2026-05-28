@@ -12,6 +12,7 @@ export type SchemaComponent =
   | 'single-or-multi-choice-dictionary'
   | 'date-picker'
   | 'date-time-picker'
+  | 'year-month-week'
   | 'phone'
   | 'data-viewer'
   | 'location'

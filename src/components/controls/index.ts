@@ -10,6 +10,7 @@ import MultiLanguageControl from '@/components/controls/MultiLanguageControl.vue
 import TextSwitchField from '@/components/controls/TextSwitchField.vue';
 import ValidationMessagesViewer from '@/components/controls/ValidationMessagesViewer.vue';
 import YearMonth from '@/components/controls/YearMonth.vue';
+import YearMonthWeek from '@/components/controls/YearMonthWeek.vue';
 import YearPicker from '@/components/controls/YearPicker.vue';
 import GroupOfFields from '@/components/controls/fields-group/FieldsGroup.vue';
 import GroupInput from '@/components/controls/group-input/GroupInput.vue';
@@ -97,6 +98,7 @@ export const vueSchemaFromControls: Components = {
   'scheduler-grid': SchedulerGrid,
   'calendar-autocomplete': CalendarAutocomplete,
   'year-month': YearMonth,
+  'year-month-week': YearMonthWeek,
   'validation-messages-viewer': ValidationMessagesViewer,
   'card': Card,
   'color-picker': ColorPicker
