@@ -1,17 +1,24 @@
 import { cloneDeep } from 'lodash';
 
+
+
 import { jsonSchemaResolver } from '@/core/engine/jsonSchemaResolver';
-import {
-  collectNestedFormsPathKeys,
-  flattenNestedFormsPathNodes,
-  hasOptionsRefs,
-  MAX_NESTED_FORM_DEPTH,
-  resolveOptionsRefTemplate,
-  stripFlatStructureFlag,
-} from '@/core/engine/resolveJsonSchemaUtils';
+import { MAX_NESTED_FORM_DEPTH, collectNestedFormsPathKeys, flattenNestedFormsPathNodes, hasOptionsRefs, resolveOptionsRefTemplate, stripFlatStructureFlag } from '@/core/engine/resolveJsonSchemaUtils';
 import { baseUri, logger } from '@/main';
 import { Schema } from '@/types/schema/Schema';
 import { SchemaOptions } from '@/types/schema/SchemaOptions';
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const variableRegexp: RegExp = new RegExp('{.*?}', 'g');
 
@@ -20,11 +27,7 @@ type ExtendedSchemaForResolver = Schema & {
 };
 
 function resolveLocaleToken(schema: any, locale: string) {
-  const serializedSchema = JSON.stringify(schema);
-  if (!serializedSchema.includes('~$locale~')) {
-    return schema;
-  }
-  return JSON.parse(serializedSchema.replaceAll('~$locale~', locale));
+  return JSON.parse(JSON.stringify(schema).replaceAll('~$locale~', locale));
 }
 
 function hasLocaleRefPlaceholders(schema: any): boolean {
