@@ -47,14 +47,14 @@
       </template>
     </v-dialog>
 
-    <v-snackbar
-      v-model="snackbar.modelValue"
-      :timeout="1000"
-      color="success"
-      variant="tonal"
-    >
-      {{ snackbar.text }}
-    </v-snackbar>
+  <v-snackbar
+    v-model="snackbar.modelValue"
+    :timeout="snackbar.timeout"
+    :color="snackbar.color"
+    :variant="snackbar.variant"
+  >
+    {{ snackbar.text }}
+  </v-snackbar>
   </div>
 </template>
 
@@ -69,6 +69,7 @@ import { Ref, computed, onMounted, reactive, ref } from 'vue';
 import { useClass, useLabel, useLocale, useProps, useResolveVariables } from '@/core/composables';
 import { useEventHandler } from '@/core/composables/useEventHandler';
 import { variableRegexp } from '@/core/engine/utils';
+import { toast } from '@/main';
 import { EngineButtonField } from '@/types/engine/EngineButtonField';
 import { NodeUpdateEvent } from '@/types/engine/NodeUpdateEvent';
 import { Schema } from '@/types/schema/Schema';
@@ -152,7 +153,42 @@ const popup = reactive<{
 const snackbar = reactive({
   modelValue: false,
   text: t('valueCopied'),
+  color: 'success',
+  variant: 'tonal',
+  timeout: 1000,
 });
+
+function getErrorMessage(error: unknown) {
+  if (axios.isAxiosError(error)) {
+    const message = error.response?.data?.message || error.message;
+    return message || t('actionError');
+  }
+  if (error instanceof Error) {
+    return error.message || t('actionError');
+  }
+  return t('actionError');
+}
+
+function showError(message?: string) {
+  const text = message || t('actionError');
+  if (toast != null && typeof toast.error === 'function') {
+    toast.error(text);
+    return;
+  }
+  snackbar.text = text;
+  snackbar.color = 'error';
+  snackbar.variant = 'tonal';
+  snackbar.timeout = 3000;
+  snackbar.modelValue = true;
+}
+
+function showSuccess(message: string) {
+  snackbar.text = message;
+  snackbar.color = 'success';
+  snackbar.variant = 'tonal';
+  snackbar.timeout = 1000;
+  snackbar.modelValue = true;
+}
 
 async function saveDialogForm(isActive: Ref<boolean>) {
   const { valid, messages } = await popupReference.value.validate('messages');
@@ -164,117 +200,138 @@ async function saveDialogForm(isActive: Ref<boolean>) {
 }
 
 async function runClickLogic() {
-  await onClick(schema, model);
-  await runBtnLogic();
+  try {
+    await onClick(schema, model);
+    await runBtnLogic();
+  } catch (error) {
+    loading.value = false;
+    showError(getErrorMessage(error));
+  }
 }
 
 async function runBtnLogic() {
-  switch (schema.mode) {
-    case 'action':
-      loading.value = true;
-      const body = await createBodyObject();
-      let payloadObject: any = {
-        code: schema.config.code,
-        body: body,
-        params: {
-          ...schema.config.params,
-        },
-      };
-
-      if (shouldWaitForSaveState && !formCurrentSaveState.value) {
-        if (schema.config.emit) {
-          payloadObject.callback = () => {
-            actionHandlerEventBus.emit('form-action', schema.config.emit);
-          };
-        }
-        caller.value = () => actionHandlerEventBus.emit('form-action', payloadObject);
-        return;
-      }
-
-      if (schema.config.emit) {
-        payloadObject.callback = () => {
-          actionHandlerEventBus.emit('form-action', schema.config.emit);
-        };
-      }
-
-      actionHandlerEventBus.emit('form-action', payloadObject);
-
-      break;
-    case 'form-and-action':
-      popup.errorMessages = [];
-      popup.title = schema.config.title;
-      if (schema.config.modelReference) {
-        popup.model = get(model, schema.config.modelReference, {});
-      }
-      if (schema.config.acceptText) {
-        popup.acceptText = schema.config.acceptText;
-      }
-      popup.schema = schema.schema as any;
-      popup.acceptFunction = async () => {
-        let payloadObject = {
+  try {
+    switch (schema.mode) {
+      case 'action':
+        loading.value = true;
+        const body = await createBodyObject();
+        let payloadObject: any = {
           code: schema.config.code,
-          body: popup.model,
+          body: body,
           params: {
             ...schema.config.params,
           },
+          callback: () => {
+            loading.value = false;
+          },
         };
-        console.debug(
-          `Popup model is ready to save, event [form-action] was emitted`,
-          payloadObject,
-        );
+
+        if (shouldWaitForSaveState && !formCurrentSaveState.value) {
+          if (schema.config.emit) {
+            const existingCallback = payloadObject.callback;
+            payloadObject.callback = () => {
+              existingCallback();
+              actionHandlerEventBus.emit('form-action', schema.config.emit);
+            };
+          }
+          caller.value = () => actionHandlerEventBus.emit('form-action', payloadObject);
+          return;
+        }
+
+        if (schema.config.emit) {
+          const existingCallback = payloadObject.callback;
+          payloadObject.callback = () => {
+            existingCallback();
+            actionHandlerEventBus.emit('form-action', schema.config.emit);
+          };
+        }
+
         actionHandlerEventBus.emit('form-action', payloadObject);
-      };
-      popup.show = true;
-      break;
-    case 'copy':
-      snackbar.modelValue = true;
-      const value = get(model, schema.config.modelReference, '');
-      await navigator.clipboard.writeText(value);
-      break;
-    case 'api-call':
-      loading.value = true;
-      if (shouldWaitForSaveState && !formCurrentSaveState.value) {
-        caller.value = apiCallMode;
-        return;
-      }
-      await apiCallMode();
 
-      break;
-    case 'redirect': {
-      const resolveRedirectValue = async (value: unknown): Promise<unknown> => {
-        if (typeof value === 'string' && new RegExp(variableRegexp).test(value)) {
-          const { resolvedText, allVariablesResolved } = await resolve(schema, value);
-          return allVariablesResolved ? resolvedText : null;
+        break;
+      case 'form-and-action':
+        popup.errorMessages = [];
+        popup.title = schema.config.title;
+        if (schema.config.modelReference) {
+          popup.model = get(model, schema.config.modelReference, {});
         }
-
-        if (Array.isArray(value)) {
-          return Promise.all(value.map((item) => resolveRedirectValue(item)));
+        if (schema.config.acceptText) {
+          popup.acceptText = schema.config.acceptText;
         }
-
-        if (value && typeof value === 'object') {
-          const nestedEntries = Object.entries(value as Record<string, unknown>);
-          const resolvedNestedEntries = await Promise.all(
-            nestedEntries.map(async ([key, nestedValue]) => {
-              const resolvedNestedValue = await resolveRedirectValue(nestedValue);
-              return [key, resolvedNestedValue] as const;
-            }),
+        popup.schema = schema.schema as any;
+        popup.acceptFunction = async () => {
+          let payloadObject = {
+            code: schema.config.code,
+            body: popup.model,
+            params: {
+              ...schema.config.params,
+            },
+            callback: () => {
+              loading.value = false;
+            },
+          };
+          console.debug(
+            `Popup model is ready to save, event [form-action] was emitted`,
+            payloadObject,
           );
-
-          return Object.fromEntries(resolvedNestedEntries);
+          loading.value = true;
+          actionHandlerEventBus.emit('form-action', payloadObject);
+        };
+        popup.show = true;
+        break;
+      case 'copy':
+        const value = get(model, schema.config.modelReference, '');
+        await navigator.clipboard.writeText(value);
+        showSuccess(t('valueCopied'));
+        break;
+      case 'api-call':
+        loading.value = true;
+        if (shouldWaitForSaveState && !formCurrentSaveState.value) {
+          caller.value = apiCallMode;
+          return;
         }
+        await apiCallMode();
 
-        return value;
-      };
+        break;
+      case 'redirect': {
+        const resolveRedirectValue = async (value: unknown): Promise<unknown> => {
+          if (typeof value === 'string' && new RegExp(variableRegexp).test(value)) {
+            const { resolvedText, allVariablesResolved } = await resolve(schema, value);
+            return allVariablesResolved ? resolvedText : null;
+          }
 
-      const paramsObject = await resolveRedirectValue(schema.config.params ?? {});
-      const payloadObject = {
-        mode: schema.mode,
-        params: paramsObject,
-        target: schema.config.target,
+          if (Array.isArray(value)) {
+            return Promise.all(value.map((item) => resolveRedirectValue(item)));
+          }
+
+          if (value && typeof value === 'object') {
+            const nestedEntries = Object.entries(value as Record<string, unknown>);
+            const resolvedNestedEntries = await Promise.all(
+              nestedEntries.map(async ([key, nestedValue]) => {
+                const resolvedNestedValue = await resolveRedirectValue(nestedValue);
+                return [key, resolvedNestedValue] as const;
+              }),
+            );
+
+            return Object.fromEntries(resolvedNestedEntries);
+          }
+
+          return value;
+        };
+
+        const paramsObject = await resolveRedirectValue(schema.config.params ?? {});
+        const payloadObject = {
+          mode: schema.mode,
+          params: paramsObject,
+          target: schema.config.target,
+        };
+        actionHandlerEventBus.emit('form-action', payloadObject);
+        break;
       }
-      actionHandlerEventBus.emit('form-action', payloadObject);
-      break;
     }
+  } catch (error) {
+    loading.value = false;
+    showError(getErrorMessage(error));
   }
 }
 
@@ -282,21 +339,26 @@ async function apiCallMode() {
   const { resolvedText, allVariablesResolved } = await resolve(schema, schema.config.source, true);
   const body = await createBodyObject();
   if (allVariablesResolved) {
-    const response = await axios({
-      method: schema.config.method || 'POST',
-      url: resolvedText,
-      data: body,
-    });
+    try {
+      const response = await axios({
+        method: schema.config.method || 'POST',
+        url: resolvedText,
+        data: body,
+      });
 
-    if (schema.config.emit) {
-      actionHandlerEventBus.emit('form-action', schema.config.emit);
+      if (schema.config.emit) {
+        actionHandlerEventBus.emit('form-action', schema.config.emit);
+      }
+
+      // TODO - dalsza implementacja - co ma się dziać z response, jakie warianty
+    } catch (error) {
+      showError(getErrorMessage(error));
+    } finally {
+      loading.value = false;
     }
-
-    // TODO - dalsza implementacja - co ma się dziać z response, jakie warianty
   } else {
-    //console.debug(resolvedText, allVariablesResolved);
+    loading.value = false;
   }
-  setTimeout(() => (loading.value = false), 1000);
 }
 
 async function createBodyObject() {

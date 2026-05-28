@@ -68,6 +68,7 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Result was manually modified.',
         },
+        actionError: 'Action failed. Please try again.',
         tableField: {
           selectedItemsCount: 'No selected items | Selected {el} item | Selected {el} items',
           enableRowActions: 'Selection mode',
@@ -157,6 +158,7 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Wynik został ręcznie zmodyfikowany.',
         },
+        actionError: 'Akcja nie powiodła się. Spróbuj ponownie.',
         tableField: {
           enableRowActions: 'Tryb zaznaczania',
           disableRowActions: 'Tryb pojedynczy',
@@ -246,6 +248,7 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Ergebnis wurde manuell geändert.',
         },
+        actionError: 'Aktion fehlgeschlagen. Bitte versuchen Sie es erneut.',
         tableField: {
           selectedItemsCount:
             'Keine ausgewählten Elemente | {el} Element ausgewählt | {el} Elemente ausgewählt',
@@ -334,6 +337,7 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Результат был изменён вручную.',
         },
+        actionError: 'Не удалось выполнить действие. Попробуйте еще раз.',
         tableField: {
           selectedItemsCount:
             'Нет выбранных элементов | Выбран {el} элемент | Выбрано {el} элемента | Выбрано {el} элементов',
@@ -422,6 +426,7 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'El resultado fue modificado manualmente.',
         },
+        actionError: 'La acción falló. Inténtalo de nuevo.',
         tableField: {
           selectedItemsCount:
             'Ningún elemento seleccionado | {el} elemento seleccionado | {el} elementos seleccionados',
@@ -510,6 +515,7 @@ export function useLocale() {
         numberInput: {
           resultWasModified: 'Le résultat a été modifié manuellement.',
         },
+        actionError: "L'action a échoué. Veuillez réessayer.",
         tableField: {
           selectedItemsCount:
             'Aucun élément sélectionné | {el} élément sélectionné | {el} éléments sélectionnés',
