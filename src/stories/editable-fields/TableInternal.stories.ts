@@ -1,102 +1,8 @@
 // @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
-
-
 import FormStoryWrapper from '../../../.storybook/components/FormStoryWrapper.vue';
 import { Schema } from '../../types/schema/Schema';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 export default {
   title: 'Elements/Editable/TableInternal',
@@ -328,6 +234,69 @@ function tableWithDataPathSchema(): Schema {
   } as Schema;
 }
 
+function tableWithItemsFilterSchema(): Schema {
+  return {
+    type: 'object',
+    properties: {
+      statusFilter: {
+        label: 'Status filter',
+        layout: {
+          component: 'select',
+        },
+        source: {
+          items: [
+            { value: 'ACTIVE', title: 'ACTIVE' },
+            { value: 'DRAFT', title: 'DRAFT' },
+            { value: 'ARCHIVED', title: 'ARCHIVED' },
+          ],
+        },
+      },
+      contracts: {
+        triggers: ['statusFilter'],
+        layout: {
+          component: 'table-internal',
+        },
+        source: {
+          itemsFilter: 'items[status = {statusFilter}]',
+          headers: displayHeaders,
+        },
+      },
+    },
+  } as Schema;
+}
+
+function tableWithDataPathItemsFilterSchema(): Schema {
+  return {
+    type: 'object',
+    properties: {
+      countryFilter: {
+        label: 'Country filter',
+        layout: {
+          component: 'select',
+        },
+        source: {
+          items: [
+            { value: 'PL', title: 'PL' },
+            { value: 'DE', title: 'DE' },
+            { value: 'CZ', title: 'CZ' },
+          ],
+        },
+      },
+      contractsTable: {
+        dataPath: 'contractData.items',
+        triggers: ['countryFilter'],
+        layout: {
+          component: 'table-internal',
+        },
+        source: {
+          itemsFilter: 'items[owner.country = {countryFilter}]',
+          headers: displayHeaders,
+        },
+      },
+    },
+  } as Schema;
+}
+
 function model() {
   return {
     contracts: rows.map((row) => ({ ...row, owner: { ...row.owner } })),
@@ -339,6 +308,36 @@ function nestedModel() {
     contractData: {
       items: rows.map((row) => ({ ...row, owner: { ...row.owner } })),
     },
+  };
+}
+
+function filterModel() {
+  return {
+    statusFilter: 'ACTIVE',
+    contracts: rows.map((row) => ({ ...row, owner: { ...row.owner } })),
+  };
+}
+
+function nestedFilterModel() {
+  return {
+    countryFilter: 'PL',
+    contractData: {
+      items: rows.map((row) => ({ ...row, owner: { ...row.owner } })),
+    },
+  };
+}
+
+function paginationModel() {
+  return {
+    contracts: Array.from({ length: 15 }, (_, index) => {
+      const row = rows[index % rows.length];
+      return {
+        ...row,
+        id: index + 1,
+        name: `${row.name} ${index + 1}`,
+        owner: { ...row.owner },
+      };
+    }),
   };
 }
 
@@ -480,5 +479,29 @@ export const DataPath: Story = {
   args: {
     formModel: nestedModel(),
     schema: tableWithDataPathSchema(),
+  },
+};
+
+export const Pagination: Story = {
+  name: 'Pagination: internal rows are sliced',
+  args: {
+    formModel: paginationModel(),
+    schema: tableSchema(),
+  },
+};
+
+export const ItemsFilterByModelVariable: Story = {
+  name: 'Items filter: status from model variable',
+  args: {
+    formModel: filterModel(),
+    schema: tableWithItemsFilterSchema(),
+  },
+};
+
+export const DataPathItemsFilterByModelVariable: Story = {
+  name: 'Items filter: dataPath and model variable',
+  args: {
+    formModel: nestedFilterModel(),
+    schema: tableWithDataPathItemsFilterSchema(),
   },
 };

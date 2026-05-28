@@ -16,6 +16,7 @@ export interface TableSource {
   data: string;
   buttons?: TableButton[];
   rowVisibleCondition? :string
+  itemsFilter?: string;
 }
 
 export interface TableHeader {

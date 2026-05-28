@@ -107,6 +107,7 @@ const roundOption: RoundOption =
 const { roundTo, formattedNumber, cleanFormattedNumber, preventInvalidNumberInput } = useNumber();
 
 const lastValue = ref<any>(null);
+const editingValue = ref<string | number | null>(null);
 
 function isOnlyZeros(str: string): boolean {
   return /^0+$/.test(str);
@@ -129,6 +130,10 @@ const getLocalModel = computed(() => {
 
 const localModel = computed({
   get(): string | number | null {
+    if (!showFormattedNumber.value) {
+      return editingValue.value;
+    }
+
     let value = getValue(props.model, props.schema);
 
     // Obsługa zmiennych z zależnościami
@@ -148,10 +153,6 @@ const localModel = computed({
     // Formatowanie liczby lub czyszczenie
     if (value && showFormattedNumber.value) {
       return formattedNumber(value, formatType, precisionMin, precision);
-    } else if (value) {
-      // Jeśli nie pokazujemy sformatowanej liczby, wyczyść ją
-      const stringValue = typeof value === 'number' ? value.toString() : String(value);
-      return cleanFormattedNumber(stringValue);
     }
 
     value = parseDigitWithOnlyZeroFraction(value);
@@ -159,10 +160,36 @@ const localModel = computed({
   },
   set(val: any) {
     lastValue.value = localModel.value;
-    val = roundTo(val, precision, roundOption);
-    setValue(val, props.schema);
+    if (val === '' || val == null) {
+      setValue(null, props.schema);
+      return;
+    }
+
+    const parsedValue = parseNumberInput(val);
+    if (parsedValue === null) {
+      setValue(val, props.schema);
+      return;
+    }
+
+    setValue(
+      showFormattedNumber.value ? roundTo(parsedValue, precision, roundOption) : parsedValue,
+      props.schema,
+    );
   },
 });
+
+function parseNumberInput(val: any): number | null {
+  const normalizedValue = String(val).replaceAll(',', '.').trim();
+  if (normalizedValue === '') return null;
+
+  const parsedValue = Number(normalizedValue);
+  return Number.isFinite(parsedValue) ? parsedValue : null;
+}
+
+function isCompleteNumberInput(val: any): boolean {
+  const normalizedValue = String(val).replaceAll(',', '.').trim();
+  return /^-?(?:\d+(?:\.\d+)?|\.\d+)$/.test(normalizedValue);
+}
 
 const isCalculationDefined = computed(() => {
   return props.schema.calculation && props.schema.calculation !== '';
@@ -186,6 +213,8 @@ const showIconForVisualizationOfManuallyChangedResult = computed(() => {
 });
 
 function userTyping(val: any) {
+  editingValue.value = val;
+
   if (isCalculationDefined.value) {
     if (logger.calculationListener)
       console.debug(
@@ -202,15 +231,35 @@ function userTyping(val: any) {
     props.schema.on.input(updateEvent);
   }
 
-  localModel.value = val;
+  if (isCompleteNumberInput(val)) {
+    localModel.value = parseNumberInput(val);
+  }
+
   onChange(props.schema, props.model);
 }
 
 function focusout() {
+  if (editingValue.value === '') {
+    localModel.value = null;
+  } else {
+    const parsedValue = parseNumberInput(editingValue.value);
+    if (parsedValue !== null) {
+      localModel.value = roundTo(parsedValue, precision, roundOption);
+    }
+  }
+
   showFormattedNumber.value = true;
+  editingValue.value = null;
 }
 
 function focusin() {
+  const value = getValue(props.model, props.schema);
+  editingValue.value =
+    value || value === 0
+      ? typeof value === 'number'
+        ? String(value)
+        : cleanFormattedNumber(String(value))
+      : value;
   showFormattedNumber.value = false;
 }
 
