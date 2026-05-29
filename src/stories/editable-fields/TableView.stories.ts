@@ -2145,7 +2145,7 @@ export const DefineModelVariablesForRefresh: Story = {
             numberInput: {
               label: 'Number',
               layout: {
-                component: 'number-field-v2',
+                component: 'number-field',
                 cols: 4,
               },
             },

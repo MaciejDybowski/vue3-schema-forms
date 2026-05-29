@@ -154,7 +154,7 @@ const snackbar = reactive({
   modelValue: false,
   text: t('valueCopied'),
   color: 'success',
-  variant: 'tonal',
+  variant: 'tonal' as 'tonal',
   timeout: 1000,
 });
 
@@ -171,7 +171,9 @@ function getErrorMessage(error: unknown) {
 
 function showError(message?: string) {
   const text = message || t('actionError');
+  // @ts-ignore
   if (toast != null && typeof toast.error === 'function') {
+    // @ts-ignore
     toast.error(text);
     return;
   }

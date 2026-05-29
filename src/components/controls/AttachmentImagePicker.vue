@@ -109,7 +109,7 @@
                 <div class="attachment-image-picker__carousel-item">
                   <v-img
                     class="attachment-image-picker__image cursor-pointer"
-                    :src="image.contentUrl"
+                    :src="imageSource(image)"
                     cover
                     @click="openPreview(image)"
                   />
@@ -139,7 +139,7 @@
                 <v-card class="attachment-image-picker__tile">
                   <v-img
                     class="attachment-image-picker__image cursor-pointer"
-                    :src="image.contentUrl"
+                    :src="imageSource(image)"
                     aspect-ratio="1"
                     cover
                     @click="openPreview(image)"
@@ -190,7 +190,7 @@
       </v-toolbar>
       <v-card-text class="attachment-image-picker__preview-body pa-0">
         <v-img
-          :src="previewImage.contentUrl"
+          :src="imageSource(previewImage)"
           class="attachment-image-picker__preview-image"
           contain
         />
@@ -254,6 +254,8 @@ const previewOpen = ref(false);
 const previewImage = ref<PickerImage | null>(null);
 const carouselIndex = ref(0);
 const resolvedDataId = ref('');
+const contentObjectUrls = ref<Record<string, string>>({});
+const createdObjectUrls = new Set<string>();
 let stopFormModelListener: (() => void) | null = null;
 
 const selectedImages = computed<SelectedAttachmentImage[]>({
@@ -374,6 +376,71 @@ function buildContentUrl(fileId: string, featureId = menuFeatureId.value, entity
   const queryParams = new URLSearchParams();
   queryParams.set('dataId', entityId);
   return `/api/v1/features/${encodePathSegment(featureId)}/files/${encodePathSegment(fileId)}/content?${queryParams.toString()}`;
+}
+
+function imageSource(image: PickerImage | null) {
+  if (!image) return '';
+  return contentObjectUrls.value[image.contentUrl] || '';
+}
+
+function revokeObjectUrl(objectUrl: string) {
+  URL.revokeObjectURL(objectUrl);
+  createdObjectUrls.delete(objectUrl);
+}
+
+function imageMimeType(mediaType: string) {
+  const normalized = mediaType.toLowerCase().replace(/^\./, '');
+  if (normalized === 'jpg') return 'image/jpeg';
+  if (normalized === 'svg') return 'image/svg+xml';
+  return normalized.startsWith('image/') ? normalized : `image/${normalized}`;
+}
+
+function normalizeImageBlob(blob: Blob, image: PickerImage) {
+  if (blob.type.startsWith('image/')) return blob;
+  return new Blob([blob], { type: imageMimeType(image.mediaType) });
+}
+
+async function loadImageContent(image: PickerImage) {
+  if (contentObjectUrls.value[image.contentUrl]) {
+    return;
+  }
+
+  const response = await axios.get<Blob>(image.contentUrl, {
+    responseType: 'blob',
+  });
+  const objectUrl = URL.createObjectURL(normalizeImageBlob(response.data, image));
+  createdObjectUrls.add(objectUrl);
+  contentObjectUrls.value = {
+    ...contentObjectUrls.value,
+    [image.contentUrl]: objectUrl,
+  };
+}
+
+async function syncImageObjectUrls() {
+  const uniqueImages = Array.from(
+    new Map(images.value.map((image) => [image.contentUrl, image])).values(),
+  );
+  const contentUrls = uniqueImages.map((image) => image.contentUrl);
+  const activeContentUrls = new Set(contentUrls);
+  const nextObjectUrls = { ...contentObjectUrls.value };
+
+  for (const [contentUrl, objectUrl] of Object.entries(nextObjectUrls)) {
+    if (!activeContentUrls.has(contentUrl)) {
+      revokeObjectUrl(objectUrl);
+      delete nextObjectUrls[contentUrl];
+    }
+  }
+  contentObjectUrls.value = nextObjectUrls;
+
+  await Promise.all(
+    uniqueImages.map(async (image) => {
+      try {
+        await loadImageContent(image);
+      } catch (error: any) {
+        errorMessage.value = error?.message || 'Nie udało się pobrać zdjęcia załącznika.';
+      }
+    }),
+  );
 }
 
 function mapToPickerImage(file: AttachmentFile): PickerImage {
@@ -502,6 +569,14 @@ watch(
   },
 );
 
+watch(
+  () => images.value.map((image) => image.contentUrl),
+  async () => {
+    await syncImageObjectUrls();
+  },
+  { immediate: true },
+);
+
 onMounted(async () => {
   await bindLabel(props.schema);
   await bindProps(props.schema);
@@ -511,6 +586,11 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   stopFormModelListener?.();
+  for (const objectUrl of createdObjectUrls) {
+    URL.revokeObjectURL(objectUrl);
+  }
+  createdObjectUrls.clear();
+  contentObjectUrls.value = {};
 });
 </script>
 
