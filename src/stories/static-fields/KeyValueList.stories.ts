@@ -1,11 +1,12 @@
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Static/Key-Value List',
+  title: 'Components/Static/Key-Value List',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard = {
+  name: 'Standard',
   args: {
     formModel: {
       keyValueList: [
@@ -40,8 +41,8 @@ export const Standard = {
   parameters: {},
 };
 
-
 export const AnyArrayFromModel = {
+  name: 'Array from Model',
   args: {
     formModel: {
       items: [
@@ -59,7 +60,7 @@ export const AnyArrayFromModel = {
       properties: {
         keyValueList: {
           label: 'Pole do pokazania listy klucz wartosc',
-          sourcePath: "items",
+          sourcePath: 'items',
           config: [
             { title: 'Pole', valueMapping: 'label' },
             { title: 'Wartość', valueMapping: 'value' },

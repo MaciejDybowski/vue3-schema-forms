@@ -1,40 +1,12 @@
 // @ts-nocheck
-import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { HttpResponse, http } from 'msw';
-
-
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/TextEditor',
+  title: 'Components/Editable/TextEditor',
   ...formStoryWrapperTemplate,
 };
 
@@ -79,7 +51,8 @@ const TEXT_EDITOR_UPLOAD_MOCK_ERROR = [
 ];
 
 export const Standard: Story = {
-  play: async (context) => {},
+  name: 'Standard',
+  play: playForm(async (context) => {}),
   args: {
     schema: {
       type: 'object',
@@ -95,13 +68,14 @@ export const Standard: Story = {
 };
 
 export const ReducedOptions: Story = {
-  play: async (context) => {},
+  name: 'Reduced Options',
+  play: playForm(async (context) => {}),
   args: {
     schema: {
       type: 'object',
       properties: {
         textEditor: {
-          editorFeatures: ["bold", "italic"],
+          editorFeatures: ['bold', 'italic'],
           layout: {
             component: 'text-editor',
           },
@@ -112,8 +86,8 @@ export const ReducedOptions: Story = {
 };
 
 export const WithDefault: Story = {
-  name: 'Default value',
-  play: async (context) => {},
+  name: 'Default Value',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -133,7 +107,7 @@ export const WithDefault: Story = {
 
 export const SimpleValidation: Story = {
   name: 'Required',
-  play: async ({ canvasElement }) => {
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     let editor: HTMLElement | null = null;
@@ -148,7 +122,7 @@ export const SimpleValidation: Story = {
     await userEvent.click(submitButton);
 
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -166,10 +140,8 @@ export const SimpleValidation: Story = {
 };
 
 export const RequiredMarker: Story = {
-  name: 'Required marker',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
-
+  name: 'Required Marker',
+  play: playForm(async ({ canvasElement }) => {
     await waitFor(() => {
       const requiredWrapper = canvasElement.querySelector('.required-input');
       if (!requiredWrapper) {
@@ -178,7 +150,7 @@ export const RequiredMarker: Story = {
     });
 
     await expect(canvasElement.querySelector('.required-input')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -198,7 +170,7 @@ export const RequiredMarker: Story = {
 
 export const RequiredAncCounter: Story = {
   name: 'Counter',
-  play: async ({ canvasElement }) => {
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     let editor: HTMLElement | null = null;
@@ -220,7 +192,7 @@ export const RequiredAncCounter: Story = {
     await userEvent.click(submitButton);
 
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -240,13 +212,9 @@ export const RequiredAncCounter: Story = {
   },
 };
 
-
-
 export const OnChangeEvents: Story = {
-  name: 'OnChangeEvents',
-  play: async ({ canvasElement, args }) => {
-    await waitForMountedAsync();
-
+  name: 'On Change Events',
+  play: playForm(async ({ canvasElement, args }) => {
     let editor: HTMLElement | null = null;
     await waitFor(() => {
       editor = getTextEditor(canvasElement);
@@ -257,7 +225,7 @@ export const OnChangeEvents: Story = {
     await new Promise((r) => setTimeout(r, 1000));
 
     await expect(args.formModel).toEqual({ textEditor: '<p>Test content</p>', fieldB: null });
-  },
+  }),
   args: {
     formModel: {
       fieldB: 'Test',
@@ -291,12 +259,11 @@ export const OnChangeEvents: Story = {
 };
 
 export const HtmlWithImageAndFileButtons: Story = {
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
-
+  name: 'HTML with Image and File Buttons',
+  play: playForm(async ({ canvasElement }) => {
     await expect(canvasElement.querySelector('.mdi-image-plus')).toBeInTheDocument();
     await expect(canvasElement.querySelector('.mdi-paperclip')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       product: {
@@ -342,6 +309,7 @@ export const HtmlWithImageAndFileButtons: Story = {
 };
 
 export const MarkdownUploadMode: Story = {
+  name: 'Markdown Upload Mode',
   args: {
     formModel: {
       textEditor: 'Początkowy tekst',
@@ -388,6 +356,7 @@ export const MarkdownUploadMode: Story = {
 };
 
 export const UploadErrorScenario: Story = {
+  name: 'Upload Error Scenario',
   args: {
     formModel: {},
     schema: {

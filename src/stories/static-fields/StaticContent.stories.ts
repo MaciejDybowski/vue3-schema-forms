@@ -3,19 +3,15 @@ import { expect, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { Layout } from '../../types/schema/elements';
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Static/Paragraphs And Headings',
+  title: 'Components/Static/Paragraphs And Headings',
   ...formStoryWrapperTemplate,
 };
 
 export const Examples: Story = {
+  name: 'Examples',
   args: {
     schema: {
       type: 'object',
@@ -83,12 +79,11 @@ export const Examples: Story = {
 };
 
 export const TextWithVariablesAndHTML: Story = {
-  name: 'Case: combine text with variables and HTML elements',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Combine Text Variables with HTML Elements',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Hello Karol Kowalski!')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       data: {
@@ -120,12 +115,11 @@ export const TextWithVariablesAndHTML: Story = {
 };
 
 export const NumberVariableInText = {
-  name: 'Case: combine text with variables and HTML elements',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Combine Number Variables with Text',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Integer number: 4 and float number: 4.230')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       data: {
@@ -157,14 +151,13 @@ export const NumberVariableInText = {
 };
 
 export const DateAndDatetimeHTML = {
-  name: 'Case: combine date/datetime variables and HTML elements',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Combine Date and DateTime Variables with HTML Elements',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByText('Date is: 04/22/2025, datetime is: 03/25/2025 12:37:34 PM'),
     ).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       data: {
@@ -196,27 +189,27 @@ export const DateAndDatetimeHTML = {
 };
 
 export const ObjectAndHtml = {
-  name: 'Case: combine standard dict object variables and HTML elements',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Combine Dictionary Object Variables with HTML Elements',
+  play: playForm(async ({ canvasElement }) => {
     const span = canvasElement.querySelector('span div');
     await expect(span).toBeInTheDocument();
 
-    await expect(span.textContent).toContain('It is possible to map dict object if it has title/value params: Paris');
-  },
+    await expect(span.textContent).toContain(
+      'It is possible to map dict object if it has title/value params: Paris',
+    );
+  }),
   args: {
     formModel: {
       dict: {
-        title: "Paris",
-        value: "1"
-      }
+        title: 'Paris',
+        value: '1',
+      },
     },
     schema: {
       type: 'object',
       properties: {
         description2: {
-          content:
-            'It is possible to map dict object if it has title/value params: {dict}',
+          content: 'It is possible to map dict object if it has title/value params: {dict}',
           layout: {
             component: 'static-content',
             tag: 'span',
@@ -228,14 +221,13 @@ export const ObjectAndHtml = {
 };
 
 export const JsonataInText: Story = {
-  name: 'Case: JSONata function',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync(40);
+  name: 'JSONata Function',
+  play: playForm(async ({ canvasElement }) => {
     const span = canvasElement.querySelector('span div');
     await expect(span).toBeInTheDocument();
 
     await expect(span.textContent).toContain('Kowalski');
-  },
+  }),
   args: {
     formModel: {
       data: {

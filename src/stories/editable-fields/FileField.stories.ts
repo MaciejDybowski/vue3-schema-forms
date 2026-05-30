@@ -1,24 +1,19 @@
 // @ts-nocheck
 import { within } from 'storybook/test';
 
-import { MOCK_FOR_FILE_INPUT, MOCK_FOR_FILE_INPUT_ERROR } from "../mock-responses";
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
-
-
-
-
+import { MOCK_FOR_FILE_INPUT, MOCK_FOR_FILE_INPUT_ERROR } from '../mock-responses';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/File',
+  title: 'Components/Editable/File',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
-  },
+  }),
   args: {
     formModel: {
       file: {
@@ -48,6 +43,7 @@ export const Standard = {
 };
 
 export const MaxFileSizeAndExtension: Story = {
+  name: 'Max File Size and Extension',
   args: {
     formModel: {
       file: {
@@ -78,11 +74,10 @@ export const MaxFileSizeAndExtension: Story = {
   },
 };
 
-
 export const TRY_UPLOAD_FILE_AND_CATCH_ERROR: Story = {
+  name: 'Try Upload Error Handling',
   args: {
-    formModel: {
-    },
+    formModel: {},
     schema: {
       type: 'object',
       properties: {
@@ -101,4 +96,4 @@ export const TRY_UPLOAD_FILE_AND_CATCH_ERROR: Story = {
       handlers: [...MOCK_FOR_FILE_INPUT_ERROR],
     },
   },
-}
+};

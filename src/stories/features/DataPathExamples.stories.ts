@@ -9,7 +9,7 @@ import {
   MULTI_ORDERED_SELECT_MOCK,
   USER_INPUT_MOCKS,
 } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 const simpleItems = [
   { value: 'one', title: 'Option 1' },
@@ -40,13 +40,13 @@ async function waitForFormReady(context: any) {
 }
 
 export default {
-  title: 'Features/DataPathExamples',
+  title: 'Features/Data Binding/Data Path Examples',
   ...formStoryWrapperTemplate,
 };
 
 export const BasicEditableFields: Story = {
-  name: 'Basic editable fields',
-  play: async (context) => {
+  name: 'Basic Editable Fields',
+  play: playForm(async (context) => {
     await waitForFormReady(context);
     const canvas = within(context.canvasElement);
 
@@ -74,7 +74,7 @@ export const BasicEditableFields: Story = {
     await waitFor(() => {
       expect(context.args.formModel.data.select).toBe('one');
     });
-  },
+  }),
   args: {
     formModel: {
       data: {
@@ -166,8 +166,8 @@ export const BasicEditableFields: Story = {
 };
 
 export const DefaultsAndDerivedValues: Story = {
-  name: 'Defaults, calculation and dependency',
-  play: async (context) => {
+  name: 'Defaults, Calculation and Dependency',
+  play: playForm(async (context) => {
     await waitForFormReady(context);
     const canvas = within(context.canvasElement);
 
@@ -182,7 +182,7 @@ export const DefaultsAndDerivedValues: Story = {
       expect(context.args.formModel.source.dependencySource).toBe('Dependency changed');
       expect(context.args.formModel.target.dependencyResult).toBe('Dependency changed');
     });
-  },
+  }),
   args: {
     formModel: {
       source: {
@@ -226,8 +226,8 @@ export const DefaultsAndDerivedValues: Story = {
 };
 
 export const TransparentContainers: Story = {
-  name: 'Fields group, card and expansion panels',
-  play: async (context) => {
+  name: 'Fields Group, Card and Expansion Panels',
+  play: playForm(async (context) => {
     await waitForFormReady(context);
     const canvas = within(context.canvasElement);
 
@@ -245,7 +245,7 @@ export const TransparentContainers: Story = {
     await waitFor(() => {
       expect(context.args.formModel.containers.panelText).toBe('Updated in panel');
     });
-  },
+  }),
   args: {
     formModel: {
       containers: {
@@ -316,8 +316,8 @@ export const TransparentContainers: Story = {
 };
 
 export const DuplicatedSectionOneLevel: Story = {
-  name: 'Duplicated section 1 level',
-  play: async (context) => {
+  name: 'Duplicated Section 1 Level',
+  play: playForm(async (context) => {
     await waitForFormReady(context);
     const canvas = within(context.canvasElement);
     const itemValueFields = await canvas.findAllByLabelText('Item value 1');
@@ -326,7 +326,7 @@ export const DuplicatedSectionOneLevel: Story = {
     await waitFor(() => {
       expect(context.args.formModel.items[0].value1).toBe('Updated item 1');
     });
-  },
+  }),
   args: {
     formModel: {
       items: [
@@ -367,8 +367,8 @@ export const DuplicatedSectionOneLevel: Story = {
 };
 
 export const DuplicatedSectionTwoLevels: Story = {
-  name: 'Duplicated section 2 levels',
-  play: async (context) => {
+  name: 'Duplicated Section 2 Levels',
+  play: playForm(async (context) => {
     await waitForFormReady(context);
     const canvas = within(context.canvasElement);
 
@@ -382,16 +382,13 @@ export const DuplicatedSectionTwoLevels: Story = {
     await waitFor(() => {
       expect(context.args.formModel.items[0].children[1].name).toBe('Updated child 1.2');
     });
-  },
+  }),
   args: {
     formModel: {
       items: [
         {
           name: 'Parent 1',
-          children: [
-            { name: 'Child 1.1' },
-            { name: 'Child 1.2' },
-          ],
+          children: [{ name: 'Child 1.1' }, { name: 'Child 1.2' }],
         },
       ],
     },
@@ -439,8 +436,8 @@ export const DuplicatedSectionTwoLevels: Story = {
 };
 
 export const DuplicatedSectionThreeLevels: Story = {
-  name: 'Duplicated section 3 levels',
-  play: async (context) => {
+  name: 'Duplicated Section 3 Levels',
+  play: playForm(async (context) => {
     await waitForFormReady(context);
     const canvas = within(context.canvasElement);
 
@@ -453,7 +450,7 @@ export const DuplicatedSectionThreeLevels: Story = {
     await waitFor(() => {
       expect(context.args.formModel.items[0].children[0].details[0].value).toBe('Updated detail');
     });
-  },
+  }),
   args: {
     formModel: {
       items: [
@@ -529,8 +526,8 @@ export const DuplicatedSectionThreeLevels: Story = {
 };
 
 export const DictionaryAndRemoteFields: Story = {
-  name: 'Dictionary, ordered, user, group and location',
-  play: async (context) => {
+  name: 'Dictionary, Ordered, User, Group and Location',
+  play: playForm(async (context) => {
     await waitForFormReady(context);
     const canvas = within(context.canvasElement);
 
@@ -543,7 +540,7 @@ export const DictionaryAndRemoteFields: Story = {
     await waitFor(() => {
       expect(context.args.formModel.remote.combobox.id).toBe('AFN');
     });
-  },
+  }),
   args: {
     formModel: {
       remote: {
@@ -611,7 +608,7 @@ export const DictionaryAndRemoteFields: Story = {
 };
 
 export const DisplayAndStaticFields: Story = {
-  name: 'Display and special fields',
+  name: 'Display and Special Fields',
   args: {
     formModel: {
       display: {
@@ -665,7 +662,7 @@ export const DisplayAndStaticFields: Story = {
       },
     },
   },
-  play: async (context) => {
+  play: playForm(async (context) => {
     await waitForFormReady(context);
     const canvas = within(context.canvasElement);
 
@@ -676,5 +673,5 @@ export const DisplayAndStaticFields: Story = {
     await waitFor(() => {
       expect(context.args.formModel.display.editableText).toBe('Display story updated value');
     });
-  },
+  }),
 };

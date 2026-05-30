@@ -1,24 +1,17 @@
 // @ts-nocheck
 import { MOCK_CALENDARS } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/CalendarSelect',
+  title: 'Components/Editable/CalendarSelect',
   ...formStoryWrapperTemplate,
 };
 
 // TODO - testy
 
 export const Standard: Story = {
-  play: async (context) => {},
+  name: 'Standard',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {

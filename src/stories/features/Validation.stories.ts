@@ -2,74 +2,24 @@
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-
-
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField } from '../../types/schema/elements';
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Validations',
+  title: 'Features/Validation',
   ...formStoryWrapperTemplate,
 };
 
 export const Required: Story = {
-  name: 'Example: define required field',
-  play: async (context) => {
+  name: 'Define Required Field',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 100 });
 
     await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -86,14 +36,14 @@ export const Required: Story = {
 };
 
 export const RequiredWithNested: Story = {
-  name: 'Example: define required field in nested object',
-  play: async (context) => {
+  name: 'Define Required Field in Nested Object',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 100 });
 
     await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -118,18 +68,18 @@ export const RequiredWithNested: Story = {
 };
 
 export const RegexpWithDependencies: Story = {
-  name: 'Example: using regexp expression for validation with params',
-  play: async (context) => {
+  name: 'Using Regexp Expression for Validation with Params',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 100 });
 
     const field = canvas.getByLabelText('Field with validation');
     await userEvent.type(field, '3.2123', { delay: 100 });
-    await userEvent.tab()
+    await userEvent.tab();
 
     await expect(canvas.getByText('To much digits')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       fieldA: 3,
@@ -169,9 +119,8 @@ export const RegexpWithDependencies: Story = {
 };
 
 export const CustomRegexpValidations: Story = {
-  name: 'Example: using regexp expression for validation with translation',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Using Regexp Expression for Validation with Translation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 100 });
@@ -183,7 +132,7 @@ export const CustomRegexpValidations: Story = {
 
     await userEvent.click(Submit, { delay: 100 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -219,9 +168,8 @@ export const CustomRegexpValidations: Story = {
  * where the name is `conditional-required` and the condition is specified using JSONata.
  */
 export const ConditionalRequired: Story = {
-  name: 'Example: built-in conditional required with JSONata',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Built-In Conditional Required with JSONata',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText('Validate');
@@ -241,7 +189,7 @@ export const ConditionalRequired: Story = {
 
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
 
   args: {
     model: {},
@@ -272,9 +220,8 @@ export const ConditionalRequired: Story = {
 };
 
 export const ConditionalRequiredWithDefault: Story = {
-  name: 'Example: built-in conditional required with JSONata and default',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Built-In Conditional Required with JSONata and Default',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText('Validate');
@@ -293,7 +240,7 @@ export const ConditionalRequiredWithDefault: Story = {
 
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
 
   args: {
     model: {},
@@ -339,15 +286,14 @@ export const ConditionalRequiredWithDefault: Story = {
 };
 
 export const AlertErrorConnectionWithValidation: Story = {
-  name: 'Example: alert with error props trigger validation error',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Alert with Error Props Trigger Validation Error',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Error message!')).toBeInTheDocument();
     await expect(canvas.getByText('Alert')).toBeInTheDocument();
-  },
+  }),
 
   args: {
     validationBehaviour: 'messages',
@@ -377,9 +323,8 @@ export const AlertErrorConnectionWithValidation: Story = {
 };
 
 export const ValidationFunctionWithJSONNataAndContext: Story = {
-  name: 'Example: using JSONata expression with context object',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Using JSONata Expression with Context Object',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText('Validate');
@@ -403,7 +348,7 @@ export const ValidationFunctionWithJSONNataAndContext: Story = {
 
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
 
   args: {
     model: {},
@@ -440,14 +385,13 @@ export const ValidationFunctionWithJSONNataAndContext: Story = {
 };
 
 export const ValidationFunctionInSections: Story = {
-  name: 'Example: using JSONata expression in duplicated section and context object',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Using JSONata Expression in Duplicated Section and Context Object',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Value not allowed.')).toBeInTheDocument();
-  },
+  }),
 
   args: {
     formModel: {
@@ -499,9 +443,8 @@ export const ValidationFunctionInSections: Story = {
 };
 
 export const JsonataDateCompare: Story = {
-  name: 'Example: using complex JSONata function for date comparison',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Using Complex JSONata Function for Date Comparison',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const validFrom = canvas.getByLabelText('Valid From');
@@ -549,7 +492,7 @@ export const JsonataDateCompare: Story = {
         ).toBeInTheDocument();
       }
     }
-  },
+  }),
 
   args: {
     model: {},
@@ -588,11 +531,9 @@ export const JsonataDateCompare: Story = {
   },
 };
 
-
 export const useDisableValidationWhenHidden: Story = {
-  name: "Example: disableValidationWhenHidden property",
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Disable Validation when Hidden Property',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText('Validate');
@@ -610,7 +551,7 @@ export const useDisableValidationWhenHidden: Story = {
 
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('This is an error message')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       switch: false,

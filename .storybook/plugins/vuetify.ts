@@ -5,7 +5,7 @@ import * as directives from 'vuetify/directives';
 import { aliases, mdi } from 'vuetify/iconsets/mdi';
 // @ts-ignore
 import colors from 'vuetify/lib/util/colors';
-import { en } from 'vuetify/locale';
+import { en, pl } from 'vuetify/locale';
 import 'vuetify/styles';
 
 export default createVuetify({
@@ -23,7 +23,7 @@ export default createVuetify({
   locale: {
     locale: 'en',
     fallback: 'en',
-    messages: { en },
+    messages: { en, pl },
   },
   theme: {
     defaultTheme: 'light',

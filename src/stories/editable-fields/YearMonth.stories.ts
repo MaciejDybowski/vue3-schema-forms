@@ -2,28 +2,12 @@
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-
-
 import { Schema } from '../../types/schema/Schema';
 import { MOCK_CALENDARS } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper, waitForMountedAsync } from './utils';
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/YearMonth',
+  title: 'Components/Editable/YearMonth',
   ...formStoryWrapperTemplate,
 };
 
@@ -32,7 +16,7 @@ export default {
  */
 export const Standard: Story = {
   name: 'Standard',
-  play: playWrapper(async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Period');
 
@@ -46,7 +30,9 @@ export const Standard: Story = {
     });
 
     // Find and click Save button
-    const saveButton = document.querySelector('.v-date-picker button[class*="bg-surface"]:last-child');
+    const saveButton = document.querySelector(
+      '.v-date-picker button[class*="bg-surface"]:last-child',
+    );
     await userEvent.click(saveButton, { delay: 200 });
 
     // Verify model is set
@@ -75,13 +61,12 @@ export const Standard: Story = {
   },
 };
 
-
 /**
  * Test case: Required field validation on form submit
  */
 export const RequiredFieldValidation: Story = {
-  name: 'Case: Required',
-  play: playWrapper(async (context) => {
+  name: 'Required',
+  play: playForm(async (context) => {
     /*const canvas = within(context.canvasElement);
 
     // Click Validate button without entering value
@@ -109,7 +94,6 @@ export const RequiredFieldValidation: Story = {
     await userEvent.click(saveButton, { delay: 200 });
 
     // Wait and validate again
-    await waitForMountedAsync(300);
     await userEvent.click(validateButton, { delay: 200 });
 
     // Should now be valid
@@ -143,8 +127,8 @@ export const RequiredFieldValidation: Story = {
  * Test case: With default value
  */
 export const WithDefaultValue: Story = {
-  name: 'Case: Default value',
-  play: playWrapper(async (context) => {
+  name: 'Default Value',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     // Should display formatted value
@@ -183,8 +167,8 @@ export const WithDefaultValue: Story = {
  * Test case: Clear value
  */
 export const ClearValue: Story = {
-  name: 'Case: Clear value',
-  play: playWrapper(async (context) => {
+  name: 'Clear Value',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     // Wait for initial value to be displayed
@@ -231,14 +215,13 @@ export const ClearValue: Story = {
  * Test case: Readonly field should not open picker
  */
 export const ReadonlyField: Story = {
-  name: 'Case: Readonly field',
-  play: playWrapper(async (context) => {
+  name: 'Read Only Field',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Period');
 
     // Click should not open picker
     await userEvent.click(field, { delay: 200 });
-    await waitForMountedAsync(300);
 
     // Picker should not be visible
     const picker = document.querySelector('.v-date-picker');

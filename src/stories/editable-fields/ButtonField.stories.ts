@@ -2,94 +2,22 @@
 import { PointerEventsCheckLevel } from '@testing-library/user-event';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-
-
 import { Schema } from '../../types/schema/Schema';
 import { BTN_MOCK } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Button ✅',
+  title: 'Components/Editable/Button',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Standard',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Click it!' });
     await expect(button).toBeInTheDocument();
-  },
+  }),
   args: {
     schema: {
       type: 'object',
@@ -106,19 +34,15 @@ export const Standard: Story = {
 };
 
 export const WithProps: Story = {
-  name: 'Case: customization',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Customization',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Click it!' });
     await expect(button).toBeInTheDocument();
 
     const btnClasses = document.getElementsByClassName('mdi-plus mdi v-icon');
     await expect(btnClasses.length).toEqual(1);
-  },
+  }),
   args: {
     schema: {
       type: 'object',
@@ -138,19 +62,15 @@ export const WithProps: Story = {
 };
 
 export const Disabled: Story = {
-  name: 'Case: disabled',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Disabled',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Click it!' });
     await expect(button).toBeInTheDocument();
 
     const btnClasses = document.getElementsByClassName('v-btn--disabled v-btn--readonly');
     await expect(btnClasses.length).toEqual(1);
-  },
+  }),
   args: {
     formModel: {
       itemId: 'item-1',
@@ -188,12 +108,8 @@ export const Disabled: Story = {
 };
 
 export const CopyToClipboard: Story = {
-  name: 'Mode: copy value to clipboard',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Copy Value to Clipboard Mode',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Copy above' });
     await expect(button).toBeInTheDocument();
@@ -209,7 +125,7 @@ export const CopyToClipboard: Story = {
 
     await button.click();
     await expect(copiedValues[0]).toEqual('Lorem ipsum...');
-  },
+  }),
   args: {
     formModel: {
       input: 'Lorem ipsum...',
@@ -242,13 +158,8 @@ export const CopyToClipboard: Story = {
 };
 
 export const DialogWithInjectedForm: Story = {
-  name: 'Mode: dialog with internal form',
-  play: async ({ canvasElement, context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
-
+  name: 'Dialog with Internal Form Mode',
+  play: playForm(async ({ canvasElement, context, mount }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup({
       pointerEventsCheck: PointerEventsCheckLevel.Never,
@@ -274,7 +185,7 @@ export const DialogWithInjectedForm: Story = {
     await waitFor(() => {
       expect(input).toHaveValue('Test');
     });
-  },
+  }),
   args: {
     formModel: {},
     emittedObject: {},
@@ -339,12 +250,8 @@ export const DialogWithInjectedForm: Story = {
 };
 
 export const EmitActionObject: Story = {
-  name: 'Mode: emit action object',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Emit Action Object Mode',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Emit action object!' });
     await expect(button).toBeInTheDocument();
@@ -354,7 +261,7 @@ export const EmitActionObject: Story = {
       expect(context.args.emittedObject.code).toEqual('my_action_code');
       expect(context.args.emittedObject.params.script).toEqual('temp');
     });
-  },
+  }),
   args: {
     formModel: {},
     emittedObject: {},
@@ -380,12 +287,8 @@ export const EmitActionObject: Story = {
 };
 
 export const OnClickChangeModel: Story = {
-  name: 'Event: onClick change model',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Event: on Click Change Model',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Copy value on click' });
     await expect(button).toBeInTheDocument();
@@ -395,7 +298,7 @@ export const OnClickChangeModel: Story = {
     await waitFor(() => {
       expect(context.args.formModel.target).toEqual('Value from source');
     });
-  },
+  }),
   args: {
     formModel: {
       source: 'Value from source',
@@ -437,12 +340,8 @@ export const OnClickChangeModel: Story = {
 };
 
 export const OnClickEmitActionObject: Story = {
-  name: 'Event: onClick emit action object',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Event: on Click Emit Action Object',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Emit onClick action' });
     await expect(button).toBeInTheDocument();
@@ -454,7 +353,7 @@ export const OnClickEmitActionObject: Story = {
       expect(context.args.emittedObject.params.script).toEqual('onClickScript');
       expect(context.args.emittedObject.body.source).toEqual('source-1');
     });
-  },
+  }),
   args: {
     formModel: {
       source: 'source-1',
@@ -487,12 +386,8 @@ export const OnClickEmitActionObject: Story = {
 };
 
 export const APICall: Story = {
-  name: 'Mode: API call with emit event',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'API Call with Emit Event Mode',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Call API' });
     await expect(button).toBeInTheDocument();
@@ -502,7 +397,7 @@ export const APICall: Story = {
     await waitFor(() => {
       expect(context.args.emittedObject.code).toEqual('refresh-attachments');
     });
-  },
+  }),
   args: {
     formModel: {
       itemId: 'item-1',
@@ -552,12 +447,8 @@ export const APICall: Story = {
 };
 
 export const APICallWaitForSave: Story = {
-  name: 'Mode: API call with emit event and wait for saved state',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'API Call with Emit Event and Wait for Saved State Mode',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Call API' });
     await expect(button).toBeInTheDocument();
@@ -571,7 +462,7 @@ export const APICallWaitForSave: Story = {
     await waitFor(() => {
       expect(context.args.emittedObject.code).toEqual('refresh-attachments');
     });
-  },
+  }),
   args: {
     formModel: {
       itemId: 'item-1',
@@ -627,9 +518,8 @@ export const APICallWaitForSave: Story = {
   },
 };
 
-
 export const Redirect: Story = {
-  name: 'Mode: Redirect',
+  name: 'Redirect Mode',
   args: {
     formModel: {
       designs: [
@@ -762,12 +652,8 @@ export const Redirect: Story = {
 };
 
 export const RedirectInNewTab: Story = {
-  name: 'Mode: Redirect in new tab',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Redirect in New Tab Mode',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Open in new tab' });
     await expect(button).toBeInTheDocument();
@@ -778,7 +664,7 @@ export const RedirectInNewTab: Story = {
       expect(context.args.emittedObject.target).toEqual('_blank');
       expect(context.args.emittedObject.params.url).toEqual('https://google.com');
     });
-  },
+  }),
   args: {
     formModel: {},
     emittedObject: {},
@@ -802,4 +688,3 @@ export const RedirectInNewTab: Story = {
     },
   },
 };
-

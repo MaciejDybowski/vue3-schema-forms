@@ -3,21 +3,16 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField } from '../../types/schema/elements';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper } from '../editable-fields/utils';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Exposed functions',
+  title: 'Features/Runtime/Exposed Functions',
   ...formStoryWrapperTemplate,
 };
 
 export const Validate: Story = {
-  name: 'Case: validate',
-  play: playWrapper(async (context) => {
+  name: 'Validate',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field B');
     await userEvent.type(field, 'This is standard text field...', { delay: 100 });
@@ -52,8 +47,8 @@ export const Validate: Story = {
 };
 
 export const ResetForm: Story = {
-  name: 'Case: reset form',
-  play: playWrapper(async (context) => {
+  name: 'Reset Form',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field B');
     await userEvent.type(field, 'This is standard text field...', { delay: 100 });
@@ -90,8 +85,8 @@ export const ResetForm: Story = {
 };
 
 export const ResetValidation: Story = {
-  name: 'Case: reset validation',
-  play: playWrapper(async (context) => {
+  name: 'Reset Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field B');
     await userEvent.type(field, 'This is standard text field...', { delay: 100 });

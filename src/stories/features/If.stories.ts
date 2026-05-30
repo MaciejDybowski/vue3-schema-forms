@@ -3,12 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField, SchemaTextField } from '../../types/schema/elements';
-import { playWrapper, waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
   title: 'Features/Conditional Rendering/Using if',
@@ -16,8 +11,8 @@ export default {
 };
 
 export const ConditionStory: Story = {
-  name: 'Case: simple usage',
-  play: playWrapper(async (context) => {
+  name: 'Simple Usage',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const renderedField = canvas.queryByText('Result');
@@ -72,9 +67,8 @@ export const ConditionStory: Story = {
 };
 
 export const ConditionWithCalcStory: Story = {
-  name: 'Case: based on calculation result',
-  play: playWrapper(async (context) => {
-
+  name: 'Based on Calculation Result',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const a = canvas.getByLabelText('A');
     await userEvent.type(a, '10', { delay: 100 });
@@ -120,8 +114,8 @@ export const ConditionWithCalcStory: Story = {
 };
 
 export const ConditionalWithDuplicatedSection: Story = {
-  name: 'Case: usage in duplicated section',
-  play: playWrapper(async (context) => {
+  name: 'Usage in Duplicated Section',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const renderedField = canvas.queryByText('Some field with if');
@@ -184,8 +178,8 @@ export const ConditionalWithDuplicatedSection: Story = {
 };
 
 export const ConditionalWithDuplicatedSectionAndInternalField: Story = {
-  name: 'Case: usage in duplicated section with internal condition',
-  play: playWrapper(async (context) => {
+  name: 'Usage in Duplicated Section with Internal Condition',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const renderedField = canvas.queryByText('Some field with if');

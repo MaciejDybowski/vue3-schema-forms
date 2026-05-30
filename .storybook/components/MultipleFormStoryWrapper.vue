@@ -15,7 +15,6 @@
         <v-divider class="mb-4" />
         <v-card-text>
           <vue-schema-forms
-            v-if="!loading"
             ref="mySchemaFormOne"
             v-model="modelOne"
             :default-form-actions="true"
@@ -53,7 +52,6 @@
         <v-divider class="mb-4" />
         <v-card-text>
           <vue-schema-forms
-            v-if="!loading"
             ref="mySchemaFormTwo"
             v-model="modelTwo"
             :default-form-actions="true"
@@ -87,7 +85,7 @@
 
 <script lang="ts" setup>
 import { debounce } from "lodash";
-import { onMounted, ref, toRaw, watch } from "vue";
+import { ref, toRaw, watch } from "vue";
 import VueJsonPretty from "vue-json-pretty";
 import "vue-json-pretty/lib/styles.css";
 
@@ -96,30 +94,43 @@ import { Schema } from "@/types/schema/Schema.d";
 import VueSchemaForms from "../../src/components/engine/VueSchemaForms.vue";
 
 const snackbar = ref(false);
-const { formModelOne, formModelTwo, options, schemaOne, schemaTwo, emittedObject } = defineProps<{
+const { formModelOne, formModelTwo, options, schemaOne, schemaTwo, emittedObject, signals } = defineProps<{
   formModelOne: object;
   schemaOne: Schema;
   formModelTwo: object;
   schemaTwo: Schema;
   options: object;
   emittedObject?: object;
+  signals?: {
+    formIsReady?: boolean;
+  };
 }>();
 
-const modelOne = ref<any>(null);
-const modelTwo = ref<any>(null);
+const modelOne = ref<any>(formModelOne ?? {});
+const modelTwo = ref<any>(formModelTwo ?? {});
 
 const mySchemaFormOne = ref();
 const mySchemaFormTwo = ref();
 
+if (signals) {
+  Object.assign(toRaw(signals), {formIsReady: false});
+}
+
 function catchSignalFormIsReady() {
+  if (signals) {
+    Object.assign(toRaw(signals), {formIsReady: true});
+  }
   console.debug(`[vue-schema-forms] - signal about ready was sent.`);
 }
 
 function handleAction(properties) {
   console.debug(`[vue-schema-forms] - catch action with properties`);
   // @ts-ignore
-  Object.assign(toRaw(emittedObject), properties);
+  if (emittedObject) {
+    Object.assign(toRaw(emittedObject), properties);
+  }
   console.debug(emittedObject);
+  properties.callback?.();
 }
 
 const debounced = {
@@ -132,11 +143,12 @@ function simulateSavedState() {
   }*/
 }
 
-const loading = ref(true);
 watch(
   () => modelOne.value,
   async () => {
-    Object.assign(toRaw(formModelOne), modelOne.value);
+    if (formModelOne) {
+      Object.assign(toRaw(formModelOne), modelOne.value);
+    }
     debounced.saveState();
   },
   { deep: true },
@@ -145,7 +157,9 @@ watch(
 watch(
   () => modelTwo.value,
   async () => {
-    Object.assign(toRaw(formModelTwo), modelTwo.value);
+    if (formModelTwo) {
+      Object.assign(toRaw(formModelTwo), modelTwo.value);
+    }
     debounced.saveState();
   },
   { deep: true },
@@ -156,11 +170,6 @@ function contextCopy(value) {
   snackbar.value = true;
 }
 
-onMounted(() => {
-  modelOne.value = formModelOne;
-  modelTwo.value = formModelTwo;
-  loading.value = false;
-});
 </script>
 
 <style lang="css" scoped></style>

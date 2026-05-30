@@ -1,47 +1,22 @@
 // @ts-nocheck
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-
-
-import { MOCK_REQUEST_CURRENCY } from "../mock-responses";
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Checkbox ✅',
+  title: 'Components/Editable/Checkbox',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Standard',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ checkboxStandard: [2] });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -66,16 +41,13 @@ export const Standard: Story = {
 };
 
 export const HorizontalLayout: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Horizontal Layout',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ checkboxStandard: [2] });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -103,18 +75,14 @@ export const HorizontalLayout: Story = {
 };
 
 export const WithDefault: Story = {
-  name: 'Default value',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Default Value',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({ checkboxWithDefault: [3] });
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ checkboxWithDefault: [3, 2] });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -140,16 +108,12 @@ export const WithDefault: Story = {
 };
 
 export const CustomMapping: Story = {
-  name: 'Case: response/option mapping',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Response Option Mapping',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await expect(option2).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -176,19 +140,15 @@ export const CustomMapping: Story = {
 };
 
 export const CustomMappingReturnObject: Story = {
-  name: 'Case: return object/option mapping',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Return Object Option Mapping',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({
       checkboxWithCustomMappingObj: [{ id: 2, text: 'Option 2' }],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -216,12 +176,8 @@ export const CustomMappingReturnObject: Story = {
 };
 
 export const CustomMappingReturnObjectDefault: Story = {
-  name: 'Case: return object/option mapping/default',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Return Object Option Mapping with Default',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const option3 = canvas.getByLabelText('Option 3');
     await userEvent.click(option3, { delay: 200 });
@@ -231,7 +187,7 @@ export const CustomMappingReturnObjectDefault: Story = {
         { id: 3, text: 'Option 3' },
       ],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -260,16 +216,12 @@ export const CustomMappingReturnObjectDefault: Story = {
 };
 
 export const GetOptionsFromAPI: Story = {
-  name: 'Case: options from API',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Options from API',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for API call
     await expect(canvas.getByText('Dram')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -299,11 +251,7 @@ export const GetOptionsFromAPI: Story = {
 
 export const SimpleValidation: Story = {
   name: 'Required',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 600 });
@@ -311,7 +259,7 @@ export const SimpleValidation: Story = {
     await userEvent.click(exampleElement, { delay: 600 });
     await userEvent.click(Submit, { delay: 600 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -337,17 +285,13 @@ export const SimpleValidation: Story = {
 };
 
 export const SourceFromModelPath: Story = {
-  name: 'Case: Source from model path',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Source from Model Path',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel['checkboxSourceFromPath']).toEqual([2]);
-  },
+  }),
   args: {
     formModel: {
       dictionaries: {
@@ -374,4 +318,3 @@ export const SourceFromModelPath: Story = {
     },
   },
 };
-

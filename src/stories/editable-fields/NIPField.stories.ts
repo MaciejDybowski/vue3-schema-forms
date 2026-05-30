@@ -2,31 +2,30 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/NIP Field',
+  title: 'Components/Editable/NIP Field',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
   name: 'Standard NIP Field (Polish)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     // Valid Polish NIP: 1234563218
     await userEvent.type(field, '1234563218', { delay: 50 });
     await expect(context.args.formModel).toEqual({ nip: '1234563218' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
       type: 'object',
       properties: {
         description: {
-          content: 'Field for entering Polish NIP or European VAT ID with automatic format and checksum validation.',
+          content:
+            'Field for entering Polish NIP or European VAT ID with automatic format and checksum validation.',
           layout: {
             component: 'static-content',
             tag: 'span',
@@ -44,14 +43,13 @@ export const Standard: Story = {
 };
 
 export const PolishNipWithPrefix: Story = {
-  name: 'Polish NIP with PL prefix',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Polish NIP with Pl Prefix',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     await userEvent.type(field, 'PL1234563218', { delay: 50 });
     await expect(context.args.formModel).toEqual({ nip: 'PL1234563218' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -70,9 +68,8 @@ export const PolishNipWithPrefix: Story = {
 };
 
 export const GermanVatId: Story = {
-  name: 'German VAT ID (DE)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'German Vat ID (De)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     // Valid German VAT: DE111111125 (passes checksum)
@@ -82,7 +79,7 @@ export const GermanVatId: Story = {
       const errorMessages = canvas.queryByText(/Invalid/i);
       expect(errorMessages).toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -108,9 +105,8 @@ export const GermanVatId: Story = {
 };
 
 export const FrenchVatId: Story = {
-  name: 'French VAT ID (FR)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'French Vat ID (Fr)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     // Valid French VAT: FR40303265045
@@ -120,7 +116,7 @@ export const FrenchVatId: Story = {
       const errorMessages = canvas.queryByText(/Invalid/i);
       expect(errorMessages).toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -146,9 +142,8 @@ export const FrenchVatId: Story = {
 };
 
 export const ItalianVatId: Story = {
-  name: 'Italian VAT ID (IT)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Italian Vat ID (It)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     // Valid Italian VAT: IT12345670017
@@ -158,7 +153,7 @@ export const ItalianVatId: Story = {
       const errorMessages = canvas.queryByText(/Invalid/i);
       expect(errorMessages).toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -184,9 +179,8 @@ export const ItalianVatId: Story = {
 };
 
 export const BritishVatId: Story = {
-  name: 'British VAT ID (GB)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'British Vat ID (Gb)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     // Valid GB VAT: GB434031494 (passes checksum - new algorithm)
@@ -196,7 +190,7 @@ export const BritishVatId: Story = {
       const errorMessages = canvas.queryByText(/Invalid/i);
       expect(errorMessages).toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -222,9 +216,8 @@ export const BritishVatId: Story = {
 };
 
 export const InvalidFormat: Story = {
-  name: 'Validation: Invalid Format',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Invalid Format Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     // Invalid format
@@ -234,7 +227,7 @@ export const InvalidFormat: Story = {
       const errorMessage = canvas.getByText(/Invalid.*format/i);
       expect(errorMessage).toBeInTheDocument();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -252,9 +245,8 @@ export const InvalidFormat: Story = {
 };
 
 export const ChecksumError: Story = {
-  name: 'Validation: Checksum - Error (blocking)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Checksum - Error (Blocking) Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     // Invalid Polish NIP checksum
@@ -264,7 +256,7 @@ export const ChecksumError: Story = {
       const errorMessage = canvas.getByText(/Invalid.*checksum/i);
       expect(errorMessage).toBeInTheDocument();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -283,9 +275,8 @@ export const ChecksumError: Story = {
 };
 
 export const ChecksumWarning: Story = {
-  name: 'Validation: Checksum - Warning (non-blocking)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Checksum - Warning (Non - Blocking) Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     await userEvent.type(field, '1234567890', { delay: 50 });
@@ -295,7 +286,7 @@ export const ChecksumWarning: Story = {
       expect(warningMessage).toBeInTheDocument();
       expect(warningMessage).toHaveClass('text-warning');
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -314,9 +305,8 @@ export const ChecksumWarning: Story = {
 };
 
 export const RequiredField: Story = {
-  name: 'Validation: Required',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Required Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     await userEvent.click(field);
@@ -325,7 +315,7 @@ export const RequiredField: Story = {
       const errorMessage = canvas.getByText(/Field is required/i);
       expect(errorMessage).toBeInTheDocument();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -339,15 +329,14 @@ export const RequiredField: Story = {
           },
         },
       },
-      required: ["nip"]
+      required: ['nip'],
     } as Schema,
   },
 };
 
 export const AutoNormalization: Story = {
-  name: 'Auto-normalization (spaces, dashes, lowercase)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Auto - Normalization (Spaces, Dashes, Lowercase)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     // Input with spaces, dashes and lowercase
@@ -355,14 +344,15 @@ export const AutoNormalization: Story = {
     await waitFor(() => {
       expect(context.args.formModel.nip).toBe('PL1234563218');
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
       type: 'object',
       properties: {
         description: {
-          content: 'Field automatically normalizes input: removes spaces, dots, dashes and converts to uppercase.',
+          content:
+            'Field automatically normalizes input: removes spaces, dots, dashes and converts to uppercase.',
           layout: {
             component: 'static-content',
             tag: 'span',
@@ -381,12 +371,11 @@ export const AutoNormalization: Story = {
 
 export const ReadOnly: Story = {
   name: 'Read Only Mode',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('NIP/VAT ID');
     expect(field).toHaveAttribute('readonly');
-  },
+  }),
   args: {
     formModel: { nip: 'DE111111125' },
     schema: {

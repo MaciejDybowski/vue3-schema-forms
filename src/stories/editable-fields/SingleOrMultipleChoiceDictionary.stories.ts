@@ -3,11 +3,10 @@ import { HttpResponse, http } from 'msw';
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/SingleOrMultiChoiceDictionary',
+  title: 'Components/Editable/SingleOrMultiChoiceDictionary',
   ...formStoryWrapperTemplate,
 };
 
@@ -94,9 +93,8 @@ function buildSchema({
 }
 
 export const SingleValueReturnPrimitive: Story = {
-  name: 'Case: single + returnObject=false',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Single + Return Object = False',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const option = await canvas.findByLabelText('Lek');
@@ -105,7 +103,7 @@ export const SingleValueReturnPrimitive: Story = {
     await expect(context.args.formModel).toEqual({
       currency: 'ALL',
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: buildSchema({
@@ -121,9 +119,8 @@ export const SingleValueReturnPrimitive: Story = {
 };
 
 export const SingleValueReturnObject: Story = {
-  name: 'Case: single + returnObject=true',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Single + Return Object = True',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const option = await canvas.findByLabelText('Dram');
@@ -135,7 +132,7 @@ export const SingleValueReturnObject: Story = {
         label: 'Dram',
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: buildSchema({
@@ -151,9 +148,8 @@ export const SingleValueReturnObject: Story = {
 };
 
 export const MultiValueReturnPrimitive: Story = {
-  name: 'Case: multi + returnObject=false',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Multi + Return Object = False',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await userEvent.click(await canvas.findByLabelText('Afgani'), { delay: 100 });
@@ -162,7 +158,7 @@ export const MultiValueReturnPrimitive: Story = {
     await expect(context.args.formModel).toEqual({
       currency: ['AFN', 'AOA'],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: buildSchema({
@@ -178,9 +174,8 @@ export const MultiValueReturnPrimitive: Story = {
 };
 
 export const MultiValueReturnObject: Story = {
-  name: 'Case: multi + returnObject=true',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Multi + Return Object = True',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await userEvent.click(await canvas.findByLabelText('Afgani'), { delay: 100 });
@@ -192,7 +187,7 @@ export const MultiValueReturnObject: Story = {
         { id: 'AUD', label: 'Dolar australijski' },
       ],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: buildSchema({
@@ -208,9 +203,8 @@ export const MultiValueReturnObject: Story = {
 };
 
 export const LimitAndOverflowWarning: Story = {
-  name: 'Case: limit override + overflow warning',
-  play: async (context) => {
-    await waitForMountedAsync(100);
+  name: 'Limit Override + Overflow Warning',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await waitFor(() => {
@@ -220,7 +214,7 @@ export const LimitAndOverflowWarning: Story = {
     await expect(context.canvasElement).toHaveTextContent(
       /Dictionary returned more options than limit \(25\)\.\s*Narrow the source or use\s*autocomplete\/combobox\./,
     );
-  },
+  }),
   args: {
     formModel: {},
     schema: buildSchema({
@@ -238,9 +232,8 @@ export const LimitAndOverflowWarning: Story = {
 };
 
 export const LimitCapAt100: Story = {
-  name: 'Case: limit cap = 100',
-  play: async (context) => {
-    await waitForMountedAsync(100);
+  name: 'Limit Cap = 100',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await waitFor(() => {
@@ -249,7 +242,7 @@ export const LimitCapAt100: Story = {
 
     const options = canvas.getAllByRole('checkbox');
     await expect(options.length).toBe(100);
-  },
+  }),
   args: {
     formModel: {},
     schema: buildSchema({
@@ -265,4 +258,3 @@ export const LimitCapAt100: Story = {
     },
   },
 };
-

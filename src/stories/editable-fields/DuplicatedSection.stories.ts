@@ -1,118 +1,24 @@
 // @ts-nocheck
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-
-
 import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper, waitForMountedAsync } from './utils';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/DuplicatedSection',
+  title: 'Components/Editable/DuplicatedSection',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: async (context) => {
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({
       items: [{ product: 'Product 1' }, { product: 'Product 1' }],
     });
-  },
+  }),
   args: {
     formModel: {
       items: [{ product: 'Product 1' }, { product: 'Product 1' }],
@@ -147,7 +53,7 @@ export const Standard: Story = {
  */
 export const StandardWithRequired: Story = {
   name: 'Required',
-  play: async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const Submit = canvas.getByText('Validate');
@@ -159,7 +65,7 @@ export const StandardWithRequired: Story = {
 
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -192,7 +98,7 @@ export const StandardWithRequired: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefaults: Story = {
-  name: 'Default value',
+  name: 'Default Value',
   args: {
     formModel: {
       invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
@@ -224,8 +130,8 @@ export const WithDefaults: Story = {
 };
 
 export const WithDivider: Story = {
-  name: 'Case: add divider between sections',
-  play: playWrapper(async (context) => {
+  name: 'Add Divider Between Sections',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({
       items: [{ product: 'Product 1' }, { product: 'Product 1' }],
@@ -263,14 +169,14 @@ export const WithDivider: Story = {
 };
 
 export const WithBtnProps: Story = {
-  play: async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const addButton = await canvas.findByRole('button', { name: 'Add item' });
     await expect(addButton).toBeInTheDocument();
     const btnClasses = document.getElementsByClassName(' v-btn--variant-outlined rounded-xl');
     await expect(btnClasses.length).toEqual(1);
-  },
-  name: 'Case: Add button customization',
+  }),
+  name: 'Add Button Customization',
   args: {
     formModel: {},
     schema: {
@@ -316,8 +222,8 @@ export const WithBtnProps: Story = {
 };
 
 export const CopyModeOfButton: Story = {
-  name: 'Case: button mode',
-  play: async (context) => {
+  name: 'Button Mode',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const input1 = await canvas.findByLabelText('Product');
@@ -336,7 +242,7 @@ export const CopyModeOfButton: Story = {
     await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: 'Item 1' }, { product: 'Item 1' }],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -366,10 +272,9 @@ export const CopyModeOfButton: Story = {
 };
 
 export const OrdinalNumber: Story = {
-  name: 'Case: add ordinal number to row',
-  play: async (context) => {
+  name: 'Add Ordinal Number to Row',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
-    await waitForMountedAsync();
     await expect(context.args.formModel).toEqual({
       items: [{ ordinalNumber: 1 }],
     });
@@ -392,7 +297,7 @@ export const OrdinalNumber: Story = {
         { product: 'Number two', ordinalNumber: 2 },
       ],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -429,13 +334,13 @@ export const OrdinalNumber: Story = {
 };
 
 export const NotDisplayInitRowWhenEmpty: Story = {
-  name: 'Case: not display empty first row',
-  play: async (context) => {
+  name: 'Not Display Empty First Row',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({});
     const inputElement = canvas.queryByLabelText('Product');
     await expect(inputElement).not.toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -463,8 +368,8 @@ export const NotDisplayInitRowWhenEmpty: Story = {
 };
 
 export const DisplayProperlyWhenModelAndInitRowIsEnabled: Story = {
-  name: 'Case: display first row when model is exist',
-  play: playWrapper(async (context) => {
+  name: 'Display First Row when Model Is Exist',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({
       invoiceItems: [{ product: 'Item 1' }],
@@ -501,8 +406,8 @@ export const DisplayProperlyWhenModelAndInitRowIsEnabled: Story = {
 };
 
 export const AddAction: Story = {
-  name: 'Test: Add action',
-  play: async (context) => {
+  name: 'Add Action',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const input1 = await canvas.findByLabelText('Product');
@@ -524,7 +429,7 @@ export const AddAction: Story = {
     await expect(context.args.formModel).toEqual({
       items: [{ product: 'Item 1' }, { product: 'Item 2' }],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -552,8 +457,8 @@ export const AddAction: Story = {
 };
 
 export const CopyBelowAction: Story = {
-  name: 'Test: Copy below action',
-  play: async (context) => {
+  name: 'Copy Below Action',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const input1 = await canvas.findByLabelText('Product');
@@ -578,7 +483,7 @@ export const CopyBelowAction: Story = {
     await expect(context.args.formModel).toEqual({
       items: [{ product: 'Item 1' }, { product: 'Item 1' }],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -606,8 +511,8 @@ export const CopyBelowAction: Story = {
 };
 
 export const DeleteAction: Story = {
-  name: 'Test: Delete action',
-  play: playWrapper(async (context) => {
+  name: 'Delete Action',
+  play: playForm(async (context) => {
     await waitFor(() => {
       expect(context.args.formModel).toEqual({
         invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
@@ -660,8 +565,8 @@ export const DeleteAction: Story = {
 };
 
 export const AddBelowAction: Story = {
-  name: 'Test: Add below action',
-  play: playWrapper(async (context) => {
+  name: 'Add Below Action',
+  play: playForm(async (context) => {
     await waitFor(() => {
       expect(context.args.formModel).toEqual({
         invoiceItems: [{ product: 'Item 1' }, { product: 'Item 2' }],
@@ -719,8 +624,8 @@ export const AddBelowAction: Story = {
 };
 
 export const ReadOnlyModeTODO: Story = {
-  name: 'Test: Read only mode',
-  play: async (context) => {
+  name: 'Read Only Mode',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({
       items: [
@@ -732,7 +637,7 @@ export const ReadOnlyModeTODO: Story = {
         },
       ],
     });
-  },
+  }),
   args: {
     formModel: {
       items: [
@@ -803,7 +708,7 @@ export const ReadOnlyModeTODO: Story = {
 };
 
 export const Dialog_Table_Integration: Story = {
-  name: 'Case: external dialog integration',
+  name: 'External Dialog Integration',
   args: {
     model: {},
     schema: {
@@ -840,7 +745,7 @@ export const Dialog_Table_Integration: Story = {
 };
 
 export const Dialog_Table_Action: Story = {
-  name: 'Case: emit custom event which let us adjust out batchAddLogic/integration',
+  name: 'Emit Custom Event to Adjust Batch Add Integration Logic',
   args: {
     model: {},
     schema: {
@@ -878,8 +783,8 @@ export const Dialog_Table_Action: Story = {
 };
 
 export const DependenciesBetweenDuplicatedSections = {
-  name: 'Case: 2 section dependencies',
- /* play: async ({ canvasElement, args }) => {
+  name: '2 Section Dependencies',
+  /* play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
     // 1️⃣ Sprawdź początkowy stan modelu (1 element we "stages" i jego mapping w "meals")
@@ -1148,11 +1053,9 @@ export const DependenciesBetweenDuplicatedSections = {
   },
 };
 
-
-
 export const defineConditionToDisplayRows: Story = {
-  name: 'Case: define condition to display rows',
-  play: async (context) => {
+  name: 'Define Condition to Display Rows',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     // upewnij się, że model został zainicjalizowany zgodnie z args
@@ -1163,7 +1066,7 @@ export const defineConditionToDisplayRows: Story = {
           { product: 'Product 2', showRow: false },
           { product: 'Product 3', showRow: false },
         ],
-      })
+      }),
     );
 
     // sprawdź, że w UI jest dokładnie jedno pole "Product" i jego wartość to "Product 1"
@@ -1172,7 +1075,7 @@ export const defineConditionToDisplayRows: Story = {
       expect(inputs.length).toEqual(1);
       expect((inputs[0] as HTMLInputElement).value).toEqual('Product 1');
     });
-  },
+  }),
   args: {
     formModel: {
       items: [
@@ -1185,7 +1088,6 @@ export const defineConditionToDisplayRows: Story = {
       type: 'object',
       properties: {
         items: {
-
           layout: {
             component: 'duplicated-section',
             schema: {
@@ -1209,8 +1111,8 @@ export const defineConditionToDisplayRows: Story = {
 };
 
 export const ConditionalEditableByJsonata: Story = {
-  name: 'Case: conditional editable (JSONata)',
-  play: playWrapper(async (context) => {
+  name: 'Conditional Editable with JSONata',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await waitFor(() => {
@@ -1279,8 +1181,8 @@ export const ConditionalEditableByJsonata: Story = {
 };
 
 export const ConditionalShowElementsByJsonata: Story = {
-  name: 'Case: conditional showElements (JSONata)',
-  play: playWrapper(async (context) => {
+  name: 'Conditional Show Elements with JSONata',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await waitFor(() => {
@@ -1307,7 +1209,9 @@ export const ConditionalShowElementsByJsonata: Story = {
     });
 
     await waitFor(() => {
-      expect(context.canvasElement.getElementsByClassName('duplicated-section-item').length).toEqual(2);
+      expect(
+        context.canvasElement.getElementsByClassName('duplicated-section-item').length,
+      ).toEqual(2);
     });
 
     const sections = context.canvasElement.getElementsByClassName('duplicated-section-item');

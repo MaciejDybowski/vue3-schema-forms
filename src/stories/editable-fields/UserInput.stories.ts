@@ -2,37 +2,17 @@
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-
-
 import { USER_INPUT_MOCKS } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/UserInput',
+  title: 'Components/Editable/UserInput',
   ...formStoryWrapperTemplate,
 };
 
 export const LimitModel: Story = {
-  name: 'Case: model = object, multiple = false',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Model = Object, Multiple = False',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('User');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -53,7 +33,7 @@ export const LimitModel: Story = {
         labels: 'the-best',
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -84,9 +64,8 @@ export const LimitModel: Story = {
 };
 
 export const LimitModelArray: Story = {
-  name: 'Case: model = array, maxSelection enabled',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Model = Array, Max Selection Enabled',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('User');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -108,7 +87,7 @@ export const LimitModelArray: Story = {
         },
       ],
     });
-  },
+  }),
   args: {
     model: {},
     schema: {
@@ -140,9 +119,8 @@ export const LimitModelArray: Story = {
 };
 
 export const AutoSelect: Story = {
-  name: 'Case: autoselect',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Autoselect',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('User');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -165,7 +143,7 @@ export const AutoSelect: Story = {
         labels: 'the-best',
       },
     });
-  },
+  }),
   args: {
     formModel: {
       owner: {
@@ -198,9 +176,8 @@ export const AutoSelect: Story = {
 };
 
 export const TriggerEvent: Story = {
-  name: 'Case: trigger event',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Trigger Event',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('User');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -224,7 +201,7 @@ export const TriggerEvent: Story = {
         fieldB: null,
       });
     });
-  },
+  }),
   args: {
     formModel: {
       fieldB: 'Template',
@@ -274,9 +251,8 @@ export const TriggerEvent: Story = {
 };
 
 export const ModelWithOnlyId: Story = {
-  name: 'Case: model = { id: ... } (incomplete)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Model = { ID:... } (Incomplete)',
+  play: playForm(async (context) => {
     await waitFor(
       () => {
         expect(context.args.formModel.user).toEqual({
@@ -290,7 +266,7 @@ export const ModelWithOnlyId: Story = {
       },
       { timeout: 5000 },
     );
-  },
+  }),
   args: {
     formModel: {
       user: { id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56' },
@@ -320,9 +296,8 @@ export const ModelWithOnlyId: Story = {
 };
 
 export const ModelWithOnlyIdArray: Story = {
-  name: 'Case: model = [{ id: ... }, { id: ... }] (incomplete array)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Model = [{ ID:... }, { ID:... }] (Incomplete Array)',
+  play: playForm(async (context) => {
     await waitFor(
       () => {
         expect(context.args.formModel.user).toEqual([
@@ -346,7 +321,7 @@ export const ModelWithOnlyIdArray: Story = {
       },
       { timeout: 5000 },
     );
-  },
+  }),
   args: {
     formModel: {
       user: [
@@ -382,9 +357,8 @@ export const ModelWithOnlyIdArray: Story = {
 };
 
 export const ReadonlyModelWithOnlyId: Story = {
-  name: 'Case: model = { id: ... }, readonly = true',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Model = { ID:... }, Read Only = True',
+  play: playForm(async (context) => {
     await waitFor(
       () => {
         expect(context.args.formModel.user).toEqual({
@@ -398,7 +372,7 @@ export const ReadonlyModelWithOnlyId: Story = {
       },
       { timeout: 5000 },
     );
-  },
+  }),
   args: {
     formModel: {
       user: { id: '1b9d6bcd-bbfd-4b2d-9b77-1b7b8a4f3c56' },

@@ -2,69 +2,20 @@
 import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-
-
 import { EngineSourceField } from '../../types/engine/controls';
 import { Schema } from '../../types/schema/Schema';
 import { SimpleSource } from '../../types/schema/elements';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper, waitForMountedAsync } from './utils';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Select',
+  title: 'Components/Editable/Select',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: playWrapper(async (context) => {
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -101,7 +52,8 @@ export const Standard: Story = {
 };
 
 export const Multiple: Story = {
-  play: playWrapper(async (context) => {
+  name: 'Multiple',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -142,8 +94,8 @@ export const Multiple: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefault: Story = {
-  name: 'Default value',
-  play: playWrapper(async (context) => {
+  name: 'Default Value',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({ selectWithDefault: 3 });
   }),
   args: {
@@ -175,7 +127,7 @@ export const WithDefault: Story = {
  */
 export const SimpleValidation: Story = {
   name: 'Required',
-  play: playWrapper(async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -215,8 +167,8 @@ export const SimpleValidation: Story = {
 };
 
 export const CustomMapping: Story = {
-  name: 'Mapper: title/value',
-  play: playWrapper(async (context) => {
+  name: 'Title and Value Mapping',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -255,8 +207,8 @@ export const CustomMapping: Story = {
 };
 
 export const CustomMappingReturnObject: Story = {
-  name: 'Mapper: title/value/returnObject',
-  play: playWrapper(async (context) => {
+  name: 'Title and Value Mapping with Return Object',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -298,9 +250,8 @@ export const CustomMappingReturnObject: Story = {
 };
 
 export const CustomMappingReturnObjectDefault: Story = {
-  name: 'Mapper: title/value/returnObject/default',
-  play: playWrapper(async (context) => {
-    await waitForMountedAsync();
+  name: 'Title and Value Mapping with Default Return Object',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({
       selectCustomMappingObjectDefault: {
         id: 2,
@@ -336,8 +287,8 @@ export const CustomMappingReturnObjectDefault: Story = {
 };
 
 export const GetOptionsFromAPI: Story = {
-  name: 'Case: Items from API',
-  play: playWrapper(async (context) => {
+  name: 'Items from API',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Simple select');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -390,8 +341,8 @@ export const GetOptionsFromAPI: Story = {
 };
 
 export const onChangeCopyValue: Story = {
-  name: 'Case: Copy values into other fields',
-  play: playWrapper(async (context) => {
+  name: 'Copy Values to Other Fields',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Wybierz dostawcę');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -542,8 +493,8 @@ export const onChangeCopyValue: Story = {
 };
 
 export const SourceFromModelPath: Story = {
-  name: 'Case: Source from model path',
-  play: playWrapper(async (context) => {
+  name: 'Source from Model Path',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Select from model path');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });

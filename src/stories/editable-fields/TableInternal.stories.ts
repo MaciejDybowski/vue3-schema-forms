@@ -5,7 +5,7 @@ import FormStoryWrapper from '../../../.storybook/components/FormStoryWrapper.vu
 import { Schema } from '../../types/schema/Schema';
 
 export default {
-  title: 'Elements/Editable/TableInternal',
+  title: 'Components/Editable/TableInternal',
   component: FormStoryWrapper,
   args: {
     emittedObject: {},
@@ -342,7 +342,7 @@ function paginationModel() {
 }
 
 export const Standard: Story = {
-  name: 'Standard: all rows',
+  name: 'Standard: All Rows',
   args: {
     formModel: model(),
     schema: tableSchema(),
@@ -350,7 +350,7 @@ export const Standard: Story = {
 };
 
 export const TwoTablesFieldsGroup: Story = {
-  name: 'Two tables from one key - fieldsGroup',
+  name: 'Two Tables from One Key - Fields Group',
   args: {
     formModel: model(),
     schema: {
@@ -388,7 +388,7 @@ export const TwoTablesFieldsGroup: Story = {
 };
 
 export const TwoTablesWithDataPath: Story = {
-  name: 'Two tables from one key - dataPath',
+  name: 'Two Tables from One Key - Data Path',
   args: {
     formModel: model(),
     schema: {
@@ -419,7 +419,7 @@ export const TwoTablesWithDataPath: Story = {
 };
 
 export const ActiveRowsOnly: Story = {
-  name: 'Filter: active=true',
+  name: 'Filter: Active = True',
   args: {
     formModel: model(),
     schema: tableSchema('active = true'),
@@ -427,7 +427,7 @@ export const ActiveRowsOnly: Story = {
 };
 
 export const ExcludeArchived: Story = {
-  name: 'Filter: status not archived',
+  name: 'Filter: Status Not Archived',
   args: {
     formModel: model(),
     schema: tableSchema('status != "ARCHIVED"'),
@@ -435,7 +435,7 @@ export const ExcludeArchived: Story = {
 };
 
 export const HighAmountRows: Story = {
-  name: 'Filter: amount >= 1000',
+  name: 'Filter: Amount > = 1000',
   args: {
     formModel: model(),
     schema: tableSchema('amount >= 1000'),
@@ -443,7 +443,7 @@ export const HighAmountRows: Story = {
 };
 
 export const NestedCountryRows: Story = {
-  name: 'Filter: nested owner.country',
+  name: 'Filter: Nested Owner.country',
   args: {
     formModel: model(),
     schema: tableSchema('owner.country = "PL"'),
@@ -451,7 +451,7 @@ export const NestedCountryRows: Story = {
 };
 
 export const CombinedCondition: Story = {
-  name: 'Filter: combined condition',
+  name: 'Filter: Combined Condition',
   args: {
     formModel: model(),
     schema: tableSchema('active = true and amount > 1000 and owner.country = "PL"'),
@@ -459,7 +459,7 @@ export const CombinedCondition: Story = {
 };
 
 export const EditableRowsWithFilter: Story = {
-  name: 'Editable: row disappears after status change',
+  name: 'Editable: Row Disappears After Status Change',
   args: {
     formModel: model(),
     schema: tableSchema('status != "ARCHIVED"', editableHeaders),
@@ -467,7 +467,7 @@ export const EditableRowsWithFilter: Story = {
 };
 
 export const InternalActionsWithHiddenRows: Story = {
-  name: 'Internal actions: filtered index mapping',
+  name: 'Internal Actions: Filtered Index Mapping',
   args: {
     formModel: model(),
     schema: tableSchema('active = true', [...displayHeaders, internalActionHeader]),
@@ -475,7 +475,7 @@ export const InternalActionsWithHiddenRows: Story = {
 };
 
 export const DataPath: Story = {
-  name: 'dataPath: model path',
+  name: 'Data Path: Model Path',
   args: {
     formModel: nestedModel(),
     schema: tableWithDataPathSchema(),
@@ -483,7 +483,7 @@ export const DataPath: Story = {
 };
 
 export const Pagination: Story = {
-  name: 'Pagination: internal rows are sliced',
+  name: 'Pagination: Internal Rows Are Sliced',
   args: {
     formModel: paginationModel(),
     schema: tableSchema(),
@@ -491,7 +491,7 @@ export const Pagination: Story = {
 };
 
 export const ItemsFilterByModelVariable: Story = {
-  name: 'Items filter: status from model variable',
+  name: 'Items Filter: Status from Model Variable',
   args: {
     formModel: filterModel(),
     schema: tableWithItemsFilterSchema(),
@@ -499,7 +499,7 @@ export const ItemsFilterByModelVariable: Story = {
 };
 
 export const DataPathItemsFilterByModelVariable: Story = {
-  name: 'Items filter: dataPath and model variable',
+  name: 'Items Filter: Data Path and Model Variable',
   args: {
     formModel: nestedFilterModel(),
     schema: tableWithDataPathItemsFilterSchema(),

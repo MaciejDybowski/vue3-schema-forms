@@ -4,7 +4,7 @@ import { HttpResponse, http } from 'msw';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Attachment Image Picker',
+  title: 'Components/Editable/Attachment Image Picker',
   ...formStoryWrapperTemplate,
 };
 
@@ -171,6 +171,7 @@ const schema = (mode = 'grid', props = {}, controlProps = {}) => ({
 });
 
 export const Grid = {
+  name: 'Grid',
   args: {
     formModel: {
       designDataId: '85d2691a-ed25-4878-9d87-a4dbac86081d',
@@ -186,6 +187,7 @@ export const Grid = {
 };
 
 export const Carousel = {
+  name: 'Carousel',
   args: {
     formModel: {
       designDataId: '85d2691a-ed25-4878-9d87-a4dbac86081d',
@@ -201,6 +203,7 @@ export const Carousel = {
 };
 
 export const FolderSelect = {
+  name: 'Folder Select',
   args: {
     formModel: {
       designDataId: '85d2691a-ed25-4878-9d87-a4dbac86081d',
@@ -216,6 +219,7 @@ export const FolderSelect = {
 };
 
 export const Readonly = {
+  name: 'Read Only',
   args: {
     formModel: {
       designDataId: '85d2691a-ed25-4878-9d87-a4dbac86081d',

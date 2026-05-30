@@ -1,22 +1,20 @@
 // @ts-nocheck
 import { expect, within } from 'storybook/test';
 
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Additional context object',
+  title: 'Features/Runtime/Context Object',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  name: 'Case: current user mapping',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Current User Mapping',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText('Field with context dependency = Maciej');
     await expect(field1).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -51,16 +49,15 @@ export const Standard: Story = {
 };
 
 export const StandardWithDefaultMapping: Story = {
-  name: "Case: pass context value as default value",
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Pass Context Value as Default Value',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText('Field with context dependency = dkowalski');
     await expect(field1).toBeInTheDocument();
     await expect(context.args.formModel).toEqual({
       item: 'defaultText Super',
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

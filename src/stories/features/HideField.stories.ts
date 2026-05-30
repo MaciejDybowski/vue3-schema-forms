@@ -3,8 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaTextField } from '../../types/schema/elements';
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
   title: 'Features/Conditional Rendering/Using hide',
@@ -12,8 +11,8 @@ export default {
 };
 
 export const Default: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Default',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText('Visible field');
     const field2 = canvas.getByLabelText('Visible field 2');
@@ -28,7 +27,7 @@ export const Default: Story = {
       field2: 3,
       field3: 6,
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

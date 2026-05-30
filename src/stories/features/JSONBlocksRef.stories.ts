@@ -1,17 +1,12 @@
 // @ts-nocheck
-import { expect, within } from 'storybook/test';
 import { HttpResponse, http } from 'msw';
+import { expect, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from '../editable-fields/utils';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/JSON Blocks ($ref)',
+  title: 'Features/Data Binding/JSON Blocks ($ref)',
   ...formStoryWrapperTemplate,
 };
 
@@ -25,13 +20,13 @@ const JSON_SCHEMA_BLOCK = [
 ];
 
 export const SchemaWithReference: Story = {
-  name: 'Example 1: Fetch part of schema from API',
-  play: async (context) => {
+  name: 'Example 1 - Fetch Part of Schema from API',
+  play: playForm(async (context) => {
     await new Promise((resolve) => setTimeout(resolve, 200));
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Input fetched from API static.json');
     await expect(field).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {

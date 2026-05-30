@@ -1,31 +1,12 @@
 // @ts-nocheck
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-
-
 import { Schema } from '../../types/schema/Schema';
 import { Layout, SchemaTextField } from '../../types/schema/elements';
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Internal calculations',
+  title: 'Features/Data Binding/Calculations',
   ...formStoryWrapperTemplate,
 };
 
@@ -60,9 +41,8 @@ const simpleCalculationSchema: Schema = {
 };
 
 export const SimpleCalculation: Story = {
-  name: 'Case: simple math',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Simple Math',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText('Field 1');
     const field2 = canvas.getByLabelText('Field 2');
@@ -75,7 +55,7 @@ export const SimpleCalculation: Story = {
       field3: 15.25,
       field4: 232.56,
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: simpleCalculationSchema,
@@ -86,9 +66,8 @@ export const SimpleCalculation: Story = {
  *
  */
 export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
-  name: 'Case: float decimal places is 2 by default',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Float Decimal Places Is 2 by Default',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field1 = canvas.getByLabelText('Field 1');
     const field2 = canvas.getByLabelText('Field 2');
@@ -101,7 +80,7 @@ export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
       field3: 15.25,
       field4: 232.56,
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: simpleCalculationSchema,
@@ -109,8 +88,8 @@ export const DefaultPrecisionIsRoundTo0DecimalPlaces: Story = {
 };
 
 export const calculationInDuplicatedSchema: Story = {
-  name: 'Case: heavy calculations in duplicated section',
-  play: async (context) => {
+  name: 'Heavy Calculations in Duplicated Section',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const addButton = await canvas.findByRole('button', { name: 'Add' });
     await userEvent.click(addButton);
@@ -144,7 +123,7 @@ export const calculationInDuplicatedSchema: Story = {
       ],
     };
     await expect(context.args.formModel).toEqual(expectedModel);
-  },
+  }),
   args: {
     formModel: {
       items: [
@@ -221,12 +200,8 @@ export const calculationInDuplicatedSchema: Story = {
 };
 
 export const SUM_function: Story = {
-  name: 'Case: $sum(path.to.values)',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: '$sum(path.to.values)',
+  play: playForm(async ({ context, mount }) => {
     await new Promise((r) => setTimeout(r, 100));
     await expect(context.args.formModel).toEqual({
       data: {
@@ -249,7 +224,7 @@ export const SUM_function: Story = {
         sumValue: 5568.46,
       },
     });
-  },
+  }),
   args: {
     formModel: {
       data: {

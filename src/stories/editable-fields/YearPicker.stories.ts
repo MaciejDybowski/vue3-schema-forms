@@ -2,15 +2,18 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/YearPicker',
+  title: 'Components/Editable/YearPicker',
   ...formStoryWrapperTemplate,
 };
 
-async function selectYearPickerItem(canvas: ReturnType<typeof within>, year = 2050, label = 'Year picker') {
+async function selectYearPickerItem(
+  canvas: ReturnType<typeof within>,
+  year = 2050,
+  label = 'Year picker',
+) {
   const select = await canvas.getByLabelText(label);
   await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
 
@@ -22,7 +25,9 @@ async function selectYearPickerItem(canvas: ReturnType<typeof within>, year = 20
 
   const items = Array.from(document.getElementsByClassName('v-list-item')) as HTMLElement[];
   const text = String(year);
-  const matched = items.find((el) => el.textContent?.trim() === text || el.textContent?.trim().includes(text));
+  const matched = items.find(
+    (el) => el.textContent?.trim() === text || el.textContent?.trim().includes(text),
+  );
 
   if (matched) {
     await userEvent.click(matched, { delay: 200 });
@@ -32,14 +37,13 @@ async function selectYearPickerItem(canvas: ReturnType<typeof within>, year = 20
   }
 }
 
-
 export const Standard = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await selectYearPickerItem(canvas, 2050);
     await expect(context.args.formModel).toEqual({ year: 2050 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -57,9 +61,8 @@ export const Standard = {
 };
 
 export const Required = {
-  name: 'Case: required',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Required',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 100 });
@@ -70,7 +73,7 @@ export const Required = {
 
     await userEvent.click(Submit, { delay: 100 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -89,13 +92,12 @@ export const Required = {
 };
 
 export const Expression = {
-  name: 'Case: expression for years',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Expression for Years',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await selectYearPickerItem(canvas, 2026);
     await expect(context.args.formModel).toEqual({ year: 2026 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

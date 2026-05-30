@@ -1,44 +1,19 @@
 // @ts-nocheck
 import { expect, userEvent, within } from 'storybook/test';
 
-
-
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Static/Alert',
+  title: 'Components/Static/Alert',
   ...formStoryWrapperTemplate,
 };
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Default',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -59,11 +34,11 @@ export const Default: Story = {
 };
 
 export const Info: Story = {
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Info',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -85,11 +60,11 @@ export const Info: Story = {
 };
 
 export const Warning: Story = {
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Warning',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -111,14 +86,14 @@ export const Warning: Story = {
 };
 
 export const Error: Story = {
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Error',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Alert')).toBeInTheDocument();
-  },
+  }),
   args: {
     validationBehaviour: 'messages',
     formModel: {},
@@ -142,14 +117,14 @@ export const Error: Story = {
 };
 
 export const ErrorWithoutTakePartInValidation: Story = {
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Error Excluded from Validation',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Lorem ipsum...')).toBeInTheDocument();
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     validationBehaviour: 'messages',
     formModel: {},
@@ -172,14 +147,13 @@ export const ErrorWithoutTakePartInValidation: Story = {
 };
 
 export const CombineWithModelVariables: Story = {
-  name: 'Case: combine with model variables',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Combine with Model Variables',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByText('Is difference between Value A = 123 and Value B = 321'),
     ).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       valueA: '123',
@@ -204,15 +178,15 @@ export const CombineWithModelVariables: Story = {
 };
 
 export const MemorableState: Story = {
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Memorable State',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByText(
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
       ),
     ).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {

@@ -3,15 +3,11 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaField } from '../../types/schema/elements';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 import { StoryTemplateWithCustomValidation } from '../templates/story-template';
 
-
-
-
-
 export default {
-  title: 'Features/Validations/Behaviour',
+  title: 'Features/Validation/Behaviour',
   ...formStoryWrapperTemplate,
 };
 
@@ -41,14 +37,14 @@ const validationExample = {
 } as Schema;
 
 export const ExposedValidationAndScroll: Story = {
-  name: 'Mode: scroll to first error',
-  play: async (context) => {
+  name: 'Scroll to First Error Mode',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 400 });
 
     await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
-  },
+  }),
   args: {
     defaultFormActions: true,
     validationBehaviour: 'scroll',
@@ -58,14 +54,14 @@ export const ExposedValidationAndScroll: Story = {
 };
 
 export const ExposedValidationAndMessages: Story = {
-  name: 'Mode: show message with link to scroll to the error',
-  play: async (context) => {
+  name: 'Show Message with Link to Scroll to the Error Mode',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 400 });
 
     await expect(canvas.getByText(': Field is required.')).toBeInTheDocument();
-  },
+  }),
   args: {
     defaultFormActions: true,
     validationBehaviour: 'messages',
@@ -75,14 +71,14 @@ export const ExposedValidationAndMessages: Story = {
 };
 
 export const ExposedValidationAndScrollWithRules: Story = {
-  name: 'Example: scroll to first error with custom message',
-  play: async (context) => {
+  name: 'Scroll to First Error with Custom Message',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 400 });
 
     await expect(canvas.getByText('Custom message')).toBeInTheDocument();
-  },
+  }),
   args: {
     defaultFormActions: true,
     validationBehaviour: 'scroll',
@@ -109,12 +105,12 @@ export const ExposedValidationAndScrollWithRules: Story = {
 };
 
 export const AddCustomSubmitWithBuiltInValidation: Story = {
-  name: 'Example: inject your own button for validate',
-  play: async (context) => {
+  name: 'Inject Your Own Button for Validate',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Submit');
     await expect(Submit).toBeInTheDocument();
-  },
+  }),
   render: StoryTemplateWithCustomValidation,
   args: {
     formModel: {},
@@ -122,16 +118,15 @@ export const AddCustomSubmitWithBuiltInValidation: Story = {
   },
 };
 
-
 export const CombinedValidationBehaviour = {
-  name: 'Mode: combined',
-  play: async (context) => {
+  name: 'Combined Mode',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 400 });
 
     await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
-  },
+  }),
   args: {
     defaultFormActions: true,
     validationBehaviour: 'combined',

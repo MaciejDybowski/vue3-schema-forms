@@ -1,21 +1,17 @@
 // @ts-nocheck
 import { expect } from 'storybook/test';
-import { userEvent, within, waitFor } from 'storybook/test';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { userEvent, waitFor, within } from 'storybook/test';
+
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Built-in expressions',
+  title: 'Features/Data Binding/Built-In Expressions',
   ...formStoryWrapperTemplate,
 };
 
 export const example1: Story = {
-  name: 'Example 1: Usage of date calculation functions',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
-
+  name: 'Example 1 - Usage of Date Calculation Functions',
+  play: playForm(async ({ context, mount }) => {
     // Assert initial values after expressions are calculated
     expect(context.args.formModel).toEqual({
       stages: [
@@ -40,7 +36,7 @@ export const example1: Story = {
       hours: '6',
       minutes: '58',
     });
-  },
+  }),
   args: {
     formModel: {
       stages: [
@@ -139,12 +135,8 @@ export const example1: Story = {
 };
 
 export const UseJSONataFunctions: Story = {
-  name: 'Example 2: JSONata function',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Example 2 - JSONata Function',
+  play: playForm(async ({ context, mount }) => {
     await new Promise((resolve) => setTimeout(resolve, 100));
     // Assert initial values after JSONata expressions are calculated
     expect(context.args.formModel).toEqual({
@@ -165,7 +157,7 @@ export const UseJSONataFunctions: Story = {
       joinedCostTypes: '213,212133',
       joinedGrossAmounts: 'costLimit>23,321;costLimit>100,321',
     });
-  },
+  }),
   args: {
     formModel: {
       documentItems: [
@@ -231,13 +223,8 @@ export const UseJSONataFunctions: Story = {
 };
 
 export const SwitchAkceptacjaZarzadu: Story = {
-  name: 'Example 3: Switch z JSONata calculation',
-  play: async ({ context, mount, canvasElement }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
-
+  name: 'Example 3 - Switch with JSONata Calculation',
+  play: playForm(async ({ context, mount, canvasElement }) => {
     const canvas = within(canvasElement);
 
     // Find and interact with the "Kwota zaliczki" field
@@ -247,14 +234,18 @@ export const SwitchAkceptacjaZarzadu: Story = {
     await userEvent.clear(textField);
     await userEvent.type(textField, '150000', { delay: 100 });
     await new Promise((r) => setTimeout(r, 300));
-    expect(await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu')).toBeChecked();
+    expect(
+      await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu'),
+    ).toBeChecked();
 
     // Enter 50000 and check switch state
     await userEvent.clear(textField);
     await userEvent.type(textField, '50000', { delay: 100 });
     await new Promise((r) => setTimeout(r, 300));
-    expect(await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu')).not.toBeChecked();
-  },
+    expect(
+      await canvas.findByLabelText('Pozostałe koszty do zaliczki – akceptacja zarządu'),
+    ).not.toBeChecked();
+  }),
   args: {
     formModel: {
       kwota: 120000,

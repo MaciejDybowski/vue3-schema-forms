@@ -1,31 +1,29 @@
 // @ts-nocheck
-import { formStoryWrapperTemplate } from './templates/shared-blocks';
-
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
-import { waitForMountedAsync } from './editable-fields/utils';
 
+import { formStoryWrapperTemplate, playForm } from './templates/shared-blocks';
 
 export default {
-  title: 'Elements/Nested Form Blocks',
-  ...formStoryWrapperTemplate
+  title: 'Examples/Nested Forms',
+  ...formStoryWrapperTemplate,
 };
 
 const options = {
   fieldProps: {
     variant: 'outlined',
-    density: 'comfortable'
+    density: 'comfortable',
   },
   context: {
     project: {
-      id: 1
-    }
+      id: 1,
+    },
   },
   i18n: {
-    $ref: '../json-mock/translations'
+    $ref: '../json-mock/translations',
   },
   otherVariable: 'TEST',
-  nestedFormsPath: '../json-mock/1/form-schema?formName={0}'
+  nestedFormsPath: '../json-mock/1/form-schema?formName={0}',
 };
 
 const JSON_TRANSLATIONS_BLOCK = [
@@ -35,16 +33,16 @@ const JSON_TRANSLATIONS_BLOCK = [
         firstName: 'Imię',
         lastName: 'Nazwisko',
         email: 'E-mail',
-        password: 'Hasło'
+        password: 'Hasło',
       },
       en: {
         firstName: 'First name',
         lastName: 'Last name',
         email: 'E-mail',
-        password: 'Password'
-      }
+        password: 'Password',
+      },
     });
-  })
+  }),
 ];
 
 const JSON_FORM_BLOCK = [
@@ -58,9 +56,9 @@ const JSON_FORM_BLOCK = [
         properties: {
           example1a: {
             label: 'Field A',
-            layout: { component: 'text-field', cols: 6, fillRow: true }
-          }
-        }
+            layout: { component: 'text-field', cols: 6, fillRow: true },
+          },
+        },
       });
     }
 
@@ -70,10 +68,10 @@ const JSON_FORM_BLOCK = [
         properties: {
           example1b: {
             label: 'Field A (required)',
-            layout: { component: 'text-field', cols: 6, fillRow: true }
-          }
+            layout: { component: 'text-field', cols: 6, fillRow: true },
+          },
         },
-        required: ['example1b']
+        required: ['example1b'],
       });
     }
 
@@ -83,12 +81,12 @@ const JSON_FORM_BLOCK = [
         properties: {
           example2a: {
             label: 'Example 2A First level',
-            layout: { component: 'text-field', cols: 6, fillRow: true }
+            layout: { component: 'text-field', cols: 6, fillRow: true },
           },
           formB: {
             '0': '/folder1/example2a-2',
             $ref: '#/options/nestedFormsPath',
-            flatStructure: true
+            flatStructure: true,
           },
         },
       });
@@ -100,22 +98,20 @@ const JSON_FORM_BLOCK = [
         properties: {
           example2a2: {
             label: 'Example 2A Second level (required)',
-            layout: { component: 'text-field', cols: 6, fillRow: true }
-          }
+            layout: { component: 'text-field', cols: 6, fillRow: true },
+          },
         },
-        required: ['example2a2']
+        required: ['example2a2'],
       });
     }
 
     return new HttpResponse(null, { status: 404 });
-  })
+  }),
 ];
 
 export const Example1: Story = {
-  name: 'Example 1A: Nested block, wrapped with key and required fields (translation included)',
-  play: async (context) => {
-    await waitForMountedAsync(50);
-
+  name: 'Example 1 A: Nested Block, Wrapped with Key and Required Fields (Translation Included)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const nestedField = canvas.getByLabelText('Field A');
@@ -126,15 +122,15 @@ export const Example1: Story = {
 
     await expect(context.args.formModel).toEqual({
       formA: {
-        example1a: 'Nested A'
+        example1a: 'Nested A',
       },
-      firstName: 'Jan'
+      firstName: 'Jan',
     });
 
     const submitButton = canvas.getByText('Validate');
     await userEvent.click(submitButton, { delay: 120 });
     await expect(canvas.queryByText('Field is required.')).toEqual(null);
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -143,7 +139,7 @@ export const Example1: Story = {
         formA: {
           '0': '/folder1/example1a',
           $ref: '#/options/nestedFormsPath',
-          flatStructure: false
+          flatStructure: false,
         },
 
         firstName: {
@@ -151,24 +147,23 @@ export const Example1: Story = {
           layout: {
             component: 'text-field',
             cols: 6,
-            fillRow: true
-          }
-        }
-      }
+            fillRow: true,
+          },
+        },
+      },
     },
-    options: options
+    options: options,
   },
   parameters: {
     msw: {
-      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK]
-    }
-  }
+      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK],
+    },
+  },
 };
 
 export const Example1B: Story = {
-  name: 'Example 1B: Nested block, wrapped with key and no required fields (translation included)',
-  play: async (context) => {
-    await waitForMountedAsync(50);
+  name: 'Example 1 B: Nested Block, Wrapped with Key and No Required Fields (Translation Included)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const nestedField = canvas.getByLabelText('Field A (required)');
@@ -183,11 +178,11 @@ export const Example1B: Story = {
 
     await expect(context.args.formModel).toEqual({
       formA: {
-        example1b: 'Nested B'
+        example1b: 'Nested B',
       },
-      firstName: 'Anna'
+      firstName: 'Anna',
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -196,7 +191,7 @@ export const Example1B: Story = {
         formA: {
           '0': '/folder1/example1b',
           $ref: '#/options/nestedFormsPath',
-          flatStructure: false
+          flatStructure: false,
         },
 
         firstName: {
@@ -204,25 +199,23 @@ export const Example1B: Story = {
           layout: {
             component: 'text-field',
             cols: 6,
-            fillRow: true
-          }
-        }
-      }
+            fillRow: true,
+          },
+        },
+      },
     },
-    options: options
+    options: options,
   },
   parameters: {
     msw: {
-      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK]
-    }
-  }
+      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK],
+    },
+  },
 };
 
 export const Example1C: Story = {
-  name: 'Example 1C: Nested block, faltStructure = true, no required fields (translation included)',
-  play: async ({ context }) => {
-    await waitForMountedAsync(50);
-
+  name: 'Example 1 C: Nested Block, Flat Structure = True, No Required Fields (Translation Included)',
+  play: playForm(async ({ context }) => {
     const canvas = within(context.canvasElement);
 
     const nestedField = canvas.getByLabelText('Field A');
@@ -236,58 +229,48 @@ export const Example1C: Story = {
 
     await expect(context.args.formModel).toEqual({
       example1a: 'Flat A',
-      firstName: 'Ola'
+      firstName: 'Ola',
     });
     await expect(context.args.formModel.formA).toBeUndefined();
 
     const submitButton = canvas.getByText('Validate');
     await userEvent.click(submitButton, { delay: 120 });
     await expect(canvas.queryByText('Field is required.')).toEqual(null);
-  },
+  }),
   args: {
     formModel: {},
     schema: {
       type: 'object',
       properties: {
         formA: {
-          '0':
-            '/folder1/example1a',
-          $ref:
-            '#/options/nestedFormsPath',
-          flatStructure:
-            true
-        }
-        ,
+          '0': '/folder1/example1a',
+          $ref: '#/options/nestedFormsPath',
+          flatStructure: true,
+        },
         firstName: {
           label: {
-            $ref: '#/i18n/~$locale~/firstName'
-          }
-          ,
+            $ref: '#/i18n/~$locale~/firstName',
+          },
           layout: {
             component: 'text-field',
-            cols:
-              6,
-            fillRow:
-              true
-          }
-        }
-      }
-    }
-    ,
-    options: options
-  }
-  ,
+            cols: 6,
+            fillRow: true,
+          },
+        },
+      },
+    },
+    options: options,
+  },
   parameters: {
     msw: {
-      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK]
-    }
-  }
+      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK],
+    },
+  },
 };
 
 export const Example1D: Story = {
-  name: 'Example 1D: Nested block, flatStructure and required fields (translation included)',
-  play: async (context) => {
-    await waitForMountedAsync(50);
+  name: 'Example 1 D: Nested Block, Flat Structure and Required Fields (Translation Included)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const nestedField = canvas.getByLabelText('Field A (required)');
@@ -302,10 +285,10 @@ export const Example1D: Story = {
 
     await expect(context.args.formModel).toEqual({
       example1b: 'Flat B',
-      firstName: 'Kasia'
+      firstName: 'Kasia',
     });
     await expect(context.args.formModel.formA).toBeUndefined();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -314,7 +297,7 @@ export const Example1D: Story = {
         formA: {
           '0': '/folder1/example1b',
           $ref: '#/options/nestedFormsPath',
-          flatStructure: true
+          flatStructure: true,
         },
 
         firstName: {
@@ -322,26 +305,23 @@ export const Example1D: Story = {
           layout: {
             component: 'text-field',
             cols: 6,
-            fillRow: true
-          }
-        }
-      }
+            fillRow: true,
+          },
+        },
+      },
     },
-    options: options
+    options: options,
   },
   parameters: {
     msw: {
-      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK]
-    }
-  }
+      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK],
+    },
+  },
 };
 
-
 export const Example2A: Story = {
-  name: 'Example 2A: 2 levels of nesting, flatStructure = true',
-  play: async (context) => {
-    await waitForMountedAsync(50);
-
+  name: 'Example 2 A: 2 Levels of Nesting, Flat Structure = True',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const nestedField = canvas.getByLabelText('Example 2A First level');
@@ -359,10 +339,10 @@ export const Example2A: Story = {
     await expect(context.args.formModel).toEqual({
       example2a: 'Flat B',
       example2a2: 'Flat B',
-      firstName: 'Kasia'
+      firstName: 'Kasia',
     });
     await expect(context.args.formModel.formA).toBeUndefined();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -371,7 +351,7 @@ export const Example2A: Story = {
         formA: {
           '0': '/folder1/example2a',
           $ref: '#/options/nestedFormsPath',
-          flatStructure: true
+          flatStructure: true,
         },
 
         firstName: {
@@ -379,16 +359,16 @@ export const Example2A: Story = {
           layout: {
             component: 'text-field',
             cols: 6,
-            fillRow: true
-          }
-        }
-      }
+            fillRow: true,
+          },
+        },
+      },
     },
-    options: options
+    options: options,
   },
   parameters: {
     msw: {
-      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK]
-    }
-  }
+      handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK],
+    },
+  },
 };

@@ -1,15 +1,10 @@
 // @ts-nocheck
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/MultiLanguageField',
+  title: 'Components/Editable/MultiLanguageField',
   ...formStoryWrapperTemplate,
 };
 
@@ -29,16 +24,15 @@ const availableLanguages = [
 ];
 
 export const ListOfCountriesFromSchem = {
-  name: 'Case 1: list of countries from schema / model = null',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Schema Countries with Empty Model',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Name of sth');
     await userEvent.type(field, 'Poland power!');
 
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
-        'en': 'Poland power!',
+        en: 'Poland power!',
       },
     });
     const select = await canvas.getByLabelText('Lang');
@@ -50,17 +44,15 @@ export const ListOfCountriesFromSchem = {
     });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[2], { delay: 200 });
-    await waitForMountedAsync(400);
     const field2 = await canvas.getByLabelText('Name of sth');
-    await waitForMountedAsync(400);
     await userEvent.type(field2, 'Polska siła!');
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
         pl: 'Polska siła!',
-        'en': 'Poland power!',
+        en: 'Poland power!',
       },
     });
-  },
+  }),
   args: {
     formModel: {
       multiLanguage: null,
@@ -81,9 +73,8 @@ export const ListOfCountriesFromSchem = {
 };
 
 export const ListOfCountriesFromSchemaType2 = {
-  name: 'Case 2: list of countries from schema / model = object',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Schema Countries with Object Model',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
         pl: 'Polska siła!',
@@ -101,15 +92,14 @@ export const ListOfCountriesFromSchemaType2 = {
     });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 400 });
-    await waitForMountedAsync(100);
     await userEvent.type(field, 'Poland power!');
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
         pl: 'Polska siła!',
-        'en': 'Poland power!',
+        en: 'Poland power!',
       },
     });
-  },
+  }),
   args: {
     formModel: {
       multiLanguage: {
@@ -132,9 +122,8 @@ export const ListOfCountriesFromSchemaType2 = {
 };
 
 export const ListOfCountriesFromOptionsType1 = {
-  name: 'Case 3: list of countries from options / model = object',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Options Countries with Object Model',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
         pl: 'Polska siła!',
@@ -152,15 +141,14 @@ export const ListOfCountriesFromOptionsType1 = {
     });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 400 });
-    await waitForMountedAsync(100);
     await userEvent.type(field, 'Poland power!');
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
         pl: 'Polska siła!',
-        'en': 'Poland power!',
+        en: 'Poland power!',
       },
     });
-  },
+  }),
   args: {
     formModel: {
       multiLanguage: {
@@ -188,11 +176,9 @@ export const ListOfCountriesFromOptionsType1 = {
   },
 };
 
-
 export const Required = {
-  name: 'Case 4: Required',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Required',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Name of sth');
 
@@ -205,18 +191,17 @@ export const Required = {
     });
     const items = document.getElementsByClassName('v-list-item');
     await userEvent.click(items[0], { delay: 400 });
-    await waitForMountedAsync(100);
     await userEvent.type(field, 'Poland power!');
     await expect(context.args.formModel).toEqual({
       multiLanguage: {
-        'en': 'Poland power!',
+        en: 'Poland power!',
       },
     });
 
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit, { delay: 200 });
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       multiLanguage: null,
@@ -232,7 +217,7 @@ export const Required = {
           },
         },
       },
-      required: ['multiLanguage']
+      required: ['multiLanguage'],
     },
   },
 };

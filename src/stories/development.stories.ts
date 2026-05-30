@@ -1,41 +1,10 @@
 // @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3-vite';
 
-
-
 import FormStoryWrapper from '../../.storybook/components/FormStoryWrapper.vue';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export default {
-  title: 'Development Area',
+  title: 'Development/Area',
   component: FormStoryWrapper,
   args: {
     emittedObject: {},
@@ -59,6 +28,7 @@ export default {
 type Story = StoryObj<typeof FormStoryWrapper>;
 
 export const TableOne: Story = {
+  name: 'Table One',
   args: {
     formModel: {
       dataId: 9123,

@@ -3,18 +3,16 @@ import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Static/ValidationMessagesViewer',
+  title: 'Components/Static/ValidationMessagesViewer',
   ...formStoryWrapperTemplate,
 };
 
 export const ErrorBlocksForm: Story = {
-  name: 'Severity error should block form validation',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Severity Error Should Block Form Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await expect(canvas.getByText('This is an error message')).toBeInTheDocument();
@@ -24,7 +22,7 @@ export const ErrorBlocksForm: Story = {
 
     // Form should be blocked - error message should appear in validation summary
     await expect(canvas.getByText('Alert')).toBeInTheDocument();
-  },
+  }),
   args: {
     validationBehaviour: 'messages',
     formModel: {
@@ -43,8 +41,8 @@ export const ErrorBlocksForm: Story = {
           layout: {
             component: 'validation-messages-viewer',
             props: {
-              variant: "tonal"
-            }
+              variant: 'tonal',
+            },
           },
         },
       },
@@ -53,9 +51,8 @@ export const ErrorBlocksForm: Story = {
 };
 
 export const WarningDoesNotBlockForm: Story = {
-  name: 'Severity warning should not block form validation',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Severity Warning Should Not Block Form Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await expect(canvas.getByText('This is a warning message')).toBeInTheDocument();
@@ -65,7 +62,7 @@ export const WarningDoesNotBlockForm: Story = {
 
     // Form should NOT be blocked - no "Alert" in validation summary
     await expect(canvas.queryByText('Alert')).not.toBeInTheDocument();
-  },
+  }),
   args: {
     validationBehaviour: 'messages',
     formModel: {
@@ -91,9 +88,8 @@ export const WarningDoesNotBlockForm: Story = {
 };
 
 export const InfoDoesNotBlockForm: Story = {
-  name: 'Severity info should not block form validation',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Severity Info Should Not Block Form Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await expect(canvas.getByText('This is an info message')).toBeInTheDocument();
@@ -103,7 +99,7 @@ export const InfoDoesNotBlockForm: Story = {
 
     // Form should NOT be blocked - no "Alert" in validation summary
     await expect(canvas.queryByText('Alert')).not.toBeInTheDocument();
-  },
+  }),
   args: {
     validationBehaviour: 'messages',
     formModel: {
@@ -129,9 +125,8 @@ export const InfoDoesNotBlockForm: Story = {
 };
 
 export const DisableValidationWhenHidden: Story = {
-  name: 'Disable validation when hidden - error message should not block form validation',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Disable Validation when Hidden - Error Message Should Not Block Form Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     // Initially the validationMessages field is hidden - form should not be blocked
@@ -150,7 +145,7 @@ export const DisableValidationWhenHidden: Story = {
     // Now the field is visible - form should be blocked by the error severity message
     await userEvent.click(submitButton, { delay: 200 });
     await expect(canvas.getByText('Alert')).toBeInTheDocument();
-  },
+  }),
   args: {
     validationBehaviour: 'messages',
     formModel: {
@@ -186,5 +181,3 @@ export const DisableValidationWhenHidden: Story = {
     } as Schema,
   },
 };
-
-

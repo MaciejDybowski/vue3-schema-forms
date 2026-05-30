@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { Meta, StoryObj } from '@storybook/vue3-vite';
+import { expect, userEvent, within } from 'storybook/test';
 
 import MultipleFormStoryWrapper from '../../../.storybook/components/MultipleFormStoryWrapper.vue';
-import { expect, userEvent, within } from 'storybook/test';
-import { playWrapper } from '../editable-fields/utils';
+import { playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Multi Instance',
+  title: 'Features/Form Composition/Multi Instance',
   component: MultipleFormStoryWrapper,
   args: {
     formModelOne: {},
@@ -25,8 +25,8 @@ export default {
 type Story = StoryObj<typeof MultipleFormStoryWrapper>;
 
 export const Example1: Story = {
-  name: "Example 1: Check if 2 forms with same variables have separated models",
-  play: playWrapper(async (context) => {
+  name: 'Example 1 - Check If 2 Forms with Same Variables Have Separated Models',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field A - form 1');
     await userEvent.type(field, 'Form 1', { delay: 100 });

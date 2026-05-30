@@ -3,11 +3,12 @@ import { IMAGE_REQUEST } from '../mock-responses';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Image',
+  title: 'Components/Editable/Image',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard = {
+  name: 'Standard',
   args: {
     formModel: {},
     schema: {
@@ -39,7 +40,7 @@ export const Standard = {
 };
 
 export const WithParametersAndModel = {
-  name: 'Case: bind parameters and context',
+  name: 'Bind Parameters and Context',
   args: {
     formModel: {
       image: {

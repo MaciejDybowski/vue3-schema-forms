@@ -3,24 +3,23 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/FieldsGroup',
+  title: 'Components/Editable/FieldsGroup',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field A in group A');
     await userEvent.type(field, 'Field closed in group', {
       delay: 100,
     });
     await expect(context.args.formModel).toEqual({ fieldA: 'Field closed in group' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -61,8 +60,8 @@ export const Standard = {
 };
 
 export const Required = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Required',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const fieldA = canvas.getByLabelText('Field A in group A');
     const Submit = canvas.getByText('Validate');
@@ -72,7 +71,7 @@ export const Required = {
     });
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -114,8 +113,7 @@ export const Required = {
 };
 
 export const TwoFieldsGroup = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Field A in group A');
     await userEvent.type(field, 'Field closed in group', {
@@ -131,8 +129,8 @@ export const TwoFieldsGroup = {
       fieldA: 'Field closed in group',
       fieldK: 'Field closed in other group',
     });
-  },
-  name: 'Case: Two groups',
+  }),
+  name: 'Two Groups',
   args: {
     formModel: {},
     schema: {
@@ -190,9 +188,8 @@ export const TwoFieldsGroup = {
 };
 
 export const GroupWithHiddenDict = {
-  name: 'Case: if/dependency/hidden',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Conditional Hidden Dependency',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const switcher = canvas.getByLabelText('Show currency field');
@@ -217,7 +214,7 @@ export const GroupWithHiddenDict = {
       showCurrency: true,
       currency: { id: 'AFN', label: 'Afgani', digitsAfterDecimal: '2', labels: 'the-best' },
     });
-  },
+  }),
   args: {
     formModel: {
       fieldQ: 'Example value',
@@ -278,9 +275,8 @@ export const GroupWithHiddenDict = {
 };
 
 export const ResetValueWhenIF = {
-  name: 'Case: reset value on IF',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Reset Value on If',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const switcher = canvas.getByLabelText('Change it!');
@@ -300,7 +296,7 @@ export const ResetValueWhenIF = {
     });
 
     await userEvent.click(switcher, { delay: 200 });
-  },
+  }),
   args: {
     formModel: {
       switch: true,
@@ -355,9 +351,8 @@ export const ResetValueWhenIF = {
   },
 };
 export const NotResetValueWhenHidden = {
-  name: 'Case: not reset value when hidden',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Not Reset Value when Hidden',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const switcher = canvas.getByLabelText('Change it!');
@@ -375,7 +370,7 @@ export const NotResetValueWhenHidden = {
     });
 
     await userEvent.click(switcher, { delay: 200 });
-  },
+  }),
   args: {
     formModel: {
       switch: true,

@@ -2,36 +2,11 @@
 import { HttpResponse, http } from 'msw';
 import { expect, waitFor, within } from 'storybook/test';
 
-
-
 import { Schema } from '../../types/schema/Schema';
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Proxy Service Caller',
+  title: 'Components/Editable/Proxy Service Caller',
   ...formStoryWrapperTemplate,
 };
 
@@ -64,16 +39,12 @@ const httpbinImageHandlers = [
 ];
 
 export const ButtonMode: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
-
+  name: 'Button Mode',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const button = await canvas.findByRole('button', { name: 'Pobierz plik' });
     await expect(button).toBeInTheDocument();
-  },
+  }),
   args: {
     schema: {
       type: 'object',
@@ -115,16 +86,12 @@ export const ButtonMode: Story = {
 };
 
 export const LinkMode: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
-
+  name: 'Link Mode',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const link = await canvas.findByRole('button', { name: 'Pobierz' });
     await expect(link).toBeInTheDocument();
-  },
+  }),
   args: {
     schema: {
       type: 'object',
@@ -165,6 +132,7 @@ export const LinkMode: Story = {
 };
 
 export const Examples: Story = {
+  name: 'Examples',
   args: {
     schema: {
       type: 'object',
@@ -200,12 +168,14 @@ export const Examples: Story = {
 };
 
 export const DynamicFileName: Story = {
-  name: 'Case: Dynamic Filename (Variables and JSONata)',
+  name: 'Dynamic Filename with Variables and JSONata',
   parameters: {
     msw: {
       handlers: [
         http.get('/api/v1/services/documents-service/download', () => {
-          const blob = new Blob(['To jest zawartość mockowanego pliku PDF.'], { type: 'application/pdf' });
+          const blob = new Blob(['To jest zawartość mockowanego pliku PDF.'], {
+            type: 'application/pdf',
+          });
           return new HttpResponse(blob, {
             headers: {
               'Content-Type': 'application/pdf',
@@ -216,13 +186,12 @@ export const DynamicFileName: Story = {
       ],
     },
   },
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync(100);
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Note: Since runDownload is triggered on click, we mainly test if the component renders with labels
     await expect(canvas.getByText('Pobierz FV_2024_001.pdf')).toBeInTheDocument();
     await expect(canvas.getByText('Pobierz Zatwierdzona_FV_2024_001.pdf')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       data: {
@@ -265,14 +234,17 @@ export const DynamicFileName: Story = {
 };
 
 export const FileNamePriority: Story = {
-  name: 'Case: Filename Priority (Header vs Config)',
+  name: 'Filename Priority (Header Vs Config)',
   parameters: {
     msw: {
       handlers: [
         http.get('/api/v1/services/documents-service/priority-test', () => {
-          const blob = new Blob(['To jest zawartość pliku, który powinien mieć nazwę z nagłówka.'], {
-            type: 'application/pdf',
-          });
+          const blob = new Blob(
+            ['To jest zawartość pliku, który powinien mieć nazwę z nagłówka.'],
+            {
+              type: 'application/pdf',
+            },
+          );
           return new HttpResponse(blob, {
             headers: {
               'Content-Type': 'application/pdf',
@@ -305,7 +277,7 @@ export const FileNamePriority: Story = {
 };
 
 export const States: Story = {
-  name: 'Case: Loading and Error States',
+  name: 'Loading and Error States',
   args: {
     schema: {
       type: 'object',

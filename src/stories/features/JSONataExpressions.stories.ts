@@ -2,22 +2,16 @@
 import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/JSONata integration',
+  title: 'Features/Data Binding/JSONata Expressions',
   ...formStoryWrapperTemplate,
 };
 
 export const OnPropsSimpleField: Story = {
-  name: 'Example 1: It is possible to use nata function in props',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Example 1 - JSONata Function in Props',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     let hint = document.getElementsByClassName('v-messages');
     await expect(hint.length).toEqual(0);
@@ -26,7 +20,7 @@ export const OnPropsSimpleField: Story = {
     await userEvent.click(option2, { delay: 200 });
     hint = document.getElementsByClassName('v-messages');
     await expect(hint.length).toEqual(1);
-  },
+  }),
   args: {
     formModel: { waluta: { value: 'PLN', title: 'Polski złoty' } },
     schema: {
@@ -62,9 +56,8 @@ export const OnPropsSimpleField: Story = {
 };
 
 export const OnPropsIfInDuplicatedSection: Story = {
-  name: 'Example 2: It is possible to use nata function in props in duplicated section',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Example 2 - JSONata Function in Duplicated Section Props',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     let hint = document.getElementsByClassName('v-messages');
     await expect(hint.length).toEqual(0);
@@ -73,7 +66,7 @@ export const OnPropsIfInDuplicatedSection: Story = {
     await userEvent.click(option2, { delay: 200 });
     hint = document.getElementsByClassName('v-messages');
     await expect(hint.length).toEqual(1);
-  },
+  }),
   args: {
     formModel: { waluta: { value: 'PLN', title: 'Polski złoty' } },
     schema: {

@@ -1,10 +1,14 @@
 // @ts-nocheck
 import { expect, userEvent, within } from 'storybook/test';
 
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
-const createTextPanel = (title: string, fieldKey: string, label: string, openByDefault?: boolean) => ({
+const createTextPanel = (
+  title: string,
+  fieldKey: string,
+  label: string,
+  openByDefault?: boolean,
+) => ({
   title,
   ...(typeof openByDefault === 'boolean' ? { openByDefault } : {}),
   schema: {
@@ -50,19 +54,16 @@ async function expectPanelState(canvasElement: HTMLElement, title: string, isExp
   await expect(panelButton).toHaveAttribute('aria-expanded', String(isExpanded));
 }
 
-
-
-
-
 export default {
-  title: 'Elements/Editable/ExpansionPanel',
+  title: 'Components/Editable/ExpansionPanel',
   ...formStoryWrapperTemplate,
 };
 
 // TODO - add tests and add test for title dependencies
 
 export const Standard: Story = {
-  play: playWrapper(async ({ canvasElement }) => {
+  name: 'Standard',
+  play: playForm(async ({ canvasElement }) => {
     await expectPanelState(canvasElement, 'Panel A', false);
     await expectPanelState(canvasElement, 'Panel B', false);
   }),
@@ -70,7 +71,8 @@ export const Standard: Story = {
 };
 
 export const OpenByDefaultTrue: Story = {
-  play: playWrapper(async ({ canvasElement }) => {
+  name: 'Open by Default True',
+  play: playForm(async ({ canvasElement }) => {
     await expectPanelState(canvasElement, 'Panel domyslnie otwarty', true);
     await expectPanelState(canvasElement, 'Panel bez flagi', false);
   }),
@@ -83,7 +85,12 @@ export const OpenByDefaultTrue: Story = {
         panelA: {
           ...baseArgs.schema.properties.panelA,
           panels: [
-            createTextPanel('Panel domyslnie otwarty', 'alwaysOpen', 'Pole domyslnie otwarte', true),
+            createTextPanel(
+              'Panel domyslnie otwarty',
+              'alwaysOpen',
+              'Pole domyslnie otwarte',
+              true,
+            ),
             createTextPanel('Panel bez flagi', 'fallbackPanel', 'Pole fallback'),
           ],
         },
@@ -93,7 +100,8 @@ export const OpenByDefaultTrue: Story = {
 };
 
 export const OpenByDefaultFalse: Story = {
-  play: playWrapper(async ({ canvasElement }) => {
+  name: 'Open by Default False',
+  play: playForm(async ({ canvasElement }) => {
     await expectPanelState(canvasElement, 'Panel domyslnie zamkniety', false);
     await expectPanelState(canvasElement, 'Panel bez flagi', false);
   }),
@@ -106,7 +114,12 @@ export const OpenByDefaultFalse: Story = {
         panelA: {
           ...baseArgs.schema.properties.panelA,
           panels: [
-            createTextPanel('Panel domyslnie zamkniety', 'alwaysClosed', 'Pole domyslnie zamkniete', false),
+            createTextPanel(
+              'Panel domyslnie zamkniety',
+              'alwaysClosed',
+              'Pole domyslnie zamkniete',
+              false,
+            ),
             createTextPanel('Panel bez flagi', 'fallbackPanel', 'Pole fallback'),
           ],
         },
@@ -116,7 +129,8 @@ export const OpenByDefaultFalse: Story = {
 };
 
 export const OpenByDefaultMixed: Story = {
-  play: playWrapper(async ({ canvasElement }) => {
+  name: 'Open by Default Mixed',
+  play: playForm(async ({ canvasElement }) => {
     await expectPanelState(canvasElement, 'Panel 1 (openByDefault=true)', true);
     await expectPanelState(canvasElement, 'Panel 2 (openByDefault=false)', false);
     await expectPanelState(canvasElement, 'Panel 3 (fallback do localStorage)', false);
@@ -131,7 +145,12 @@ export const OpenByDefaultMixed: Story = {
           ...baseArgs.schema.properties.panelA,
           panels: [
             createTextPanel('Panel 1 (openByDefault=true)', 'mixedOpen', 'Pole otwarte', true),
-            createTextPanel('Panel 2 (openByDefault=false)', 'mixedClosed', 'Pole zamkniete', false),
+            createTextPanel(
+              'Panel 2 (openByDefault=false)',
+              'mixedClosed',
+              'Pole zamkniete',
+              false,
+            ),
             createTextPanel('Panel 3 (fallback do localStorage)', 'mixedFallback', 'Pole fallback'),
           ],
         },
@@ -140,14 +159,9 @@ export const OpenByDefaultMixed: Story = {
   },
 };
 
-
-
-
-
-
 export const TableOne: Story = {
-  name: "Readonly - expansion panel",
-  play: playWrapper(async ({ canvasElement }) => {
+  name: 'Read Only - Expansion Panel',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const panelButton = await canvas.findByRole('button', { name: 'Tytuł sekcji' });
 
@@ -163,49 +177,49 @@ export const TableOne: Story = {
   args: {
     formModel: {},
     schema: {
-      'type': 'object',
-      'properties': {
-        'expansionPanels518': {
-          'layout': {
-            'component': 'expansion-panels',
-            'props': { 'readonly': true }
+      type: 'object',
+      properties: {
+        expansionPanels518: {
+          layout: {
+            component: 'expansion-panels',
+            props: { readonly: true },
           },
-          'panels': [{
-            'title': 'Tytuł sekcji',
-            'titleIcon': 'mdi-home',
-            'titleIconSize': 20,
-            'schema': {
-              'properties': {
-                'textField937': {
-                  'label': 'Item-textField937',
-                  'layout': {
-                    'cols': { 'xs': 12, 'sm': 6, 'md': 6, 'lg': 4, 'xl': 4, 'xxl': 4 },
-                    'fillRow': true,
-                    'component': 'text-field'
-                  }
-                }
-              }
-            }
-          }]
-        }
-      }
-    }
-  }
+          panels: [
+            {
+              title: 'Tytuł sekcji',
+              titleIcon: 'mdi-home',
+              titleIconSize: 20,
+              schema: {
+                properties: {
+                  textField937: {
+                    label: 'Item-textField937',
+                    layout: {
+                      cols: { xs: 12, sm: 6, md: 6, lg: 4, xl: 4, xxl: 4 },
+                      fillRow: true,
+                      component: 'text-field',
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
+  },
 };
 
 export const HideCondition: Story = {
-  play: playWrapper(async ({ canvasElement }) => {
+  name: 'Hide Condition',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-  
-    
+
     // Toggle switch to hide panel
     const switchInput = await canvas.findByLabelText('Pokaż ukryty panel');
-    await userEvent.click(switchInput, {delay: 600});
-    
+    await userEvent.click(switchInput, { delay: 600 });
+
     // Panel B should disappear
     await expect(canvas.queryByRole('button', { name: 'B' })).toBeInTheDocument();
-  
-
   }),
   args: {
     formModel: { showPanel: false },
@@ -247,7 +261,7 @@ export const HideCondition: Story = {
                   test: { label: 'Test', layout: { component: 'text-field' } },
                 },
               },
-            }
+            },
           ],
         },
       },
@@ -256,19 +270,20 @@ export const HideCondition: Story = {
 };
 
 export const OpenCondition: Story = {
-  play: playWrapper(async ({ canvasElement }) => {
+  name: 'Open Condition',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    
+
     // Panel B should be closed initially
     await expectPanelState(canvasElement, 'B', false);
-    
+
     // Toggle switch to open panel
     const switchInput = await canvas.findByLabelText('Otwórz panel automatycznie');
-    await userEvent.click(switchInput, {delay: 600});
-    
+    await userEvent.click(switchInput, { delay: 600 });
+
     // Wait for animation/reactivity
-    await new Promise(r => setTimeout(r, 500));
-    
+    await new Promise((r) => setTimeout(r, 500));
+
     // Panel B should be expanded
     await expectPanelState(canvasElement, 'B', true);
   }),
@@ -305,7 +320,8 @@ export const OpenCondition: Story = {
                   test: { label: 'Test', layout: { component: 'text-field' } },
                 },
               },
-            },        {
+            },
+            {
               title: 'C',
               schema: {
                 properties: {
@@ -313,7 +329,6 @@ export const OpenCondition: Story = {
                 },
               },
             },
-
           ],
         },
       },

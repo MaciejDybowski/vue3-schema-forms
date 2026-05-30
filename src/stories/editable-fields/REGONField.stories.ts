@@ -2,24 +2,22 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/REGON Field',
+  title: 'Components/Editable/REGON Field',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  name: 'Standard REGON Field (9-digit)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Standard REGON Field (9 - Digit)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('REGON');
     // Valid 9-digit REGON: 123456785
     await userEvent.type(field, '123456785', { delay: 50 });
     await expect(context.args.formModel).toEqual({ regon: '123456785' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -45,15 +43,14 @@ export const Standard: Story = {
 };
 
 export const Standard14Digit: Story = {
-  name: 'Standard REGON Field (14-digit)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Standard REGON Field (14 - Digit)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('REGON');
     // Valid 14-digit REGON: 12345678512347
     await userEvent.type(field, '12345678512347', { delay: 50 });
     await expect(context.args.formModel).toEqual({ regon: '12345678512347' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -79,19 +76,20 @@ export const Standard14Digit: Story = {
 };
 
 export const ChecksumValidationError: Story = {
-  name: 'Checksum Validation: Error mode',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Checksum Error Mode',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('REGON');
     // Invalid checksum (last digit changed)
     await userEvent.type(field, '123456789', { delay: 50 });
     await userEvent.tab();
     await waitFor(() => {
-      const errorMessage = canvas.queryByText(/nieprawidłowa suma kontrolna|invalid regon checksum/i);
+      const errorMessage = canvas.queryByText(
+        /nieprawidłowa suma kontrolna|invalid regon checksum/i,
+      );
       expect(errorMessage).not.toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -118,19 +116,20 @@ export const ChecksumValidationError: Story = {
 };
 
 export const ChecksumValidationWarning: Story = {
-  name: 'Checksum Validation: Warning mode',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Checksum Warning Mode',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('REGON');
     // Invalid checksum (last digit changed)
     await userEvent.type(field, '123456789', { delay: 50 });
     await userEvent.tab();
     await waitFor(() => {
-      const warningMessage = canvas.queryByText(/nieprawidłowa suma kontrolna|invalid regon checksum/i);
+      const warningMessage = canvas.queryByText(
+        /nieprawidłowa suma kontrolna|invalid regon checksum/i,
+      );
       expect(warningMessage).not.toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -158,14 +157,13 @@ export const ChecksumValidationWarning: Story = {
 
 export const NoChecksumValidation: Story = {
   name: 'No Checksum Validation',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('REGON');
     // Any 9-digit number accepted without checksum validation
     await userEvent.type(field, '123456789', { delay: 50 });
     await expect(context.args.formModel).toEqual({ regon: '123456789' });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -190,9 +188,8 @@ export const NoChecksumValidation: Story = {
 };
 
 export const InvalidFormat: Story = {
-  name: 'Validation: Invalid Format',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Invalid Format Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('REGON');
     // 10 digits - invalid length
@@ -202,7 +199,7 @@ export const InvalidFormat: Story = {
       const errorMessage = canvas.queryByText(/musi składać się z dokładnie|must contain exactly/i);
       expect(errorMessage).not.toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -229,8 +226,7 @@ export const InvalidFormat: Story = {
 
 export const RequiredField: Story = {
   name: 'Required REGON Field',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('REGON');
     await userEvent.click(field);
@@ -239,7 +235,7 @@ export const RequiredField: Story = {
       const errorMessage = canvas.queryByText(/^Pole jest wymagane\.$|^Field is required\.$/i);
       expect(errorMessage).not.toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -266,19 +262,20 @@ export const RequiredField: Story = {
 };
 
 export const ValidRegon9WithCorrectChecksum: Story = {
-  name: 'Valid 9-digit REGON with correct checksum',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Valid 9 - Digit REGON with Correct Checksum',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('REGON');
     // Valid REGON: 123456785 (checksum = 5)
     await userEvent.type(field, '123456785', { delay: 50 });
     await userEvent.tab();
     await waitFor(() => {
-      const errorMessage = canvas.queryByText(/nieprawidłowa suma kontrolna|invalid regon checksum/i);
+      const errorMessage = canvas.queryByText(
+        /nieprawidłowa suma kontrolna|invalid regon checksum/i,
+      );
       expect(errorMessage).toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -303,4 +300,3 @@ export const ValidRegon9WithCorrectChecksum: Story = {
     } as Schema,
   },
 };
-

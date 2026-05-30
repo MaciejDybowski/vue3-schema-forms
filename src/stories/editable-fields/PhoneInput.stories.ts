@@ -3,35 +3,21 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
 import { SchemaTextField } from '../../types/schema/elements';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Phone ✅',
+  title: 'Components/Editable/Phone',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Standard',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const phoneLabels = await canvas.findAllByText('Phone Input');
     await expect(phoneLabels).toHaveLength(2);
     await expect(phoneLabels[1]).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -52,14 +38,10 @@ export const Standard: Story = {
  * You can set the default value of field from schema
  */
 export const DefaultValue: Story = {
-  name: 'Default value',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Default Value',
+  play: playForm(async ({ context, mount }) => {
     await expect(context.args.formModel.phoneInput).toBe('+48510333202');
-  },
+  }),
   args: {
     formModel: { phoneInput: '+48510333202' },
     schema: {
@@ -79,12 +61,7 @@ export const DefaultValue: Story = {
 
 export const Required: Story = {
   name: 'Required',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
-
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
 
     const input = canvas.getByRole('textbox', { name: 'Phone Input' });
@@ -95,7 +72,7 @@ export const Required: Story = {
     await userEvent.click(submit);
 
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
 
   args: {
     formModel: {},
@@ -118,13 +95,8 @@ export const Required: Story = {
 };
 
 export const WithPhoneInputPropsProps: Story = {
-  name: 'Case: passing lib props',
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
-
+  name: 'Passing Lib Props',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
 
     const input = canvas.getByRole('combobox', { name: 'Country' });
@@ -142,7 +114,7 @@ export const WithPhoneInputPropsProps: Story = {
       await expect(countryTitle).toEqual('Polska (Poland)');
       await userEvent.click(countryItems[1], { pointerEventsCheck: 0, delay: 100 });
     }
-  },
+  }),
   args: {
     schema: {
       type: 'object',

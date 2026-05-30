@@ -2,20 +2,16 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/ColorPicker',
+  title: 'Components/Editable/ColorPicker',
   ...formStoryWrapperTemplate,
 };
 
-
-
 export const Standard: Story = {
-  play: async (context) => {
-
-  },
+  name: 'Standard',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -33,9 +29,8 @@ export const Standard: Story = {
 };
 
 export const Required: Story = {
-  play: async (context) => {
-
-  },
+  name: 'Required',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -54,9 +49,8 @@ export const Required: Story = {
 };
 
 export const WithModel: Story = {
-  play: async (context) => {
-
-  },
+  name: 'With Model',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {
       colorPrimary: '#00FF00',
@@ -77,9 +71,8 @@ export const WithModel: Story = {
 };
 
 export const Readonly: Story = {
-  play: async (context) => {
-
-  },
+  name: 'Read Only',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {
       colorPrimary: '#FF5733',
@@ -92,12 +85,11 @@ export const Readonly: Story = {
           layout: {
             component: 'color-picker',
             props: {
-              readonly: true
-            }
+              readonly: true,
+            },
           },
         },
       },
     } as Schema,
   },
 };
-

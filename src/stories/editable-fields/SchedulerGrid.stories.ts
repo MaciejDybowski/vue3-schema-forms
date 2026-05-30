@@ -2,21 +2,22 @@
 import { expect, waitFor, within } from 'storybook/test';
 
 import { SCHEDULER_GRID_MOCKS } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/SchedulerGrid',
+  title: 'Components/Editable/SchedulerGrid',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: async (context) => {
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await waitFor(() => {
       expect(canvas.getByText('December 2025')).toBeTruthy();
       expect(canvas.getByText('Unavailable')).toBeTruthy();
     });
-  },
+  }),
   args: {
     formModel: {
       month: 'December',
@@ -79,14 +80,15 @@ export const Standard: Story = {
 };
 
 export const WithModel: Story = {
-  play: async (context) => {
+  name: 'With Model',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await waitFor(() => {
       // powinny być widoczne nazwiska użytkowników z args (Liam i Olivia)
       expect(canvas.queryByText('Johnson Liam')).toBeTruthy();
       expect(canvas.queryByText('Smith Olivia')).toBeTruthy();
     });
-  },
+  }),
   args: {
     formModel: {
       month: 'December',
@@ -232,7 +234,8 @@ export const WithModel: Story = {
 };
 
 export const Readonly: Story = {
-  play: async (context) => {
+  name: 'Read Only',
+  play: playForm(async (context) => {
     const canvasEl = context.canvasElement;
     await waitFor(() => {
       // znajdź wszystkie inputy w canvas i sprawdź, że są readonly lub disabled
@@ -249,7 +252,7 @@ export const Readonly: Story = {
         });
       }
     });
-  },
+  }),
   args: {
     formModel: {
       month: 'December',
@@ -402,13 +405,14 @@ export const Readonly: Story = {
 };
 
 export const Customization: Story = {
-  play: async (context) => {
+  name: 'Customization',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await waitFor(() => {
       // w wariancie customization kolumna usera powinna być ukryta -> brak tekstu "Liam Johnson"
       expect(canvas.queryByText('Liam Johnson')).toBeNull();
     });
-  },
+  }),
   args: {
     formModel: {
       month: 'December',
@@ -691,7 +695,7 @@ const createModifiedDataModel = () => [
 
 export const WithModifiedData: Story = {
   name: 'With Modified Data',
-  play: async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const canvasEl = context.canvasElement;
     await waitFor(() => {
@@ -714,7 +718,7 @@ export const WithModifiedData: Story = {
       expect(changeIndicators.length).toBeGreaterThan(0);
       expect(mutedNoteIcons.length).toBeGreaterThan(0);
     });
-  },
+  }),
   args: {
     formModel: {
       month: 'December',
@@ -737,8 +741,8 @@ export const WithModifiedData: Story = {
 };
 
 export const WithModifiedDataReadonly: Story = {
-  name: 'With Modified Data - Readonly',
-  play: async (context) => {
+  name: 'With Modified Data - Read Only',
+  play: playForm(async (context) => {
     const canvasEl = context.canvasElement;
     await waitFor(() => {
       const dayHeaders = canvasEl.querySelectorAll('.day-header-cell');
@@ -751,7 +755,7 @@ export const WithModifiedDataReadonly: Story = {
       expect(clickableCells.length).toBe(0);
       expect(changeIndicators.length).toBeGreaterThan(0);
     });
-  },
+  }),
   args: {
     formModel: {
       month: 'December',
@@ -904,7 +908,7 @@ const rangeScheduleDay9To12 = buildRangeSchedule(9, 12, 'UNAVAILABLE');
 
 export const WithSelectedRange: Story = {
   name: 'With Selected Range',
-  play: async (context) => {
+  play: playForm(async (context) => {
     const canvasEl = context.canvasElement;
 
     await waitFor(() => {
@@ -916,7 +920,7 @@ export const WithSelectedRange: Story = {
       expect(dayHeaders[5].textContent?.trim()).toBe('10');
       expect(compactHeaders.length).toBeGreaterThan(0);
     });
-  },
+  }),
   args: {
     formModel: {
       dateFrom: '2026-05-05',
@@ -957,7 +961,7 @@ export const WithSelectedRange: Story = {
 
 export const WithGroupedDays: Story = {
   name: 'With Grouped Days',
-  play: async (context) => {
+  play: playForm(async (context) => {
     const canvasEl = context.canvasElement;
 
     await waitFor(() => {
@@ -972,7 +976,7 @@ export const WithGroupedDays: Story = {
       expect(groupHeaders[0].textContent?.includes('Styczen')).toBeTruthy();
       expect(groupHeaders[1].textContent?.includes('Luty')).toBeTruthy();
     });
-  },
+  }),
   args: {
     formModel: {
       schedulerGrid: [
@@ -1011,7 +1015,7 @@ export const WithGroupedDays: Story = {
 
 export const WithGroupedDaysHidden: Story = {
   name: 'With Grouped Days - Hidden Groups',
-  play: async (context) => {
+  play: playForm(async (context) => {
     const canvasEl = context.canvasElement;
 
     await waitFor(() => {
@@ -1021,7 +1025,7 @@ export const WithGroupedDaysHidden: Story = {
       expect(dayHeaders.length).toBe(8);
       expect(groupHeaders.length).toBe(0);
     });
-  },
+  }),
   args: {
     formModel: {
       schedulerGrid: [
@@ -1061,7 +1065,7 @@ export const WithGroupedDaysHidden: Story = {
 
 export const CustomizedWithGroupsAndModifiedData: Story = {
   name: 'Customization - Groups + Modified Data',
-  play: async (context) => {
+  play: playForm(async (context) => {
     const canvasEl = context.canvasElement;
 
     await waitFor(() => {
@@ -1077,7 +1081,7 @@ export const CustomizedWithGroupsAndModifiedData: Story = {
       expect(changedCells.length).toBeGreaterThan(0);
       expect(fadedCells.length).toBeGreaterThan(0);
     });
-  },
+  }),
   args: {
     formModel: {
       schedulerGrid: [
@@ -1118,7 +1122,7 @@ export const CustomizedWithGroupsAndModifiedData: Story = {
 
 export const EmptyFirstUserWithMixedRanges: Story = {
   name: 'Empty First User + Mixed Ranges',
-  play: async (context) => {
+  play: playForm(async (context) => {
     const canvasEl = context.canvasElement;
 
     await waitFor(() => {
@@ -1138,7 +1142,7 @@ export const EmptyFirstUserWithMixedRanges: Story = {
       expect((subsetRowCells[3] as HTMLElement).style.backgroundColor).not.toBe('');
       expect((subsetRowCells[10] as HTMLElement).style.backgroundColor).toBe('');
     });
-  },
+  }),
   args: {
     formModel: {
       month: 'December',
@@ -1187,7 +1191,7 @@ export const EmptyFirstUserWithMixedRanges: Story = {
 
 export const MixedRangesSortedHeaders: Story = {
   name: 'Mixed Ranges - Sorted Headers',
-  play: async (context) => {
+  play: playForm(async (context) => {
     const canvasEl = context.canvasElement;
 
     await waitFor(() => {
@@ -1214,7 +1218,7 @@ export const MixedRangesSortedHeaders: Story = {
       expect((thirdRangeRowCells[6] as HTMLElement).style.backgroundColor).not.toBe('');
       expect((thirdRangeRowCells[9] as HTMLElement).style.backgroundColor).not.toBe('');
     });
-  },
+  }),
   args: {
     formModel: {
       month: 'December',
@@ -1262,7 +1266,8 @@ export const MixedRangesSortedHeaders: Story = {
 };
 
 export const SourceAPI: Story = {
-  play: async (context) => {
+  name: 'Source API',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await waitFor(
       () => {
@@ -1273,7 +1278,7 @@ export const SourceAPI: Story = {
       },
       { timeout: 3000 },
     );
-  },
+  }),
   args: {
     formModel: {
       month: 'December',

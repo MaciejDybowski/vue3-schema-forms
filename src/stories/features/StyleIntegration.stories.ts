@@ -1,21 +1,19 @@
 // @ts-nocheck
 import { expect } from 'storybook/test';
 
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Style integration (CSS)',
+  title: 'Features/Styling/CSS Integration',
   ...formStoryWrapperTemplate,
 };
 
 export const Story1: Story = {
-  name: 'Example 1: passing vuetify CSS classes into element',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Example 1 - Passing Vuetify CSS Classes into Element',
+  play: playForm(async (context) => {
     const field = document.getElementsByClassName('text-h4');
     await expect(field[0]).toBeInTheDocument();
-  },
+  }),
   args: {
     schema: {
       type: 'object',

@@ -2,20 +2,10 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Bookmarks ✅',
+  title: 'Components/Editable/Bookmarks',
   ...formStoryWrapperTemplate,
 };
 
@@ -53,16 +43,13 @@ const createSchema = (options = {}) =>
   }) as Schema;
 
 export const Standard: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Standard',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     baseItems.forEach((item) => {
       expect(canvas.getByText(item.title)).toBeInTheDocument();
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: createSchema(),
@@ -70,11 +57,8 @@ export const Standard: Story = {
 };
 
 export const PrependIcons: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Prepend Icons',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const expectedIcons = [
       'mdi-cog',
@@ -97,7 +81,7 @@ export const PrependIcons: Story = {
       expect(iconElement).toBeInTheDocument();
       expect(iconElement).toHaveClass(icon);
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: createSchema({
@@ -123,15 +107,9 @@ export const PrependIcons: Story = {
   },
 };
 
-
-
 export const BgColorAndColor: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
-
+  name: 'Bg Color and Color',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
 
     // 1. tło v-tabs – jak masz już zrobione
@@ -142,7 +120,7 @@ export const BgColorAndColor: Story = {
     const [firstTab] = canvas.getAllByRole('tab');
     expect(firstTab).toBeInTheDocument();
     expect(firstTab).toHaveStyle({ color: 'rgb(238, 170, 221)' });
-  },
+  }),
   args: {
     formModel: {},
     schema: createSchema({
@@ -154,20 +132,13 @@ export const BgColorAndColor: Story = {
   },
 };
 
-
-
-
-
 export const Vertical: Story = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Vertical',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const bookmark = canvas.getByTestId('bookmarks');
     expect(bookmark).toHaveClass('v-tabs--vertical');
-  },
+  }),
   args: {
     formModel: {},
     schema: createSchema({
@@ -183,18 +154,15 @@ export const Vertical: Story = {
 };
 
 export const ValidationInHiddenParts = {
-  play: async ({ context, mount }) => {
-    await mount();
-    await waitFor(() => {
-      expect(context.args.signals.formIsReady).toBe(true);
-    });
+  name: 'Validation in Hidden Parts',
+  play: playForm(async ({ context, mount }) => {
     const canvas = within(context.canvasElement);
     const submitButton = canvas.getByText('Validate');
     await userEvent.click(submitButton, { delay: 100 });
     await expect(
       canvas.getByText('The number provided is incorrect. (Ex: 421 321 621)'),
     ).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {

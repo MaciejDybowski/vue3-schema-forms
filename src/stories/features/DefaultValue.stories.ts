@@ -2,18 +2,16 @@
 import { expect, waitFor } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { waitForMountedAsync } from '../editable-fields/utils';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Default value',
+  title: 'Features/Data Binding/Default Value',
   ...formStoryWrapperTemplate,
 };
 
 export const JSONataDefaultValue: Story = {
-  name: 'Case: JSONata default value',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'JSONata Default Value',
+  play: playForm(async (context) => {
     await waitFor(() => {
       expect(context.args.formModel).toEqual({
         firstName: 'Jan',
@@ -21,7 +19,7 @@ export const JSONataDefaultValue: Story = {
         fullName: 'Jan Kowalski',
       });
     });
-  },
+  }),
   args: {
     formModel: {
       firstName: 'Jan',
@@ -49,9 +47,8 @@ export const JSONataDefaultValue: Story = {
 };
 
 export const JSONataDefaultValueInDuplicatedSection: Story = {
-  name: 'Case: JSONata default value in duplicated section',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'JSONata Default Value in Duplicated Section',
+  play: playForm(async (context) => {
     await waitFor(() => {
       expect(context.args.formModel).toEqual({
         people: [
@@ -60,7 +57,7 @@ export const JSONataDefaultValueInDuplicatedSection: Story = {
         ],
       });
     });
-  },
+  }),
   args: {
     formModel: {
       people: [
@@ -99,13 +96,12 @@ export const JSONataDefaultValueInDuplicatedSection: Story = {
 };
 
 export const PlainDefaultValueStillWorks: Story = {
-  name: 'Case: plain default value still works',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Plain Default Value Still Works',
+  play: playForm(async (context) => {
     expect(context.args.formModel).toEqual({
       description: 'Plain text',
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

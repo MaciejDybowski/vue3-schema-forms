@@ -4,16 +4,16 @@ import { expect, userEvent, within } from 'storybook/test';
 import dayjs from '../../components/controls/date/dayjs';
 import { Schema } from '../../types/schema/Schema';
 import { SchemaDateField } from '../../types/schema/elements';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper, waitForMountedAsync } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Date',
+  title: 'Components/Editable/Date',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: playWrapper(async (context) => {
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Date');
     await userEvent.type(field, '01/29/2024');
@@ -36,7 +36,8 @@ export const Standard: Story = {
 };
 
 export const DefaultValue: Story = {
-  play: playWrapper(async (context) => {
+  name: 'Default Value',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({ dateWithDefault: '2024-01-29' });
   }),
   args: {
@@ -57,8 +58,8 @@ export const DefaultValue: Story = {
 };
 
 export const ReadOnly: Story = {
-  play: playWrapper(async (context) => {
-    await waitForMountedAsync();
+  name: 'Read Only',
+  play: playForm(async (context) => {
     const btnClasses = document.getElementsByClassName('v-btn--icon v-btn--readonly');
     await expect(btnClasses.length).toEqual(1);
   }),
@@ -85,8 +86,8 @@ export const ReadOnly: Story = {
 };
 
 export const PickFromMenu: Story = {
-  name: 'Case: pick date from menu',
-  play: playWrapper(async (context) => {
+  name: 'Pick Date from Menu',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const icon = document.getElementsByClassName('mdi-calendar');
     await userEvent.click(icon[0]);
@@ -112,8 +113,8 @@ export const PickFromMenu: Story = {
 };
 
 export const CustomFormatInModel: Story = {
-  name: 'Case: custom format in schema definition',
-  play: playWrapper(async (context) => {
+  name: 'Custom Format in Schema Definition',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Date');
     await userEvent.type(field, '01/30/2024');
@@ -140,8 +141,8 @@ export const CustomFormatInModel: Story = {
  * Example shows how to define a "required" field on a form
  */
 export const SimpleValidation: Story = {
-  name: 'Validation: required',
-  play: playWrapper(async (context) => {
+  name: 'Required Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     await userEvent.click(Submit);
@@ -169,9 +170,9 @@ export const SimpleValidation: Story = {
 };
 
 export const Validation_1: Story = {
-  name: 'Validation: past date is not allowed',
+  name: 'Past Date Is Not Allowed Validation',
 
-  play: playWrapper(async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     const field = canvas.getByLabelText('Date');
@@ -198,8 +199,8 @@ export const Validation_1: Story = {
 };
 
 export const Validation_2: Story = {
-  name: 'Validation: future date is not allowed',
-  play: playWrapper(async (context) => {
+  name: 'Future Date Is Not Allowed Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const Submit = canvas.getByText('Validate');
     const field = canvas.getByLabelText('Date');

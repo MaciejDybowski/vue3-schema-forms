@@ -2,28 +2,22 @@
 import { expect, fireEvent, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/NumberField',
+  title: 'Components/Editable/NumberField',
   ...formStoryWrapperTemplate,
 };
 
 export const TypeInteger: Story = {
   name: 'Integer',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Number field');
     await userEvent.type(field, '{backspace}');
     await userEvent.type(field, '1', { delay: 300 });
     await expect(context.args.formModel).toEqual({ numberField: 1 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -43,14 +37,13 @@ export const TypeInteger: Story = {
 
 export const TypeFloat: Story = {
   name: 'Float',
-  play: async (context) => {
-    await waitForMountedAsync();
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Number field');
     await userEvent.type(field, '{backspace}');
     await userEvent.type(field, '1.25', { delay: 300 });
     await expect(context.args.formModel).toEqual({ numberField: 1.25 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -76,11 +69,10 @@ export const TypeFloat: Story = {
 };
 
 export const DefaultValue: Story = {
-  name: 'Default value',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Default Value',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({ numberInt: 1, numberFloat: 1.25 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -108,8 +100,8 @@ export const DefaultValue: Story = {
 };
 
 export const Required: Story = {
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Required',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const exampleElement = canvas.getByLabelText('Number field');
     const Submit = canvas.getByText('Validate');
@@ -121,7 +113,7 @@ export const Required: Story = {
 
     await userEvent.click(Submit);
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -141,14 +133,13 @@ export const Required: Story = {
 };
 
 export const CenterTextInField: Story = {
-  name: 'Case: change alignment of field value',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Change Alignment of Field Value',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Number field');
     await userEvent.type(field, '1.25', { delay: 300 });
     await expect(context.args.formModel).toEqual({ numberField: 1.25 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -168,15 +159,14 @@ export const CenterTextInField: Story = {
   },
 };
 export const FloatStandard4DecimalPlaces: Story = {
-  name: 'Case: change precision',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Change Precision',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Number (float)');
     await userEvent.type(field, '1.34632', { delay: 300 });
     await fireEvent.focusOut(field);
     await expect(context.args.formModel).toEqual({ numberFloat4: 1.3463 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -196,9 +186,8 @@ export const FloatStandard4DecimalPlaces: Story = {
 };
 
 export const FloatPrecisionOnBlur: Story = {
-  name: 'Case: round precision on blur',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Round Precision on Blur',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Number (float)');
 
@@ -211,7 +200,7 @@ export const FloatPrecisionOnBlur: Story = {
 
     await fireEvent.focusIn(field);
     await expect(field).toHaveValue('23.5556');
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -232,15 +221,14 @@ export const FloatPrecisionOnBlur: Story = {
 };
 
 export const DependencyDecimalPlaces: Story = {
-  name: 'Case: change precision with dependency',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Change Precision with Dependency',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Number (float)');
     await userEvent.type(field, '1.34632', { delay: 300 });
     await fireEvent.focusOut(field);
     await expect(context.args.formModel).toEqual({ decimalPlaces: 4, numberFloat4: 1.3463 });
-  },
+  }),
   args: {
     formModel: {
       decimalPlaces: 4,
@@ -270,14 +258,13 @@ export const DependencyDecimalPlaces: Story = {
 };
 
 export const DependenciesInDefaultValue: Story = {
-  name: 'Case: default value from model dependency',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Default Value from Model Dependency',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = await canvas.getByLabelText('Percent');
     await expect(context.args.formModel).toEqual({ percent: 32, number: 32 });
     fireEvent.focusOut(field);
-  },
+  }),
   args: {
     formModel: {
       number: 32,
@@ -300,9 +287,8 @@ export const DependenciesInDefaultValue: Story = {
 };
 
 export const PrecisionListener: Story = {
-  name: 'Case: dynamic precision',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Dynamic Precision',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const precision = await canvas.getByLabelText('Dynamic precision');
 
@@ -322,7 +308,7 @@ export const PrecisionListener: Story = {
       await userEvent.type(precision, input, { delay: 100 });
       await expect(context.args.formModel).toEqual(expected);
     }
-  },
+  }),
   args: {
     formModel: {
       numberField: 1.235567,

@@ -2,18 +2,18 @@
 import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/TextArea',
+  title: 'Components/Editable/TextArea',
   ...formStoryWrapperTemplate,
 };
 /**
  * The default settings for the text area are such that the ```auto-grow = enabled``` , and the field starts with a setting of ```rows = 3```.
  */
 export const Standard: Story = {
-  play: playWrapper(async (context) => {
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Text area');
     await userEvent.type(field, 'This is standard text area...', { delay: 100 });
@@ -37,8 +37,8 @@ export const Standard: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefault: Story = {
-  name: 'Default value',
-  play: playWrapper(async (context) => {
+  name: 'Default Value',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({ textAreaWithDefault: 'Lorem ipsum...' });
   }),
   args: {
@@ -63,7 +63,7 @@ export const WithDefault: Story = {
  */
 export const SimpleValidation: Story = {
   name: 'Required',
-  play: playWrapper(async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const exampleElement = canvas.getByLabelText('Text area');
     await userEvent.type(exampleElement, 'Required field', {
@@ -97,7 +97,7 @@ export const SimpleValidation: Story = {
  */
 export const RequiredAncCounter: Story = {
   name: 'Counter',
-  play: playWrapper(async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const exampleElement = canvas.getByLabelText('Text area');
     await userEvent.type(exampleElement, 'Required field with counter', { delay: 100 });

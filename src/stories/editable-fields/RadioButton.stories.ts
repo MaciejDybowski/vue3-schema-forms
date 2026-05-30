@@ -1,59 +1,26 @@
 // @ts-nocheck
 import { expect, userEvent, within } from 'storybook/test';
 
-
-
 import { EngineSourceField } from '../../types/engine/controls';
 import { Schema } from '../../types/schema/Schema';
 import { Source } from '../../types/schema/elements';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper, waitForMountedAsync } from './utils';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/RadioButton',
+  title: 'Components/Editable/RadioButton',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({ radioButton: 1 });
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ radioButton: 2 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -77,16 +44,15 @@ export const Standard: Story = {
   },
 };
 
-
 export const HorizontalLayout: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Horizontal Layout',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({ radioButton: 1 });
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ radioButton: 2 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -97,8 +63,8 @@ export const HorizontalLayout: Story = {
           layout: {
             component: 'radio-button',
             props: {
-              inline: true
-            }
+              inline: true,
+            },
           },
           source: {
             items: [
@@ -116,8 +82,8 @@ export const HorizontalLayout: Story = {
  * You can set the default value of field from schema
  */
 export const DefaultValue: Story = {
-  name: 'Default value',
-  play: playWrapper(async (context) => {
+  name: 'Default Value',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({ radioButtonWithDefault: 3 });
   }),
   args: {
@@ -149,7 +115,7 @@ export const DefaultValue: Story = {
  */
 export const Required: Story = {
   name: 'Required',
-  play: playWrapper(async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const exampleElement = canvas.getByLabelText('Option 3');
     await userEvent.click(exampleElement, 'Required field', {
@@ -184,11 +150,10 @@ export const Required: Story = {
 };
 
 export const CustomMapping: Story = {
-  name: 'Mapper: title/value',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Title and Value Mapping',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({ radioButtonCustomMapping: 1 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -215,13 +180,12 @@ export const CustomMapping: Story = {
 };
 
 export const CustomMappingReturnObject: Story = {
-  name: 'Mapper: title/value/returnObject',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Title and Value Mapping with Return Object',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({
       radioButtonCustomMappingObject: { id: 1, text: 'Option 1' },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -249,16 +213,15 @@ export const CustomMappingReturnObject: Story = {
 };
 
 export const CustomMappingReturnObjectDefault: Story = {
-  name: 'Mapper: title/value/returnObject/default',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Title and Value Mapping with Default Return Object',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({
       radioButtonCustomMappingObjectDefault: {
         id: 2,
         text: 'Option 2',
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -287,15 +250,14 @@ export const CustomMappingReturnObjectDefault: Story = {
 };
 
 export const NoInitValue: Story = {
-  name: 'Case: No value on init',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'No Initial Value',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel).toEqual({});
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel).toEqual({ radioButton: 2 });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -321,8 +283,8 @@ export const NoInitValue: Story = {
 };
 
 export const GetOptionsFromAPI: Story = {
-  name: 'Case: Items from API',
-  play: async (context) => {
+  name: 'Items from API',
+  play: playForm(async (context) => {
     await new Promise((resolve) => setTimeout(resolve, 1000)); // <- wait for api call
     await expect(context.args.formModel).toEqual({
       radioButtonOptionsFromAPI: {
@@ -332,7 +294,7 @@ export const GetOptionsFromAPI: Story = {
         labels: 'the-best',
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -364,15 +326,14 @@ export const GetOptionsFromAPI: Story = {
 };
 
 export const SourceFromModelPath: Story = {
-  name: 'Case: Source from model path',
-  play: async (context) => {
-    await waitForMountedAsync(100);
+  name: 'Source from Model Path',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(context.args.formModel['radioButtonSourceFromPath']).toEqual(1);
     const option2 = canvas.getByLabelText('Option 2');
     await userEvent.click(option2, { delay: 200 });
     await expect(context.args.formModel['radioButtonSourceFromPath']).toEqual(2);
-  },
+  }),
   args: {
     formModel: {
       dictionaries: {
@@ -399,4 +360,3 @@ export const SourceFromModelPath: Story = {
     } as Schema,
   },
 };
-

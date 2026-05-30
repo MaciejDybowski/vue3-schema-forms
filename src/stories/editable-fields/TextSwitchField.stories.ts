@@ -2,21 +2,16 @@
 import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper } from './utils';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Text-Switch-Field',
+  title: 'Components/Editable/Text-Switch-Field',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard = {
   name: 'Standard',
-  play: playWrapper(async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Add comment here');
     expect(field).toBeInTheDocument();
@@ -46,8 +41,8 @@ export const Standard = {
 };
 
 export const WithModel = {
-  name: 'Case: with model',
-  play: playWrapper(async (context) => {
+  name: 'With Model',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const input = canvas.getByLabelText('Item');
     await expect(input).toHaveValue('Standard comment');
@@ -72,10 +67,9 @@ export const WithModel = {
   },
 };
 
-
 export const BackToTextModel = {
-  name: 'Case: back to text mode by delete value',
-  play: playWrapper(async (context) => {
+  name: 'Back to Text Mode After Clearing Value',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const input = canvas.getByLabelText('Item');
     await new Promise((r) => setTimeout(r, 300));

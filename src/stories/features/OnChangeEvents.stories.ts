@@ -2,159 +2,18 @@
 import { Story } from 'storybook/dist/csf';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
-
-
 import { DictionarySource } from '../../types/shared/Source';
-import { waitForMountedAsync } from '../editable-fields/utils';
 import { CURRENCIES_REQUEST } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/OnChange events',
+  title: 'Features/Events/OnChange',
   ...formStoryWrapperTemplate,
 };
 
 export const ConditionalOnChangeCopyValue: Story = {
-  name: 'Case: copy value only when condition is met',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Copy Value Only when Condition Is Met',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     // Select the dropdown
@@ -191,7 +50,7 @@ export const ConditionalOnChangeCopyValue: Story = {
 
     // Verify that 'smart' field WAS updated because condition (value=1) is met
     await expect(context.args.formModel.smart).toBe('Option 1');
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -239,8 +98,8 @@ export const ConditionalOnChangeCopyValue: Story = {
 };
 
 export const CallActionWithParametersAndRequestBody: Story = {
-  name: 'Case: form action will be send after value change',
-  play: async (context) => {},
+  name: 'Form Action Will Be Send After Value Change',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -286,9 +145,8 @@ export const CallActionWithParametersAndRequestBody: Story = {
 };
 
 export const ResetValueOnChange: Story = {
-  name: 'Case: reset value of other property in model',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Reset Value of Other Property in Model',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     let textField = canvas.getByLabelText('Field A');
@@ -297,7 +155,7 @@ export const ResetValueOnChange: Story = {
     });
     await new Promise((r) => setTimeout(r, 1000));
     await expect(context.args.formModel).toEqual({ fieldA: 'Changed', fieldB: null });
-  },
+  }),
   args: {
     formModel: {
       fieldB: 'Maciej',
@@ -335,9 +193,8 @@ export const ResetValueOnChange: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSection: Story = {
-  name: 'Case: reset value of other property (duplicate section) in model',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Reset Value of Other Property (Duplicate Section) in Model',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     let textField = canvas.getByLabelText('Field A');
@@ -348,7 +205,7 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
     await expect(context.args.formModel).toEqual({
       section: [{ fieldA: 'Changed', fieldB: null }],
     });
-  },
+  }),
   args: {
     formModel: {
       section: [
@@ -399,9 +256,8 @@ export const ResetValueOnChangeInDuplicatedSection: Story = {
 };
 
 export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
-  name: 'Case: reset value of dictionary in duplicated section',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Reset Value of Dictionary in Duplicated Section',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -428,7 +284,7 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
         },
       ],
     });
-  },
+  }),
   args: {
     formModel: {
       section: [
@@ -455,16 +311,15 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
                     title: 'label',
                     value: 'id',
                   } as DictionarySource,
-                  onChange:
-                    {
-                      mode: 'change-model',
-                      variables: [
-                        {
-                          path: 'fieldB',
-                          value: null,
-                        },
-                      ],
-                    },
+                  onChange: {
+                    mode: 'change-model',
+                    variables: [
+                      {
+                        path: 'fieldB',
+                        value: null,
+                      },
+                    ],
+                  },
                 } as SchemaSourceField,
                 fieldB: {
                   label: 'Field B',
@@ -487,14 +342,9 @@ export const ResetValueOnChangeInDuplicatedSectionWithDictionary: Story = {
   },
 };
 
-
-
 export const ChangeModelAndAction: Story = {
-  name: 'Change-model then action',
-  play: async (context) => {
-
-
-    await waitForMountedAsync();
+  name: 'Change - Model Then Action',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const source = canvas.getByLabelText('Source');
@@ -505,7 +355,7 @@ export const ChangeModelAndAction: Story = {
 
     // after onChange handlers run, target should be updated by change-model handler
     await expect(context.args.formModel.target).toBe('Hello');
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -543,9 +393,8 @@ export const ChangeModelAndAction: Story = {
 };
 
 export const EmitEventAndConditionalReset: Story = {
-  name: 'Emit event and conditional reset',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Emit Event and Conditional Reset',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const source = canvas.getByLabelText('Trigger');
@@ -553,7 +402,7 @@ export const EmitEventAndConditionalReset: Story = {
     await new Promise((r) => setTimeout(r, 700));
 
     await expect(context.args.formModel.target).toBeNull();
-  },
+  }),
   args: {
     formModel: { target: 'initial' },
     schema: {
@@ -587,4 +436,3 @@ export const EmitEventAndConditionalReset: Story = {
     },
   },
 };
-

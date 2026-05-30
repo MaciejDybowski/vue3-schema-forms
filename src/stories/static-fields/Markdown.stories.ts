@@ -1,13 +1,14 @@
 // @ts-nocheck
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Static/Markdown',
+  title: 'Components/Static/Markdown',
   ...formStoryWrapperTemplate,
 };
 
 export const MarkdownTable: Story = {
-  play: async (context) => {},
+  name: 'Markdown Table',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {
       dataId: '0195d1b7-8c56-75cf-836f-0da2c18ecd4c',

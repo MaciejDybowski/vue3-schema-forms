@@ -1,16 +1,11 @@
 // @ts-nocheck
-import { expect, userEvent, within } from 'storybook/test';
 import { HttpResponse, http } from 'msw';
+import { expect, userEvent, within } from 'storybook/test';
 
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper } from '../editable-fields/utils';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Internationalization (i18n)',
+  title: 'Features/Internationalization/Translations',
   ...formStoryWrapperTemplate,
 };
 /**
@@ -21,8 +16,8 @@ export default {
  * ##### !!! The schema is translated at the very beginning of the rendering process; changing the language "live" can be costly and requires re-rendering the entire form. !!!
  */
 export const i18nObjectInSchema: Story = {
-  name: 'Example 1: i18n object in schema',
-  play: playWrapper(async (context) => {
+  name: 'Example 1 - i18n Object in Schema',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('First name');
     const field1 = canvas.getByLabelText('Last name');
@@ -109,8 +104,8 @@ const JSON_TRANSLATIONS_BLOCK = [
 ];
 
 export const i18nObjectAsRef: Story = {
-  name: 'Example 2: i18n object as $ref in options',
-  play: async (context) => {
+  name: 'Example 2 - i18n Object as $ref in Options',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await new Promise((r) => setTimeout(r, 200));
     const field = canvas.getByLabelText('First name');
@@ -122,7 +117,7 @@ export const i18nObjectAsRef: Story = {
     await expect(field1).toBeInTheDocument();
     await expect(field2).toBeInTheDocument();
     await expect(field3).toBeInTheDocument();
-  },
+  }),
   args: {
     schema: {
       type: 'object',
@@ -179,12 +174,12 @@ export const i18nObjectAsRef: Story = {
 };
 
 export const internationalizationWithParams: Story = {
-  name: 'Example 3: add params to translations',
-  play: async (context) => {
+  name: 'Example 3 - Add Params to Translations',
+  play: playForm(async (context) => {
     await new Promise((r) => setTimeout(r, 200));
     const canvas = within(context.canvasElement);
     await expect(canvas.getByText('Welcome John Smith on our site!')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       firstName: 'John',
@@ -231,8 +226,8 @@ export const internationalizationWithParams: Story = {
 };
 
 export const ParamsWithDifferentLevels: Story = {
-  name: 'Example 4: nested keys in i18n object',
-  play: async (context) => {
+  name: 'Example 4 - Nested Keys in i18n Object',
+  play: playForm(async (context) => {
     await new Promise((r) => setTimeout(r, 200));
     const canvas = within(context.canvasElement);
     await expect(
@@ -241,7 +236,7 @@ export const ParamsWithDifferentLevels: Story = {
     await expect(canvas.getByText('Hello Customer XYZ!')).toBeInTheDocument();
     const field = canvas.getByLabelText('Customer name');
     await expect(field).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       customer: {
@@ -317,8 +312,8 @@ export const ParamsWithDifferentLevels: Story = {
 };
 
 export const TranslationTesting2: Story = {
-  name: 'Example 5: using jsonata in $ref parameters',
-  play: async (context) => {
+  name: 'Example 5 - Using JSONata in $ref Parameters',
+  play: playForm(async (context) => {
     await new Promise((r) => setTimeout(r, 200));
     const canvas = within(context.canvasElement);
 
@@ -333,7 +328,7 @@ export const TranslationTesting2: Story = {
     await expect(
       canvas.getByText('Hello! This text will show when switch is true'),
     ).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       valueOne: 'This text will show when switch is false',

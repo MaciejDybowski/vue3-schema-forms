@@ -8,27 +8,23 @@
 
 <script lang="ts" setup>
 import { useTheme } from "vuetify"
-import { onMounted, watch } from "vue"
+import { watch } from "vue"
 import i18n from "../plugins/i18n"
 
 const props = defineProps<{
-  themeName: any
-  localeName: any
+  themeName: string
+  localeName: string
 }>()
 
 const theme = useTheme()
 
-watch(props.localeName, nVal => {
+watch(() => props.localeName, nVal => {
   i18n.global.locale.value = nVal
-})
+}, { immediate: true })
 
-watch(props.themeName, nVal => {
+watch(() => props.themeName, nVal => {
   theme.global.name.value = nVal as string
-})
-
-onMounted(() => {
-  i18n.global.locale.value = props.localeName.value
-})
+}, { immediate: true })
 </script>
 
 <style>

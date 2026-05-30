@@ -1,105 +1,20 @@
 // @ts-nocheck
-import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { HttpResponse, http } from 'msw';
-
-
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { RESPONSE_DICTIONARY, TABLE_PAGE_WITHOUT_AGGREGATES, TABLE_PAGE_WITHOUT_AGGREGATES_ZERO, TABLE_PAGE_WITH_AGGREGATES, UPDATE_TABLE_ROW, generatePageData } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import {
+  RESPONSE_DICTIONARY,
+  TABLE_PAGE_WITHOUT_AGGREGATES,
+  TABLE_PAGE_WITHOUT_AGGREGATES_ZERO,
+  TABLE_PAGE_WITH_AGGREGATES,
+  UPDATE_TABLE_ROW,
+  generatePageData,
+} from '../mock-responses';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/TableView',
+  title: 'Components/Editable/TableView',
   ...formStoryWrapperTemplate,
 };
 
@@ -124,7 +39,8 @@ async function selectYearInTable(canvasElement: HTMLElement, label = 'Year') {
 }
 
 export const Standard: Story = {
-  play: async (context) => {},
+  name: 'Standard',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -188,7 +104,8 @@ export const Standard: Story = {
 };
 
 export const EmptyTable: Story = {
-  play: async (context) => {},
+  name: 'Empty Table',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -252,7 +169,8 @@ export const EmptyTable: Story = {
 };
 
 export const ColorableCells: Story = {
-  play: async (context) => {},
+  name: 'Colorable Cells',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -318,46 +236,45 @@ export const ColorableCells: Story = {
 };
 const TEST = [
   http.get('/mock-data/table-view-mock2', async (req, res, ctx) => {
-
-
     return HttpResponse.json({
-      "content": [
+      content: [
         {
-          "wniosekOWsparcieId": 1,
-          "funduszKod": "FPM",
-          "kosztKwalifikowanyId": 1,
-          "lp": 1,
-          "wykazKosztowKwalifikowanych": "reklama w telewizji, radiu, prasie, Internecie (kampanie i reklamy w serwisach społecznościowych, reklama on-line, np. banery reklamowe), reklama kinowa oraz reklama zewnętrzna typu outdoor (np. citylight, billboard)",
-          "szczegolowyWykazKosztow": "test",
-          "szczegolowaKalkulacjaIlosc": 10.0,
-          "szczegolowaKalkulacjaCenaJedn": 5.0,
-          "szczegolowaKalkulacjaLacznie": 40.0,
-          "procentDofinansowaniaZFunduszu": null,
-          "proponowanaWysokoscWsparciaZFunduszu": null,
-          "szczegolowaKalkulacjaLacznieWyliczone": 50.0,
-          "alerty": [
+          wniosekOWsparcieId: 1,
+          funduszKod: 'FPM',
+          kosztKwalifikowanyId: 1,
+          lp: 1,
+          wykazKosztowKwalifikowanych:
+            'reklama w telewizji, radiu, prasie, Internecie (kampanie i reklamy w serwisach społecznościowych, reklama on-line, np. banery reklamowe), reklama kinowa oraz reklama zewnętrzna typu outdoor (np. citylight, billboard)',
+          szczegolowyWykazKosztow: 'test',
+          szczegolowaKalkulacjaIlosc: 10.0,
+          szczegolowaKalkulacjaCenaJedn: 5.0,
+          szczegolowaKalkulacjaLacznie: 40.0,
+          procentDofinansowaniaZFunduszu: null,
+          proponowanaWysokoscWsparciaZFunduszu: null,
+          szczegolowaKalkulacjaLacznieWyliczone: 50.0,
+          alerty: [
             {
-              "type": "warning",
-              "message": "kwota \"łącznie\" powinna wynosić: 50.00"
-            }
-          ]
-        }
+              type: 'warning',
+              message: 'kwota "łącznie" powinna wynosić: 50.00',
+            },
+          ],
+        },
       ],
-      "totalElements": 11,
-      "page": {
-        "size": 10,
-        "number": 0,
-        "numberOfElements": 10,
-        "first": true,
-        "last": false
-      }
+      totalElements: 11,
+      page: {
+        size: 10,
+        number: 0,
+        numberOfElements: 10,
+        first: true,
+        last: false,
+      },
     });
   }),
 ];
 
-
 export const DynamicAlerts: Story = {
-  play: async (context) => {},
+  name: 'Dynamic Alerts',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -433,7 +350,8 @@ export const DynamicAlerts: Story = {
 };
 
 export const NumberFields: Story = {
-  play: async (context) => {},
+  name: 'Number Fields',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -498,8 +416,8 @@ export const NumberFields: Story = {
 };
 
 export const JoinValues: Story = {
-  name: 'Merge variables in column',
-  play: async (context) => {},
+  name: 'Merge Variables in Column',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -557,8 +475,8 @@ export const JoinValues: Story = {
 };
 
 export const JoinValuesWithHtmlAndExtraText: Story = {
-  name: 'Merge variables with HTML',
-  play: async (context) => {},
+  name: 'Merge Variables with HTML',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -617,8 +535,8 @@ export const JoinValuesWithHtmlAndExtraText: Story = {
 };
 
 export const ActionField: Story = {
-  name: 'Action mapping for field',
-  play: async (context) => {},
+  name: 'Action Mapping for Field',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -667,8 +585,8 @@ export const ActionField: Story = {
 };
 
 export const ActionFieldAdvanced: Story = {
-  name: 'Action mapping with extra HTML',
-  play: async (context) => {},
+  name: 'Action Mapping with Extra HTML',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -723,7 +641,7 @@ export const ActionFieldAdvanced: Story = {
 
 export const TopSlotAndButtons: Story = {
   name: 'Slot: Top',
-  play: async (context) => {},
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -828,8 +746,8 @@ export const TopSlotAndButtons: Story = {
 };
 
 export const TopSlotAndButtonsDisabled: Story = {
-  name: 'Slot: Top (disabled)',
-  play: async (context) => {},
+  name: 'Slot: Top (Disabled)',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -936,7 +854,7 @@ export const TopSlotAndButtonsDisabled: Story = {
 
 export const ContextActions: Story = {
   name: 'Slot: Context Actions',
-  play: async (context) => {},
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1028,8 +946,8 @@ export const ContextActions: Story = {
 };
 
 export const ContextActionsWithCondition: Story = {
-  name: 'Slot: Context Actions + condition',
-  play: async (context) => {},
+  name: 'Slot: Context Actions + Condition',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1122,8 +1040,8 @@ export const ContextActionsWithCondition: Story = {
 };
 
 export const ContextActionsWithConditionDisabled: Story = {
-  name: 'Slot: Context Actions + condition (disabled)',
-  play: async (context) => {},
+  name: 'Slot: Context Actions + Condition (Disabled)',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1216,8 +1134,8 @@ export const ContextActionsWithConditionDisabled: Story = {
 };
 
 export const ContextActionWithSchemaIntegration: Story = {
-  name: 'Slot: Context Actions + schema',
-  play: async (context) => {},
+  name: 'Slot: Context Actions + Schema',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1297,7 +1215,7 @@ export const ContextActionWithSchemaIntegration: Story = {
 
 export const SummaryAggregates: Story = {
   name: 'Slot: Aggregates',
-  play: async (context) => {},
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1362,8 +1280,8 @@ export const SummaryAggregates: Story = {
 };
 
 export const SummaryAggregatesUpdate: Story = {
-  name: 'Slot: Aggregates + update',
-  play: async (context) => {},
+  name: 'Slot: Aggregates + Update',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1408,7 +1326,7 @@ export const SummaryAggregatesUpdate: Story = {
                   },
                 ],
                 footerMapping: '<b>Summary of:</b> {height}',
-                properties: {  width: '200px' },
+                properties: { width: '200px' },
               },
               {
                 title: 'Base',
@@ -1436,8 +1354,8 @@ export const SummaryAggregatesUpdate: Story = {
 };
 
 export const TextEditableField: Story = {
-  name: 'Editable field: Text',
-  play: async (context) => {},
+  name: 'Editable Field: Text',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1504,8 +1422,8 @@ export const TextEditableField: Story = {
 };
 
 export const BooleanEditableField: Story = {
-  name: 'Editable field: Boolean',
-  play: async (context) => {},
+  name: 'Editable Field: Boolean',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1576,8 +1494,8 @@ export const BooleanEditableField: Story = {
 };
 
 export const DateEditableField: Story = {
-  name: 'Editable field: Date',
-  play: async (context) => {},
+  name: 'Editable Field: Date',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1648,11 +1566,10 @@ export const DateEditableField: Story = {
 };
 
 export const YearEditableField: Story = {
-  name: 'Editable field: Year',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Editable Field: Year',
+  play: playForm(async ({ canvasElement }) => {
     await selectYearInTable(canvasElement, 'Year');
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -1716,13 +1633,12 @@ export const YearEditableField: Story = {
 };
 
 export const YearEditableReadonlyWithCondition: Story = {
-  name: 'Editable field: Year (readonly condition)',
-  play: async ({ canvasElement }) => {
-    await waitForMountedAsync();
+  name: 'Editable Field: Year (Read Only Condition)',
+  play: playForm(async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const yearInput = (await canvas.findAllByLabelText('Year'))[0] as HTMLInputElement;
     await expect(yearInput).toHaveAttribute('readonly');
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -1787,8 +1703,8 @@ export const YearEditableReadonlyWithCondition: Story = {
 };
 
 export const NumberEditableField: Story = {
-  name: 'Editable field: Number',
-  play: async (context) => {},
+  name: 'Editable Field: Number',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1854,8 +1770,8 @@ export const NumberEditableField: Story = {
 };
 
 export const EditableSelect: Story = {
-  name: 'Editable field: Select',
-  play: async (context) => {},
+  name: 'Editable Field: Select',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1921,8 +1837,8 @@ export const EditableSelect: Story = {
 };
 
 export const EditableSelectObject: Story = {
-  name: 'Editable field: Select model as object',
-  play: async (context) => {},
+  name: 'Editable Field: Select Model as Object',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -1988,8 +1904,8 @@ export const EditableSelectObject: Story = {
 };
 
 export const EditableSelectWithCondition: Story = {
-  name: 'Case: Condition on editable field',
-  play: async (context) => {},
+  name: 'Condition on Editable Field',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -2056,8 +1972,8 @@ export const EditableSelectWithCondition: Story = {
 };
 
 export const DictionaryEditableField: Story = {
-  name: 'Editable field: Dictionary',
-  play: async (context) => {},
+  name: 'Editable Field: Dictionary',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -2124,8 +2040,8 @@ export const DictionaryEditableField: Story = {
 };
 
 export const DefineModelVariablesForRefresh: Story = {
-  name: 'Case: Define model variable for refresh table',
-  play: async (context) => {},
+  name: 'Define Model Variable for Refresh Table',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {
       numberInput: 1,
@@ -2191,8 +2107,8 @@ export const DefineModelVariablesForRefresh: Story = {
 };
 
 export const EditableSelectReadonlyWithCondition: Story = {
-  name: 'Case: Condition (readonly) on editable field',
-  play: async (context) => {},
+  name: 'Condition (Read Only) on Editable Field',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -2260,8 +2176,8 @@ export const EditableSelectReadonlyWithCondition: Story = {
 };
 
 export const ReadonlyMode: Story = {
-  name: 'Mode: readonly',
-  play: async (context) => {},
+  name: 'Read Only Mode',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -2414,8 +2330,8 @@ export const ReadonlyMode: Story = {
 };
 
 export const groupActions = {
-  name: 'Case: actions on selected row',
-  play: async (context) => {},
+  name: 'Actions on Selected Row',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -2434,8 +2350,8 @@ export const groupActions = {
           },
           source: {
             data: '/mock-data/table-view-mock',
-            showSelect:true,
-            idMapper:"id",
+            showSelect: true,
+            idMapper: 'id',
             headers: [
               {
                 title: 'Id',
@@ -2466,12 +2382,12 @@ export const groupActions = {
                 key: 'actions',
                 actions: [
                   {
-                    "multiSelect": true,
+                    multiSelect: true,
                     title: 'Delete',
                     icon: 'mdi-delete-outline',
                     mode: 'action',
                     code: 'delete',
-                    condition: "id=1",
+                    condition: 'id=1',
                     config: {
                       params: {
                         script: 'delete_product_from_offer',
@@ -2485,7 +2401,7 @@ export const groupActions = {
                     },
                   },
                   {
-                    "multiSelect": true,
+                    multiSelect: true,
                     title: 'Pallet shipping',
                     icon: 'mdi-shipping-pallet',
                     mode: 'action',
@@ -2505,7 +2421,6 @@ export const groupActions = {
                 ],
               },
             ],
-
           },
         },
       },
@@ -2516,4 +2431,4 @@ export const groupActions = {
       handlers: TABLE_PAGE_WITHOUT_AGGREGATES,
     },
   },
-}
+};

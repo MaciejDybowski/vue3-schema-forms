@@ -4,7 +4,7 @@ import { offsetSchema } from '@/stories/schemas';
 import { formStoryWrapperTemplate } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Layouts',
+  title: 'Features/Form Composition/Layouts',
   ...formStoryWrapperTemplate,
 };
 
@@ -17,7 +17,7 @@ export default {
  * `cols: number | Cols` - specifies the column width in the grid system. It can be a number or an object that meets the structure of the `Cols` interface.
  */
 export const Example1: Story = {
-  name: "Example 1: cols as numbers",
+  name: 'Example 1 - Cols as Numbers',
   args: {
     schema: {
       type: 'object',
@@ -49,7 +49,7 @@ export const Example1: Story = {
 };
 
 export const Example2: Story = {
-  name: "Example 2: cols as object",
+  name: 'Example 2 - Cols as Object',
   args: {
     schema: {
       type: 'object',
@@ -81,7 +81,7 @@ export const Example2: Story = {
 };
 
 export const Example3: Story = {
-  name: "Example 3: fillRow property",
+  name: 'Example 3 - Fill Row Property',
   args: {
     schema: {
       type: 'object',
@@ -91,7 +91,7 @@ export const Example3: Story = {
           layout: {
             component: 'text-field',
             cols: 4,
-            fillRow: true
+            fillRow: true,
           },
         },
         item2: {
@@ -99,7 +99,7 @@ export const Example3: Story = {
           layout: {
             component: 'text-field',
             cols: 4,
-            fillRow: true
+            fillRow: true,
           },
         },
         item3: {
@@ -107,7 +107,7 @@ export const Example3: Story = {
           layout: {
             component: 'text-field',
             cols: 4,
-            fillRow: true
+            fillRow: true,
           },
         },
       },
@@ -116,7 +116,7 @@ export const Example3: Story = {
 };
 
 export const Example4: Story = {
-  name: "Example 4: offset property",
+  name: 'Example 4 - Offset Property',
   args: {
     schema: {
       type: 'object',

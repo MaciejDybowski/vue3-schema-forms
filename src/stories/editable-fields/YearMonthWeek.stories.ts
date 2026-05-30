@@ -3,11 +3,10 @@ import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper, waitForMountedAsync } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/YearMonthWeek',
+  title: 'Components/Editable/YearMonthWeek',
   ...formStoryWrapperTemplate,
 };
 
@@ -32,7 +31,7 @@ export const Standard: Story = {
 };
 
 export const SelectWeekNumber: Story = {
-  name: 'Case: select week number',
+  name: 'Select Week Number',
   args: {
     formModel: {
       deliveryWeek: '2026-W22',
@@ -52,8 +51,8 @@ export const SelectWeekNumber: Story = {
 };
 
 export const OnlyFirstDayOfWeekClickable: Story = {
-  name: 'Case: only Monday clickable',
-  play: playWrapper(async (context) => {
+  name: 'Only Monday Clickable',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Delivery week');
 
@@ -89,8 +88,8 @@ export const OnlyFirstDayOfWeekClickable: Story = {
 };
 
 export const WithDefaultValue: Story = {
-  name: 'Case: Default value',
-  play: playWrapper(async (context) => {
+  name: 'Default Value',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await waitFor(() => {
@@ -118,8 +117,8 @@ export const WithDefaultValue: Story = {
 };
 
 export const ClearValue: Story = {
-  name: 'Case: Clear value',
-  play: playWrapper(async (context) => {
+  name: 'Clear Value',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await waitFor(() => {
@@ -154,13 +153,12 @@ export const ClearValue: Story = {
 };
 
 export const ReadonlyField: Story = {
-  name: 'Case: Readonly field',
-  play: playWrapper(async (context) => {
+  name: 'Read Only Field',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Delivery week');
 
     await userEvent.click(field, { delay: 200 });
-    await waitForMountedAsync(300);
 
     expect(document.querySelector('.v-date-picker')).not.toBeInTheDocument();
     expect(field).toHaveValue('2026-W22');
@@ -187,8 +185,8 @@ export const ReadonlyField: Story = {
 };
 
 export const WeekAcrossYearBoundary: Story = {
-  name: 'Case: week across year boundary',
-  play: playWrapper(async (context) => {
+  name: 'Week Across Year Boundary',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await waitFor(() => {

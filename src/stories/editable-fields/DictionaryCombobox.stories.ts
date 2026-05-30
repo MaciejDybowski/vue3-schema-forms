@@ -4,88 +4,13 @@ import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, within } from 'storybook/test';
 import { waitFor } from 'storybook/test';
 
-
-
 import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Dictionary [combobox]',
+  title: 'Components/Editable/Dictionary [combobox]',
   ...formStoryWrapperTemplate,
 };
 
@@ -103,12 +28,13 @@ const MOCK_REQUEST = [
 ];
 
 export const Standard: Story = {
-  play: async (context) => {
+  name: 'Standard',
+  play: playForm(async (context) => {
     // const canvas = within(context.canvasElement);
     // const field = canvas.getByLabelText("Text area");
     // await userEvent.type(field, "This is standard text area...", { delay: 100 });
     // await expect(context.args.formModel).toEqual({ textArea: "This is standard text area..." });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -138,11 +64,9 @@ export const Standard: Story = {
   },
 };
 
-
 export const Label: Story = {
-  name: 'Case: extra label content',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Extra Label Content',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -151,7 +75,7 @@ export const Label: Story = {
     await expect(chips.length).toEqual(2);
     await expect(chips[0].textContent).toEqual('The best');
     await expect(chips[1].textContent).toEqual('The least');
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -202,9 +126,8 @@ export const Label: Story = {
 };
 
 export const MultipleValues: Story = {
-  name: 'Case: model as array',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Model as Array',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -239,7 +162,7 @@ export const MultipleValues: Story = {
         },
       ],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -268,11 +191,9 @@ export const MultipleValues: Story = {
   },
 };
 
-
 export const MultipleValuesWithLimit: Story = {
-  name: 'Case: model as array with limit',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Model as Array with Limit',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -301,7 +222,7 @@ export const MultipleValuesWithLimit: Story = {
         },
       ],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -332,9 +253,8 @@ export const MultipleValuesWithLimit: Story = {
 };
 
 export const WithDescription: Story = {
-  name: 'Case: add description to list item',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Add Description to List Item',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -349,7 +269,7 @@ export const WithDescription: Story = {
     await expect(context.args.formModel).toEqual({
       currency: { id: 'AFN', label: 'Afgani', digitsAfterDecimal: '2', labels: 'the-best' },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

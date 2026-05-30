@@ -56,12 +56,8 @@ export const globalTypes = {
     toolbar: {
       icon: 'globe',
       items: [
-        { value: 'en', left: '🇺🇸', title: 'English' },
-        { value: 'pl', left: '🇵🇱', title: 'Polski' },
-        { value: 'de', left: '🇩🇪', title: 'Deutsch' },
-        { value: 'ru', left: '🇷🇺', title: 'Русский' },
-        { value: 'es', left: '🇪🇸', title: 'Español' },
-        { value: 'fr', left: '🇫🇷', title: 'Français' }
+        { value: 'en', left: 'EN', title: 'English' },
+        { value: 'pl', left: 'PL', title: 'Polski' },
       ],
       dynamicTitle: true,
     },
@@ -72,8 +68,8 @@ export const globalTypes = {
     toolbar: {
       icon: 'paintbrush',
       items: [
-        { value: 'light', title: 'Light', left: '🌞' },
-        { value: 'dark', title: 'Dark', left: '🌛' },
+        { value: 'light', title: 'Light', left: 'Light' },
+        { value: 'dark', title: 'Dark', left: 'Dark' },
       ],
       dynamicTitle: true,
     },

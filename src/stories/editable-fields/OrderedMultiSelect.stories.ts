@@ -3,21 +3,16 @@ import { Story } from 'storybook/dist/csf';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MULTI_ORDERED_SELECT_MOCK } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/OrderedMultiSelect',
+  title: 'Components/Editable/OrderedMultiSelect',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Standard',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await waitFor(() => {
@@ -44,7 +39,7 @@ export const Standard: Story = {
         },
       ],
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -75,8 +70,8 @@ export const Standard: Story = {
 };
 
 export const Required: Story = {
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Required',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
     await waitFor(() => {
@@ -107,7 +102,7 @@ export const Required: Story = {
     await userEvent.click(Submit, { delay: 400 });
 
     await expect(canvas.getByText('Form is valid')).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -139,9 +134,8 @@ export const Required: Story = {
 };
 
 export const Variant: Story = {
-  name: 'Case: input variant',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Input Variant',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     const item = canvas.getByLabelText('Choose countries');
@@ -171,7 +165,7 @@ export const Variant: Story = {
         },
       ],
     });
-  },
+  }),
   args: {
     model: {
       orderedMultiSelect: null,

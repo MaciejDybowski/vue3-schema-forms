@@ -1,14 +1,15 @@
 // @ts-nocheck
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Static/Divider',
+  title: 'Components/Static/Divider',
   ...formStoryWrapperTemplate,
 };
 
 export const Default: Story = {
-  play: async () => {},
+  name: 'Default',
+  play: playForm(async () => {}),
   args: {
     formModel: {},
     schema: {
@@ -25,7 +26,8 @@ export const Default: Story = {
 };
 
 export const Thickness: Story = {
-  play: async () => {},
+  name: 'Thickness',
+  play: playForm(async () => {}),
   args: {
     formModel: {},
     schema: {
@@ -43,7 +45,8 @@ export const Thickness: Story = {
 };
 
 export const Color: Story = {
-  play: async () => {},
+  name: 'Color',
+  play: playForm(async () => {}),
   args: {
     formModel: {},
     schema: {
@@ -63,7 +66,8 @@ export const Color: Story = {
 };
 
 export const Opacity: Story = {
-  play: async () => {},
+  name: 'Opacity',
+  play: playForm(async () => {}),
   args: {
     formModel: {},
     schema: {

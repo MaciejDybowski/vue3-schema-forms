@@ -2,17 +2,16 @@
 import { expect, userEvent, within } from 'storybook/test';
 
 import { Schema } from '../../types/schema/Schema';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { playWrapper } from './utils';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/TextField',
+  title: 'Components/Editable/TextField',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
   name: 'Standard',
-  play: playWrapper(async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByLabelText('Text field');
     await userEvent.type(field, 'This is standard text field...', { delay: 100 });
@@ -37,8 +36,8 @@ export const Standard: Story = {
  * You can set the default value of field from schema
  */
 export const WithDefault: Story = {
-  name: 'Default value',
-  play: playWrapper(async (context) => {
+  name: 'Default Value',
+  play: playForm(async (context) => {
     await expect(context.args.formModel).toEqual({ textFieldWithDefault: 'Item 1' });
   }),
   args: {
@@ -63,7 +62,7 @@ export const WithDefault: Story = {
  */
 export const SimpleValidation: Story = {
   name: 'Required',
-  play: playWrapper(async (context) => {
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const exampleElement = canvas.getByLabelText('Text field');
     await userEvent.type(exampleElement, 'Required field', {
@@ -91,8 +90,8 @@ export const SimpleValidation: Story = {
 };
 
 export const TextFieldCounter: Story = {
-  name: 'Case: counter validation',
-  play: playWrapper(async (context) => {
+  name: 'Counter Validation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const exampleElement = canvas.getByLabelText('Text field');
     await userEvent.type(exampleElement, 'Required field with counter', { delay: 100 });

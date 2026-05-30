@@ -15,7 +15,6 @@
         <v-divider class="mb-4" />
         <v-card-text>
           <vue-schema-forms
-            v-if="!loading"
             ref="mySchemaForm"
             v-model="model"
             :default-form-actions="true"
@@ -52,15 +51,13 @@ import { debounce } from 'lodash';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
-import { onBeforeMount, onMounted, ref, toRaw, watch } from "vue";
+import { ref, toRaw, watch } from "vue";
 
 import { Schema } from '@/types/schema/Schema.d';
 
 import VueSchemaForms from '../../src/components/engine/VueSchemaForms.vue';
-import { fetchToken } from "../plugins/keycloak";
-
 const snackbar = ref(false);
-const { schema, options, formModel, emittedObject, signals } = defineProps<{
+const { schema, options, formModel, emittedObject, signals, validationBehaviour } = defineProps<{
   formModel: object;
   schema: Schema;
   options: object;
@@ -72,12 +69,18 @@ const { schema, options, formModel, emittedObject, signals } = defineProps<{
 
 }>();
 
-const model = ref<any>(null);
+const model = ref<any>(formModel ?? {});
 
 const mySchemaForm = ref();
 
+if (signals) {
+  Object.assign(toRaw(signals), {formIsReady: false});
+}
+
 function catchSignalFormIsReady() {
-  Object.assign(toRaw(signals), {formIsReady: true});
+  if (signals) {
+    Object.assign(toRaw(signals), {formIsReady: true});
+  }
 }
 
 function handleAction(properties) {
@@ -85,7 +88,9 @@ function handleAction(properties) {
 
   // @ts-ignore
   try {
-    Object.assign(toRaw(emittedObject), properties);
+    if (emittedObject) {
+      Object.assign(toRaw(emittedObject), properties);
+    }
     console.debug(emittedObject);
   } catch (e) {
     //console.warn("error");
@@ -101,7 +106,7 @@ function handleAction(properties) {
   });
   Object.assign(toRaw(model.value), x);
   */
-  properties.callback();
+  properties.callback?.();
 }
 
 const debounced = {
@@ -114,14 +119,15 @@ function simulateSavedState() {
   }
 }
 
-const loading = ref(true);
 watch(
   () => model.value,
   async () => {
     if (mySchemaForm.value) {
       mySchemaForm.value.formDataWasSaved = false;
     }
-    Object.assign(toRaw(formModel), model.value);
+    if (formModel) {
+      Object.assign(toRaw(formModel), model.value);
+    }
     debounced.saveState();
   },
   { deep: true },
@@ -132,19 +138,6 @@ function contextCopy() {
   snackbar.value = true;
 }
 
-onMounted(() => {
-  model.value = formModel;
-  loading.value = false;
-});
-
-onBeforeMount(async () => {
-  loading.value = true;
-  //await fetchToken("tecna")
-
-
-  await new Promise((r) => setTimeout(r, 200));
-
-});
 </script>
 
 <style lang="css" scoped></style>

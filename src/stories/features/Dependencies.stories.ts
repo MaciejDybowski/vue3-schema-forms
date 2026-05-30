@@ -11,18 +11,17 @@ import {
   SchemaTextField,
   SimpleSource,
 } from '../../types/schema/elements';
-import { waitForMountedAsync } from '../editable-fields/utils';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Features/Dependencies',
+  title: 'Features/Data Binding/Dependencies',
   ...formStoryWrapperTemplate,
 };
 
 export const step1: Story = {
-  name: 'Example 1: Usage of text value of field from model without nested objects',
-  play: async (context) => {},
+  name: 'Example 1 - Usage of Text Value of Field from Model Without Nested Objects',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -46,8 +45,8 @@ export const step1: Story = {
 };
 
 export const step2: Story = {
-  name: 'Example 2: Usage of nested values of field from model',
-  play: async (context) => {},
+  name: 'Example 2 - Usage of Nested Values of Field from Model',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {},
     schema: {
@@ -129,8 +128,8 @@ export const step2: Story = {
 };
 
 export const step3: Story = {
-  name: 'Example 3: Usage of values which are in duplicated section in the form model',
-  play: async (context) => {},
+  name: 'Example 3 - Usage of Values Which Are in Duplicated Section in the Form Model',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {
       fieldB: 'Root level',
@@ -194,8 +193,8 @@ export const step3: Story = {
 };
 
 export const step4: Story = {
-  name: 'Example 4: Usage of values which are in nested duplicated section in the form model',
-  play: async (context) => {},
+  name: 'Example 4 - Usage of Values Which Are in Nested Duplicated Section in the Form Model',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {
       fieldB: 'Root level',
@@ -317,8 +316,8 @@ export const step4: Story = {
 };
 
 export const step5: Story = {
-  name: 'Example 5: Usage of values which are in field group',
-  play: async (context) => {},
+  name: 'Example 5 - Usage of Values Which Are in Field Group',
+  play: playForm(async (context) => {}),
   args: {
     formModel: {
       fieldA: 'value in field group',
@@ -360,8 +359,8 @@ export const step5: Story = {
 };
 
 export const UseDependenciesInLabel: Story = {
-  name: 'Example 6: Usage of values which are in form model to combine in label',
-  play: async (context) => {
+  name: 'Example 6 - Usage of Values Which Are in Form Model to Combine in Label',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await context.step('Resolved deps on load', async () => {
@@ -376,7 +375,7 @@ export const UseDependenciesInLabel: Story = {
       let labelResolved = await canvas.findAllByText('Price (gross)');
       await expect(labelResolved.length).toEqual(4); // 2 visible and 2 not visible
     });
-  },
+  }),
   args: {
     formModel: {
       data: {
@@ -444,9 +443,8 @@ export const UseDependenciesInLabel: Story = {
 };
 
 export const UseFormVariablesInFieldProps: Story = {
-  name: 'Example 7: Usage of values which are in form model to combine in props',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Example 7 - Usage of Values Which Are in Form Model to Combine in Props',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const currency = canvas.getByLabelText('Currency');
 
@@ -475,7 +473,7 @@ export const UseFormVariablesInFieldProps: Story = {
       const queryHint = await canvas.findAllByText('Digits after decimal = 3');
       await expect(queryHint.length).toEqual(2);
     });
-  },
+  }),
 
   args: {
     formModel: {
@@ -565,8 +563,8 @@ export const UseFormVariablesInFieldProps: Story = {
 };
 
 export const UseVariableDependencyWithFallbackMessage: Story = {
-  name: 'Example 8: Define fallback massage in case of unresolved dependency',
-  play: async (context) => {
+  name: 'Example 8 - Define Fallback Massage in Case of Unresolved Dependency',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
 
     await context.step('Check default label with fallback message', async () => {
@@ -588,7 +586,7 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
       let labelResolved = await canvas.findAllByText('Telephone with PL prefix');
       await expect(labelResolved.length).toEqual(2); // 1 visible and 1 not visible
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {
@@ -626,7 +624,7 @@ export const UseVariableDependencyWithFallbackMessage: Story = {
 };
 
 export const ComplexExample: Story = {
-  name: 'Example 9: Complex example',
+  name: 'Example 9 - Complex Example',
   args: {
     formModel: {
       dataId: '#01',
@@ -803,9 +801,8 @@ export const ComplexExample: Story = {
 };
 
 export const DependencyWithEditAndTriggers: Story = {
-  name: 'Exmaple 10: value from dict, ediable and reactive',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Example 10 - Value from Dictionary, Editable and Reactive',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const select = await canvas.getByLabelText('Currency');
     await userEvent.click(select, { pointerEventsCheck: 0, delay: 200 });
@@ -856,7 +853,7 @@ export const DependencyWithEditAndTriggers: Story = {
         labels: 'the-least',
       },
     });
-  },
+  }),
   args: {
     formModel: {},
     schema: {

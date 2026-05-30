@@ -1,58 +1,26 @@
 // @ts-nocheck
 import { expect, within } from 'storybook/test';
 
-
-
 import { Schema } from '../../types/schema/Schema';
 import { DictionarySource } from '../../types/shared/Source';
 import { MOCK_REQUEST_CURRENCY } from '../mock-responses';
-import { formStoryWrapperTemplate } from '../templates/shared-blocks';
-import { waitForMountedAsync } from './utils';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { formStoryWrapperTemplate, playForm } from '../templates/shared-blocks';
 
 export default {
-  title: 'Elements/Editable/Data viewer',
+  title: 'Components/Editable/Data viewer',
   ...formStoryWrapperTemplate,
 };
 
 export const Standard: Story = {
-  name: 'Case: matching model key (text)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Matching Model Key (Text)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Read value from model [text]');
     const text = canvas.getByText('This is plain text');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       plainText: 'This is plain text',
@@ -80,7 +48,7 @@ export const Standard: Story = {
 };
 
 export const ContentCopy: Story = {
-  name: 'Case: enable copy value to clipboard',
+  name: 'Enable Copy Value to Clipboard',
   args: {
     formModel: {
       plainText: 'This is plain text',
@@ -109,16 +77,15 @@ export const ContentCopy: Story = {
 };
 
 export const StandardNumber: Story = {
-  name: 'Case: matching model key (number)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Matching Model Key (Number)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Read value from model [number]');
     const text = canvas.getByText('4,000.25');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       number: 4000.25,
@@ -147,16 +114,15 @@ export const StandardNumber: Story = {
 };
 
 export const StandardDate: Story = {
-  name: 'Case: matching model key (date)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Matching Model Key (Date)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Read value from model [date]');
     const text = canvas.getByText('01/25/2024');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       date: '2024-01-25T00:00:00.000Z',
@@ -185,16 +151,15 @@ export const StandardDate: Story = {
 };
 
 export const StandardDateTime: Story = {
-  name: 'Case: matching model key (datetime)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Matching Model Key (Datetime)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Read value from model [date]');
     const text = canvas.getByText('01/25/2024 1:00:00 AM');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       date: '2024-01-25T00:00:00.000Z',
@@ -214,16 +179,15 @@ export const StandardDateTime: Story = {
 };
 
 export const StandardPhone: Story = {
-  name: 'Case: matching model key (phone)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Matching Model Key (Phone)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Read value from model [phone]');
     const text = canvas.getByText('510 333 202');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       phone: '+48510333202',
@@ -251,16 +215,15 @@ export const StandardPhone: Story = {
 };
 
 export const StandardObject: Story = {
-  name: 'Case: matching model key (object)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Matching Model Key (Object)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Read value from model [object]');
     const text = canvas.getByText('Value');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       obj: {
@@ -291,9 +254,8 @@ export const StandardObject: Story = {
 };
 
 export const StandardDictionary: Story = {
-  name: 'Case: matching model key (dictionary)',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Matching Model Key (Dictionary)',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Read value from model [dictionary]');
     await new Promise((resolve) => setTimeout(resolve, 200)); // <- wait for api call
@@ -301,7 +263,7 @@ export const StandardDictionary: Story = {
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       dictionary: {
@@ -346,16 +308,15 @@ export const StandardDictionary: Story = {
 };
 
 export const ValueMapping: Story = {
-  name: 'Case: mapping other key from model',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Mapping Other Key from Model',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Create text from model variables');
     const text = canvas.getByText('This is plain text and other value 400.25');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       plainText: 'This is plain text',
@@ -384,16 +345,15 @@ export const ValueMapping: Story = {
 };
 
 export const StandardCalc: Story = {
-  name: 'Case: calculation',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Calculation',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Result of calc');
     const text = canvas.getByText('4,100.25');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       a: 4000.25,
@@ -423,16 +383,15 @@ export const StandardCalc: Story = {
 };
 
 export const StandardCalcVariable: Story = {
-  name: 'Case: combine calculation result with other variables',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Combine Calculation Result with Other Variables',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Result of calc');
     const text = canvas.getByText('4,100.25');
 
     await expect(field).toBeInTheDocument();
     await expect(text).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       a: 4000.25,
@@ -472,13 +431,12 @@ export const StandardCalcVariable: Story = {
 };
 
 export const VariableInDuplicatedSection: Story = {
-  name: 'Case: variable inside duplicated section',
-  play: async (context) => {
-    await waitForMountedAsync();
+  name: 'Variable Inside Duplicated Section',
+  play: playForm(async (context) => {
     const canvas = within(context.canvasElement);
     const field = canvas.getByText('Currency: PLN');
     await expect(field).toBeInTheDocument();
-  },
+  }),
   args: {
     formModel: {
       a: 4000.25,
