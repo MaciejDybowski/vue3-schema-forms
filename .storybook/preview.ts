@@ -34,9 +34,11 @@ setup((app) => {
   app.use(i18n);
 });
 
-const basePath = import.meta.env.BASE_URL.endsWith('/')
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
+const basePath = import.meta.env.PROD
+  ? import.meta.env.BASE_URL.endsWith('/')
+    ? import.meta.env.BASE_URL
+    : `${import.meta.env.BASE_URL}/`
+  : '/';
 
 initialize({
   onUnhandledRequest: 'bypass', // 👈 suppresses the warning
