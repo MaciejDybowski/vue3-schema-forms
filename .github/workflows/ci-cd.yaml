@@ -67,8 +67,6 @@ jobs:
 
       - name: Build Storybook
         run: npm run build-storybook
-        env:
-          STORYBOOK_BASE_PATH: /vue3-schema-forms/
 
       - name: Upload storybook artifact
         uses: actions/upload-artifact@v4

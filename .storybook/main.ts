@@ -1,8 +1,6 @@
 import { StorybookConfig } from '@storybook/vue3-vite';
 import { mergeConfig } from 'vitest/config';
 
-const storybookBasePath = process.env.STORYBOOK_BASE_PATH ?? '/storybook/';
-
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   staticDirs: ['./static'],
@@ -18,7 +16,7 @@ const config: StorybookConfig = {
   },
   managerHead: (head: string) => `
     ${head}
-    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <style>
       .sidebar-header a[title] img {
         max-width: 210px !important;
@@ -40,14 +38,14 @@ const config: StorybookConfig = {
   `,
   previewHead: (head: string) => `
     ${head}
-    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   `,
   //docs: {},
   async viteFinal(config) {
-    // Match the production sub-path where the static Storybook is served.
+    // Set base path for GitHub Pages
     const isProduction = process.env.STORYBOOK === 'true';
     if (isProduction) {
-      config.base = storybookBasePath;
+      config.base = '/vue3-schema-forms/';
     }
 
     // Merge custom configuration into the default config
