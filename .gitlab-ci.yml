@@ -106,41 +106,66 @@ aurea-forms-publish:
   stage: publish
   script:
     - echo "$NPM_REGISTRY_CONFIG" > ~/.npmrc
+    - PACKAGE_NAME=$(node -p "require('./package.json').name")
+    - PUBLISHED_VERSION=$(npm view "$PACKAGE_NAME" version --registry=https://${NPM_REGISTRY} 2>/dev/null || true)
+    - NEXT_VERSION=$(node -e "const version = (process.argv[1] || require('./package.json').version).split('.').map(Number); version[2] += 1; console.log(version.join('.'))" "$PUBLISHED_VERSION")
+    - npm version "$NEXT_VERSION" --no-git-tag-version --allow-same-version
     - npm install
     - npm run build
     - npm run publish:nexus
-  #  - ./get-version.sh
-  #artifacts:
-  #  reports:
-  #    dotenv: version.env
+    - bash ./get-version.sh
+    - source version.env
+    - |
+      for attempt in $(seq 1 30); do
+        if npm view "vue3-schema-forms@${FORM_VERSION}" version --registry=https://${NPM_PROXY} | grep -q "^${FORM_VERSION}$"; then
+          echo "vue3-schema-forms@${FORM_VERSION} is available in install registry"
+          exit 0
+        fi
+        echo "Waiting for vue3-schema-forms@${FORM_VERSION} in install registry (${attempt}/30)"
+        sleep 5
+      done
+      echo "vue3-schema-forms@${FORM_VERSION} is not available in install registry"
+      exit 1
+  artifacts:
+    reports:
+      dotenv: version.env
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "master"'
 
 
 
 
-#aurea-dashboards:
-#  stage: update-projects
-#  trigger:
-#    project: aurea/aurea-dashboard-frontend
-#    branch: master
-#    strategy: depend
-#  variables:
-#    UPDATED_AUREA_FORMS_VERSION: "$FORM_VERSION"
-#    UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
-#    UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
-#    RUN_UPDATE_FORMS: "true"
+aurea-dashboards:
+  stage: update-projects
+  needs:
+    - job: aurea-forms-publish
+      artifacts: true
+  trigger:
+    project: aurea/aurea-dashboard-frontend
+    branch: master
+    strategy: depend
+  variables:
+    UPDATED_AUREA_FORMS_VERSION: "$FORM_VERSION"
+    UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
+    UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
+    RUN_UPDATE_FORMS: "true"
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "master"'
 
-#aurea-forms-builder:
-#  stage: update-projects
-#  trigger:
-#    project: aurea/aurea-runtime/aurea-forms-builder
-#    branch: master
-#    strategy: depend
-#  variables:
-#    UPDATED_AUREA_FORMS_VERSION: "$FORM_VERSION"
-#    UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
-#    UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
-#    RUN_UPDATE_FORMS: "true"
-
-
-
+aurea-forms-builder:
+  stage: update-projects
+  needs:
+    - job: aurea-forms-publish
+      artifacts: true
+  trigger:
+    project: aurea/aurea-runtime/aurea-forms-builder
+    branch: master
+    strategy: depend
+  variables:
+    UPDATED_AUREA_FORMS_VERSION: "$FORM_VERSION"
+    UPSTREAM_PROJECT: "$CI_PROJECT_PATH"
+    UPSTREAM_COMMIT: "$CI_COMMIT_SHA"
+    RUN_UPDATE_FORMS: "true"
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "master"'
 
