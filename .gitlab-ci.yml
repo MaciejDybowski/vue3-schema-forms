@@ -39,7 +39,7 @@ storybook-build:
 
 storybook-tests:
   stage: storybook-tests
-  image: mcr.microsoft.com/playwright:v1.57.0-noble
+  image: mcr.microsoft.com/playwright:v1.60.0-noble
   dependencies:
     - storybook-build
   variables:
