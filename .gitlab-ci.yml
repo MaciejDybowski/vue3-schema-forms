@@ -34,7 +34,7 @@ storybook-build:
       - storybook-static
     expire_in: 1 week
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "stable"'
+    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "storybook"'
 
 
 storybook-tests:
@@ -45,10 +45,13 @@ storybook-tests:
   variables:
     TZ: "Europe/Warsaw"
   script:
+    - npm config set registry https://${NPM_PROXY}
+    - npm set //${NPM_REGISTRY}:_authToken=${NPM_TOKEN}
+    - npm set //${NPM_PROXY}:_authToken=${NPM_TOKEN}
     - npm ci
     - npm run vitest-storybook
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "stable"'
+    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "storybook"'
 
 
 storybook-push:
@@ -69,8 +72,8 @@ storybook-push:
       --dockerfile $CI_PROJECT_DIR/Dockerfile.storybook
       --build-arg NEXUS3_URL=${UPSTREAM_REPO}
       --destination ${DOWNSTREAM_REPO}/$GROUP_NAME/$APP_NAME:storybook
-  only:
-    - stable
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "storybook"'
 
 
 storybook-deploy:
@@ -83,11 +86,8 @@ storybook-deploy:
     ENV_REPO_PATH: /opt/dashboards/
     APP_NAME: aurea-forms-storybook
     FILE_NAME: docker-compose.yml
-  only:
-    variables:
-      - $REGISTRY_URL == "registry.tecna.pl"
-    refs:
-      - stable
+  rules:
+    - if: '$REGISTRY_URL == "registry.tecna.pl" && ($CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "storybook")'
   before_script:
     - apk update && apk add openssh-client bash rsync
     - eval $(ssh-agent -s)
@@ -168,4 +168,3 @@ aurea-forms-builder:
     RUN_UPDATE_FORMS: "true"
   rules:
     - if: '$CI_COMMIT_REF_NAME == "stable" || $CI_COMMIT_REF_NAME == "master"'
-
