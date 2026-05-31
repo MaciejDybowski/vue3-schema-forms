@@ -34,9 +34,11 @@ setup((app) => {
   app.use(i18n);
 });
 
-// Determine base path for GitHub Pages deployment
-const isGitHubPages = window.location.hostname.includes('github.io');
-const basePath = isGitHubPages ? '/vue3-schema-forms/' : '/';
+const basePath = import.meta.env.PROD
+  ? import.meta.env.BASE_URL.endsWith('/')
+    ? import.meta.env.BASE_URL
+    : `${import.meta.env.BASE_URL}/`
+  : '/';
 
 initialize({
   onUnhandledRequest: 'bypass', // 👈 suppresses the warning
