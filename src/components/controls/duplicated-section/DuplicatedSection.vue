@@ -47,7 +47,7 @@
         :id="getAddBtnMode === 'feature' ? 'addBtnRef' : 'addBtn'"
         color="primary"
         prepend-icon="mdi-plus"
-        v-bind="schema.options.buttonProps"
+        v-bind="buttonProps"
         @click="runDuplicatedSectionButtonLogic(false)"
       >
         {{ getAddBtnText }}
@@ -71,7 +71,7 @@
               <v-btn
                 class="ml-auto"
                 color="primary"
-                v-bind="schema.options.buttonProps"
+                v-bind="buttonProps"
                 variant="elevated"
                 @click="closeAndAddBatch(isActive)"
               >
@@ -326,6 +326,16 @@ const computedOptions = computed(() => {
     options.fieldProps['readonly'] = true;
   }
   return options;
+});
+
+const buttonProps = computed(() => {
+  const buttonPropsValue = { ...(props.schema.options?.buttonProps || {}) };
+
+  if (typeof buttonPropsValue.readonly === 'string') {
+    delete buttonPropsValue.readonly;
+  }
+
+  return buttonPropsValue;
 });
 
 const duplicatedSectionEventBus = useEventBus<string>('form-duplicated-section');
@@ -745,6 +755,14 @@ watch(
     evaluateAllRows();
   },
   { deep: true },
+);
+
+watch(
+  () => fieldProps.value.readonly,
+  async () => {
+    await evaluateEditable();
+    await evaluateShowSectionElements();
+  },
 );
 
 onMounted(async () => {
