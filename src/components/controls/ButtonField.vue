@@ -223,6 +223,7 @@ async function runBtnLogic() {
           params: {
             ...schema.config.params,
           },
+          refreshModelOnCallback: true,
           callback: () => {
             loading.value = false;
           },
@@ -268,6 +269,7 @@ async function runBtnLogic() {
             params: {
               ...schema.config.params,
             },
+            refreshModelOnCallback: true,
             callback: () => {
               loading.value = false;
             },

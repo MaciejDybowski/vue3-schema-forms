@@ -113,11 +113,7 @@ const pendingEvents: any[] = []; // kolejka zdarzeń wywołanych przed otrzymani
 function flushPendingEvents() {
   while (pendingEvents.length) {
     const { payload } = pendingEvents.shift();
-    if (payload.callback) {
-      emit('callAction', { ...payload });
-    } else {
-      emit('callAction', { ...payload, callback: actionCallback });
-    }
+    emitCallAction(payload);
   }
 }
 
@@ -141,16 +137,37 @@ async function actionCallback() {
   emitUpdateEvent();
 }
 
+function emitCallAction(payload: any) {
+  const { refreshModelOnCallback, callback, ...restPayload } = payload;
+
+  if (!callback) {
+    emit('callAction', { ...restPayload, callback: actionCallback });
+    return;
+  }
+
+  if (refreshModelOnCallback) {
+    emit('callAction', {
+      ...restPayload,
+      callback: async (...args: any[]) => {
+        try {
+          await actionCallback();
+        } finally {
+          return callback(...args);
+        }
+      },
+    });
+    return;
+  }
+
+  emit('callAction', { ...restPayload, callback });
+}
+
 actionHandlerEventBus.on(async (event, payload) => {
   if (!formReadySignalSent.value) {
     pendingEvents.push({ event, payload });
     return;
   }
-  if (payload.callback) {
-    emit('callAction', { ...payload });
-    return;
-  }
-  emit('callAction', { ...payload, callback: actionCallback });
+  emitCallAction(payload);
 });
 
 const debounced = {
