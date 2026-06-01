@@ -111,7 +111,7 @@
       :class="item.class"
       :style="[item.label ? '' : 'justify-items: center']"
       :label="item.label"
-      :model-value="getValue(item.valueMapping, index)"
+      :model-value="getBooleanValue(item, index)"
       :rules="rulesMap[item.valueMapping]"
       v-bind="boundAttrsMap[item.valueMapping]"
       @update:model-value="handlersMap[item.valueMapping]?.input"
@@ -264,6 +264,11 @@ function getValue(valueMapping: string, index: number) {
   }
 
   return value;
+}
+
+function getBooleanValue(item: HeaderEditableObject, index: number) {
+  const value = getValue(item.valueMapping, index);
+  return value ?? item.defaultValue ?? false;
 }
 
 const showFormattedNumber = ref<boolean[]>([]);

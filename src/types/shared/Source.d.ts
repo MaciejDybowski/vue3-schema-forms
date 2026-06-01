@@ -41,6 +41,7 @@ export interface HeaderEditableObject {
   valueMapping: string;
   class?: string;
   type: "NUMBER" | "TEXT" | "TEXTAREA" | "SELECT" | "DICTIONARY" | "BOOLEAN" | "DATE" | "YEAR";
+  defaultValue?: boolean;
   validations?: any[];
   condition?: string;
   readonly: ? string;
