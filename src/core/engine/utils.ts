@@ -123,6 +123,16 @@ function resolveRefsAndReplace(schema: any) {
     return replacements;
   }
 
+  function resolveContextPlaceholders(input: string): string {
+    return input.replace(variableRegexp, (match) => {
+      const path = match.slice(1, -1);
+      if (!path.startsWith('context.')) return match;
+
+      const value = getDeepValue(schema.options, path.split('.'));
+      return value === undefined || value === null ? match : String(value);
+    });
+  }
+
   function walk(obj: any) {
     if (Array.isArray(obj)) {
       obj.forEach((item) => walk(item));
@@ -146,6 +156,8 @@ function resolveRefsAndReplace(schema: any) {
           for (const index in replacements) {
             resolvedRef = resolvedRef.replace(`{${index}}`, replacements[Number(index)]);
           }
+
+          resolvedRef = resolveContextPlaceholders(resolvedRef);
 
           // Zastąp $ref na bezpośredni URL z podmienionymi parametrami
           obj.$ref = resolvedRef;

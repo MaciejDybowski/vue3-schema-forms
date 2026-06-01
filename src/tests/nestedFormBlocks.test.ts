@@ -25,6 +25,18 @@ const schemaByPath: Record<string, any> = {
     },
     required: ['test'],
   },
+  '/Formularze usługi/Blok faktury.form': {
+    type: 'object',
+    properties: {
+      invoiceNumber: {
+        label: 'Numer faktury',
+        layout: {
+          component: 'text-field',
+        },
+      },
+    },
+    required: ['invoiceNumber'],
+  },
   'child-level-1': {
     type: 'object',
     properties: {
@@ -144,6 +156,12 @@ function deepResolveRefs(node: any): any {
     return resolvedSchema ? cloneValue(resolvedSchema) : node;
   }
 
+  if (typeof node.$ref === 'string' && node.$ref.includes('/api/v1/features/test/form-blocks?path=')) {
+    const path = node.$ref.split('/api/v1/features/test/form-blocks?path=')[1];
+    const resolvedSchema = schemaByPath[path];
+    return resolvedSchema ? cloneValue(resolvedSchema) : node;
+  }
+
   const result: Record<string, any> = {};
   for (const [key, value] of Object.entries(node)) {
     result[key] = deepResolveRefs(value);
@@ -227,6 +245,32 @@ describe('Zagnieżdzone formularze:', () => {
     expect(Object.keys(resolved.properties ?? {})).toEqual(['fieldA', 'test']);
     expect(resolved.properties?.blokA).toBeUndefined();
     expect(resolved.required).toEqual(['test']);
+  });
+
+  it('rozwiązuje context w nestedFormsPath przed pobraniem nested form blocka', async () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        formBlock: {
+          '0': '/Formularze usługi/Blok faktury.form',
+          $ref: '#/options/nestedFormsPath',
+          flatStructure: true,
+        },
+      },
+    };
+
+    const options = {
+      context: {
+        menuFeatureId: 'test',
+      },
+      nestedFormsPath: '../api/v1/features/{context.menuFeatureId}/form-blocks?path={0}',
+    };
+
+    const resolved = await resolveSchemaWithLocale(schema as any, 'pl', options as any);
+
+    expect(resolved.properties?.formBlock).toBeUndefined();
+    expect(resolved.properties?.invoiceNumber).toBeDefined();
+    expect(resolved.required).toEqual(['invoiceNumber']);
   });
 
   it('zachowuje strukturę zagnieżdżoną gdy flatStructure=false', async () => {

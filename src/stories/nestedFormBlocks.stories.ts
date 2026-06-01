@@ -109,6 +109,28 @@ const JSON_FORM_BLOCK = [
   }),
 ];
 
+const JSON_CONTEXT_FORM_BLOCK = [
+  http.get('/api/v1/features/:menuFeatureId/form-blocks', ({ params, request }) => {
+    const url = new URL(request.url);
+    const path = url.searchParams.get('path');
+
+    if (params.menuFeatureId === 'test' && path === '/Formularze usługi/Blok faktury.form') {
+      return HttpResponse.json({
+        type: 'object',
+        properties: {
+          invoiceNumber: {
+            label: 'Numer faktury',
+            layout: { component: 'text-field', cols: 6, fillRow: true },
+          },
+        },
+        required: ['invoiceNumber'],
+      });
+    }
+
+    return new HttpResponse(null, { status: 404 });
+  }),
+];
+
 export const Example1: Story = {
   name: 'Example 1 A: Nested Block, Wrapped with Key and Required Fields (Translation Included)',
   play: playForm(async (context) => {
@@ -369,6 +391,51 @@ export const Example2A: Story = {
   parameters: {
     msw: {
       handlers: [...JSON_TRANSLATIONS_BLOCK, ...JSON_FORM_BLOCK],
+    },
+  },
+};
+
+export const ContextMenuFeatureIdInNestedFormsPath: Story = {
+  name: 'Context menuFeatureId in nestedFormsPath',
+  play: playForm(async (context) => {
+    const canvas = within(context.canvasElement);
+
+    const nestedField = canvas.getByLabelText('Numer faktury');
+    await expect(nestedField).toBeInTheDocument();
+
+    const submitButton = canvas.getByText('Validate');
+    await userEvent.click(submitButton, { delay: 120 });
+    await expect(canvas.getByText('Field is required.')).toBeInTheDocument();
+
+    await userEvent.type(nestedField, 'FV/1/2026', { delay: 80 });
+
+    await expect(context.args.formModel).toEqual({
+      invoiceNumber: 'FV/1/2026',
+    });
+    await expect(context.args.formModel.formBlock).toBeUndefined();
+  }),
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        formBlock: {
+          '0': '/Formularze usługi/Blok faktury.form',
+          $ref: '#/options/nestedFormsPath',
+          flatStructure: true,
+        },
+      },
+    },
+    options: {
+      context: {
+        menuFeatureId: 'test',
+      },
+      nestedFormsPath: '../api/v1/features/{context.menuFeatureId}/form-blocks?path={0}',
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [...JSON_CONTEXT_FORM_BLOCK],
     },
   },
 };
