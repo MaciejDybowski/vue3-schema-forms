@@ -207,6 +207,7 @@ function wrapPropertiesWithPathAndIndex(
   for (const [key, value] of Object.entries(properties)) {
     const hasNestedProperties = value.properties !== undefined;
     const hasLayoutSchema = value.layout?.schema?.properties !== undefined;
+    const hasLayoutColumns = Array.isArray(value.layout?.columns);
     const isDuplicatedSection = value.layout?.component === 'duplicated-section';
     const isFieldsGroup = value.layout?.component === 'fields-group';
 
@@ -250,6 +251,18 @@ function wrapPropertiesWithPathAndIndex(
           index,
         );
       }
+    }
+
+    if (hasLayoutColumns) {
+      value.layout?.columns?.forEach((column: any) => {
+        if (column?.schema?.properties) {
+          wrapPropertiesWithPathAndIndex(
+            column.schema.properties as Record<string, SchemaField>,
+            path,
+            index,
+          );
+        }
+      });
     }
   }
 

@@ -86,6 +86,14 @@ export function stripFlatStructureFlag(
       stripFlatStructureFlag(value.layout.schema.properties, options, maxDepth, depth + 1);
     }
 
+    if (Array.isArray(value?.layout?.columns)) {
+      value.layout.columns.forEach((column: any) => {
+        if (column?.schema?.properties) {
+          stripFlatStructureFlag(column.schema.properties, options, maxDepth, depth + 1);
+        }
+      });
+    }
+
     if (Array.isArray(value?.panels)) {
       value.panels.forEach((panel: any) => {
         if (panel?.schema?.properties) {
@@ -128,6 +136,17 @@ export function collectNestedFormsPathKeys(
       collectNestedFormsPathKeys(value.layout.schema.properties, options, fullPath, maxDepth, depth + 1).forEach((k) =>
         keys.add(k),
       );
+    }
+
+    if (Array.isArray(value?.layout?.columns)) {
+      value.layout.columns.forEach((column: any, columnIndex: number) => {
+        if (column?.schema?.properties) {
+          const columnPath = `${fullPath}.layout.columns.${columnIndex}`;
+          collectNestedFormsPathKeys(column.schema.properties, options, columnPath, maxDepth, depth + 1).forEach((k) =>
+            keys.add(k),
+          );
+        }
+      });
     }
 
     if (Array.isArray(value?.panels)) {
@@ -229,6 +248,22 @@ export function flattenNestedFormsPathNodes(
         maxDepth,
         depth + 1,
       );
+    }
+
+    if (Array.isArray(properties[key]?.layout?.columns)) {
+      properties[key].layout.columns.forEach((column: any, columnIndex: number) => {
+        if (column?.schema?.properties) {
+          const columnPath = `${fullPath}.layout.columns.${columnIndex}`;
+          flattenNestedFormsPathNodes(
+            column.schema.properties,
+            keys,
+            columnPath,
+            column.schema,
+            maxDepth,
+            depth + 1,
+          );
+        }
+      });
     }
 
     if (Array.isArray(properties[key]?.panels)) {

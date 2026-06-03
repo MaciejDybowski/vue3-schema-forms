@@ -666,6 +666,8 @@ function wrapPropertiesWithIndexAndPath(
       value.layout && value.layout.schema && value.layout.component == 'duplicated-section';
     const isFieldGroup =
       value.layout && value.layout.schema && value.layout.component == 'fields-group';
+    const isFieldsColumns =
+      value.layout && Array.isArray(value.layout.columns) && value.layout.component == 'fields-columns';
 
     if (isNestedFieldExist) {
       wrapPropertiesWithIndexAndPath(value.properties as any, index);
@@ -678,6 +680,14 @@ function wrapPropertiesWithIndexAndPath(
       }
       // @ts-ignore
       wrapPropertiesWithIndexAndPath(value.layout.schema.properties, index, value);
+    }
+
+    if (isFieldsColumns) {
+      value.layout?.columns?.forEach((column: any) => {
+        if (column?.schema?.properties) {
+          wrapPropertiesWithIndexAndPath(column.schema.properties, index, value);
+        }
+      });
     }
 
     if (props.schema['path'] !== undefined && props.schema['index'] != undefined) {

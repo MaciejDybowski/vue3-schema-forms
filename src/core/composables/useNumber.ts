@@ -12,7 +12,7 @@ export interface CurrencyFormatterOptions {
 }
 
 export function useNumber() {
-  const { n, locale, numberFormats } = useI18n();
+  const { n, locale } = useI18n();
 
   const decimal = (precisionMin: number, precisionMax: number) => {
     return {
@@ -108,7 +108,7 @@ export function useNumber() {
     return cleaned;
   }
 
-  function getDecimalSeparator(locale: string): string {
+  function getDecimalSeparator(inputLocale: string = locale.value): string {
     const decimalSeparators: Record<string, string> = {
       'pl-PL': ',',
       pl: ',',
@@ -118,21 +118,51 @@ export function useNumber() {
       fr: ',',
       'es-ES': ',',
       es: ',',
+      'it-IT': ',',
+      it: ',',
       'ru-RU': ',',
       ru: ',',
       'en-US': '.',
       'en-GB': '.',
       en: '.',
+      'ja-JP': '.',
+      ja: '.',
     };
 
-    return decimalSeparators[locale] || '.';
+    if (decimalSeparators[inputLocale]) return decimalSeparators[inputLocale];
+
+    try {
+      const decimalPart = Intl.NumberFormat(inputLocale)
+        .formatToParts(1.1)
+        .find((part) => part.type === 'decimal');
+
+      return decimalPart?.value || '.';
+    } catch {
+      return '.';
+    }
   }
 
   function isValidNumberInput(value: string, integer = false): boolean {
-    const normalizedValue = value.replaceAll(',', '.');
+    const normalizedValue = normalizeNumberInput(value);
 
     if (integer) return /^-?\d*$/.test(normalizedValue);
     return /^-?\d*(\.\d*)?$/.test(normalizedValue);
+  }
+
+  function normalizeNumberInput(value: string): string {
+    let normalizedValue = value.trim().replace(/[\s\u00A0']/g, '');
+    const lastCommaIndex = normalizedValue.lastIndexOf(',');
+    const lastDotIndex = normalizedValue.lastIndexOf('.');
+
+    if (lastCommaIndex !== -1 && lastDotIndex !== -1) {
+      if (lastCommaIndex > lastDotIndex) {
+        return normalizedValue.replaceAll('.', '').replace(',', '.');
+      }
+
+      return normalizedValue.replaceAll(',', '');
+    }
+
+    return normalizedValue.replace(',', '.');
   }
 
   function preventInvalidNumberInput(event: InputEvent, integer = false) {
@@ -155,6 +185,7 @@ export function useNumber() {
     formattedNumber,
     formattedCurrency,
     cleanFormattedNumber,
+    getDecimalSeparator,
     preventInvalidNumberInput,
   };
 }

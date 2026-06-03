@@ -220,6 +220,79 @@ export const FloatPrecisionOnBlur: Story = {
   },
 };
 
+export const FloatCommaAndDotInput: Story = {
+  name: 'Accept Comma and Dot Separators',
+  play: playForm(async (context) => {
+    const canvas = within(context.canvasElement);
+    const commaField = await canvas.getByLabelText('Comma number');
+    const dotField = await canvas.getByLabelText('Dot number');
+
+    await userEvent.type(commaField, '12,34', { delay: 100 });
+    await userEvent.type(dotField, '56.78', { delay: 100 });
+
+    await expect(context.args.formModel).toEqual({ commaNumber: 12.34, dotNumber: 56.78 });
+  }),
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        commaNumber: {
+          label: 'Comma number',
+          type: 'float',
+          precision: 2,
+          layout: {
+            component: 'number-field',
+          },
+        },
+        dotNumber: {
+          label: 'Dot number',
+          type: 'float',
+          precision: 2,
+          layout: {
+            component: 'number-field',
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
+export const FloatPasteWithComma: Story = {
+  name: 'Paste Number with Comma',
+  globals: {
+    locale: 'pl',
+  },
+  play: playForm(async (context) => {
+    const canvas = within(context.canvasElement);
+    const field = await canvas.getByLabelText('Number (float)');
+
+    await userEvent.click(field);
+    await userEvent.paste('1 234,56');
+    await expect(context.args.formModel).toEqual({ numberFloat: 1234.56 });
+
+    await fireEvent.focusOut(field);
+    await expect((field as HTMLInputElement).value).toMatch(/^1[\s\u00A0]?234,56$/);
+  }),
+  args: {
+    formModel: {},
+    schema: {
+      type: 'object',
+      properties: {
+        numberFloat: {
+          label: 'Number (float)',
+          type: 'float',
+          precision: 2,
+          precisionMin: 2,
+          layout: {
+            component: 'number-field',
+          },
+        },
+      },
+    } as Schema,
+  },
+};
+
 export const DependencyDecimalPlaces: Story = {
   name: 'Change Precision with Dependency',
   play: playForm(async (context) => {

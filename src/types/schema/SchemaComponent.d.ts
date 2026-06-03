@@ -21,6 +21,7 @@ export type SchemaComponent =
   | 'avatar'
   | 'switch'
   | 'user-input'
+  | 'fields-columns'
   | 'fields-group'
   | 'image'
   | 'divider'

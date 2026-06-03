@@ -85,9 +85,8 @@ export function useConditionalRendering() {
 
   function resetModelValueWhenFalse(model: object, schema: EngineField) {
     if (lastValueOfShouldRender.value && !shouldRender.value && checkIfComponentIsStatic(schema)) {
-      if (schema.layout.component == 'fields-group') {
-        const internalSchema = schema.layout.schema as Schema;
-        resetModelValues(internalSchema, schema);
+      if (hasNestedSchemas(schema)) {
+        resetNestedSchemaValues(schema, schema);
       } else {
         const event: NodeUpdateEvent = {
           key: getDataPath(schema),
@@ -100,12 +99,44 @@ export function useConditionalRendering() {
     lastValueOfShouldRender.value = shouldRender.value;
   }
 
+  function hasNestedSchemas(field: any): boolean {
+    return !!(
+      field.layout?.schema?.properties ||
+      field.layout?.columns?.length ||
+      field.panels?.length
+    );
+  }
+
+  function resetNestedSchemaValues(field: any, formField: EngineField) {
+    if (field.layout?.schema) {
+      resetModelValues(field.layout.schema, formField);
+    }
+
+    if (Array.isArray(field.layout?.columns)) {
+      field.layout.columns.forEach((column: any) => {
+        if (column?.schema) {
+          resetModelValues(column.schema, formField);
+        }
+      });
+    }
+
+    if (Array.isArray(field.panels)) {
+      field.panels.forEach((panel: any) => {
+        if (panel?.schema) {
+          resetModelValues(panel.schema, formField);
+        }
+      });
+    }
+  }
+
   function resetModelValues(schema: Schema, formField: EngineField) {
     if (!schema.properties) return;
 
     Object.entries(schema.properties).forEach(([key, field]) => {
       if (field.type === 'object' && field.properties) {
         resetModelValues(field as any, formField);
+      } else if (hasNestedSchemas(field)) {
+        resetNestedSchemaValues(field, formField);
       } else {
         const event: NodeUpdateEvent = {
           key: fillPath(formField.path, formField.index, field.dataPath || key),

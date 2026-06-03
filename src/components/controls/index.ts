@@ -14,6 +14,7 @@ import ValidationMessagesViewer from '@/components/controls/ValidationMessagesVi
 import YearMonth from '@/components/controls/YearMonth.vue';
 import YearMonthWeek from '@/components/controls/YearMonthWeek.vue';
 import YearPicker from '@/components/controls/YearPicker.vue';
+import FieldsColumns from '@/components/controls/fields-columns/FieldsColumns.vue';
 import GroupOfFields from '@/components/controls/fields-group/FieldsGroup.vue';
 import GroupInput from '@/components/controls/group-input/GroupInput.vue';
 import TextEditor from '@/components/controls/text-editor/TextEditor.vue';
@@ -79,6 +80,7 @@ export const vueSchemaFromControls: Components = {
   divider: Divider,
   /*  "image-preview": ImagePreview,*/
   image: Image,
+  'fields-columns': FieldsColumns,
   'fields-group': GroupOfFields,
   'table-view': TableView,
   'table-internal': TableInternal,

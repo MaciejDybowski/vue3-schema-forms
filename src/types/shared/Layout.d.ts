@@ -5,6 +5,12 @@ import { DuplicatedSectionOptions } from '@/types/shared/DuplicatedSectionOption
 import { StaticContentTag } from '@/types/shared/StaticContentTag';
 import { Offset } from '@/types/shared/Offset';
 
+export interface FieldsColumn {
+  cols?: number | Cols;
+  class?: string;
+  schema: Schema;
+}
+
 export interface Layout {
   component: SchemaComponent;
   cols?: number | Cols;
@@ -17,6 +23,7 @@ export interface Layout {
 
   // duplicated-section && section && address
   schema?: Schema;
+  columns?: FieldsColumn[];
   options?: Record<string, any> & DuplicatedSectionOptions;
 
 

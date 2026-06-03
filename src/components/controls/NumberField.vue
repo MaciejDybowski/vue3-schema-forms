@@ -81,7 +81,6 @@ const { label, bindLabel } = useLabel(props.schema);
 const { getValue, setValue, getDataPath } = useFormModel();
 const { onChange } = useEventHandler();
 const { resolve } = useResolveVariables();
-const showFormattedNumber = ref(true);
 const { fillPath } = useResolveVariables();
 const { activeRules } = useActiveRules({
   fieldProps,
@@ -104,39 +103,27 @@ const formatType = (
 const roundOption: RoundOption =
   'roundOption' in props.schema ? (props.schema.roundOption as RoundOption) : 'round';
 
-const { roundTo, formattedNumber, cleanFormattedNumber, preventInvalidNumberInput } = useNumber();
+const {
+  roundTo,
+  formattedNumber,
+  cleanFormattedNumber,
+  getDecimalSeparator,
+  preventInvalidNumberInput,
+} = useNumber();
 
-const lastValue = ref<any>(null);
-const editingValue = ref<string | number | null>(null);
-
-function isOnlyZeros(str: string): boolean {
-  return /^0+$/.test(str);
-}
-
-function parseDigitWithOnlyZeroFraction(value: number) {
-  let lastFraction = lastValue.value?.toString().split('.')[1];
-  lastFraction = lastFraction?.slice(0, lastFraction.length - 1);
-  let current = value ? value.toString().split('.')[1] : null;
-
-  if (isOnlyZeros(lastFraction) && current == undefined) {
-    return value + `.${lastFraction}`;
-  }
-  return value;
-}
+const isFocused = ref(false);
+const inputValue = ref<string | null>(null);
 
 const getLocalModel = computed(() => {
-  return localModel.value;
+  if (isFocused.value) return inputValue.value;
+
+  return getFormattedModelValue();
 });
 
 const localModel = computed({
   get(): string | number | null {
-    if (!showFormattedNumber.value) {
-      return editingValue.value;
-    }
-
     let value = getValue(props.model, props.schema);
 
-    // Obsługa zmiennych z zależnościami
     if (value && typeof value == 'string' && value.match(variableRegexp)) {
       return value;
     }
@@ -145,50 +132,86 @@ const localModel = computed({
       return null;
     }
 
-    /* // Konwersja string na number
-    if (typeof value == 'string') {
-      value = Number(value);
-    }*/
-
-    // Formatowanie liczby lub czyszczenie
-    if (value && showFormattedNumber.value) {
-      return formattedNumber(value, formatType, precisionMin, precision);
-    }
-
-    value = parseDigitWithOnlyZeroFraction(value);
     return value;
   },
   set(val: any) {
-    lastValue.value = localModel.value;
-    if (val === '' || val == null) {
+    if (val === '' || val == null || isIncompleteNumberInput(val)) {
       setValue(null, props.schema);
+      return;
+    }
+
+    if (typeof val === 'string' && val.match(variableRegexp)) {
+      setValue(val, props.schema);
       return;
     }
 
     const parsedValue = parseNumberInput(val);
     if (parsedValue === null) {
-      setValue(val, props.schema);
       return;
     }
 
     setValue(
-      showFormattedNumber.value ? roundTo(parsedValue, precision, roundOption) : parsedValue,
+      isFocused.value ? parsedValue : roundTo(parsedValue, precision, roundOption),
       props.schema,
     );
   },
 });
 
+function getFormattedModelValue(): string | number | null {
+  const value = localModel.value;
+
+  if (typeof value === 'number') {
+    return formattedNumber(value, formatType, Number(precisionMin), Number(precision));
+  }
+
+  return value;
+}
+
+function getEditableModelValue(): string | null {
+  const value = localModel.value;
+
+  if (typeof value === 'number') {
+    return String(value).replace('.', getDecimalSeparator());
+  }
+
+  if (typeof value === 'string') {
+    return cleanFormattedNumber(value);
+  }
+
+  return null;
+}
+
+function normalizeNumberInput(val: any): string {
+  let value = String(val)
+    .trim()
+    .replace(/[\s\u00A0']/g, '');
+  const lastCommaIndex = value.lastIndexOf(',');
+  const lastDotIndex = value.lastIndexOf('.');
+
+  if (lastCommaIndex !== -1 && lastDotIndex !== -1) {
+    if (lastCommaIndex > lastDotIndex) {
+      value = value.replaceAll('.', '').replace(',', '.');
+    } else {
+      value = value.replaceAll(',', '');
+    }
+
+    return value;
+  }
+
+  return value.replace(',', '.');
+}
+
 function parseNumberInput(val: any): number | null {
-  const normalizedValue = String(val).replaceAll(',', '.').trim();
+  const normalizedValue = normalizeNumberInput(val);
   if (normalizedValue === '') return null;
 
   const parsedValue = Number(normalizedValue);
   return Number.isFinite(parsedValue) ? parsedValue : null;
 }
 
-function isCompleteNumberInput(val: any): boolean {
-  const normalizedValue = String(val).replaceAll(',', '.').trim();
-  return /^-?(?:\d+(?:\.\d+)?|\.\d+)$/.test(normalizedValue);
+function isIncompleteNumberInput(val: any): boolean {
+  const normalizedValue = normalizeNumberInput(val);
+  return normalizedValue === '-' || /^-?(?:\d+\.|\.)$/.test(normalizedValue);
 }
 
 const isCalculationDefined = computed(() => {
@@ -197,10 +220,7 @@ const isCalculationDefined = computed(() => {
 
 const isValueFromModelAndNotChangedManually = computed(() => {
   const dataPath = getDataPath(props.schema);
-  return (
-    !localModel.value ||
-    (localModel.value && !(`${dataPath}ManuallyChanged` in props.model))
-  );
+  return !localModel.value || (localModel.value && !(`${dataPath}ManuallyChanged` in props.model));
 });
 
 const showIconForVisualizationOfManuallyChangedResult = computed(() => {
@@ -213,7 +233,7 @@ const showIconForVisualizationOfManuallyChangedResult = computed(() => {
 });
 
 function userTyping(val: any) {
-  editingValue.value = val;
+  inputValue.value = val == null ? null : String(val);
 
   if (isCalculationDefined.value) {
     if (logger.calculationListener)
@@ -231,36 +251,35 @@ function userTyping(val: any) {
     props.schema.on.input(updateEvent);
   }
 
-  if (isCompleteNumberInput(val)) {
-    localModel.value = parseNumberInput(val);
+  if (val === '' || val == null) {
+    localModel.value = null;
+  } else if (!isIncompleteNumberInput(val)) {
+    const parsedValue = parseNumberInput(val);
+    if (parsedValue !== null) {
+      localModel.value = parsedValue;
+    }
   }
 
   onChange(props.schema, props.model);
 }
 
 function focusout() {
-  if (editingValue.value === '') {
+  if (inputValue.value === '') {
     localModel.value = null;
   } else {
-    const parsedValue = parseNumberInput(editingValue.value);
+    const parsedValue = parseNumberInput(inputValue.value);
     if (parsedValue !== null) {
-      localModel.value = roundTo(parsedValue, precision, roundOption);
+      setValue(roundTo(parsedValue, precision, roundOption), props.schema);
     }
   }
 
-  showFormattedNumber.value = true;
-  editingValue.value = null;
+  isFocused.value = false;
+  inputValue.value = null;
 }
 
 function focusin() {
-  const value = getValue(props.model, props.schema);
-  editingValue.value =
-    value || value === 0
-      ? typeof value === 'number'
-        ? String(value)
-        : cleanFormattedNumber(String(value))
-      : value;
-  showFormattedNumber.value = false;
+  inputValue.value = getEditableModelValue();
+  isFocused.value = true;
 }
 
 async function runCalculationIfExist() {
