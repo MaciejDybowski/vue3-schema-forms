@@ -13,7 +13,7 @@
     v-bind="fieldProps"
     @change="updateFileByAPI()"
     @drop.prevent="updateFileByAPI()"
-    @click:clear="removeFile(localModel, true)"
+    @click:clear="handleClear"
   >
     <template #selection="{ fileNames }">
       <v-chip
@@ -183,6 +183,12 @@ async function addFileLabel(file: FileInfo) {
 }
 
 async function removeFile(file: FileInfo, cleanModel = false) {
+  if (!file || !file.id) {
+    if (cleanModel) {
+      localModel.value = null;
+    }
+    return;
+  }
   try {
     await axios.delete(
       deleteFileUrl.value
@@ -202,6 +208,15 @@ async function removeFile(file: FileInfo, cleanModel = false) {
       toast.error(error.message);
     }
   }
+}
+
+function handleClear() {
+  const fileToRemove = localModel.value || lastLocalModel.value;
+  if (!fileToRemove) {
+    localModel.value = null;
+    return;
+  }
+  removeFile(fileToRemove, true);
 }
 
 async function getDownloadLink() {
