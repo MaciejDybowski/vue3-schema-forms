@@ -30,7 +30,7 @@ const resolvedContent = ref<any>({ resolvedText: null, allVariablesResolved: fal
 const vueSchemaFormEventBus = useEventBus<string>('form-model');
 const { getValue } = useFormModel();
 
-const localModel = computed(() => getValue(props.model, props.schema));
+const localModel = computed(() => getValue(props.model, props.schema) ?? '');
 const md = markdownit().use(markdownItMultimdTable).use(markdownItTable).enable('table');
 
 onMounted(async () => {
